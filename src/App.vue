@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import container  from './components/container.vue'
+import designiy  from './components/designiy.vue'
 </script>
 <template>
-    <container></container>
+    <designiy></designiy>
 </template>
 
 <style>

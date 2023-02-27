@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.10",
+    "dat.gui": "^0.7.9",
     "element-plus": "^2.2.32",
     "three": "^0.149.0",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "vue-router": "^4.0.13"
   },
   "devDependencies": {
     "@types/three": "^0.149.0",

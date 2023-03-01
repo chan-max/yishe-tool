@@ -9,7 +9,7 @@
         <a>导入</a>
         <a>导出</a>
         <a> 场景 </a>
-        <a>服装底色</a>
+        <a @click="selectColor">选择服装底色</a>
         <a @click="addTexture">添加贴图</a>
         <a>添加文字</a>
         <a>尺寸参考</a>
@@ -48,7 +48,8 @@ import {
   PlaneGeometry,
   DoubleSide,
   CanvasTexture,
-  FrontSide
+  FrontSide,
+  SphereGeometry
 } from "three";
 import { onWindowResize } from "../utils/rerender";
 import { importLocalImage } from "../common/importLocalImage";
@@ -60,8 +61,8 @@ const diyContainer = ref();
 
 // 存储整个模型相关的信息
 const DESIGN_INFO = {
-    currentGLTF:null, // 当前引入的gltf模型
-    currentMaterial:null // 当前的贴图材质
+  currentGLTF: null, // 当前引入的gltf模型
+  currentMaterial: null, // 当前的贴图材质
 };
 
 var scene = new Scene();
@@ -78,6 +79,8 @@ scene.add(light);
 camera.position.set(0, 0, 1);
 camera.lookAt(0, 0, 0);
 
+function selectColor() {}
+
 var renderer = new WebGLRenderer();
 renderer.setClearColor(0x252525); //设置背景颜色
 onWindowResize(() => {
@@ -89,7 +92,18 @@ onWindowResize(() => {
 async function importModel() {
   let gltf = await importLocalModel();
   DESIGN_INFO.currentGLTF = gltf;
-  scene.add(gltf.scene);
+
+  let m = null;
+  gltf.scene.traverse((child) => {
+    if (child.material) {
+      m = child.material;
+    }
+  });
+  console.log(m);
+  const geometry = new SphereGeometry(3, 30, 30);
+  const cube = new Mesh(geometry, m);
+  console.log(m.map.toJSON())
+  scene.add(cube);
 }
 
 async function addTexture() {
@@ -102,7 +116,6 @@ async function addTexture() {
   canvas.width = 100;
   canvas.height = 100;
   let c = canvas.getContext("2d");
-  c.fillStyle = "#00ff00";
   c.fillRect(0, 0, 100, 100);
   c.beginPath();
   c.beginPath();
@@ -115,11 +128,10 @@ async function addTexture() {
     map: texture,
     side: FrontSide,
   });
-  DESIGN_INFO.currentMaterial = material
+  DESIGN_INFO.currentMaterial = material;
+
   DESIGN_INFO.currentGLTF.scene.traverse((child) => {
-    if (child instanceof Mesh) {
-      child.material = material;
-    }
+    child.material = material;
   });
 }
 
@@ -143,9 +155,11 @@ datGui.add(gui, "centerX", 0.0, 1.0).onChange(updateUV);
 datGui.add(gui, "centerY", 0.0, 1.0).onChange(updateUV);
 datGui.add(gui, "RepeatWrapping").onChange(function (e) {
   if (e) {
-    DESIGN_INFO.currentMaterial.map.wrapS = DESIGN_INFO.currentMaterial.map.wrapT = RepeatWrapping; //设置为可循环
+    DESIGN_INFO.currentMaterial.map.wrapS =
+      DESIGN_INFO.currentMaterial.map.wrapT = RepeatWrapping; //设置为可循环
   } else {
-    DESIGN_INFO.currentMaterial.wrapS = DESIGN_INFO.currentMaterial.map.wrapT = ClampToEdgeWrapping; //设置会默认的最后一像素伸展
+    DESIGN_INFO.currentMaterial.wrapS = DESIGN_INFO.currentMaterial.map.wrapT =
+      ClampToEdgeWrapping; //设置会默认的最后一像素伸展
   }
   DESIGN_INFO.currentMaterial.map.needsUpdate = true;
 });

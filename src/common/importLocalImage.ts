@@ -1,5 +1,5 @@
 /*
-    异步读取本地照片（可多选），返回照片文件
+    异步读取本地照片（可多选），返回照片文件 数组类型
 */
 
 export function importLocalImage() {

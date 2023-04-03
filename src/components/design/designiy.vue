@@ -3,7 +3,7 @@
   <div id="menu">
     <div style="margin-left: 10px">
       <select>
-        <option disabled selected style="display: none">服装模型</option>
+        <option disabled selected style="display: none">选择服装模型</option>
         <option>t恤</option>
         <option>卫衣</option>
         <option>衬衫</option>
@@ -78,6 +78,8 @@ import rightMenu from "./rightMenu.vue";
 import { CustomTextureCanvas } from './utils/CustomTextureCanvas'
 
 import { currentGltf, showRightMenu, isLoading, container, currentModel, currentMaterial, textureCanvas, currentCustomTextureCanvas } from './utils/store'
+
+enum const clothModel
 
 
 const scene = new Scene();

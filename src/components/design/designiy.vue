@@ -2,12 +2,9 @@
   <loading v-if="isLoading"></loading>
   <div id="menu">
     <div style="margin-left: 10px">
-      <select>
-        <option disabled selected style="display: none">选择服装模型</option>
-        <option>t恤</option>
-        <option>卫衣</option>
-        <option>衬衫</option>
-        <option>短裤</option>
+      <select v-model="currentFilename"> 
+        <option disabled selected style="display: none" value="placeholder">选择服装模型</option>
+        <option v-for="model of ModelInfo" :value="model.filename">{{ model.name }}</option>
       </select>
       <select>
         <option disabled selected style="display: none">底色</option>
@@ -16,7 +13,6 @@
         <option>蓝色</option>
         <option>黄色</option>
       </select>
-      <a @click="initModel">导入</a>
       <a @click="showRightMenu = !showRightMenu"> 操作菜单 </a>
     </div>
   </div>
@@ -49,7 +45,6 @@ import {
   LineBasicMaterial,
   MeshLambertMaterial,
   PointLight,
-  TextureLoader,
   OrthographicCamera,
   RepeatWrapping,
   ClampToEdgeWrapping,
@@ -62,7 +57,7 @@ import {
 import loading from "./loading.vue";
 import * as dat from "dat.gui";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { computed, getCurrentInstance, onMounted, ref, shallowRef } from "vue";
+import { computed, getCurrentInstance, onMounted, ref, shallowRef, watch } from 'vue';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { waitImage } from "../../common/waitImage";
 
@@ -76,10 +71,8 @@ import { importBuiltInModel } from "../../common/importBuiltInModel";
 import { useDraggable } from "@vueuse/core";
 import rightMenu from "./rightMenu.vue";
 import { CustomTextureCanvas } from './utils/CustomTextureCanvas'
-
-import { currentGltf, showRightMenu, isLoading, container, currentModel, currentMaterial, textureCanvas, currentCustomTextureCanvas } from './utils/store'
-
-enum const clothModel
+import {ModelInfo} from './const'
+import { currentGltf, showRightMenu, isLoading, container, currentModel, currentMaterial, textureCanvas, currentCustomTextureCanvas, currentFilename } from './utils/store';
 
 
 const scene = new Scene();
@@ -89,29 +82,23 @@ const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight,
 const light = new AmbientLight(0xffffff, 10, 100);
 scene.add(light);
 
-camera.position.set(0, 0, 3);
+camera.position.set(0, 0, 10);
 camera.lookAt(0, 0, 0);
 
-async function initModel() {
+watch(currentFilename,async (filename)=>{
   isLoading.value = true;
-  let gltf = await importBuiltInModel("eye.glb");
-  currentGltf.value = gltf
-
-  gltf.scene.traverse((child) => {
+   let gltf = await importBuiltInModel(filename);
+   currentGltf.value = gltf
+   gltf.scene.traverse((child) => {
     if (child instanceof Mesh) {
       currentModel.value = child
       currentMaterial.value = child.material;
     }
   });
-
-  currentMaterial.value.map.matrixAutoUpdate = false;
+  // currentMaterial.value.map.matrixAutoUpdate = false;
   scene.add(gltf.scene);
   isLoading.value = false;
-
-}
-
-
-
+})
 
 
 var renderer = new WebGLRenderer();
@@ -131,13 +118,10 @@ function render() {
   requestAnimationFrame(render);
 }
 
-// 轨道控制器
-
 onMounted(() => {
   container.value.appendChild(renderer.domElement); //body元素中插入canvas对象
   render();
 });
-
 
 </script>
 

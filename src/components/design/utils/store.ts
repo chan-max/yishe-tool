@@ -3,6 +3,10 @@ import { shallowRef } from "vue"
 // 是否展示素材菜单
  export const showRightMenu = shallowRef(true);
 
+// 当前选择的模型名称 
+
+export const currentFilename = shallowRef('placeholder')
+
 // 加载
 export const isLoading = shallowRef(false);
 

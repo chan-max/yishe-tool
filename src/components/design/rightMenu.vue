@@ -49,7 +49,6 @@ import { CanvasTexture, MeshBasicMaterial, Texture } from "three";
 watchEffect(() => {
   if (textureCanvas.value && currentGltf.value) {
     // 模型变化时 同步
-    currentCustomTextureCanvas.value = new CustomTextureCanvas(textureCanvas.value, currentMaterial.value.map.image)
   }
 })
 

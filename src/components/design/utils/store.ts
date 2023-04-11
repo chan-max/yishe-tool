@@ -5,7 +5,7 @@ import { shallowRef } from "vue"
 
 // 当前选择的模型名称 
 
-export const currentFilename = shallowRef('placeholder')
+export const currentFilename = shallowRef('shirt_white.glb')
 
 // 加载
 export const isLoading = shallowRef(false);

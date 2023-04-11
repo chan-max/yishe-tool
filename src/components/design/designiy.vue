@@ -2,7 +2,7 @@
   <loading v-if="isLoading"></loading>
   <div id="menu">
     <div style="margin-left: 10px">
-      <select v-model="currentFilename"> 
+      <select v-model="currentFilename">
         <option disabled selected style="display: none" value="placeholder">选择服装模型</option>
         <option v-for="model of ModelInfo" :value="model.filename">{{ model.name }}</option>
       </select>
@@ -18,7 +18,8 @@
   </div>
 
   <div id="right-menu">
-    <transition leave-active-class="animate__animated animate__backOutRight" enter-active-class="animate__animated animate__backInRight" :duration="{ enter: 100, leave: 100 }">
+    <transition leave-active-class="animate__animated animate__backOutRight"
+      enter-active-class="animate__animated animate__backInRight" :duration="{ enter: 100, leave: 100 }">
       <right-menu v-show="showRightMenu"></right-menu>
     </transition>
   </div>
@@ -53,6 +54,7 @@ import {
   CanvasTexture,
   FrontSide,
   SphereGeometry,
+BoxHelper,
 } from "three";
 import loading from "./loading.vue";
 import * as dat from "dat.gui";
@@ -71,34 +73,61 @@ import { importBuiltInModel } from "../../common/importBuiltInModel";
 import { useDraggable } from "@vueuse/core";
 import rightMenu from "./rightMenu.vue";
 import { CustomTextureCanvas } from './utils/CustomTextureCanvas'
-import {ModelInfo} from './const'
+import { ModelInfo } from './const'
 import { currentGltf, showRightMenu, isLoading, container, currentModel, currentMaterial, textureCanvas, currentCustomTextureCanvas, currentFilename } from './utils/store';
 
 
 const scene = new Scene();
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-// 环境光
-const light = new AmbientLight(0xffffff, 10, 100);
+const alight = new AmbientLight( 0xffffff,0.6 );
+scene.add( alight );
+
+var light = new PointLight(0xffffff, 1, 30, 1);
+light.position.set(0,0,20);
 scene.add(light);
+
+scene.add(new Mesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial({ color: 0xff0000 })))
 
 camera.position.set(0, 0, 10);
 camera.lookAt(0, 0, 0);
 
-watch(currentFilename,async (filename)=>{
+
+function getFitScaleValue(obj) {
+  var boxHelper = new BoxHelper(obj);
+  boxHelper.geometry.computeBoundingBox();
+  var box = boxHelper.geometry.boundingBox;
+  var maxDiameter = Math.max((box.max.x - box.min.x), (box.max.y - box.min.y), (box.max.z - box.min.z));
+  return camera.position.z / maxDiameter;
+}
+
+//设置模型到适合观察的大小
+function setScaleToFitSize(obj) {
+  var scaleValue = getFitScaleValue(obj);
+  obj.scale.set(scaleValue, scaleValue, scaleValue);
+  return scaleValue;
+}
+
+watch(currentFilename, async (filename) => renderModel(filename))
+
+// 根据文件名渲染模型
+async function renderModel(filename){
+  scene.clear()
   isLoading.value = true;
-   let gltf = await importBuiltInModel(filename);
-   currentGltf.value = gltf
-   gltf.scene.traverse((child) => {
-    if (child instanceof Mesh) {
+  let gltf = await importBuiltInModel(filename);
+  currentGltf.value = gltf
+  gltf.scene.traverse((child) => {
+    if (child.isMesh) {
       currentModel.value = child
       currentMaterial.value = child.material;
+      child.geometry.center()
+      setScaleToFitSize(child)
     }
   });
   // currentMaterial.value.map.matrixAutoUpdate = false;
   scene.add(gltf.scene);
   isLoading.value = false;
-})
+}
 
 
 var renderer = new WebGLRenderer();
@@ -113,6 +142,7 @@ onWindowResize(() => {
   camera.updateProjectionMatrix();
 });
 
+
 function render() {
   renderer.render(scene, camera);
   requestAnimationFrame(render);
@@ -120,6 +150,7 @@ function render() {
 
 onMounted(() => {
   container.value.appendChild(renderer.domElement); //body元素中插入canvas对象
+  renderModel(currentFilename.value)
   render();
 });
 
@@ -147,11 +178,13 @@ onMounted(() => {
 #menu a {
   margin: auto 10px;
 }
+
 #menu a {
   color: #d5d5d5;
   font-size: 14px;
   font-weight: bold;
 }
+
 #menu a:hover {
   background: #333;
   cursor: pointer;

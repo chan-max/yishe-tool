@@ -3,7 +3,11 @@
 
 export const ModelInfo = [
     {
-        name: 'T恤',
-        filename: 't_shirt.glb'
-    }
+        name: '纯白男T恤',
+        filename: 'shirt_white.glb'
+    },
+    {
+        name: '纯黑男T恤',
+        filename: 'shirt_black.glb'
+    },
 ]

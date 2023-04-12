@@ -75,19 +75,11 @@ import rightMenu from "./rightMenu.vue";
 import { CustomTextureCanvas } from './utils/CustomTextureCanvas'
 import { ModelInfo } from './const'
 import { currentGltf, showRightMenu, isLoading, container, currentModel, currentMaterial, textureCanvas, currentCustomTextureCanvas, currentFilename } from './utils/store';
+import { setBasicLight } from './scene/lightControl';
 
 
 const scene = new Scene();
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-const alight = new AmbientLight( 0xffffff,0.6 );
-scene.add( alight );
-
-var light = new PointLight(0xffffff, 1, 30, 1);
-light.position.set(0,0,20);
-scene.add(light);
-
-scene.add(new Mesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial({ color: 0xff0000 })))
 
 camera.position.set(0, 0, 10);
 camera.lookAt(0, 0, 0);
@@ -126,6 +118,7 @@ async function renderModel(filename){
   });
   // currentMaterial.value.map.matrixAutoUpdate = false;
   scene.add(gltf.scene);
+  setBasicLight(scene)
   isLoading.value = false;
 }
 

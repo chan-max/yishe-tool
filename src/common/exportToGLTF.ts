@@ -22,22 +22,3 @@ export function exportToGLTF(data: any, filename: any = 'model') {
     URL.revokeObjectURL(objectURL)
 }
 
-import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
-
-export function sceneExportToGLTF(scene: any, filename: any) {
-    const exporter = new GLTFExporter();
-
-    // Parse the input and generate the glTF output
-    exporter.parse(
-        scene,
-        // called when the gltf has been generated
-        function (gltf: any) {
-            console.log(gltf);
-            exportToGLTF(gltf);
-        },
-        // called when there is an error in the generation
-        function (error: any) {
-            console.log("An error happened");
-        }
-    );
-}

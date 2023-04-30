@@ -1,4 +1,4 @@
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 /*
     导入本地模型 , 只能导入一个, 目前只支持 glb ，gltf 返回一个实例
 */

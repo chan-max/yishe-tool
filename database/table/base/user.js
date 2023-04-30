@@ -1,6 +1,13 @@
 import { DataTypes } from "sequelize"
 
-export const TABLE_USER = {
+
+export const AccountStatusEnum = {
+    NORMAL: 0, // 正常状态
+    DISABLED: 1, // 禁用状态
+    IMPROVING: 2
+}
+
+export const USER_TABLE = {
     firstName: {
         type: DataTypes.STRING,
     },
@@ -16,6 +23,7 @@ export const TABLE_USER = {
         type: DataTypes.STRING,
         allowNull: false
     },
+    // 账号对于每个用户为唯一
     account: {
         type: DataTypes.STRING,
         allowNull: false
@@ -23,5 +31,11 @@ export const TABLE_USER = {
     password: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+    },
+    accountStatus: {
+        type: DataTypes.STRING
     }
 }

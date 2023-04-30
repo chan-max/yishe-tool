@@ -62,17 +62,14 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { computed, getCurrentInstance, onMounted, ref, shallowRef, watch } from 'vue';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { waitImage } from "../../common/waitImage";
-
 import { onWindowResize } from "../../utils/rerender";
 import { importLocalImage } from "../../common/importLocalImage";
-import { sceneExportToGLTF } from "../../common/exportToGLTF";
 import { importLocalModel } from "../../common/importLocalModel";
 import { Loading } from "@element-plus/icons-vue";
 import { importBuiltInModel } from "../../common/importBuiltInModel";
 
 import { useDraggable } from "@vueuse/core";
 import rightMenu from "./rightMenu.vue";
-import { CustomTextureCanvas } from './utils/CustomTextureCanvas'
 import { ModelInfo } from './const'
 import { currentGltf, showRightMenu, isLoading, container, currentModel, currentMaterial, textureCanvas, currentCustomTextureCanvas, currentFilename } from './utils/store';
 import { setBasicLight } from './scene/lightControl';

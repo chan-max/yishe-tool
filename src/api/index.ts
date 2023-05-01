@@ -1,10 +1,9 @@
 import apiInstance from "./apiInstance";
 
 // 检验账号是否存在
-export const accountIsExist = (data: any) => apiInstance.get('/accountIsExist', { params: data })
+export const getAccountStatus = (data: any) => apiInstance.get('/getAccountStatus', {
+    params: data
+})
 
-
-
-export const signIn = () => { }
-export const signUp = () => { }
-export const signOut = () => { }
+// 注册 ，账号密码手机号
+export const signUp = (data: any) => apiInstance.post('/signUp', data)

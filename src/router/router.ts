@@ -12,16 +12,16 @@ const routes = [
     {
         path: '/signup',
         name: 'Signup',
-        component:signup
+        component: signup
     },
     {
         path: '/design',
         name: 'design',
         component: design,
-    }
+    },
 ]
 
- const router = createRouter({
+const router = createRouter({
     history: createWebHashHistory(),
     routes
 })

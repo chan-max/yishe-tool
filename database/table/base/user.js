@@ -1,12 +1,6 @@
 import { DataTypes } from "sequelize"
 
 
-export const AccountStatusEnum = {
-    NORMAL: 0, // 正常状态
-    DISABLED: 1, // 禁用状态
-    IMPROVING: 2
-}
-
 export const USER_TABLE = {
     firstName: {
         type: DataTypes.STRING,

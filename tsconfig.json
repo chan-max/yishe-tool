@@ -21,7 +21,9 @@
         ],
         "skipLibCheck": true,
         "noEmit": true,
-        "allowJs": true
+        "allowJs": true,
+        "checkJs": false,
+        "allowSyntheticDefaultImports": true,
     },
     "include": [
         "src/**/*.ts",

@@ -1,12 +1,15 @@
-<script setup lang="ts">
-</script>
 <template>
-  <div id="home-header">
-    衣设网
-  </div>
-  <router-view></router-view>
-</template>
-
+    <div id="notice"></div>
+    <div id="header">
+        <header-view></header-view>
+    </div>
+    <div id="content">
+      <router-view></router-view>
+    </div>
+  </template>
+<script setup lang="ts">
+    import headerView from './base/header.vue'
+</script>
 <style>
 html,
 body {
@@ -17,13 +20,18 @@ body {
 #app {
   height: 100%;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-#home-header {
-  height: 50px;
+#header {
+  height: 60px;
   width: 100%;
-  color: #00c1de;
-  font-weight: bold;
-  background: #00c1de;
+  flex-shrink: 0;
+}
+
+#content {
+  flex: auto;
+  overflow: auto;
 }
 </style>

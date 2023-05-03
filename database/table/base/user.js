@@ -11,11 +11,9 @@ export const USER_TABLE = {
     // 用户名
     name: {
         type: DataTypes.STRING,
-        allowNull: false
     },
     phonenumber: {
         type: DataTypes.STRING,
-        allowNull: false
     },
     // 账号对于每个用户为唯一
     account: {

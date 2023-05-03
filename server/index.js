@@ -4,7 +4,7 @@ import cors from 'koa2-cors'
 import jwt from 'jsonwebtoken'
 import path from 'path'
 import _static from 'koa-static'
-import {koaBody} from 'koa-body'
+import { koaBody } from 'koa-body'
 import { fileURLToPath } from 'url'
 import { initRouter } from './router.js';
 
@@ -15,19 +15,12 @@ import { setupDatabase } from '../database/setup.js'
 
 const app = new Koa();
 const router = new Router();
-
 const sequelize = await setupDatabase()
-
-
 initRouter(router, sequelize, app)
 
 app.use(_static(path.join(__dirname, '../dist')))
 app.use(cors({ origin: "*", credentials: true }));
-
-app.use(koaBody({
-    multipart: true
-}))
-
+app.use(koaBody({ multipart: true }))
 app.use(router.routes());
 app.use(router.allowedMethods())
 

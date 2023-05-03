@@ -1,5 +1,10 @@
-import { signUpHook } from "./api/signup.js";
+import { signUpHook } from "./api/base/signUp.js";
+import { signInHook } from './api/base/signIn.js'
 
-export function initRouter(router, sequelize, app) {
-    signUpHook.call(null,...arguments)
+export const initRouter = (router, sequelize, app) => {
+    let hooks = [
+        signInHook,
+        signUpHook
+    ]
+    hooks.forEach((hook) => hook(router, sequelize, app))
 }

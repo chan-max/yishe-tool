@@ -11,7 +11,10 @@ export function setToken() {
 
 }
 
-
+const token = jwt.sign({ account: '666', exp: Date.now() + 60 * 60 }, '666');
+console.log(token);
+let res = jwt.verify(token, '666', { complete: true })
+console.log(res);
 
 async function checkoutToken(ctx, next) {
     // split('?')[0]把字符串分割成字符串数组——拿到url值

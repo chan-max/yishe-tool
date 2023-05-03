@@ -17,9 +17,10 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { reactive, toRaw } from "vue";
-import { signUp, getAccountStatus } from "@/api/index";
+import { signUp, getAccountStatus } from "@api/index";
+import { StatusCodeEnum } from "@common/enum/statusCode.js";
 
 const signUpForm = reactive({
   phonenumber: "",
@@ -29,7 +30,13 @@ const signUpForm = reactive({
 
 async function submit() {
   let res = await signUp(toRaw(signUpForm));
-  console.log(res);
+  let status = res.data.status;
+  if (status === StatusCodeEnum.SIGNUP_SUCCESS) {
+    alert("注册成功");
+  } else if (status === StatusCodeEnum.ACCOUNT_ALREADY_EXIST) {
+    alert('账号已存在')
+  }
+
 }
 </script>
 <style>

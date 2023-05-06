@@ -1,4 +1,4 @@
-import { shallowRef } from "vue"
+import { ref, shallowRef } from "vue"
 
 // 是否展示素材菜单
  export const showRightMenu = shallowRef(true);
@@ -27,3 +27,7 @@ export const textureCanvas = shallowRef()
 
 // 材质canvas抽象类
 export const currentCustomTextureCanvas = shallowRef()
+
+
+// 当前组件是否全屏
+export const isFullpage = ref(false)

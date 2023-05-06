@@ -19,7 +19,7 @@
 
 <script setup>
 import { reactive, toRaw } from "vue";
-import { signUp, getAccountStatus } from "@api/index";
+import { signUp, getAccountStatus } from "@/api/index";
 import { StatusCodeEnum } from "@common/enum/statusCode.js";
 
 const signUpForm = reactive({

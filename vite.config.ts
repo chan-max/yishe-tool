@@ -7,10 +7,8 @@ export default defineConfig({
     server: {},
     resolve: {
         alias: {
+            /*  @/ 代表src 路径下 ， @ 代表全局路径下 */
             '@': path.resolve(__dirname, './src'),
-            '@component': path.resolve(__dirname, './src/components'),
-            '@view': path.resolve(__dirname, './src/views'),
-            '@api': path.resolve(__dirname, './src/api'),
             '@common': path.resolve(__dirname, './common/')
         },
     }

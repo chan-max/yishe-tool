@@ -1,74 +1,48 @@
 <template>
-  <loading v-if="isLoading"></loading>
-  <div id="design-canvas-container" ref="mountContainer"></div>
-
+  <div id="designiy-container">
+    <div id="designiy-canvas-container" ref="mountContainer"></div>
+    <header-menu></header-menu>
+    
+  </div>
 </template>
 
 <script setup>
 import {
-  Scene,
-  PerspectiveCamera,
-  WebGLRenderer,
-  Color,
-  AxesHelper,
-  AmbientLight,
-  BoxGeometry,
-  Mesh,
-  MeshBasicMaterial,
-  Vector3,
-  BufferGeometry,
-  Line,
-  LineBasicMaterial,
-  MeshLambertMaterial,
-  PointLight,
-  OrthographicCamera,
-  RepeatWrapping,
-  ClampToEdgeWrapping,
-  PlaneGeometry,
-  DoubleSide,
-  CanvasTexture,
-  FrontSide,
-  SphereGeometry,
-  BoxHelper,
-} from "three";
-import loading from "./loading.vue";
-import * as dat from "dat.gui";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { computed, getCurrentInstance, onMounted, ref, render, shallowRef, watch } from 'vue';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { waitImage } from "../../../common/waitImage";
-import { debounce, getElementPureHeight, getElementPureWidth, onWindowResize } from "../utils/utils";
-import { importLocalImage } from "../../../common/importLocalImage";
-import { importLocalModel } from "../../../common/importLocalModel";
-import { Loading } from "@element-plus/icons-vue";
-import { importBuiltInModel } from "../../../common/importBuiltInModel";
-import { useDraggable } from "@vueuse/core";
-import { ModelInfo } from '../const'
-import { currentGltf, showRightMenu, isLoading, container, currentModel, currentMaterial, textureCanvas, currentCustomTextureCanvas, currentFilename } from '../store';
-import { setBasicLight } from '../scene/lightControl';  
-import { Designiy } from '../scene/instance/Designiy'
+  onMounted,
+  ref
+} from "vue";
+import { Designiy } from "../scene/Designiy";
+import headerMenu from "./headerMenu.vue";
 
-const mountContainer = ref()
+const mountContainer = ref();
+
+let designiy = new Designiy();
 
 
-const setup = () => {
-  let designiy = new Designiy({
-    container: mountContainer.value
-  })
+designiy.addModel("https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb")
 
 
-  designiy.scene.add(new Mesh(new BoxGeometry(1,1,1),new MeshBasicMaterial()))
+
+designiy.addAmientLight(0xffffff, 0.2);
+designiy.addDirectionalLight(0xffffff, 1, 10, 10, 10);
+
+designiy.setBgColor('#252525')
 
 
-  designiy.render()
-}
 
-
-onMounted(setup)
+onMounted(() => {
+  designiy.render(mountContainer.value);
+});
 </script>
 
 <style lang="less">
-#design-canvas-container {
+#designiy-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#designiy-canvas-container {
   width: 100%;
   height: 100%;
   overflow: hidden;

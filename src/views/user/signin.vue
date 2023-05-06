@@ -16,7 +16,7 @@
 
 <script setup>
 import { reactive, toRaw } from "vue";
-import { signIn } from '@api/index'
+import { signIn } from '@/api/index'
 import { StatusCodeEnum } from "@common/enum/statusCode.js";
 import { useUserStore } from '@/store/stores/user'
 import {useRouter} from 'vue-router'

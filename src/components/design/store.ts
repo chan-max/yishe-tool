@@ -31,3 +31,6 @@ export const currentCustomTextureCanvas = shallowRef()
 
 // 当前组件是否全屏
 export const isFullpage = ref(false)
+
+// 是否展示背景控制表单
+export const isShowBgControlForm = ref(false)

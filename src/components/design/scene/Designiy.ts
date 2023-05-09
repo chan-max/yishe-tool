@@ -1,4 +1,5 @@
 import {
+  Box3,
   BoxGeometry,
   DirectionalLight,
   Mesh,
@@ -6,12 +7,13 @@ import {
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
+  AmbientLight,
+  Vector3,
+  Box3Helper,
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
-import { AmbientLight } from "three";
-
 
 export class Designiy {
   public scene: Scene;
@@ -85,7 +87,7 @@ export class Designiy {
     this.container.style.background = background;
   }
 
-  public importModel(source: any) {
+  public load(source: any) {
     const loader = new GLTFLoader();
     let isUrl = source.startsWith("http") || source.startsWith("https");
     // 默认引入 piblic/model 下的模型
@@ -98,10 +100,34 @@ export class Designiy {
   }
 
   private addedModelMap: Record<string, any> = {};
+
   public async addModel(source: any) {
-    let gltf: any = await this.importModel(source);
+    let gltf: any = await this.load(source);
     this.scene.add(gltf.scene);
     this.addedModelMap[source] = gltf;
+    this.initImportedModel(gltf);
+  }
+
+  // 模型居中
+  private initImportedModel(gltf) {
+    let object = gltf.scene;
+
+    // 先处理尺寸，再居中
+    const box = new Box3().setFromObject(object);
+    let size = new Vector3();
+    box.getSize(size);
+    let length = size.length()
+    object.scale.set(10/length,10/length,10/length);
+
+
+    const centerBox = new Box3().setFromObject(object);
+
+    const center = centerBox.getCenter(new Vector3());
+    
+    object.position.x += object.position.x - center.x;
+    object.position.y += object.position.y - center.y;
+    object.position.z += object.position.z - center.z;
+
   }
 
   public removeModel(source: any) {
@@ -125,6 +151,4 @@ export class Designiy {
     light.position.set(x, y, z);
     this.scene.add(light);
   }
-
-  
 }

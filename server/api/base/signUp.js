@@ -1,7 +1,7 @@
 import { StatusCodeEnum } from "../../../common/enum/statusCode.js"
 
 
-export const signUpHook = (router, sequelize, app) => router.post('/signUp', async (ctx, next) => {
+export const signupHook = (router, sequelize, app) => router.post('/signup', async (ctx, next) => {
     const data = ctx.request.body
     const { phonenumber, account, password } = data
 

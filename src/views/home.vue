@@ -10,7 +10,7 @@ import { useUserStore } from '@/store/stores/user.ts'
 import { storeToRefs } from 'pinia'
 const useStore = useUserStore()
 
-const { isSignedIn, account } = storeToRefs(useStore)
+const { isLogin, account } = storeToRefs(useStore)
 
 </script>
 

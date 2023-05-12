@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 // 不需要验证身份的接口
 export const TokenIgnoreRoutesEnum = {
-    USER_SIGNIN: '/signin',
+    USER_LOGIN: '/login',
     USER_SIGNUP: '/signup',
     
 }

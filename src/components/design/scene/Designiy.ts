@@ -10,26 +10,36 @@ import {
   AmbientLight,
   Vector3,
   Box3Helper,
+  Vector2,
+
+  Object3D,
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
-
+import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 export class Designiy {
   public scene: Scene;
   public renderer: WebGLRenderer;
   private camera: any;
-  private container: any;
+  private canvasContainer: any;
+
   private controler: any;
 
   private resizeObserver: any;
 
+  public mouse = new Vector2();
+
   private get width() {
-    return Number(window.getComputedStyle(this.container).width.slice(0, -2));
+    return Number(
+      window.getComputedStyle(this.canvasContainer).width.slice(0, -2)
+    );
   }
 
   private get height() {
-    return Number(window.getComputedStyle(this.container).height.slice(0, -2));
+    return Number(
+      window.getComputedStyle(this.canvasContainer).height.slice(0, -2)
+    );
   }
 
   constructor() {
@@ -38,28 +48,18 @@ export class Designiy {
     this.renderer = new WebGLRenderer();
   }
 
-  private initContanier(container: any) {
-    this.container = container;
-    this.camera = new PerspectiveCamera(
-      75,
-      this.width / this.height,
-      0.1,
-      1000
-    );
+  private initCanvasContainer(canvasContainer: any) {
+    this.canvasContainer = canvasContainer;
+    this.camera = new PerspectiveCamera(  75,  this.width / this.height,  0.1,  1000);
     this.renderer.setSize(this.width, this.height);
     this.camera.position.set(0, 0, 10);
     this.camera.lookAt(0, 0, 0);
     this.controler = new OrbitControls(this.camera, this.renderer.domElement);
-    this.container.appendChild(this.renderer.domElement);
-
-    this.resizeObserver = new ResizeObserver(
-      debounce(() => {
-        this.camera.aspect = this.width / this.height;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(this.width, this.height);
-      }, 10)
-    );
-    this.resizeObserver.observe(container);
+    this.canvasContainer.appendChild(this.renderer.domElement);
+    this.initClickEvent();
+    this.initMousemoveEvent();
+    this.resizeObserver = new ResizeObserver(debounce(() => {  this.camera.aspect = this.width / this.height;    this.camera.updateProjectionMatrix();   this.renderer.setSize(this.width, this.height); }, 10) )
+    this.resizeObserver.observe(canvasContainer);
   }
 
   public frameCount = 0;
@@ -71,7 +71,7 @@ export class Designiy {
   }
 
   public render(target: any) {
-    this.initContanier(target);
+    this.initCanvasContainer(target);
     this.doRender();
   }
 
@@ -84,7 +84,7 @@ export class Designiy {
   }
 
   public setCssBg(background: any) {
-    this.container.style.background = background;
+    this.canvasContainer.style.background = background;
   }
 
   public load(source: any) {
@@ -99,41 +99,45 @@ export class Designiy {
     });
   }
 
-  private addedModelMap: Record<string, any> = {};
+  mainModel: any = null;
+  mainMesh: any = null;
 
-  public async addModel(source: any) {
-    let gltf: any = await this.load(source);
-    this.scene.add(gltf.scene);
-    this.addedModelMap[source] = gltf;
-    this.initImportedModel(gltf);
+  private findMainMesh(gltf) {
+    let mainMesh = null;
+    gltf.scene.traverse((child) => {
+      if (child.isMesh && !mainMesh) {
+        mainMesh = child;
+      }
+    });
+    return mainMesh;
   }
 
-  // 模型居中
+  public async setMainModel(source: any) {
+    let gltf: any = await this.load(source);
+    this.scene.add(gltf.scene);
+    this.initImportedModel(gltf);
+    this.mainModel = gltf;
+    this.mainMesh = this.findMainMesh(gltf);
+  }
+
+  public removeMainModel() {
+    this.scene.remove(this.mainModel.scene);
+  }
+
+  // 模型居中和调整尺寸
   private initImportedModel(gltf) {
     let object = gltf.scene;
-
     // 先处理尺寸，再居中
-    const box = new Box3().setFromObject(object);
+    const sizeBox = new Box3().setFromObject(object);
     let size = new Vector3();
-    box.getSize(size);
-    let length = size.length()
-    object.scale.set(10/length,10/length,10/length);
-
-
+    sizeBox.getSize(size);
+    let length = size.length();
+    object.scale.set(10 / length, 10 / length, 10 / length);
     const centerBox = new Box3().setFromObject(object);
-
     const center = centerBox.getCenter(new Vector3());
-    
     object.position.x += object.position.x - center.x;
     object.position.y += object.position.y - center.y;
     object.position.z += object.position.z - center.z;
-
-  }
-
-  public removeModel(source: any) {
-    let gltf = this.addedModelMap[source];
-    this.scene.remove(gltf.scene);
-    this.addedModelMap[source] = null;
   }
 
   public addAmientLight(color: any, intensity: any) {
@@ -150,5 +154,40 @@ export class Designiy {
     var light = new DirectionalLight(color, intensity);
     light.position.set(x, y, z);
     this.scene.add(light);
+  }
+
+  // click 事件只会在渲染后触发
+  private _onClickCbs = new Set();
+  public onClick(cb: any) {
+    this._onClickCbs.add(cb);
+  }
+
+  private initClickEvent() {
+    // 禁止滑动触发点击事件
+    let mousedownX = null
+    let mousedownY = null
+    let radius = 5
+
+    this.canvasContainer.addEventListener('mousedown',(event:any) => {
+      mousedownX = event.offsetX
+      mousedownY = event.offsetY
+    })
+
+    this.canvasContainer.addEventListener('mouseup',(event:any) => {
+      let mouseupX = event.offsetX
+      let mouseupY = event.offsetY
+      if(Math.abs(mousedownX - mouseupX) <= radius && Math.abs(mousedownY - mouseupY) <=radius){
+        // 确定 点击
+        this._onClickCbs.forEach((cb:any) => cb.call(this,this))
+      }
+    })
+  }
+
+  // 保存鼠标坐标信息
+  private initMousemoveEvent() {
+    this.canvasContainer.addEventListener("mousemove", (event: any) => {
+      this.mouse.x = (event.offsetX / this.width) * 2 - 1;
+      this.mouse.y = -(event.offsetY / this.height) * 2 + 1;
+    });
   }
 }

@@ -2,11 +2,11 @@ import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
 
 export const useUserStore = defineStore('user', () => {
-    const isSignedIn = ref(false)
-    const signInTime = ref()
+    const isLogin = ref(false)
+    const loginTime = ref()
     const account = ref('')
     return {
-        isSignedIn,
+        isLogin,
         account
     }
 })

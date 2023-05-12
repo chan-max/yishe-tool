@@ -1,13 +1,15 @@
 <template>
-  <div id="designiy">
+  <div id="designiy" >
     <main-view></main-view>
   </div>
 </template>
 
 <script setup>
-
 import mainView from "./layout/main.vue";
-// 控制是否全屏
+import { useDraggable } from "@vueuse/core";
+import { ref } from "vue";
+
+
 
 </script>
 
@@ -15,6 +17,5 @@ import mainView from "./layout/main.vue";
 #designiy {
   width: 100%;
   height: 100%;
-  position: relative;
 }
 </style>

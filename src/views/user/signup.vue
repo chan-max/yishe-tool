@@ -1,14 +1,14 @@
 <template>
   <div class="accountApply-form">
-    <el-form :model="signUpForm">
+    <el-form :model="signupForm">
       <el-form-item label="手机号" required>
-        <el-input v-model="signUpForm.phonenumber" />
+        <el-input v-model="signupForm.phonenumber" />
       </el-form-item>
       <el-form-item label="账号" required>
-        <el-input v-model="signUpForm.account" />
+        <el-input v-model="signupForm.account" />
       </el-form-item>
       <el-form-item label="密码" required>
-        <el-input v-model="signUpForm.password" />
+        <el-input v-model="signupForm.password" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit"> 注册 </el-button>
@@ -19,17 +19,17 @@
 
 <script setup>
 import { reactive, toRaw } from "vue";
-import { signUp, getAccountStatus } from "@/api/index";
+import { signup, getAccountStatus } from "@/api/index";
 import { StatusCodeEnum } from "@common/enum/statusCode.js";
 
-const signUpForm = reactive({
+const signupForm = reactive({
   phonenumber: "",
   account: "",
   password: "",
 });
 
 async function submit() {
-  let res = await signUp(toRaw(signUpForm));
+  let res = await signup(toRaw(signupForm));
   let status = res.data.status;
   if (status === StatusCodeEnum.SIGNUP_SUCCESS) {
     alert("注册成功");

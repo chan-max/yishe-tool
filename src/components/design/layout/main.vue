@@ -1,28 +1,27 @@
 <template>
   <div id="designiy-container">
-    <div id="designiy-canvas-container" ref="mountContainer"></div>
     <header-menu></header-menu>
+    <div id="designiy-canvas-container" ref="mountContainer"></div>
   </div>
 </template>
 <script setup>
 import { onMounted, ref } from "vue";
 import { Designiy } from "../scene/designiy";
 import headerMenu from "./headerMenu.vue";
-import bgControlForm from "./bgControlForm.vue";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { AxesHelper, BoxGeometry, Mesh, MeshBasicMaterial, Object3D, Raycaster, Vector3 } from "three";
 
 const mountContainer = ref();
 
-let designiy = new Designiy();
+const designiy = new Designiy();
 
-designiy.setMainModel("black_shirt.glb");
+designiy.setMainModel("blue_shirt.glb");
 
 designiy.addAmientLight(0xffffff, 0.2);
 designiy.addDirectionalLight(0xffffff, 0.8, 0, 0, 10);
 designiy.addDirectionalLight(0xffffff, 0.8, 0, 0, -10);
 
-designiy.setBgColor("#252525");
+designiy.setBgColor("#eeeeee");
 
 designiy.onClick((des) => {
   let {
@@ -31,8 +30,7 @@ designiy.onClick((des) => {
     camera,
     scene
   } = des;
-
-
+  
   let raycaster = new Raycaster()
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObject(mainMesh);

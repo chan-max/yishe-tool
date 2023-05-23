@@ -112,16 +112,24 @@ export class Designiy {
     return mainMesh;
   }
 
+  
+
   public async setMainModel(source: any) {
+    this.removeMainModel()
     let gltf: any = await this.load(source);
-    this.scene.add(gltf.scene);
     this.initImportedModel(gltf);
+    this.scene.add(gltf.scene);
     this.mainModel = gltf;
     this.mainMesh = this.findMainMesh(gltf);
   }
 
   public removeMainModel() {
+    if(!this.mainModel){
+      return
+    }
     this.scene.remove(this.mainModel.scene);
+    this.mainMesh = null
+    this.mainModel = null
   }
 
   // 模型居中和调整尺寸

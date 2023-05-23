@@ -10,7 +10,8 @@
 .designiy-header-menu {
   width: 100%;
   height: 40px;
-  background-color: #444;
+  background-color: #fcfcfc;
+  border-bottom: 1px solid #efefef;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,21 +20,10 @@
 }
 
 .designiy-header-menu-item{
-  color:#eee;
+  color:#333;
   font-size: 12px;
   font-weight: bold;
   margin: 0 20px;
   cursor: pointer;
-}
-
-
-.designiy-bg-picker {
-  input {
-    width: 30px;
-    height: 30px;
-    border: none;
-    outline: none;
-    background-color: transparent;
-  }
 }
 </style>

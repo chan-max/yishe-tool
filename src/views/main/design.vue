@@ -9,10 +9,7 @@ import designiy from "@/components/design/index.vue";
 </script>
 <style lang="less">
 .design-view {
-    height: 800px;
-    width: 1400px;
-    position: fixed;
-    left: calc(50% - 700px);
-    top: 200px;
+    height: 100%;
+    width: 100%;
 }
 </style>

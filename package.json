@@ -19,6 +19,7 @@
     "@vueuse/components": "^9.13.0",
     "@vueuse/core": "^9.13.0",
     "animate.css": "^4.1.1",
+    "ant-design-vue": "^3.2.20",
     "axios": "^1.4.0",
     "bootstrap-icons": "^1.10.3",
     "dat.gui": "^0.7.9",

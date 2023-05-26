@@ -5,10 +5,9 @@ axios.defaults.timeout = 10000 // 时间超时设置10s
 
 const apiInstance = axios.create()
 
-apiInstance.defaults.baseURL = 'http://localhost:3000'
+apiInstance.defaults.baseURL = import.meta.env.DEV ? 'api' : '';
 
 axios.interceptors.request.use = apiInstance.interceptors.request.use
-
 
 apiInstance.interceptors.request.use(
     config => {
@@ -23,7 +22,7 @@ apiInstance.interceptors.request.use(
 )
 
 apiInstance.interceptors.response.use((response) => {
-    return response;
+    return response.data;
 }, (error) => {
     return Promise.reject(error);
 })

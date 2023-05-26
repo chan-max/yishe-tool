@@ -30,13 +30,12 @@ const signupForm = reactive({
 
 async function submit() {
   let res = await signup(toRaw(signupForm));
-  let status = res.data.status;
+  let status = res.status;
   if (status === StatusCodeEnum.SIGNUP_SUCCESS) {
     alert("注册成功");
   } else if (status === StatusCodeEnum.ACCOUNT_ALREADY_EXIST) {
     alert('账号已存在')
   }
-
 }
 </script>
 <style>

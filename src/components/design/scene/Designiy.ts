@@ -47,7 +47,7 @@ export class Designiy {
     this.scene = new Scene();
     this.renderer = new WebGLRenderer();
   }
-
+  
   private initCanvasContainer(canvasContainer: any) {
     this.canvasContainer = canvasContainer;
     this.camera = new PerspectiveCamera(  75,  this.width / this.height,  0.1,  1000);

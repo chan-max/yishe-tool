@@ -1,4 +1,4 @@
-import apiInstance from "./apiInstance";
+import apiInstance from './apiInstance';
 
 // 检验账号是否存在
 export const getAccountStatus = (data: any) => apiInstance.get('/getAccountStatus', {
@@ -11,3 +11,8 @@ export const signup = (data: any) => apiInstance.post('/signup', data)
 
 // 登录
 export const login = (data: any) => apiInstance.post('/login', data)
+
+
+// 获取首页展示栏模型 
+export const getBannerModel = () => apiInstance.get('/getBannerModel')
+

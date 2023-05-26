@@ -1,10 +1,19 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
+import alias from '@rollup/plugin-alias'
 
 export default defineConfig({
-    plugins: [vue()],
-    server: {},
+    plugins: [vue(),alias()],
+    server: {
+        proxy:{
+            '/api':{
+                target:'http://localhost:3000',
+                changeOrigin:true,
+                rewrite:(path) => path.replace(/^\/api/,"")
+            }
+        }
+    },
     resolve: {
         alias: {
             /*  @/ 代表src 路径下 ， @ 代表全局路径下 */

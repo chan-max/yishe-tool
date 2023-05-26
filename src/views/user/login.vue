@@ -31,7 +31,7 @@ const loginForm = reactive({
 
 async function submit() {
   let res = await login(toRaw(loginForm))
-  let status = res.data.status
+  let status = res.status
   if (status === StatusCodeEnum.ACCOUNT_NOT_EXIST) {
     alert('账号并不存在')
   } else if (status === StatusCodeEnum.PASSWORD_ERROR) {
@@ -39,7 +39,7 @@ async function submit() {
   } else if (status === StatusCodeEnum.LOGIN_SUCCESS) {
     alert('登陆成功')
     userStore.isLogin = true
-    userStore.account = res.data.data.account
+    userStore.account = res.data.account
     router.push({
         name:'Home'
     })

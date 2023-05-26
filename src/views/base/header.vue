@@ -36,7 +36,7 @@ import { Search } from '@element-plus/icons-vue'
 .logo {
   height: 100%;
   display:flex;
-  margin-right: 40px;
+  margin-right: 20px;
   justify-content: space-around;
   align-items: center;
   .line{
@@ -50,7 +50,7 @@ import { Search } from '@element-plus/icons-vue'
 #header-container {
   width: 100%;
   height: 100%;
-  padding: 0 10px;
+  padding: 0 15px;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;

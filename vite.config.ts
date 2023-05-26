@@ -18,7 +18,8 @@ export default defineConfig({
         alias: {
             /*  @/ 代表src 路径下 ， @ 代表全局路径下 */
             '@': path.resolve(__dirname, './src'),
-            '@common': path.resolve(__dirname, './common/')
+            '@common': path.resolve(__dirname, './common/'),
+            '$':path.resolve(__dirname, './'), // 根目录
         },
     }
 })

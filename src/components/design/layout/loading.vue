@@ -1,17 +1,16 @@
 <template>
   <div id="loading">加载中...</div>
 </template>
-<script>
-export default {};
+<script setup>
 </script>
 
 <style>
 #loading {
-  position: fixed;
+  position: absolute;
   width: 100%;
   height: 100%;
   z-index: 999999;
-  background: rgba(50, 50, 50, 0.5);
+  background: rgba(50, 50, 50, 0.05);
   display: flex;
   justify-content: center;
   align-items: center;

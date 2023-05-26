@@ -16,3 +16,5 @@ export const login = (data: any) => apiInstance.post('/login', data)
 // 获取首页展示栏模型 
 export const getBannerModel = () => apiInstance.get('/getBannerModel')
 
+// 获取可以进行编辑的内置模型
+export const getBaseModelList = () => apiInstance.get('/getBaseModelList')

@@ -4,13 +4,13 @@ export const getBaseModelListHook = (router) => router.get('/getBaseModelList',(
     ctx.body = {
         data:[{
             name:'白色T恤',
-            source:'white_shirt.glb',
+            source:'model/white_shirt.glb',
         },{
             name:'黑色T恤',
-            source:'black_shirt.glb',
+            source:'model/black_shirt.glb',
         },{
             name:'蓝色T恤',
-            source:'blue_shirt.glb',
+            source:'model/blue_shirt.glb',
         }]
     }
 })

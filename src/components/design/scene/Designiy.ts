@@ -18,24 +18,36 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
+import { gltfLoader } from '../../../common/threejsHelper';
+import {ref} from 'vue'
+
+
 export class Designiy {
+  // 场景
   public scene: Scene;
+  // 渲染器
   public renderer: WebGLRenderer;
+  // 摄像机
   private camera: any;
+  // 当前画布容器
   private canvasContainer: any;
-
+  // 控制器
   private controler: any;
-
+  // 尺寸侦听器
   private resizeObserver: any;
-
+  // 保存当前鼠标坐标
   public mouse = new Vector2();
 
+  public loading = ref(false)
+  
+  // 当前界面宽度
   private get width() {
     return Number(
       window.getComputedStyle(this.canvasContainer).width.slice(0, -2)
     );
   }
 
+  // 当前页面高度
   private get height() {
     return Number(
       window.getComputedStyle(this.canvasContainer).height.slice(0, -2)
@@ -48,6 +60,8 @@ export class Designiy {
     this.renderer = new WebGLRenderer();
   }
   
+
+
   private initCanvasContainer(canvasContainer: any) {
     this.canvasContainer = canvasContainer;
     this.camera = new PerspectiveCamera(  75,  this.width / this.height,  0.1,  1000);
@@ -62,6 +76,7 @@ export class Designiy {
     this.resizeObserver.observe(canvasContainer);
   }
 
+  // 记录已渲染的帧数
   public frameCount = 0;
 
   private doRender() {
@@ -87,17 +102,6 @@ export class Designiy {
     this.canvasContainer.style.background = background;
   }
 
-  public load(source: any) {
-    const loader = new GLTFLoader();
-    let isUrl = source.startsWith("http") || source.startsWith("https");
-    // 默认引入 piblic/model 下的模型
-    let sourceUrl = isUrl ? source : "model/" + source;
-    return new Promise((resolve: any) => {
-      loader.load(sourceUrl, (gltf) => {
-        resolve(gltf);
-      });
-    });
-  }
 
   mainModel: any = null;
   mainMesh: any = null;
@@ -116,11 +120,13 @@ export class Designiy {
 
   public async setMainModel(source: any) {
     this.removeMainModel()
-    let gltf: any = await this.load(source);
+    this.loading.value = true
+    let gltf: any = await gltfLoader(source);
     this.initImportedModel(gltf);
     this.scene.add(gltf.scene);
     this.mainModel = gltf;
     this.mainMesh = this.findMainMesh(gltf);
+    this.loading.value = false
   }
 
   public removeMainModel() {

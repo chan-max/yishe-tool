@@ -61,6 +61,7 @@ onMounted(async () => {
 .banner-left {
   font-size: 60px;
   font-weight: bold;
+  width:300px;
   color: rgba(255, 255, 255, 0.7);
 }
 

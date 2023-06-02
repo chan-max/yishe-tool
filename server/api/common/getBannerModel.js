@@ -5,7 +5,9 @@ export const getBannerModelHook = (router) => router.get('/getBannerModel',  (ct
     var path = process.cwd() + '/static/bannerModel.glb';
     const src = fs.createReadStream(path);
     ctx.body = {
-        url:'bannerModel.glb',
-        source:''
+        data:{
+            url:'bannerModel.glb',
+            source:''
+        }
     }
 })

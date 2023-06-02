@@ -1,11 +1,12 @@
 <template>
-  <div class="designiy" >
+  <div class="designiy">
     <main-view></main-view>
   </div>
 </template>
 
 <script setup>
 import mainView from "./layout/main.vue";
+
 
 </script>
 
@@ -14,6 +15,5 @@ import mainView from "./layout/main.vue";
   width: 100%;
   height: 100%;
   position: relative;
-  border-top: 5px solid #eee;
 }
 </style>

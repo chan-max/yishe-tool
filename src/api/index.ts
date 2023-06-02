@@ -18,3 +18,10 @@ export const getBannerModel = () => apiInstance.get('/getBannerModel')
 
 // 获取可以进行编辑的内置模型
 export const getBaseModelList = () => apiInstance.get('/getBaseModelList')
+
+
+// 获取基本盒子天空模型
+export const getBaseSkybox = () => apiInstance.get('getBaseSkybox')
+
+// 获取所有可用贴图
+export const getStickers = () => apiInstance.post('getStickers')

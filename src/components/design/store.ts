@@ -3,10 +3,6 @@ import { ref, shallowRef } from "vue"
 // 是否展示素材菜单
  export const showRightMenu = shallowRef(true);
 
-// 当前选择的模型名称 
-
-export const currentFilename = shallowRef('shirt_white.glb')
-
 // 加载
 export const isLoading = shallowRef(false);
 
@@ -34,3 +30,8 @@ export const isFullpage = ref(false)
 
 // 是否展示背景控制表单
 export const isShowBgControlForm = ref(false)
+
+// 画布背景颜色 
+export const CanvasBgColor = ref('#eeeeee')
+// 画布背景透明度
+export const CanvasBgOpacity = ref('1')

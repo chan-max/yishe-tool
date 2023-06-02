@@ -2,23 +2,27 @@ import { createApp } from 'vue'
 import App from './views/App.vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { createPinia } from 'pinia'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 import router from './router/router'
+import './style/cover-elementplus.less'
+import i18n from './i18n/index'
 
 const app = createApp(App)
 app.use(router)
 
 app.use(Antd)
 
+app.use(i18n)
+
+
+
 const pinia = createPinia()
 app.use(pinia)
 
 app.use(ElementPlus)
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-    app.component(key, component)
-}
+
+
 app.mount('#app')

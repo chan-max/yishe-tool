@@ -1,14 +1,28 @@
 <template>
-  <div id="notice"></div>
-  <div id="header">
-    <header-view></header-view>
-  </div>
-  <div id="content">
-    <router-view></router-view>
-  </div>
+  <el-config-provider :locale="locale">
+    <div id="notice"></div>
+    <div id="header" v-if="!$route.meta.hideHeader">
+      <header-view @change-language="toggleLanguage"></header-view>
+    </div>
+    <div id="content">
+      <router-view></router-view>
+    </div>
+  </el-config-provider>
 </template>
-<script setup lang="ts">
+<script setup>
 import headerView from "./base/header.vue";
+import { computed, ref } from "vue";
+import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+import en from "element-plus/dist/locale/en.mjs";
+
+import {useI18n} from 'vue-i18n'
+
+const {t,locale} = useI18n()
+
+const toggle = () => {
+
+}
+
 </script>
 <style>
 html,
@@ -18,30 +32,28 @@ body {
   height: 100%;
 }
 
-
 #app {
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
-  overflow-x:hidden;
+  overflow-x: hidden;
 }
 
 #header {
   height: 50px;
   width: 100%;
   flex-shrink: 0;
+  position: relative;
   border: 1px solid #eee;
 }
 
 #content {
   flex: auto;
-  background: #f2f2f2;
+  background: #fff;
   overflow-y: auto;
+  position: relative;
 }
-
-
-
 
 /* 滚动条样式 */
 ::-webkit-scrollbar {

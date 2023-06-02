@@ -11,14 +11,15 @@ import {
   Vector3,
   Box3Helper,
   Vector2,
-
   Object3D,
+  SphereGeometry,
+  DoubleSide,
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
-import { gltfLoader } from '../../../common/threejsHelper';
+import { gltfLoader, textureLoader } from '../../../common/threejsHelper';
 import {ref} from 'vue'
 
 
@@ -66,7 +67,7 @@ export class Designiy {
     this.canvasContainer = canvasContainer;
     this.camera = new PerspectiveCamera(  75,  this.width / this.height,  0.1,  1000);
     this.renderer.setSize(this.width, this.height);
-    this.camera.position.set(0, 0, 10);
+    this.camera.position.set(0, 0, 1);
     this.camera.lookAt(0, 0, 0);
     this.controler = new OrbitControls(this.camera, this.renderer.domElement);
     this.canvasContainer.appendChild(this.renderer.domElement);
@@ -90,8 +91,8 @@ export class Designiy {
     this.doRender();
   }
 
-  public setBgColor(color: any) {
-    this.renderer.setClearColor(color);
+  public setBgColor(color: any,alpha=1 ) {
+    this.renderer.setClearColor(color,alpha);
   }
 
   public setBgAlpha(alpha: any) {
@@ -118,10 +119,10 @@ export class Designiy {
 
   
 
-  public async setMainModel(source: any) {
+  public async setMainModel(url: any) {
     this.removeMainModel()
     this.loading.value = true
-    let gltf: any = await gltfLoader(source);
+    let gltf: any = await gltfLoader(url);
     this.initImportedModel(gltf);
     this.scene.add(gltf.scene);
     this.mainModel = gltf;
@@ -139,14 +140,14 @@ export class Designiy {
   }
 
   // 模型居中和调整尺寸
-  private initImportedModel(gltf) {
+  private initImportedModel(gltf, flag = 1) {
     let object = gltf.scene;
     // 先处理尺寸，再居中
     const sizeBox = new Box3().setFromObject(object);
     let size = new Vector3();
     sizeBox.getSize(size);
     let length = size.length();
-    object.scale.set(10 / length, 10 / length, 10 / length);
+    object.scale.set(flag / length, flag / length, flag / length);
     const centerBox = new Box3().setFromObject(object);
     const center = centerBox.getCenter(new Vector3());
     object.position.x += object.position.x - center.x;
@@ -204,4 +205,50 @@ export class Designiy {
       this.mouse.y = -(event.offsetY / this.height) * 2 + 1;
     });
   }
+
+
+  private skybox = null
+
+  removeSkybox(){
+    if(this.skybox){
+      this.scene.remove(this.skybox)
+    }
+  }
+
+  // 球形天空盒子
+  async setSkybox(source){
+    this.removeSkybox()
+
+    // 方形天空盒子
+    if(Array.isArray(source)){
+      let textures = await Promise.all(source.map(textureLoader))
+      let materials = textures.map((texture:any) => new MeshBasicMaterial({map:texture,side:DoubleSide}))
+      let skybox = new Mesh(new BoxGeometry(100,100,100 ),materials)
+      this.scene.add(skybox)
+      this.skybox = skybox
+      return
+    } 
+      
+    // 球形天空盒子
+    if( source.endsWith('.jpg') ){
+      const texture:any = await textureLoader(source)
+      const geometry = new SphereGeometry( 100, 100, 100 ); 
+      const material = new MeshBasicMaterial( {
+        side:DoubleSide,
+        map:texture
+      }); 
+      const skybox = new Mesh( geometry, material ); 
+      this.scene.add( skybox );
+      this.skybox = skybox
+      return 
+    }
+
+    // 场景天空盒子
+    if(source.endsWith('.glb')){
+      debugger
+    }
+  }
+
 }
+
+

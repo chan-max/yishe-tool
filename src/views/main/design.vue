@@ -5,7 +5,6 @@
 </template>
 <script setup>
 import designiy from "@/components/design/index.vue";
-
 </script>
 <style lang="less">
 .design-view {

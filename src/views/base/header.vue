@@ -5,8 +5,10 @@
         <div class="logo">
           衣设网 1s.design
         </div>
-        <div class="header-container-link">设计室</div>
         <div class="header-container-link">作品展</div>
+        <div class="header-container-link">设计室</div>
+        <div class="header-container-link">工作台</div>
+        <div class="header-container-link">商场</div>
         <div style="flex: auto"></div>
         <div class="header-container-search">
           <el-button
@@ -48,7 +50,6 @@ function toggleLanguage(){
     locale.value = 'en'
   }
 }
-
 
 </script>
 

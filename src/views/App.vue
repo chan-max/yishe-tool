@@ -1,5 +1,5 @@
 <template>
-  <el-config-provider :locale="locale">
+  <el-config-provider :locale="elementLocale">
     <div id="notice"></div>
     <div id="header" v-if="!$route.meta.hideHeader">
       <header-view @change-language="toggleLanguage"></header-view>
@@ -15,13 +15,18 @@ import { computed, ref } from "vue";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
 
-import {useI18n} from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 
-const {t,locale} = useI18n()
+const {t,locale,global} = useI18n()
 
-const toggle = () => {
+const elementLocale = computed(() => {
+  if (locale.value == "en") {
+    return en;
+  } else {
+    return zhCn;
+  }
+})
 
-}
 
 </script>
 <style>

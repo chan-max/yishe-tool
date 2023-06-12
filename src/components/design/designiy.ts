@@ -17,9 +17,9 @@ import {
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { debounce, onWindowResize } from "../utils/utils";
+import { debounce, onWindowResize } from "./utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
-import { gltfLoader, textureLoader } from '../../../common/threejsHelper';
+import { gltfLoader, textureLoader } from '../../common/threejsHelper';
 import {ref} from 'vue'
 
 
@@ -76,6 +76,8 @@ export class Designiy {
     this.resizeObserver = new ResizeObserver(debounce(() => {  this.camera.aspect = this.width / this.height;    this.camera.updateProjectionMatrix();   this.renderer.setSize(this.width, this.height); }, 10) )
     this.resizeObserver.observe(canvasContainer);
   }
+
+
 
   // 记录已渲染的帧数
   public frameCount = 0;

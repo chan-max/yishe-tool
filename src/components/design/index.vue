@@ -15,5 +15,6 @@ import mainView from "./layout/main.vue";
   width: 100%;
   height: 100%;
   position: relative;
+  border: 1px solid #ddd;
 }
 </style>

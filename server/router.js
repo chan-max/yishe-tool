@@ -3,7 +3,9 @@ import { loginHook } from './api/base/login.js'
 import {getBannerModelHook} from './api/common/getBannerModel.js'
 import {getBaseModelListHook} from './api/common/getBaseModelList.js'
 import {getBaseSkyboxHook } from "./api/common/getSkybox.js";
-import { getStickersHook } from "./api/design/getStickers.js";
+import { getWebStickersHook,getMyStickersHook } from "./api/design/getStickers.js";
+
+
 
 export const initRouter = (router, sequelize, app) => {
     let hooks = [
@@ -12,7 +14,8 @@ export const initRouter = (router, sequelize, app) => {
         getBannerModelHook,
         getBaseModelListHook,
         getBaseSkyboxHook,
-        getStickersHook
+        getWebStickersHook,
+        getMyStickersHook
     ]
     hooks.forEach((hook) => hook(router, sequelize, app))
 }

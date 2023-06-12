@@ -1,16 +1,6 @@
 <template>
   <div class="designiy-header">
     <div class="designiy-header-home"> </div>
-    <div class="designiy-header-change-bgcolor">
-      <el-color-picker
-        show-alpha
-        size="small"
-        v-model="bgColor"
-        color-format="rgb"
-        :predefine="predefineColors"
-      />
-    </div>
-
     <div class="designiy-header-select-model">
       <el-dropdown @command="modelChange" size="small" split-button>
         <div class="designiy-header-select-model-btn">{{ currentModel.name }}</div>
@@ -25,6 +15,15 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
+    </div>
+    <div class="designiy-header-change-bgcolor">
+      <el-color-picker
+        show-alpha
+        size="small"
+        v-model="bgColor"
+        color-format="rgb"
+        :predefine="predefineColors"
+      />
     </div>
 
     <div class="designiy-header-select-skybox">
@@ -45,12 +44,13 @@
 
     <div class="designiy-header-item">贴图</div>
     <div class="designiy-header-item">艺术字</div>
+    <div class="designiy-header-item">自定义图形</div>
+    <div class="designiy-header-item">灯光调整</div>
   </div>
 </template>
 
 <script setup>
 import { getBaseModelList, getBaseSkybox } from "@/api/index.ts";
-import { BgColorsOutlined, MenuOutlined, PictureOutlined } from "@ant-design/icons-vue";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
 import { CanvasBgColor, CanvasBgOpacity } from "../store";
 import Color from "color";

@@ -6,7 +6,9 @@
   <div class="designiy-left">
     <stickers-tabs @dragend="dragend"></stickers-tabs>
   </div>
-  <div class="designiy-right"></div>
+  <div class="designiy-right">
+  
+  </div>
   <div class="designiy-bottom"></div>
   <div id="designiy-canvas-container" ref="mountContainer"></div>
 </template>
@@ -16,7 +18,8 @@ import { Designiy } from "../designiy";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
 import { CanvasBgColor, CanvasBgOpacity } from "../store";
-import stickersTabs from "./stickersTabs.vue";
+import stickersTabs from "./stickers/stickersTabs.vue";
+
 
 // 挂载容器
 const mountContainer = ref();
@@ -37,8 +40,6 @@ function selectSkybox(skybox) {
 designiy.addDirectionalLight(0xffffff, 0.8, 0, 0, 10);
 designiy.addDirectionalLight(0xffffff, 0.8, 0, 0, -10);
 
-
-
 // 改变画布背景颜色
 watchEffect(() =>
   designiy.setBgColor(CanvasBgColor.value, CanvasBgOpacity.value)
@@ -49,6 +50,8 @@ onMounted(() => designiy.render(mountContainer.value));
 function dragend() {
   console.log("dragend！！！");
 }
+
+
 </script>
 
 <style lang="less">
@@ -70,6 +73,14 @@ function dragend() {
   overflow: auto;
 }
 .designiy-right {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  height: calc(100% - 50px);
+  width: auto;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  overflow: auto;
 }
 
 .designiy-bottom {

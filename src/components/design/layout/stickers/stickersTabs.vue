@@ -1,5 +1,6 @@
 <template>
   <div class="designiy-stickers">
+    <el-button  type="primary" style="width:100%;margin:10px 0;"> 制作贴纸 <bg-colors-outlined /> </el-button>
     <img
       v-show="isDragging"
       ref="draggingEl"
@@ -8,22 +9,10 @@
     />
 
     
-
-    <el-tabs v-model="currentStickerPage" :stretch="true">
-      <el-tab-pane
-        v-for="(stickerPage, stickerPageName) in stickerPages"
-        :name="stickerPageName"
-        :key="stickerPageName"
-      >
-        <template #label>
-          <span style="font-size: 12px; color: #666">{{
-            stickerPageName
-          }}</span>
-        </template>
-        <div class="designiy-stickers-list">
+    <div class="designiy-stickers-list">
           <el-collapse>
             <el-collapse-item
-              v-for="(sticker, index) in stickerPage"
+              v-for="(sticker, index) in webStickers"
               :key="index"
             >
               <template #title>
@@ -59,8 +48,6 @@
             </el-collapse-item>
           </el-collapse>
         </div>
-      </el-tab-pane>
-    </el-tabs>
   </div>
 </template>
 
@@ -69,6 +56,9 @@
 import { getWebStickers, getMyStickers } from "@/api";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { useMouse } from "@vueuse/core";
+import { BgColorsOutlined} from "@ant-design/icons-vue";
+
+
 const { x, y } = useMouse();
 
 const emits = defineEmits(["dragend"]);
@@ -86,15 +76,12 @@ function stickerDragstart(e) {
   e.preventDefault();
 }
 
-const stickerPages = reactive({
-  网络贴纸: "",
-  我的贴纸: "",
-});
-
 const currentStickerPage = ref("网络贴纸");
 
-getWebStickers().then((res) => (stickerPages["网络贴纸"] = res.data));
-getMyStickers().then((res) => (stickerPages["我的贴纸"] = res.data));
+const webStickers = ref()
+
+
+getWebStickers().then((res) => (webStickers.value = res.data));
 
 
 // 模拟 dragend 事件

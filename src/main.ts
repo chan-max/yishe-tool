@@ -10,7 +10,7 @@ import router from './router/router'
 import './style/cover-elementplus.scss'
 import './style/cover-antdesign.less'
 import i18n from './i18n/index'
-
+import './style/index.less'
 
 const app = createApp(App)
 app.use(router)

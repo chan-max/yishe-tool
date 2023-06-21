@@ -7,6 +7,7 @@ export const signupHook = (router, sequelize, app) => router.post('/signup', asy
 
     const table = sequelize.models.users
 
+    
     let _user = await table.findOne({ where: { account } })
 
     if (_user) {

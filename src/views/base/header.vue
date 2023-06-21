@@ -21,14 +21,10 @@
         <div class="header-container-language">
           <el-button link @click="toggleLanguage"> {{ $t("language") }} </el-button>
         </div>
-        <el-button color="#1db1e2" @click="login">
-          <span style="font-weight: bold; color: #fff; font-size: 14px"
-            >注 册</span
+        <el-button  @click="login" type="primary">
+          <span style="font-size: 14px"
+            >登 录 </span
           >
-        </el-button>
-        <el-button color="#f35336" @click="$router.push({ name: 'Design' })">
-          <span style="margin-right: 5px"><bg-colors-outlined></bg-colors-outlined></span>
-          <span style="font-weight: bold; color: #fff; font-size: 14px" >开始创作</span>
         </el-button>
       </div>
     </el-col>

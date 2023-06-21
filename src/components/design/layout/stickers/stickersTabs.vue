@@ -8,7 +8,7 @@
       :style="{ top: draggingElY + 'px', left: draggingElX + 'px' }"
     />
 
-    
+      
     <div class="designiy-stickers-list">
           <el-collapse>
             <el-collapse-item
@@ -87,7 +87,7 @@ getWebStickers().then((res) => (webStickers.value = res.data));
 // 模拟 dragend 事件
 function dragend() {
   if (isDragging.value) {
-    emits("dragend")
+    emits("dragend",draggingEl)
     isDragging.value = false;
   }
 }

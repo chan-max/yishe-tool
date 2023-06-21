@@ -27,15 +27,15 @@ export const getWebStickersHook = (router) => router.post('/getWebStickers',(ctx
                 type:'相关推荐',
                 data:[]
             },
+            {
+                type:'我的创作',
+                data:[]
+            },
+            {
+                type:'我的收藏',
+                data:[]
+            },
         ]
     }
 })
 
-
-
-export const getMyStickersHook = (router) => router.post('/getMyStickers',(ctx) => {
-    ctx.body = {
-        data:[
-        ]
-    }
-})

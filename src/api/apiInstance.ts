@@ -10,21 +10,20 @@ apiInstance.defaults.baseURL = import.meta.env.DEV ? 'api' : '';
 axios.interceptors.request.use = apiInstance.interceptors.request.use
 
 apiInstance.interceptors.request.use(
-    config => {
+    request => {
         if ((window as any).token) {
-            config.headers.Authorization = (window as any).token
+            request.headers.token = (window as any).token
         }
-        return config
-    },
-    err => {
-        return Promise.reject(err)
+        return request
     }
 )
 
-apiInstance.interceptors.response.use((response) => {
-    return response.data;
-}, (error) => {
-    return Promise.reject(error);
-})
-
+apiInstance.interceptors.response.use(
+    response => {
+        if(response.headers.token){
+            (window as any).token = response.headers.token
+        }
+        return response.data;
+    }
+)
 export default apiInstance

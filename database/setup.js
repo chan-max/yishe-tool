@@ -1,5 +1,4 @@
 import Sequelize from 'sequelize';
-
 import { initTables } from './table/index.js';
 
 export const setupDatabase = () => new Promise(async (resolve, reject) => {

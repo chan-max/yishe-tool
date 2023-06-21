@@ -14,6 +14,7 @@ import {
   Object3D,
   SphereGeometry,
   DoubleSide,
+  Raycaster,
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -39,6 +40,7 @@ export class Designiy {
   // 保存当前鼠标坐标
   public mouse = new Vector2();
 
+  // 是否在加载模型
   public loading = ref(false)
   
   // 当前界面宽度
@@ -62,7 +64,7 @@ export class Designiy {
   }
   
 
-
+  // 初始化容器
   private initCanvasContainer(canvasContainer: any) {
     this.canvasContainer = canvasContainer;
     this.camera = new PerspectiveCamera(  75,  this.width / this.height,  0.1,  1000);
@@ -82,6 +84,7 @@ export class Designiy {
   // 记录已渲染的帧数
   public frameCount = 0;
 
+
   private doRender() {
     requestAnimationFrame(this.doRender.bind(this));
     this.frameCount++;
@@ -93,22 +96,28 @@ export class Designiy {
     this.doRender();
   }
 
+  // 设置背景颜色
   public setBgColor(color: any,alpha=1 ) {
     this.renderer.setClearColor(color,alpha);
   }
 
+  // 设置透明度
   public setBgAlpha(alpha: any) {
     this.renderer.setClearAlpha(alpha);
   }
 
+  // 设置 css 背景
   public setCssBg(background: any) {
     this.canvasContainer.style.background = background;
   }
 
 
+  // 主模型
   mainModel: any = null;
+  // 主网格
   mainMesh: any = null;
 
+  // 寻找模型中的网格
   private findMainMesh(gltf) {
     let mainMesh = null;
     gltf.scene.traverse((child) => {
@@ -122,8 +131,8 @@ export class Designiy {
   
 
   public async setMainModel(url: any) {
-    this.removeMainModel()
     this.loading.value = true
+    this.removeMainModel()
     let gltf: any = await gltfLoader(url);
     this.initImportedModel(gltf);
     this.scene.add(gltf.scene);
@@ -132,6 +141,7 @@ export class Designiy {
     this.loading.value = false
   }
 
+  // 移除主模型
   public removeMainModel() {
     if(!this.mainModel){
       return
@@ -157,9 +167,12 @@ export class Designiy {
     object.position.z += object.position.z - center.z;
   }
 
+
+  // 添加环境光
   public addAmientLight(color: any, intensity: any) {
     this.scene.add(new AmbientLight(color, intensity));
   }
+
 
   public addDirectionalLight(
     color: any,
@@ -208,6 +221,14 @@ export class Designiy {
     });
   }
 
+  public onMainModelClick(cb){
+    this.onClick(() => {
+      if(!this.mainModel){
+        return
+      }
+    })
+  }
+
 
   private skybox = null
 
@@ -247,7 +268,6 @@ export class Designiy {
 
     // 场景天空盒子
     if(source.endsWith('.glb')){
-      debugger
     }
   }
 

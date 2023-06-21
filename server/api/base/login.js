@@ -1,27 +1,32 @@
 import { StatusCodeEnum } from "../../../common/enum/statusCode.js"
+import jwt from "jsonwebtoken";
+
 
 export const loginHook = (router, sequelize) => router.post('/login', async (ctx) => {
     const data = ctx.request.body
     const { account, password } = data
     const userTable = sequelize.models.users
 
-    const userInfo = await userTable.findOne({ where: { account } })
+    const user = await userTable.findOne({ where: { account } })
 
-    if (!userInfo) {
+    if (!user) {
         return ctx.body = {
             status: StatusCodeEnum.ACCOUNT_NOT_EXIST
         }
     }
     
-    if (password !== userInfo.dataValues.password) {
+    if (password !== user.dataValues.password) {
         return ctx.body = {
             status: StatusCodeEnum.PASSWORD_ERROR
         }
-    } else {
-        // 登陆成功
-        return ctx.body = {
-            status: StatusCodeEnum.LOGIN_SUCCESS,
-            data: userInfo
-        }
+    } 
+
+
+    const token = jwt.sign({ account, exp: Date.now() + 60 * 60 }, '1s');
+    ctx.set('Token',token)
+        
+    return ctx.body = {
+        status: StatusCodeEnum.LOGIN_SUCCESS,
+        data: user
     }
 })

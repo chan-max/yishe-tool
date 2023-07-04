@@ -21,7 +21,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "./utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { gltfLoader, textureLoader } from '../../common/threejsHelper';
-import {ref} from 'vue'
+import { ref } from 'vue'
+import { useMouse } from "@vueuse/core";
 
 
 export class Designiy {
@@ -38,11 +39,17 @@ export class Designiy {
   // 尺寸侦听器
   private resizeObserver: any;
   // 保存当前鼠标坐标
-  public mouse = new Vector2();
+  private _mouse = new Vector2();
+
+  public get mouse() {
+    this._mouse.x = (this.x.value / this.width) * 2 - 1;
+    this._mouse.y = -(this.y.value / this.height) * 2 + 1;
+    return this._mouse
+  }
 
   // 是否在加载模型
   public loading = ref(false)
-  
+
   // 当前界面宽度
   private get width() {
     return Number(
@@ -62,21 +69,21 @@ export class Designiy {
     this.scene = new Scene();
     this.renderer = new WebGLRenderer();
   }
-  
+
 
   // 初始化容器
   private initCanvasContainer(canvasContainer: any) {
     this.canvasContainer = canvasContainer;
-    this.camera = new PerspectiveCamera(  75,  this.width / this.height,  0.1,  1000);
+    this.camera = new PerspectiveCamera(75, this.width / this.height, 0.1, 1000);
     this.renderer.setSize(this.width, this.height);
     this.camera.position.set(0, 0, 1);
     this.camera.lookAt(0, 0, 0);
     this.controler = new OrbitControls(this.camera, this.renderer.domElement);
     this.canvasContainer.appendChild(this.renderer.domElement);
-    this.initClickEvent();
-    this.initMousemoveEvent();
-    this.resizeObserver = new ResizeObserver(debounce(() => {  this.camera.aspect = this.width / this.height;    this.camera.updateProjectionMatrix();   this.renderer.setSize(this.width, this.height); }, 10) )
+    this.resizeObserver = new ResizeObserver(debounce(() => { this.camera.aspect = this.width / this.height; this.camera.updateProjectionMatrix(); this.renderer.setSize(this.width, this.height); }, 10))
     this.resizeObserver.observe(canvasContainer);
+    this.initClickEvent();
+    this.initMousePositionHandler();
   }
 
 
@@ -97,8 +104,8 @@ export class Designiy {
   }
 
   // 设置背景颜色
-  public setBgColor(color: any,alpha=1 ) {
-    this.renderer.setClearColor(color,alpha);
+  public setBgColor(color: any, alpha = 1) {
+    this.renderer.setClearColor(color, alpha);
   }
 
   // 设置透明度
@@ -128,7 +135,7 @@ export class Designiy {
     return mainMesh;
   }
 
-  
+
 
   public async setMainModel(url: any) {
     this.loading.value = true
@@ -143,7 +150,7 @@ export class Designiy {
 
   // 移除主模型
   public removeMainModel() {
-    if(!this.mainModel){
+    if (!this.mainModel) {
       return
     }
     this.scene.remove(this.mainModel.scene);
@@ -198,32 +205,33 @@ export class Designiy {
     let mousedownY = null
     let radius = 5
 
-    this.canvasContainer.addEventListener('mousedown',(event:any) => {
+    this.canvasContainer.addEventListener('mousedown', (event: any) => {
       mousedownX = event.offsetX
       mousedownY = event.offsetY
     })
 
-    this.canvasContainer.addEventListener('mouseup',(event:any) => {
+    this.canvasContainer.addEventListener('mouseup', (event: any) => {
       let mouseupX = event.offsetX
       let mouseupY = event.offsetY
-      if(Math.abs(mousedownX - mouseupX) <= radius && Math.abs(mousedownY - mouseupY) <=radius){
+      if (Math.abs(mousedownX - mouseupX) <= radius && Math.abs(mousedownY - mouseupY) <= radius) {
         // 确定 点击
-        this._onClickCbs.forEach((cb:any) => cb.call(this,this))
+        this._onClickCbs.forEach((cb: any) => cb.call(this, this))
       }
     })
   }
 
   // 保存鼠标坐标信息
-  private initMousemoveEvent() {
-    this.canvasContainer.addEventListener("mousemove", (event: any) => {
-      this.mouse.x = (event.offsetX / this.width) * 2 - 1;
-      this.mouse.y = -(event.offsetY / this.height) * 2 + 1;
-    });
+  private x = null
+  private y = null
+  private initMousePositionHandler() {
+    const { x, y } = useMouse();
+    this.x = x
+    this.y = y
   }
 
-  public onMainModelClick(cb){
+  public onMainModelClick(cb) {
     this.onClick(() => {
-      if(!this.mainModel){
+      if (!this.mainModel) {
         return
       }
     })
@@ -232,44 +240,47 @@ export class Designiy {
 
   private skybox = null
 
-  removeSkybox(){
-    if(this.skybox){
+  removeSkybox() {
+    if (this.skybox) {
       this.scene.remove(this.skybox)
     }
   }
 
   // 球形天空盒子
-  async setSkybox(source){
+  async setSkybox(source) {
     this.removeSkybox()
 
     // 方形天空盒子
-    if(Array.isArray(source)){
+    if (Array.isArray(source)) {
       let textures = await Promise.all(source.map(textureLoader))
-      let materials = textures.map((texture:any) => new MeshBasicMaterial({map:texture,side:DoubleSide}))
-      let skybox = new Mesh(new BoxGeometry(100,100,100 ),materials)
+      let materials = textures.map((texture: any) => new MeshBasicMaterial({ map: texture, side: DoubleSide }))
+      let skybox = new Mesh(new BoxGeometry(100, 100, 100), materials)
       this.scene.add(skybox)
       this.skybox = skybox
       return
-    } 
-      
+    }
+
     // 球形天空盒子
-    if( source.endsWith('.jpg') ){
-      const texture:any = await textureLoader(source)
-      const geometry = new SphereGeometry( 100, 100, 100 ); 
-      const material = new MeshBasicMaterial( {
-        side:DoubleSide,
-        map:texture
-      }); 
-      const skybox = new Mesh( geometry, material ); 
-      this.scene.add( skybox );
+    if (source.endsWith('.jpg')) {
+      const texture: any = await textureLoader(source)
+      const geometry = new SphereGeometry(100, 100, 100);
+      const material = new MeshBasicMaterial({
+        side: DoubleSide,
+        map: texture
+      });
+      const skybox = new Mesh(geometry, material);
+      this.scene.add(skybox);
       this.skybox = skybox
-      return 
+      return
     }
 
     // 场景天空盒子
-    if(source.endsWith('.glb')){
+    if (source.endsWith('.glb')) {
     }
   }
+
+
+
 
 }
 

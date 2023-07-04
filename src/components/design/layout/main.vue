@@ -25,6 +25,8 @@ import {
   Texture,
   TextureLoader,
   Vector3,
+  BoxGeometry,
+  Euler,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
@@ -47,71 +49,53 @@ function selectSkybox(skybox) {
 designiy.addDirectionalLight(0xffffff, 0.8, 0, 0, 10);
 designiy.addDirectionalLight(0xffffff, 0.8, 0, 0, -10);
 
-designiy.onMainModelClick(() => {
-  debugger;
-});
-
 // 改变画布背景颜色
 watchEffect(() => designiy.setBgColor(CanvasBgColor.value, CanvasBgOpacity.value));
 
 onMounted(() => designiy.render(mountContainer.value));
 
+// let material = new MeshBasicMaterial({ color: 0xf000f0 });
+// let geometry = new BoxGeometry(0.5, 0.5, 0.5);
+// let mesh = new Mesh(geometry, material);
+
+// designiy.scene.add(mesh);
+
 function dragend(draggingEl) {
-  let raycaster = new Raycaster()
+  let raycaster = new Raycaster();
+
   raycaster.setFromCamera(designiy.mouse, designiy.camera);
-  const intersects = raycaster.intersectObject(designiy.mainMesh);
+
+  let mesh = designiy.mainMesh;
+
+  if(!mesh){
+    return
+  }
+
+  const intersects = raycaster.intersectObject(mesh,true);
+
+  
 
   if (intersects.length > 0) {
+    var position = intersects[0].point;
+
+    var size = new Vector3(0.1, 0.1, 0.1);
+
     var n = intersects[0].face.normal.clone();
-    n.transformDirection(designiy.mainMesh.matrixWorld);
+    n.transformDirection(mesh.matrixWorld);
     n.add(intersects[0].point);
 
     let helper = new Object3D();
 
     helper.position.copy(intersects[0].point);
     helper.lookAt(n);
-    
-    var position = intersects[0].point;
-    var size = new Vector3(0.1, 0.1, 0.1);
+    let euler = helper.rotation;
 
-    var decalGeometry = new DecalGeometry(designiy.mainMesh, position, helper.rotation, size);
+    var decalGeometry = new DecalGeometry(mesh, position, euler, size);
 
     var decal = new Mesh(decalGeometry, new MeshBasicMaterial({ color: 0xff0000 }));
     designiy.scene.add(decal);
   }
 }
-
-// designiy.onClick((des) => {
-//   let {
-//     mouse,
-//     mainMesh,
-//     camera,
-//     scene
-//   } = des;
-
-//   let raycaster = new Raycaster()
-//   raycaster.setFromCamera(mouse, camera);
-//   const intersects = raycaster.intersectObject(mainMesh);
-
-//   if (intersects.length > 0) {
-//     var n = intersects[0].face.normal.clone();
-//     n.transformDirection(mainMesh.matrixWorld);
-//     n.add(intersects[0].point);
-
-//     let helper = new Object3D();
-
-//     helper.position.copy(intersects[0].point);
-//     helper.lookAt(n);
-
-//     var position = intersects[0].point;
-//     var size = new Vector3(0.1, 0.1, 0.1);
-
-//     var decalGeometry = new DecalGeometry(mainMesh, position, helper.rotation, size);
-
-//     var decal = new Mesh(decalGeometry, new MeshBasicMaterial({ color: 0xff0000 }));
-//     scene.add(decal);
-//   }
-// });
 </script>
 
 <style lang="less">

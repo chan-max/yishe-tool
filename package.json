@@ -14,8 +14,6 @@
     "serve:dev": "nodemon  --inspect server/index.js",
     "dev": "concurrently \"vite\"  \"vitepress dev docs\"   \"nodemon  --inspect server/index.js\""
   },
-
-
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
     "@element-plus/icons-vue": "^2.0.10",
@@ -46,6 +44,7 @@
     "sass": "^1.62.1",
     "scss": "^0.2.4",
     "sequelize": "^6.31.0",
+    "sharp": "^0.32.1",
     "svg2png": "^4.1.1",
     "text-to-svg": "^3.1.5",
     "three": "^0.149.0",

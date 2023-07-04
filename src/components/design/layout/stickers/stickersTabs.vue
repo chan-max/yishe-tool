@@ -27,7 +27,6 @@
                   title="拖拽来选择该贴图"
                   :key="index"
                   @dragstart="stickerDragstart"
-                  @dragend="stickerDragend"
                   draggable="true"
                 >
                   <div class="designiy-stickers-item-hover">

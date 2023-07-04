@@ -11,6 +11,9 @@ export const getBaseModelListHook = (router) => router.get('/getBaseModelList',(
         },{
             name:'蓝色T恤',
             source:'model/blue_shirt.glb',
+        },{
+            name:'塑胶人',
+            source:'model/person.glb',
         }]
     }
 })

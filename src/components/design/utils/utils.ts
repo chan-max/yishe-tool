@@ -7,13 +7,13 @@ export function onWindowResize(callback: any, immediate: boolean = false) {
 
 export function debounce(fn: Function, wait: number) {
     let timeoutId: any = null
-    return () => {
+    return (...params) => {
         if (timeoutId !== null) {
             // 存在任务
             clearTimeout(timeoutId)
         }
         timeoutId = setTimeout(() => {
-            fn()
+            fn(...params)
             timeoutId = null
         }, wait);
     }

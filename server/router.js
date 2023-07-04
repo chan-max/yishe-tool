@@ -4,7 +4,7 @@ import {getBannerModelHook} from './api/common/getBannerModel.js'
 import {getBaseModelListHook} from './api/common/getBaseModelList.js'
 import {getBaseSkyboxHook } from "./api/common/getSkybox.js";
 import { getWebStickersHook } from "./api/design/getStickers.js";
-import { getWordArtStickerHook } from "./api/design/wordArt.js";
+import { getWordArtStickerHook,createWordArtHook } from "./api/design/wordArt/wordArt.js";
 
 
 export const initRouter = (router, sequelize, app) => {
@@ -15,7 +15,8 @@ export const initRouter = (router, sequelize, app) => {
         getBaseModelListHook,
         getBaseSkyboxHook,
         getWebStickersHook,
-        getWordArtStickerHook
+        getWordArtStickerHook,
+        createWordArtHook
     ]
     hooks.forEach((hook) => hook(router, sequelize, app))
 }

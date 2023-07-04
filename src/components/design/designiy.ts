@@ -278,10 +278,6 @@ export class Designiy {
     if (source.endsWith('.glb')) {
     }
   }
-
-
-
-
 }
 
 

@@ -54,44 +54,32 @@ watchEffect(() => designiy.setBgColor(CanvasBgColor.value, CanvasBgOpacity.value
 
 onMounted(() => designiy.render(mountContainer.value));
 
-// let material = new MeshBasicMaterial({ color: 0xf000f0 });
-// let geometry = new BoxGeometry(0.5, 0.5, 0.5);
-// let mesh = new Mesh(geometry, material);
-
-// designiy.scene.add(mesh);
-
 function dragend(draggingEl) {
+  let mesh = designiy.mainMesh;
+
+  if (!mesh) {
+    return;
+  }
+
+  const aspectRatio = draggingEl.width / draggingEl.height;
+
   let raycaster = new Raycaster();
 
   raycaster.setFromCamera(designiy.mouse, designiy.camera);
 
-  let mesh = designiy.mainMesh;
-
-  if(!mesh){
-    return
-  }
-
-  const intersects = raycaster.intersectObject(mesh,true);
-
-  
+  const intersects = raycaster.intersectObject(mesh, true);
 
   if (intersects.length > 0) {
     var position = intersects[0].point;
-
     var size = new Vector3(0.1, 0.1, 0.1);
-
     var n = intersects[0].face.normal.clone();
     n.transformDirection(mesh.matrixWorld);
     n.add(intersects[0].point);
-
     let helper = new Object3D();
-
     helper.position.copy(intersects[0].point);
     helper.lookAt(n);
     let euler = helper.rotation;
-
     var decalGeometry = new DecalGeometry(mesh, position, euler, size);
-
     var decal = new Mesh(decalGeometry, new MeshBasicMaterial({ color: 0xff0000 }));
     designiy.scene.add(decal);
   }

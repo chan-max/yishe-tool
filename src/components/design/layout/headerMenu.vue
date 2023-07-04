@@ -152,4 +152,6 @@ getBaseSkybox().then((result) => (skyboxList.value = result.data));
   height: 20px;
   margin: 0 10px;
 }
+
+
 </style>

@@ -86,7 +86,7 @@ getWebStickers().then((res) => (webStickers.value = res.data));
 // 模拟 dragend 事件
 function dragend() {
   if (isDragging.value) {
-    emits("dragend",draggingEl)
+    emits("dragend",draggingEl.value)
     isDragging.value = false;
   }
 }

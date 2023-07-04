@@ -24,7 +24,6 @@ export const textureCanvas = shallowRef()
 // 材质canvas抽象类
 export const currentCustomTextureCanvas = shallowRef()
 
-
 // 当前组件是否全屏
 export const isFullpage = ref(false)
 
@@ -35,3 +34,4 @@ export const isShowBgControlForm = ref(false)
 export const CanvasBgColor = ref('#eeeeee')
 // 画布背景透明度
 export const CanvasBgOpacity = ref('1')
+

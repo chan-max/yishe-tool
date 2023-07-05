@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-form">
     <el-form :model="loginForm">
       <el-form-item label="账号" required>
         <el-input v-model="loginForm.account" />
@@ -16,37 +16,41 @@
 
 <script setup>
 import { reactive, toRaw } from "vue";
-import { login } from '@/api/index'
+import { login } from "@/api/index";
 import { StatusCodeEnum } from "@common/enum/statusCode.js";
-import { useUserStore } from '@/store/stores/user'
-import {useRouter} from 'vue-router'
+import { useLoginStatusStore } from "@/store/stores/user";
+import { useRouter } from "vue-router";
+import {message} from 'ant-design-vue';
+import { doLogin } from '../../actions/login';
 
-const userStore = useUserStore()
-const router = useRouter()
+const userStore = useLoginStatusStore();
+const router = useRouter();
 
 const loginForm = reactive({
-  account: '',
-  password: ''
-})
+  account: "",
+  password: "",
+});
+
 
 async function submit() {
-  let res = await login(toRaw(loginForm))
-  let status = res.status
+  let res = await login(toRaw(loginForm));
+  let status = res.status;
   if (status === StatusCodeEnum.ACCOUNT_NOT_EXIST) {
-    alert('账号并不存在')
+    message.info('账号不存在')
   } else if (status === StatusCodeEnum.PASSWORD_ERROR) {
-    alert('密码错误')
+    message.info('密码错误')
   } else if (status === StatusCodeEnum.LOGIN_SUCCESS) {
-    alert('登陆成功')
-    userStore.isLogin = true
-    userStore.account = res.data.account
-    router.push({
-        name:'Home'
-    })
+    message.success('登陆成功')
+    doLogin(res.data)
   }
 }
+
 
 </script>
 
 <style>
+.login-form {
+  width: 400px;
+  height: 300px;
+}
 </style>

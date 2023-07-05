@@ -1,5 +1,5 @@
 <template>
-  <div class="accountApply-form">
+  <div class="signup-container">
     <el-form :model="signupForm">
       <el-form-item label="手机号" required>
         <el-input v-model="signupForm.phonenumber" />
@@ -37,9 +37,10 @@ async function submit() {
     alert('账号已存在')
   }
 }
+
 </script>
 <style>
-.accountApply-form {
+.signup-container {
   display: flex;
   flex-direction: column;
   justify-content: center;

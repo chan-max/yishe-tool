@@ -2,7 +2,7 @@
   <el-row justify="center" style="height: 100%">
     <el-col :xl="14" style="height: 100%">
       <div id="header-container">
-        <div class="logo">
+        <div class="logo" style="cursor:pointer" @click="$router.push({name:'Home'})">
           衣设网 1s.design
         </div>
         <div class="header-container-link">作品展</div>
@@ -21,10 +21,8 @@
         <div class="header-container-language">
           <el-button link @click="toggleLanguage"> {{ $t("language") }} </el-button>
         </div>
-        <el-button  @click="login" type="primary">
-          <span style="font-size: 14px"
-            >登 录 </span
-          >
+        <el-button v-if="loginStatusStore.isLogin" @click="$router.push({name:'Login'})" type="primary">
+          <span style="font-size: 14px">登 录 </span>
         </el-button>
       </div>
     </el-col>
@@ -32,10 +30,12 @@
 </template>
 
 <script setup>
-import { BgColorsOutlined } from "@ant-design/icons-vue";
 import { Search } from "@element-plus/icons-vue";
-
 import { useI18n } from "vue-i18n";
+
+import { useLoginStatusStore } from "@/store/stores/user";
+
+const loginStatusStore = useLoginStatusStore();
 
 const {t,locale,global} = useI18n()
 
@@ -46,6 +46,8 @@ function toggleLanguage(){
     locale.value = 'en'
   }
 }
+
+
 
 </script>
 
@@ -85,4 +87,6 @@ function toggleLanguage(){
 .header-container-language {
   margin: 0 20px;
 }
+
+
 </style>

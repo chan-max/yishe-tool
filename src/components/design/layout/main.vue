@@ -17,6 +17,7 @@ import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
 import { CanvasBgColor, CanvasBgOpacity } from "../store";
 import stickersTabs from "./stickers/stickersTabs.vue";
+import { message } from "ant-design-vue";
 import {
   Mesh,
   MeshBasicMaterial,
@@ -58,6 +59,7 @@ function dragend(draggingEl) {
   let mesh = designiy.mainMesh;
 
   if (!mesh) {
+    message.info("请先选择模型");
     return;
   }
 
@@ -71,7 +73,7 @@ function dragend(draggingEl) {
 
   if (intersects.length > 0) {
     var position = intersects[0].point;
-    var size = new Vector3(0.1, 0.1, 0.1);
+    var size = new Vector3(0.1, 0.1 / aspectRatio, 0.1);
     var n = intersects[0].face.normal.clone();
     n.transformDirection(mesh.matrixWorld);
     n.add(intersects[0].point);
@@ -80,10 +82,19 @@ function dragend(draggingEl) {
     helper.lookAt(n);
     let euler = helper.rotation;
     var decalGeometry = new DecalGeometry(mesh, position, euler, size);
-    var decal = new Mesh(decalGeometry, new MeshBasicMaterial({ color: 0xff0000 }));
+
+    let texture = new Texture(draggingEl)
+    texture.needsUpdate = true;
+    var decal = new Mesh(
+      decalGeometry,
+      new MeshBasicMaterial({ map: texture,transparent:true })
+    );
     designiy.scene.add(decal);
   }
 }
+
+
+
 </script>
 
 <style lang="less">

@@ -32,6 +32,7 @@ export const isShowBgControlForm = ref(false)
 
 // 画布背景颜色 
 export const CanvasBgColor = ref('#eeeeee')
+
 // 画布背景透明度
 export const CanvasBgOpacity = ref('1')
 

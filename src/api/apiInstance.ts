@@ -26,4 +26,5 @@ apiInstance.interceptors.response.use(
         return response.data;
     }
 )
+
 export default apiInstance

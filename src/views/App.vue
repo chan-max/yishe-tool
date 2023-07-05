@@ -17,7 +17,7 @@ import en from "element-plus/dist/locale/en.mjs";
 
 import { useI18n } from "vue-i18n";
 
-const {t,locale,global} = useI18n()
+const { t, locale, global } = useI18n();
 
 const elementLocale = computed(() => {
   if (locale.value == "en") {
@@ -25,8 +25,7 @@ const elementLocale = computed(() => {
   } else {
     return zhCn;
   }
-})
-
+});
 
 </script>
 <style>
@@ -58,6 +57,10 @@ body {
   background: #fff;
   overflow-y: auto;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 /* 滚动条样式 */

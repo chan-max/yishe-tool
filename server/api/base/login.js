@@ -24,7 +24,8 @@ export const loginHook = (router, sequelize) => router.post('/login', async (ctx
 
     const token = jwt.sign({ account, exp: Date.now() + 60 * 60 }, '1s');
     ctx.set('Token',token)
-        
+    
+    
     return ctx.body = {
         status: StatusCodeEnum.LOGIN_SUCCESS,
         data: user

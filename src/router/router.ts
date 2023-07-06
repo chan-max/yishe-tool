@@ -41,13 +41,15 @@ const routes = [
         name: 'Search',
         component: search,
     },
-]
+]   
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes
 })
 
+import { blockLoginPage } from './routerInterception'
 
+blockLoginPage(router)
 
 export default router

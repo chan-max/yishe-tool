@@ -1,7 +1,7 @@
 
 // 自定义接口状态码
 
-export const StatusCodeEnum = {
+export const ResponseStatusCodeEnum = {
     ACCOUNT_ALREADY_EXIST: 0, // 账号已存在
     SIGNUP_SUCCESS: 1, // 账号注册成功
     UNKNOW_ERROR: 2, // 未知错误

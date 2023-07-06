@@ -1,4 +1,4 @@
-import { StatusCodeEnum } from "../../../common/enum/statusCode.js"
+import { ResponseStatusCodeEnum } from "../../../common/enum/statusCode.js"
 import jwt from "jsonwebtoken";
 
 
@@ -11,13 +11,13 @@ export const loginHook = (router, sequelize) => router.post('/login', async (ctx
 
     if (!user) {
         return ctx.body = {
-            status: StatusCodeEnum.ACCOUNT_NOT_EXIST
+            status: ResponseStatusCodeEnum.ACCOUNT_NOT_EXIST
         }
     }
     
     if (password !== user.dataValues.password) {
         return ctx.body = {
-            status: StatusCodeEnum.PASSWORD_ERROR
+            status: ResponseStatusCodeEnum.PASSWORD_ERROR
         }
     } 
 
@@ -27,7 +27,7 @@ export const loginHook = (router, sequelize) => router.post('/login', async (ctx
     
     
     return ctx.body = {
-        status: StatusCodeEnum.LOGIN_SUCCESS,
+        status: ResponseStatusCodeEnum.LOGIN_SUCCESS,
         data: user
     }
 })

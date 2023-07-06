@@ -1,4 +1,4 @@
-import { StatusCodeEnum } from "../../../common/enum/statusCode.js"
+import { ResponseStatusCodeEnum } from "../../../common/enum/statusCode.js"
 
 
 export const signupHook = (router, sequelize, app) => router.post('/signup', async (ctx, next) => {
@@ -12,7 +12,7 @@ export const signupHook = (router, sequelize, app) => router.post('/signup', asy
 
     if (_user) {
         ctx.body = {
-            status: StatusCodeEnum.ACCOUNT_ALREADY_EXIST
+            status: ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST
         }
         return
     }
@@ -20,11 +20,11 @@ export const signupHook = (router, sequelize, app) => router.post('/signup', asy
     try {
         await table.create(data)
         return ctx.body = {
-            status: StatusCodeEnum.SIGNUP_SUCCESS
+            status: ResponseStatusCodeEnum.SIGNUP_SUCCESS
         }
     } catch (error) {
         return ctx.body = {
-            status: StatusCodeEnum.UNKNOW_ERROR,
+            status: ResponseStatusCodeEnum.UNKNOW_ERROR,
             error
         }
     }

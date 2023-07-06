@@ -12,17 +12,20 @@ import './style/cover-antdesign.less'
 import i18n from './i18n/index'
 import './style/index.less'
 
+
 const app = createApp(App)
-app.use(router)
+
 
 app.use(Antd)
 
 app.use(i18n)
 
 const pinia = createPinia()
+
 app.use(pinia)
 
-app.use(ElementPlus)
+app.use(router)
 
+app.use(ElementPlus)
 
 app.mount('#app')

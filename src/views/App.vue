@@ -43,18 +43,17 @@ body {
   flex-direction: column;
   overflow-x: hidden;
 }
-
+            
 #header {
   height: 50px;
   width: 100%;
   flex-shrink: 0;
   position: relative;
-  border: 1px solid #eee;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
 #content {
   flex: auto;
-  background: #fff;
   overflow-y: auto;
   position: relative;
   display: flex;

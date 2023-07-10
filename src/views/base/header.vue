@@ -10,16 +10,9 @@
         <div class="header-container-link">工作台</div>
         <div class="header-container-link">商场</div>
         <div style="flex: auto"></div>
-        <div class="header-container-search">
-          <el-button
-            @click="$router.push({ name: 'Search' })"
-            :icon="Search"
-            size="default"
-            circle
-          />
-        </div>
-        <div class="header-container-language">
-          <el-button link @click="toggleLanguage"> {{ $t("language") }} </el-button>
+
+        <div class="header-container-link" @click="toggleLanguage">
+          {{ $t("language") }}
         </div>
         <el-button
           v-if="!loginStatusStore.isLogin"
@@ -96,13 +89,9 @@ function toggleLanguage() {
 
 .header-container-link {
   margin: 0 20px;
-  color: #555;
-  font-weight: bold;
+  color: #333;
   font-size: 12px;
-}
-
-.header-container-language {
-  margin: 0 20px;
+  cursor: pointer;
 }
 
 .user-center-popover {
@@ -112,6 +101,4 @@ function toggleLanguage() {
   align-items: center;
   flex-direction: column;
 }
-
-
 </style>

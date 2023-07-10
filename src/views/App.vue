@@ -26,7 +26,6 @@ const elementLocale = computed(() => {
     return zhCn;
   }
 });
-
 </script>
 <style>
 html,
@@ -43,13 +42,29 @@ body {
   flex-direction: column;
   overflow-x: hidden;
 }
-            
+
 #header {
   height: 50px;
   width: 100%;
   flex-shrink: 0;
   position: relative;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 1200px) {
+  #header{
+    height: 50px;
+  }
+}
+@media (max-width: 992px) {
+  #header{
+    height: 50px;
+  }
+}
+@media (max-width: 768px) {
+  #header{
+    height: 50px;
+  }
 }
 
 #content {

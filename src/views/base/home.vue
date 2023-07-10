@@ -43,6 +43,7 @@ onMounted(async () => {
 </script>
 
 <style>
+
 .banner {
   width: 100%;
   height: 800px;
@@ -56,8 +57,6 @@ onMounted(async () => {
   background: linear-gradient(-45deg, #1db1e2, #00c1de);
   box-shadow: inset 0px 0px 300px 50px rgba(0, 0, 0, 0.6); */
 }
-
-
 
 .bannner-model {
   height: 800px;

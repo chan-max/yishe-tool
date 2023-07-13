@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize"
 
-
 export const USER_TABLE = {
     firstName: {
         type: DataTypes.STRING,
@@ -29,5 +28,8 @@ export const USER_TABLE = {
     },
     accountStatus: {
         type: DataTypes.STRING
+    },
+    avatar:{
+        type:DataTypes.TEXT('long')
     }
 }

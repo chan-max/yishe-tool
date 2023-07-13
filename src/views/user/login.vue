@@ -33,12 +33,12 @@ import { LoginTypeEnum } from "@common/enum/loginType.js";
 const userStore = useLoginStatusStore();
 const router = useRouter();
 
+
 const loginForm = reactive({
   account: "",
   password: "",
   loginType: LoginTypeEnum.ONCE,
 });
-
 
 async function submit() {
   let res = await login(toRaw(loginForm));
@@ -49,9 +49,12 @@ async function submit() {
     message.info("密码错误");
   } else if (status === ResponseStatusCodeEnum.LOGIN_SUCCESS) {
     message.success("登陆成功");
-    doLogin(res.data,loginForm.loginType);
+    doLogin(res.data, loginForm.loginType);
   }
 }
+
+
+
 </script>
 
 <style>

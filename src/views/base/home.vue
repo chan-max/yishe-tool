@@ -1,66 +1,35 @@
 <template>
-    <div
-    style="
-      text-align: center;
-      margin-top: 100px;
-      font-weight: bold;
-      font-size: 40px;
-      color: #444;
-    "
-  >
-    开放式服装设计 & 交易平台
+  <div style="text-align: center; font-weight: bold; font-size: 72px; color: #333;font-family: Fira Sans,sans-serif;margin-top:120px;letter-spacing: -.03em;">
+    开放式服装设计&交易平台
   </div>
-    <div
-    style="
-      text-align: center;
-      margin: 30px;
-      font-weight: bold;
-      font-size: 24px;
-      color: #595959;
-    "
-  >
-    每个人都是设计师
+  <div style="text-align: center; font-size: 20px; color: #595959;padding:20px 50px 50px 20px;max-width:1200px;">
+    "创新设计，无限可能 - 您的一站式服装设计和交易平台。从服装设计概念的构思，到设计整合，最后的交易销售，我们的平台提供完整的解决方案。让我们一起打破传统，通过在线平台实现设计的创新，交易的便利，让时尚更加触手可及。"
   </div>
-      <div class="banner">
-        <div class="bannner-model">
-          <gltf-viewer :data="bannerModelUrl"></gltf-viewer>
-        </div>
-      </div>
+  <el-button type="primary" size="large" color="#333" @click="$router.push({name:'Design'})">开始创作</el-button>
+    <div class="bannner-model">
+      <gltf-viewer :data="bannerModelUrl"></gltf-viewer>
+    </div>
 </template>
 
 <script setup>
 import gltfViewer from "@/components/modal/gltfViewer.vue";
-import {onMounted,ref} from 'vue'
+import { onMounted, ref } from "vue";
 import { getBannerModel } from "../../api";
-let bannerModelUrl = ref('')
+let bannerModelUrl = ref("");
 
 onMounted(async () => {
-  let data = await getBannerModel()
-  bannerModelUrl.value = data.data
-})
-
-
+  let data = await getBannerModel();
+  bannerModelUrl.value = data.data;
+});
 </script>
 
 <style>
 
-.banner {
-  width: 100%;
-  height: 800px;
-  background-size: 600% 600%;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  position: relative;
-  padding: 0 10%;
-  /* animation: bgFade 5s ease infinite;
-  background: linear-gradient(-45deg, #1db1e2, #00c1de);
-  box-shadow: inset 0px 0px 300px 50px rgba(0, 0, 0, 0.6); */
-}
 
 .bannner-model {
-  height: 800px;
-  width: 800px;
+  height: 600px;
+  width: 1000px;
+  margin-top: 50px;
 }
 
 @keyframes bgFade {

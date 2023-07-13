@@ -1,14 +1,14 @@
 <template>
   <el-row justify="center" style="height: 100%">
-    <el-col :xl="14" style="height: 100%">
+    <el-col :xl="12" :lg="14" style="height: 100%">
       <div id="header-container">
         <div class="logo" style="cursor: pointer" @click="$router.push({ name: 'Home' })">
           衣设网 1s.design
         </div>
-        <div class="header-container-link">作品展</div>
-        <div class="header-container-link">设计室</div>
-        <div class="header-container-link">工作台</div>
-        <div class="header-container-link">商场</div>
+        <div class="header-container-link hidden-sm-and-down">作品展</div>
+        <div class="header-container-link hidden-sm-and-down">设计室</div>
+        <div class="header-container-link hidden-sm-and-down">工作台</div>
+        <div class="header-container-link hidden-sm-and-down">商场</div>
         <div style="flex: auto"></div>
 
         <div class="header-container-link" @click="toggleLanguage">
@@ -33,7 +33,7 @@
             <div><el-button @click="doLogout" size="small">退出登录</el-button></div>
           </div>
           <template #reference>
-            <el-avatar shape="square" size="small" src="/default-user-avator.png" />
+            <el-avatar shape="square" size="small" :src="avatar" />
           </template>
         </el-popover>
       </div>
@@ -42,13 +42,17 @@
 </template>
 
 <script setup>
-import { Search } from "@element-plus/icons-vue";
 import { useI18n } from "vue-i18n";
-
 import { useLoginStatusStore } from "@/store/stores/user";
 import { doLogout } from "../../actions/loginAction";
+import { computed } from "vue";
 
 const loginStatusStore = useLoginStatusStore();
+
+const avatar = computed(() => {
+  const loginStatusStore = useLoginStatusStore();
+  return loginStatusStore.userInfo.avatar || "/default-user-avatar.png";
+});
 
 const { t, locale, global } = useI18n();
 
@@ -90,7 +94,7 @@ function toggleLanguage() {
 .header-container-link {
   margin: 0 20px;
   color: #333;
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer;
 }
 

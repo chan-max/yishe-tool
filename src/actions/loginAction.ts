@@ -1,6 +1,7 @@
 import { useLoginStatusStore } from "@/store/stores/user"
 import router from "@/router/router"
-import { LoginTypeEnum } from '@common/enum/loginType.js';
+
+import { LoginTypeEnum } from '../../common/enum/loginType.js';
 
 const LOGIN_FLAG = '1s_login'
 

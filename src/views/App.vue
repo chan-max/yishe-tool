@@ -44,35 +44,18 @@ body {
 }
 
 #header {
-  height: 50px;
+  height: 60px;
   width: 100%;
   flex-shrink: 0;
   position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 1200px) {
-  #header{
-    height: 50px;
-  }
-}
-@media (max-width: 992px) {
-  #header{
-    height: 50px;
-  }
-}
-@media (max-width: 768px) {
-  #header{
-    height: 50px;
-  }
-}
 
 #content {
   flex: auto;
   overflow-y: auto;
   position: relative;
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
 }

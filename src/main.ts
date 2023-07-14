@@ -12,14 +12,14 @@ import './style/cover-antdesign.less'
 import i18n from './i18n/index'
 import './style/index.less'
 import 'element-plus/theme-chalk/display.css'
+import { setupAction } from './actions/setupAction';
 
 const app = createApp(App)
-
 
 app.use(Antd)
 
 app.use(i18n)
-
+ 
 const pinia = createPinia()
 
 app.use(pinia)
@@ -28,4 +28,6 @@ app.use(router)
 
 app.use(ElementPlus)
 
+setupAction(app,router,pinia)
 app.mount('#app')
+

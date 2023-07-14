@@ -6,6 +6,7 @@ import login from '../views/user/login.vue'
 import design from '../views/main/design.vue'
 import search from '@/views/base/search.vue'
 
+
 const routes = [
     {
         path: '/',
@@ -47,6 +48,8 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes
 })
+
+
 
 import { blockLoginPage } from './routerInterception'
 

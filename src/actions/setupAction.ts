@@ -1,4 +1,5 @@
+import { getLocalUserInfo } from '@/actions/loginAction';
 
-export const setupAction = () => {
+export const setupAction = (app,router,pinia) => {
     
 }

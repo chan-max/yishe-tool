@@ -31,5 +31,8 @@ export const USER_TABLE = {
     },
     avatar:{
         type:DataTypes.TEXT('long')
+    },
+    isAdmin:{
+        type:DataTypes.BOOLEAN,
     }
 }

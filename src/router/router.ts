@@ -5,13 +5,21 @@ import signup from '../views/user/signup.vue'
 import login from '../views/user/login.vue'
 import design from '../views/main/design.vue'
 import search from '@/views/base/search.vue'
-
+import admin from '@/admin/index.vue'
 
 const routes = [
     {
         path: '/',
         name: 'Home',
         component: home,
+    },
+    {
+        path: '/admin',
+        name: 'Admin',
+        component: admin,
+        meta:{
+            hideHeader:true
+        }
     },
     {
         path: '/signup',

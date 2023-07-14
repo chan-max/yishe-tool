@@ -29,5 +29,6 @@ app.use(router)
 app.use(ElementPlus)
 
 setupAction(app,router,pinia)
+
 app.mount('#app')
 

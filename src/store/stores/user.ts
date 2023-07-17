@@ -8,6 +8,7 @@ export const useLoginStatusStore = defineStore("login_status", () => {
   const userInfo = ref();
   const token = ref();
   const once = ref();
+  const isAdmin = ref(false);
   // 初始化用户登录状态
   const localUserInfo = getLocalUserInfo();
 
@@ -18,6 +19,7 @@ export const useLoginStatusStore = defineStore("login_status", () => {
     loginTime.value = localUserInfo.loginTime
     token.value = localUserInfo.token
     once.value = localUserInfo.once
+    isAdmin.value = localUserInfo.isAdmin
   }
 
 
@@ -27,5 +29,6 @@ export const useLoginStatusStore = defineStore("login_status", () => {
     loginTime,
     token,
     once,
+    isAdmin
   };
 });

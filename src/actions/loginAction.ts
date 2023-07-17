@@ -10,6 +10,7 @@ export const getLocalUserInfo = () =>
     localStorage.getItem(LOGIN_FLAG) || sessionStorage.getItem(LOGIN_FLAG)
   );
 
+  
 export const clearLocalUserInfo = () => {
   localStorage.removeItem(LOGIN_FLAG);
   sessionStorage.removeItem(LOGIN_FLAG);
@@ -48,6 +49,7 @@ export const doLogin = (userInfo, once) => {
     ...userInfo,
     once,
   };
+
 
   updateLocalUserInfo(localUserInfo);
   router.push({ name: "Home" });

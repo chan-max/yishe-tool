@@ -30,6 +30,7 @@
         >
           <div class="user-center-popover">
             <div><el-button size="small">个人中心</el-button></div>
+            <div><el-button v-if="loginStatusStore.isAdmin" size="small" @click="$router.push({name:'Admin'})">管理员</el-button></div>
             <div><el-button @click="doLogout" size="small">退出登录</el-button></div>
           </div>
           <template #reference>
@@ -53,6 +54,8 @@ const avatar = computed(() => {
   const loginStatusStore = useLoginStatusStore();
   return loginStatusStore.userInfo.avatar || "/default-user-avatar.png";
 });
+
+
 
 const { t, locale, global } = useI18n();
 

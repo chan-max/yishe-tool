@@ -7,6 +7,8 @@ import design from '../views/main/design.vue'
 import search from '@/views/base/search.vue'
 import admin from '@/admin/index.vue'
 
+import {adminRoutes} from '@/admin/router'
+
 const routes = [
     {
         path: '/',
@@ -17,6 +19,7 @@ const routes = [
         path: '/admin',
         name: 'Admin',
         component: admin,
+        children:adminRoutes,
         meta:{
             hideHeader:true
         }
@@ -54,13 +57,14 @@ const routes = [
 
 const router = createRouter({
     history: createWebHashHistory(),
-    routes
+    routes:routes as any
 })
 
 
 
-import { blockLoginPage } from './routerInterception'
+import { blockAdminPage,blockLoginPage } from './routerInterception'
 
 blockLoginPage(router)
+blockAdminPage(router)
 
 export default router

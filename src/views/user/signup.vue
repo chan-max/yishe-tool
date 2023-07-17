@@ -26,7 +26,7 @@ const signupForm = reactive({
 async function submit() {
   var formData = new FormData()
   let avatarBase64 = await fileToBase64(avatarInput.value.files[0])
-
+  
   formData.append('avatar',avatarBase64)
   formData.append('phonenumber',signupForm.phonenumber)
   formData.append('account',signupForm.account)

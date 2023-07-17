@@ -17,7 +17,10 @@ export const signupHook = (router, sequelize, app) => router.post('/signup', asy
         return
     }
 
+
+
     try {
+        data.isAdmin = false
         await table.create(data)
         return ctx.body = {
             status: ResponseStatusCodeEnum.SIGNUP_SUCCESS

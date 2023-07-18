@@ -6,8 +6,12 @@ import login from '../views/user/login.vue'
 import design from '../views/main/design.vue'
 import search from '@/views/base/search.vue'
 import admin from '@/admin/index.vue'
+import unknown from '@/views/base/unknown.vue'
 
 import {adminRoutes} from '@/admin/router'
+
+
+
 
 const routes = [
     {
@@ -52,6 +56,14 @@ const routes = [
         path: '/search',
         name: 'Search',
         component: search,
+    },
+    {
+        path: '/:catchAll(.*)',
+        name: 'Unknown',
+        component: unknown,
+        meta:{
+            hideHeader:true
+        }
     },
 ]   
 

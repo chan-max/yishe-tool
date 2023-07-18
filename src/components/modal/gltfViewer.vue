@@ -116,8 +116,8 @@ watch( () => props.data, async () => {
   justify-content: center;
   align-items: center;
   cursor:pointer;
-  background-color: #ddd;
-  border-radius: 30px;
+  background-color: #fff;
+  border-radius: 10px;
   box-shadow: 0 0 20px 11px rgba(148,148,148,.12);
 }
 

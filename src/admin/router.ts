@@ -1,6 +1,6 @@
 
 import index from './view/index.vue'
-import modelIndex from './view/model/index.vue';
+import modelIndex from './view/model/index/index.vue';
 
 import modelUpload from './view/model/modelUpload.vue';
 import modelDetail from './view/model/modelDetail.vue';

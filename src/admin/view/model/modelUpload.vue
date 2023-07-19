@@ -1,6 +1,6 @@
 <template>
     <div class="admin-model-upload">
-        添加模型
+        <el-text  size="large">模型上传</el-text>
     </div>
 </template>
 <script setup>

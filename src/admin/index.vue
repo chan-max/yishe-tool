@@ -10,9 +10,9 @@
           <el-menu class="admin-menu"
            :collapse="isCollapse" 
            :router="true" 
-            background-color="#3285ff"
             text-color="#fff"
             active-text-color="#fff"
+            background-color="#3EA9F7"
             style="display:flex;"
           >
 
@@ -55,7 +55,7 @@
           </el-menu>
         </el-aside>
         <el-main
-          style="background-color: #fff; box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.01)"
+          class="admin-main"
         >
           <router-view></router-view>
         </el-main>
@@ -93,7 +93,7 @@ const avatar = computed(() => {
   width: 100%;
   height: 100%;
   /* background-color: #00071d; */
-  background-color: #f5f6fa;
+  background-color: #f1f5f8;
   border-top: 3px solid var(--1s-blue);
 }
 
@@ -110,5 +110,8 @@ const avatar = computed(() => {
   overflow: hidden;
 }
 
+.admin-main{
+  background-color: #fff; box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.01)
+}
 
 </style>

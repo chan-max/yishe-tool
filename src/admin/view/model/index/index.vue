@@ -22,18 +22,19 @@ import {UploadFilled} from '@element-plus/icons-vue'
 
 </script>
 <style lang="less">
+
 .admin-model-index {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  grid-auto-rows: 200px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-auto-rows: 160px;
   justify-items: center;
 }
 
 .admin-model-index-card {
-    width: 260px; 
-    height: 180px; 
+    width: 220px; 
+    height: 140px; 
     background: #f5f5f5!important;
     &:hover{
         border: 1px solid #aaa;

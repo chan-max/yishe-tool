@@ -7,7 +7,7 @@ export const BASEMODEL_TABLE =  {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    filePath: {
+    path: {
       type: DataTypes.STRING,
       allowNull: false,
     },

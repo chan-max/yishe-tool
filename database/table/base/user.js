@@ -1,7 +1,6 @@
 import { DataTypes } from "sequelize"
 
 
-
 export const USER_TABLE = {
     firstName: {
         type: DataTypes.STRING,

@@ -1,5 +1,7 @@
 import { GLTFLoader, } from "three/examples/jsm/loaders/GLTFLoader";
 import {TextureLoader} from 'three'
+
+
 export function gltfLoader(url) {
     let loader = new GLTFLoader();
     return new Promise(async (resolve,reject) => {

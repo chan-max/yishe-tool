@@ -26,3 +26,6 @@ export const getWebStickers = () => apiInstance.post('getWebStickers')
 // 获取我的贴图
 export const getMyStickers = () => apiInstance.post('getMyStickers')
 
+// 上传基础模型
+
+export const uploadBaseModel = (data: any) => apiInstance.post('uploadBaseModel', data)

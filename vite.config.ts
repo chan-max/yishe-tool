@@ -39,4 +39,7 @@ export default defineConfig({
       $: path.resolve(__dirname, "./"), // 根目录
     },
   },
+  define: {
+    '__DEV__': process.env.NODE_ENV !== 'production',
+  }
 });

@@ -10,9 +10,6 @@ import unknown from '@/views/base/unknown.vue'
 
 import {adminRoutes} from '@/admin/router'
 
-
-
-
 const routes = [
     {
         path: '/',
@@ -23,34 +20,23 @@ const routes = [
         path: '/admin',
         name: 'Admin',
         component: admin,
+        header:false,
         children:adminRoutes,
-        meta:{
-            hideHeader:true
-        }
     },
     {
         path: '/signup',
         name: 'Signup',
         component: signup,
-        meta:{
-            hideHeader:true
-        }
     },
     {
         path: '/login',
         name: 'Login',
         component: login,
-        meta:{
-            hideHeader:true
-        }
     },
     {
         path: '/design',
         name: 'Design',
         component: design,
-        meta:{
-            hideHeader:true
-        }
     },
     {
         path: '/search',
@@ -61,20 +47,21 @@ const routes = [
         path: '/:catchAll(.*)',
         name: 'Unknown',
         component: unknown,
-        meta:{
-            hideHeader:true
-        }
     },
 ]   
 
+
+let _routes = routeTransform(routes as any)
+
 const router = createRouter({
     history: createWebHashHistory(),
-    routes:routes as any
+    routes:_routes ,
 })
 
 
 
 import { blockAdminPage,blockLoginPage } from './routerInterception'
+import { routeTransform } from './routeTransform'
 
 blockLoginPage(router)
 blockAdminPage(router)

@@ -10,21 +10,25 @@ export const adminRoutes =  [
         name:'Admin',
         path: '',
         component: index,
+        header:false
     },
     {
         path: 'model',
         name:'Model',
         component: modelIndex,
+        header:false
     },
     {
         path: 'model/:id',
         name:'ModelDetail',
         component:modelDetail,
-        props:true
+        props:true,
+        header:false
     },
     {
         path: 'model/upload',
         name:'ModelUpload',
         component:modelUpload,
+        header:false
     },
 ]

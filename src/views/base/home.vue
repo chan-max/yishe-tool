@@ -1,4 +1,8 @@
 <template>
+  <div class="banner">
+    
+  </div>
+
   <div style="text-align: center; font-weight: bold; font-size: 72px; color: #333;font-family: Fira Sans,sans-serif;margin-top:120px;letter-spacing: -.03em;">
     开放式服装设计&交易平台
   </div>
@@ -24,7 +28,13 @@ onMounted(async () => {
 </script>
 
 <style>
-
+.banner{
+    background-color: red;
+    height: 500px;
+    width: 100%;
+    margin-top: -60px;
+    position: '';
+}
 
 .bannner-model {
   height: 600px;

@@ -1,7 +1,7 @@
 <template>
   <el-config-provider :locale="elementLocale">
     <div id="notice"></div>
-    <div id="header" v-if="!$route.meta.hideHeader">
+    <div id="header" v-if="$route.meta.header">
       <header-view @change-language="toggleLanguage"></header-view>
     </div>
     <div id="content">
@@ -55,9 +55,11 @@ body {
   flex: auto;
   overflow-y: auto;
   position: relative;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+  text-align: center;
+  & > *{
+    margin-left:auto;
+    margin-right:auto;
+  }
 }
 
 /* 滚动条样式 */

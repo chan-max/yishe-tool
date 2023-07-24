@@ -1,6 +1,6 @@
 <template>
   <el-row justify="center" style="height: 100%">
-    <el-col :xl="12" :lg="14" style="height: 100%">
+    <el-col :xl="14"  style="height: 100%">
       <div id="header-container">
         <div class="logo" style="cursor: pointer" @click="$router.push({ name: 'Home' })">
           衣设网 1s.design
@@ -10,7 +10,6 @@
         <div class="header-container-link hidden-sm-and-down">工作台</div>
         <div class="header-container-link hidden-sm-and-down">商场</div>
         <div style="flex: auto"></div>
-
         <div class="header-container-link" @click="toggleLanguage">
           {{ $t("language") }}
         </div>
@@ -34,7 +33,7 @@
             <div><el-button @click="doLogout" size="small">退出登录</el-button></div>
           </div>
           <template #reference>
-            <el-avatar shape="square" size="small" :src="avatar" />
+            <el-avatar size="small" :src="avatar" />
           </template>
         </el-popover>
       </div>
@@ -46,7 +45,12 @@
 import { useI18n } from "vue-i18n";
 import { useLoginStatusStore } from "@/store/stores/user";
 import { doLogout } from "../../actions/loginAction";
-import { computed } from "vue";
+import { computed,ref } from "vue";
+
+
+const transparentMode = ref(false)
+
+
 
 const loginStatusStore = useLoginStatusStore();
 
@@ -97,7 +101,8 @@ function toggleLanguage() {
 .header-container-link {
   margin: 0 20px;
   color: #333;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: bold;
   cursor: pointer;
 }
 

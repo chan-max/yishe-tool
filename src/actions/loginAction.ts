@@ -42,6 +42,7 @@ export const doLogin = (userInfo, once) => {
   loginStatusStore.userInfo = userInfo;
   loginStatusStore.loginTime = now;
   loginStatusStore.once = once;
+  loginStatusStore.isAdmin = userInfo.isAdmin;
 
   // 保存用户信息到本地
   const localUserInfo = {

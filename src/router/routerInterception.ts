@@ -11,6 +11,7 @@ export const blockLoginPage = (router) => {
   });
 };
 
+
 export const blockAdminPage = (router) => {
   router.beforeEach((to, from, next) => {
     let loginStatusStore = useLoginStatusStore();
@@ -18,6 +19,6 @@ export const blockAdminPage = (router) => {
       next({ name: "Home" });
     } else {
       next();
-    }
+    } 
   });
 };

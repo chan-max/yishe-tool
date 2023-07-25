@@ -40,7 +40,7 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   box-shadow: inset 2px -3px 95px 45px rgba(0, 0, 0, 0.05);
-  padding: 100px;
+  padding: 150px;
 
   @media screen and (max-width: 1200px) {
     flex-direction: column;

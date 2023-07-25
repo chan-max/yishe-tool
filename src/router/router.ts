@@ -37,6 +37,7 @@ const routes = [
         path: '/design',
         name: 'Design',
         component: design,
+        header:false
     },
     {
         path: '/search',

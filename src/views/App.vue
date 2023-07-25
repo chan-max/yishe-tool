@@ -46,15 +46,16 @@ body {
 #header {
   height: 60px;
   width: 100%;
-  flex-shrink: 0;
-  position: relative;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
 }
 
 
 #content {
   flex: auto;
-  overflow-y: auto;
-  position: relative;
   text-align: center;
   & > *{
     margin-left:auto;
@@ -64,9 +65,10 @@ body {
 
 /* 滚动条样式 */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
   height: 10px;
 }
+
 ::-webkit-scrollbar-track {
   background: rgb(239, 239, 239);
 }

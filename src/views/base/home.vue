@@ -35,12 +35,13 @@ onMounted(async () => {
 <style>
 .banner {
   background: linear-gradient(45deg, rgba(19,22,30,1) 50%, hsl(265,100%,30%) 100%);
+  background: linear-gradient(45deg,#13161e,#111727 34.35%,#0e4b61);
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: inset 2px -3px 95px 45px rgba(0, 0, 0, 0.05);
-  padding: 150px;
+  padding: 150px 30px;
 
   @media screen and (max-width: 1200px) {
     flex-direction: column;

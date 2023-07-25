@@ -1,7 +1,7 @@
 <template>
   <div class="banner">
     <div class="banner-desc">
-      <div style="font-size: 40px; color: #fff;line-height: 100px;">开放式服装设计 & 交易平台</div>
+      <div style="font-size: 40px; color: #fff;">开放式服装设计 & 交易平台</div>
       <div style="font-size: 16px; color: rgba(255, 255, 255, 0.5);line-height: 30px;">
         这是一个专门面向设计师和买家的全新线上平台，旨在创造一个安全、公正和透明的环境，让创新与商业交易可以无缝衔接
       </div>

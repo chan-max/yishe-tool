@@ -58,7 +58,11 @@ async function submit() {
 
 <style>
 .login-form {
-  width: 400px;
-  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
+  height: 100%;
 }
 </style>

@@ -9,7 +9,7 @@
     <div class="header-container-link hidden-sm-and-down">设计室</div>
     <div class="header-container-link hidden-sm-and-down">工作台</div>
     <div class="header-container-link hidden-sm-and-down">商场</div>
-
+    <div class="header-container-link hidden-sm-and-down">买衣服</div>
 
     <div style="flex: auto"></div>
     <div class="header-container-link" @click="toggleLanguage">

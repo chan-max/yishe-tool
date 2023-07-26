@@ -116,6 +116,7 @@ watch( () => props.data, async () => {
   justify-content: center;
   align-items: center;
   cursor:pointer;
+  background-color: #141719;
 }
 
 .gltf-viewer-loading{

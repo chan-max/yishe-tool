@@ -43,6 +43,8 @@ onMounted(async () => {
     /* 蓝色 */
   background: linear-gradient(to right, #000428,  #004e92);
 
+  /*  浅蓝 */
+  background: linear-gradient(353deg, rgba(148,187,233,1) 0%, rgba(0,102,255,1) 65%);
 
   width: 100%;
   display: flex;

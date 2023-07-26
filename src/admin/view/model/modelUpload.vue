@@ -44,6 +44,8 @@
 </template>
 <script setup>
 import { message } from "ant-design-vue";
+import { ElMessage } from 'element-plus'
+
 import { reactive, ref } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 

@@ -3,15 +3,18 @@
     <div class="logo" style="cursor: pointer" @click="$router.push({ name: 'Home' })">
       衣设 1s.design
     </div>
-    <div class="header-container-link hidden-sm-and-down">作品展</div>
+    <div class="header-container-link hidden-sm-and-down">
+    作品展
+    </div>
     <div class="header-container-link hidden-sm-and-down">设计室</div>
     <div class="header-container-link hidden-sm-and-down">工作台</div>
     <div class="header-container-link hidden-sm-and-down">商场</div>
+
+
     <div style="flex: auto"></div>
     <div class="header-container-link" @click="toggleLanguage">
       {{ $t("language") }}
     </div>
-
     <el-popover
     v-if="loginStatusStore.isLogin"
       placement="bottom"
@@ -55,7 +58,8 @@ import { useLoginStatusStore } from "@/store/stores/user";
 import { doLogout } from "../../actions/loginAction";
 import { computed, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
-import { Pointer } from "@element-plus/icons-vue";
+import { Pointer,CaretBottom } from "@element-plus/icons-vue";
+
 
 let route = useRoute();
 
@@ -85,7 +89,7 @@ watchEffect(() => {
 const menuStyle = computed(() => {
   return {
     background: transparentMode.value ? "transparent" : "#fff",
-    color: transparentMode.value ? "rgba(255,255,255,0.7)" : "#333",
+    color: transparentMode.value ? "#fff" : "#000",
     borderBottom: transparentMode.value ? "none" : "1px solid #dcdcdc",
   };
 });
@@ -147,7 +151,12 @@ function toggleLanguage() {
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
+  opacity: 0.8;
+  &:hover{
+    opacity: 1;
+  }
 }
+
 
 .user-center-popover {
   display: flex;

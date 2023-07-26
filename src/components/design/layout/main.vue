@@ -18,6 +18,8 @@ import loading from "./loading.vue";
 import { CanvasBgColor, CanvasBgOpacity } from "../store";
 import stickersTabs from "./stickers/stickersTabs.vue";
 import { message } from "ant-design-vue";
+import { ElMessage } from 'element-plus'
+
 import {
   Mesh,
   MeshBasicMaterial,

@@ -46,6 +46,10 @@ onMounted(async () => {
   /*  浅蓝 */
   background: linear-gradient(353deg, rgba(148,187,233,1) 0%, rgba(0,102,255,1) 65%);
 
+  /* 钱浅蓝 */
+
+background: linear-gradient(to right, #2F80ED, #56CCF2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
   width: 100%;
   display: flex;
   justify-content: center;

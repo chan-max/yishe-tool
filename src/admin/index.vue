@@ -9,7 +9,7 @@
           background-color="#fbfaff"
           text-color="#696969"
           :router="true"
-          active-text-color="#6900ff"
+          active-text-color="#06f"
         >
           <div
             style="

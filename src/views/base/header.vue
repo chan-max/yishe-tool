@@ -1,7 +1,7 @@
 <template>
   <div id="header-container">
     <div class="logo" style="cursor: pointer" @click="$router.push({ name: 'Home' })">
-      衣设网 1s.design
+      衣设 1s.design
     </div>
     <div class="header-container-link hidden-sm-and-down">作品展</div>
     <div class="header-container-link hidden-sm-and-down">设计室</div>
@@ -39,18 +39,12 @@
       v-if="!loginStatusStore.isLogin"
       @click="$router.push({ name: 'Login' })"
       type="primary"
+      round
+      color="#0066ff"
     >
       <span style="font-size: 14px">登 录 </span>
     </el-button>
 
-    <el-button
-      v-if="!loginStatusStore.isLogin"
-      @click="$router.push({ name: 'Signup' })"
-      color="#fe215a"
-      :icon="Pointer "
-    >
-      <span style="font-size: 14px;color:#fff;"> 注 册 </span>
-    </el-button>
 
   </div>
 </template>

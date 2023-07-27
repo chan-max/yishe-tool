@@ -1,13 +1,15 @@
 <template>
   <div class="banner">
     <div class="banner-desc">
-      <div style="font-size: 40px; color: #fff;font-weight: 600;">开放式服装设计 & 交易平台</div>
-      <div style="font-size: 16px; color: rgba(255, 255, 255, 0.5); line-height: 30px">
+      <div style="font-size: 40px; color: #fff; font-weight: 600">
+        开放式服装设计 & 交易平台
+      </div>
+      <div style="font-size: 16px; color: rgba(255, 255, 255, 0.8); line-height: 30px">
         这是一个专门面向设计师和买家的全新线上平台，旨在创造一个安全、公正和透明的环境，让创新与商业交易可以无缝衔接
       </div>
       <div style="padding-top: 30px">
-        <el-button type="primary" size="large">
-          <span style="font-size: 18px; font-weight: bold"> 试一下 </span>
+        <el-button size="large">
+          <span style="font-size: 18px; font-weight: bold; color: #06f"> 试一下 </span>
         </el-button>
       </div>
     </div>
@@ -33,22 +35,25 @@ onMounted(async () => {
 
 <style>
 .banner {
-
   /* 紫色 */
   background: linear-gradient(45deg, rgba(19, 22, 30, 1) 50%, hsl(265, 100%, 30%) 100%);
 
   /* 墨绿色 */
   background: linear-gradient(45deg, #13161e, #111727 34.35%, #add8e6);
 
-    /* 蓝色 */
-  background: linear-gradient(to right, #000428,  #004e92);
+  /* 蓝色 */
+  background: linear-gradient(to right, #000428, #004e92);
 
   /*  浅蓝 */
-  background: linear-gradient(353deg, rgba(148,187,233,1) 0%, rgba(0,102,255,1) 65%);
+  background: linear-gradient(
+    353deg,
+    rgba(148, 187, 233, 1) 0%,
+    rgba(0, 102, 255, 1) 65%
+  );
 
-  /* 钱浅蓝 */
+  /* 浅蓝 */
 
-background: linear-gradient(to right, #2F80ED, #56CCF2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, #3556fb, #2f80ed);
 
   width: 100%;
   display: flex;

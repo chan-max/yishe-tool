@@ -1,7 +1,9 @@
 <template>
   <div class="left-menu">
     <el-tooltip content="选择服装模型" placement="right">
-      <div class="left-menu-item"><font-awesome-icon :icon="['fass', 'shirt']" /></div>
+      <div class="left-menu-item">
+        <font-awesome-icon :icon="['fass', 'shirt']" style="color: #06f" />
+      </div>
     </el-tooltip>
   </div>
 </template>

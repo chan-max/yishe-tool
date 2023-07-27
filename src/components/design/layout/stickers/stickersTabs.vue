@@ -1,6 +1,5 @@
 <template>
   <div class="designiy-stickers">
-    <el-button  type="primary" style="width:100%;margin:10px 0;"> 制作贴纸 <bg-colors-outlined /> </el-button>
     <img
       v-show="isDragging"
       ref="draggingEl"
@@ -8,55 +7,42 @@
       :style="{ top: draggingElY + 'px', left: draggingElX + 'px' }"
     />
 
-      
     <div class="designiy-stickers-list">
-          <el-collapse>
-            <el-collapse-item
-              v-for="(sticker, index) in webStickers"
+      <el-collapse>
+        <el-collapse-item v-for="(sticker, index) in webStickers" :key="index">
+          <template #title>
+            <span style="font-size: 12px; color: #666">{{ sticker.type }}</span>
+          </template>
+          <div class="designiy-stickers-container">
+            <div
+              class="designiy-stickers-item"
+              v-for="(item, index) in sticker.data"
+              title="拖拽来选择该贴图"
               :key="index"
+              @dragstart="stickerDragstart"
+              draggable="true"
             >
-              <template #title>
-                <span style="font-size: 12px; color: #666">{{
-                  sticker.type
-                }}</span>
-              </template>
-              <div class="designiy-stickers-container">
-                <div
-                  class="designiy-stickers-item"
-                  v-for="(item, index) in sticker.data"
-                  title="拖拽来选择该贴图"
-                  :key="index"
-                  @dragstart="stickerDragstart"
-                  draggable="true"
-                >
-                  <div class="designiy-stickers-item-hover">
-                    {{ item.name }}
-                  </div>
-                  <el-image
-                    :src="'api/' + item.source"
-                    style="
-                      height: 100%;
-                      width: 100%;
-                      padding: 10px;
-                      cursor: grab;
-                    "
-                    fit="contain"
-                  />
-                </div>
+              <div class="designiy-stickers-item-hover">
+                {{ item.name }}
               </div>
-            </el-collapse-item>
-          </el-collapse>
-        </div>
+              <el-image
+                :src="'api/' + item.source"
+                style="height: 100%; width: 100%; padding: 10px; cursor: grab"
+                fit="contain"
+              />
+            </div>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
+    </div>
   </div>
 </template>
-
 
 <script setup>
 import { getWebStickers, getMyStickers } from "@/api";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { useMouse } from "@vueuse/core";
-import { BgColorsOutlined} from "@ant-design/icons-vue";
-
+import { BgColorsOutlined } from "@ant-design/icons-vue";
 
 const { x, y } = useMouse();
 
@@ -70,38 +56,33 @@ const draggingElY = computed(() => y.value - draggingEl.value?.height / 2);
 
 // 开始拖拽
 function stickerDragstart(e) {
-  draggingEl.value.src = e.target.querySelector('img').src;
+  draggingEl.value.src = e.target.querySelector("img").src;
   isDragging.value = true;
   e.preventDefault();
 }
 
 const currentStickerPage = ref("网络贴纸");
 
-const webStickers = ref()
-
+const webStickers = ref();
 
 getWebStickers().then((res) => (webStickers.value = res.data));
-
 
 // 模拟 dragend 事件
 function dragend() {
   if (isDragging.value) {
-    emits("dragend",draggingEl.value)
+    emits("dragend", draggingEl.value);
     isDragging.value = false;
   }
 }
 
 onMounted(() => {
   document.addEventListener("mouseup", dragend);
-})
+});
 
 onUnmounted(() => {
   document.removeEventListener("mouseup", dragend);
-})
-
-
+});
 </script>
-
 
 <style lang="less">
 .designiy-stickers {
@@ -138,8 +119,7 @@ onUnmounted(() => {
   overflow: hidden;
   &:hover {
     // box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
-      rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   }
 }
 
@@ -147,8 +127,8 @@ onUnmounted(() => {
   width: 220px;
 }
 
-.designiy-stickers-item:hover{
-  .designiy-stickers-item-hover{
+.designiy-stickers-item:hover {
+  .designiy-stickers-item-hover {
     visibility: visible;
   }
 }

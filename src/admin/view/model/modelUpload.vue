@@ -8,10 +8,10 @@
       style=""
     >
       <el-form-item prop="name" required>
-        <el-input v-model="form.name" size="large" placeholder="模型名称"/>
+        <el-input v-model="form.name" size="large" placeholder="模型名称" />
       </el-form-item>
       <el-form-item prop="description" required>
-        <el-input v-model="form.description" size="large"  placeholder="模型描述" />
+        <el-input v-model="form.description" size="large" placeholder="模型描述" />
       </el-form-item>
     </el-form>
     <el-upload
@@ -25,35 +25,32 @@
       ref="upload"
       v-model:file-list="file"
     >
-
       <el-icon style="color: var(--el-color-primary); font-size: 50px"
         ><upload-filled
       /></el-icon>
       <div>点击或拖拽模型文件来上传</div>
       <template #tip>
-        <div class="el-upload__tip">仅限 glb,gltf 类型,大小限制为20mb </div>
+        <div class="el-upload__tip">仅限 glb,gltf 类型,大小限制为20mb</div>
       </template>
     </el-upload>
     <el-button @click="submit" size="large" type="primary" style="width: 100%">
       上传
     </el-button>
-    <el-button @click="remove" size="large" style="width: 100%;margin:20px 0">
+    <el-button @click="remove" size="large" style="width: 100%; margin: 20px 0">
       移除当前文件
     </el-button>
   </div>
 </template>
 <script setup>
 import { message } from "ant-design-vue";
-import { ElMessage } from 'element-plus'
+import { ElMessage } from "element-plus";
 
 import { reactive, ref } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 
 const upload = ref();
 
-const file = ref([])
-
-
+const file = ref([]);
 
 const rules = reactive({
   name: [{ required: true, message: "请输入模型名称", trigger: "blur" }],
@@ -65,20 +62,18 @@ const form = reactive({
   description: "",
 });
 
-
-
-function remove(){
+function remove() {
   upload.value.handleRemove(file.value[0]);
 }
 
 function submit() {
-  if (!file.value[0]){
-    message.error('选择模型文件')
-    return 
+  if (!file.value[0]) {
+    message.error("选择模型文件");
+    return;
   }
   if (file.value[0].size / 1024 / 1024 > 20) {
-    message.error('模型最大限制为20mb')
-    return
+    message.error("模型最大限制为20mb");
+    return;
   }
   upload.value.submit();
 }
@@ -90,7 +85,7 @@ function submit() {
   height: 100%;
 }
 
-.el-form-item__content{
-  margin-left: 0!important;
+.el-form-item__content {
+  margin-left: 0 !important;
 }
 </style>

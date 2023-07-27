@@ -1,6 +1,26 @@
 <template>
   <div class="designiy-header">
-    <div class="designiy-header-home"> </div>
+    <div class="designiy-header-home"></div>
+    <div class="designiy-header-select-skybox">
+      <el-dropdown @command="selectSkybox" size="small">
+        <div class="designiy-header-select-skybox-btn">天空球</div>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+              v-for="(skybox, index) in skyboxList"
+              :key="index"
+              :command="skybox"
+              >{{ skybox.name }}</el-dropdown-item
+            >
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </div>
+
+    <div class="designiy-header-item">贴图</div>
+    <div class="designiy-header-item">艺术字</div>
+    <div class="designiy-header-item">自定义图形</div>
+    <div class="designiy-header-item">灯光调整</div>
     <div class="designiy-header-select-model">
       <el-dropdown @command="modelChange" size="small" split-button>
         <div class="designiy-header-select-model-btn">{{ currentModel.name }}</div>
@@ -26,26 +46,13 @@
       />
     </div>
 
-    <div class="designiy-header-select-skybox">
-      <el-dropdown @command="selectSkybox" size="small">
-        <div class="designiy-header-select-skybox-btn">天空球</div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item
-              v-for="(skybox, index) in skyboxList"
-              :key="index"
-              :command="skybox"
-              >{{ skybox.name }}</el-dropdown-item
-            >
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </div>
-
-    <div class="designiy-header-item">贴图</div>
-    <div class="designiy-header-item">艺术字</div>
-    <div class="designiy-header-item">自定义图形</div>
-    <div class="designiy-header-item">灯光调整</div>
+    <div style="flex-grow: 1"></div>
+    <el-button type="primary" size="small" plain>
+      <span style="font-weight: bold">上 传</span>
+    </el-button>
+    <el-button type="primary" size="small">
+      <span style="font-weight: bold">保 存</span>
+    </el-button>
   </div>
 </template>
 
@@ -54,7 +61,7 @@ import { getBaseModelList, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
 import { CanvasBgColor, CanvasBgOpacity } from "../store";
 import Color from "color";
-
+import { Edit, Share, Delete } from "@element-plus/icons-vue";
 
 const emits = defineEmits(["selectModel", "selectSkybox"]);
 
@@ -104,12 +111,11 @@ getBaseSkybox().then((result) => (skyboxList.value = result.data));
   width: 100%;
   height: 100%;
   background-color: #fcfcfc;
-  border-bottom: 1px solid #efefef;
   display: flex;
   justify-content: start;
   align-items: center;
   box-sizing: border-box;
-  border-bottom: 5px solid #eee;
+  padding-right: 20px;
 }
 
 .designiy-header-select-model {
@@ -141,7 +147,7 @@ getBaseSkybox().then((result) => (skyboxList.value = result.data));
   }
 }
 
-.designiy-header-home{
+.designiy-header-home {
   width: 10px;
 }
 
@@ -152,6 +158,4 @@ getBaseSkybox().then((result) => (skyboxList.value = result.data));
   height: 20px;
   margin: 0 10px;
 }
-
-
 </style>

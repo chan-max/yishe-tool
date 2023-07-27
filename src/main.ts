@@ -12,9 +12,24 @@ import './style/cover-antdesign.less'
 import i18n from './i18n/index'
 import './style/index.less'
 import 'element-plus/theme-chalk/display.css'
+import '@icon-park/vue/styles/index.css'
 import { setupAction } from './actions/setupAction';
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+
+import { FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+
+
+
+
 const app = createApp(App)
+
+
+library.add(fas)
+
+app.component('font-awesome-icon', FontAwesomeIcon)
+
 
 app.use(Antd)
 

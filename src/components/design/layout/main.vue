@@ -3,10 +3,18 @@
   <div class="designiy-top">
     <header-menu @select-skybox="selectSkybox" @select-model="selectModel" />
   </div>
+  <div class="designiy-top">
+    <header-menu @select-skybox="selectSkybox" @select-model="selectModel" />
+  </div>
+  <div class="designiy-sub-top">
+    <sub-header />
+  </div>
   <div class="designiy-left">
+    <left-menu></left-menu>
+  </div>
+  <div class="designiy-right">
     <stickers-tabs @dragend="dragend"></stickers-tabs>
   </div>
-  <div class="designiy-right"></div>
   <div class="designiy-bottom"></div>
   <div id="designiy-canvas-container" ref="mountContainer"></div>
 </template>
@@ -18,7 +26,9 @@ import loading from "./loading.vue";
 import { CanvasBgColor, CanvasBgOpacity } from "../store";
 import stickersTabs from "./stickers/stickersTabs.vue";
 import { message } from "ant-design-vue";
-import { ElMessage } from 'element-plus'
+import { ElMessage } from "element-plus";
+import leftMenu from "./leftMenu.vue";
+import subHeader from "./subHeader.vue";
 
 import {
   Mesh,
@@ -85,18 +95,15 @@ function dragend(draggingEl) {
     let euler = helper.rotation;
     var decalGeometry = new DecalGeometry(mesh, position, euler, size);
 
-    let texture = new Texture(draggingEl)
+    let texture = new Texture(draggingEl);
     texture.needsUpdate = true;
     var decal = new Mesh(
       decalGeometry,
-      new MeshBasicMaterial({ map: texture,transparent:true })
+      new MeshBasicMaterial({ map: texture, transparent: true })
     );
     designiy.scene.add(decal);
   }
 }
-
-
-
 </script>
 
 <style lang="less">
@@ -104,27 +111,38 @@ function dragend(draggingEl) {
   height: 50px;
   width: 100%;
   position: absolute;
+  border-bottom: 1px solid #e3e3e3;
   top: 0;
+}
+
+.designiy-sub-top {
+  height: 36px;
+  width: 100%;
+  position: absolute;
+  background-color: #fff;
+  border-bottom: 1px solid #e3e3e3;
+  top: 50px;
 }
 
 .designiy-left {
   position: absolute;
   left: 0;
-  top: 50px;
-  height: calc(100% - 50px);
-  width: auto;
+  top: 86px;
+  height: calc(100% - 86px);
+  width: 50px;
   background: #fff;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #e3e3e3;
   overflow: auto;
 }
+
 .designiy-right {
   position: absolute;
   right: 0;
-  top: 50px;
-  height: calc(100% - 50px);
+  top: 86px;
+  height: calc(100% - 86px);
   width: auto;
   background: #fff;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #e3e3e3;
   overflow: auto;
 }
 

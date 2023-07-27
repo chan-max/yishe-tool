@@ -6,8 +6,6 @@
 
 <script setup>
 import mainView from "./layout/main.vue";
-
-
 </script>
 
 <style lang="less">

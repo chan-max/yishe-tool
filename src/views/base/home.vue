@@ -8,8 +8,8 @@
         这是一个专门面向设计师和买家的全新线上平台，旨在创造一个安全、公正和透明的环境，让创新与商业交易可以无缝衔接
       </div>
       <div style="padding-top: 30px">
-        <el-button size="large">
-          <span style="font-size: 18px; font-weight: bold; color: #06f"> 试一下 </span>
+        <el-button size="large" class="banner-btn">
+          <span style="font-size: 18px; font-weight: bold"> 试一下 </span>
         </el-button>
       </div>
     </div>
@@ -52,8 +52,7 @@ onMounted(async () => {
   );
 
   /* 浅蓝 */
-
-  background: linear-gradient(to right, #3556fb, #2f80ed);
+  background: linear-gradient(to right, #06f, #2f80ed);
 
   width: 100%;
   display: flex;
@@ -81,5 +80,14 @@ onMounted(async () => {
 .bannner-model {
   height: 400px;
   width: 700px;
+}
+
+.banner-btn {
+  background-color: #fff !important;
+  color: #06f !important;
+  &:hover {
+    background-color: #06f !important;
+    color: #fff !important;
+  }
 }
 </style>

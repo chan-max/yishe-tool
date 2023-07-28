@@ -31,6 +31,11 @@
         <font-awesome-icon :icon="['fas', 'lightbulb']" />
       </div>
     </el-tooltip>
+    <el-tooltip content="预览模型" placement="right">
+      <div class="menu-bar-item">
+        <font-awesome-icon :icon="['fas', 'eye']" />
+      </div>
+    </el-tooltip>
     <el-tooltip content="使用帮助" placement="right">
       <div class="menu-bar-item">
         <font-awesome-icon :icon="['fas', 'circle-question']" />
@@ -63,6 +68,10 @@
   }
   &:hover {
     color: #06f;
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 }
 </style>

@@ -42,6 +42,22 @@
     </div>
 
     <div style="flex-grow: 1"></div>
+
+    <div
+      @click="isDarkMode = !isDarkMode"
+      style="
+        width: 50px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      "
+    >
+      <font-awesome-icon v-if="isDarkMode" :icon="['fas', 'sun']" />
+      <font-awesome-icon v-else :icon="['fas', 'moon']" />
+    </div>
+
     <el-button type="primary" size="small" plain>
       <span style="font-weight: bold">上 传</span>
     </el-button>
@@ -54,7 +70,7 @@
 <script setup>
 import { getBaseModelList, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
-import { CanvasBgColor, CanvasBgOpacity } from "../store";
+import { CanvasBgColor, CanvasBgOpacity, isDarkMode } from "../store";
 import Color from "color";
 import { Edit, Share, Delete } from "@element-plus/icons-vue";
 

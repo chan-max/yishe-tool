@@ -1,5 +1,8 @@
 import { ref, shallowRef } from "vue"
 
+// 是否为暗色模式
+export const isDarkMode = ref(false)
+
 // 是否展示素材菜单
  export const showRightMenu = shallowRef(true);
 

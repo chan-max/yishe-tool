@@ -8,7 +8,11 @@
         这是一个专门面向设计师和买家的全新线上平台，旨在创造一个安全、公正和透明的环境，让创新与商业交易可以无缝衔接
       </div>
       <div style="padding-top: 30px">
-        <el-button size="large" class="banner-btn">
+        <el-button
+          size="large"
+          class="banner-btn"
+          @click="$router.push({ name: 'Design' })"
+        >
           <span style="font-size: 18px; font-weight: bold"> 试一下 </span>
         </el-button>
       </div>

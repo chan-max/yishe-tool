@@ -27,11 +27,13 @@ const routes = [
         path: '/signup',
         name: 'Signup',
         component: signup,
+        header:false
     },
     {
         path: '/login',
         name: 'Login',
         component: login,
+        header:false,
     },
     {
         path: '/design',

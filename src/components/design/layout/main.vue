@@ -3,12 +3,6 @@
   <div class="designiy-top">
     <header-menu @select-skybox="selectSkybox" @select-model="selectModel" />
   </div>
-  <div class="designiy-top">
-    <header-menu @select-skybox="selectSkybox" @select-model="selectModel" />
-  </div>
-  <div class="designiy-sub-top">
-    <sub-header />
-  </div>
   <div class="designiy-left">
     <left-menu></left-menu>
   </div>
@@ -17,6 +11,8 @@
   </div>
   <div class="designiy-bottom"></div>
   <div id="designiy-canvas-container" ref="mountContainer"></div>
+
+  <div class="designiy-center-float">66666</div>
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect } from "vue";
@@ -108,11 +104,12 @@ function dragend(draggingEl) {
 
 <style lang="less">
 .designiy-top {
-  height: 50px;
+  height: 44px;
   width: 100%;
   position: absolute;
   border-bottom: 1px solid #e3e3e3;
   top: 0;
+  z-index: 10;
 }
 
 .designiy-sub-top {
@@ -122,31 +119,35 @@ function dragend(draggingEl) {
   background-color: #fff;
   border-bottom: 1px solid #e3e3e3;
   top: 50px;
+  z-index: 10;
 }
 
 .designiy-left {
   position: absolute;
   left: 0;
-  top: 86px;
-  height: calc(100% - 86px);
+  top: 44px;
+  height: calc(100% - 44px);
   width: 50px;
   background: #fff;
   border-right: 1px solid #e3e3e3;
   overflow: auto;
+  z-index: 10;
 }
 
 .designiy-right {
   position: absolute;
   right: 0;
-  top: 86px;
-  height: calc(100% - 86px);
+  top: 44px;
+  height: calc(100% - 44px);
   width: auto;
   background: #fff;
-  border-right: 1px solid #e3e3e3;
+  border-left: 1px solid #e3e3e3;
   overflow: auto;
+  z-index: 10;
 }
 
 .designiy-bottom {
+  z-index: 10;
 }
 
 #designiy-canvas-container {
@@ -154,5 +155,13 @@ function dragend(draggingEl) {
   height: 100%;
   background: #fff;
   overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.designiy-center-float {
+  z-index: 10;
 }
 </style>

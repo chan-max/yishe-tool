@@ -14,5 +14,8 @@ import mainView from "./layout/main.vue";
   height: 100%;
   position: relative;
   border: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

@@ -12,7 +12,7 @@
   <div class="designiy-bottom"></div>
   <div id="designiy-canvas-container" ref="mountContainer"></div>
 
-  <div class="designiy-center-float">66666</div>
+  <div class="designiy-center-float"></div>
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect } from "vue";

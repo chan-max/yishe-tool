@@ -36,7 +36,6 @@ export default defineConfig({
       /*  @/ 代表src 路径下 ， @ 代表全局路径下 */
       "@": path.resolve(__dirname, "./src"),
       "@common": path.resolve(__dirname, "./common/"),
-      $: path.resolve(__dirname, "./"), // 根目录
     },
   },
   define: {

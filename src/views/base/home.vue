@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="bannner-model">
-      <gltf-viewer :data="bannerModelUrl"></gltf-viewer>
+      <gltf-viewer :url="bannerModelInfo.url"></gltf-viewer>
     </div>
   </div>
 
@@ -26,14 +26,14 @@
 </template>
 
 <script setup>
-import gltfViewer from "@/components/modal/gltfViewer.vue";
+import gltfViewer from "@/components/model/gltfViewer.vue";
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "../../api";
-let bannerModelUrl = ref("");
+let bannerModelInfo = ref("");
 
 onMounted(async () => {
   let data = await getBannerModel();
-  bannerModelUrl.value = data.data;
+  bannerModelInfo.value = data.data;
 });
 </script>
 

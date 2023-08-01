@@ -39,18 +39,26 @@
     <el-button @click="remove" size="large" style="width: 100%; margin: 20px 0">
       移除当前文件
     </el-button>
+    <gltf-viewer
+      style="width: 900px; height: 600px; margin: auto"
+      :url="previewUrl"
+    ></gltf-viewer>
   </div>
 </template>
 <script setup>
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
-
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
+import gltfViewer from "@/components/model/gltfViewer.vue";
 
 const upload = ref();
 
 const file = ref([]);
+
+const previewUrl = computed(
+  () => file.value[0] && URL.createObjectURL(file.value[0].raw)
+);
 
 const rules = reactive({
   name: [{ required: true, message: "请输入模型名称", trigger: "blur" }],

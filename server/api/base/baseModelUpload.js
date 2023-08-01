@@ -1,4 +1,3 @@
-import path from "path";
 
 export const baseModelUploadHook = (router, sequelize) =>
   router.post("/baseModelUpload", async (ctx) => {
@@ -7,7 +6,7 @@ export const baseModelUploadHook = (router, sequelize) =>
     const { name, description } = ctx.request.body;
     const fullpath = file.filepath;
     const _path = fullpath.split("uploads")[1];
-    debugger;
+
     await table.create({
       name,
       description,
@@ -15,5 +14,6 @@ export const baseModelUploadHook = (router, sequelize) =>
     });
     ctx.body = {
       message: "File uploaded successfully",
+
     };
   });

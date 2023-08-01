@@ -1,19 +1,10 @@
+// 获取基础可用于模型编辑的模型，不需要分页查找等功能
 
-
-export const getBaseModelListHook = (router) => router.get('/getBaseModelList',(ctx) => {
+export const getBaseModelListHook = (router,sequelize) => router.get('/getBaseModelList' , async (ctx) => {
+    const table = sequelize.models.base_models;
+    const res =  await table.findAll()
     ctx.body = {
-        data:[{
-            name:'白色T恤',
-            source:'model/white_shirt.glb',
-        },{
-            name:'黑色T恤',
-            source:'model/black_shirt.glb',
-        },{
-            name:'蓝色T恤',
-            source:'model/blue_shirt.glb',
-        },{
-            name:'塑胶人',
-            source:'model/person.glb',
-        }]
+        data:res
     }
 })
+

@@ -5,9 +5,9 @@ import jwt from "jsonwebtoken";
 export const loginHook = (router, sequelize) => router.post('/login', async (ctx) => {
     const data = ctx.request.body
     const { account, password } = data
-    const userTable = sequelize.models.users
+    const table = sequelize.models.users
 
-    const user = await userTable.findOne({ where: { account } })
+    const user = await table.findOne({ where: { account } })
 
     if (!user) {
         return ctx.body = {

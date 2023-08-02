@@ -40,6 +40,7 @@
       移除当前文件
     </el-button>
     <gltf-viewer
+      ref="gltfViewerRef"
       style="width: 900px; height: 600px; margin: auto"
       :url="previewUrl"
     ></gltf-viewer>
@@ -50,11 +51,14 @@ import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
 import { reactive, ref, computed } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
-import gltfViewer from "@/components/model/gltfViewer.vue";
+import gltfViewer from "@/components/model/gltfViewer/index.vue";
+import { base64ToFile } from "../../../common/transform/base64ToFile";
 
 const upload = ref();
 
 const file = ref([]);
+
+const gltfViewerRef = ref();
 
 const previewUrl = computed(
   () => file.value[0] && URL.createObjectURL(file.value[0].raw)
@@ -68,6 +72,7 @@ const rules = reactive({
 const form = reactive({
   name: "",
   description: "",
+  img: "",
 });
 
 function remove() {
@@ -83,6 +88,8 @@ function submit() {
     message.error("模型最大限制为20mb");
     return;
   }
+
+  form.img = base64ToFile(gltfViewerRef.value.getScreenshot());
   upload.value.submit();
 }
 </script>

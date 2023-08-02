@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import gltfViewer from "@/components/model/gltfViewer.vue";
+import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "../../api";
 let bannerModelInfo = ref("");

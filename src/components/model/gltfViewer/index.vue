@@ -149,8 +149,10 @@ watch(
 );
 
 function screenshot() {
+  renderer.render(scene, camera);
   var img = renderer.domElement.toDataURL("image/png"); // base64
-
+  var win = window.open("", "_blank");
+  win.document.write('<img src="' + img + '"/>');
   emits("screenshot", img);
 }
 </script>

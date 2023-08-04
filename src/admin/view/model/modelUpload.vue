@@ -90,6 +90,7 @@ function submit() {
   }
 
   form.img = base64ToFile(gltfViewerRef.value.getScreenshot());
+
   upload.value.submit();
 }
 </script>

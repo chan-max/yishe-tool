@@ -149,10 +149,12 @@ watch(
 );
 
 function screenshot() {
-  renderer.render(scene, camera);
+  renderer.render(scene, camera); // 截取会出现白图片
   var img = renderer.domElement.toDataURL("image/png"); // base64
-  var win = window.open("", "_blank");
-  win.document.write('<img src="' + img + '"/>');
+
+  // var win = window.open("", "_blank");
+  // win.document.write('<img src="' + img + '"/>');
+
   emits("screenshot", img);
 }
 </script>

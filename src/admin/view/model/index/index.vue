@@ -1,7 +1,10 @@
 <template>
   <div class="admin-model-index">
-    <el-card class="admin-model-index-card" v-for="i in models" shadow="never">
-      body
+    <el-card class="admin-model-index-card" v-for="m in models" shadow="never">
+      <img
+        style="width: 100%; height: 100%"
+        :src="__DEV__ ? '/api' + m.imgPath : m.imgPath"
+      />
     </el-card>
     <el-card
       @click="$router.push({ name: 'ModelUpload' })"
@@ -55,5 +58,6 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 !important;
 }
 </style>

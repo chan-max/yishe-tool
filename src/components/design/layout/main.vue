@@ -6,12 +6,9 @@
   <div class="designiy-left">
     <left-menu></left-menu>
   </div>
-  <div class="designiy-right">
-    <stickers-tabs @dragend="dragend"></stickers-tabs>
-  </div>
+  <div class="designiy-right"></div>
   <div class="designiy-bottom"></div>
   <div id="designiy-canvas-container" ref="mountContainer"></div>
-
   <div class="designiy-center-float"></div>
 </template>
 <script setup>
@@ -104,32 +101,21 @@ function dragend(draggingEl) {
 
 <style lang="less">
 .designiy-top {
-  height: 44px;
-  width: 100%;
-  position: absolute;
-  border-bottom: 1px solid #e3e3e3;
-  top: 0;
-  z-index: 10;
-}
-
-.designiy-sub-top {
   height: 36px;
   width: 100%;
   position: absolute;
-  background-color: #fff;
-  border-bottom: 1px solid #e3e3e3;
-  top: 50px;
+  top: 0;
   z-index: 10;
 }
 
 .designiy-left {
   position: absolute;
   left: 0;
-  top: 44px;
-  height: calc(100% - 44px);
-  width: 50px;
+  top: 36px;
+  height: calc(100% - 36px);
+  width: 46px;
   background: #fff;
-  border-right: 1px solid #e3e3e3;
+  border-right: 1px solid #eee;
   overflow: auto;
   z-index: 10;
 }
@@ -137,11 +123,11 @@ function dragend(draggingEl) {
 .designiy-right {
   position: absolute;
   right: 0;
-  top: 44px;
-  height: calc(100% - 44px);
+  top: 36px;
+  height: calc(100% - 36px);
   width: auto;
   background: #fff;
-  border-left: 1px solid #e3e3e3;
+  border-left: 1px solid #eee;
   overflow: auto;
   z-index: 10;
 }

@@ -25,6 +25,8 @@ app.use(_static(path.join(__dirname, "./dist")));
 
 app.use(_static(path.join(__dirname, "./static")));
 
+app.use(_static(path.join(__dirname, "./uploads")));
+
 
 app.use(cors({ origin: "*", credentials: true }));
 

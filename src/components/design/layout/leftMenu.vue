@@ -20,7 +20,6 @@
         <font-awesome-icon :icon="['fas', 'ruler']" />
       </div>
     </el-tooltip>
-
     <el-tooltip content="设置场景" placement="right">
       <div class="menu-bar-item">
         <font-awesome-icon :icon="['fas', 'video']" />
@@ -63,14 +62,14 @@
   align-items: center;
   cursor: pointer;
   svg {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
   }
   &:hover {
     color: #06f;
     svg {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
   }
 }

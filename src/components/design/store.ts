@@ -1,7 +1,7 @@
-import { ref, shallowRef } from "vue"
+import { computed, ref, shallowRef, watchEffect } from "vue"
 
 // 是否为暗色模式
-export const isDarkMode = ref(false)
+export const isDarkMode = ref(true)
 
 // 是否展示素材菜单
  export const showRightMenu = shallowRef(true);
@@ -34,8 +34,13 @@ export const isFullpage = ref(false)
 export const isShowBgControlForm = ref(false)
 
 // 画布背景颜色 
-export const CanvasBgColor = ref('#eeeeee')
+export const CanvasBgColor = ref('')
 
 // 画布背景透明度
 export const CanvasBgOpacity = ref('1')
 
+
+// 画布颜色随着暗色模式的变化而变化
+watchEffect(() => {
+    CanvasBgColor.value = isDarkMode.value ? '#181818' : '#eee'
+})

@@ -1,5 +1,6 @@
 <template>
   <div class="designiy-header">
+    <div style="flex-grow: 1"></div>
     <div class="designiy-header-home"></div>
     <div class="designiy-header-select-skybox">
       <el-dropdown @command="selectSkybox" size="small">
@@ -40,8 +41,6 @@
         :predefine="predefineColors"
       />
     </div>
-
-    <div style="flex-grow: 1"></div>
 
     <div
       @click="isDarkMode = !isDarkMode"

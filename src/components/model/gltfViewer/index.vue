@@ -136,6 +136,7 @@ async function initModel() {
 
 defineExpose({
   getScreenshot() {
+    renderer.render(scene, camera); // 截取会出现白图片
     return renderer.domElement.toDataURL("image/png");
   },
 });

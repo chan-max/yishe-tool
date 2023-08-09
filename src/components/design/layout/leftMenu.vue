@@ -66,7 +66,6 @@
     height: 15px;
   }
   &:hover {
-    color: #06f;
     svg {
       width: 18px;
       height: 18px;

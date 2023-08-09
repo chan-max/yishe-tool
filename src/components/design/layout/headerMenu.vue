@@ -26,8 +26,8 @@
               v-for="(model, index) in modelList"
               :key="index"
               :command="model"
-              >{{ model.name }}</el-dropdown-item
-            >
+              >{{ model.name }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -43,6 +43,7 @@
     </div>
 
     <div
+      class="designiy-header-changemode"
       @click="isDarkMode = !isDarkMode"
       style="
         width: 50px;
@@ -57,9 +58,6 @@
       <font-awesome-icon v-else :icon="['fas', 'moon']" />
     </div>
 
-    <el-button type="primary" size="small" plain>
-      <span style="font-weight: bold">上 传</span>
-    </el-button>
     <el-button type="primary" size="small">
       <span style="font-weight: bold">保 存</span>
     </el-button>

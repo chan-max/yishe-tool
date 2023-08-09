@@ -34,7 +34,6 @@ app.use(cors({ origin: "*", credentials: true }));
 const uploadPath = path.join(__dirname, 'uploads')
 
 
-
 app.use(koaBody({ multipart: true ,    
     formidable: {
     // 上传目录
@@ -42,7 +41,6 @@ app.use(koaBody({ multipart: true ,
     // 保留文件扩展名
     keepExtensions: true,
 }}));
-
 
 
 app.use(router.routes());

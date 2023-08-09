@@ -10,6 +10,8 @@
   <div class="designiy-bottom"></div>
   <div id="designiy-canvas-container" ref="mountContainer"></div>
   <div class="designiy-center-float"></div>
+
+  <ddialog>666666</ddialog>
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect } from "vue";
@@ -22,6 +24,7 @@ import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
 import leftMenu from "./leftMenu.vue";
 import subHeader from "./subHeader.vue";
+import ddialog from "../components/dialog.vue";
 
 import {
   Mesh,

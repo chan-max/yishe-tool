@@ -44,3 +44,6 @@ export const CanvasBgOpacity = ref('1')
 watchEffect(() => {
     CanvasBgColor.value = isDarkMode.value ? '#181818' : '#eee'
 })
+
+// 是否展示基础模型选择菜单
+export const showBaseModelSelect = ref(false);

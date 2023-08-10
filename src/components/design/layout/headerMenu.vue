@@ -42,22 +42,6 @@
       />
     </div>
 
-    <div
-      class="designiy-header-changemode"
-      @click="isDarkMode = !isDarkMode"
-      style="
-        width: 50px;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-      "
-    >
-      <font-awesome-icon v-if="isDarkMode" :icon="['fas', 'sun']" />
-      <font-awesome-icon v-else :icon="['fas', 'moon']" />
-    </div>
-
     <el-button type="primary" size="small">
       <span style="font-weight: bold">保 存</span>
     </el-button>

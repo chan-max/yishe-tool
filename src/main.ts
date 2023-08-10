@@ -15,7 +15,7 @@ import 'element-plus/theme-chalk/display.css'
 import '@icon-park/vue/styles/index.css'
 import { setupAction } from './actions/setupAction';
 import './resource/fontAwesome'
-
+import 'animate.css';
 
 import { FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 

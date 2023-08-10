@@ -1,7 +1,7 @@
 <template>
   <div class="menu-bar">
     <el-tooltip content="选择服装模型" placement="right">
-      <div class="menu-bar-item">
+      <div class="menu-bar-item" @click="showBaseModelSelect = !showBaseModelSelect">
         <font-awesome-icon :icon="['fas', 'shirt']" />
       </div>
     </el-tooltip>
@@ -40,9 +40,17 @@
         <font-awesome-icon :icon="['fas', 'circle-question']" />
       </div>
     </el-tooltip>
+    <el-tooltip :content="isDarkMode ? '白天模式' : '夜间模式'" placement="right">
+      <div class="menu-bar-item" @click="isDarkMode = !isDarkMode">
+        <font-awesome-icon v-if="isDarkMode" :icon="['fas', 'sun']" />
+        <font-awesome-icon v-else :icon="['fas', 'moon']" />
+      </div>
+    </el-tooltip>
   </div>
 </template>
-<script></script>
+<script setup>
+import { showBaseModelSelect, isDarkMode } from "../store";
+</script>
 <style lang="less">
 .menu-bar {
   width: 100%;

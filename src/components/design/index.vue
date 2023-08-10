@@ -1,5 +1,5 @@
 <template>
-  <div class="designiy" :class="{ dark: isDarkMode }">
+  <div class="designiy" :class="isDarkMode ? 'dark' : 'light'">
     <main-view></main-view>
   </div>
 </template>

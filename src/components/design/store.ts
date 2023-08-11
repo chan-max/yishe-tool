@@ -1,3 +1,4 @@
+import { setFullscreen } from "@/common/browser";
 import { computed, ref, shallowRef, watchEffect } from "vue"
 
 // 是否为暗色模式
@@ -28,7 +29,9 @@ export const textureCanvas = shallowRef()
 export const currentCustomTextureCanvas = shallowRef()
 
 // 当前组件是否全屏
-export const isFullpage = ref(false)
+export const isFullScreen = ref(false)
+watchEffect(() => setFullscreen(isFullScreen.value))
+
 
 // 是否展示背景控制表单
 export const isShowBgControlForm = ref(false)
@@ -47,3 +50,6 @@ watchEffect(() => {
 
 // 是否展示基础模型选择菜单
 export const showBaseModelSelect = ref(false);
+
+
+

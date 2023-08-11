@@ -15,6 +15,11 @@
         <font-awesome-icon :icon="['fas', 'font']" />
       </div>
     </el-tooltip>
+    <el-tooltip content="自定义涂鸦" placement="right">
+      <div class="menu-bar-item">
+        <font-awesome-icon :icon="['fas', 'palette']" />
+      </div>
+    </el-tooltip>
     <el-tooltip content="尺寸测量工具" placement="right">
       <div class="menu-bar-item">
         <font-awesome-icon :icon="['fas', 'ruler']" />
@@ -30,6 +35,7 @@
         <font-awesome-icon :icon="['fas', 'lightbulb']" />
       </div>
     </el-tooltip>
+
     <el-tooltip content="预览模型" placement="right">
       <div class="menu-bar-item">
         <font-awesome-icon :icon="['fas', 'eye']" />
@@ -46,10 +52,19 @@
         <font-awesome-icon v-else :icon="['fas', 'moon']" />
       </div>
     </el-tooltip>
+    <el-tooltip :content="isFullScreen ? '退出全屏' : '进入全屏'" placement="right">
+      <div class="menu-bar-item" @click="isFullScreen = !isFullScreen">
+        <font-awesome-icon
+          v-if="isFullScreen"
+          :icon="['fas', 'down-left-and-up-right-to-center']"
+        />
+        <font-awesome-icon v-else :icon="['fas', 'up-right-and-down-left-from-center']" />
+      </div>
+    </el-tooltip>
   </div>
 </template>
 <script setup>
-import { showBaseModelSelect, isDarkMode } from "../store";
+import { showBaseModelSelect, isDarkMode, isFullScreen } from "../store";
 </script>
 <style lang="less">
 .menu-bar {

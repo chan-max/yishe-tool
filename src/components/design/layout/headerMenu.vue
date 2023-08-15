@@ -1,22 +1,17 @@
 <template>
   <div class="designiy-header">
-    <div style="flex-grow: 1"></div>
-    <div class="designiy-header-home"></div>
-    <div class="designiy-header-select-skybox">
-      <el-dropdown @command="selectSkybox" size="small">
-        <div class="designiy-header-select-skybox-btn">天空球</div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item
-              v-for="(skybox, index) in skyboxList"
-              :key="index"
-              :command="skybox"
-              >{{ skybox.name }}</el-dropdown-item
-            >
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+    <div class="designiy-header-logo"></div>
+
+    <div class="designiy-header-item">
+      撤销
+      <font-awesome-icon style="transform: scaleX(-1)" :icon="['fas', 'share']" />
     </div>
+    <div class="designiy-header-item">
+      <font-awesome-icon :icon="['fas', 'share']" />
+      重做
+    </div>
+
+    <div style="flex-grow: 1"></div>
     <div class="designiy-header-select-model">
       <el-dropdown @command="modelChange" size="small" split-button>
         <div class="designiy-header-select-model-btn">{{ currentModel.name }}</div>
@@ -126,28 +121,15 @@ getBaseSkybox().then((result) => (skyboxList.value = result.data));
   margin: 0 10px;
 }
 
-.designiy-header-select-skybox {
-  display: flex;
-  align-items: center;
-  margin: auto 10px;
-  .designiy-header-select-skybox-btn {
-    color: #555;
-    font-size: 12px;
-    line-height: 20px;
-    height: 20px;
-    outline: none;
-  }
-}
-
-.designiy-header-home {
-  width: 10px;
+.designiy-header-logo {
+  width: 50px;
+  height: 40px;
 }
 
 .designiy-header-item {
-  color: #555;
+  color: #eee;
   font-size: 12px;
-  line-height: 20px;
-  height: 20px;
-  margin: 0 10px;
+  margin: 0 7px;
+  cursor: pointer;
 }
 </style>

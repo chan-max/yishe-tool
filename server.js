@@ -11,11 +11,7 @@ import { initRouter } from "./server/router.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// import { setupDatabase } from "./database/setup.js";
-
-import db from './server/models/index.js'
-
-console.log('12132')
+import { setupDatabase } from "./database/setup.js";
 
 
 const app = new Koa();

@@ -21,10 +21,7 @@ import { FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 const app = createApp(App)
 
-
-
 app.component('font-awesome-icon', FontAwesomeIcon)
-
 
 app.use(Antd)
 
@@ -43,4 +40,5 @@ setupAction(app,router,pinia)
 app.config.globalProperties.__DEV__ = import.meta.env.DEV
 
 app.mount('#app')
+
 

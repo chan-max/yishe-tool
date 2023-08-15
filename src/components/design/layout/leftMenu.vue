@@ -74,7 +74,7 @@ import { showBaseModelSelect, isDarkMode, isFullScreen } from "../store";
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 30px;
+  padding-top: 10px;
 }
 
 .menu-bar-item {

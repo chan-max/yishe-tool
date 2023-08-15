@@ -97,7 +97,8 @@ function close() {
 }
 
 .designiy-dialog-content {
-  min-width: 400px;
-  min-height: 200px;
+  min-width: 100px;
+  min-height: 50px;
+  padding:10px ;
 }
 </style>

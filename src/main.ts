@@ -16,6 +16,7 @@ import '@icon-park/vue/styles/index.css'
 import { setupAction } from './actions/setupAction';
 import './resource/fontAwesome'
 import 'animate.css';
+import './style/base.less'
 
 import { FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
@@ -38,6 +39,8 @@ app.use(ElementPlus)
 setupAction(app,router,pinia)
 
 app.config.globalProperties.__DEV__ = import.meta.env.DEV
+
+
 
 app.mount('#app')
 

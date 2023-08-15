@@ -28,7 +28,6 @@ import stickersTabs from "./stickers/stickersTabs.vue";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
 import leftMenu from "./leftMenu.vue";
-import subHeader from "./subHeader.vue";
 import diydialog from "../components/dialog.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
 

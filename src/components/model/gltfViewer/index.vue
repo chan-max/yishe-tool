@@ -155,7 +155,7 @@ function screenshot() {
 
   // var win = window.open("", "_blank");
   // win.document.write('<img src="' + img + '"/>');
-
+  
   emits("screenshot", img);
 }
 </script>

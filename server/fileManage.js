@@ -23,7 +23,7 @@ export const getUploadPath = () => {
 // 获取已上传文件的相对路径
 export function getRePath(_path){
     let basePath = path.join(os.homedir(),'Desktop','file')
-    return _path.split(basePath)[1].replace('\\','/')
+    return _path.split(basePath)[1]
 }
 
 

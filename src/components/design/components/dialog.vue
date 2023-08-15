@@ -9,7 +9,7 @@
       ref="el"
       class="designiy-dialog"
       :style="style"
-      style="position: fixed"
+      style="position: fixed;"
     >
       <div class="designiy-dialog-header">
         <div class="designiy-dialog-header-title">{{ title }}</div>
@@ -30,7 +30,23 @@ const el = ref();
 const { x, y, style } = useDraggable(el, {
   initialValue: {},
 });
-const props = defineProps(["title", "show"]);
+
+const props = defineProps({
+  title:'',
+  show:'',
+  position:{
+    default(props){
+      return {
+        top:'',
+        bottom:'',
+        left:'',
+        right:'',
+        ...props.position
+      }
+    }
+  }
+});
+
 
 const emits = defineEmits(["close"]);
 
@@ -45,7 +61,11 @@ function close() {
   background: #353535;
   border-radius: 2px;
   box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.25);
-  top: 25%;
+
+  top:v-bind("props.position.top");
+  left:v-bind("props.position.left");
+  bottom:v-bind("props.position.bottom");
+  right:v-bind("props.position.right");
 }
 
 .designiy-dialog-header {

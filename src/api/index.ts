@@ -1,3 +1,4 @@
+import { handlerFilePath } from './apiHelper';
 import apiInstance from './apiInstance';
 
 // 检验账号是否存在
@@ -17,6 +18,17 @@ export const getBannerModel = () => apiInstance.get('/getBannerModel')
 // 获取可以进行编辑的内置模型
 export const getBaseModelList = () => apiInstance.get('/getBaseModelList')
 
+export function baseModelListAdapter(data){
+    return data.map((item) => {
+        return {
+            name:item.name,
+            desc:item.description,
+            img: handlerFilePath(item.imgPath) ,
+            file:handlerFilePath(item.filePath),
+        }
+    })
+}
+
 // 获取基本盒子天空模型
 export const getBaseSkybox = () => apiInstance.get('getBaseSkybox')
 
@@ -27,5 +39,4 @@ export const getWebStickers = () => apiInstance.post('getWebStickers')
 export const getMyStickers = () => apiInstance.post('getMyStickers')
 
 // 上传基础模型
-
 export const uploadBaseModel = (data: any) => apiInstance.post('uploadBaseModel', data)

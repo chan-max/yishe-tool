@@ -11,7 +11,7 @@
       :style="style"
       style="position: fixed;"
     >
-      <div class="designiy-dialog-header">
+      <div class="designiy-dialog-header" v-if="header">
         <div class="designiy-dialog-header-title">{{ title }}</div>
         <div @click="close" class="designiy-dialog-header-close">
           <font-awesome-icon :icon="['fas', 'xmark']" />
@@ -32,8 +32,13 @@ const { x, y, style } = useDraggable(el, {
 });
 
 const props = defineProps({
-  title:'',
-  show:'',
+  title:'', // 顶部标题
+  show:{
+    default:true
+  }, // 是否展示
+  header:{
+    default:true
+  },
   position:{
     default(props){
       return {
@@ -53,6 +58,8 @@ const emits = defineEmits(["close"]);
 function close() {
   emits("close");
 }
+
+
 </script>
 <style>
 .designiy-dialog {
@@ -77,7 +84,7 @@ function close() {
     rgba(0, 0, 0, 0.15) 0%,
     rgba(0, 0, 0, 0.25) 100%
   );
-  cursor: all-scroll;
+  /* cursor: all-scroll; */
   padding: 5px 10px;
   border-bottom: 2px solid #222;
 }
@@ -97,8 +104,9 @@ function close() {
 }
 
 .designiy-dialog-content {
-  min-width: 100px;
-  min-height: 50px;
+  min-width: 200px;
+  min-height: 100px;
   padding:10px ;
+  text-align: left;
 }
 </style>

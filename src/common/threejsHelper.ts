@@ -5,8 +5,7 @@ import {TextureLoader} from 'three'
 export function gltfLoader(url) {
     let loader = new GLTFLoader();
     return new Promise(async (resolve,reject) => {
-        let _url = (url.startsWith('http') || url.startsWith('blob')  || !import.meta.env.DEV)  ? url : `api/${url}`;
-        let gltf = await loader.loadAsync(_url)
+        let gltf = await loader.loadAsync(url)
         resolve(gltf)
     })
 }

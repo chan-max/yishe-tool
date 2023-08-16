@@ -1,20 +1,25 @@
 <template>
   <div class="designiy-base-model-select">
-    <div class="designiy-base-model-select-item" v-for="m in models">
-      <img :src="(__DEV__ ? 'api' : '') +  m.imgPath" draggable="false">
-    </div>
+    <el-image  class="designiy-base-model-select-item"  v-for="m in models" :src="m.img" draggable="false" @click="selectModel(m)"></el-image>
   </div>
 </template>
 <script setup>
-import { getBaseModelList } from "@/api";
+import { getBaseModelList,baseModelListAdapter  } from "@/api";
 import { onMounted, ref } from "vue";
+import {showBaseModelSelectDialog,currentModelInfo} from '../../store.ts'
 
 const models = ref([]);
 
 onMounted(async () => {
   const res = await getBaseModelList();
-  models.value = res.data;
+  models.value = baseModelListAdapter(res.data);
 });
+
+
+function selectModel(m){
+  showBaseModelSelectDialog.value = false
+  currentModelInfo.value = m
+}
 
 </script>
 <style lang="less">
@@ -32,10 +37,6 @@ onMounted(async () => {
 .designiy-base-model-select-item{
   width:190px;
   height: 120px;
-  img{
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-  }
+  cursor: pointer;
 }
 </style>

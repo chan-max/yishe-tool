@@ -4,9 +4,6 @@ import { computed, ref, shallowRef, watchEffect } from "vue"
 // 是否为暗色模式
 export const isDarkMode = ref(true)
 
-// 是否展示素材菜单
- export const showRightMenu = shallowRef(true);
-
 // 加载
 export const isLoading = shallowRef(false);
 
@@ -37,19 +34,25 @@ watchEffect(() => setFullscreen(isFullScreen.value))
 export const isShowBgControlForm = ref(false)
 
 // 画布背景颜色 
-export const CanvasBgColor = ref('')
+export const canvasBgColor = ref('')
 
 // 画布背景透明度
-export const CanvasBgOpacity = ref('1')
+export const canvasBgOpacity = ref('1')
 
 
 // 画布颜色随着暗色模式的变化而变化
 watchEffect(() => {
-    CanvasBgColor.value = isDarkMode.value ? '#181818' : '#eee'
+    canvasBgColor.value = isDarkMode.value ? '#181818' : '#eee'
 })
 
 // 是否展示基础模型选择菜单
-export const showBaseModelSelect = ref(false);
+export const showBaseModelSelectDialog = ref(false);
 
+// 当前选中的模型文件路径
+export const currentModelFilePath = ref()
 
+// 当前操作的模型信息
+export const currentModelInfo = ref()
 
+// 是否展示场景控制弹窗
+export const showSceneControlDialog = ref(false)

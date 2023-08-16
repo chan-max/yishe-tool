@@ -1,7 +1,7 @@
 <template>
   <div class="menu-bar">
     <el-tooltip content="选择服装模型" placement="right">
-      <div class="menu-bar-item" @click="showBaseModelSelect = !showBaseModelSelect">
+      <div class="menu-bar-item" @click="showBaseModelSelectDialog = !showBaseModelSelectDialog">
         <font-awesome-icon :icon="['fas', 'shirt']" />
       </div>
     </el-tooltip>
@@ -26,7 +26,7 @@
       </div>
     </el-tooltip>
     <el-tooltip content="设置场景" placement="right">
-      <div class="menu-bar-item">
+      <div class="menu-bar-item" @click="showSceneControlDialog = !showSceneControlDialog">
         <font-awesome-icon :icon="['fas', 'video']" />
       </div>
     </el-tooltip>
@@ -35,7 +35,6 @@
         <font-awesome-icon :icon="['fas', 'lightbulb']" />
       </div>
     </el-tooltip>
-
     <el-tooltip content="预览模型" placement="right">
       <div class="menu-bar-item">
         <font-awesome-icon :icon="['fas', 'eye']" />
@@ -64,7 +63,9 @@
   </div>
 </template>
 <script setup>
-import { showBaseModelSelect, isDarkMode, isFullScreen } from "../store";
+import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canvasBgOpacity, showSceneControlDialog, } from "../store";
+
+
 </script>
 <style lang="less">
 .menu-bar {

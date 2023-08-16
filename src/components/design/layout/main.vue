@@ -1,7 +1,7 @@
 <template>
   <loading v-if="isLoading"></loading>
   <div class="designiy-top">
-    <header-menu @select-skybox="selectSkybox" @select-model="selectModel" />
+    <header-menu/>
   </div>
   <div class="designiy-left">
     <left-menu></left-menu>
@@ -11,25 +11,34 @@
   <div id="designiy-canvas-container" ref="mountContainer"></div>
 
   <diydialog
-    :show="showBaseModelSelect"
+    :show="showBaseModelSelectDialog"
     title="选择模型"
-    @close="showBaseModelSelect = false"
+    @close="showBaseModelSelectDialog = false"
   >
     <base-model-select></base-model-select>
   </diydialog>
+
+  <diydialog
+    title="设置场景"
+    :show="showSceneControlDialog"
+    @close="showSceneControlDialog = false"
+  >
+    <scene-control></scene-control>
+  </diydialog>
 </template>
 <script setup>
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect ,watch} from "vue";
 import { Designiy } from "../designiy";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
-import { CanvasBgColor, CanvasBgOpacity, showBaseModelSelect } from "../store";
+import { canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog} from "../store";
 import stickersTabs from "./stickers/stickersTabs.vue";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
+import sceneControl from './sceneControl/index.vue'
 
 import {
   Mesh,
@@ -52,22 +61,34 @@ const designiy = new Designiy();
 // 是否处于加载中
 const isLoading = computed(() => designiy.loading.value);
 
-function selectModel(model) {
-  designiy.setMainModel(model.source);
-}
+watch(currentModelInfo,() => {
+  const {
+    file
+  } = currentModelInfo.value
 
-function selectSkybox(skybox) {
-  designiy.setSkybox(skybox.source);
-}
+  designiy.setMainModel(file)
+})
+
+
+
+
+
+
 
 designiy.addDirectionalLight(0xffffff, 0.8, 0, 0, 10);
 designiy.addDirectionalLight(0xffffff, 0.8, 0, 0, -10);
 
 // 改变画布背景颜色
-watchEffect(() => designiy.setBgColor(CanvasBgColor.value, CanvasBgOpacity.value));
+watchEffect(() => designiy.setBgColor(canvasBgColor.value, canvasBgOpacity.value));
 
+
+// 渲染动画
 onMounted(() => designiy.render(mountContainer.value));
 
+
+
+
+// 贴图逻辑暂时保留
 function dragend(draggingEl) {
   let mesh = designiy.mainMesh;
 
@@ -109,7 +130,7 @@ function dragend(draggingEl) {
 
 <style lang="less">
 .designiy-top {
-  height: 36px;
+  height: 30px;
   width: 100%;
   position: absolute;
   top: 0;
@@ -119,9 +140,9 @@ function dragend(draggingEl) {
 .designiy-left {
   position: absolute;
   left: 0;
-  top: 36px;
-  height: calc(100% - 36px);
-  width: 46px;
+  top: 30px;
+  height: calc(100% - 30px);
+  width: 40px;
   background: #fff;
   border-right: 1px solid #eee;
   overflow: auto;
@@ -131,8 +152,8 @@ function dragend(draggingEl) {
 .designiy-right {
   position: absolute;
   right: 0;
-  top: 36px;
-  height: calc(100% - 36px);
+  top: 30px;
+  height: calc(100% - 30px);
   width: auto;
   background: #fff;
   border-left: 1px solid #eee;

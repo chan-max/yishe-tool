@@ -2,11 +2,13 @@ import { useLoginStatusStore } from "@/store/stores/user";
 import axios from "axios";
 
 // 全局设置
-axios.defaults.timeout = 10000; // 时间超时设置10s
+axios.defaults.timeout = 100000; // 时间超时设置100s
 
 const apiInstance = axios.create();
 
 apiInstance.defaults.baseURL = import.meta.env.DEV ? "api" : "";
+
+
 
 axios.interceptors.request.use = apiInstance.interceptors.request.use;
 

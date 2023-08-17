@@ -142,7 +142,7 @@ function dragend(draggingEl) {
   left: 0;
   top: 30px;
   height: calc(100% - 30px);
-  width: 40px;
+  width: 36px;
   background: #fff;
   border-right: 1px solid #eee;
   overflow: auto;

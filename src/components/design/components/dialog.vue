@@ -65,7 +65,7 @@ function close() {
 .designiy-dialog {
   z-index: 9;
   /* 默认宽高 */
-  background: #353535;
+  background: #303030;
   border-radius: 2px;
   box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.25);
 
@@ -85,7 +85,7 @@ function close() {
     rgba(0, 0, 0, 0.25) 100%
   );
   /* cursor: all-scroll; */
-  padding: 5px 10px;
+  padding: 2px 7px;
   border-bottom: 2px solid #222;
 }
 
@@ -100,7 +100,6 @@ function close() {
 .designiy-dialog-header-title {
   color: #c7c7c7;
   font-size: 12px;
-  font-weight: bold;
 }
 
 .designiy-dialog-content {

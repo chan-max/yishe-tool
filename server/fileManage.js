@@ -1,6 +1,8 @@
 import fs from 'fs'
-import path, { dirname } from 'path'
+import path from 'path'
 import os from 'os'
+
+export const uploadsPath = path.join(os.homedir(),'Desktop','uploads')
 
 function getDir(){
     const date = new Date();
@@ -13,7 +15,7 @@ function getDir(){
 
 // 文件上传的路径
 export const getUploadPath = () => {
-    const dir =  path.join(os.homedir(),'Desktop','file',getDir())
+     const dir =  path.join(uploadsPath,getDir())
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
     }
@@ -22,7 +24,7 @@ export const getUploadPath = () => {
 
 // 获取已上传文件的相对路径
 export function getRePath(_path){
-    let basePath = path.join(os.homedir(),'Desktop','file')
+    let basePath = uploadsPath
     return _path.split(basePath)[1]
 }
 

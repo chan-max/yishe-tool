@@ -30,7 +30,9 @@ app.use(_static(path.join(__dirname, "./dist")));
 
 app.use(_static(path.join(__dirname, "./static")));
 
-app.use(_static(path.join(os.homedir(), 'Desktop','file')));
+import { uploadsPath } from "./server/fileManage.js";
+app.use(_static(uploadsPath));
+
 
 app.use(cors({ origin: "*", credentials: true }));
 

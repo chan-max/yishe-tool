@@ -25,13 +25,21 @@
   >
     <scene-control></scene-control>
   </diydialog>
+  <diydialog
+    :header="false"
+    :show="showImageStickerDialog"
+    style="width:300px;height:calc(100% - 35px);"
+    :position="{left:'40px',bottom:0}"
+  >
+    <image-sticker></image-sticker>
+  </diydialog>
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect ,watch} from "vue";
 import { Designiy } from "../designiy";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
-import { canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog} from "../store";
+import { canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog} from "../store";
 import stickersTabs from "./stickers/stickersTabs.vue";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -39,6 +47,8 @@ import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
 import sceneControl from './sceneControl/index.vue'
+import imageSticker from './imageSticker/index.vue'
+
 
 import {
   Mesh,

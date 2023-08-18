@@ -56,3 +56,6 @@ export const currentModelInfo = ref()
 
 // 是否展示场景控制弹窗
 export const showSceneControlDialog = ref(false)
+
+// 是否展示图片贴图的弹窗
+export const showImageStickerDialog = ref(false)

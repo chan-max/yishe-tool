@@ -65,7 +65,7 @@ function close() {
 .designiy-dialog {
   z-index: 9;
   /* 默认宽高 */
-  background: #303030;
+  background: #282828;
   border-radius: 2px;
   box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.25);
 
@@ -85,7 +85,7 @@ function close() {
     rgba(0, 0, 0, 0.25) 100%
   );
   /* cursor: all-scroll; */
-  padding: 2px 7px;
+  padding: 4px 10px;
   border-bottom: 2px solid #222;
 }
 
@@ -103,8 +103,8 @@ function close() {
 }
 
 .designiy-dialog-content {
-  min-width: 200px;
-  min-height: 100px;
+  width: 100%;
+  height: 100%;
   padding:10px ;
   text-align: left;
 }

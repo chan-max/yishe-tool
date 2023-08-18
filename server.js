@@ -12,8 +12,6 @@ import fs from 'fs'
 
 import { getUploadPath } from "./server/fileManage.js";
 
-
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -31,7 +29,13 @@ app.use(_static(path.join(__dirname, "./dist")));
 app.use(_static(path.join(__dirname, "./static")));
 
 import { uploadsPath } from "./server/fileManage.js";
+
+
 app.use(_static(uploadsPath));
+
+
+
+
 
 
 app.use(cors({ origin: "*", credentials: true }));

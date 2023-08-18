@@ -6,7 +6,7 @@
       </div>
     </el-tooltip>
     <el-tooltip content="图片贴图" placement="right">
-      <div class="menu-bar-item">
+      <div class="menu-bar-item" @click="showImageStickerDialog = !showImageStickerDialog">
         <font-awesome-icon :icon="['fas', 'image']" />
       </div>
     </el-tooltip>
@@ -63,7 +63,7 @@
   </div>
 </template>
 <script setup>
-import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canvasBgOpacity, showSceneControlDialog, } from "../store";
+import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canvasBgOpacity, showSceneControlDialog,showImageStickerDialog } from "../store";
 
 
 </script>
@@ -80,14 +80,14 @@ import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canv
 
 .menu-bar-item {
   width: 100%;
-  height: 40px;
+  height: 36px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   svg {
-    width: 15px;
-    height: 15px;
+    width: 14px;
+    height: 14px;
   }
   &:hover {
     svg {

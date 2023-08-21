@@ -4,34 +4,42 @@
     leave-active-class="animate__animated animate__bounceOut"
     duration="80"
   >
-    <div
+    <Draggable
       v-if="show"
-      ref="el"
       class="designiy-dialog"
-      :style="style"
+      v-slot="{ x, y }"
+      :initial-value="{ x, y}"
+      :prevent-default="true"
+      :handle="handle"
       style="position: fixed;"
     >
-      <div class="designiy-dialog-header" v-if="header">
-        <div class="designiy-dialog-header-title">{{ title }}</div>
-        <div @click="close" class="designiy-dialog-header-close">
-          <font-awesome-icon :icon="['fas', 'xmark']" />
+        <div  ref="handle" v-show="header" class="designiy-dialog-header">
+          <div class="designiy-dialog-header-title">{{ title }}</div>
+          <div @click="close" class="designiy-dialog-header-close">
+            <font-awesome-icon :icon="['fas', 'xmark']" />
+          </div>
         </div>
-      </div>
       <div class="designiy-dialog-content">
         <slot></slot>
+        {{ x  }}
+        {{ y }}
       </div>
-    </div>
+    </Draggable>
   </transition>
 </template>
 <script setup>
 import { defineProps, ref } from "vue";
 import { useDraggable } from "@vueuse/core";
-const el = ref();
-const { x, y, style } = useDraggable(el, {
-  initialValue: {},
+import { UseDraggable as Draggable } from '@vueuse/components'
+
+const handle  = ref()
+const { x, y, style } = useDraggable(handle, {
+  initialValue: {
+  },
 });
 
 const props = defineProps({
+  draggable:false, //
   title:'', // 顶部标题
   show:{
     default:true
@@ -68,7 +76,6 @@ function close() {
   background: #282828;
   border-radius: 2px;
   box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.25);
-
   top:v-bind("props.position.top");
   left:v-bind("props.position.left");
   bottom:v-bind("props.position.bottom");

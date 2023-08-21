@@ -30,8 +30,8 @@ app.use(_static(path.join(__dirname, "./static")));
 
 import { uploadsPath } from "./server/fileManage.js";
 
-
 app.use(_static(uploadsPath));
+
 
 
 

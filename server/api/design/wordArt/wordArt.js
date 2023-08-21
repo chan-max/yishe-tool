@@ -1,5 +1,5 @@
 import TextToSvg from 'text-to-svg'
-import  sharp from 'sharp';
+import sharp from 'sharp';
 import path from 'path'
 
 /*

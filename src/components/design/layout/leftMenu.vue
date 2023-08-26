@@ -60,6 +60,11 @@
         <font-awesome-icon v-else :icon="['fas', 'up-right-and-down-left-from-center']" />
       </div>
     </el-tooltip>
+    <el-tooltip content="导出当前模型" placement="right">
+      <div class="menu-bar-item">
+        <font-awesome-icon :icon="['fas', 'file-export']" />
+      </div>
+    </el-tooltip>
   </div>
 </template>
 <script setup>
@@ -80,7 +85,7 @@ import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canv
 
 .menu-bar-item {
   width: 100%;
-  height: 36px;
+  height: 34px;
   display: flex;
   justify-content: center;
   align-items: center;

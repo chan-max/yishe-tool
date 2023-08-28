@@ -6,36 +6,31 @@ import path from "path";
 import _static from "koa-static";
 import { koaBody } from "koa-body";
 import { fileURLToPath } from "url";
-import { initRouter } from "./server/router.js";
+import { initRouter } from "./router.js"
 import os from 'os'
 import fs from 'fs'
 
-import { getUploadPath } from "./server/fileManage.js";
+import { getUploadPath } from "./fileManage.js"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import { setupDatabase } from "./database/setup.js";
 
 const app = new Koa();
 const router = new Router();
-const sequelize = await setupDatabase();
 
-initRouter(router, sequelize, app);
+import db from './sequelize/models/index.js'
+
+initRouter(router, db.sequelize, app);
 
 // 前端打包后的代码
-app.use(_static(path.join(__dirname, "./dist")));
+app.use(_static(path.join(__dirname, "../dist")));
 
-app.use(_static(path.join(__dirname, "./static")));
+app.use(_static(path.join(__dirname, "../static")));
 
-import { uploadsPath } from "./server/fileManage.js";
+import { uploadsPath } from "./fileManage.js"
 
 app.use(_static(uploadsPath));
-
-
-
-
-
 
 
 app.use(cors({ origin: "*", credentials: true }));

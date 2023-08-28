@@ -21,8 +21,6 @@
         </div>
       <div class="designiy-dialog-content">
         <slot></slot>
-        {{ x  }}
-        {{ y }}
       </div>
     </Draggable>
   </transition>

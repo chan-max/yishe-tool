@@ -4,15 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "frontend:dev": "vite",
+    "": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "serve": "node --inspect=3000 ./server.js",
-    "serve:dev": "nodemon  --inspect server/index.js",
-    "dev": "concurrently \"vite --host 0.0.0.0\"  \"vitepress dev docs\"   \"nodemon  --inspect server.js\""
+    "serve": "node --inspect=3000 server/server.js",
+    "serve:dev": "nodemon  --inspect server/server.js",
+    "dev": "concurrently \"vite --host 0.0.0.0\"  \"vitepress dev docs\"   \"nodemon  --inspect server/server.js\""
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",

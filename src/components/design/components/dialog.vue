@@ -5,6 +5,7 @@
     duration="80"
   >
     <Draggable
+      @vnode-mounted="mounted"
       v-if="show"
       class="designiy-dialog"
       v-slot="{ x, y }"
@@ -21,14 +22,12 @@
         </div>
       <div class="designiy-dialog-content">
         <slot></slot>
-        {{ x  }}
-        {{ y }}
       </div>
     </Draggable>
   </transition>
 </template>
 <script setup>
-import { defineProps, ref } from "vue";
+import { defineProps, ref,onMounted } from "vue";
 import { useDraggable } from "@vueuse/core";
 import { UseDraggable as Draggable } from '@vueuse/components'
 
@@ -66,7 +65,10 @@ const emits = defineEmits(["close"]);
 function close() {
   emits("close");
 }
-
+ 
+function mounted(){
+  debugger
+}
 
 </script>
 <style>
@@ -113,5 +115,6 @@ function close() {
   width: 100%;
   height: 100%;
   text-align: left;
+  overflow-y: auto;
 }
 </style>

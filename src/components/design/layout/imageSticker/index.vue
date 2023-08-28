@@ -72,7 +72,7 @@
             font-size: 12px;
             font-weight: 100;
         }
-
+        
         .el-collapse-item__wrap{
           background-color: #3d3d3d;
           border:none;

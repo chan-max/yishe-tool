@@ -33,13 +33,21 @@
   >
     <image-sticker></image-sticker>
   </diydialog>
+  <diydialog
+    :header="false"
+    :show="showWordArtDialog"
+    style="width:300px;height:calc(100% - 35px);"
+    :position="{left:'40px',bottom:0}"
+  >
+    <word-art></word-art>
+  </diydialog>
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect ,watch} from "vue";
 import { Designiy } from "../designiy";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
-import { canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog} from "../store";
+import { canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showWordArtDialog} from "../store";
 import stickersTabs from "./stickers/stickersTabs.vue";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -48,7 +56,7 @@ import diydialog from "../components/dialog.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
 import sceneControl from './sceneControl/index.vue'
 import imageSticker from './imageSticker/index.vue'
-
+import wordArt from './wordArt/index.vue'
 
 import {
   Mesh,

@@ -59,3 +59,8 @@ export const showSceneControlDialog = ref(false)
 
 // 是否展示图片贴图的弹窗
 export const showImageStickerDialog = ref(false)
+
+// 是否展示艺术字弹窗
+export const showWordArtDialog = ref(false)
+
+

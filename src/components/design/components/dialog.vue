@@ -5,14 +5,14 @@
     duration="80"
   >
     <Draggable
-      @vnode-mounted="mounted"
       v-if="show"
+      @vue:mounted="mounted"
       class="designiy-dialog"
       v-slot="{ x, y }"
       :initial-value="{ x, y}"
       :prevent-default="true"
       :handle="handle"
-      style="position: fixed;"
+      :style="{zIndex}"
     >
         <div  ref="handle" v-show="header" class="designiy-dialog-header">
           <div class="designiy-dialog-header-title">{{ title }}</div>
@@ -27,9 +27,10 @@
   </transition>
 </template>
 <script setup>
-import { defineProps, ref,onMounted } from "vue";
+import { defineProps, ref,onMounted, computed } from "vue";
 import { useDraggable } from "@vueuse/core";
 import { UseDraggable as Draggable } from '@vueuse/components'
+import {zIndexDialog} from '../store'
 
 const handle  = ref()
 const { x, y, style } = useDraggable(handle, {
@@ -66,8 +67,12 @@ function close() {
   emits("close");
 }
  
+
+const zIndex = ref(zIndexDialog)
+
 function mounted(){
-  debugger
+    // 
+    zIndex.value += 1
 }
 
 </script>
@@ -82,6 +87,7 @@ function mounted(){
   left:v-bind("props.position.left");
   bottom:v-bind("props.position.bottom");
   right:v-bind("props.position.right");
+  position: fixed;
 }
 
 .designiy-dialog-header {

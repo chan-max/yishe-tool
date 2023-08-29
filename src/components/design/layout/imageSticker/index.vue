@@ -1,6 +1,6 @@
 <template>
     <div class="designiy-image-sticker">
-      66666
+      
     </div>
   </template>
   <script setup>
@@ -11,7 +11,6 @@
   <style lang="less">
     .designiy-image-sticker{
         padding:10px;
-
         .el-collapse{
             border:none;
         }

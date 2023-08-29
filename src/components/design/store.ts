@@ -1,5 +1,5 @@
 import { setFullscreen } from "@/common/browser";
-import { computed, ref, shallowRef, watchEffect } from "vue"
+import { computed, ref, shallowRef, watchEffect,watch } from "vue"
 
 // 是否为暗色模式
 export const isDarkMode = ref(true)
@@ -62,5 +62,10 @@ export const showImageStickerDialog = ref(false)
 
 // 是否展示艺术字弹窗
 export const showWordArtDialog = ref(false)
+
+// 保存弹窗当前的zIndex
+export var zIndexDialog = 0
+
+
 
 

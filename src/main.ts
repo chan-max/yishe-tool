@@ -17,6 +17,8 @@ import { setupAction } from './actions/setupAction';
 import './resource/fontAwesome'
 import 'animate.css';
 import './style/base.less'
+import 'default-passive-events'
+
 
 import { FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 

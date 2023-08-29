@@ -30,7 +30,7 @@
     "axios": "^1.4.0",
     "bootstrap-icons": "^1.10.3",
     "color": "^4.2.3",
-    "concurrently": "^8.2.0",
+    "concurrently": "^8.2.1",
     "dat.gui": "^0.7.9",
     "egg": "^3.15.0",
     "element-plus": "^2.2.32",

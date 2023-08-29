@@ -1,4 +1,4 @@
-import { signupHook } from "./api/base/signup.js";
+
 import { loginHook } from './api/base/login.js'
 import {getBannerModelHook} from './api/common/getBannerModel.js'
 import {getBaseModelListHook} from './api/common/getBaseModelList.js'
@@ -6,6 +6,8 @@ import {getBaseSkyboxHook } from "./api/common/getSkybox.js";
 import { getWebStickersHook } from "./api/design/getStickers.js";
 import { getWordArtStickerHook,createWordArtHook } from "./api/design/wordArt/wordArt.js";
 import { baseModelUploadHook } from "./api/base/baseModelUpload.js";
+import { signupHook } from "./api/base/signUp.js";
+
 
 export const initRouter = (router, sequelize, app) => {
     let hooks = [

@@ -8,7 +8,7 @@
   import {showBaseModelSelectDialog,currentModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
 import Color from 'color'
 
-  const predefineColors = ref(["#ffffff", "#dddddd", "#333333", "#555555"]);
+const predefineColors = ref(["#ffffff", "#dddddd", "#333333", "#555555"]);
 
 const bgColor = computed({
   get() {
@@ -25,8 +25,8 @@ const bgColor = computed({
   },
 });
 
-  </script>
-  <style lang="less">
+</script>
+<style lang="less">
 
-  </style>
+</style>
   

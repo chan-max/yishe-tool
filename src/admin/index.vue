@@ -39,7 +39,20 @@
             </el-menu-item-group>
           </el-sub-menu>
 
-          <el-menu-item index="2">
+          <el-sub-menu index="2">
+            <template #title>
+              <el-icon><icon-menu /></el-icon>
+              <span>图片管理</span>
+            </template>
+            <el-menu-item-group >
+              <el-menu-item index="/admin/image">所有图片</el-menu-item>
+              <el-menu-item index="/admin/image/upload">上传图片</el-menu-item>
+            </el-menu-item-group>
+          </el-sub-menu>
+          
+
+
+          <el-menu-item index="3">
             <el-icon><User /></el-icon>
             <span class="menu-item">用户管理</span>
           </el-menu-item>

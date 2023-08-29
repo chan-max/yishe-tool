@@ -64,7 +64,7 @@ export const showImageStickerDialog = ref(false)
 export const showWordArtDialog = ref(false)
 
 // 保存弹窗当前的zIndex
-export var zIndexDialog = 0
+export const zIndexDialog = ref(10)
 
 
 

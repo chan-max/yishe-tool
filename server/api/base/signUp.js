@@ -4,7 +4,6 @@ export const signupHook = (router, sequelize, app) => router.post('/signup', asy
     const data = ctx.request.body
     const { phonenumber, account, password,avatar } = data
 
-    debugger
     const table = sequelize.models.User
 
     const _user = await table.findOne({ where: { account } })

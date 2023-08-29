@@ -8,7 +8,7 @@ export const baseModelUploadHook = (router, sequelize) => router.post("/baseMode
     const table = sequelize.models.BaseModel;
     const { name, description } = ctx.request.body;
     const { file, img } = ctx.request.files; // 模型文件, 图片
-    debugger
+
     var filePath = getRePath(file.filepath);
     var imgPath = getRePath(img.filepath);
     

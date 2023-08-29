@@ -68,11 +68,11 @@ function close() {
 }
  
 
-const zIndex = ref(zIndexDialog)
+const zIndex = ref()
 
 function mounted(){
-    // 
-    zIndex.value += 1
+    zIndex.value = zIndexDialog.value 
+    zIndexDialog.value += 1
 }
 
 </script>

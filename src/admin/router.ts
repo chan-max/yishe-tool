@@ -1,9 +1,15 @@
 
 import index from './view/index.vue'
-import modelIndex from './view/model/index/index.vue';
 
+
+import modelIndex from './view/model/index/index.vue';
 import modelUpload from './view/model/modelUpload.vue';
 import modelDetail from './view/model/modelDetail.vue';
+
+import imageIndex from './view/image/index/index.vue';
+import imageUpload from './view/image/imageUpload.vue';
+import imageDetail from './view/image/imageDetail.vue';
+
 
 export const adminRoutes =  [
     {
@@ -31,4 +37,24 @@ export const adminRoutes =  [
         component:modelUpload,
         header:false
     },
+    {
+        path: 'image',
+        name:'Image',
+        component: imageIndex,
+        header:false
+    },
+    {
+        path: 'image/:id',
+        name:'ImageDetail',
+        component:imageDetail,
+        props:true,
+        header:false
+    },
+    {
+        path: 'image/upload',
+        name:'ImageUpload',
+        component:imageUpload,
+        header:false
+    },
+    
 ]

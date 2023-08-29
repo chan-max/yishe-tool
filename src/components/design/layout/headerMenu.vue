@@ -1,7 +1,6 @@
 <template>
   <div class="designiy-header">
     <div class="designiy-header-logo"></div>
-
     <div class="designiy-header-item">
       撤销
       <font-awesome-icon style="transform: scaleX(-1)" :icon="['fas', 'share']" />

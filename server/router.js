@@ -1,4 +1,3 @@
-
 import { loginHook } from './api/base/login.js'
 import {getBannerModelHook} from './api/common/getBannerModel.js'
 import {getBaseModelListHook} from './api/common/getBaseModelList.js'
@@ -7,6 +6,8 @@ import { getWebStickersHook } from "./api/design/getStickers.js";
 import { getWordArtStickerHook,createWordArtHook } from "./api/design/wordArt/wordArt.js";
 import { baseModelUploadHook } from "./api/base/baseModelUpload.js";
 import { signupHook } from "./api/base/signUp.js";
+import {imageUploadHook} from './api/base/imageUpload.js'
+import { getImageListHook } from './api/common/getImageList.js';
 
 
 export const initRouter = (router, sequelize, app) => {
@@ -19,7 +20,9 @@ export const initRouter = (router, sequelize, app) => {
         getWebStickersHook,
         getWordArtStickerHook,
         createWordArtHook,
-        baseModelUploadHook
+        baseModelUploadHook,
+        imageUploadHook,
+        getImageListHook
     ]
     hooks.forEach((hook) => hook(router, sequelize, app))
 }

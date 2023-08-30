@@ -5,6 +5,7 @@
       label-position="right"
       label-width="100px"
       :model="form"
+      style=""
     >
       <el-form-item prop="name" required>
         <el-input v-model="form.name" size="large" placeholder="图片名称" />
@@ -16,20 +17,20 @@
     <el-upload
       drag
       :multiple="false"
-      :action="__DEV__ ? '/api/imageUpload' : '/imageUpload'"
+      :action="Url.UPLOAD_IMAGE"
       :data="form"
-      :disabled="!!img.length"
+      :disabled="!!file.length"
       :auto-upload="false"
-      accept=".jpg,.png"
+      accept=".png,.jpg"
       ref="upload"
-      v-model:file-list="img"
+      v-model:file-list="file"
     >
       <el-icon style="color: var(--el-color-primary); font-size: 50px"
         ><upload-filled
       /></el-icon>
-      <div>点击或拖拽图片来上传</div>
+      <div>点击或拖拽图片文件来上传</div>
       <template #tip>
-        <div class="el-upload__tip">仅限 jpg,png 类型</div>
+        <div class="el-upload__tip">仅限 jpg,png 类型,大小限制为20mb</div>
       </template>
     </el-upload>
     <el-button @click="submit" size="large" type="primary" style="width: 100%">
@@ -38,6 +39,7 @@
     <el-button @click="remove" size="large" style="width: 100%; margin: 20px 0">
       移除当前文件
     </el-button>
+    <img :src="previewUrl" style="width: 900px; height: 600px; margin: auto">
   </div>
 </template>
 <script setup>
@@ -46,21 +48,21 @@ import { ElMessage } from "element-plus";
 import { reactive, ref, computed } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
-import { base64ToFile } from "../../../common/transform/base64ToFile";
+import {Url} from '@/api/url'
 
 const upload = ref();
 
-const img = ref([]);
+const file = ref([]);
 
-const gltfViewerRef = ref();
+console.log(import.meta.env.DEV)
 
 const previewUrl = computed(
-  () => img.value[0] && URL.createObjectURL(img.value[0].raw)
+  () => file.value[0] && URL.createObjectURL(file.value[0].raw)
 );
 
 const rules = reactive({
-  name: [{ required: true, message: "请输入模型名称", trigger: "blur" }],
-  description: [{ required: true, message: "请输入模型描述", trigger: "blur" }],
+  name: [{ required: true, message: "请输入图片名称", trigger: "blur" }],
+  description: [{ required: true, message: "请输入图片描述", trigger: "blur" }],
 });
 
 const form = reactive({
@@ -69,16 +71,16 @@ const form = reactive({
 });
 
 function remove() {
-  upload.value.handleRemove(img.value[0]);
+  upload.value.handleRemove(file.value[0]);
 }
 
 function submit() {
-  if (!img.value[0]) {
-    message.error("选择模型文件");
+  if (!file.value[0]) {
+    message.error("选择图片");
     return;
   }
-  if (img.value[0].size / 1024 / 1024 > 20) {
-    message.error("模型最大限制为20mb");
+  if (file.value[0].size / 1024 / 1024 > 20) {
+    message.error("图片最大限制为20mb");
     return;
   }
 

@@ -1,9 +1,9 @@
 <template>
   <div class="admin-model-index">
-    <el-card class="admin-model-index-card" v-for="m in models" shadow="never">
+    <el-card class="admin-model-index-card" v-for="i in images" shadow="never">
       <img
         style="width: 100%; height: 100%"
-        :src="__DEV__ ? '/api' + m.imgPath : m.imgPath"
+        :src="i.path"
       />
     </el-card>
     <el-card
@@ -15,7 +15,7 @@
         ><UploadFilled
       /></el-icon>
       <span style="font-size: 12px; font-weight: bold; padding: 5px; color: #888"
-        >上传模型</span
+        >上传图片</span
       >
     </el-card>
   </div>
@@ -23,15 +23,15 @@
 
 <script setup>
 import { UploadFilled } from "@element-plus/icons-vue";
-import { getBaseModelList } from "@/api";
+import { getImageList} from "@/api";
 import { onMounted, ref } from "vue";
 
-const models = ref([]);
+const images = ref([]);
 
 onMounted(async () => {
-  const res = await getBaseModelList();
-  models.value = res.data;
+  images.value = await getImageList();
 });
+
 </script>
 <style lang="less">
 .admin-model-index {

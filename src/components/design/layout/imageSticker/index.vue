@@ -1,14 +1,24 @@
 <template>
-    <div class="designiy-image-sticker">
-      
+    <div class="designiy-image-sticker debug">
+        <img v-for="i in images" :src="i.path" style="width:100%;margin:5px;">
     </div>
   </template>
   <script setup>
   import { onMounted, ref,computed } from "vue";
   import {showBaseModelSelectDialog,currentModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
 
+    import {getImageList} from '@/api/index'
+
+  const images = ref([])
+
+
+
+  onMounted(async () => {
+  images.value = await getImageList();
+  });
+
   </script>
-  <style lang="less">
+<style lang="less">
     .designiy-image-sticker{
         padding:10px;
         .el-collapse{

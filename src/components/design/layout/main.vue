@@ -80,17 +80,9 @@ const designiy = new Designiy();
 const isLoading = computed(() => designiy.loading.value);
 
 watch(currentModelInfo,() => {
-  const {
-    file
-  } = currentModelInfo.value
-
+  const {file} = currentModelInfo.value;
   designiy.setMainModel(file)
 })
-
-
-
-
-
 
 
 designiy.addDirectionalLight(0xffffff, 0.8, 0, 0, 10);

@@ -14,9 +14,10 @@ apiInstance.interceptors.request.use((request) => {
 });
 
 apiInstance.interceptors.response.use((response) => {
-  if (response.headers.token) {
-    useLoginStatusStore().token = response.headers.token;
-  }
+
+    // 保存 token
+  response.headers.token && (useLoginStatusStore().token = response.headers.token);
+  
   return response.data;
 });
 

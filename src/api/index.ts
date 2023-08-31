@@ -65,6 +65,6 @@ export const getImageList = () => new Promise(async (resolve:any,reject:any) => 
         description:item.description
     }))
 
-    resolve(data)
+    resolve(data);
 })
 

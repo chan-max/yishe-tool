@@ -1,30 +1,30 @@
 
 
 // 区分开发和生产api
-function getUrl(url):any{
+function url(url):any{
     return `${String(import.meta.env.DEV) ? '/api' :''}${url}`
 }
 
 
 export enum Url {
     // 图片上传
-    UPLOAD_IMAGE = getUrl('/imageUpload') ,  
+    UPLOAD_IMAGE = url('/imageUpload') ,  
 
     // 上传基础模型
-    UPLOAD_BASE_MODEL = getUrl('/uploadBaseModel'),
+    UPLOAD_BASE_MODEL = url('/uploadBaseModel'),
 
     // 注册
-    SINGUP = getUrl('/signup'),
+    SINGUP = url('/signup'),
 
     // 登录
-    LOGIN = getUrl('/login'),
+    LOGIN = url('/login'),
 
     // 获取首页模型信息
-    GET_BANNER_MODEL = getUrl('/getBannerModel'),
+    GET_BANNER_MODEL = url('/getBannerModel'),
 
     // 获取基本模型列表
-    GET_BASE_MODEL_LIST = getUrl('/getBaseModelList'),
+    GET_BASE_MODEL_LIST = url('/getBaseModelList'),
 
     // 获取图片
-    GET_IMAGE_LIST = getUrl('/getImageList'),
+    GET_IMAGE_LIST = url('/getImageList'),
 }

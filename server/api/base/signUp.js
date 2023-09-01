@@ -15,7 +15,7 @@ export const signupHook = (router, sequelize, app) => router.post('/signup', asy
         return
     }
 
-
+    
 
     try {
         data.isAdmin = true

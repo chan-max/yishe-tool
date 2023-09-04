@@ -36,10 +36,10 @@
   <diydialog
     :header="false"
     :show="showWordArtDialog"
-    style="width:300px;height:calc(100% - 35px);"
+    style="width:auto;height:calc(100% - 35px);"
     :position="{left:'40px',bottom:0}"
   >
-    <word-art></word-art>
+    <word-sticker></word-sticker>
   </diydialog>
 </template>
 <script setup>
@@ -56,7 +56,7 @@ import diydialog from "../components/dialog.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
 import sceneControl from './sceneControl/index.vue'
 import imageSticker from './imageSticker/index.vue'
-import wordArt from './wordArt/index.vue'
+import wordSticker from './wordSticker/index.vue'
 
 import {
   Mesh,

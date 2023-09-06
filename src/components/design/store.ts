@@ -2,7 +2,7 @@ import { setFullscreen } from "@/common/browser";
 import { computed, ref, shallowRef, watchEffect,watch } from "vue"
 
 // 是否为暗色模式
-export const isDarkMode = ref(true)
+export const isDarkMode = ref(false)
 
 // 加载
 export const isLoading = shallowRef(false);
@@ -27,6 +27,7 @@ export const currentCustomTextureCanvas = shallowRef()
 
 // 当前组件是否全屏
 export const isFullScreen = ref(false)
+
 watchEffect(() => setFullscreen(isFullScreen.value))
 
 
@@ -65,6 +66,14 @@ export const showWordArtDialog = ref(false)
 
 // 保存弹窗当前的zIndex
 export const zIndexDialog = ref(10)
+
+// 文字贴纸文字
+export const textStickerText = ref('1s.design')
+
+// 文字贴纸颜色
+export const textStickerColor = ref('#000')
+
+
 
 
 

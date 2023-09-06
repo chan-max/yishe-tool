@@ -1,6 +1,6 @@
 <template>
-  <div class="admin-model-index">
-    <el-card class="admin-model-index-card" v-for="i in images" shadow="never">
+  <div class="admin-image-index">
+    <el-card class="admin-image-index-card" v-for="i in images" shadow="never">
       <img
         style="width: 100%; height: 100%"
         :src="i.path"
@@ -8,7 +8,7 @@
     </el-card>
     <el-card
       @click="$router.push({ name: 'ModelUpload' })"
-      class="admin-model-index-card"
+      class="admin-image-index-card"
       shadow="never"
     >
       <el-icon style="color: var(--el-color-primary); font-size: 20px"
@@ -34,7 +34,7 @@ onMounted(async () => {
 
 </script>
 <style lang="less">
-.admin-model-index {
+.admin-image-index {
   width: 100%;
   height: 100%;
   display: grid;
@@ -43,7 +43,7 @@ onMounted(async () => {
   justify-items: center;
 }
 
-.admin-model-index-card {
+.admin-image-index-card {
   width: 220px;
   height: 140px;
   background: #f5f5f5 !important;

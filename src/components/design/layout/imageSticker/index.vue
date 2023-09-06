@@ -4,20 +4,20 @@
     </div>
   </template>
   <script setup>
-  import { onMounted, ref,computed } from "vue";
-  import {showBaseModelSelectDialog,currentModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
+import { onMounted, ref,computed } from "vue";
+import {showBaseModelSelectDialog,currentModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
 
-    import {getImageList} from '@/api/index'
+import {getImageList} from '@/api/index'
 
-  const images = ref([])
+const images = ref([])
 
 
 
-  onMounted(async () => {
+onMounted(async () => {
   images.value = await getImageList();
-  });
+});
 
-  </script>
+</script>
 <style lang="less">
     .designiy-image-sticker{
         padding:10px;

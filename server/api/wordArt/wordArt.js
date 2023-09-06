@@ -8,15 +8,18 @@ import path from 'path'
 */
 
 
-export const textStickerHook = (router) => router.get('/textSticker/:text/:color', async (ctx) => {
-    const { text, color } = ctx.params;
-
+export const textStickerHook = (router) => router.get('/textSticker', async (ctx) => {
+    const { text, color, } = ctx.query;
+    
     const tts = TextToSvg.loadSync();
-    const attributes = {fill: 'red', stroke: 'black'};
-    const options = {x: 0, y: 0, fontSize: 72, anchor: 'top', attributes: attributes};
-    const svg = tts.getSVG('hello', options);
-
+    const attributes = {fill: color};
+    const options = {x: 0, y: 0, fontSize: 72, anchor: 'top', attributes: attributes,fontWeight: 900};
+    const svg = tts.getSVG(text, options);
+    
+    ctx.set('Content-Type', 'image/svg+xml');
     ctx.body = svg;
 })
+
+
 
 

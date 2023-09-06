@@ -39,7 +39,7 @@
     style="width:auto;height:calc(100% - 35px);"
     :position="{left:'40px',bottom:0}"
   >
-    <word-sticker></word-sticker>
+    <text-sticker></text-sticker>
   </diydialog>
 </template>
 <script setup>
@@ -56,7 +56,7 @@ import diydialog from "../components/dialog.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
 import sceneControl from './sceneControl/index.vue'
 import imageSticker from './imageSticker/index.vue'
-import wordSticker from './wordSticker/index.vue'
+import textSticker from './textSticker/index.vue'
 
 import {
   Mesh,

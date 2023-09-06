@@ -28,13 +28,14 @@
 <script setup>
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import { onMounted, ref } from "vue";
-import { getBannerModel,bannerModelAdapter } from "../../api";
+import { getBannerModel } from "../../api";
 let bannerModelInfo = ref("");
 
 onMounted(async () => {
   let data = await getBannerModel();
-  bannerModelInfo.value = bannerModelAdapter(data.data);
+  bannerModelInfo.value = data
 });
+
 </script>
 
 <style>

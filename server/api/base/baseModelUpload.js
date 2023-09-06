@@ -20,6 +20,7 @@ export const baseModelUploadHook = (router, sequelize) => router.post("/baseMode
     });
 
     ctx.body = {
-      message: "File uploaded successfully",
+      message: "模型上传成功",
+      type:'success'
     };
   });

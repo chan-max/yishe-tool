@@ -4,15 +4,15 @@
   </div>
 </template>
 <script setup>
-import { getBaseModelList,baseModelListAdapter  } from "@/api";
+import { getBaseModelList  } from "@/api";
 import { onMounted, ref } from "vue";
 import {showBaseModelSelectDialog,currentModelInfo} from '../../store.ts'
 
 const models = ref([]);
 
 onMounted(async () => {
-  const res = await getBaseModelList();
-  models.value = baseModelListAdapter(res.data);
+  const data = await getBaseModelList();
+  models.value = data
 });
 
 
@@ -28,6 +28,7 @@ function selectModel(m){
   height: 400px;
   overflow-y: auto ;
   display: grid;
+  padding:10px;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   grid-auto-rows: 130px;
   justify-items: center;

@@ -1,9 +1,14 @@
 
+export const handlerStaticFilePath = (path) => {
+    path = path.replaceAll('\\','/')
+    return (import.meta.env.DEV ? '/api/' : '/')  + path
+}
 
 // 区分开发和生产api
 function url(url):any{
     return `${String(import.meta.env.DEV) ? '/api' :''}${url}`
 }
+
 
 
 export enum Url {
@@ -27,4 +32,7 @@ export enum Url {
 
     // 获取图片
     GET_IMAGE_LIST = url('/getImageList'),
+
+    // 获取文字贴图
+    GET_TEXT_STICKER = url('/textSticker'),
 }

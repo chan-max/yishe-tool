@@ -3,7 +3,7 @@
     <el-card class="admin-model-index-card" v-for="m in models" shadow="never">
       <img
         style="width: 100%; height: 100%"
-        :src="__DEV__ ? '/api' + m.imgPath : m.imgPath"
+        :src="m.img"
       />
     </el-card>
     <el-card
@@ -29,8 +29,7 @@ import { onMounted, ref } from "vue";
 const models = ref([]);
 
 onMounted(async () => {
-  const res = await getBaseModelList();
-  models.value = res.data;
+   models.value = await getBaseModelList();
 });
 </script>
 <style lang="less">

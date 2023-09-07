@@ -35,7 +35,7 @@
   </diydialog>
   <diydialog
     :header="false"
-    :show="showWordArtDialog"
+    :show="showTextStickerDialog"
     style="width:auto;height:calc(100% - 35px);"
     :position="{left:'40px',bottom:0}"
   >
@@ -47,7 +47,7 @@ import { computed, onMounted, ref, watchEffect ,watch} from "vue";
 import { Designiy } from "../designiy";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
-import { canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showWordArtDialog} from "../store";
+import { canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showTextStickerDialog} from "../store";
 import stickersTabs from "./stickers/stickersTabs.vue";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";

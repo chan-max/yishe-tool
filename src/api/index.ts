@@ -10,7 +10,10 @@ const URL: any = Url;
 export const signup = (data: any) => apiInstance.post(URL.SINGUP, data);
 
 // 登录
-export const login = (data: any) => apiInstance.post(URL.LOGIN, data);
+export const login = (data) => new Promise( async (resolve, reject) => {
+  let res = await apiInstance.post(URL.LOGIN, data);
+  resolve(res.data)
+})
 
 // 获取首页展示栏模型
 export const getBannerModel = () =>
@@ -60,8 +63,7 @@ export const uploadImage = (data: any) =>
 export const getImageList = () =>
   new Promise(async (resolve: any, reject: any) => {
     let res = await apiInstance.get(URL.GET_IMAGE_LIST);
-    
-    let data = res.data.map((item: any) => ({
+    let data = res.data.data.map((item: any) => ({
       path: handlerStaticFilePath(item.path),
       name: item.name,
       description: item.description,

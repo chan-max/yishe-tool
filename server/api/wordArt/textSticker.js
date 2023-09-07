@@ -2,11 +2,15 @@ import TextToSvg from 'text-to-svg'
 import sharp from 'sharp';
 import path from 'path'
 
+// 获取所有可用的字体列表 
+export const getFonts = () => {
+
+}
+
 /*
     根据字体，文字获取艺术字图片资源
     svg,png
 */
-
 
 export const textStickerHook = (router) => router.get('/textSticker', async (ctx) => {
     const { text, color, } = ctx.query;

@@ -24,13 +24,19 @@
           </div>
 
           <el-menu-item index="Admin">
-            <el-icon><HomeFilled /></el-icon>
+            <el-icon><House /></el-icon>
             <span>首页</span>
+          </el-menu-item>
+
+
+          <el-menu-item index="System">
+            <el-icon><Monitor /></el-icon>
+            <span>系统管理</span>
           </el-menu-item>
 
           <el-sub-menu index="1">
             <template #title>
-              <el-icon><icon-menu /></el-icon>
+              <el-icon><Goods /></el-icon>
               <span>模型管理</span>
             </template>
             <el-menu-item-group >
@@ -41,7 +47,7 @@
 
           <el-sub-menu index="2">
             <template #title>
-              <el-icon><icon-menu /></el-icon>
+              <el-icon><Picture /></el-icon>
               <span>图片管理</span>
             </template>
             <el-menu-item-group >
@@ -50,12 +56,41 @@
             </el-menu-item-group>
           </el-sub-menu>
           
+          <el-sub-menu index="3">
+            <template #title>
+              <el-icon><EditPen /></el-icon>
+              <span>字体管理</span>
+            </template>
+            <el-menu-item-group >
+              <el-menu-item index="/admin/font">所有字体</el-menu-item>
+              <el-menu-item index="/admin/font/upload">上传字体</el-menu-item>
+            </el-menu-item-group>
+          </el-sub-menu>
 
 
-          <el-menu-item index="3">
-            <el-icon><User /></el-icon>
-            <span class="menu-item">用户管理</span>
-          </el-menu-item>
+
+          <el-sub-menu index="4">
+            <template #title>
+              <el-icon><User/></el-icon>
+              <span>用户管理</span>
+            </template>
+            <el-menu-item-group >
+              <el-menu-item index="/admin/user">所有用户</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group >
+              <el-menu-item index="/admin/adduser">添加用户</el-menu-item>
+            </el-menu-item-group>
+          </el-sub-menu>
+
+          <el-sub-menu index="5">
+            <template #title>
+              <el-icon><Coin /></el-icon>
+              <span>数据库管理</span>
+            </template>
+            <el-menu-item-group >
+              <el-menu-item index="/admin/table">数据表</el-menu-item>
+            </el-menu-item-group>
+          </el-sub-menu>
 
           <div style="flex-grow: 1"></div>
 
@@ -81,6 +116,12 @@ import {
   User,
   Expand,
   Grid,
+  Monitor,
+  House,
+  Picture,
+  Goods ,
+  EditPen,
+  Coin
 } from "@element-plus/icons-vue";
 
 import { HomeOutlined } from "@ant-design/icons-vue";

@@ -43,7 +43,6 @@ const loginForm = reactive({
 
 async function submit() {
   let res = await login(toRaw(loginForm));
-
   let status = res.status;
   if (status === ResponseStatusCodeEnum.ACCOUNT_NOT_EXIST) {
     message.info("账号不存在");

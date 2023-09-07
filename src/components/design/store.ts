@@ -62,7 +62,7 @@ export const showSceneControlDialog = ref(false)
 export const showImageStickerDialog = ref(false)
 
 // 是否展示艺术字弹窗
-export const showWordArtDialog = ref(false)
+export const showTextStickerDialog = ref(false)
 
 // 保存弹窗当前的zIndex
 export const zIndexDialog = ref(10)

@@ -11,7 +11,7 @@
       </div>
     </el-tooltip>
     <el-tooltip content="艺术字贴图" placement="right">
-      <div class="menu-bar-item" @click="showWordArtDialog = !showWordArtDialog">
+      <div class="menu-bar-item" @click="showTextStickerDialog = !showTextStickerDialog">
         <font-awesome-icon :icon="['fas', 'font']" />
       </div>
     </el-tooltip>
@@ -68,7 +68,7 @@
   </div>
 </template>
 <script setup>
-import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canvasBgOpacity, showSceneControlDialog,showImageStickerDialog,showWordArtDialog} from "../store";
+import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canvasBgOpacity, showSceneControlDialog,showImageStickerDialog,showTextStickerDialog} from "../store";
 </script>
 <style lang="less">
 .menu-bar {

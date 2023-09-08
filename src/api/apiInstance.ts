@@ -5,7 +5,7 @@ import { messageResponseInterceptor, tokenRequestInterceptor, tokenResponseInter
 // 全局设置
 axios.defaults.timeout = 100000; // 时间超时设置100s
 
-const apiInstance = axios.create();
+const apiInstance:any = axios.create();
 
 apiInstance.interceptors.request.use(tokenRequestInterceptor);
 apiInstance.interceptors.response.use(tokenResponseInterceptor);

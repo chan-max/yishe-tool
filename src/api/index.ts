@@ -1,40 +1,37 @@
-import { handlerStaticFilePath } from "./url";
+import { staticFilePath } from "./url";
 import apiInstance from "./apiInstance";
 import { Url } from "./url";
 import { buildURL } from "@/common/url";
 
-// todo
-const URL: any = Url;
-
 // 注册 ，账号密码手机号
-export const signup = (data: any) => apiInstance.post(URL.SINGUP, data);
+export const signup = (data: any) => apiInstance.post(Url.SINGUP, data);
 
 // 登录
 export const login = (data) => new Promise( async (resolve, reject) => {
-  let res = await apiInstance.post(URL.LOGIN, data);
+  let res = await apiInstance.post(Url.LOGIN, data);
   resolve(res.data)
 })
 
 // 获取首页展示栏模型
 export const getBannerModel = () =>
   new Promise(async (resolve, reject) => {
-    const res = await apiInstance.get(URL.GET_BANNER_MODEL);
+    const res = await apiInstance.get(Url.GET_BANNER_MODEL);
     resolve({
-      url: handlerStaticFilePath(res.data.data.url),
+      url: staticFilePath(res.data.data.url),
     });
   });
 
 // 获取可以进行编辑的内置模型
 export const getBaseModelList = () =>
   new Promise(async (resolve, reject) => {
-    const res = await apiInstance.get(URL.GET_BASE_MODEL_LIST);
+    const res = await apiInstance.get(Url.GET_BASE_MODEL_LIST);
     resolve(
       res.data.data.map((item) => {
         return {
           name: item.name,
           desc: item.description,
-          img: handlerStaticFilePath(item.imgPath),
-          file: handlerStaticFilePath(item.filePath),
+          img: staticFilePath(item.imgPath),
+          file: staticFilePath(item.filePath),
         };
       })
     );
@@ -53,18 +50,18 @@ export const getMyStickers = () => apiInstance.post("getMyStickers");
 
 // 上传基础模型
 export const uploadBaseModel = (data: any) =>
-  apiInstance.post(URL.UPLOAD_BASE_MODEL, data);
+  apiInstance.post(Url.UPLOAD_BASE_MODEL, data);
 
 // 上传图片
 export const uploadImage = (data: any) =>
-  apiInstance.post(URL.UPLOAD_IMAGE, data);
+  apiInstance.post(Url.UPLOAD_IMAGE, data);
 
 // 获取图片列表
 export const getImageList = () =>
   new Promise(async (resolve: any, reject: any) => {
-    let res = await apiInstance.get(URL.GET_IMAGE_LIST);
+    let res = await apiInstance.get(Url.GET_IMAGE_LIST);
     let data = res.data.data.map((item: any) => ({
-      path: handlerStaticFilePath(item.path),
+      path: staticFilePath(item.path),
       name: item.name,
       description: item.description,
     }));
@@ -76,5 +73,11 @@ export interface TextStickerQuerys {
   color: string;
   text: string;
 }
-export const getTextStickerURL = (querys: any) =>
-  buildURL(URL.GET_TEXT_STICKER, querys);
+export const getTextStickerUrl = (querys: any) =>  buildURL(Url.GET_TEXT_STICKER, querys);
+
+
+
+
+
+// 上传文字字体文件
+export const uploadFont = (data) => apiInstance.post(Url.UPLOAD_FONT,data)

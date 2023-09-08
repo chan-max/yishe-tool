@@ -1,5 +1,5 @@
 
-export const handlerStaticFilePath = (path) => {
+export const staticFilePath = (path) => {
     path = path.replaceAll('\\','/')
     return (import.meta.env.DEV ? '/api/' : '/')  + path
 }
@@ -8,8 +8,6 @@ export const handlerStaticFilePath = (path) => {
 function url(url):any{
     return `${String(import.meta.env.DEV) ? '/api' :''}${url}`
 }
-
-
 
 export enum Url {
     // 图片上传
@@ -35,4 +33,6 @@ export enum Url {
 
     // 获取文字贴图
     GET_TEXT_STICKER = url('/textSticker'),
+
+    UPLOAD_FONT = url('/uploadFont'),
 }

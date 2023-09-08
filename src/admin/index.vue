@@ -66,9 +66,6 @@
               <el-menu-item index="/admin/font/upload">上传字体</el-menu-item>
             </el-menu-item-group>
           </el-sub-menu>
-
-
-
           <el-sub-menu index="4">
             <template #title>
               <el-icon><User/></el-icon>
@@ -145,6 +142,9 @@ const avatar = computed(() => {
   height: 100%;
   /* background-color: #00071d; */
   background-color: #fff;
+}
+
+.admin-main{
 }
 
 .el-popper.is-light {

@@ -10,13 +10,13 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { showBaseModelSelectDialog, currentModelInfo, canvasBgColor, canvasBgOpacity,textStickerText,textStickerColor } from '../../store.ts'
-import { getTextStickerURL } from '@/api/index';
+import { getTextStickerUrl } from '@/api/index';
 import { useDebounceFn } from '@vueuse/core'
 
 const textStickerImg = ref()
 
 const src = computed(() => {
-  return getTextStickerURL({
+  return getTextStickerUrl({
     text:textStickerText.value,
     color:textStickerColor.value
   })

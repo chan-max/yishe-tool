@@ -1,6 +1,7 @@
 import TextToSvg from 'text-to-svg'
 import sharp from 'sharp';
 import path from 'path'
+import {getRePath} from '../../fileManage.js';
 
 // 获取所有可用的字体列表 
 export const getFonts = () => {
@@ -24,6 +25,29 @@ export const textStickerHook = (router) => router.get('/textSticker', async (ctx
     ctx.body = svg;
 })
 
+
+
+export const uploadFontHook = (router,sequelize) => router.post('/uploadFont', async (ctx) => {
+    const table = sequelize.models.Font;
+    const { name, description } = ctx.request.body;
+    var { file, img } = ctx.request.files; // 模型文件, 图片
+
+    debugger
+    file = getRePath(file?.filepath);
+    img  = getRePath(img?.filepath);
+    
+    await table.create({
+      name,
+      description,
+      file,
+      img,
+    });
+
+    ctx.body = {
+      message: "字体上传成功",
+      type:'success'
+    };
+})
 
 
 

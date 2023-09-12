@@ -1,15 +1,25 @@
 <template>
   <div class="designiy-text-sticker">
     <div class="designiy-text-sticker-canvas">
-        <div id="text-sticker">{{ textStickerText }}</div>
+        <div id="text-sticker" :style="{color:textStickerColor,fontWeight:textStickerWeight}">{{ textStickerText }}</div>
     </div>
-    <el-input placeholder="请输入文字贴纸内容" style="margin-top:10px;" v-model="textStickerText"></el-input>
+    <el-input placeholder="请输入文字贴纸内容" style="margin-top:10px;" v-model="textStickerText">
+      <template #prepend>贴图文字</template>
+    </el-input>
+    <el-input type="number" step="100" max="900" min="0" placeholder="请输入文字贴纸厚度" style="margin-top:10px;" v-model="textStickerWeight">
+      <template #prepend>字体厚度</template>
+    </el-input>
+
+   <div style="margin-top:10px">
+      文字颜色:
+      <el-color-picker  show-alpha size="small" v-model="textStickerColor" color-format="rgb" />
+   </div>
     <el-button  style="margin-top:10px;" type="primary" size="default"><span style="font-weight: bold">添加文字贴纸</span></el-button>
   </div>
 </template>
 <script setup>
 import { onMounted, ref, computed } from "vue";
-import { showBaseModelSelectDialog, currentModelInfo, canvasBgColor, canvasBgOpacity,textStickerText,textStickerColor } from '../../store.ts'
+import { showBaseModelSelectDialog, currentModelInfo, canvasBgColor, canvasBgOpacity,textStickerText,textStickerColor,textStickerWeight } from '../../store.ts'
 import { getFonts, getTextStickerUrl } from '@/api/index';
 import { useDebounceFn } from '@vueuse/core'
 

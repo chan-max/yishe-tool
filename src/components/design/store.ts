@@ -76,6 +76,8 @@ export const textStickerText = ref('1s.design')
 // 文字贴纸颜色
 export const textStickerColor = ref('#000')
 
+// 文字厚度
+export const textStickerWeight = ref(500)
 
 
 

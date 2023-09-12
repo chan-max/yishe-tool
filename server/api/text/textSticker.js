@@ -6,11 +6,7 @@ import {getRePath} from '../../fileManage.js';
 // 获取所有可用的字体列表 
 export const getFontsHook = (router,sequelize) => router.get('/getFonts', async (ctx) => {
     const table = sequelize.models.Font;
-    debugger
-
-
     const fonts = await table.findAll();
-
     ctx.body = {
       data:fonts
     };

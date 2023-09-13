@@ -85,12 +85,11 @@ export const getFonts = () => new Promise( async (resolve,reject) => {
   const res = await apiInstance.get(Url.GET_FONTS)
   const data = res.data.data.map((item) => {
     return {
-      file:item.file,
-      img:item.img,
+      file:staticFilePath(item.file),
+      img:staticFilePath(item.img),
       name:item.name,
       description:item.description
     }
   })
-
   resolve(data)
 })

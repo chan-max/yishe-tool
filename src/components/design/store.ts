@@ -64,6 +64,11 @@ export const showImageStickerDialog = ref(false)
 // 是否展示艺术字弹窗
 export const showTextStickerDialog = ref(false)
 
+
+// 是否展示工作数窗口
+export const showWorkTreeDialog = ref(true)
+
+
 // 保存弹窗当前的zIndex
 export const zIndexDialog = ref(10)
 

@@ -17,7 +17,7 @@ export const uploadFontHook = (router,sequelize) => router.post('/uploadFont', a
     const table = sequelize.models.Font;
     const { name, description } = ctx.request.body;
     var { file, img } = ctx.request.files; // 模型文件, 图片
-  
+    
     file = getRePath(file?.filepath);
     img  = getRePath(img?.filepath);
     

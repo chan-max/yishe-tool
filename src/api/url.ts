@@ -1,5 +1,10 @@
 
 export const staticFilePath = (path) => {
+
+    if(!path){
+        return
+    }
+
     path = path.replaceAll('\\','/')
     return (import.meta.env.DEV ? '/api/' : '/')  + path
 }

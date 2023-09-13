@@ -41,13 +41,22 @@
   >
     <text-sticker></text-sticker>
   </diydialog>
+
+  <diydialog
+    :header="false"
+    :show="showWorkTreeDialog"
+    style="width:auto;height:calc(100% - 35px);"
+    :position="{right:'0px',bottom:0}"
+  >
+    <work-tree></work-tree>
+  </diydialog>
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect ,watch} from "vue";
 import { Designiy } from "../designiy";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
-import { canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showTextStickerDialog} from "../store";
+import { canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showTextStickerDialog,showWorkTreeDialog} from "../store";
 import stickersTabs from "./stickers/stickersTabs.vue";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -57,6 +66,7 @@ import baseModelSelect from "./baseModelSelect/index.vue";
 import sceneControl from './sceneControl/index.vue'
 import imageSticker from './imageSticker/index.vue'
 import textSticker from './textSticker/index.vue'
+import workTree from './workTree/index.vue'
 
 import {
   Mesh,

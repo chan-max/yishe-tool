@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Font.init({
     name: DataTypes.STRING,
-    desc: DataTypes.STRING,
+    description: DataTypes.STRING,
     file: DataTypes.STRING,
     img: DataTypes.STRING
   }, {

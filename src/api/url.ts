@@ -35,4 +35,6 @@ export enum Url {
     GET_TEXT_STICKER = url('/textSticker'),
 
     UPLOAD_FONT = url('/uploadFont'),
+
+    GET_FONTS = url('/getFonts'),
 }

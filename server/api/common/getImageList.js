@@ -2,6 +2,8 @@
 
 export const getImageListHook = (router,sequelize) => router.get('/getImageList' , async (ctx) => {
     const table = sequelize.models.Image;
+    debugger
+    
     const res =  await table.findAll()
     ctx.body = {
         data:res

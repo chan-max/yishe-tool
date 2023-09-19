@@ -75,9 +75,22 @@ export interface TextStickerQuerys {
 }
 export const getTextStickerUrl = (querys: any) =>  buildURL(Url.GET_TEXT_STICKER, querys);
 
-
-
-
-
 // 上传文字字体文件
 export const uploadFont = (data) => apiInstance.post(Url.UPLOAD_FONT,data)
+
+
+// 获取所有字体
+
+export const getFonts = () => new Promise( async (resolve,reject) => {
+  const res = await apiInstance.get(Url.GET_FONTS)
+  const data = res.data.data.map((item) => {
+    return {
+      file:item.file,
+      img:item.img,
+      name:item.name,
+      description:item.description
+    }
+  })
+
+  resolve(data)
+})

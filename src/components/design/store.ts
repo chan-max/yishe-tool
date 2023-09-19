@@ -67,6 +67,9 @@ export const showTextStickerDialog = ref(false)
 // 保存弹窗当前的zIndex
 export const zIndexDialog = ref(10)
 
+
+
+
 // 文字贴纸文字
 export const textStickerText = ref('1s.design')
 

@@ -3,7 +3,7 @@ import {getBannerModelHook} from './api/common/getBannerModel.js'
 import {getBaseModelListHook} from './api/common/getBaseModelList.js'
 import {getBaseSkyboxHook } from "./api/common/getSkybox.js";
 import { getWebStickersHook } from "./api/design/getStickers.js";
-import { textStickerHook,uploadFontHook } from "./api/wordArt/textSticker.js";
+import { textStickerHook,uploadFontHook,getFontsHook } from "./api/text/textSticker.js";
 import { baseModelUploadHook } from "./api/base/baseModelUpload.js";
 import { signupHook } from "./api/base/signUp.js";
 import {imageUploadHook} from './api/base/imageUpload.js'
@@ -23,7 +23,8 @@ export const initRouter = (router, sequelize, app) => {
         imageUploadHook,
         getImageListHook,
         textStickerHook,
-        uploadFontHook
+        uploadFontHook,
+        getFontsHook
     ]
     hooks.forEach((hook) => hook(router, sequelize, app))
 }

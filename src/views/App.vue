@@ -44,7 +44,7 @@ body {
 }
 
 #header {
-  height: 60px;
+  height: 45px;
   width: 100%;
   position: fixed;
   display: flex;

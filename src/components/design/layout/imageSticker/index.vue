@@ -1,16 +1,40 @@
 <template>
-    <div class="designiy-image-sticker debug">
-        <img v-for="i in images" :src="i.path" style="width:100%;margin:5px;">
+    <div class="designiy-image-sticker">
+    <div class="designiy-image-sticker-container">
+      <div class="designiy-image-sticker-container-item" v-for="i in images" draggable="false">
+          <el-image @load="load" :src="i.path" style="width: 100%;height: 100%;" fit="contain" lazy>
+            <template #placeholder>
+                <div class="designiy-image-sticker-container-item_loading">
+                  <el-icon class="rolling-icon"><Loading /></el-icon>
+                </div>
+            </template>
+            <template #error>
+                <div class="designiy-image-sticker-container-item_error">
+                  <el-icon style="color:#888"><Picture /></el-icon>
+                </div>
+            </template>
+          </el-image>
+      </div>
+    </div>   
     </div>
   </template>
   <script setup>
 import { onMounted, ref,computed } from "vue";
 import {showBaseModelSelectDialog,currentModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
-
+import { Loading,CloseBold,CircleCloseFilled ,Picture} from "@element-plus/icons-vue";
 import {getImageList} from '@/api/index'
+import {initDraggableElement} from '../../utils/draggable'
+
+const emits = defineEmits(['dragover'])
 
 const images = ref([])
 
+// image load success
+function load(e){
+  initDraggableElement(e.target,(img,event) => {
+    emits('dragover',img,event)
+  })
+}
 
 
 onMounted(async () => {
@@ -20,7 +44,6 @@ onMounted(async () => {
 </script>
 <style lang="less">
     .designiy-image-sticker{
-        padding:10px;
         .el-collapse{
             border:none;
         }
@@ -42,5 +65,39 @@ onMounted(async () => {
           border:none;
         }
     }
+
+    .designiy-image-sticker-container{
+      width: 220px;
+      display: flex;
+      padding: 5px;
+      justify-content: space-around;
+      &-item{
+        width:100px;
+        height:70px;
+        padding: 5px;
+        background-color: #efefef;
+        border-radius: 5px;
+        &_loading,&_error{
+          width:100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+
+    @keyframes rolling {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.rolling-icon {
+  animation: rolling 3s linear infinite;
+}
   </style>
   

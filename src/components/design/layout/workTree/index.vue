@@ -1,6 +1,6 @@
 <template>
  <div class="designiy-worktree">
-   
+   工作树
  </div>
 </template>
 <script setup> 
@@ -9,6 +9,6 @@
 <style lang="less">
 
 .designiy-worktree{
-   width:300px;
+   width:240px;
 }
 </style>

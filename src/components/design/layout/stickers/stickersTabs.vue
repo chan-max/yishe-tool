@@ -82,6 +82,8 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener("mouseup", dragend);
 });
+
+
 </script>
 
 <style lang="less">

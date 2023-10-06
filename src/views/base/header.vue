@@ -7,7 +7,7 @@
     作品展
     </div>
     <div class="header-container-link hidden-sm-and-down">设计室</div>
-    <div class="header-container-link hidden-sm-and-down">工作台</div>
+    <div class="header-container-link hidden-sm-and-down" @click="$router.push({name:'Workspace'})">工作台</div>
     <div class="header-container-link hidden-sm-and-down">商场</div>
     <div class="header-container-link hidden-sm-and-down">买衣服</div>
 
@@ -149,11 +149,13 @@ function toggleLanguage() {
   margin: 0 20px;
   color: v-bind("menuStyle.color");
   font-size: 12px;
-  font-weight: bold;
+  font-weight: 400;
   cursor: pointer;
   opacity: 0.8;
+  transition: all .5s;
   &:hover{
     opacity: 1;
+    box-shadow: 0px 3px 0px 0px white;
   }
 }
 

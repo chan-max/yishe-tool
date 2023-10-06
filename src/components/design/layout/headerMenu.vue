@@ -12,7 +12,7 @@
 
     <div style="flex-grow: 1"></div>
 
-    <el-button type="primary" size="small">
+    <el-button type="primary" size="small" round style="height: 20px;font-size: 10px;">
       <span style="font-weight: bold">保 存</span>
     </el-button>
   </div>
@@ -40,7 +40,7 @@ const props = defineProps([]);
   justify-content: start;
   align-items: center;
   box-sizing: border-box;
-  padding-right: 20px;
+  padding-right: 0px;
 }
 
 .designiy-header-select-model {

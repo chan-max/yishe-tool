@@ -5,10 +5,11 @@ import signup from '../views/user/signup.vue'
 import login from '../views/user/login.vue'
 import design from '../views/main/design.vue'
 import search from '@/views/base/search.vue'
+import workspace from '@/views/workspace/index.vue'
 import admin from '@/admin/index.vue'
 import unknown from '@/views/base/unknown.vue'
 
-import {adminRoutes} from '@/admin/router'
+import { adminRoutes } from '@/admin/router'
 
 const routes = [
     {
@@ -45,6 +46,11 @@ const routes = [
         path: '/search',
         name: 'Search',
         component: search,
+    },
+    {
+        path:'/workspace',
+        name:'Workspace',
+        component:workspace
     },
     {
         path: '/:catchAll(.*)',

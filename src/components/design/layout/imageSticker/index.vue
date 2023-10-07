@@ -1,7 +1,7 @@
 <template>
     <div class="designiy-image-sticker">
     <div class="designiy-image-sticker-container">
-      <div class="designiy-image-sticker-container-item" v-for="i in images" draggable="false">
+      <div class="designiy-image-sticker-container-item" title="拖动来进行贴图" v-for="i in images" draggable="false">
           <el-image @load="load" :src="i.path" style="width: 100%;height: 100%;" fit="contain" lazy>
             <template #placeholder>
                 <div class="designiy-image-sticker-container-item_loading">
@@ -69,14 +69,17 @@ onMounted(async () => {
     .designiy-image-sticker-container{
       width: 220px;
       display: flex;
+      flex-wrap: wrap;
       padding: 5px;
       justify-content: space-around;
       &-item{
+        margin: 5px 0;
         width:100px;
         height:70px;
         padding: 5px;
         background-color: #efefef;
         border-radius: 5px;
+        cursor:pointer;
         &_loading,&_error{
           width:100%;
           height: 100%;

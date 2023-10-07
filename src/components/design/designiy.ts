@@ -88,7 +88,7 @@ export class Designiy {
     this.camera.position.copy(this.defaultCameraPosition);
 
     this.controler = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controler.enablePan = false
+    // this.controler.enablePan = false
     this.canvasContainer.appendChild(this.renderer.domElement);
     this.resizeObserver = new ResizeObserver(debounce(() => { this.camera.aspect = this.width / this.height; this.camera.updateProjectionMatrix(); this.renderer.setSize(this.width, this.height); }, 10))
     this.resizeObserver.observe(canvasContainer);
@@ -303,7 +303,7 @@ export class Designiy {
     let mesh = this.mainMesh;
 
     if (!mesh) {
-      ElMessage.info('please select model before stick')
+      ElMessage.info('请先选择一个基础模型')
       return;
     } 
   
@@ -353,7 +353,7 @@ export class Designiy {
   // 恢复模型模型位置
   resetPosition(){
     this.camera.position.copy(this.defaultCameraPosition)
-    this.controler.update()
+    this.controler.update();
   }
 
 

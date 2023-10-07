@@ -9,9 +9,12 @@ export const staticFilePath = (path) => {
     return (import.meta.env.DEV ? '/api/' : '/')  + path
 }
 
+
+
 // 区分开发和生产api
 function url(url):any{
-    return `${String(import.meta.env.DEV) ? '/api' :''}${url}`
+    console.log('url')
+    return `${import.meta.env.DEV ? '/api' :''}${url}`
 }
 
 export enum Url {

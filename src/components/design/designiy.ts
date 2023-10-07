@@ -15,7 +15,8 @@ import {
   SphereGeometry,
   DoubleSide,
   Raycaster,
-  Texture
+  Texture,
+  Euler
 } from "three";
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -314,7 +315,9 @@ export class Designiy {
   
     const intersects = raycaster.intersectObject(mesh, true);
   
-    if (intersects.length > 0) {
+    if (intersects.length == 0) {
+        return
+    }
       var position = intersects[0].point;
       var size = new Vector3(0.1, 0.1 / aspectRatio, 0.1);
       var n = intersects[0].face.normal.clone();
@@ -322,19 +325,30 @@ export class Designiy {
       n.add(intersects[0].point);
       let helper = new Object3D();
       helper.position.copy(intersects[0].point);
+
+
       helper.lookAt(n);
+
       let euler = helper.rotation;
+
+
       var decalGeometry = new DecalGeometry(mesh, position, euler, size);
-  
+
       let texture = new Texture(img);
       texture.needsUpdate = true;
+
       var decal = new Mesh(
         decalGeometry,
         new MeshBasicMaterial({ map: texture, transparent: true })
       );
+
+      
       this.scene.add(decal);
-    }
   }
+
+
+  public stickers = []
+
 
   // 恢复模型模型位置
   resetPosition(){

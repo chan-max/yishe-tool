@@ -93,9 +93,9 @@ async function initModel() {
   let el = gltfViewer.value;
   let gltf = await gltfLoader(url);
 
-  const controler = new OrbitControls(camera, renderer.domElement);
+  const controller = new OrbitControls(camera, renderer.domElement);
 
-  controler.enablePan = false; // 禁止右键拖拽
+  controller.enablePan = false; // 禁止右键拖拽
 
   let resizeOb = new ResizeObserver(
     debounce(() => {

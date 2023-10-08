@@ -23,14 +23,14 @@ import {
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { debounce, onWindowResize } from "./utils/utils";
+import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
-import { gltfLoader, textureLoader } from "../../common/threejsHelper";
-import { ref } from "vue";
-import { useMouse } from "@vueuse/core";
+import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
+import { reactive, ref } from "vue";
+import { reactify, useMouse } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 
-export class Designiy {
+export class ModelController {
   // 场景
   public scene: Scene;
   // 渲染器
@@ -40,14 +40,14 @@ export class Designiy {
   // 当前画布容器
   private canvasContainer: any;
   // 控制器
-  private controler: any;
+  private controller: any;
   // 尺寸侦听器
   private resizeObserver: any;
   // 保存当前鼠标坐标
   private _mouse = new Vector2();
 
   // 记录原始摄像机位置
-  public defaultCameraPosition = new Vector3(0, 0.2, 1);
+  public defaultCameraPosition = new Vector3(0, 0, 1);
 
   public get mouse() {
     this._mouse.x = (this.x.value / this.width) * 2 - 1;
@@ -92,8 +92,8 @@ export class Designiy {
     this.camera.lookAt(0, 0, 0);
     this.camera.position.copy(this.defaultCameraPosition);
 
-    this.controler = new OrbitControls(this.camera, this.renderer.domElement);
-    // this.controler.enablePan = false
+    this.controller = new OrbitControls(this.camera, this.renderer.domElement);
+    // this.controller.enablePan = false
     this.canvasContainer.appendChild(this.renderer.domElement);
     this.resizeObserver = new ResizeObserver(
       debounce(() => {
@@ -307,13 +307,14 @@ export class Designiy {
   }
 
   // 进行贴图
-  stick(img) {
+  stickOnMousePosition(img) {
     let mesh = this.mainMesh;
 
     if (!mesh) {
       ElMessage.info("请先选择一个基础模型");
       return;
     }
+
 
     const aspectRatio = img.width / img.height;
 
@@ -326,7 +327,9 @@ export class Designiy {
     if (intersects.length == 0) {
       return;
     }
+    
     var position = intersects[0].point;
+
     var size = new Vector3(0.1, 0.1 / aspectRatio, 0.1);
     var n = intersects[0].face.normal.clone();
     n.transformDirection(mesh.matrixWorld);
@@ -340,7 +343,7 @@ export class Designiy {
 
     var decalGeometry = new DecalGeometry(mesh, position, euler, size);
 
-  
+    console.log(position)
 
    // texture.needsUpdate = true;
 
@@ -350,10 +353,7 @@ export class Designiy {
     var decal = new Mesh(
       decalGeometry,
       new MeshPhongMaterial({
-        specular: 0x444444,
         map: texture,
-        normalScale: new Vector2(1, 1),
-        shininess: 30,
         transparent: true,
         depthTest: true,
         depthWrite: false,
@@ -363,15 +363,18 @@ export class Designiy {
       })
     );
 
+
     this.scene.add(decal);
   }
 
-  public stickers = [];
+
+  // 实时保存所有贴纸
+  public stickers = reactive([]);
 
   // 恢复模型模型位置
   resetPosition() {
     this.camera.position.copy(this.defaultCameraPosition);
-    this.controler.update();
+    this.controller.update();
   }
 
   // 执行动画
@@ -384,4 +387,13 @@ export class Designiy {
     }
     this.mainModel.scene.rotation.y += 0.008;
   }
+
+
+  // 导出 1stf 格式化信息
+  exportTo1stf(){
+
+  }
 }
+
+
+

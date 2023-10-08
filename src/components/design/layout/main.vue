@@ -55,7 +55,7 @@
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect ,watch} from "vue";
-import { Designiy } from "../designiy";
+import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
 import { currentDesInstance,canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showTextStickerDialog,showWorkTreeDialog} from "../store";
@@ -90,7 +90,7 @@ import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 // 挂载容器
 const mountContainer = ref();
 
-const designiy = new Designiy();
+const designiy = new ModelController();
 const {scene} = designiy
 
 currentDesInstance.value = designiy
@@ -137,7 +137,7 @@ onMounted(() => designiy.render(mountContainer.value));
 
 // 贴图逻辑暂时保留
 function stickeOn(img,event) {
-  designiy.stick(img)
+  designiy.stickOnMousePosition(img)
 }
 </script>
 
@@ -194,4 +194,4 @@ function stickeOn(img,event) {
 .designiy-center-float {
   z-index: 10;
 }
-</style>
+</style>../core/controller

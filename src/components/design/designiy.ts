@@ -340,17 +340,18 @@ export class Designiy {
 
     var decalGeometry = new DecalGeometry(mesh, position, euler, size);
 
-    let texture = new Texture(img);
-    texture.needsUpdate = true;
+  
+
+   // texture.needsUpdate = true;
 
     const textureLoader = new TextureLoader();
-    const testImg = textureLoader.load("three.png");
-
+    const texture = textureLoader.load(img.src);
+   
     var decal = new Mesh(
       decalGeometry,
       new MeshPhongMaterial({
         specular: 0x444444,
-        map: testImg,
+        map: texture,
         normalScale: new Vector2(1, 1),
         shininess: 30,
         transparent: true,

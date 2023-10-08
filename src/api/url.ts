@@ -13,7 +13,6 @@ export const staticFilePath = (path) => {
 
 // 区分开发和生产api
 function url(url):any{
-    console.log('url')
     return `${import.meta.env.DEV ? '/api' :''}${url}`
 }
 

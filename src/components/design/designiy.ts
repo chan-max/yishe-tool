@@ -16,18 +16,19 @@ import {
   DoubleSide,
   Raycaster,
   Texture,
-  Euler
+  Euler,
+  MeshPhongMaterial,
+  TextureLoader,
 } from "three";
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "./utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
-import { gltfLoader, textureLoader } from '../../common/threejsHelper';
-import { ref } from 'vue'
+import { gltfLoader, textureLoader } from "../../common/threejsHelper";
+import { ref } from "vue";
 import { useMouse } from "@vueuse/core";
 import { ElMessage } from "element-plus";
-
 
 export class Designiy {
   // 场景
@@ -46,16 +47,16 @@ export class Designiy {
   private _mouse = new Vector2();
 
   // 记录原始摄像机位置
-  public defaultCameraPosition= new Vector3(0,0.2,1)
+  public defaultCameraPosition = new Vector3(0, 0.2, 1);
 
   public get mouse() {
     this._mouse.x = (this.x.value / this.width) * 2 - 1;
     this._mouse.y = -(this.y.value / this.height) * 2 + 1;
-    return this._mouse
+    return this._mouse;
   }
 
   // 是否在加载模型
-  public loading = ref(false)
+  public loading = ref(false);
 
   // 当前界面宽度
   private get width() {
@@ -77,11 +78,15 @@ export class Designiy {
     this.renderer = new WebGLRenderer();
   }
 
-
   // 初始化容器
   private initCanvasContainer(canvasContainer: any) {
     this.canvasContainer = canvasContainer;
-    this.camera = new PerspectiveCamera(75, this.width / this.height, 0.1, 1000);
+    this.camera = new PerspectiveCamera(
+      75,
+      this.width / this.height,
+      0.1,
+      1000
+    );
 
     this.renderer.setSize(this.width, this.height);
     this.camera.lookAt(0, 0, 0);
@@ -90,34 +95,37 @@ export class Designiy {
     this.controler = new OrbitControls(this.camera, this.renderer.domElement);
     // this.controler.enablePan = false
     this.canvasContainer.appendChild(this.renderer.domElement);
-    this.resizeObserver = new ResizeObserver(debounce(() => { this.camera.aspect = this.width / this.height; this.camera.updateProjectionMatrix(); this.renderer.setSize(this.width, this.height); }, 10))
+    this.resizeObserver = new ResizeObserver(
+      debounce(() => {
+        this.camera.aspect = this.width / this.height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(this.width, this.height);
+      }, 10)
+    );
     this.resizeObserver.observe(canvasContainer);
     this.initClickEvent();
     this.initMousePositionHandler();
   }
 
-
   // 记录已渲染的帧数
   public frameCount = 0;
-
 
   private doRender() {
     requestAnimationFrame(this.doRender.bind(this));
     this.frameCount++;
-    this.execAnimation()
+    this.execAnimation();
     this.renderer.render(this.scene, this.camera);
   }
 
-
-  isMounted = false
+  isMounted = false;
 
   public render(target: any) {
-    if(this.isMounted){
-      return
+    if (this.isMounted) {
+      return;
     }
     this.initCanvasContainer(target);
     this.doRender();
-    this.isMounted = true
+    this.isMounted = true;
   }
 
   // 设置背景颜色
@@ -135,7 +143,6 @@ export class Designiy {
     this.canvasContainer.style.background = background;
   }
 
-
   // 主模型
   mainModel: any = null;
   // 主网格
@@ -152,32 +159,31 @@ export class Designiy {
     return mainMesh;
   }
 
-
-  gltf:any = null
+  gltf: any = null;
 
   public async setMainModel(url: any) {
-    this.loading.value = true
-    this.removeMainModel()
+    this.loading.value = true;
+    this.removeMainModel();
     let gltf: any = await gltfLoader(url);
     this.mainModel = gltf;
     this.initModelPosition();
     this.scene.add(gltf.scene);
     this.mainMesh = this.findMainMesh(gltf);
-    this.loading.value = false
+    this.loading.value = false;
   }
 
   // 移除主模型
   public removeMainModel() {
     if (!this.mainModel) {
-      return
+      return;
     }
     this.scene.remove(this.mainModel.scene);
-    this.mainMesh = null
-    this.mainModel = null
+    this.mainMesh = null;
+    this.mainModel = null;
   }
 
   // 模型居中和调整尺寸
-  private initModelPosition( flag = 1) {
+  private initModelPosition(flag = 1) {
     let object = this.mainModel.scene;
     // 先处理尺寸，再居中
     const sizeBox = new Box3().setFromObject(object);
@@ -192,12 +198,10 @@ export class Designiy {
     object.position.z += object.position.z - center.z;
   }
 
-
   // 添加环境光
   public addAmientLight(color: any, intensity: any) {
     this.scene.add(new AmbientLight(color, intensity));
   }
-
 
   public addDirectionalLight(
     color: any,
@@ -219,154 +223,164 @@ export class Designiy {
 
   private initClickEvent() {
     // 禁止滑动触发点击事件
-    let mousedownX = null
-    let mousedownY = null
-    let radius = 5
+    let mousedownX = null;
+    let mousedownY = null;
+    let radius = 5;
 
-    this.canvasContainer.addEventListener('mousedown', (event: any) => {
-      mousedownX = event.offsetX
-      mousedownY = event.offsetY
-    })
+    this.canvasContainer.addEventListener("mousedown", (event: any) => {
+      mousedownX = event.offsetX;
+      mousedownY = event.offsetY;
+    });
 
-    this.canvasContainer.addEventListener('mouseup', (event: any) => {
-      let mouseupX = event.offsetX
-      let mouseupY = event.offsetY
-      if (Math.abs(mousedownX - mouseupX) <= radius && Math.abs(mousedownY - mouseupY) <= radius) {
+    this.canvasContainer.addEventListener("mouseup", (event: any) => {
+      let mouseupX = event.offsetX;
+      let mouseupY = event.offsetY;
+      if (
+        Math.abs(mousedownX - mouseupX) <= radius &&
+        Math.abs(mousedownY - mouseupY) <= radius
+      ) {
         // 确定 点击
-        this._onClickCbs.forEach((cb: any) => cb.call(this, this))
+        this._onClickCbs.forEach((cb: any) => cb.call(this, this));
       }
-    })
+    });
   }
 
   // 保存鼠标坐标信息
-  private x = null
-  private y = null
+  private x = null;
+  private y = null;
   private initMousePositionHandler() {
     const { x, y } = useMouse();
-    this.x = x
-    this.y = y
+    this.x = x;
+    this.y = y;
   }
 
   public onMainModelClick(cb) {
     this.onClick(() => {
       if (!this.mainModel) {
-        return
+        return;
       }
-    })
+    });
   }
 
-
-  private skybox = null
+  private skybox = null;
 
   removeSkybox() {
     if (this.skybox) {
-      this.scene.remove(this.skybox)
+      this.scene.remove(this.skybox);
     }
   }
 
   // 球形天空盒子
   async setSkybox(source) {
-    this.removeSkybox()
+    this.removeSkybox();
 
     // 方形天空盒子
     if (Array.isArray(source)) {
-      let textures = await Promise.all(source.map(textureLoader))
-      let materials = textures.map((texture: any) => new MeshBasicMaterial({ map: texture, side: DoubleSide }))
-      let skybox = new Mesh(new BoxGeometry(100, 100, 100), materials)
-      this.scene.add(skybox)
-      this.skybox = skybox
-      return
+      let textures = await Promise.all(source.map(textureLoader));
+      let materials = textures.map(
+        (texture: any) =>
+          new MeshBasicMaterial({ map: texture, side: DoubleSide })
+      );
+      let skybox = new Mesh(new BoxGeometry(100, 100, 100), materials);
+      this.scene.add(skybox);
+      this.skybox = skybox;
+      return;
     }
 
     // 球形天空盒子
-    if (source.endsWith('.jpg')) {
-      const texture: any = await textureLoader(source)
+    if (source.endsWith(".jpg")) {
+      const texture: any = await textureLoader(source);
       const geometry = new SphereGeometry(100, 100, 100);
       const material = new MeshBasicMaterial({
         side: DoubleSide,
-        map: texture
+        map: texture,
       });
       const skybox = new Mesh(geometry, material);
       this.scene.add(skybox);
-      this.skybox = skybox
-      return
+      this.skybox = skybox;
+      return;
     }
 
     // 场景天空盒子
-    if (source.endsWith('.glb')) {
+    if (source.endsWith(".glb")) {
     }
   }
 
-
   // 进行贴图
-  stick(img){
+  stick(img) {
     let mesh = this.mainMesh;
 
     if (!mesh) {
-      ElMessage.info('请先选择一个基础模型')
+      ElMessage.info("请先选择一个基础模型");
       return;
-    } 
-  
-    const aspectRatio = img.width / img.height;
-  
-    let raycaster = new Raycaster();
-  
-    raycaster.setFromCamera(this.mouse, this.camera);
-  
-    const intersects = raycaster.intersectObject(mesh, true);
-  
-    if (intersects.length == 0) {
-        return
     }
-      var position = intersects[0].point;
-      var size = new Vector3(0.1, 0.1 / aspectRatio, 0.1);
-      var n = intersects[0].face.normal.clone();
-      n.transformDirection(mesh.matrixWorld);
-      n.add(intersects[0].point);
-      let helper = new Object3D();
-      helper.position.copy(intersects[0].point);
 
+    const aspectRatio = img.width / img.height;
 
-      helper.lookAt(n);
+    let raycaster = new Raycaster();
 
-      let euler = helper.rotation;
+    raycaster.setFromCamera(this.mouse, this.camera);
 
+    const intersects = raycaster.intersectObject(mesh, true);
 
-      var decalGeometry = new DecalGeometry(mesh, position, euler, size);
+    if (intersects.length == 0) {
+      return;
+    }
+    var position = intersects[0].point;
+    var size = new Vector3(0.1, 0.1 / aspectRatio, 0.1);
+    var n = intersects[0].face.normal.clone();
+    n.transformDirection(mesh.matrixWorld);
+    n.add(intersects[0].point);
+    let helper = new Object3D();
+    helper.position.copy(intersects[0].point);
 
-      let texture = new Texture(img);
-      texture.needsUpdate = true;
+    helper.lookAt(n);
 
-      var decal = new Mesh(
-        decalGeometry,
-        new MeshBasicMaterial({ map: texture, transparent: true })
-      );
+    let euler = helper.rotation;
 
-      
-      this.scene.add(decal);
+    var decalGeometry = new DecalGeometry(mesh, position, euler, size);
+
+    let texture = new Texture(img);
+    texture.needsUpdate = true;
+
+    const textureLoader = new TextureLoader();
+    const testImg = textureLoader.load("three.png");
+
+    var decal = new Mesh(
+      decalGeometry,
+      new MeshPhongMaterial({
+        specular: 0x444444,
+        map: testImg,
+        normalScale: new Vector2(1, 1),
+        shininess: 30,
+        transparent: true,
+        depthTest: true,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        wireframe: false,
+      })
+    );
+
+    this.scene.add(decal);
   }
 
-
-  public stickers = []
-
+  public stickers = [];
 
   // 恢复模型模型位置
-  resetPosition(){
-    this.camera.position.copy(this.defaultCameraPosition)
+  resetPosition() {
+    this.camera.position.copy(this.defaultCameraPosition);
     this.controler.update();
   }
 
-
   // 执行动画
 
-  animate = false
+  animate = false;
 
-  execAnimation(){
-    if(!this.mainModel || !this.animate){
-      return
+  execAnimation() {
+    if (!this.mainModel || !this.animate) {
+      return;
     }
-    this.mainModel.scene.rotation.y += 0.008
+    this.mainModel.scene.rotation.y += 0.008;
   }
 }
-
-

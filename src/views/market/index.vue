@@ -1,7 +1,7 @@
 <template>
     商场
 </template>
-<script>
+<script setup>
 </script>
 <style>
 </style>

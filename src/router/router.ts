@@ -9,7 +9,6 @@ import workspace from '@/views/workspace/index.vue'
 import market from '@/views/market/index.vue'
 import admin from '@/admin/index.vue'
 import unknown from '@/views/base/unknown.vue'
-
 import { adminRoutes } from '@/admin/router'
 
 const routes = [

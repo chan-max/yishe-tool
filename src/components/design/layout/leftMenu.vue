@@ -62,13 +62,6 @@
         <font-awesome-icon :icon="['fas', 'circle-question']" />
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" :content="isDarkMode ? '白天模式' : '夜间模式'" placement="right">
-      <div class="menu-bar-item" @click="isDarkMode = !isDarkMode">
-        <font-awesome-icon v-if="isDarkMode" :icon="['fas', 'sun']" />
-        <font-awesome-icon v-else :icon="['fas', 'moon']" />
-      </div>
-    </el-tooltip>
-
     <el-tooltip :hide-after="0" content="导出当前模型" placement="right">
       <div class="menu-bar-item">
         <font-awesome-icon :icon="['fas', 'file-export']" />

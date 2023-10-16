@@ -1,21 +1,30 @@
 <template>
   <div class="designiy-text-sticker">
+    
     <div class="designiy-text-sticker-canvas">
-      <div id="text-sticker" ref="textStickerEl"  :class="{'text-vertical':textStickerVertical}" :style="{ color: textStickerColor, fontWeight: textStickerWeight,letterSpacing:textStickerLetterSpacing + 'px' }" style="font-size:50px;">{{ textStickerText }}
+      <div id="text-sticker" ref="textStickerEl"  
+      :class="{'text-vertical':textStickerVertical}" 
+      :style="{ color: textStickerColor, fontWeight: textStickerWeight,letterSpacing:textStickerLetterSpacing + 'px' }" 
+      style="font-size:50px;white-space: pre;">{{ textStickerText }}
       </div>
     </div>
-    <el-input placeholder="请输入文字贴纸内容" style="margin-top:10px;" v-model="textStickerText">
-      <template #prepend>贴图文字</template>
-    </el-input>
-    <el-input type="number" step="100" max="900" min="0" placeholder="请输入文字贴纸厚度" style="margin-top:10px;"
-      v-model="textStickerWeight">
-      <template #prepend>字体厚度</template>
-    </el-input>
 
-    <el-input type="number" step="1"  placeholder="请输入文字间距" style="margin-top:10px;"
+
+    <div class="designiy-text-sticker-textarea">
+      <textarea
+       placeholder="输入贴纸内容..."
+       v-model="textStickerText"
+      />
+    </div>
+
+    <div class="designiy-text-sticker-form">
+      <input type="number" step="100" max="900" min="0" placeholder="请输入文字贴纸厚度"
+      v-model="textStickerWeight">
+    <input type="number" step="1"  placeholder="请输入文字间距"
       v-model="textStickerLetterSpacing">
-      <template #prepend>字体间距</template>
-    </el-input>
+    </div>
+
+
 
     <el-select style="margin-top:10px" v-model="fontFile" placeholder="选择字体文件">
     <el-option
@@ -41,7 +50,7 @@
 
     <el-button style="margin-top:10px;" type="primary" size="default"><span
         style="font-weight: bold">添加文字贴纸</span></el-button>
-        {{ font }}
+
   </div>
   
 </template>
@@ -50,6 +59,7 @@ import { onMounted, ref, computed, watch, reactive } from 'vue';
 import { showBaseModelSelectDialog, currentModelInfo, canvasBgColor, canvasBgOpacity, textStickerText, textStickerColor, textStickerWeight } from '../../store.ts'
 import { getFonts, getTextStickerUrl } from '@/api/index';
 import { useDebounceFn } from '@vueuse/core'
+import { More } from '@element-plus/icons-vue';
 
 const textStickerEl = ref()
 
@@ -93,8 +103,8 @@ onMounted(async () => {
 }
 
 .designiy-text-sticker-canvas {
-  min-width: 280px;
-  min-height: 200px;
+  width: 300px;
+  height: 200px;
   background: #eee;
   display: flex;
   justify-content: center;
@@ -105,11 +115,13 @@ onMounted(async () => {
   background-position: -15px 5px, 15px 15px, 10px 10px, 20px 20px;
   background-size: 20px 20px;
   overflow: auto;
+  border-radius: 15px;
 }
 
 #text-sticker {
   max-width: 100%;
   font-size: 30px;
+
 }
 
 #textStickerImg {
@@ -121,6 +133,29 @@ onMounted(async () => {
 .text-vertical{
     writing-mode: vertical-rl;
     text-orientation: upright;
+}
+
+.designiy-text-sticker-textarea{
+  margin-top: 10px;
+  textarea{
+  outline: none;
+  width: 100%;
+  background-color: transparent!important;
+  color: #fff!important;
+  font-size: 12px;
+  padding:10px;
+  }
+}
+
+.designiy-text-sticker-form{
+  margin-top:10px;
+  display: flex;
+  input{
+    width: 50%;
+    background-color: transparent;
+    outline: none;
+    border: none;
+  }
 }
 </style>
   

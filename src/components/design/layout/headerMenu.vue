@@ -11,7 +11,10 @@
     </div>
     <div style="flex-grow: 1"></div>
 
-    <el-button type="primary" size="small"  style="font-size: 10px;margin-right: 10px;">
+    <div class="designiy-header-mode-switch">
+      <el-switch title="切换白天/黑色模式" v-model="isDarkMode" :active-action-icon="Moon" :inactive-action-icon="Sunny" />
+    </div>
+    <el-button @click="save" type="primary" size="small"  style="height:26px;font-size: 10px;margin-right: 10px;">
       <span style="font-weight: bold;font-size: 12px;">保 存</span>
     </el-button>
   </div>
@@ -22,7 +25,7 @@ import { getBaseModelList, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
 import { canvasBgColor, canvasBgOpacity, isDarkMode ,currentController} from "../store";
 import Color from "color";
-import { Edit, Share, Delete } from "@element-plus/icons-vue";
+import { Edit, Share, Delete ,Sunny,Moon} from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {uploadModel} from '@/api'
 
@@ -84,5 +87,39 @@ async function save(){
   font-size: 12px;
   margin: 0 7px;
   cursor: pointer;
+}
+
+.designiy-header-mode-switch{
+  margin-right: 10px;
+  span{
+    height: 28px;
+  }
+
+  .el-switch__action{
+   width: 20px!important;
+   height: 20px!important;
+   color: #06f;
+   svg{
+      color:var(--el-color-primary);
+    }
+  }
+
+  .is-checked{
+    .el-switch__action{
+      background-color: #2c2c2c;
+      left: calc(100% - 22px)!important;
+    }
+    .el-switch__core{
+    background: #555!important;
+  }
+    svg{
+      color:#fff;
+    }
+  }
+
+  .el-switch__core{
+    border: none;
+  }
+
 }
 </style>

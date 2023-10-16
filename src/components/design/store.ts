@@ -46,7 +46,7 @@ export const canvasBgOpacity = ref('1')
 
 // 画布颜色随着暗色模式的变化而变化
 watchEffect(() => {
-    canvasBgColor.value = isDarkMode.value ? '#181818' : '#eee'
+    canvasBgColor.value = isDarkMode.value ? '#eee' : '#eee'
 })
 
 // 是否展示基础模型选择菜单

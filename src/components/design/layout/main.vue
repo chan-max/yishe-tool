@@ -31,7 +31,7 @@
   <diydialog
     :header="false"
     :show="showImageStickerDialog"
-    style="height:calc(100% - 32px);"
+    style="height:calc(100% - 37px);"
     :position="{left:'38px',bottom:0}"
   >
     <image-sticker @dragover="stickeOn"></image-sticker>
@@ -48,7 +48,7 @@
   <diydialog
     :header="false"
     :show="showWorkTreeDialog"
-    style="width:auto;height:calc(100% - 30px);"
+    style="width:auto;height:calc(100% - 35px);"
     :position="{right:'0px',bottom:0}"
   >
     <work-tree></work-tree>
@@ -144,7 +144,7 @@ function stickeOn(img,event) {
 
 <style lang="less">
 .designiy-top {
-  height: 30px;
+  height: 35px;
   width: 100%;
   position: absolute;
   top: 0;
@@ -154,8 +154,8 @@ function stickeOn(img,event) {
 .designiy-left {
   position: absolute;
   left: 0;
-  top: 30px;
-  height: calc(100% - 30px);
+  top: 35px;
+  height: calc(100% - 35px);
   width: 36px;
   background: #fff;
   border-right: 1px solid #eee;
@@ -166,8 +166,8 @@ function stickeOn(img,event) {
 .designiy-right {
   position: absolute;
   right: 0;
-  top: 30px;
-  height: calc(100% - 30px);
+  top: 35px;
+  height: calc(100% - 35px);
   width: auto;
   background: #fff;
   border-left: 1px solid #eee;

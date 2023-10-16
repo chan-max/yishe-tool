@@ -25,6 +25,13 @@
         <font-awesome-icon :icon="['fas', 'palette']" />
       </div>
     </el-tooltip>
+
+    <el-tooltip :hide-after="0" content="几何图形" placement="right">
+      <div class="menu-bar-item">
+        <font-awesome-icon :icon="['fas', 'circle-nodes']" />
+      </div>
+    </el-tooltip>
+
     <el-tooltip :hide-after="0" content="喷图" placement="right">
       <div class="menu-bar-item">
         <font-awesome-icon :icon="['fas', 'paint-roller']" />
@@ -99,6 +106,12 @@ import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canv
     svg {
       width: 18px;
       height: 18px;
+    }
+  }
+  &:active {
+    svg {
+      width: 16px;
+      height: 16px;
     }
   }
 }

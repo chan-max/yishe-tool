@@ -19,14 +19,14 @@
 </div>
 </template>
 <script setup>
-import {isFullScreen,currentDesInstance} from '../store'
+import {isFullScreen,currentController} from '../store'
 
 function locate(){
-    currentDesInstance.value.resetPosition()
+    currentController.value.resetPosition()
 }
 
 function animate(){
-    currentDesInstance.value.animate = !currentDesInstance.value.animate
+    currentController.value.animate = !currentController.value.animate
 }
 
 </script>

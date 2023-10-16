@@ -2,10 +2,10 @@ import { setFullscreen } from "@/common/browser";
 import { computed, ref, shallowRef, watchEffect,watch } from "vue"
 
 // 当前实例
-export const currentDesInstance = shallowRef(null)
+export const currentController = shallowRef(null)
 
 // 是否为暗色模式
-export const isDarkMode = ref(false)
+export const isDarkMode = ref(true)
 
 // 加载
 export const isLoading = shallowRef(false);

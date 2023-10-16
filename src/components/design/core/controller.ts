@@ -29,6 +29,7 @@ import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
 import { reactive, ref } from "vue";
 import { reactify, useMouse } from "@vueuse/core";
 import { ElMessage } from "element-plus";
+import { base64ToFile } from "@/common/transform/base64ToFile";
 
 export class ModelController {
   // 场景
@@ -161,11 +162,14 @@ export class ModelController {
 
   gltf: any = null;
 
+  baseModelUrl:any = null
+
   public async setMainModel(url: any) {
     this.loading.value = true;
     this.removeMainModel();
     let gltf: any = await gltfLoader(url);
     this.mainModel = gltf;
+    this.baseModelUrl = url
     this.initModelPosition();
     this.scene.add(gltf.scene);
     this.mainMesh = this.findMainMesh(gltf);
@@ -183,7 +187,7 @@ export class ModelController {
   }
 
   // 模型居中和调整尺寸
-  private initModelPosition(flag = 1) {
+  private initModelPosition(flag = 1.5) {
     let object = this.mainModel.scene;
     // 先处理尺寸，再居中
     const sizeBox = new Box3().setFromObject(object);
@@ -262,49 +266,7 @@ export class ModelController {
     });
   }
 
-  private skybox = null;
-
-  removeSkybox() {
-    if (this.skybox) {
-      this.scene.remove(this.skybox);
-    }
-  }
-
-  // 球形天空盒子
-  async setSkybox(source) {
-    this.removeSkybox();
-
-    // 方形天空盒子
-    if (Array.isArray(source)) {
-      let textures = await Promise.all(source.map(textureLoader));
-      let materials = textures.map(
-        (texture: any) =>
-          new MeshBasicMaterial({ map: texture, side: DoubleSide })
-      );
-      let skybox = new Mesh(new BoxGeometry(100, 100, 100), materials);
-      this.scene.add(skybox);
-      this.skybox = skybox;
-      return;
-    }
-
-    // 球形天空盒子
-    if (source.endsWith(".jpg")) {
-      const texture: any = await textureLoader(source);
-      const geometry = new SphereGeometry(100, 100, 100);
-      const material = new MeshBasicMaterial({
-        side: DoubleSide,
-        map: texture,
-      });
-      const skybox = new Mesh(geometry, material);
-      this.scene.add(skybox);
-      this.skybox = skybox;
-      return;
-    }
-
-    // 场景天空盒子
-    if (source.endsWith(".glb")) {
-    }
-  }
+   
 
   // 进行贴图
   stickOnMousePosition(img) {
@@ -342,11 +304,7 @@ export class ModelController {
     let euler = helper.rotation;
 
     var decalGeometry = new DecalGeometry(mesh, position, euler, size);
-
-    console.log(position)
-
-   // texture.needsUpdate = true;
-
+    
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(img.src);
    
@@ -390,8 +348,23 @@ export class ModelController {
 
 
   // 导出 1stf 格式化信息
-  exportTo1stf(){
 
+  parse1stf(){
+
+  }
+
+  exportTo1stf(){
+    const baseModelUrl = this.baseModelUrl
+
+    return {
+      baseModelUrl
+    }
+  }
+
+  getScreenShotFile(){
+    this.renderer.render(this.scene, this.camera); // 截取会出现白图片
+    var base64 = this.renderer.domElement.toDataURL("image/png"); // base64
+    return base64ToFile(base64);
   }
 }
 

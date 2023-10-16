@@ -8,7 +8,7 @@ import { baseModelUploadHook } from "./api/base/baseModelUpload.js";
 import { signupHook } from "./api/base/signUp.js";
 import {imageUploadHook} from './api/base/imageUpload.js'
 import { getImageListHook } from './api/common/getImageList.js';
-
+import { uploadModelHook } from './api/base/uploadModel.js';
 
 
 export const initRouter = (router, sequelize, app) => {
@@ -24,7 +24,8 @@ export const initRouter = (router, sequelize, app) => {
         getImageListHook,
         textStickerHook,
         uploadFontHook,
-        getFontsHook
+        getFontsHook,
+        uploadModelHook
     ]
     hooks.forEach((hook) => hook(router, sequelize, app))
 }

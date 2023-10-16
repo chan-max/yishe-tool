@@ -44,4 +44,7 @@ export enum Url {
     UPLOAD_FONT = url('/uploadFont'),
 
     GET_FONTS = url('/getFonts'),
+
+    // 上传模型
+    UPLOAD_MODEL = url('/uploadModel')
 }

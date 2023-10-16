@@ -12,7 +12,7 @@
 
     <div style="flex-grow: 1"></div>
 
-    <el-button type="primary" size="small" round style="height: 20px;font-size: 10px;margin-right: 10px;">
+    <el-button type="primary" size="small" round style="height: 20px;font-size: 10px;margin-right: 10px;" @click="save">
       <span style="font-weight: bold">保 存</span>
     </el-button>
   </div>
@@ -21,12 +21,28 @@
 <script setup>
 import { getBaseModelList, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
-import { canvasBgColor, canvasBgOpacity, isDarkMode } from "../store";
+import { canvasBgColor, canvasBgOpacity, isDarkMode ,currentController} from "../store";
 import Color from "color";
 import { Edit, Share, Delete } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from 'element-plus'
+import {uploadModel} from '@/api'
 
 const props = defineProps([]);
 
+async function save(){
+   await ElMessageBox.confirm(
+    '确认将模型保存至工作台吗?',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'info',
+      draggable: true,
+    })
+    const img = currentController.value.getScreenShotFile()
+    const data = new FormData()
+    data.append('img',img)
+    await uploadModel(data)
+}
 
 
 </script>

@@ -43,7 +43,6 @@
       @click="$router.push({ name: 'Login' })"
       type="primary"
       round
-      color="#0066ff"
     >
       <span style="font-size: 14px">登 录 </span>
     </el-button>

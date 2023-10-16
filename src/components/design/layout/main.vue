@@ -13,6 +13,7 @@
   <div id="designiy-canvas-container" ref="mountContainer"></div>
 
   <diydialog
+    style=" border: 1px solid rgba(255, 255, 255, 0.2)"
     :show="showBaseModelSelectDialog"
     title="选择模型"
     @close="showBaseModelSelectDialog = false"
@@ -58,7 +59,7 @@ import { computed, onMounted, ref, watchEffect ,watch} from "vue";
 import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
-import { currentDesInstance,canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showTextStickerDialog,showWorkTreeDialog} from "../store";
+import { currentController,canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showTextStickerDialog,showWorkTreeDialog} from "../store";
 import stickersTabs from "./stickers/stickersTabs.vue";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -93,7 +94,7 @@ const mountContainer = ref();
 const designiy = new ModelController();
 const {scene} = designiy
 
-currentDesInstance.value = designiy
+currentController.value = designiy
 
 // 是否处于加载中
 const isLoading = computed(() => designiy.loading.value);
@@ -177,7 +178,7 @@ function stickeOn(img,event) {
 .designiy-bottom {
   z-index: 10;
   position: absolute;
-  bottom: 30px;
+  bottom: 20px;
 }
 
 #designiy-canvas-container {

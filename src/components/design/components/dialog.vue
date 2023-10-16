@@ -87,7 +87,7 @@ function mounted(){
   left:v-bind("props.position.left");
   bottom:v-bind("props.position.bottom");
   right:v-bind("props.position.right");
-  position: fixed;
+  position: absolute;
 }
 
 .designiy-dialog-header {
@@ -100,14 +100,16 @@ function mounted(){
     rgba(0, 0, 0, 0.25) 100%
   );
   /* cursor: all-scroll; */
-  padding: 4px 10px;
+  padding: 15px;
   border-bottom: 2px solid #222;
+  cursor: move;
 }
 
 .designiy-dialog-header-close {
   color: #c7c7c7;
   cursor: pointer;
   display: flex;
+  padding: 5px;
   justify-content: center;
   align-items: center;
 }
@@ -115,6 +117,7 @@ function mounted(){
 .designiy-dialog-header-title {
   color: #c7c7c7;
   font-size: 12px;
+  font-weight: bold;
 }
 
 .designiy-dialog-content {

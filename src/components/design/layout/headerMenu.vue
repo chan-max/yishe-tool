@@ -9,11 +9,10 @@
       <font-awesome-icon :icon="['fas', 'share']" />
       重做
     </div>
-
     <div style="flex-grow: 1"></div>
 
-    <el-button type="primary" size="small" round style="height: 20px;font-size: 10px;margin-right: 10px;">
-      <span style="font-weight: bold">保 存</span>
+    <el-button type="primary" size="small"  style="font-size: 10px;margin-right: 10px;">
+      <span style="font-weight: bold;font-size: 12px;">保 存</span>
     </el-button>
   </div>
 </template>

@@ -6,6 +6,7 @@ import login from '../views/user/login.vue'
 import design from '../views/main/design.vue'
 import search from '@/views/base/search.vue'
 import workspace from '@/views/workspace/index.vue'
+import market from '@/views/market/index.vue'
 import admin from '@/admin/index.vue'
 import unknown from '@/views/base/unknown.vue'
 
@@ -51,6 +52,11 @@ const routes = [
         path:'/workspace',
         name:'Workspace',
         component:workspace
+    },
+    {
+        path:'/market',
+        name:'Market',
+        component:market
     },
     {
         path: '/:catchAll(.*)',

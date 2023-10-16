@@ -6,15 +6,19 @@
     <div class="header-container-link hidden-sm-and-down">
     作品展
     </div>
-    <div class="header-container-link hidden-sm-and-down">设计室</div>
-    <div class="header-container-link hidden-sm-and-down" @click="$router.push({name:'Workspace'})">工作台</div>
-    <div class="header-container-link hidden-sm-and-down">商场</div>
-    <div class="header-container-link hidden-sm-and-down">买衣服</div>
+
+    <a class="header-container-link hidden-sm-and-down">设计室</a>
+    <a class="header-container-link hidden-sm-and-down" @click="$router.push({name:'Workspace'})">工作台</a>
+    <a class="header-container-link hidden-sm-and-down" @click="$router.push({name:'Market'})">商场</a>
+    <a class="header-container-link hidden-sm-and-down">买衣服</a>
 
     <div style="flex: auto"></div>
-    <div class="header-container-link" @click="toggleLanguage">
+
+    <!-- <div class="header-container-link" @click="toggleLanguage">
       {{ $t("language") }}
-    </div>
+    </div> -->
+
+
     <el-popover
     v-if="loginStatusStore.isLogin"
       placement="bottom"
@@ -155,6 +159,7 @@ function toggleLanguage() {
   transition: all .5s;
   &:hover{
     opacity: 1;
+    color: v-bind("menuStyle.color");
     box-shadow: 0px 3px 0px 0px white;
   }
 }

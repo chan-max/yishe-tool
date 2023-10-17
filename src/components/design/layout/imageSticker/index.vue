@@ -67,14 +67,14 @@ onMounted(async () => {
     }
 
     .designiy-image-sticker-container{
-      width: 220px;
+      width: 260px;
       display: flex;
       flex-wrap: wrap;
       padding: 5px;
       justify-content: space-around;
       &-item{
         margin: 5px 0;
-        width:100px;
+        width:115px;
         height:70px;
         padding: 5px;
         background-color: #efefef;

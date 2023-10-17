@@ -126,7 +126,7 @@ onUnmounted(() => {
 }
 
 .designiy-stickers-list {
-  width: 220px;
+  width: 260px;
 }
 
 .designiy-stickers-item:hover {

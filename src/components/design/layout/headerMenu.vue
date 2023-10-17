@@ -10,7 +10,6 @@
       重做
     </div>
     <div style="flex-grow: 1"></div>
-
     <div class="designiy-header-mode-switch">
       <el-switch title="切换白天/黑色模式" v-model="isDarkMode" :active-action-icon="Moon" :inactive-action-icon="Sunny" />
     </div>
@@ -106,7 +105,7 @@ async function save(){
 
   .is-checked{
     .el-switch__action{
-      background-color: #2c2c2c;
+      background-color: #323232;
       left: calc(100% - 22px)!important;
     }
     .el-switch__core{

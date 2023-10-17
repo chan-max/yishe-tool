@@ -87,5 +87,8 @@ export const textStickerColor = ref('#000')
 // 文字厚度
 export const textStickerWeight = ref(500)
 
+// 字号大小， 字号大小只用于显示
+export const textStickerFontSize = ref(32)
 
-
+// 行高
+export const textStickerLineHeight = ref(1)

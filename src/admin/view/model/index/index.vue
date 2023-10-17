@@ -43,7 +43,7 @@ onMounted(async () => {
 }
 
 .admin-model-index-card {
-  width: 220px;
+  width: 260px;
   height: 140px;
   background: #f5f5f5 !important;
   &:hover {

@@ -79,7 +79,8 @@ export const zIndexDialog = ref(10)
 
 
 // 文字贴纸文字
-export const textStickerText = ref('1s.design')
+export const textStickerText = ref(`breaking
+          bad`)
 
 // 文字贴纸颜色
 export const textStickerColor = ref('#000')

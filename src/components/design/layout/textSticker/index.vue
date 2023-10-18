@@ -1,6 +1,6 @@
 <template>
   <div class="designiy-text-sticker">
-
+    <div class="designiy-text-sticker-title">贴纸预览</div>
     <div class="designiy-text-sticker-canvas">
       <div id="text-sticker" ref="textStickerEl" :class="{ 'text-vertical': textStickerVertical }"
         :style="{ 
@@ -8,9 +8,13 @@
         fontWeight: textStickerWeight, 
         letterSpacing: textStickerLetterSpacing + 'px' ,
         fontSize: textStickerFontSize +'px',
-        lineHeight: textStickerLineHeight +'em'
+        lineHeight: textStickerLineHeight +'em',
+        writingMode: textStickerVertical ?   'vertical-rl' : '',
+        textOrientation: textStickerVertical ?  'upright' : '',
+        fontStyle: textStickerIsItalic ? 'italic' : 'normal'
         }"
-        style="white-space: pre;">{{ textStickerText }}
+        style="white-space: pre;">
+        {{ textStickerText }}
       </div>
     </div>
 
@@ -23,31 +27,37 @@
     <div class="designiy-text-sticker-form">
       <div class="designiy-text-sticker-form-item">
         <div class="designiy-text-sticker-form-item-label">厚度 </div>
-        <div class="designiy-text-sticker-form-item-inner">
-          <input type="number" step="100" max="900" min="0" v-model="textStickerWeight">
-        </div>
+          <input class="designiy-text-sticker-form-item-input" type="number" step="100" max="900" min="0" v-model="textStickerWeight">
       </div>
 
 
       <div class="designiy-text-sticker-form-item">
         <div class="designiy-text-sticker-form-item-label">间距 </div>
-        <div class="designiy-text-sticker-form-item-inner">
-          <input type="number" step="1" v-model="textStickerLetterSpacing">
-        </div>
+          <input class="designiy-text-sticker-form-item-input" type="number" step="1" v-model="textStickerLetterSpacing">
       </div>
 
       <div class="designiy-text-sticker-form-item">
         <div class="designiy-text-sticker-form-item-label">字号</div>
-        <div class="designiy-text-sticker-form-item-inner">
-          <input type="number" step="1" max="100" min="0" v-model="textStickerFontSize">
-        </div>
+          <input class="designiy-text-sticker-form-item-input" type="number" step="1" max="100" min="0" v-model="textStickerFontSize">
       </div>
 
       <div class="designiy-text-sticker-form-item">
         <div class="designiy-text-sticker-form-item-label">行高 </div>
-        <div class="designiy-text-sticker-form-item-inner">
-          <input type="number" step="0.1" max="100" min="0" v-model="textStickerLineHeight">
-        </div>
+        <input  class="designiy-text-sticker-form-item-input" type="number" step="0.1" max="100" min="0" v-model="textStickerLineHeight">
+      </div>
+
+      <div class="designiy-text-sticker-form-item">
+        <div class="designiy-text-sticker-form-item-label">纵向 </div>
+          <div class="designiy-text-sticker-form-item-textbtn" @click="textStickerVertical = !textStickerVertical">
+            {{ textStickerVertical ? '是' : '否' }}
+          </div>
+      </div>
+
+      <div class="designiy-text-sticker-form-item">
+        <div class="designiy-text-sticker-form-item-label">斜体 </div>
+          <div class="designiy-text-sticker-form-item-textbtn" @click="textStickerIsItalic = !textStickerIsItalic">
+            {{ textStickerIsItalic ? '是' : '否' }}
+          </div>
       </div>
     </div>
 
@@ -55,10 +65,6 @@
     
     <div class="designiy-text-sticker-title">文字排列方式</div>
 
-    <hr class="designiy-text-sticker-divider">
-
-    <div class="designiy-text-sticker-title">文字是否斜体</div>
-    
     <hr class="designiy-text-sticker-divider">
 
     <div class="designiy-text-sticker-title">文字下划线</div>
@@ -85,8 +91,7 @@
 
     <div style="flex:1"></div>
 
-    <el-button  style="margin-top:10px;" type="primary" size="default">
-    <span style="font-weight: bold">上传该贴纸</span></el-button>
+
   </div>
 </template>
 <script setup>
@@ -95,6 +100,7 @@ import { showBaseModelSelectDialog, currentModelInfo, canvasBgColor, canvasBgOpa
 import { getFonts, getTextStickerUrl } from '@/api/index';
 import { useDebounceFn } from '@vueuse/core'
 import { More } from '@element-plus/icons-vue';
+import { textStickerIsItalic } from '../../store';
 
 const textStickerEl = ref()
 
@@ -108,7 +114,6 @@ const fontFile = ref()
 const textStickerVertical = ref(false)
 
 const textStickerLetterSpacing = ref(5)
-
 
 var id = 0
 watch(fontFile, (url) => {
@@ -134,15 +139,14 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   width: auto;
-  padding: 10px;
+  padding: 0px 15px;
   width: 240px;
   height: 100%;
 }
 
 .designiy-text-sticker-canvas {
-  width: 220px;
+  width: 100%;
   height: 160px;
-  min-width: 220px;
   min-height: 160px;
   background: #eee;
   display: flex;
@@ -187,6 +191,7 @@ onMounted(async () => {
 
 .designiy-text-sticker-form{
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
 }
 
@@ -194,41 +199,53 @@ onMounted(async () => {
   display: flex;
   position: relative;
   align-items: center;
-  justify-content: center;
-  width: 50%;
+  justify-content: space-between;
+  width: 100%;
   padding: 3px 0;
-  input {
+  &:focus-within{
+       outline: 1px solid var(--el-color-primary);
+    }
+}
+
+.designiy-text-sticker-form-item-input{
     height: 24px;
-    width: 110px;
+    width: 60px;
     color: #fff;
     font-size: 12px;
     background-color: transparent;
     border:none;
     padding: 0px 5px;
-    padding-left: 40px;
     outline:none;
-    &:focus{
-      outline: 1px solid var(--el-color-primary);
-    }
+
+}
+
+.designiy-text-sticker-form-item-textbtn{
+  color: #fff;
+  font-size: 12px;
+  width: 60px;
+  padding-left: 5px;
+  cursor: pointer;
+  text-align: right;
+  &:hover{
+    opacity: 0.9;
   }
 }
 
 
 .designiy-text-sticker-form-item-label {
-  position: absolute;
-  left: 5px;
   color: #999;
   font-size: 10px;
   font-weight: bold;
   width: 30px;
   flex-shrink: 0;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
 }
 
 .designiy-text-sticker-title{
   color: #fff;
-  font-weight: bold;
-  margin-top: 10px;
-  margin-bottom: 5px;
+  margin: 10px 0;
   font-size: 10px;
 }
 

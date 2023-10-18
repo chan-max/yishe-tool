@@ -93,3 +93,6 @@ export const textStickerFontSize = ref(32)
 
 // 行高
 export const textStickerLineHeight = ref(1)
+
+// 是否斜体
+export const textStickerIsItalic = ref(false)

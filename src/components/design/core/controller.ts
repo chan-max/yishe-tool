@@ -30,6 +30,7 @@ import { reactive, ref } from "vue";
 import { reactify, useMouse } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
+import { DecalController } from "./decalController";
 
 export class ModelController {
   // 场景
@@ -37,13 +38,13 @@ export class ModelController {
   // 渲染器
   public renderer: WebGLRenderer;
   // 摄像机
-  private camera: any;
+  public camera: any;
   // 当前画布容器
   private canvasContainer: any;
   // 控制器
-  private controller: any;
+  public controller: any;
   // 尺寸侦听器
-  private resizeObserver: any;
+  public resizeObserver: any;
   // 保存当前鼠标坐标
   private _mouse = new Vector2();
 
@@ -268,61 +269,13 @@ export class ModelController {
 
    
 
+  decalControllers:any = []
+
   // 进行贴图
   stickOnMousePosition(img) {
-    let mesh = this.mainMesh;
-
-    if (!mesh) {
-      ElMessage.info("请先选择一个基础模型");
-      return;
-    }
-
-
-    const aspectRatio = img.width / img.height;
-
-    let raycaster = new Raycaster();
-
-    raycaster.setFromCamera(this.mouse, this.camera);
-
-    const intersects = raycaster.intersectObject(mesh, true);
-
-    if (intersects.length == 0) {
-      return;
-    }
-    
-    var position = intersects[0].point;
-
-    var size = new Vector3(0.1, 0.1 / aspectRatio, 0.1);
-    var n = intersects[0].face.normal.clone();
-    n.transformDirection(mesh.matrixWorld);
-    n.add(intersects[0].point);
-    let helper = new Object3D();
-    helper.position.copy(intersects[0].point);
-
-    helper.lookAt(n);
-
-    let euler = helper.rotation;
-
-    var decalGeometry = new DecalGeometry(mesh, position, euler, size);
-    
-    const textureLoader = new TextureLoader();
-    const texture = textureLoader.load(img.src);
-   
-    var decal = new Mesh(
-      decalGeometry,
-      new MeshPhongMaterial({
-        map: texture,
-        transparent: true,
-        depthTest: true,
-        depthWrite: false,
-        polygonOffset: true,
-        polygonOffsetFactor: -4,
-        wireframe: false,
-      })
-    );
-
-
-    this.scene.add(decal);
+    var decal = new DecalController(this,img)
+    decal.create()
+    this.decalControllers.push(decal)
   }
 
 
@@ -355,7 +308,7 @@ export class ModelController {
 
   exportTo1stf(){
     const baseModelUrl = this.baseModelUrl
-
+    debugger
     return {
       baseModelUrl
     }

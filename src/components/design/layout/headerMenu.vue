@@ -39,9 +39,14 @@ async function save(){
       type: 'info',
       draggable: true,
     })
+
+
     const img = currentController.value.getScreenShotFile()
     const data = new FormData()
     data.append('img',img)
+    const modelInfo = currentController.exportTo1stf()
+    debugger
+    data.append('modelInfo',modelInfo)
     await uploadModel(data)
 }
 

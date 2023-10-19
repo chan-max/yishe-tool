@@ -24,15 +24,16 @@
     <hr class="designiy-text-sticker-divider">
    
     <div class="designiy-text-sticker-title">文字属性</div>
-    <div class="designiy-text-sticker-form">
+
+
       <div class="designiy-text-sticker-form-item">
-        <div class="designiy-text-sticker-form-item-label">厚度 </div>
+        <div class="designiy-text-sticker-form-item-label">文字厚度 </div>
           <input class="designiy-text-sticker-form-item-input" type="number" step="100" max="900" min="0" v-model="textStickerWeight">
       </div>
 
 
       <div class="designiy-text-sticker-form-item">
-        <div class="designiy-text-sticker-form-item-label">间距 </div>
+        <div class="designiy-text-sticker-form-item-label">文字间距 </div>
           <input class="designiy-text-sticker-form-item-input" type="number" step="1" v-model="textStickerLetterSpacing">
       </div>
 
@@ -47,33 +48,54 @@
       </div>
 
       <div class="designiy-text-sticker-form-item">
-        <div class="designiy-text-sticker-form-item-label">纵向 </div>
+        <div class="designiy-text-sticker-form-item-label">纵向排列 </div>
           <div class="designiy-text-sticker-form-item-textbtn" @click="textStickerVertical = !textStickerVertical">
             {{ textStickerVertical ? '是' : '否' }}
           </div>
       </div>
 
       <div class="designiy-text-sticker-form-item">
-        <div class="designiy-text-sticker-form-item-label">斜体 </div>
+        <div class="designiy-text-sticker-form-item-label">使用斜体 </div>
           <div class="designiy-text-sticker-form-item-textbtn" @click="textStickerIsItalic = !textStickerIsItalic">
             {{ textStickerIsItalic ? '是' : '否' }}
           </div>
       </div>
-    </div>
+
+      <div class="designiy-text-sticker-form-item">
+        <div class="designiy-text-sticker-form-item-label">文字字体</div>
+        <div>
+          
+        </div>
+      </div>
+
+      <div class="designiy-text-sticker-form-item">
+        <div class="designiy-text-sticker-form-item-label">颜色</div>
+        <div>
+          
+        </div>
+      </div>
+
+      <div class="designiy-text-sticker-form-item">
+        <div class="designiy-text-sticker-form-item-label">文字对齐方式</div>
+          <div class="designiy-text-sticker-form-item-textbtn">
+            
+          </div>
+      </div>
+
+      <div class="designiy-text-sticker-form-item">
+        <div class="designiy-text-sticker-form-item-label">文字阴影</div>
+      </div>
+
+      <div class="designiy-text-sticker-form-item">
+        <div class="designiy-text-sticker-form-item-label">文字装饰</div>
+      </div>
 
     <hr class="designiy-text-sticker-divider">
+
+    <div class="designiy-text-sticker-title">背景属性</div> 
     
-    <div class="designiy-text-sticker-title">文字排列方式</div>
-
     <hr class="designiy-text-sticker-divider">
 
-    <div class="designiy-text-sticker-title">文字下划线</div>
-    
-    <hr class="designiy-text-sticker-divider">
-
-    <div class="designiy-text-sticker-title">对齐方式</div>
-    
-    <hr class="designiy-text-sticker-divider">
 
 
 
@@ -159,12 +181,12 @@ onMounted(async () => {
   background-size: 20px 20px;
   overflow: auto;
   border-radius: 2px;
+  cursor: pointer;
 }
 
 #text-sticker {
   max-width: 100%;
   font-size: 30px;
-
 }
 
 #textStickerImg {
@@ -189,11 +211,6 @@ onMounted(async () => {
     min-height: 60px;
 }
 
-.designiy-text-sticker-form{
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-}
 
 .designiy-text-sticker-form-item {
   display: flex;
@@ -212,20 +229,29 @@ onMounted(async () => {
     width: 60px;
     color: #fff;
     font-size: 12px;
+    text-align: right;
     background-color: transparent;
     border:none;
-    padding: 0px 5px;
     outline:none;
-
+    position: relative;
+    display: inline-block;
+    padding-right: 5px;
+    &::-webkit-inner-spin-button{
+      position: absolute;
+      margin-left: 10px;
+      width: 20px;
+      height: 16px!important;
+      left: 0%;
+    }
 }
 
 .designiy-text-sticker-form-item-textbtn{
   color: #fff;
   font-size: 12px;
-  width: 60px;
   padding-left: 5px;
   cursor: pointer;
   text-align: right;
+  padding-right: 5px;
   &:hover{
     opacity: 0.9;
   }
@@ -236,16 +262,16 @@ onMounted(async () => {
   color: #999;
   font-size: 10px;
   font-weight: bold;
-  width: 30px;
   flex-shrink: 0;
   height: 24px;
   line-height: 24px;
-  text-align: center;
+  text-align: left;
+  padding-left: 5px;
 }
 
 .designiy-text-sticker-title{
   color: #fff;
-  margin: 10px 0;
+  margin: 15px 0 10px 0;
   font-size: 10px;
 }
 

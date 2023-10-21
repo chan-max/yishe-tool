@@ -95,3 +95,6 @@ export const getFonts = () => new Promise( async (resolve,reject) => {
 })
 
 export const uploadModel = (data) => apiInstance.post(Url.UPLOAD_MODEL,data)
+
+
+export const sendEmail = (data) => apiInstance.post(Url.SEND_MAIL,data)

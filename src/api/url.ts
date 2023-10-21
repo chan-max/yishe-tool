@@ -46,5 +46,7 @@ export enum Url {
     GET_FONTS = url('/getFonts'),
 
     // 上传模型
-    UPLOAD_MODEL = url('/uploadModel')
+    UPLOAD_MODEL = url('/uploadModel'),
+
+    SEND_MAIL = url('/sendEmail')
 }

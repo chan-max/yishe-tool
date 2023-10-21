@@ -1,13 +1,13 @@
 <template>
   <div class="banner">
     <div class="banner-desc">
-      <div style="font-size: 40px; color: #fff; font-weight: 600">
+      <div style="font-size: 36px; color: #fff; font-weight: 600">
         开放式服装设计 & 交易平台
       </div>
-      <div style="font-size: 16px; color: rgba(255, 255, 255, 0.8); line-height: 30px">
+      <div style="font-size: 14px; color: rgba(255, 255, 255, 0.6); line-height: 24px;padding-top: 20px;">
         这是一个专门面向设计师和买家的全新线上平台，旨在创造一个安全、公正和透明的环境，让创新与商业交易可以无缝衔接
       </div>
-      <div style="padding-top: 30px">
+      <div style="padding-top: 10px">
         <el-button
           size="large"
           class="banner-btn"
@@ -40,35 +40,20 @@ onMounted(async () => {
 
 <style>
 .banner {
-  /* 紫色 */
-  background: linear-gradient(45deg, rgba(19, 22, 30, 1) 50%, hsl(265, 100%, 30%) 100%);
+  background: linear-gradient(45deg, rgb(26, 1, 117) 0%, rgba(225, 5, 34, 0) 70%) repeat scroll 0% 0%, 
+  linear-gradient(135deg, #6900ff 10%, rgba(49, 5, 209, 0) 80%) repeat scroll 0% 0%, 
+  linear-gradient(225deg, #6900ff, rgba(10, 219, 216, 0) 80%) repeat scroll 0% 0%,
+   rgba(0, 0, 0, 0) linear-gradient(315deg, #06f, rgba(9, 245, 5, 0) 70%) repeat scroll 0% 0%;
 
-  /* 墨绿色 */
-  background: linear-gradient(45deg, #13161e, #111727 34.35%, #add8e6);
 
-  /* 蓝色 */
-  background: linear-gradient(to right, #000428, #004e92);
 
-  /*  浅蓝 */
-  background: linear-gradient(
-    353deg,
-    rgba(148, 187, 233, 1) 0%,
-    rgba(0, 102, 255, 1) 65%
-  );
-
-  /* 浅蓝 */
-  background: linear-gradient(to right, #06f, #2f80ed);
 
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: inset 2px -3px 95px 45px rgba(0, 0, 0, 0.2);
-  padding: 200px 30px;
-
-  @media screen and (max-width: 1200px) {
-    flex-direction: column;
-  }
+  box-shadow: inset 2px -3px 95px 45px rgba(255, 255, 255, 0.03);
+  padding: 200px 60px;
 }
 
 .banner-desc {
@@ -89,9 +74,9 @@ onMounted(async () => {
 
 .banner-btn {
   background-color: #fff !important;
-  color: #06f !important;
+  color: var(--el-color-primary) !important;
   &:hover {
-    background-color: #06f !important;
+    background-color: var(--el-color-primary) !important;
     color: #fff !important;
   }
 }

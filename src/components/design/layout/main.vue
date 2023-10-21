@@ -195,4 +195,4 @@ function stickeOn(img,event) {
 .designiy-center-float {
   z-index: 10;
 }
-</style>../core/controller
+</style>

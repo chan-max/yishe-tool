@@ -3,10 +3,22 @@
     <main-view></main-view>
   </div>
 </template>
-
 <script setup>
 import mainView from "./layout/main.vue";
 import { isDarkMode } from "./store";
+
+function disableMouseWheelZoom() {
+  // Chrome, Firefox, IE9+
+  window.addEventListener('wheel', preventDefault, { passive: false });
+  // Safari
+  window.addEventListener('mousewheel', preventDefault, { passive: false });
+}
+
+function preventDefault(event) {
+  event.preventDefault();
+}
+
+disableMouseWheelZoom()
 </script>
 <style lang="less">
 @import url(./style/dark.less);

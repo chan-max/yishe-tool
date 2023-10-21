@@ -31,6 +31,12 @@ import { reactify, useMouse } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
+import { _1stfExporterMixin } from "./1stf";
+
+
+const mixins = [
+  _1stfExporterMixin
+]
 
 export class ModelController {
   // 场景
@@ -78,6 +84,7 @@ export class ModelController {
     // 初始化时暴露场景和渲染器
     this.scene = new Scene();
     this.renderer = new WebGLRenderer();
+    mixins.forEach((mixin) => mixin(this))
   }
 
   // 初始化容器
@@ -306,20 +313,17 @@ export class ModelController {
 
   }
 
-  exportTo1stf(){
-    const baseModelUrl = this.baseModelUrl
-    debugger
-    return {
-      baseModelUrl
-    }
-  }
-
   getScreenShotFile(){
     this.renderer.render(this.scene, this.camera); // 截取会出现白图片
     var base64 = this.renderer.domElement.toDataURL("image/png"); // base64
     return base64ToFile(base64);
   }
+
+  // 导出 1stf 格式化信息
+  exportTo1stf = null
 }
+
+
 
 
 

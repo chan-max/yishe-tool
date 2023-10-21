@@ -66,7 +66,7 @@ body {
 /* 滚动条样式 */
 ::-webkit-scrollbar {
   width: 5px;
-  height: 10px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {

@@ -3,21 +3,20 @@
     <div class="logo" style="cursor: pointer" @click="$router.push({ name: 'Home' })">
       衣设 1s.design
     </div>
-    <div class="header-container-link hidden-sm-and-down">
+    <div class="header-container-link">
     作品展
     </div>
 
-    <a class="header-container-link hidden-sm-and-down">设计室</a>
-    <a class="header-container-link hidden-sm-and-down" @click="$router.push({name:'Workspace'})">工作台</a>
-    <a class="header-container-link hidden-sm-and-down" @click="$router.push({name:'Market'})">商场</a>
-    <a class="header-container-link hidden-sm-and-down">买衣服</a>
+    <div class="header-container-link ">设计室</div>
+    <div class="header-container-link " :class="$route.name == 'Workspace' && 'header-container-link-active'"  @click="$router.push({name:'Workspace'})">工作台</div>
+    <div class="header-container-link " :class="$route.name == 'Market' && 'header-container-link-active'" @click="$router.push({name:'Market'})">商场</div>
+    <div class="header-container-link">买衣服</div>
 
     <div style="flex: auto"></div>
 
     <!-- <div class="header-container-link" @click="toggleLanguage">
       {{ $t("language") }}
     </div> -->
-
 
     <el-popover
     v-if="loginStatusStore.isLogin"
@@ -66,36 +65,52 @@ import { Pointer,CaretBottom } from "@element-plus/icons-vue";
 
 let route = useRoute();
 
-const transparentMode = ref(true);
 
-let isHome = true;
+const menuHomeTop = {
+  background:'transparent',
+  color:'#fff'
+}
 
-watchEffect(() => {
-  let isHome = route.name === "Home";
-  transparentMode.value = isHome;
+const menuHome = {
+  background:'#fff',
+  color:'#000'
+}
 
-  let appEl = document.querySelector("#app");
-
-  appEl.onscroll = isHome
-    ? function (e) {
-         if (appEl.scrollTop > 0) {
-          transparentMode.value = false;
-        } else {
-          transparentMode.value = true;
-        }
-      }
-    : "";
-});
-
-
+const menu = {
+  background:'#fff',
+  color:'#000'
+}
 
 const menuStyle = computed(() => {
-  return {
-    background: transparentMode.value ? "transparent" : "#fff",
-    color: transparentMode.value ? "#fff" : "#000",
-    borderBottom: transparentMode.value ? "none" : "1px solid #dcdcdc",
-  };
+  return isHome.value ? isScrolled.value ? menuHome : menuHomeTop : menu
 });
+
+
+
+/*
+  导航菜案三种样式
+*/
+
+const isHome = ref(true)
+const  isScrolled = ref(false)
+
+onMounted(() => {
+  const appEl = document.querySelector("#app");
+  appEl.onscroll = isHome && function (e) {
+         if (appEl.scrollTop > 0) {
+          isScrolled.value = true
+        } else {
+          isScrolled.value = false
+        }
+      }
+})
+
+
+watchEffect(() => {
+  let _isHome = route.name === "Home";
+  isHome.value = _isHome
+});
+
 
 // 顶部头像
 
@@ -130,8 +145,6 @@ function toggleLanguage() {
   align-items: center;
   background-color: v-bind("menuStyle.background");
 
-  border-bottom: v-bind("menuStyle.borderBottom");
-
   @media screen and (min-width: 1920px) {
     padding: 0 10%;
   }
@@ -158,7 +171,6 @@ function toggleLanguage() {
   transition: all .5s;
   &:hover{
     opacity: 1;
-    color: v-bind("menuStyle.color");
     box-shadow: 0px 3px 0px 0px white;
   }
 }
@@ -170,5 +182,9 @@ function toggleLanguage() {
   height: 80px;
   align-items: center;
   flex-direction: column;
+}
+
+.header-container-link-active{
+  color: var(--el-color-primary);
 }
 </style>

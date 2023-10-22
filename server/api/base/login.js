@@ -1,7 +1,6 @@
 import { ResponseStatusCodeEnum } from "../../../common/enum/statusCode.js"
 import jwt from "jsonwebtoken";
 
-
 export const loginHook = (router, sequelize) => router.post('/login', async (ctx) => {
     const data = ctx.request.body
     const { account, password } = data

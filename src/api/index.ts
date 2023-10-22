@@ -95,3 +95,16 @@ export const getFonts = () => new Promise( async (resolve,reject) => {
 })
 
 export const uploadModel = (data) => apiInstance.post(Url.UPLOAD_MODEL,data)
+
+
+// 获取模型列表
+export const getModelList  = (data) => new Promise( async (resolve,reject) => {
+  const res = await apiInstance.post(Url.GET_MODEL_LIST,data)
+  const _data = res.data.data.map((item) => {
+    return {
+      img:item.img,
+      modelInfo:item.modelInfo
+    }
+  })
+  resolve(_data)
+})

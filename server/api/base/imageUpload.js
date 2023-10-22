@@ -4,11 +4,11 @@ import { getRePath } from '../../fileManage.js'
 export const imageUploadHook =  (router,sequelize) => router.post('/imageUpload',async (ctx) => {
     const table = sequelize.models.Image;
     const { name, description } = ctx.request.body;
-    debugger
+
     const { file } = ctx.request.files; // 模型文件, 图片
 
     var filePath = getRePath(file.filepath);
-
+  
     await table.create({
       name,
       description,

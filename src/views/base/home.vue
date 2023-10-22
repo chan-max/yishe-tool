@@ -36,9 +36,12 @@ onMounted(async () => {
   bannerModelInfo.value = data
 });
 
+
+
 </script>
 
 <style>
+
 .banner {
   /* 紫色 */
   background: linear-gradient(45deg, rgba(19, 22, 30, 1) 50%, hsl(265, 100%, 30%) 100%);

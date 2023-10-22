@@ -1,16 +1,11 @@
 <template>
   <div id="header-container">
     <div class="logo" style="cursor: pointer" @click="$router.push({ name: 'Home' })">
-      衣设 1s.design
-    </div>
-    <div class="header-container-link">
-    作品展
+      衣设
     </div>
 
-    <div class="header-container-link ">设计室</div>
-    <div class="header-container-link " :class="$route.name == 'Workspace' && 'header-container-link-active'"  @click="$router.push({name:'Workspace'})">工作台</div>
-    <div class="header-container-link " :class="$route.name == 'Market' && 'header-container-link-active'" @click="$router.push({name:'Market'})">商场</div>
-    <div class="header-container-link">买衣服</div>
+    <a class="header-container-link " @click="$router.push({name:'Workspace'})">工作台</a>
+    <a class="header-container-link" @click="$router.push({name:'Market'})">商场</a>
 
     <div style="flex: auto"></div>
 
@@ -162,10 +157,10 @@ function toggleLanguage() {
 }
 
 .header-container-link {
-  margin: 0 20px;
+  margin: 0 14px;
   color: v-bind("menuStyle.color");
   font-size: 12px;
-  font-weight: 400;
+  font-weight: bold;
   cursor: pointer;
   opacity: 0.8;
   transition: all .5s;

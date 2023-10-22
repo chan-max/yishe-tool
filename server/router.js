@@ -5,11 +5,12 @@ import {getBaseSkyboxHook } from "./api/common/getSkybox.js";
 import { getWebStickersHook } from "./api/design/getStickers.js";
 import { textStickerHook,uploadFontHook,getFontsHook } from "./api/text/textSticker.js";
 import { baseModelUploadHook } from "./api/base/baseModelUpload.js";
-import { signupHook } from "./api/base/signUp.js";
+import { signupHook } from "./api/user.js";
 import {imageUploadHook} from './api/base/imageUpload.js'
 import { getImageListHook } from './api/common/getImageList.js';
 import { uploadModelHook } from './api/base/uploadModel.js';
 import {getModelListHook} from './api/common/getModelList.js';
+import {sendEmailHook} from './api/email.js'
 
 export const initRouter = (router, sequelize, app) => {
     let hooks = [
@@ -26,7 +27,8 @@ export const initRouter = (router, sequelize, app) => {
         uploadFontHook,
         getFontsHook,
         uploadModelHook,
-        getModelListHook
+        getModelListHook,
+        sendEmailHook
     ]
     hooks.forEach((hook) => hook(router, sequelize, app))
 }

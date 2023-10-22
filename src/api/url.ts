@@ -49,5 +49,6 @@ export enum Url {
     UPLOAD_MODEL = url('/uploadModel'),
 
     // 获取模型列表
-    GET_MODEL_LIST = url('/getModelList')
+    GET_MODEL_LIST = url('/getModelList'),
+    SEND_MAIL = url('/sendEmail')
 }

@@ -108,3 +108,4 @@ export const getModelList  = (data) => new Promise( async (resolve,reject) => {
   })
   resolve(_data)
 })
+export const sendEmail = (data) => apiInstance.post(Url.SEND_MAIL,data)

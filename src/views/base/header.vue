@@ -3,14 +3,9 @@
     <div class="logo" style="cursor: pointer" @click="$router.push({ name: 'Home' })">
       衣设
     </div>
-    <div class="header-container-link hidden-sm-and-down">
-    作品展
-    </div>
 
-    <a class="header-container-link hidden-sm-and-down">设计室</a>
-    <a class="header-container-link hidden-sm-and-down" @click="$router.push({name:'Workspace'})">工作台</a>
-    <a class="header-container-link hidden-sm-and-down" @click="$router.push({name:'Market'})">商场</a>
-    <a class="header-container-link hidden-sm-and-down">买衣服</a>
+    <a class="header-container-link " @click="$router.push({name:'Workspace'})">工作台</a>
+    <a class="header-container-link" @click="$router.push({name:'Market'})">商场</a>
 
     <div style="flex: auto"></div>
 

@@ -55,7 +55,7 @@
       </el-form-item>
     </el-form>
     <el-divider>
-      <div class="signup-link" @click="$router.push({name:'signup'})">已有账号？去登录</div>
+      <div class="signup-link" @click="$router.push({name:'Login'})">已有账号？去登录</div>
     </el-divider>
   </div>
   </div>
@@ -129,12 +129,13 @@ async function submit() {
   }
 
   var formData = new FormData()
-  let avatarBase64 = await fileToBase64(avatarInput.value.files[0])
+  let avatarBase64 = await fileToBase64(avatarInput.value?.files[0])
   
   formData.append('avatar',avatarBase64)
   formData.append('account',signupForm.account)
   formData.append('email',signupForm.email)
   formData.append('password',signupForm.password)
+  formData.append('validateCode',signupForm.validateCode)
 
 
   let res = await signup(formData);

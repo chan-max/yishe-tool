@@ -1,7 +1,7 @@
 <template>
   <el-config-provider :locale="elementLocale">
     <div id="notice"></div>
-    <div id="header" v-if="$route.meta.header">
+    <div id="header" v-if="$route.meta.header" :style="{position:$route.name == 'Home' ? 'fixed' : ''}">
       <header-view @change-language="toggleLanguage"></header-view>
     </div>
     <div id="content">
@@ -46,7 +46,7 @@ body {
 #header {
   height: 45px;
   width: 100%;
-  position: fixed;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;

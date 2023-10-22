@@ -13,7 +13,8 @@
           class="banner-btn"
           @click="$router.push({ name: 'Design' })"
         >
-          <span style="font-size: 18px; font-weight: bold"> 试一下 </span>
+          <span style="font-size: 18px;"> 试一下</span>
+          <el-icon><TopRight /></el-icon> 
         </el-button>
       </div>
     </div>
@@ -29,7 +30,10 @@
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "../../api";
+import { TopRight } from "@element-plus/icons-vue";
+
 let bannerModelInfo = ref("");
+
 
 onMounted(async () => {
   let data = await getBannerModel();
@@ -40,14 +44,8 @@ onMounted(async () => {
 
 <style>
 .banner {
-  background: linear-gradient(45deg, rgb(26, 1, 117) 0%, rgba(225, 5, 34, 0) 70%) repeat scroll 0% 0%, 
-  linear-gradient(135deg, #6900ff 10%, rgba(49, 5, 209, 0) 80%) repeat scroll 0% 0%, 
-  linear-gradient(225deg, #6900ff, rgba(10, 219, 216, 0) 80%) repeat scroll 0% 0%,
-   rgba(0, 0, 0, 0) linear-gradient(315deg, #06f, rgba(9, 245, 5, 0) 70%) repeat scroll 0% 0%;
-
-
-
-
+  background:radial-gradient(at left bottom, rgb(1, 163, 255), rgb(105, 0, 255));
+  
   width: 100%;
   display: flex;
   justify-content: center;

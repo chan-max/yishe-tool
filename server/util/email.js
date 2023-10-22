@@ -12,22 +12,24 @@ const transporter = nodemailer.createTransport({
 });
 
 // 邮件发送函数
-export function sendEmail(options) {
+export function sendValidateCodeEmail(options) {
   // 邮件配置
   const mailOptions = {
     from: 'yishe1s@163.com',
     to: options.email,
-    subject: '衣设账号注册验证码 ',
-    text: 'This is a test email from Nodemailer'
+    subject: '衣设账号注册认证',
+    text: `你的验证码为${options.validateCode}，有效期为十分钟`
   };
-
+  
+  return new Promise((resolve,reject) => {
   // 发送邮件
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log('Error occurred while sending email:', error.message);
-    } else {
-      console.log('Email sent successfully!');
-    }
-  });
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        reject(error.message)
+      } else {
+        resolve()
+      }
+    });
+  })
 }
 

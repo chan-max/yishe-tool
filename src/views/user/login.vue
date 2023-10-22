@@ -76,7 +76,7 @@ const rules = reactive({
   account: [
     {  
     message:'',
-    trigger: ['blur' ,'change'],
+    trigger: ['blur' ],
     validator(rule,val){
       return val.length >= 6 && val.length <= 16
     },
@@ -85,7 +85,7 @@ const rules = reactive({
   password: [
     { 
       message:'',
-      trigger:['blur' ,'change'],
+      trigger:['blur'],
       validator(rule,val){
         return val.length >= 6 && val.length <= 16
       },

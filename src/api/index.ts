@@ -4,7 +4,10 @@ import { Url } from "./url";
 import { buildURL } from "@/common/url";
 
 // 注册 ，账号密码手机号
-export const signup = (data: any) => apiInstance.post(Url.SINGUP, data);
+export const signup = (data: any) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post(Url.SINGUP, data)
+  resolve(res.data)
+});
 
 // 登录
 export const login = (data) => new Promise( async (resolve, reject) => {

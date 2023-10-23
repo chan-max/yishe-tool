@@ -4,8 +4,8 @@
       衣设
     </div>
 
-    <a class="header-container-link " @click="$router.push({name:'Workspace'})">工作台</a>
-    <a class="header-container-link" @click="$router.push({name:'Market'})">商场</a>
+    <div class="header-container-link " :class="$route.name =='Workspace' && 'header-container-link-active'"  @click="$router.push({name:'Workspace'})">工作台</div>
+    <div class="header-container-link" :class="$route.name =='Market' && 'header-container-link-active'" @click="$router.push({name:'Market'})">商场</div>
 
     <div style="flex: auto"></div>
 
@@ -141,7 +141,7 @@ function toggleLanguage() {
   background-color: v-bind("menuStyle.background");
 
   @media screen and (min-width: 1920px) {
-    padding: 0 10%;
+    padding: 0 15%;
   }
   transition: all 0.2s ease-in-out;
 }

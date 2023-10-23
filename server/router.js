@@ -9,7 +9,7 @@ import { signupHook } from "./api/user.js";
 import {imageUploadHook} from './api/base/imageUpload.js'
 import { getImageListHook } from './api/common/getImageList.js';
 import { uploadModelHook } from './api/base/uploadModel.js';
-import {getModelListHook} from './api/common/getModelList.js';
+import {getModelListHook} from './api/model.js';
 import {sendEmailHook} from './api/email.js'
 
 export const initRouter = (router, sequelize, app) => {

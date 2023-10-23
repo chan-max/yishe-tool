@@ -68,8 +68,11 @@ import { ResponseStatusCodeEnum } from "@common/enum/statusCode.js";
 import {fileToBase64} from '@/common/transform/fileToBase64'
 
 import { View ,Hide,User,Lock,Message,InfoFilled,Bell} from "@element-plus/icons-vue";
+import { useRouter } from "vue-router";
 
 const avatarInput  = ref()
+
+const router = useRouter()
 
 const signupForm = reactive({
   account: "",
@@ -141,9 +144,7 @@ async function submit() {
   let res = await signup(formData);
   let status = res.status;
   if (status === ResponseStatusCodeEnum.SIGNUP_SUCCESS) {
-    alert("注册成功");
-  } else if (status === ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST) {
-    alert("账号已存在");
+      router.replace({name:'Login'})
   }
 }
 

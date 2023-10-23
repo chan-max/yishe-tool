@@ -6,19 +6,10 @@
 <script setup>
 import mainView from "./layout/main.vue";
 import { isDarkMode } from "./store";
+import { usePreventScreenResize } from './composition/preventScreenResize';
 
-function disableMouseWheelZoom() {
-  // Chrome, Firefox, IE9+
-  window.addEventListener('wheel', preventDefault, { passive: false });
-  // Safari
-  window.addEventListener('mousewheel', preventDefault, { passive: false });
-}
+usePreventScreenResize()
 
-function preventDefault(event) {
-  event.preventDefault();
-}
-
-disableMouseWheelZoom()
 </script>
 <style lang="less">
 @import url(./style/dark.less);

@@ -4,6 +4,9 @@
         <div class="market-title">
             寻找第一无二的创作
         </div>
+        <div>
+            {{ modelList }}
+        </div>
     </div>
 </template>
 <script setup>

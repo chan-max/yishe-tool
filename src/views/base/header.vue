@@ -12,7 +12,7 @@
     <!-- <div class="header-container-link" @click="toggleLanguage">
       {{ $t("language") }}
     </div> -->
-
+    
     <el-popover
     v-if="loginStatusStore.isLogin"
       placement="bottom"
@@ -57,9 +57,7 @@ import { computed, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { Pointer,CaretBottom } from "@element-plus/icons-vue";
 
-
 let route = useRoute();
-
 
 const menuHomeTop = {
   background:'transparent',
@@ -73,7 +71,8 @@ const menuHome = {
 
 const menu = {
   background:'#fff',
-  color:'#000'
+  color:'#000',
+  borderBottom:`1px solid #e7e7e7`
 }
 
 const menuStyle = computed(() => {
@@ -133,12 +132,13 @@ function toggleLanguage() {
 #header-container {
   width: 100%;
   height: 100%;
-  padding: 0 20px;
+  padding:20px;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: v-bind("menuStyle.background");
+  border-bottom: v-bind("menuStyle.borderBottom");
 
   @media screen and (min-width: 1920px) {
     padding: 0 15%;

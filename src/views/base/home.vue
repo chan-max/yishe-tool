@@ -47,8 +47,7 @@ onMounted(async () => {
 <style>
 
 .banner {
-  background:radial-gradient(at left bottom, rgb(1, 163, 255), rgb(105, 0, 255));
-  
+  background:radial-gradient(at left bottom, rgb(1, 163, 255), #06f);
   width: 100%;
   display: flex;
   justify-content: center;

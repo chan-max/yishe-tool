@@ -105,7 +105,7 @@ export const getModelList  = (data) => new Promise( async (resolve,reject) => {
   const res = await apiInstance.post(Url.GET_MODEL_LIST,data)
   const _data = res.data.data.map((item) => {
     return {
-      img:item.img,
+      img:staticFilePath(item.img),
       modelInfo:item.modelInfo
     }
   })

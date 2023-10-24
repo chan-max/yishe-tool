@@ -1,9 +1,9 @@
-import { toRealFilePath } from "@/api/url";
+import { resolveFilePath } from "@/api/url";
 import { ModelController } from "./controller";
 
 export const _1stfExporterMixin = (modelController: ModelController) => {
   modelController.exportTo1stf = () => {
-    const baseModelUrl = toRealFilePath(modelController.baseModelUrl);
+    const baseModelUrl = resolveFilePath(modelController.baseModelUrl);
     const decals = modelController.decalControllers.map((dc: any) => {
       const position = {
         x: dc.position.x,

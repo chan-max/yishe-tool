@@ -1,33 +1,25 @@
 
-export const toDevFilePath = (path) => {
+export const resolveFilePath = (path) => {
 
     if(!path){
         return ''
     }
 
     path = path.replaceAll('\\','/')
+    path = path.replaceAll('//','/')
 
-    if(path.startsWith('/api') || path.startsWith('api')){
-        return path
-    }
-
-    return  '/api/' +  path
-}
-
-export const toRealFilePath = (path) => {
-
-    if(!path){
-        return ''
-    }
-
-    path = path.replaceAll('\\','/')
-
-    if(path.startsWith('/api')){
-        return path.slice(4)
-    }
-
-    if(path.startsWith('api')){
-        return path.slice(3)
+    
+    if(import.meta.env.DEV){
+        if(!path.startsWith('/api') && !path.startsWith('api')){
+            return '/api/' +  path
+        }
+    }else{
+        if(path.startsWith('/api')){
+            return path.slice(4)
+        }
+        if(path.startsWith('api')){
+            return path.slice(3)
+        }
     }
 
     return path

@@ -1,9 +1,11 @@
 <template>
   <div class="gltf-viewer" ref="gltfViewer">
-    <div class="gltf-viewer-loading" v-if="loading">加载中...</div>
+    <div class="gltf-viewer-loading" v-if="loading">
+      ...
+    </div>
     <div class="screenshot"></div>
     <div class="gltf-viewer-menu">
-      <font-awesome-icon @click="screenshot" title="截屏" :icon="['fas', 'camera']" />
+
     </div>
   </div>
 </template>
@@ -36,15 +38,10 @@ import { debounce } from "@/common/utils/debounce";
 import { gltfLoader } from "@/common/threejsHelper";
 import { format1stf } from '@/api/format';
 
-/*
-  model : 1stf
-*/
 
 const props = defineProps(['model']);
 
-const $ = format1stf(props.model)
-
-const emits = defineEmits(["screenshot"]);
+const emits = defineEmits(["screenshot",'load']);
 
 const loading = ref(false);
 
@@ -83,15 +80,16 @@ function initImportedModel(gltf) {
 }
 
 async function initModel() {
-  const url = $.baseModelUrl;
+  loading.value = true;
+  const $ = format1stf(props.model)
 
+  const url = $.baseModelUrl;
+  
   if (!url) {
-    scene.remove(currentGltf.value.scene);
     currentGltf.value = null;
     return;
   }
 
-  loading.value = true;
   let el = gltfViewer.value;
   let gltf = await gltfLoader(url);
 
@@ -134,6 +132,7 @@ async function initModel() {
   el.appendChild(renderer.domElement);
   render();
   loading.value = false;
+  emits('load')
 }
 
 defineExpose({

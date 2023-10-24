@@ -1,7 +1,8 @@
 <template>
     <div class="market-card">
-        <div  class="market-card-main">
-            <el-image v-if="!focus" fit="contain" :src="props.model.img" draggable="false">
+        <div  class="market-card-main"  @mouseenter="mouseenter" @mouseleave="mouseleave">
+            <div class="market-card-main-img">
+            <el-image v-if="showImg" fit="cover" :src="props.model.img" draggable="false">
                 <template #placeholder>
                     <loading></loading>
                 </template>
@@ -9,9 +10,13 @@
                     <span style="font-weight: bold;color:#ddd;">加载失败</span>
                 </template>
             </el-image>
-            <gltf-viewer v-else :model="props.model.modelInfo"></gltf-viewer>
+            </div>
+            <div class="market-card-main-viewer">
+                <gltf-viewer v-if="showViewer" :model="props.model.modelInfo" @load="load"></gltf-viewer>
+            </div>
         </div>
         <div class="market-card-title">
+            
         </div>
     </div>
 </template>
@@ -19,10 +24,26 @@
 import { defineProps,ref } from 'vue';
 import loading from './loading.vue'
 import gltfViewer from '@/components/model/gltfViewer/index.vue';
+import { nextTick } from 'process';
 
 const props = defineProps(['model'])
 
-const focus = ref(false)
+const showImg = ref(true)
+
+const showViewer = ref(false)
+
+function mouseenter() {
+    showViewer.value = true
+}
+
+function mouseleave(){
+    showViewer.value = false
+    showImg.value = true
+}
+
+function load(){
+    showImg.value = false
+}
 
 </script>
 <style>
@@ -47,11 +68,29 @@ const focus = ref(false)
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    position: relative;
+    .el-image{
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .market-card-title{
     width: 100%;
     height: 30px;
     background-color: #fff;
+}
+
+
+.market-card-main-img{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.market-card-main-viewer{
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 </style>

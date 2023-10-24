@@ -1,7 +1,8 @@
-import { toDevFilePath } from "./url";
+import { resolveFilePath } from "./url";
 import apiInstance from "./apiInstance";
 import { Url } from "./url";
 import { buildURL } from "@/common/url";
+import { format1stf } from "./format";
 
 // 注册 ，账号密码手机号
 export const signup = (data: any) => new Promise(async (resolve, reject) => {
@@ -19,9 +20,7 @@ export const login = (data) => new Promise( async (resolve, reject) => {
 export const getBannerModel = () =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.get(Url.GET_BANNER_MODEL);
-    resolve({
-      url: toDevFilePath(res.data.data.url),
-    });
+    resolve(res.data.data.modelInfo);
   });
 
 // 获取可以进行编辑的内置模型
@@ -33,8 +32,8 @@ export const getBaseModelList = () =>
         return {
           name: item.name,
           desc: item.description,
-          img: toDevFilePath(item.imgPath),
-          file: toDevFilePath(item.filePath),
+          img: resolveFilePath(item.imgPath),
+          file: resolveFilePath(item.filePath),
         };
       })
     );
@@ -64,7 +63,7 @@ export const getImageList = () =>
   new Promise(async (resolve: any, reject: any) => {
     let res = await apiInstance.get(Url.GET_IMAGE_LIST);
     let data = res.data.data.map((item: any) => ({
-      path: toDevFilePath(item.path),
+      path: resolveFilePath(item.path),
       name: item.name,
       description: item.description,
     }));
@@ -88,8 +87,8 @@ export const getFonts = () => new Promise( async (resolve,reject) => {
   const res = await apiInstance.get(Url.GET_FONTS)
   const data = res.data.data.map((item) => {
     return {
-      file:toDevFilePath(item.file),
-      img:toDevFilePath(item.img),
+      file:resolveFilePath(item.file),
+      img:resolveFilePath(item.img),
       name:item.name,
       description:item.description
     }
@@ -105,7 +104,7 @@ export const getModelList  = (data) => new Promise( async (resolve,reject) => {
   const res = await apiInstance.post(Url.GET_MODEL_LIST,data)
   const _data = res.data.data.map((item) => {
     return {
-      img:toDevFilePath(item.img),
+      img:resolveFilePath(item.img),
       modelInfo:item.modelInfo
     }
   })

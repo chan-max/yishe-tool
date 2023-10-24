@@ -1,4 +1,4 @@
-import { toDevFilePath } from "./url";
+import { resolveFilePath} from "./url";
 
 
 export function format1stf(source:any){
@@ -15,7 +15,6 @@ export function format1stf(source:any){
         }
     }
 
-    source.baseModelUrl = toDevFilePath( source.baseModelUrl)
-
+    source.baseModelUrl = resolveFilePath( source.baseModelUrl)
     return source
 }

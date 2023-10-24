@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="bannner-model">
-      <gltf-viewer :url="bannerModelInfo.url"></gltf-viewer>
+      <gltf-viewer :model="modelInfo"></gltf-viewer>
     </div>
   </div>
 
@@ -32,12 +32,12 @@ import { onMounted, ref } from "vue";
 import { getBannerModel } from "../../api";
 import { TopRight } from "@element-plus/icons-vue";
 
-let bannerModelInfo = ref("");
+let modelInfo = ref("");
 
 
 onMounted(async () => {
   let data = await getBannerModel();
-  bannerModelInfo.value = data
+  modelInfo.value = data
 });
 
 

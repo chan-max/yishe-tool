@@ -3,14 +3,14 @@
         <div class="market-title">
         </div>
         <div class="market-content">
-            <viewer v-for="model in modelList" :model="model"></viewer>
+            <card v-for="model in modelList" :model="model"></card>
         </div>
     </div>
 </template>
 <script setup>
 import { getModelList } from '@/api/index';
 import { onMounted,ref } from 'vue';
-import viewer from './modelViewer.vue'
+import card from './card.vue'
 
 const modelList = ref()
 
@@ -43,4 +43,6 @@ onMounted(async () => {
     overflow: auto;
     justify-content: center;
 }
+
+
 </style>

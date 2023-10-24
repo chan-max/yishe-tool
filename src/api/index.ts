@@ -1,4 +1,4 @@
-import { staticFilePath } from "./url";
+import { toDevFilePath } from "./url";
 import apiInstance from "./apiInstance";
 import { Url } from "./url";
 import { buildURL } from "@/common/url";
@@ -20,7 +20,7 @@ export const getBannerModel = () =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.get(Url.GET_BANNER_MODEL);
     resolve({
-      url: staticFilePath(res.data.data.url),
+      url: toDevFilePath(res.data.data.url),
     });
   });
 
@@ -33,8 +33,8 @@ export const getBaseModelList = () =>
         return {
           name: item.name,
           desc: item.description,
-          img: staticFilePath(item.imgPath),
-          file: staticFilePath(item.filePath),
+          img: toDevFilePath(item.imgPath),
+          file: toDevFilePath(item.filePath),
         };
       })
     );
@@ -64,7 +64,7 @@ export const getImageList = () =>
   new Promise(async (resolve: any, reject: any) => {
     let res = await apiInstance.get(Url.GET_IMAGE_LIST);
     let data = res.data.data.map((item: any) => ({
-      path: staticFilePath(item.path),
+      path: toDevFilePath(item.path),
       name: item.name,
       description: item.description,
     }));
@@ -88,8 +88,8 @@ export const getFonts = () => new Promise( async (resolve,reject) => {
   const res = await apiInstance.get(Url.GET_FONTS)
   const data = res.data.data.map((item) => {
     return {
-      file:staticFilePath(item.file),
-      img:staticFilePath(item.img),
+      file:toDevFilePath(item.file),
+      img:toDevFilePath(item.img),
       name:item.name,
       description:item.description
     }
@@ -105,7 +105,7 @@ export const getModelList  = (data) => new Promise( async (resolve,reject) => {
   const res = await apiInstance.post(Url.GET_MODEL_LIST,data)
   const _data = res.data.data.map((item) => {
     return {
-      img:staticFilePath(item.img),
+      img:toDevFilePath(item.img),
       modelInfo:item.modelInfo
     }
   })

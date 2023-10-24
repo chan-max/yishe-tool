@@ -1,14 +1,37 @@
 
-export const staticFilePath = (path) => {
+export const toDevFilePath = (path) => {
 
     if(!path){
-        return
+        return ''
     }
 
     path = path.replaceAll('\\','/')
-    return (import.meta.env.DEV ? '/api/' : '/')  + path
+
+    if(path.startsWith('/api') || path.startsWith('api')){
+        return path
+    }
+
+    return  '/api/' +  path
 }
 
+export const toRealFilePath = (path) => {
+
+    if(!path){
+        return ''
+    }
+
+    path = path.replaceAll('\\','/')
+
+    if(path.startsWith('/api')){
+        return path.slice(4)
+    }
+
+    if(path.startsWith('api')){
+        return path.slice(3)
+    }
+
+    return path
+}
 
 
 // 区分开发和生产api

@@ -1,6 +1,5 @@
 
 // 生成随机六位验证码
-
 export function generateVerificationCode() {
     const codeLength = 6;
     let code = '';
@@ -11,4 +10,13 @@ export function generateVerificationCode() {
     }
     return code;
   }
+
+// 暂停
+export function sleep(s){
+  return new Promise((resolve) => {
+    setTimeout(() => {
+        resolve()
+    }, s * 1000);
+  })
+}
   

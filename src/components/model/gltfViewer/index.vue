@@ -34,13 +34,15 @@ import {
 } from "three";
 import { debounce } from "@/common/utils/debounce";
 import { gltfLoader } from "@/common/threejsHelper";
+import { format1stf } from '@/api/format';
 
 /*
-    props :
-    data : 模型相关数据
+  model : 1stf
 */
 
-const props = defineProps(["url"]);
+const props = defineProps(['model']);
+
+const $ = format1stf(props.model)
 
 const emits = defineEmits(["screenshot"]);
 
@@ -81,7 +83,7 @@ function initImportedModel(gltf) {
 }
 
 async function initModel() {
-  let url = props.url;
+  const url = $.baseModelUrl;
 
   if (!url) {
     scene.remove(currentGltf.value.scene);
@@ -125,7 +127,7 @@ async function initModel() {
 
   function render() {
     requestAnimationFrame(render);
-    gltf.scene.rotation.y += 0.003;
+    // gltf.scene.rotation.y += 0.003;
     renderer.render(scene, camera);
   }
 
@@ -142,12 +144,12 @@ defineExpose({
 });
 
 watch(
-  () => props.url,
+  () => props.model,
   async () => {
     await nextTick();
     initModel();
   }
-);
+,{immediate:true});
 
 function screenshot() {
   renderer.render(scene, camera); // 截取会出现白图片

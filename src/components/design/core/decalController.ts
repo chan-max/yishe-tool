@@ -58,8 +58,6 @@ export class DecalController {
     
     const intersects = raycaster.intersectObject(mesh, true);
 
-
-
     if (intersects.length == 0) {
       return;
     }
@@ -92,7 +90,7 @@ export class DecalController {
 
     this.modelController.scene.add(this.decal);
     }
-
+    
     //  销毁该贴纸
     destroy(){
       this.modelController.scene.remove(this.decal);

@@ -32,6 +32,7 @@ import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
+import { operatingDecal, showDecalControlDialog } from "../store";
 
 
 const mixins = [
@@ -283,6 +284,8 @@ export class ModelController {
     var decal = new DecalController(this,img)
     decal.create()
     this.decalControllers.push(decal)
+    operatingDecal.value = decal
+    showDecalControlDialog.value = true
   }
 
 

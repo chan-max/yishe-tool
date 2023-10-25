@@ -1,16 +1,16 @@
 <template>
   <loading v-if="isLoading"></loading>
-  <div class="designiy-top">
+  <div class="modelController-top">
     <header-menu/>
   </div>
-  <div class="designiy-left">
+  <div class="modelController-left">
     <left-menu></left-menu>
   </div>
-  <div class="designiy-right"></div>
-  <div class="designiy-bottom">
+  <div class="modelController-right"></div>
+  <div class="modelController-bottom">
     <bottom-menu></bottom-menu>
   </div>
-  <div id="designiy-canvas-container" ref="mountContainer"></div>
+  <div id="modelController-canvas-container" ref="mountContainer"></div>
 
   <diydialog
     style=" border: 1px solid rgba(255, 255, 255, 0.2)"
@@ -91,19 +91,19 @@ import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 // 挂载容器
 const mountContainer = ref();
 
-const designiy = new ModelController();
-const {scene} = designiy
+const modelController = new ModelController();
 
-currentController.value = designiy
+const {scene} = modelController
+
+currentController.value = modelController
 
 // 是否处于加载中
-const isLoading = computed(() => designiy.loading.value);
+const isLoading = computed(() => modelController.loading.value);
 
 watch(currentModelInfo,() => {
   const {file} = currentModelInfo.value;
-  designiy.setMainModel(file)
+  modelController.setMainModel(file)
 })
-
 
 // 创建场景、相机和渲染器等...
 
@@ -128,22 +128,22 @@ scene.add(pointLight);
 
 
 // 改变画布背景颜色
-watchEffect(() => designiy.setBgColor(canvasBgColor.value, canvasBgOpacity.value));
+watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacity.value));
 
 // 渲染动画
-onMounted(() => designiy.render(mountContainer.value));
+onMounted(() => modelController.render(mountContainer.value));
 
 
 
 
 // 贴图逻辑暂时保留
 function stickeOn(img,event) {
-  designiy.stickOnMousePosition(img)
+  modelController.stickOnMousePosition(img)
 }
 </script>
 
 <style lang="less">
-.designiy-top {
+.modelController-top {
   height: 40px;
   width: 100%;
   position: absolute;
@@ -151,7 +151,7 @@ function stickeOn(img,event) {
   z-index: 10;
 }
 
-.designiy-left {
+.modelController-left {
   position: absolute;
   left: 0;
   top: 40px;
@@ -163,7 +163,7 @@ function stickeOn(img,event) {
   z-index: 10;
 }
 
-.designiy-right {
+.modelController-right {
   position: absolute;
   right: 0;
   top: 40px;
@@ -175,13 +175,13 @@ function stickeOn(img,event) {
   z-index: 10;
 }
 
-.designiy-bottom {
+.modelController-bottom {
   z-index: 10;
   position: absolute;
   bottom: 20px;
 }
 
-#designiy-canvas-container {
+#modelController-canvas-container {
   width: 100%;
   height: 100%;
   background: #fff;
@@ -192,7 +192,7 @@ function stickeOn(img,event) {
   z-index: 1;
 }
 
-.designiy-center-float {
+.modelController-center-float {
   z-index: 10;
 }
 </style>

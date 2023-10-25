@@ -37,7 +37,7 @@ import {
 import { debounce } from "@/common/utils/debounce";
 import { gltfLoader } from "@/common/threejsHelper";
 import { format1stf } from '@/api/format';
-
+import { canvasBgColor } from '../../design/store';
 
 const props = defineProps(['model']);
 
@@ -55,7 +55,6 @@ const renderer = new WebGLRenderer({
   alpha: true, // 透明背景
 });
 
-renderer.setClearColor("#333");
 
 const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
 camera.lookAt(0, 0, 0);
@@ -86,9 +85,10 @@ async function initModel() {
   const url = $.baseModelUrl;
   
   if (!url) {
-    currentGltf.value = null;
     return;
   }
+
+  renderer.setClearColor($.canvasBgColor || '#474e56');
 
   let el = gltfViewer.value;
   let gltf = await gltfLoader(url);
@@ -125,7 +125,7 @@ async function initModel() {
 
   function render() {
     requestAnimationFrame(render);
-    // gltf.scene.rotation.y += 0.003;
+    gltf.scene.rotation.y += 0.003;
     renderer.render(scene, camera);
   }
 

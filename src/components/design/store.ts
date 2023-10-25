@@ -15,7 +15,7 @@ export const isLoading = shallowRef(false);
 export const container = shallowRef();
 
 // 保存当前引入的文件
-export const currentGltf = shallowRef()
+export const currentBaseModelUrl = shallowRef()
 
 // 保存引入文件场景中的模型
 export const currentModel = shallowRef()

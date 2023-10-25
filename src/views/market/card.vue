@@ -16,7 +16,6 @@
             </div>
         </div>
         <div class="market-card-title">
-            
         </div>
     </div>
 </template>
@@ -24,8 +23,6 @@
 import { defineProps,ref } from 'vue';
 import loading from './loading.vue'
 import gltfViewer from '@/components/model/gltfViewer/index.vue';
-import { nextTick } from 'process';
-
 const props = defineProps(['model'])
 
 const showImg = ref(true)

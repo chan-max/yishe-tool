@@ -1,9 +1,10 @@
 import { resolveFilePath } from "@/api/url";
 import { ModelController } from "./controller";
+import { canvasBgColor, currentBaseModelUrl, isDarkMode } from "../store";
 
 export const _1stfExporterMixin = (modelController: ModelController) => {
   modelController.exportTo1stf = () => {
-    const baseModelUrl = resolveFilePath(modelController.baseModelUrl);
+
     const decals = modelController.decalControllers.map((dc: any) => {
       const position = {
         x: dc.position.x,
@@ -27,13 +28,27 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
         position,
         rotation,
         size,
-        img: dc.img.src
-      }
+        img: dc.img.src,
+      };
     });
 
-    return {
-      baseModelUrl,
-      decals
+    debugger
+
+    var _ = {
+      baseModelUrl: resolveFilePath(currentBaseModelUrl.value),
+      decals,
+      isDarkMode: isDarkMode.value,
+      canvasBgColor: canvasBgColor.value,
+      camera:{
+        position: {
+          x:modelController.camera.position.x,
+          y:modelController.camera.position.y,
+          z:modelController.camera.position.z,
+        }
+      }
     };
+
+    
+    return _;
   };
 };

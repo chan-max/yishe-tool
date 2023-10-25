@@ -32,11 +32,9 @@ import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
+import { currentBaseModelUrl } from "../store";
 
-
-const mixins = [
-  _1stfExporterMixin
-]
+const mixins = [_1stfExporterMixin];
 
 export class ModelController {
   // 场景
@@ -84,7 +82,7 @@ export class ModelController {
     // 初始化时暴露场景和渲染器
     this.scene = new Scene();
     this.renderer = new WebGLRenderer();
-    mixins.forEach((mixin) => mixin(this))
+    mixins.forEach((mixin) => mixin(this));
   }
 
   // 初始化容器
@@ -170,14 +168,15 @@ export class ModelController {
 
   gltf: any = null;
 
-  baseModelUrl:any = null
+  baseModelUrl: any = null;
 
   public async setMainModel(url: any) {
     this.loading.value = true;
     this.removeMainModel();
     let gltf: any = await gltfLoader(url);
     this.mainModel = gltf;
-    this.baseModelUrl = url
+    this.baseModelUrl = url;
+    currentBaseModelUrl.value = url;
     this.initModelPosition();
     this.scene.add(gltf.scene);
     this.mainMesh = this.findMainMesh(gltf);
@@ -274,17 +273,14 @@ export class ModelController {
     });
   }
 
-   
-
-  decalControllers:any = []
+  decalControllers: any = [];
 
   // 进行贴图
   stickOnMousePosition(img) {
-    var decal = new DecalController(this,img)
-    decal.create()
-    this.decalControllers.push(decal)
+    var decal = new DecalController(this, img);
+    decal.create();
+    this.decalControllers.push(decal);
   }
-
 
   // 实时保存所有贴纸
   public stickers = reactive([]);
@@ -306,24 +302,17 @@ export class ModelController {
     this.mainModel.scene.rotation.y += 0.008;
   }
 
-
-  // 导出 1stf 格式化信息
-
-  parse1stf(){
-
+  // 解析 1stf 格式化信息 ， 并初始化系统
+  parse1stf() {
+    
   }
 
-  getScreenShotFile(){
+  getScreenShotFile() {
     this.renderer.render(this.scene, this.camera); // 截取会出现白图片
     var base64 = this.renderer.domElement.toDataURL("image/png"); // base64
     return base64ToFile(base64);
   }
 
   // 导出 1stf 格式化信息
-  exportTo1stf = null
+  exportTo1stf = null;
 }
-
-
-
-
-

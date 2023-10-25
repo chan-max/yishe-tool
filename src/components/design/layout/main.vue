@@ -1,13 +1,13 @@
 <template>
   <loading v-if="isLoading"></loading>
-  <div class="modelController-top">
+  <div class="designiy-top">
     <header-menu/>
   </div>
-  <div class="modelController-left">
+  <div class="designiy-left">
     <left-menu></left-menu>
   </div>
-  <div class="modelController-right"></div>
-  <div class="modelController-bottom">
+  <div class="designiy-right"></div>
+  <div class="designiy-bottom">
     <bottom-menu></bottom-menu>
   </div>
   <div id="designiy-canvas-container" ref="mountContainer"></div> 
@@ -152,7 +152,7 @@ function stickeOn(img,event) {
 </script>
 
 <style lang="less">
-.modelController-top {
+.designiy-top {
   height: 40px;
   width: 100%;
   position: absolute;
@@ -160,7 +160,7 @@ function stickeOn(img,event) {
   z-index: 10;
 }
 
-.modelController-left {
+.designiy-left {
   position: absolute;
   left: 0;
   top: 40px;
@@ -172,7 +172,7 @@ function stickeOn(img,event) {
   z-index: 10;
 }
 
-.modelController-right {
+.designiy-right {
   position: absolute;
   right: 0;
   top: 40px;
@@ -184,7 +184,7 @@ function stickeOn(img,event) {
   z-index: 10;
 }
 
-.modelController-bottom {
+.designiy-bottom {
   z-index: 10;
   position: absolute;
   bottom: 20px;
@@ -201,7 +201,7 @@ function stickeOn(img,event) {
   z-index: 1;
 }
 
-.modelController-center-float {
+.designiy-center-float {
   z-index: 10;
 }
 </style>

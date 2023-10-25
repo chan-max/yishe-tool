@@ -70,8 +70,11 @@ export const showTextStickerDialog = ref(false)
 
 
 // 是否展示工作数窗口
-export const showWorkTreeDialog = ref(true)
+export const showWorkTreeDialog = ref(false)
 
+// 是否展示贴画控制弹窗
+
+export const showDecalControlDialog = ref(true)
 
 // 保存弹窗当前的zIndex
 export const zIndexDialog = ref(10)
@@ -97,3 +100,6 @@ export const textStickerLineHeight = ref(1)
 
 // 是否斜体
 export const textStickerIsItalic = ref(false)
+
+// 当前正在操作的贴花
+export const operatingDecal = shallowRef()

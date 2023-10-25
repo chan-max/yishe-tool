@@ -10,8 +10,7 @@
   <div class="modelController-bottom">
     <bottom-menu></bottom-menu>
   </div>
-  <div id="modelController-canvas-container" ref="mountContainer"></div>
-
+  <div id="designiy-canvas-container" ref="mountContainer"></div> 
   <diydialog
     style=" border: 1px solid rgba(255, 255, 255, 0.2)"
     :show="showBaseModelSelectDialog"
@@ -53,13 +52,22 @@
   >
     <work-tree></work-tree>
   </diydialog>
+
+  <diydialog
+    :header="false"
+    :show="showDecalControlDialog"
+    style="width:auto;height:calc(100% - 40px);"
+    :position="{right:'0px',bottom:0}"
+  >
+    <decal-control></decal-control>
+  </diydialog>
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect ,watch} from "vue";
 import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
-import { currentController,canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showTextStickerDialog,showWorkTreeDialog} from "../store";
+import { currentController,canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showTextStickerDialog,showWorkTreeDialog, showDecalControlDialog} from "../store";
 import stickersTabs from "./stickers/stickersTabs.vue";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -71,6 +79,7 @@ import imageSticker from './imageSticker/index.vue'
 import textSticker from './textSticker/index.vue'
 import workTree from './workTree/index.vue'
 import bottomMenu from './bottomMenu.vue'
+import decalControl from './decalControl/index.vue'
 
 import {
   Mesh,
@@ -181,7 +190,7 @@ function stickeOn(img,event) {
   bottom: 20px;
 }
 
-#modelController-canvas-container {
+#designiy-canvas-container {
   width: 100%;
   height: 100%;
   background: #fff;

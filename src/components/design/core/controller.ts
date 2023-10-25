@@ -33,6 +33,7 @@ import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
 import { currentBaseModelUrl } from "../store";
+import { operatingDecal, showDecalControlDialog } from "../store";
 
 const mixins = [_1stfExporterMixin];
 
@@ -177,6 +178,7 @@ export class ModelController {
     this.mainModel = gltf;
     this.baseModelUrl = url;
     currentBaseModelUrl.value = url;
+
     this.initModelPosition();
     this.scene.add(gltf.scene);
     this.mainMesh = this.findMainMesh(gltf);
@@ -277,13 +279,8 @@ export class ModelController {
 
   // 进行贴图
   stickOnMousePosition(img) {
-    var decal = new DecalController(this, img);
-    decal.create();
-    this.decalControllers.push(decal);
+    var decal = new DecalController(this,img)
   }
-
-  // 实时保存所有贴纸
-  public stickers = reactive([]);
 
   // 恢复模型模型位置
   resetPosition() {
@@ -304,7 +301,7 @@ export class ModelController {
 
   // 解析 1stf 格式化信息 ， 并初始化系统
   parse1stf() {
-    
+
   }
 
   getScreenShotFile() {

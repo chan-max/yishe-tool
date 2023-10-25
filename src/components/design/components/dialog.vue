@@ -14,7 +14,7 @@
       :handle="handle"
       :style="{zIndex}"
     >
-        <div  ref="handle" v-show="header" class="designiy-dialog-header">
+        <div ref="handle" v-show="header" class="designiy-dialog-header">
           <div class="designiy-dialog-header-title">{{ title }}</div>
           <div @click="close" class="designiy-dialog-header-close">
             <font-awesome-icon :icon="['fas', 'xmark']" />

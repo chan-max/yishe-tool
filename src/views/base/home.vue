@@ -13,7 +13,7 @@
           class="banner-btn"
           @click="$router.push({ name: 'Design' })"
         >
-          <span style="font-size: 18px;"> 试一下</span>
+          <span style="font-size: 18px;font-weight: bold;"> 试一下</span>
           <el-icon><TopRight /></el-icon> 
         </el-button>
       </div>

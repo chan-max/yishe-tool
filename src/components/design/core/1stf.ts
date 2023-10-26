@@ -1,4 +1,4 @@
-import { resolveFilePath } from "@/api/url";
+import { resolveFilePath, toRealPath } from "@/api/url";
 import { ModelController } from "./controller";
 import { canvasBgColor, currentBaseModelUrl, isDarkMode } from "../store";
 
@@ -23,19 +23,19 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
         y: dc.size.y,
         z: dc.size.z,
       };
-
+      
       return {
+        src: dc.stickerInfo.realUrl,
         position,
         rotation,
         size,
-        img: dc.img.src,
       };
     });
 
-    debugger
-
-    var _ = {
-      baseModelUrl: resolveFilePath(currentBaseModelUrl.value),
+    
+    
+    const _ = {
+      baseModelUrl: toRealPath(currentBaseModelUrl.value),
       decals,
       isDarkMode: isDarkMode.value,
       canvasBgColor: canvasBgColor.value,

@@ -35,7 +35,9 @@ import { _1stfExporterMixin } from "./1stf";
 import { currentBaseModelUrl } from "../store";
 import { operatingDecal, showDecalControlDialog } from "../store";
 
-const mixins = [_1stfExporterMixin];
+const mixins = [
+  _1stfExporterMixin
+];
 
 export class ModelController {
   // 场景
@@ -267,19 +269,11 @@ export class ModelController {
     this.y = y;
   }
 
-  public onMainModelClick(cb) {
-    this.onClick(() => {
-      if (!this.mainModel) {
-        return;
-      }
-    });
-  }
-
   decalControllers: any = [];
 
   // 进行贴图
-  stickOnMousePosition(img) {
-    var decal = new DecalController(this,img)
+  stickOnMousePosition(img,info) {
+    var decal = new DecalController(this,img,info)
   }
 
   // 恢复模型模型位置
@@ -309,7 +303,7 @@ export class ModelController {
     var base64 = this.renderer.domElement.toDataURL("image/png"); // base64
     return base64ToFile(base64);
   }
-
+  
   // 导出 1stf 格式化信息
   exportTo1stf = null;
 }

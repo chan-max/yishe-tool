@@ -1,5 +1,3 @@
-
-
 // 使元素可拖拽
 
 const draggableImage = document.createElement('img');
@@ -12,7 +10,6 @@ document.body.appendChild(draggableImage);
 
 export const initDraggableElement = (imageElement,cb) => {
     // 创建一个新的 image 元素
-
     imageElement.addEventListener('dragstart',(e) => {
         e.preventDefault()
     })

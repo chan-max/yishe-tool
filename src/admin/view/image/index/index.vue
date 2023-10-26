@@ -3,7 +3,7 @@
     <el-card class="admin-image-index-card" v-for="i in images" shadow="never">
       <img
         style="width: 100%; height: 100%"
-        :src="i.path"
+        :src="i.previewUrl"
       />
     </el-card>
     <el-card
@@ -23,7 +23,7 @@
 
 <script setup>
 import { UploadFilled } from "@element-plus/icons-vue";
-import { getImageList} from "@/api";
+import { getImageList } from "@/api";
 import { onMounted, ref } from "vue";
 
 const images = ref([]);

@@ -2,7 +2,7 @@
     <div class="designiy-image-sticker">
     <div class="designiy-image-sticker-container">
       <div class="designiy-image-sticker-container-item" title="拖动来进行贴图" v-for="i in images" draggable="false">
-          <el-image @load="load" :src="i.path" style="width: 100%;height: 100%;" fit="contain" lazy>
+          <el-image @load="load($event,i)" :src="i.previewUrl" style="width: 100%;height: 100%;" fit="contain" lazy>
             <template #placeholder>
                 <div class="designiy-image-sticker-container-item_loading">
                   <el-icon class="rolling-icon"><Loading /></el-icon>
@@ -18,7 +18,7 @@
     </div>   
     </div>
   </template>
-  <script setup>
+<script setup>
 import { onMounted, ref,computed } from "vue";
 import {showBaseModelSelectDialog,currentModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
 import { Loading,CloseBold,CircleCloseFilled ,Picture} from "@element-plus/icons-vue";
@@ -30,9 +30,9 @@ const emits = defineEmits(['dragover'])
 const images = ref([])
 
 // image load success
-function load(e){
-  initDraggableElement(e.target,(img,event) => {
-    emits('dragover',img,event)
+function load(e,i){
+  initDraggableElement(e.target,(img) => {
+    emits('dragover',img,i)
   })
 }
 
@@ -102,5 +102,5 @@ onMounted(async () => {
 .rolling-icon {
   animation: rolling 3s linear infinite;
 }
-  </style>
+</style>
   

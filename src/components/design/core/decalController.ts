@@ -33,9 +33,12 @@ export class DecalController {
 
   decal = null;
 
-  constructor(modelController: ModelController, img: HTMLImageElement) {
+  stickerInfo = null
+
+  constructor(modelController: ModelController, img: HTMLImageElement,stickerInfo) {
     this.modelController = modelController;
     this.img = img;
+    this.stickerInfo = stickerInfo;
     this.aspectRatio = this.img.width / this.img.height;
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(this.img.src);
@@ -52,7 +55,7 @@ export class DecalController {
     this.create();
     modelController.decalControllers.push(this);
     showDecalControlDialog.value = true;
-    operatingDecal.value = decal;
+    operatingDecal.value = this
   }
 
   // 创建该贴纸
@@ -69,6 +72,7 @@ export class DecalController {
       this.modelController.mouse,
       this.modelController.camera
     );
+    
 
     const intersects = raycaster.intersectObject(mesh, true);
 
@@ -107,5 +111,9 @@ export class DecalController {
   //  销毁该贴纸
   destroy() {
     this.modelController.scene.remove(this.decal);
+  }
+
+  onClick(cb){
+    
   }
 }

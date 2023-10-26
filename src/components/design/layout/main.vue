@@ -142,13 +142,15 @@ watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacit
 // 渲染动画
 onMounted(() => modelController.render(mountContainer.value));
 
-
-
+modelController.onClick((mc) => {
+    console.log(mc.decalControllers[0] )
+})
 
 // 贴图逻辑暂时保留
-function stickeOn(img,event) {
-  modelController.stickOnMousePosition(img)
+function stickeOn(img,info) {
+  modelController.stickOnMousePosition(img,info)
 }
+
 </script>
 
 <style lang="less">

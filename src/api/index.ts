@@ -63,18 +63,17 @@ export const getImageList = () =>
   new Promise(async (resolve: any, reject: any) => {
     let res = await apiInstance.get(Url.GET_IMAGE_LIST);
     let data = res.data.data.map((item: any) => ({
-      path: resolveFilePath(item.path),
+      previewUrl: resolveFilePath(item.path),
+      realUrl:item.path,
       name: item.name,
       description: item.description,
     }));
     resolve(data);
   });
 
+
+
 // 获取文字贴图地址
-export interface TextStickerQuerys {
-  color: string;
-  text: string;
-}
 export const getTextStickerUrl = (querys: any) =>  buildURL(Url.GET_TEXT_STICKER, querys);
 
 // 上传文字字体文件

@@ -37,7 +37,6 @@ import {
 import { debounce } from "@/common/utils/debounce";
 import { gltfLoader } from "@/common/threejsHelper";
 import { format1stf } from '@/api/format';
-import { canvasBgColor } from '../../design/store';
 
 const props = defineProps(['model']);
 
@@ -83,7 +82,8 @@ async function initModel() {
   const $ = format1stf(props.model)
 
   const url = $.baseModelUrl;
-  
+
+  debugger
   if (!url) {
     return;
   }

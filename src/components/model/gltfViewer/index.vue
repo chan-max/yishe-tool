@@ -54,9 +54,10 @@ const renderer = new WebGLRenderer({
   alpha: true, // 透明背景
 });
 
-
 const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
+
 camera.lookAt(0, 0, 0);
+
 camera.position.set(0, 0, 1);
 
 const getWidth = (el) => Number(window.getComputedStyle(el).width.slice(0, -2));
@@ -83,7 +84,6 @@ async function initModel() {
 
   const url = $.baseModelUrl;
 
-  debugger
   if (!url) {
     return;
   }
@@ -123,6 +123,26 @@ async function initModel() {
   scene.add(dl);
   scene.add(dl2);
 
+  const decals = $.decals
+  
+  decals.forEach(decal => {
+    const {src,position,rotation,size} = decal
+    var decalGeometry = new DecalGeometry(this.modelController.mainMesh, position, rotation, size);
+    var mesh = new Mesh(decalGeometry, this.material);
+    const textureLoader = new TextureLoader();
+    const texture = textureLoader.load(this.img.src);
+    this.material = new MeshPhongMaterial({
+      map: texture,
+      transparent: true,
+      depthTest: true,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -4,
+      wireframe: false,
+    });
+    scene.add(decalGeometry)
+  });
+
   function render() {
     requestAnimationFrame(render);
     gltf.scene.rotation.y += 0.003;
@@ -150,6 +170,7 @@ watch(
   }
 ,{immediate:true});
 
+
 function screenshot() {
   renderer.render(scene, camera); // 截取会出现白图片
   var img = renderer.domElement.toDataURL("image/png"); // base64
@@ -158,6 +179,7 @@ function screenshot() {
   // win.document.write('<img src="' + img + '"/>');
   
   emits("screenshot", img);
+
 }
 </script>
 <style lang="less">

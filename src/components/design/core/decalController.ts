@@ -35,13 +35,14 @@ export class DecalController {
 
   stickerInfo = null
 
-  constructor(modelController: ModelController, img: HTMLImageElement,stickerInfo) {
+   constructor(modelController: ModelController, img: HTMLImageElement,stickerInfo) {
     this.modelController = modelController;
     this.img = img;
     this.stickerInfo = stickerInfo;
     this.aspectRatio = this.img.width / this.img.height;
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(this.img.src);
+ 
     this.material = new MeshPhongMaterial({
       map: texture,
       transparent: true,
@@ -67,6 +68,7 @@ export class DecalController {
     }
 
     let raycaster = new Raycaster();
+
 
     raycaster.setFromCamera(
       this.modelController.mouse,
@@ -102,7 +104,7 @@ export class DecalController {
     this.rotation = rotation;
 
     var decalGeometry = new DecalGeometry(mesh, position, rotation, size);
-
+    debugger
     this.decal = new Mesh(decalGeometry, this.material);
 
     this.modelController.scene.add(this.decal);

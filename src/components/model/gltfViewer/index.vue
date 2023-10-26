@@ -27,16 +27,20 @@ import {
   Box3,
   BoxGeometry,
   DirectionalLight,
+  Euler,
   Mesh,
   MeshBasicMaterial,
+  MeshPhongMaterial,
   PerspectiveCamera,
   Scene,
+  TextureLoader,
   Vector3,
   WebGLRenderer,
 } from "three";
 import { debounce } from "@/common/utils/debounce";
 import { gltfLoader } from "@/common/threejsHelper";
 import { format1stf } from '@/api/format';
+import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
 const props = defineProps(['model']);
 
@@ -49,6 +53,8 @@ const gltfViewer = ref();
 const scene = new Scene();
 
 const currentGltf = shallowRef();
+
+const currentMesh = shallowRef()
 
 const renderer = new WebGLRenderer({
   alpha: true, // 透明背景
@@ -92,6 +98,16 @@ async function initModel() {
 
   let el = gltfViewer.value;
   let gltf = await gltfLoader(url);
+  currentMesh.value = findMainMesh(gltf)
+  function findMainMesh(gltf) {
+    let mainMesh = null;
+    gltf.scene.traverse((child) => {
+      if (child.isMesh && !mainMesh) {
+        mainMesh = child;
+      }
+    });
+    return mainMesh;
+  }
 
   const controller = new OrbitControls(camera, renderer.domElement);
 
@@ -125,13 +141,18 @@ async function initModel() {
 
   const decals = $.decals
   
-  decals.forEach(decal => {
-    const {src,position,rotation,size} = decal
-    var decalGeometry = new DecalGeometry(this.modelController.mainMesh, position, rotation, size);
-    var mesh = new Mesh(decalGeometry, this.material);
-    const textureLoader = new TextureLoader();
-    const texture = textureLoader.load(this.img.src);
-    this.material = new MeshPhongMaterial({
+  decals.forEach(async decal => {
+    const { src,position,rotation,size } = decal
+    const decalGeometry = new DecalGeometry(
+      currentMesh.value,
+      new Vector3(position.x,position.y,position.z), 
+      new Euler(rotation.x,rotation.y,rotation.z) ,
+      new Vector3(size.x,size.y,size.z));
+
+      const textureLoader = new TextureLoader();
+      const texture =  await textureLoader.loadAsync(src);
+
+    const material = new MeshPhongMaterial({
       map: texture,
       transparent: true,
       depthTest: true,
@@ -140,7 +161,11 @@ async function initModel() {
       polygonOffsetFactor: -4,
       wireframe: false,
     });
-    scene.add(decalGeometry)
+
+      var decalMesh = new Mesh(decalGeometry, material)
+      scene.add(decalMesh);
+
+
   });
 
   function render() {

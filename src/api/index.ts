@@ -20,7 +20,7 @@ export const login = (data) => new Promise( async (resolve, reject) => {
 export const getBannerModel = () =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.get(Url.GET_BANNER_MODEL);
-    resolve(res.data.data.modelInfo);
+    resolve(res?.data?.data?.modelInfo);
   });
 
 // 获取可以进行编辑的内置模型

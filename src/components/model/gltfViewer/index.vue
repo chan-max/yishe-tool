@@ -5,7 +5,6 @@
     </div>
     <div class="screenshot"></div>
     <div class="gltf-viewer-menu">
-
     </div>
   </div>
 </template>
@@ -44,17 +43,13 @@ import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
 const props = defineProps(['model']);
 
-const emits = defineEmits(["screenshot",'load']);
+const emits = defineEmits(["screenshot", 'load']);
 
 const loading = ref(false);
 
 const gltfViewer = ref();
 
 const scene = new Scene();
-
-const currentGltf = shallowRef();
-
-const currentMesh = shallowRef()
 
 const renderer = new WebGLRenderer({
   alpha: true, // 透明背景
@@ -85,7 +80,7 @@ function initImportedModel(gltf) {
 }
 
 async function initModel() {
-  loading.value = true;
+
   const $ = format1stf(props.model)
 
   const url = $.baseModelUrl;
@@ -94,11 +89,26 @@ async function initModel() {
     return;
   }
 
+  loading.value = true;
+
   renderer.setClearColor($.canvasBgColor || '#474e56');
 
+  let currentMesh = null
+
   let el = gltfViewer.value;
+
+  function resetCamera() {
+    let width = getWidth(el);
+    let height = getHeight(el);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  }
+
+  resetCamera()
+
   let gltf = await gltfLoader(url);
-  currentMesh.value = findMainMesh(gltf)
+  currentMesh = findMainMesh(gltf)
   function findMainMesh(gltf) {
     let mainMesh = null;
     gltf.scene.traverse((child) => {
@@ -114,13 +124,7 @@ async function initModel() {
   controller.enablePan = false; // 禁止右键拖拽
 
   let resizeOb = new ResizeObserver(
-    debounce(() => {
-      let width = getWidth(el);
-      let height = getHeight(el);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-    })
+    debounce(resetCamera)
   );
 
   resizeOb.observe(el);
@@ -129,7 +133,6 @@ async function initModel() {
 
   initImportedModel(gltf);
 
-  currentGltf.value = gltf;
   scene.add(gltf.scene);
 
   const dl = new DirectionalLight(0xffffff, 1);
@@ -140,18 +143,18 @@ async function initModel() {
   scene.add(dl2);
 
   const decals = $.decals
-  
-  decals.forEach(async decal => {
-    const { src,position,rotation,size } = decal
+
+  decals.forEach(decal => {
+    const { src, position, rotation, size } = decal
     const decalGeometry = new DecalGeometry(
-      currentMesh.value,
-      new Vector3(position.x,position.y,position.z), 
-      new Euler(rotation.x,rotation.y,rotation.z) ,
-      new Vector3(size.x,size.y,size.z));
-
-      const textureLoader = new TextureLoader();
-      const texture =  await textureLoader.loadAsync(src);
-
+      currentMesh,
+      new Vector3(position.x, position.y, position.z),
+      new Euler(rotation.x, rotation.y, rotation.z),
+      new Vector3(size.x, size.y, size.z));
+    
+    const textureLoader = new TextureLoader();
+    const texture = textureLoader.load(src);
+    
     const material = new MeshPhongMaterial({
       map: texture,
       transparent: true,
@@ -162,18 +165,15 @@ async function initModel() {
       wireframe: false,
     });
 
-      var decalMesh = new Mesh(decalGeometry, material)
-      scene.add(decalMesh);
-
-
+    var decalMesh = new Mesh(decalGeometry, material)
+    scene.add(decalMesh);
   });
-
+  
   function render() {
     requestAnimationFrame(render);
     gltf.scene.rotation.y += 0.003;
     renderer.render(scene, camera);
   }
-
   el.appendChild(renderer.domElement);
   render();
   loading.value = false;
@@ -193,7 +193,7 @@ watch(
     await nextTick();
     initModel();
   }
-,{immediate:true});
+  , { immediate: true });
 
 
 function screenshot() {
@@ -202,9 +202,8 @@ function screenshot() {
 
   // var win = window.open("", "_blank");
   // win.document.write('<img src="' + img + '"/>');
-  
-  emits("screenshot", img);
 
+  emits("screenshot", img);
 }
 </script>
 <style lang="less">

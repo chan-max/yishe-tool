@@ -94,7 +94,8 @@ export class DecalController {
     n.transformDirection(mesh.matrixWorld);
     n.add(intersects[0].point);
 
-    let helper = new Object3D();
+    const  helper = new Object3D();
+    
     helper.position.copy(intersects[0].point);
 
     helper.lookAt(n);
@@ -104,7 +105,7 @@ export class DecalController {
     this.rotation = rotation;
 
     var decalGeometry = new DecalGeometry(mesh, position, rotation, size);
-    debugger
+
     this.decal = new Mesh(decalGeometry, this.material);
 
     this.modelController.scene.add(this.decal);

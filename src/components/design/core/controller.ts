@@ -101,7 +101,7 @@ export class ModelController {
     this.renderer.setSize(this.width, this.height);
     this.camera.lookAt(0, 0, 0);
     this.camera.position.copy(this.defaultCameraPosition);
-
+      
     this.controller = new OrbitControls(this.camera, this.renderer.domElement);
     // this.controller.enablePan = false
     this.canvasContainer.appendChild(this.renderer.domElement);
@@ -303,7 +303,7 @@ export class ModelController {
     var base64 = this.renderer.domElement.toDataURL("image/png"); // base64
     return base64ToFile(base64);
   }
-  
+
   // 导出 1stf 格式化信息
   exportTo1stf = null;
 }

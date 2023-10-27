@@ -1,13 +1,15 @@
 
+function unifySlashes(input) {
+    return input.replace(/(\/+|\\+)/g, '/');
+}
+
 export const resolveFilePath = (path) => {
 
     if(!path){
         return ''
     }
 
-    path = path.replaceAll('\\','/')
-    path = path.replaceAll('//','/')
-
+    path = unifySlashes(path)
     
     if(import.meta.env.DEV){
         if(!path.startsWith('/api') && !path.startsWith('api')){
@@ -27,6 +29,7 @@ export const resolveFilePath = (path) => {
 
 
 export function toRealPath(path){
+    path = unifySlashes(path)
     return path.replace('api','')
 }
 

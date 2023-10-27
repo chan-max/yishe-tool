@@ -61,6 +61,7 @@ camera.lookAt(0, 0, 0);
 
 camera.position.set(0, 0, 1);
 
+
 const getWidth = (el) => Number(window.getComputedStyle(el).width.slice(0, -2));
 const getHeight = (el) => Number(window.getComputedStyle(el).height.slice(0, -2));
 
@@ -94,6 +95,9 @@ async function initModel() {
   renderer.setClearColor($.canvasBgColor || '#474e56');
 
   let currentMesh = null
+
+  // 同步摄像机位置
+  camera.position.set($.camera.position.x,$.camera.position.y,$.camera.position.z)
 
   let el = gltfViewer.value;
 
@@ -145,13 +149,12 @@ async function initModel() {
   const decals = $.decals
 
   decals.forEach(decal => {
-    const { src, position, rotation, size } = decal
-    const decalGeometry = new DecalGeometry(
-      currentMesh,
-      new Vector3(position.x, position.y, position.z),
-      new Euler(rotation.x, rotation.y, rotation.z),
-      new Vector3(size.x, size.y, size.z));
-    
+    var { src, position, rotation, size } = decal
+    position =   new Vector3(position.x, position.y, position.z)
+    rotation = new Euler(rotation.x, rotation.y, rotation.z,)
+    size =  new Vector3(size.x, size.y, size.z)
+    const decalGeometry = new DecalGeometry( currentMesh,position,rotation,size)
+
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(src);
     
@@ -169,9 +172,9 @@ async function initModel() {
     scene.add(decalMesh);
   });
   
+
   function render() {
     requestAnimationFrame(render);
-    gltf.scene.rotation.y += 0.003;
     renderer.render(scene, camera);
   }
   el.appendChild(renderer.domElement);

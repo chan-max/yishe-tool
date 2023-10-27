@@ -180,7 +180,7 @@ export class ModelController {
     this.mainModel = gltf;
     this.baseModelUrl = url;
     currentBaseModelUrl.value = url;
-
+    
     this.initModelPosition();
     this.scene.add(gltf.scene);
     this.mainMesh = this.findMainMesh(gltf);

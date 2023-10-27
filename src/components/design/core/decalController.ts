@@ -69,7 +69,6 @@ export class DecalController {
 
     let raycaster = new Raycaster();
 
-
     raycaster.setFromCamera(
       this.modelController.mouse,
       this.modelController.camera
@@ -94,7 +93,7 @@ export class DecalController {
     n.transformDirection(mesh.matrixWorld);
     n.add(intersects[0].point);
 
-    const  helper = new Object3D();
+    const helper = new Object3D();
     
     helper.position.copy(intersects[0].point);
 
@@ -109,6 +108,7 @@ export class DecalController {
     this.decal = new Mesh(decalGeometry, this.material);
 
     this.modelController.scene.add(this.decal);
+    
   }
 
   //  销毁该贴纸

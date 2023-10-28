@@ -25,12 +25,16 @@ import {
   AmbientLight,
   Box3,
   BoxGeometry,
+  BufferGeometry,
   DirectionalLight,
   Euler,
+  Float32BufferAttribute,
   Mesh,
   MeshBasicMaterial,
   MeshPhongMaterial,
   PerspectiveCamera,
+  Points,
+  PointsMaterial,
   Scene,
   TextureLoader,
   Vector3,
@@ -66,13 +70,14 @@ const getWidth = (el) => Number(window.getComputedStyle(el).width.slice(0, -2));
 const getHeight = (el) => Number(window.getComputedStyle(el).height.slice(0, -2));
 
 function initImportedModel(gltf) {
+  let flag = 1.5
   let object = gltf.scene;
   // 先处理尺寸，再居中
   const sizeBox = new Box3().setFromObject(object);
   let size = new Vector3();
   sizeBox.getSize(size);
   let length = size.length();
-  object.scale.set(1 / length, 1 / length, 1 / length);
+  object.scale.set(flag / length, flag / length, flag / length);
   const centerBox = new Box3().setFromObject(object);
   const center = centerBox.getCenter(new Vector3());
   object.position.x += object.position.x - center.x;
@@ -94,24 +99,11 @@ async function initModel() {
 
   renderer.setClearColor($.canvasBgColor || '#474e56');
 
-  let currentMesh = null
+  var currentMesh = null
 
-  // 同步摄像机位置
-  camera.position.set($.camera.position.x,$.camera.position.y,$.camera.position.z)
-
-  let el = gltfViewer.value;
-
-  function resetCamera() {
-    let width = getWidth(el);
-    let height = getHeight(el);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height);
-  }
-
-  resetCamera()
 
   let gltf = await gltfLoader(url);
+
   currentMesh = findMainMesh(gltf)
   function findMainMesh(gltf) {
     let mainMesh = null;
@@ -123,12 +115,31 @@ async function initModel() {
     return mainMesh;
   }
 
+  // 同步摄像机位置
+  camera.position.set($.camera.position.x,$.camera.position.y,$.camera.position.z);
+  camera.rotation.set($.camera.rotation.x,$.camera.rotation.y,$.camera.rotation.z);
+  camera.fov = $.camera.fov;
+  camera.near = $.camera.near;
+  camera.far = $.camera.far;
+  
+  let el = gltfViewer.value;
+
+  function resetCameraAspect() {
+    let width = getWidth(el);
+    let height = getHeight(el);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  }
+
+  resetCameraAspect()
+
   const controller = new OrbitControls(camera, renderer.domElement);
 
   controller.enablePan = false; // 禁止右键拖拽
 
   let resizeOb = new ResizeObserver(
-    debounce(resetCamera)
+    debounce(resetCameraAspect)
   );
 
   resizeOb.observe(el);
@@ -154,7 +165,6 @@ async function initModel() {
     rotation = new Euler(rotation.x, rotation.y, rotation.z,)
     size =  new Vector3(size.x, size.y, size.z)
     const decalGeometry = new DecalGeometry( currentMesh,position,rotation,size)
-
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(src);
     
@@ -172,11 +182,13 @@ async function initModel() {
     scene.add(decalMesh);
   });
   
+  
 
   function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
   }
+  
   el.appendChild(renderer.domElement);
   render();
   loading.value = false;

@@ -1,7 +1,11 @@
 import { ElMessage } from "element-plus";
 import { ModelController } from "./controller";
 import {
+  Box3,
+  BoxGeometry,
+  Euler,
   Mesh,
+  MeshBasicMaterial,
   MeshPhongMaterial,
   Object3D,
   Raycaster,
@@ -63,7 +67,6 @@ export class DecalController {
   create() {
     const mesh = this.modelController.mainMesh;
     if (!mesh) {
-      ElMessage.info("请先选择一个基础模型");
       return;
     }
 
@@ -78,6 +81,7 @@ export class DecalController {
     const intersects = raycaster.intersectObject(mesh, true);
 
     if (intersects.length == 0) {
+      // 未选中任何贴纸
       return;
     }
 
@@ -106,9 +110,7 @@ export class DecalController {
     var decalGeometry = new DecalGeometry(mesh, position, rotation, size);
 
     this.decal = new Mesh(decalGeometry, this.material);
-
     this.modelController.scene.add(this.decal);
-    
   }
 
   //  销毁该贴纸
@@ -117,6 +119,7 @@ export class DecalController {
   }
 
   onClick(cb){
-    
   }
 }
+
+

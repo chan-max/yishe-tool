@@ -2,14 +2,14 @@
     <div class="designiy-decal-control">
         
     </div>
-  </template>
+</template>
 <script setup>
 import { onMounted, ref,computed,watch } from "vue";
 
 import { operatingDecal } from '../../store.ts'
 
 watch(operatingDecal,( ) => {
-    
+      debugger
 })
 
 </script>

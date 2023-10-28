@@ -31,10 +31,8 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
         size,
       };
     });
-
     
-    
-    const _ = {
+    return {
       baseModelUrl: toRealPath(currentBaseModelUrl.value),
       decals,
       isDarkMode: isDarkMode.value,
@@ -44,11 +42,18 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
           x:modelController.camera.position.x,
           y:modelController.camera.position.y,
           z:modelController.camera.position.z,
-        }
+        },
+        rotation: {
+          x:modelController.camera.rotation.x,
+          y:modelController.camera.rotation.y,
+          z:modelController.camera.rotation.z,
+        },
+        fov: modelController.camera.fov,
+        // 根据试图尺寸自适应
+        aspect: modelController.camera.aspect,
+        near: modelController.camera.near,
+        far: modelController.camera.far
       }
     };
-
-    
-    return _;
   };
 };

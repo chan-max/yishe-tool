@@ -198,14 +198,15 @@ export class ModelController {
   }
 
   // 模型居中和调整尺寸
-  private initModelPosition(flag = 1.5) {
+  private initModelPosition() {
     let object = this.mainModel.scene;
+    let flag = 1.5
     // 先处理尺寸，再居中
     const sizeBox = new Box3().setFromObject(object);
     let size = new Vector3();
     sizeBox.getSize(size);
     let length = size.length();
-    object.scale.set(flag / length, flag / length, flag / length);
+    object.scale.set( flag /length,  flag / length,  flag /length);
     const centerBox = new Box3().setFromObject(object);
     const center = centerBox.getCenter(new Vector3());
     object.position.x += object.position.x - center.x;
@@ -306,4 +307,9 @@ export class ModelController {
 
   // 导出 1stf 格式化信息
   exportTo1stf = null;
+
+
+  initDecalClickEvent(){
+
+  }
 }

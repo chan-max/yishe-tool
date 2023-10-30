@@ -307,9 +307,7 @@ export class ModelController {
 
   // 导出 1stf 格式化信息
   exportTo1stf = null;
-
-
+  
   initDecalClickEvent(){
-
   }
 }

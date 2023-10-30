@@ -88,9 +88,8 @@ export class DecalController {
     var position = intersects[0].point;
 
     this.position = position;
-
+    
     var size = new Vector3(0.1, 0.1 / this.aspectRatio, 0.1);
-
     this.size = size;
 
     var n = intersects[0].face.normal.clone();

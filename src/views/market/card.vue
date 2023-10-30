@@ -47,10 +47,10 @@ function load(){
 .market-card{
     width: 330px;
     background-color: #fff;
-    border-radius: 10px;
-    border: 1px solid #ddd;
+    border-radius: 5px;
     overflow: hidden;
-    box-shadow: 0 1px 8px rgba(0,0,0,.08);
+    border: 1px solid #eee;
+    /* box-shadow: 0 1px 8px rgba(0,0,0,.08); */
     display: flex;
     justify-content: space-between;
     align-items: center;

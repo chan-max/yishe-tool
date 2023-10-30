@@ -10,6 +10,7 @@ import {
   Object3D,
   Raycaster,
   TextureLoader,
+  Vector2,
   Vector3,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
@@ -35,18 +36,27 @@ export class DecalController {
 
   rotation = null;
 
+  // 保存当前的decal实例
   decal = null;
 
+  // 当前使用的材质信息
   stickerInfo = null
 
-   constructor(modelController: ModelController, img: HTMLImageElement,stickerInfo) {
+  // 记录贴花添加时的鼠标位置
+  mousePositon = null
+
+  // 记录贴画时摄像机的位置
+  cameraPosition = null
+
+  constructor(modelController: ModelController, img: HTMLImageElement,stickerInfo) {
+
     this.modelController = modelController;
     this.img = img;
     this.stickerInfo = stickerInfo;
     this.aspectRatio = this.img.width / this.img.height;
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(this.img.src);
- 
+    
     this.material = new MeshPhongMaterial({
       map: texture,
       transparent: true,
@@ -77,7 +87,8 @@ export class DecalController {
       this.modelController.camera
     );
     
-
+    this.mousePositon = new Vector2(this.modelController.mouse.x,this.modelController.mouse.y)
+    
     const intersects = raycaster.intersectObject(mesh, true);
 
     if (intersects.length == 0) {

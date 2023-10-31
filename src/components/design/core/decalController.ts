@@ -24,7 +24,7 @@ export class DecalController {
   img = null;
 
   // 宽高比
-  aspectRatio = 1;
+  imgAspectRatio = 1;
 
   // 材质
   material = null;
@@ -53,7 +53,7 @@ export class DecalController {
     this.modelController = modelController;
     this.img = img;
     this.stickerInfo = stickerInfo;
-    this.aspectRatio = this.img.width / this.img.height;
+    this.imgAspectRatio = this.img.width / this.img.height;
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(this.img.src);
     
@@ -99,9 +99,6 @@ export class DecalController {
     var position = intersects[0].point;
 
     this.position = position;
-    
-    var size = new Vector3(0.1, 0.1 / this.aspectRatio, 0.1);
-    this.size = size;
 
     var n = intersects[0].face.normal.clone();
     n.transformDirection(mesh.matrixWorld);
@@ -118,6 +115,15 @@ export class DecalController {
 
     this.rotation = rotation;
 
+    // 贴纸旋转角度
+    this.rotation.z = Math.random() * 2 * Math.PI;
+
+    // 贴图尺寸
+    var size = new Vector3(0.3, 0.3 / this.imgAspectRatio, 0.3);
+    
+    this.size = size;
+
+    console.log(this.imgAspectRatio)
     var decalGeometry = new DecalGeometry(mesh, position, rotation, size);
 
     this.decal = new Mesh(decalGeometry, this.material);

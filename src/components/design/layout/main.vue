@@ -137,7 +137,7 @@ pointLight.position.set(0, 0, 2); // 设置光源位置
 scene.add(pointLight);
 
 
-scene.add(new AxesHelper(0.5))
+// scene.add(new AxesHelper(0.5))
 
 // 改变画布背景颜色
 watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacity.value));

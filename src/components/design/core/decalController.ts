@@ -105,11 +105,12 @@ export class DecalController {
 
     var n = intersects[0].face.normal.clone();
     n.transformDirection(mesh.matrixWorld);
-    n.add(intersects[0].point);
+    n.add(position);
+
 
     const helper = new Object3D();
     
-    helper.position.copy(intersects[0].point);
+    helper.position.copy(position);
 
     helper.lookAt(n);
 

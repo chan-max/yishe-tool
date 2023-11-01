@@ -129,6 +129,7 @@ async function initModel() {
 
   let el = gltfViewer.value;
 
+
   function resetCameraAspect() {
     let width = getWidth(el);
     let height = getHeight(el);
@@ -162,15 +163,19 @@ async function initModel() {
   scene.add(dl);
   scene.add(dl2);
 
+
   if ($.decals) {
-    $.decals.forEach(async decal => {
+    $.decals.forEach(decal => {
       var { src, position, rotation, size } = decal
       position = new Vector3(position.x, position.y, position.z)
       rotation = new Euler(rotation.x, rotation.y, rotation.z,)
       size = new Vector3(size.x, size.y, size.z)
       const decalGeometry = new DecalGeometry(currentMesh, position, rotation, size)
+
+      console.log(position, rotation, size)
+      
       const textureLoader = new TextureLoader();
-      const texture = await textureLoader.loadAsync(src);
+      const texture = textureLoader.load(src);
 
       const material = new MeshPhongMaterial({
         map: texture,
@@ -183,7 +188,6 @@ async function initModel() {
       });
 
       var decalMesh = new Mesh(decalGeometry, material)
-      console.log(decalMesh);
       scene.add(decalMesh);
     });
   }

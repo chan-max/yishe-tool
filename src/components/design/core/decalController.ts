@@ -123,9 +123,8 @@ export class DecalController {
     
     this.size = size;
 
-    console.log(this.imgAspectRatio)
     var decalGeometry = new DecalGeometry(mesh, position, rotation, size);
-
+    console.log(position,rotation,size)
     this.decal = new Mesh(decalGeometry, this.material);
     this.modelController.scene.add(this.decal);
   }

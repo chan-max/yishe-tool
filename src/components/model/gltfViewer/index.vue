@@ -116,12 +116,17 @@ async function initModel() {
   }
 
   // 同步摄像机位置
-  camera.position.set($.camera.position.x,$.camera.position.y,$.camera.position.z);
-  camera.rotation.set($.camera.rotation.x,$.camera.rotation.y,$.camera.rotation.z);
-  camera.fov = $.camera.fov;
-  camera.near = $.camera.near;
-  camera.far = $.camera.far;
-  
+
+  if ($.camera) {
+    camera.position.set($.camera.position.x, $.camera.position.y, $.camera.position.z);
+    camera.rotation.set($.camera.rotation.x, $.camera.rotation.y, $.camera.rotation.z);
+    camera.fov = $.camera.fov;
+    camera.near = $.camera.near;
+    camera.far = $.camera.far;
+  }
+
+
+
   let el = gltfViewer.value;
 
   function resetCameraAspect() {
@@ -157,38 +162,39 @@ async function initModel() {
   scene.add(dl);
   scene.add(dl2);
 
-  const decals = $.decals
+  if ($.decals) {
+    $.decals.forEach(async decal => {
+      var { src, position, rotation, size } = decal
+      position = new Vector3(position.x, position.y, position.z)
+      rotation = new Euler(rotation.x, rotation.y, rotation.z,)
+      size = new Vector3(size.x, size.y, size.z)
+      const decalGeometry = new DecalGeometry(currentMesh, position, rotation, size)
+      const textureLoader = new TextureLoader();
+      const texture = await textureLoader.loadAsync(src);
 
-  decals.forEach(decal => {
-    var { src, position, rotation, size } = decal
-    position =   new Vector3(position.x, position.y, position.z)
-    rotation = new Euler(rotation.x, rotation.y, rotation.z,)
-    size =  new Vector3(size.x, size.y, size.z)
-    const decalGeometry = new DecalGeometry( currentMesh,position,rotation,size)
-    const textureLoader = new TextureLoader();
-    const texture = textureLoader.load(src);
-    
-    const material = new MeshPhongMaterial({
-      map: texture,
-      transparent: true,
-      depthTest: true,
-      depthWrite: false,
-      polygonOffset: true,
-      polygonOffsetFactor: -4,
-      wireframe: false,
+      const material = new MeshPhongMaterial({
+        map: texture,
+        transparent: true,
+        depthTest: true,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        wireframe: false,
+      });
+
+      var decalMesh = new Mesh(decalGeometry, material)
+      console.log(decalMesh);
+      scene.add(decalMesh);
     });
+  }
 
-    var decalMesh = new Mesh(decalGeometry, material)
-    scene.add(decalMesh);
-  });
-  
   
 
   function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
   }
-  
+
   el.appendChild(renderer.domElement);
   render();
   loading.value = false;

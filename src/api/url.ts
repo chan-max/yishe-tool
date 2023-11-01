@@ -9,6 +9,10 @@ export const resolveFilePath = (path) => {
         return ''
     }
 
+    if(path.startsWith('blob')){
+        return path
+    }
+
     path = unifySlashes(path)
     
     if(import.meta.env.DEV){

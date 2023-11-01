@@ -1,3 +1,4 @@
+
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 
 import home from '../views/base/home.vue'
@@ -7,9 +8,9 @@ import design from '../views/main/design.vue'
 import search from '@/views/base/search.vue'
 import workspace from '@/views/workspace/index.vue'
 import market from '@/views/market/index.vue'
-import admin from '@/admin/index.vue'
+import {adminRoutes} from './adminRouter'
 import unknown from '@/views/base/unknown.vue'
-import { adminRoutes } from '@/admin/router'
+import admin from '@/views/admin/index.vue'
 
 const routes = [
     {

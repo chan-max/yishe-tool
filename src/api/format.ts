@@ -16,7 +16,9 @@ export function format1stf(source:any){
     }
 
     source.baseModelUrl = resolveFilePath( source.baseModelUrl)
-    source.decals.forEach((decal) => {
+
+    
+    source?.decals?.forEach((decal) => {
         decal.src = resolveFilePath(decal.src)
     })
     return source

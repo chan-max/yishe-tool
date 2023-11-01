@@ -124,7 +124,7 @@ import {
 import { HomeOutlined } from "@ant-design/icons-vue";
 
 import { ref, computed } from "vue";
-import { useLoginStatusStore } from "../store/stores/user";
+import { useLoginStatusStore } from "@/store/stores/user";
 
 // 菜单书否处于折叠状态
 const isCollapse = ref(false);

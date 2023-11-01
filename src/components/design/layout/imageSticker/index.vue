@@ -17,7 +17,7 @@
       </div>
     </div>   
     </div>
-  </template>
+</template>
 <script setup>
 import { onMounted, ref,computed } from "vue";
 import {showBaseModelSelectDialog,currentModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
@@ -40,7 +40,6 @@ function load(e,i){
 onMounted(async () => {
   images.value = await getImageList();
 });
-
 </script>
 <style lang="less">
     .designiy-image-sticker{
@@ -67,11 +66,11 @@ onMounted(async () => {
     }
 
     .designiy-image-sticker-container{
-      width: 240px;
       display: flex;
       flex-wrap: wrap;
       padding: 5px;
-      justify-content: space-around;
+      justify-content: space-between;
+      width:240px;
       &-item{
         margin: 5px 0;
         width:110px;
@@ -90,7 +89,10 @@ onMounted(async () => {
       }
     }
 
-    @keyframes rolling {
+
+
+
+  @keyframes rolling {
   0% {
     transform: rotate(0deg);
   }

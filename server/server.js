@@ -7,8 +7,8 @@ import _static from "koa-static";
 import { koaBody } from "koa-body";
 import { fileURLToPath } from "url";
 import { initRouter } from "./router.js"
-import os from 'os'
-import fs from 'fs'
+import http from "http";
+import ip from "ip";
 
 import { getUploadPath } from "./fileManage.js"
 
@@ -47,5 +47,11 @@ app.use(koaBody({ multipart: true ,
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-await app.listen(3000);
+const port = 3000
+
+export function host(){
+    return  ip.address() + ':' + port
+}
+
+await app.listen(port)
 console.log("server is running at http://localhost:3000");

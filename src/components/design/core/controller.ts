@@ -103,6 +103,8 @@ export class ModelController {
     this.camera.position.copy(this.defaultCameraPosition);
       
     this.controller = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controller.minDistance = 0.5
+    this.controller.maxDistance = 5
     // this.controller.enablePan = false
     this.canvasContainer.appendChild(this.renderer.domElement);
     this.resizeObserver = new ResizeObserver(

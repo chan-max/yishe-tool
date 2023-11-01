@@ -1,23 +1,19 @@
+import index from '@/views/admin/index.vue'
+import home from '@/views/admin/view/home.vue'
+import modelIndex from '@/views/admin/view/model/index/index.vue';
+import modelUpload from '@/views/admin/view/model/modelUpload.vue';
 
-import index from './view/index.vue'
+import imageIndex from '@/views/admin/view/image/index/index.vue';
+import imageUpload from '@/views/admin/view/image/imageUpload.vue';
 
-
-import modelIndex from './view/model/index/index.vue';
-import modelUpload from './view/model/modelUpload.vue';
-
-import imageIndex from './view/image/index/index.vue';
-import imageUpload from './view/image/imageUpload.vue';
-
-import fontIndex from './view/font/index.vue';
-import fontUpload from './view/font/fontUpload.vue';
-
-
+import fontIndex from '@/views/admin/view/font/fontUpload.vue';
+import fontUpload from '@/views/admin/view/font/fontUpload.vue';
 
 export const adminRoutes =  [
     {
         name:'Admin',
         path: '',
-        component: index,
+        component: home,
         header:false
     },
     {

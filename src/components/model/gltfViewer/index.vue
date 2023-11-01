@@ -22,7 +22,6 @@ import {
 } from "vue";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import {
-  AmbientLight,
   Box3,
   BoxGeometry,
   BufferGeometry,
@@ -39,6 +38,10 @@ import {
   TextureLoader,
   Vector3,
   WebGLRenderer,
+  PointLight,
+  AmbientLight,
+  Raycaster,
+  AxesHelper
 } from "three";
 import { debounce } from "@/common/utils/debounce";
 import { gltfLoader } from "@/common/threejsHelper";
@@ -55,6 +58,12 @@ const gltfViewer = ref();
 
 const scene = new Scene();
 
+
+// 添加环境光
+const ambientLight = new AmbientLight(0xffffff, 0.1); // 设置颜色和强度
+scene.add(ambientLight);
+
+
 const renderer = new WebGLRenderer({
   alpha: true, // 透明背景
 });
@@ -70,7 +79,7 @@ const getWidth = (el) => Number(window.getComputedStyle(el).width.slice(0, -2));
 const getHeight = (el) => Number(window.getComputedStyle(el).height.slice(0, -2));
 
 function initImportedModel(gltf) {
-  let flag = 1.5
+  let flag = 1
   let object = gltf.scene;
   // 先处理尺寸，再居中
   const sizeBox = new Box3().setFromObject(object);
@@ -100,7 +109,6 @@ async function initModel() {
   renderer.setClearColor($.canvasBgColor || '#474e56');
 
   var currentMesh = null
-
 
   let gltf = await gltfLoader(url);
 
@@ -154,6 +162,8 @@ async function initModel() {
 
   initImportedModel(gltf);
 
+
+
   scene.add(gltf.scene);
 
   const dl = new DirectionalLight(0xffffff, 1);
@@ -167,13 +177,23 @@ async function initModel() {
   if ($.decals) {
     $.decals.forEach(decal => {
       var { src, position, rotation, size } = decal
+
+      // 判断是否在网格上
+      var raycaster = new Raycaster();
+      raycaster.set(position, new Vector3(0, -1, 0));
+      // 使用射线投射器检查模型是否与射线相交。
+      var intersects = raycaster.intersectObject(currentMesh);
+      // 如果有交点，那么这个点就在模型上。
+      if (intersects.length > 0) {
+          console.log("The point is on the model.");
+      } else {
+          console.log("The point is not on the model.");
+      }
+
       position = new Vector3(position.x, position.y, position.z)
       rotation = new Euler(rotation.x, rotation.y, rotation.z,)
       size = new Vector3(size.x, size.y, size.z)
-      const decalGeometry = new DecalGeometry(currentMesh, position, rotation, size)
 
-      console.log(position, rotation, size)
-      
       const textureLoader = new TextureLoader();
       const texture = textureLoader.load(src);
 
@@ -187,7 +207,8 @@ async function initModel() {
         wireframe: false,
       });
 
-      var decalMesh = new Mesh(decalGeometry, material)
+      const decalGeometry = new DecalGeometry(currentMesh, position, rotation, size)
+      var decalMesh = new Mesh(decalGeometry, material);
       scene.add(decalMesh);
     });
   }

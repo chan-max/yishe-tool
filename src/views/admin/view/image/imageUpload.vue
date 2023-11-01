@@ -54,8 +54,6 @@ const upload = ref();
 
 const file = ref([]);
 
-console.log(import.meta.env.DEV)
-
 const previewUrl = computed(
   () => file.value[0] && URL.createObjectURL(file.value[0].raw)
 );

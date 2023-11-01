@@ -146,7 +146,7 @@ watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacit
 onMounted(() => modelController.render(mountContainer.value));
 
 modelController.onClick((mc) => {
-    console.log(mc.decalControllers[0] )
+
 })
 
 // 贴图逻辑暂时保留

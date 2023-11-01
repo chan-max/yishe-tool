@@ -202,7 +202,7 @@ export class ModelController {
   // 模型居中和调整尺寸
   private initModelPosition() {
     let object = this.mainModel.scene;
-    let flag = 1.5
+    let flag = 1
     // 先处理尺寸，再居中
     const sizeBox = new Box3().setFromObject(object);
     let size = new Vector3();

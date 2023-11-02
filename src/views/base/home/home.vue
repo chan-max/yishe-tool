@@ -55,9 +55,6 @@ onMounted(async () => {
 
 <style>
 
-.home-top{
-  height: 40px;
-}
 
 .home-news{
   
@@ -68,7 +65,7 @@ onMounted(async () => {
 }
 
 .banner {
-  background:#265bec;
+  background:#fff;
   width: 100%;
   display: flex;
   justify-content: center;

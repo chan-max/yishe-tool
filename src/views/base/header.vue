@@ -9,9 +9,6 @@
 
     <div style="flex: auto"></div>
 
-    <!-- <div class="header-container-link" @click="toggleLanguage">
-      {{ $t("language") }}
-    </div> -->
     
     <el-popover
     v-if="loginStatusStore.isLogin"
@@ -50,7 +47,7 @@
 </template>
 
 <script setup>
-import { useI18n } from "vue-i18n";
+
 import { useLoginStatusStore } from "@/store/stores/user";
 import { doLogout } from "../../actions/loginAction";
 import { computed, ref, onMounted, watchEffect } from "vue";
@@ -71,15 +68,7 @@ const avatar = computed(() => {
 
 // 切花语言模式
 
-const { t, locale, global } = useI18n();
 
-function toggleLanguage() {
-  if (locale.value == "en") {
-    locale.value = "cn";
-  } else {
-    locale.value = "en";
-  }
-}
 </script>
 
 <style lang="less">

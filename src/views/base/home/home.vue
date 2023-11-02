@@ -2,8 +2,8 @@
   <home-top></home-top>
   <home-news></home-news>
   <home-header></home-header>
+  <home-bar></home-bar>
 
-  
   <div class="banner">
     <div class="banner-desc">
       <div style="font-size: 36px; color: #fff; font-weight: 600">
@@ -39,7 +39,7 @@ import { TopRight } from "@element-plus/icons-vue";
 import homeTop from './top.vue'
 import homeNews from './news.vue'
 import homeHeader from './header.vue'
-
+import homeBar from './bar.vue'
 
 let modelInfo = ref("");
 
@@ -54,15 +54,6 @@ onMounted(async () => {
 </script>
 
 <style>
-
-
-.home-news{
-  
-}
-
-.home-header{
-  
-}
 
 .banner {
   background:#fff;

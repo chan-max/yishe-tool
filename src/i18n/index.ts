@@ -6,10 +6,10 @@ export default createI18n({
   globalInjection: true, // 全局注册$t方法
   messages: {
     cn: {
-     language:'EN'
+     language:'cn'
     },
     en: {
-      language:'ZH'
+      language:'en'
     },
   },
 })

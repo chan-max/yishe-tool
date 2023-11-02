@@ -59,52 +59,6 @@ import { Pointer,CaretBottom } from "@element-plus/icons-vue";
 
 let route = useRoute();
 
-const menuHomeTop = {
-  background:'transparent',
-  color:'#fff'
-}
-
-const menuHome = {
-  background:'#fff',
-  color:'#000'
-}
-
-const menu = {
-  background:'#fff',
-  color:'#000',
-  borderBottom:`1px solid #e7e7e7`
-}
-
-const menuStyle = computed(() => {
-  return isHome.value ? isScrolled.value ? menuHome : menuHomeTop : menu
-});
-
-
-
-/*
-  导航菜案三种样式
-*/
-
-const isHome = ref(true)
-const  isScrolled = ref(false)
-
-onMounted(() => {
-  const appEl = document.querySelector("#app");
-  appEl.onscroll = isHome && function (e) {
-         if (appEl.scrollTop > 0) {
-          isScrolled.value = true
-        } else {
-          isScrolled.value = false
-        }
-      }
-})
-
-
-watchEffect(() => {
-  let _isHome = route.name === "Home";
-  isHome.value = _isHome
-});
-
 
 // 顶部头像
 
@@ -137,8 +91,6 @@ function toggleLanguage() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: v-bind("menuStyle.background");
-  border-bottom: v-bind("menuStyle.borderBottom");
 
   @media screen and (min-width: 1920px) {
     padding: 0 15%;
@@ -158,7 +110,6 @@ function toggleLanguage() {
 
 .header-container-link {
   margin: 0 14px;
-  color: v-bind("menuStyle.color");
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;

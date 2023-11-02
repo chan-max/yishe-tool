@@ -41,7 +41,8 @@ import {
   PointLight,
   AmbientLight,
   Raycaster,
-  AxesHelper
+  AxesHelper,
+Vector2
 } from "three";
 import { debounce } from "@/common/utils/debounce";
 import { gltfLoader } from "@/common/threejsHelper";
@@ -166,17 +167,31 @@ async function initModel() {
 
   scene.add(gltf.scene);
 
-  const dl = new DirectionalLight(0xffffff, 1);
-  dl.position.set(0, 0, 10);
-  const dl2 = new DirectionalLight(0xffffff, 1);
-  dl2.position.set(0, 0, -10);
-  scene.add(dl);
-  scene.add(dl2);
+// 添加环境光
+const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
+scene.add(ambientLight);
+
+// 添加平行光
+const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+directionalLight1.position.set(1, 1, 1); // 设置光源位置
+scene.add(directionalLight1);
+
+// 添加平行光
+const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+directionalLight2.position.set(-1, -1, -1); // 设置光源位置
+scene.add(directionalLight2);
+
+// 添加点光源
+const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
+pointLight.position.set(0, 0, 2); // 设置光源位置
+scene.add(pointLight);
 
 
   if ($.decals) {
     $.decals.forEach(decal => {
       var { src, position, rotation, size } = decal
+
+      position = new Vector3(position.x, position.y, position.z)
 
       // 判断是否在网格上
       var raycaster = new Raycaster();
@@ -184,19 +199,15 @@ async function initModel() {
       // 使用射线投射器检查模型是否与射线相交。
       var intersects = raycaster.intersectObject(currentMesh);
       // 如果有交点，那么这个点就在模型上。
-      if (intersects.length > 0) {
-          console.log("The point is on the model.");
-      } else {
-          console.log("The point is not on the model.");
+      if (intersects.length <= 0) {
+          console.log("贴花位置错误");
+          return
       }
 
-      position = new Vector3(position.x, position.y, position.z)
       rotation = new Euler(rotation.x, rotation.y, rotation.z,)
       size = new Vector3(size.x, size.y, size.z)
-
       const textureLoader = new TextureLoader();
       const texture = textureLoader.load(src);
-
       const material = new MeshPhongMaterial({
         map: texture,
         transparent: true,

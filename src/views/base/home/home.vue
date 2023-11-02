@@ -1,4 +1,9 @@
 <template>
+  <home-top></home-top>
+  <home-news></home-news>
+  <home-header></home-header>
+
+  
   <div class="banner">
     <div class="banner-desc">
       <div style="font-size: 36px; color: #fff; font-weight: 600">
@@ -29,8 +34,12 @@
 <script setup>
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import { onMounted, ref } from "vue";
-import { getBannerModel } from "../../api";
+import { getBannerModel } from "@/api";
 import { TopRight } from "@element-plus/icons-vue";
+import homeTop from './top.vue'
+import homeNews from './news.vue'
+import homeHeader from './header.vue'
+
 
 let modelInfo = ref("");
 
@@ -45,6 +54,18 @@ onMounted(async () => {
 </script>
 
 <style>
+
+.home-top{
+  height: 40px;
+}
+
+.home-news{
+  
+}
+
+.home-header{
+  
+}
 
 .banner {
   background:#265bec;

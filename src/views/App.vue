@@ -1,16 +1,11 @@
 <template>
   <el-config-provider :locale="elementLocale">
-    <div id="notice"></div>
-    <div id="header" v-if="$route.meta.header" :style="{position:$route.name == 'Home' ? 'fixed' : ''}">
-      <header-view @change-language="toggleLanguage"></header-view>
-    </div>
     <div id="content">
       <router-view></router-view>
     </div>
   </el-config-provider>
 </template>
 <script setup>
-import headerView from "./base/header.vue";
 import { computed, ref } from "vue";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";

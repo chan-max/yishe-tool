@@ -1,12 +1,12 @@
 <template lang="">
-<div class="home-top flex justify-center items-center ">
-    <div class="home-top-content h-full flex items-center justify-between">
+<div class="header-top flex justify-center items-center ">
+    <div class="header-top-content h-full flex items-center justify-between">
     <div @click="toggleLanguage">
       {{ $t("language") }}
     </div>
     <div>
-        <span class="font-bold">tel:</span>
-        <span class=" text-xs">18742539196</span>
+        <span>tel</span>
+        <!-- <span class=" text-xs font-bold">18742539196</span> -->
     </div>
     </div>
   </div>
@@ -25,14 +25,14 @@ function toggleLanguage() {
 
 </script>
 <style lang="less">
-    .home-top{
-        width: 100%;
-        height:36px;
-        background-color: #f2f2f2;
-    }
+.header-top {
+  width: 100%;
+  height: 36px;
+  background-color: #f2f2f2;
+}
 
-    .home-top-content{
-        width:1080px;
-        padding:0 20px;
-    }
+.header-top-content {
+  width: 1200px;
+  padding: 0 20px;
+}
 </style>

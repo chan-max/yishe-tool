@@ -1,15 +1,14 @@
 <template>
   <el-config-provider :locale="elementLocale">
-    <div id="content">
+      <header-menu v-if="$route.meta.header"></header-menu>
       <router-view></router-view>
-    </div>
   </el-config-provider>
 </template>
 <script setup>
 import { computed, ref } from "vue";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
-
+import headerMenu from './base/header/index.vue'
 import { useI18n } from "vue-i18n";
 
 const { t, locale, global } = useI18n();
@@ -32,31 +31,14 @@ body {
 }
 
 #app {
-  height: 100%;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
 }
 
-#header {
-  height: 45px;
-  width: 100%;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-}
-
-
-#content {
-  flex: auto;
-  text-align: center;
-  & > *{
-    margin-left:auto;
-    margin-right:auto;
-  }
+#app > * {
+  flex-shrink: 0;
 }
 
 /* 滚动条样式 */
@@ -76,5 +58,6 @@ body {
   background: #999;
 }
 ::-webkit-scrollbar-corner {
+
 }
 </style>

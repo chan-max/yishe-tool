@@ -156,8 +156,8 @@ async function submit() {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 300px;
-  height: 100%;
+  width: 100%;
+  flex: auto;
 }
 
 .signup-form{

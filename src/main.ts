@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './views/App.vue'
+import "tailwindcss/tailwind.css"
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -18,7 +19,6 @@ import './resource/fontAwesome'
 import 'animate.css';
 import './style/base.less'
 import 'default-passive-events'
-import "tailwindcss/tailwind.css"
 
 import { FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 

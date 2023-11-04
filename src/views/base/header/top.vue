@@ -33,6 +33,6 @@ function toggleLanguage() {
 
 .header-top-content {
   width: 1200px;
-  padding: 0 20px;
+  padding: 0 30px;
 }
 </style>

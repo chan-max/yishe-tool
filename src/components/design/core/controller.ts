@@ -64,9 +64,6 @@ export class ModelController {
     return this._mouse;
   }
 
-  // 是否在加载模型
-  public loading = ref(false);
-
   // 当前界面宽度
   private get width() {
     return Number(
@@ -176,7 +173,6 @@ export class ModelController {
   baseModelUrl: any = null;
 
   public async setMainModel(url: any) {
-    this.loading.value = true;
     this.removeMainModel();
     let gltf: any = await gltfLoader(url);
     this.mainModel = gltf;
@@ -186,7 +182,6 @@ export class ModelController {
     this.initModelPosition();
     this.scene.add(gltf.scene);
     this.mainMesh = this.findMainMesh(gltf);
-    this.loading.value = false;
   }
 
   // 移除主模型

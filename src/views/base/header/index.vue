@@ -1,5 +1,4 @@
 <template lang="">
-        <header-top></header-top>
         <header-news></header-news>
         <header-menu></header-menu>
         <header-bar></header-bar>

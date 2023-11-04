@@ -22,3 +22,11 @@ export const blockAdminPage = (router) => {
     } 
   });
 };
+
+
+export const initDocumentTitle = (router) => {
+  router.beforeEach((to,from,next) => {
+    document.title = to.meta.title || '1s'
+    next()
+  })
+}

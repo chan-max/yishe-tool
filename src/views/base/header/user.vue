@@ -48,7 +48,7 @@ const loginStatusStore = useLoginStatusStore();
 
 const avatar = computed(() => {
   const loginStatusStore = useLoginStatusStore();
-  return loginStatusStore.userInfo.avatar || "/default-user-avatar.png";
+  return loginStatusStore.userInfo.avatar || "/defaultAvatar/avatar8.png";
 });
 
 </script>
@@ -57,8 +57,12 @@ const avatar = computed(() => {
         display: flex;
         justify-content: center;
         align-items: center;
+        .el-avatar{
+        width:32px;
+        height:32px;
+        }
     }
-
+    
     .heade-user-unlogin{
         font-weight: bold;
         font-size: 16px;

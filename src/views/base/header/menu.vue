@@ -2,7 +2,7 @@
     <div class="header-menu flex justify-center">
         <div class="header-menu-content flex justify-between items-center">
             <div class="header-menu-content-logo font-bold text-2xl">
-                1s.design
+                衣设
             </div>
             <div class="header-menu-content-menu flex">
                 <router-link :to="{name:'Home'}" class="header-menu-content-menu-item" active-class="header-menu-content-menu-item_focus"> 
@@ -28,7 +28,7 @@
 
 .header-menu-content {
     width: 1200px;
-    padding: 0 20px;
+    padding: 0 30px;
 }
 
 .header-menu-content-menu-item {
@@ -45,7 +45,11 @@
     color: var(--1s-main);
 }
 
+.header-menu-content-logo{
+    width:200px;
+}
+
 .header-menu-content-tools{
-    width: 100px;
+    width: 200px;
 }
 </style>

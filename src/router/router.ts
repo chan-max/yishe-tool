@@ -128,10 +128,11 @@ const router = createRouter({
   routes: _routes,
 });
 
-import { blockAdminPage, blockLoginPage } from "./routerInterception";
+import { blockAdminPage, blockLoginPage, initDocumentTitle } from "./routerInterception";
 import { routeTransform } from "./routeTransform";
 
 blockLoginPage(router);
 blockAdminPage(router);
+initDocumentTitle(router)
 
 export default router;

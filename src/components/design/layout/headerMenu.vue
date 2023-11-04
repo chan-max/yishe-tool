@@ -1,6 +1,11 @@
 <template>
   <div class="designiy-header">
     <div class="designiy-header-logo"></div>
+
+    <div class="designiy-header-menu">
+      <font-awesome-icon :icon="['fas', 'bars']" />
+    </div>
+
     <div class="designiy-header-item">
       撤销
       <font-awesome-icon style="transform: scaleX(-1)" :icon="['fas', 'share']" />
@@ -13,7 +18,7 @@
     <div class="designiy-header-mode-switch">
       <el-switch title="切换白天/黑色模式" v-model="isDarkMode" :active-action-icon="Moon" :inactive-action-icon="Sunny" />
     </div>
-    <el-button @click="save" type="primary" size="small"  style="height:26px;font-size: 10px;margin-right: 10px;">
+    <el-button @click="save" type="primary" size="small"  style="height:26px;font-size: 10px;">
       <span style="font-weight: bold;font-size: 12px;">保 存</span>
     </el-button>
   </div>
@@ -60,7 +65,9 @@ async function save(){
   justify-content: start;
   align-items: center;
   box-sizing: border-box;
-  padding-right: 0px;
+  column-gap:10px;
+  padding: 0px 5px;
+  border-bottom:var(--1s-header-border-bottom);
 }
 
 .designiy-header-select-model {
@@ -80,8 +87,22 @@ async function save(){
 }
 
 .designiy-header-logo {
-  width: 50px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
+  background:#ddd;
+}
+
+.designiy-header-menu{
+  width:30px;
+  height:30px;
+  background:#e6e6e6;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#000;
+  border-radius:5px;
+  font-size:16px;
+  cursor:pointer;
 }
 
 .designiy-header-item {
@@ -92,7 +113,6 @@ async function save(){
 }
 
 .designiy-header-mode-switch{
-  margin-right: 10px;
   span{
     height: 28px;
   }

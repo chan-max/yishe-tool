@@ -32,8 +32,8 @@ function animate(){
 </script>
 <style>
 .designiy-bottom-menu{
+    height:100%;
     width: auto;
-    height: 30px;
     background-color: #fff;
     display: flex;
     justify-content: center;

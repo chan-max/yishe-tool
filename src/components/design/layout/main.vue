@@ -1,18 +1,27 @@
 <template>
-  <loading v-if="isLoading"></loading>
-  <div class="designiy-top">
-    <header-menu/>
-  </div>
-  <div class="designiy-left">
-    <left-menu></left-menu>
-  </div>
-  <div class="designiy-right"></div>
-  <div class="designiy-bottom">
-    <bottom-menu></bottom-menu>
-  </div>
   <div id="designiy-canvas-container" ref="mountContainer"></div> 
+  <loading v-if="isLoading"></loading>
+  <diydialog    
+    :header="false"
+    style="width:100%;height:var(--1s-header-height);top:0;"
+    >
+    <header-menu/>
+  </diydialog>
+
+  <diydialog     
+    :header="false"
+    style="left:0;bottom:0;width:var(--1s-left-menu-width);height:calc(100% - var(--1s-header-height))"
+    >
+    <left-menu></left-menu>
+  </diydialog>
+
+
+  <diydialog :header="false" style="height:var(--1s-bottom-menu-height);bottom:30px;">
+    <bottom-menu></bottom-menu>
+  </diydialog>
+
+
   <diydialog
-    style=" border: 1px solid rgba(255, 255, 255, 0.2)"
     :show="showBaseModelSelectDialog"
     title="选择模型"
     @close="showBaseModelSelectDialog = false"
@@ -30,16 +39,14 @@
   <diydialog
     :header="false"
     :show="showImageStickerDialog"
-    style="height:calc(100% - 40px);"
-    :position="{left:'36px',bottom:0}"
+    style="height:calc(100% - var(--1s-header-height));bottom:0;left:calc(var(--1s-left-menu-width) + 2px);"
   >
     <image-sticker @dragover="stickeOn"></image-sticker>
   </diydialog>
   <diydialog
     :header="false"
     :show="showTextStickerDialog"
-    style="width:auto;height:calc(100% - 40px);"
-    :position="{left:'36px',bottom:0}"
+    style="height:calc(100% - var(--1s-header-height));bottom:0;left:calc(var(--1s-left-menu-width) + 2px);"
   >
     <text-sticker></text-sticker>
   </diydialog>
@@ -47,8 +54,7 @@
   <diydialog
     :header="false"
     :show="showWorkTreeDialog"
-    style="width:auto;height:calc(100% - 40px);"
-    :position="{right:'0px',bottom:0}"
+    style="height:calc(100% - var(--1s-header-height));bottom:0;right:0;"
   >
     <work-tree></work-tree>
   </diydialog>
@@ -56,8 +62,7 @@
   <diydialog
     :header="false"
     :show="showDecalControlDialog"
-    style="width:auto;height:calc(100% - 40px);"
-    :position="{right:'0px',bottom:0}"
+    style="height:calc(100% - var(--1s-header-height));bottom:0;right:0;"
   >
     <decal-control></decal-control>
   </diydialog>
@@ -67,8 +72,14 @@ import { computed, onMounted, ref, watchEffect ,watch} from "vue";
 import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
-import { currentController,canvasBgColor, canvasBgOpacity, showBaseModelSelectDialog ,currentModelInfo,showSceneControlDialog,showImageStickerDialog,showTextStickerDialog,showWorkTreeDialog, showDecalControlDialog} from "../store";
-import stickersTabs from "./stickers/stickersTabs.vue";
+import { 
+  currentController,canvasBgColor,
+  canvasBgOpacity, showBaseModelSelectDialog ,
+  currentModelInfo,showSceneControlDialog,
+  showImageStickerDialog,
+  showTextStickerDialog,showWorkTreeDialog, showDecalControlDialog,
+  isLoading
+  } from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
 import leftMenu from "./leftMenu.vue";
@@ -98,17 +109,16 @@ AxesHelper,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
+isLoading.value = true
+
 // 挂载容器
 const mountContainer = ref();
 
 const modelController = new ModelController();
 
-const {scene} = modelController
+const { scene } = modelController
 
 currentController.value = modelController
-
-// 是否处于加载中
-const isLoading = computed(() => modelController.loading.value);
 
 watch(currentModelInfo,() => {
   const {file} = currentModelInfo.value;
@@ -143,11 +153,10 @@ scene.add(pointLight);
 watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacity.value));
 
 // 渲染动画
-onMounted(() => modelController.render(mountContainer.value));
-
-modelController.onClick((mc) => {
-
-})
+onMounted(() => {
+  modelController.render(mountContainer.value);
+  isLoading.value = false
+});
 
 // 贴图逻辑暂时保留
 function stickeOn(img,info) {
@@ -157,43 +166,6 @@ function stickeOn(img,info) {
 </script>
 
 <style lang="less">
-.designiy-top {
-  height: 40px;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  z-index: 10;
-}
-
-.designiy-left {
-  position: absolute;
-  left: 0;
-  top: 40px;
-  height: calc(100% - 40px);
-  width: 36px;
-  background: #fff;
-  border-right: 2px solid #eee;
-  overflow: auto;
-  z-index: 10;
-}
-
-.designiy-right {
-  position: absolute;
-  right: 0;
-  top: 40px;
-  height: calc(100% - 40px);
-  width: auto;
-  background: #fff;
-  border-left: 1px solid #eee;
-  overflow: auto;
-  z-index: 10;
-}
-
-.designiy-bottom {
-  z-index: 10;
-  position: absolute;
-  bottom: 20px;
-}
 
 #designiy-canvas-container {
   width: 100%;

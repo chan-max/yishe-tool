@@ -79,9 +79,8 @@ function mounted(){
 <style>
 .designiy-dialog {
   z-index: 9;
-  /* 默认宽高 */
-  background: #323232;
-  box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.25);
+  background:var(--1s-dialog-background);
+  box-shadow:var(--1s-dialog-box-shadow);
   top:v-bind("props.position.top");
   left:v-bind("props.position.left");
   bottom:v-bind("props.position.bottom");
@@ -93,19 +92,12 @@ function mounted(){
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(0, 0, 0, 0.25) 100%
-  );
-  /* cursor: all-scroll; */
   padding: 15px;
-  border-bottom: 2px solid #222;
   cursor: move;
 }
 
 .designiy-dialog-header-close {
-  color: #c7c7c7;
+  color: var(--1s-dialog-header-text-color);
   cursor: pointer;
   display: flex;
   padding: 5px;
@@ -114,7 +106,7 @@ function mounted(){
 }
 
 .designiy-dialog-header-title {
-  color: #c7c7c7;
+  color: var(--1s-dialog-header-text-color);
   font-size: 12px;
   font-weight: bold;
 }

@@ -43,14 +43,14 @@ onMounted(async () => {
 
 </script>
 <style lang="less">
-    
+
 .home-banner {
   background:#fafafa;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 600px;
+  height: 700px;
 }
 
 .home-banner-content{

@@ -1,5 +1,10 @@
 <template>
-  <div id="loading">加载中...</div>
+  <div id="loading">
+    <div class="designiy-loader-text">
+      加载中...
+    </div>
+    <span class="designiy-loader"></span>
+  </div>
 </template>
 <script setup>
 </script>
@@ -10,12 +15,51 @@
   width: 100%;
   height: 100%;
   z-index: 999999;
-  background: rgba(50, 50, 50, 0.05);
   display: flex;
+  flex-direction:column;
   justify-content: center;
   align-items: center;
-  color: #ffffff;
-  font-size: 20px;
-  font-weight: bold;
+  backdrop-filter: blur(6px);
+  background:rgba(155,155,155,.3);
 }
+
+
+.designiy-loader-text{
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  padding:10px 0px;
+}
+
+.designiy-loader {
+  width: 200px;
+  height: 4.8px;
+  display: inline-block;
+  position: relative;
+  background: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.designiy-loader::after {
+  content: '';
+  width: 50px;
+  height: 4.8px;
+  background: var(--1s-main);
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  animation: animloader 2s linear infinite;
+}
+
+@keyframes animloader {
+  0% {
+    left: 0;
+    transform: translateX(-100%);
+  }
+  100% {
+    left: 100%;
+    transform: translateX(0%);
+  }
+}
+    
 </style>

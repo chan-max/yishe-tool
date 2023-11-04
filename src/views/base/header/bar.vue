@@ -7,7 +7,7 @@
             </div>
             <div style="flex:1"></div>
             <div class="header-bar-content-search">
-                <el-input class="" v-model="search" placeholder="搜索服装" size="large">
+                <el-input class="" v-model="search" placeholder="搜索服装" size="normal">
                     <template #suffix>
                         <div style="cursor:pointer"> <font-awesome-icon :icon="['fas', 'magnifying-glass']" /></div>
                     </template>
@@ -48,13 +48,13 @@ onMounted(() => {
 <style>
 .header-bar {
     width: 100%;
-    height: 70px;
+    height: 50px;
     background: var(--1s-main);
 }
 
 .header-bar-content {
     width: 1200px;
-    padding: 0 20px;
+    padding: 0 30px;
 }
 
 .header-bar-content-menu {

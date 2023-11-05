@@ -21,7 +21,7 @@
 </script>
 <style lang="less">
 .header-menu {
-    height: 100px;
+    height: 60px;
     width: 100%;
     background-color: #fff;
 }

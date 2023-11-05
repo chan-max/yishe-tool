@@ -12,6 +12,7 @@ usePreventScreenResize()
 
 </script>
 <style lang="less">
+@import url(./theme.less);
 @import url(./style.less);
 .designiy {
   width: 100%;

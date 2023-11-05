@@ -1,14 +1,13 @@
 <template lang="">
-    <div class="heade-user">
-        <div v-if="!loginStatusStore.isLogin" class="heade-user-unlogin">
-            <span class="heade-user-unlogin-item" @click="$router.push({name:'Login'})">登录</span>
-            /
-            <span class="heade-user-unlogin-item" @click="$router.push({name:'Signup'})">注册</span>
-        </div>
+    <div class="user-avatar">
+        <el-button  v-if="!loginStatusStore.isLogin" @click="$router.push({name:'Login'})" type="primary" round size="small">
+            <span style="font-weight: bold;font-size: 12px;">登 录</span>
+        </el-button>
+
         <el-popover
         v-else
         placement="bottom"
-        :title="` 欢迎, ${loginStatusStore.userInfo.account} !`"
+        :title="` 欢迎, ${loginStatusStore.userInfo?.account} !`"
         trigger="hover"
         >
         <div class="user-center-popover">
@@ -24,7 +23,7 @@
             <div><el-button @click="doLogout" size="small">退出登录</el-button></div>
         </div>
         <template #reference>
-            <el-avatar size="normal" shape="square" :src="avatar" />
+            <el-avatar size="normal" shape="circle" :src="avatar" />
         </template>
         </el-popover>
     </div>
@@ -37,44 +36,38 @@ import { computed, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { Pointer,CaretBottom } from "@element-plus/icons-vue";
 
-
-
 let route = useRoute();
 
 // 顶部头像
 const loginStatusStore = useLoginStatusStore();
-
-
-
 const avatar = computed(() => {
   const loginStatusStore = useLoginStatusStore();
-  return loginStatusStore.userInfo.avatar || "/defaultAvatar/avatar8.png";
+  return loginStatusStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
 });
 
 </script>
 <style lang="less">
-    .heade-user{
+    .user-avatar{
         display: flex;
         justify-content: center;
         align-items: center;
         .el-avatar{
-        width:32px;
-        height:32px;
+            height:30px;
+            width:30px;
         }
     }
     
-    .heade-user-unlogin{
+    .user-avatar-unlogin{
         font-weight: bold;
-        font-size: 16px;
-        color: #fff;
+        font-size: 12px;
         cursor: default;
     }
 
-    .heade-user-unlogin-item{
+    .user-avatar-unlogin-item{
         cursor: pointer;
     }
 
-    .heade-user-unlogin-item:hover{
+    .user-avatar-unlogin-item:hover{
         cursor: pointer;
         opacity: .9;
     }

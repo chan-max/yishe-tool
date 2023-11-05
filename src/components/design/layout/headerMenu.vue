@@ -2,9 +2,7 @@
   <div class="designiy-header">
     <div class="designiy-header-logo"></div>
 
-    <div class="designiy-header-menu">
-      <font-awesome-icon :icon="['fas', 'bars']" />
-    </div>
+    <header-menu-dropdown/>
 
     <div class="designiy-header-item">
       撤销
@@ -14,13 +12,13 @@
       <font-awesome-icon :icon="['fas', 'share']" />
       重做
     </div>
+
     <div style="flex-grow: 1"></div>
-    <div class="designiy-header-mode-switch">
-      <el-switch title="切换白天/黑色模式" v-model="isDarkMode" :active-action-icon="Moon" :inactive-action-icon="Sunny" />
+
+    <div class="designiy-header-quit">
+      <font-awesome-icon :icon="['fas', 'right-from-bracket']" />
     </div>
-    <el-button @click="save" type="primary" size="small"  style="height:26px;font-size: 10px;">
-      <span style="font-weight: bold;font-size: 12px;">保 存</span>
-    </el-button>
+    <user-avatar/>
   </div>
 </template>
 
@@ -32,6 +30,8 @@ import Color from "color";
 import { Edit, Share, Delete ,Sunny,Moon} from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {uploadModel} from '@/api'
+import userAvatar from '@/components/user/userAvatar.vue'
+import headerMenuDropdown from './headerMenuDropdown/index.vue'
 
 const props = defineProps([]);
 
@@ -60,15 +60,17 @@ async function save(){
 .designiy-header {
   width: 100%;
   height: 100%;
-  background-color: #fcfcfc;
   display: flex;
   justify-content: start;
   align-items: center;
   box-sizing: border-box;
   column-gap:10px;
-  padding: 0px 5px;
   border-bottom:var(--1s-header-border-bottom);
+  padding-right: 5px;
+  padding-left:5px;
 }
+
+
 
 .designiy-header-select-model {
   margin: 0 10px;
@@ -92,19 +94,6 @@ async function save(){
   background:#ddd;
 }
 
-.designiy-header-menu{
-  width:30px;
-  height:30px;
-  background:#e6e6e6;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#000;
-  border-radius:5px;
-  font-size:16px;
-  cursor:pointer;
-}
-
 .designiy-header-item {
   color: #eee;
   font-size: 12px;
@@ -112,36 +101,9 @@ async function save(){
   cursor: pointer;
 }
 
-.designiy-header-mode-switch{
-  span{
-    height: 28px;
-  }
-
-  .el-switch__action{
-   width: 20px!important;
-   height: 20px!important;
-   color: #06f;
-   svg{
-      color:var(--el-color-primary);
-    }
-  }
-
-  .is-checked{
-    .el-switch__action{
-      background-color: #323232;
-      left: calc(100% - 22px)!important;
-    }
-    .el-switch__core{
-    background: #555!important;
-  }
-    svg{
-      color:#fff;
-    }
-  }
-
-  .el-switch__core{
-    border: none;
-  }
-
+.designiy-header-quit{
+  color:var(--1s-icon-color);
+  padding :0 5px;
+  font-size:18px;
 }
 </style>

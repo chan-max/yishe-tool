@@ -1,25 +1,26 @@
 <template>
-  <div id="designiy-canvas-container" ref="mountContainer"></div> 
+  <div id="designiy-canvas-container" ref="mountContainer"></div>
   <loading v-if="isLoading"></loading>
-  <diydialog    
-    :header="false"
-    style="width:100%;height:var(--1s-header-height);top:0;"
-    >
-    <header-menu/>
+
+  <diydialog :header="false" style="width: 100%; height: var(--1s-header-height); top: 0">
+    <header-menu />
   </diydialog>
 
-  <diydialog     
+  <diydialog
     :header="false"
-    style="left:0;bottom:0;width:var(--1s-left-menu-width);height:calc(100% - var(--1s-header-height))"
-    >
+    style="
+      left: 0;
+      bottom: 0;
+      width: var(--1s-left-menu-width);
+      height: calc(100% - var(--1s-header-height));
+    "
+  >
     <left-menu></left-menu>
   </diydialog>
 
-
-  <diydialog :header="false" style="height:var(--1s-bottom-menu-height);bottom:30px;">
+  <diydialog :header="false" style="height: var(--1s-bottom-menu-height); bottom: 30px">
     <bottom-menu></bottom-menu>
   </diydialog>
-
 
   <diydialog
     :show="showBaseModelSelectDialog"
@@ -39,14 +40,22 @@
   <diydialog
     :header="false"
     :show="showImageStickerDialog"
-    style="height:calc(100% - var(--1s-header-height));bottom:0;left:calc(var(--1s-left-menu-width) + 2px);"
+    style="
+      height: calc(100% - var(--1s-header-height));
+      bottom: 0;
+      left: calc(var(--1s-left-menu-width));
+    "
   >
     <image-sticker @dragover="stickeOn"></image-sticker>
   </diydialog>
   <diydialog
     :header="false"
     :show="showTextStickerDialog"
-    style="height:calc(100% - var(--1s-header-height));bottom:0;left:calc(var(--1s-left-menu-width) + 2px);"
+    style="
+      height: calc(100% - var(--1s-header-height));
+      bottom: 0;
+      left: calc(var(--1s-left-menu-width));
+    "
   >
     <text-sticker></text-sticker>
   </diydialog>
@@ -54,7 +63,7 @@
   <diydialog
     :header="false"
     :show="showWorkTreeDialog"
-    style="height:calc(100% - var(--1s-header-height));bottom:0;right:0;"
+    style="height: calc(100% - var(--1s-header-height)); bottom: 0; right: 0"
   >
     <work-tree></work-tree>
   </diydialog>
@@ -62,35 +71,40 @@
   <diydialog
     :header="false"
     :show="showDecalControlDialog"
-    style="height:calc(100% - var(--1s-header-height));bottom:0;right:0;"
+    style="height: calc(100% - var(--1s-header-height)); bottom: 0; right: 0"
   >
     <decal-control></decal-control>
   </diydialog>
 </template>
 <script setup>
-import { computed, onMounted, ref, watchEffect ,watch} from "vue";
+import { computed, onMounted, ref, watchEffect, watch } from "vue";
 import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
-import { 
-  currentController,canvasBgColor,
-  canvasBgOpacity, showBaseModelSelectDialog ,
-  currentModelInfo,showSceneControlDialog,
+import {
+  currentController,
+  canvasBgColor,
+  canvasBgOpacity,
+  showBaseModelSelectDialog,
+  currentModelInfo,
+  showSceneControlDialog,
   showImageStickerDialog,
-  showTextStickerDialog,showWorkTreeDialog, showDecalControlDialog,
-  isLoading
-  } from "../store";
+  showTextStickerDialog,
+  showWorkTreeDialog,
+  showDecalControlDialog,
+  isLoading,
+} from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
-import sceneControl from './sceneControl/index.vue'
-import imageSticker from './imageSticker/index.vue'
-import textSticker from './textSticker/index.vue'
-import workTree from './workTree/index.vue'
-import bottomMenu from './bottomMenu.vue'
-import decalControl from './decalControl/index.vue'
+import sceneControl from "./sceneControl/index.vue";
+import imageSticker from "./imageSticker/index.vue";
+import textSticker from "./textSticker/index.vue";
+import workTree from "./workTree/index.vue";
+import bottomMenu from "./bottomMenu.vue";
+import decalControl from "./decalControl/index.vue";
 
 import {
   Mesh,
@@ -102,28 +116,29 @@ import {
   Vector3,
   BoxGeometry,
   Euler,
-DirectionalLight,
-AmbientLight,
-PointLight,
-AxesHelper,
+  DirectionalLight,
+  AmbientLight,
+  PointLight,
+  AxesHelper,
+  GridHelper,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
-isLoading.value = true
+isLoading.value = true;
 
 // 挂载容器
 const mountContainer = ref();
 
 const modelController = new ModelController();
 
-const { scene } = modelController
+const { scene } = modelController;
 
-currentController.value = modelController
+currentController.value = modelController;
 
-watch(currentModelInfo,() => {
-  const {file} = currentModelInfo.value;
-  modelController.setMainModel(file)
-})
+watch(currentModelInfo, () => {
+  const { file } = currentModelInfo.value;
+  modelController.setMainModel(file);
+});
 
 // 创建场景、相机和渲染器等...
 
@@ -146,7 +161,6 @@ const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
 pointLight.position.set(0, 0, 2); // 设置光源位置
 scene.add(pointLight);
 
-
 // scene.add(new AxesHelper(0.5))
 
 // 改变画布背景颜色
@@ -155,18 +169,21 @@ watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacit
 // 渲染动画
 onMounted(() => {
   modelController.render(mountContainer.value);
-  isLoading.value = false
+  isLoading.value = false;
 });
 
 // 贴图逻辑暂时保留
-function stickeOn(img,info) {
-  modelController.stickOnMousePosition(img,info)
+function stickeOn(img, info) {
+  modelController.stickOnMousePosition(img, info);
 }
+
+import {onShortcutTrigger} from '../shortcut/index.ts'
+
+
 
 </script>
 
 <style lang="less">
-
 #designiy-canvas-container {
   width: 100%;
   height: 100%;

@@ -13,14 +13,14 @@
                     </template>
                 </el-input>
             </div>
-            <user></user>
+            <user-avatar/>
         </div>
     </div>
 </template>
     
 <script setup lang='ts'>
 import { Search } from '@element-plus/icons-vue';
-import user from './user.vue'
+import userAvatar from '@/components/user/userAvatar.vue'
 import { ref, onMounted, onUnmounted } from 'vue';
 
 const search = ref('')

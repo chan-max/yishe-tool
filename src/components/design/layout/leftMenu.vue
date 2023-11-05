@@ -67,6 +67,21 @@
         <font-awesome-icon :icon="['fas', 'file-export']" />
       </div>
     </el-tooltip>
+    <div style="flex:1"></div>
+
+    <el-tooltip :hide-after="0" content="切换外观模式" placement="right">
+      <div class="menu-bar-item" @click="isDarkMode = !isDarkMode">
+        <font-awesome-icon v-if="isDarkMode" :icon="['fas', 'sun']" />
+        <font-awesome-icon v-else :icon="['fas', 'moon']" />
+      </div>
+    </el-tooltip>
+
+    <el-tooltip :hide-after="0" content="系统设置" placement="right">
+      <div class="menu-bar-item">
+        <font-awesome-icon :icon="['fas', 'gear']" />
+      </div>
+    </el-tooltip>
+
   </div>
 </template>
 <script setup>
@@ -76,30 +91,30 @@ import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canv
 .menu-bar {
   width: 100%;
   height: 100%;
-  background-color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 10px;
+  padding-bottom: 10px;
+  row-gap:5px;
+  border-right:var(--1s-left-menu-border-right);
 }
 
 .menu-bar-item {
-  width: 100%;
-  height: 34px;
-  min-height: 34px;
+  width: 28px;
+  height: 28px;
+  border-radius:5px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  color:var(--1s-icon-color);
   svg {
     width: 14px;
     height: 14px;
   }
   &:hover {
-    svg {
-      width: 18px;
-      height: 18px;
-    }
+    background:var(--1s-left-menu-icon-hover-background-color);
   }
   &:active {
     svg {

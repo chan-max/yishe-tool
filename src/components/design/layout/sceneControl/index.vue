@@ -2,8 +2,8 @@
     <div class="designiy-scene-control">
         <el-color-picker show-alpha size="small" v-model="bgColor" color-format="rgb" :predefine="predefineColors" />
     </div>
-  </template>
-  <script setup>
+</template>
+<script setup>
   import { onMounted, ref,computed } from "vue";
   import {showBaseModelSelectDialog,currentModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
 import Color from 'color'
@@ -27,6 +27,12 @@ const bgColor = computed({
 
 </script>
 <style lang="less">
+.designiy-scene-control{
+  width:700px;
+  height:300px;
+  padding:10px;
+}
+
 
 </style>
   

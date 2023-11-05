@@ -34,7 +34,6 @@ function animate(){
 .designiy-bottom-menu{
     height:100%;
     width: auto;
-    background-color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -50,5 +49,6 @@ function animate(){
     display: flex;
     justify-content: center;
     align-items: center;
+    color:var(--1s-icon-color);
 }
 </style>

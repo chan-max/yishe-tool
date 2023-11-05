@@ -1,6 +1,6 @@
 <template>
     <div class="designiy-decal-control">
-        
+        操作当前模型
     </div>
 </template>
 <script setup>

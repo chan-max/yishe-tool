@@ -1,8 +1,7 @@
 <template>
-  <div class="admin-container">
-    <el-container style="height: 100%">
-      <el-aside style="display: flex; flex-direction: column" width="auto">
-        <el-menu
+  <div class="admin">
+        <div class="admin-left">
+          <el-menu
           class="admin-menu"
           :collapse="isCollapse"
           style="display: flex"
@@ -23,11 +22,10 @@
             <el-avatar shape="square" size="default" :src="avatar" />
           </div>
 
-          <el-menu-item index="Admin">
+          <el-menu-item index="/admin">
             <el-icon><House /></el-icon>
             <span>首页</span>
           </el-menu-item>
-
 
           <el-menu-item index="System">
             <el-icon><Monitor /></el-icon>
@@ -96,14 +94,10 @@
             <span>收起/展开</span>
           </el-menu-item>
         </el-menu>
-      </el-aside>
-      <el-container>
-        <el-header style="border-bottom: 1px solid #e9e9ef"></el-header>
-        <el-main class="admin-main">
+        </div>
+        <div class="admin-content">
           <router-view></router-view>
-        </el-main>
-      </el-container>
-    </el-container>
+        </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -137,15 +131,14 @@ const avatar = computed(() => {
 });
 </script>
 <style>
-.admin-container {
+.admin {
   width: 100%;
   height: 100%;
   /* background-color: #00071d; */
   background-color: #fff;
+  display:flex;
 }
 
-.admin-main{
-}
 
 .el-popper.is-light {
   border: none !important;
@@ -170,7 +163,6 @@ const avatar = computed(() => {
 .admin-menu{
   .el-menu-item {
   font-size: 12px !important;
-
 }
 
 .el-sub-menu__title {
@@ -190,4 +182,10 @@ const avatar = computed(() => {
 }
 }
 
+.admin-content{
+  width:100%;
+  height:100%;
+  padding:20px;
+  overflow:auto;
+}
 </style>

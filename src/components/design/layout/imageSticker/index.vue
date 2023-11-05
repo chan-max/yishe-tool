@@ -42,28 +42,6 @@ onMounted(async () => {
 });
 </script>
 <style lang="less">
-    .designiy-image-sticker{
-        .el-collapse{
-            border:none;
-        }
-        .el-collapse-item{
-            padding-bottom:2px;
-        }
-        .el-collapse-item__header{
-            height:25px;
-            padding-left:10px;
-            background-color: #3d3d3d;
-            border:none;
-            color:#e5e5e5;
-            font-size: 12px;
-            font-weight: 100;
-        }
-
-        .el-collapse-item__wrap{
-          background-color: #3d3d3d;
-          border:none;
-        }
-    }
 
     .designiy-image-sticker-container{
       display: flex;
@@ -71,12 +49,14 @@ onMounted(async () => {
       padding: 5px;
       justify-content: space-between;
       width:240px;
-      &-item{
+    }
+
+    .designiy-image-sticker-container-item{
         margin: 5px 0;
         width:110px;
         height:70px;
         padding: 5px;
-        background-color: #efefef;
+        background-color: var(--1s-image-sticker-image-background-color);
         border-radius: 5px;
         cursor:pointer;
         &_loading,&_error{
@@ -86,10 +66,7 @@ onMounted(async () => {
           justify-content: center;
           align-items: center;
         }
-      }
     }
-
-
 
 
   @keyframes rolling {

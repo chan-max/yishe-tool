@@ -109,4 +109,19 @@ export const getModelList  = (data) => new Promise( async (resolve,reject) => {
   })
   resolve(_data)
 })
+
+// 发送邮件
 export const sendEmail = (data) => apiInstance.post(Url.SEND_MAIL,data)
+
+// 获取用户列表
+export interface UserListInfo {
+  total: number,
+  list: any[],
+  currentPage: number,
+  pageSize: number,
+  totalPages: number
+}
+export const getUserList = (params)=> new Promise(async (resolve,reject) => {
+  const res = await apiInstance.post(Url.GET_USER_LIST,params);
+  resolve(res.data.data)
+})

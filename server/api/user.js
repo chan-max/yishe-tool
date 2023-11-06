@@ -48,3 +48,24 @@ export const signupHook = (router, sequelize, app) => router.post('/signup', asy
 
 
 
+// 获取用户列表
+export const getUserListHook = (router,sequelize,app) => router.post('/getUserList',async (ctx,next) => {
+    
+    const pageSize = 5
+    const currentPage = 1
+
+    const result = await sequelize.models.User.findAndCountAll({
+        limit: pageSize,
+        offset: (currentPage - 1) * pageSize,
+      });
+
+      ctx.body = {
+        data:{
+            total: result.count,
+            list: result.rows,
+            currentPage: currentPage,
+            pageSize: pageSize,
+            totalPages: Math.ceil(result.count / pageSize),
+          }
+      }
+})

@@ -5,10 +5,10 @@
         class="admin-menu"
         :collapse="isCollapse"
         style="display: flex"
-        background-color="#fbfaff"
-        text-color="#696969"
+        background-color="#293543"
+        text-color="#ddd"
         :router="true"
-        active-text-color="#06f"
+        active-text-color="#fff"
       >
         <div
           style="
@@ -19,6 +19,7 @@
             justify-content: center;
           "
         ></div>
+
 
         <el-menu-item index="/admin">
           <el-icon><House /></el-icon>
@@ -85,7 +86,17 @@
           </el-menu-item-group>
         </el-sub-menu>
 
-        <div style="flex-grow: 1"></div>
+        <el-sub-menu index="6">
+          <template #title>
+            <el-icon><Coin /></el-icon>
+            <span>订单管理</span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item index="/admin/table">订单管理</el-menu-item>
+          </el-menu-item-group>
+        </el-sub-menu>
+
+        <div style="flex: 1"></div>
 
         <el-menu-item @click="isCollapse = !isCollapse">
           <el-icon><Expand /></el-icon>
@@ -94,9 +105,7 @@
       </el-menu>
     </div>
     <div class="admin-right">
-      <div class="admin-header">
-        
-      </div>
+      <div class="admin-header"></div>
       <div class="admin-content">
         <router-view></router-view>
       </div>
@@ -142,6 +151,13 @@ const avatar = computed(() => {
   display: flex;
 }
 
+.admin-menu-label {
+  font-size: 12px;
+  color: #eee;
+  font-weight: 300;
+  padding: 5px 20px;
+}
+
 .admin-menu {
   --el-menu-item-height: 50px;
   --el-menu-sub-item-height: 40px;
@@ -154,10 +170,10 @@ const avatar = computed(() => {
   overflow: hidden;
 }
 
-.admin-header{
+.admin-header {
   width: 100%;
   height: 50px;
-  background-color: red;
+  border-bottom: 1px solid #eee;
 }
 
 .admin-menu:not(.el-menu--collapse) {
@@ -165,8 +181,10 @@ const avatar = computed(() => {
 }
 
 .admin-menu {
+  .el-sub-menu__title,
   .el-menu-item {
     font-size: 12px !important;
+    font-weight: 300 !important;
   }
 
   .el-sub-menu__title {
@@ -184,6 +202,10 @@ const avatar = computed(() => {
   .el-menu-item-group__title {
     display: none;
   }
+
+  .el-menu-item.is-active {
+    background: rgb(33, 42, 54);
+  }
 }
 
 .admin-right {
@@ -191,4 +213,9 @@ const avatar = computed(() => {
   height: 100%;
   overflow: auto;
 }
+
+.admin-content{
+  padding:20px;
+}
+
 </style>

@@ -21,6 +21,7 @@ import imageUpload from "@/views/admin/view/image/imageUpload.vue";
 import fontIndex from "@/views/admin/view/font/fontUpload.vue";
 import fontUpload from "@/views/admin/view/font/fontUpload.vue";
 import complete from '@/views/user/complete.vue'
+import adminUserManage from '@/views/admin/view/user/index.vue'
 
 const routes = [
   {
@@ -80,6 +81,12 @@ const routes = [
         path: "font/upload",
         name: "FontUpload",
         component: fontUpload,
+        header: false,
+      },
+      {
+        path: "user",
+        name: "AdminUserManage",
+        component: adminUserManage,
         header: false,
       },
     ],

@@ -177,10 +177,6 @@ function stickeOn(img, info) {
   modelController.stickOnMousePosition(img, info);
 }
 
-import {onShortcutTrigger} from '../shortcut/index.ts'
-
-
-
 </script>
 
 <style lang="less">

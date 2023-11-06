@@ -30,9 +30,9 @@ const emits = defineEmits(['dragover'])
 const images = ref([])
 
 // image load success
-function load(e,i){
+function load(e,info){
   initDraggableElement(e.target,(img) => {
-    emits('dragover',img,i)
+    emits('dragover',img,info)
   })
 }
 

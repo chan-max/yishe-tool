@@ -1,12 +1,11 @@
 <template>
     <div class="designiy-decal-control">
-        操作当前模型
+        操作当前贴纸
     </div>
 </template>
 <script setup>
 import { onMounted, ref,computed,watch } from "vue";
-
-import { operatingDecal } from '../../store.ts'
+import { operatingDecal } from '../../store.ts';
 
 watch(operatingDecal,( ) => {
       window.decal = operatingDecal
@@ -15,9 +14,9 @@ watch(operatingDecal,( ) => {
 </script>
 <style lang="less">
 .designiy-decal-control{
-    width:240px;
+    width:300px;
+    padding: 10px;
     display:flex;
-    justify-content:center;
     align-items:center;
 }
 </style>

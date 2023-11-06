@@ -2,7 +2,9 @@ import { useMagicKeys ,whenever} from '@vueuse/core'
 
 const useKeys = useMagicKeys({
   passive: false,
-  onEventFired:(e) => e.preventDefault()
+  onEventFired:(e) => {
+     // e.preventDefault()
+  }
 })
 
 export function onShortcutTrigger(keys:string|string[],callback){

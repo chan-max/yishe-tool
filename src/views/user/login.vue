@@ -67,6 +67,7 @@ const form = ref()
 const errMsg = ref()
 
 const isOnce = ref(false);
+
 const loginForm = reactive({
   account: "",
   password: "",
@@ -76,7 +77,7 @@ const rules = reactive({
   account: [
     {  
     message:'请输入 6 ~ 16 位长度的账号',
-    trigger: ['blur' ],
+    trigger: ['blur'],
     validator(rule,val){
       return val.length >= 6 && val.length <= 16
     },

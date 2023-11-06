@@ -40,7 +40,6 @@ export class DecalController {
   decal = null;
 
   // 当前使用的材质信息
-  stickerInfo = null
 
   // 记录贴花添加时的鼠标位置
   mousePositon = null
@@ -52,7 +51,7 @@ export class DecalController {
 
     this.modelController = modelController;
     this.img = img;
-    this.stickerInfo = stickerInfo;
+    
     this.imgAspectRatio = this.img.width / this.img.height;
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(this.img.src);

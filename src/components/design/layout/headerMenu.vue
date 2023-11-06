@@ -2,7 +2,7 @@
   <div class="designiy-header">
     <div class="designiy-header-logo"></div>
 
-    <header-menu-dropdown/>
+    <header-menu-dropdown />
 
     <div class="designiy-header-item">
       撤销
@@ -15,28 +15,35 @@
 
     <div style="flex-grow: 1"></div>
 
+    <div @click="save" class="cursor-pointer" style="font-weight: bold; font-size: 12px;color:var(--1s-text-color);">
+      保 存
+    </div>
+
     <div class="designiy-header-quit">
       <font-awesome-icon :icon="['fas', 'right-from-bracket']" />
     </div>
-    <user-avatar/>
+    <user-avatar />
   </div>
 </template>
 
 <script setup>
 import { getBaseModelList, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
-import { canvasBgColor, canvasBgOpacity, isDarkMode ,currentController} from "../store";
+import { canvasBgColor, canvasBgOpacity, isDarkMode, currentController } from "../store";
 import Color from "color";
-import { Edit, Share, Delete ,Sunny,Moon} from "@element-plus/icons-vue";
+import { Upload } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {uploadModel} from '@/api'
+import { uploadModel } from '@/api'
 import userAvatar from '@/components/user/userAvatar.vue'
 import headerMenuDropdown from './headerMenuDropdown/index.vue'
+import { onShortcutTrigger } from '../shortcut/index';
 
 const props = defineProps([]);
 
-async function save(){
-   await ElMessageBox.confirm(
+onShortcutTrigger(['Ctrl+S'],save)
+
+async function save() {
+  await ElMessageBox.confirm(
     '确认将模型保存至工作台吗?',
     {
       confirmButtonText: '确认',
@@ -46,11 +53,11 @@ async function save(){
     })
 
 
-    const img = currentController.value.getScreenShotFile()
-    const data = new FormData()
-    data.append('img',img)
-    data.append('modelInfo',JSON.stringify(currentController.value.exportTo1stf()))
-    await uploadModel(data)
+  const img = currentController.value.getScreenShotFile()
+  const data = new FormData()
+  data.append('img', img)
+  data.append('modelInfo', JSON.stringify(currentController.value.exportTo1stf()))
+  await uploadModel(data)
 }
 
 
@@ -64,10 +71,10 @@ async function save(){
   justify-content: start;
   align-items: center;
   box-sizing: border-box;
-  column-gap:10px;
-  border-bottom:var(--1s-header-border-bottom);
+  column-gap: 10px;
+  border-bottom: var(--1s-header-border-bottom);
   padding-right: 5px;
-  padding-left:5px;
+  padding-left: 5px;
 }
 
 
@@ -91,7 +98,7 @@ async function save(){
 .designiy-header-logo {
   width: 30px;
   height: 30px;
-  background:#ddd;
+  background: #ddd;
 }
 
 .designiy-header-item {
@@ -101,9 +108,9 @@ async function save(){
   cursor: pointer;
 }
 
-.designiy-header-quit{
-  color:var(--1s-icon-color);
-  padding :0 5px;
-  font-size:18px;
+.designiy-header-quit {
+  color: var(--1s-icon-color);
+  padding: 0 5px;
+  font-size: 18px;
 }
 </style>

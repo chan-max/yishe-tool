@@ -7,7 +7,7 @@
             </div>
             <div style="flex:1"></div>
             <div class="header-bar-content-search">
-                <el-input class="" v-model="search" placeholder="搜索服装" size="normal">
+                <el-input class="" v-model="search" placeholder="搜索服装" size="default">
                     <template #suffix>
                         <div style="cursor:pointer"> <font-awesome-icon :icon="['fas', 'magnifying-glass']" /></div>
                     </template>

@@ -14,7 +14,6 @@ export const imageUploadHook =  (router,sequelize) => router.post('/imageUpload'
       description,
       path:filePath,
     });
-
     
     ctx.body = {   
       message: "图片上传成功",

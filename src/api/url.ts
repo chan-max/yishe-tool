@@ -81,5 +81,8 @@ export enum Url {
     SEND_MAIL = url('/sendEmail'),
 
     // 获取用户列表，后台使用
-    GET_USER_LIST = url('/getUserList')
+    GET_USER_LIST = url('/getUserList'),
+
+    // 更新用户信息
+    UPDATE_USER_INFO = url('/updateUserInfo')
 }

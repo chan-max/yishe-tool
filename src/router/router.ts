@@ -20,7 +20,7 @@ import imageIndex from "@/views/admin/view/image/index/index.vue";
 import imageUpload from "@/views/admin/view/image/imageUpload.vue";
 import fontIndex from "@/views/admin/view/font/fontUpload.vue";
 import fontUpload from "@/views/admin/view/font/fontUpload.vue";
-import complete from '@/views/user/complete.vue'
+import update from '@/views/user/update.vue'
 import adminUserManage from '@/views/admin/view/user/index.vue'
 
 const routes = [
@@ -95,13 +95,13 @@ const routes = [
     path: "/signup",
     name: "Signup",
     component: signup,
-    header: true,
+    header: false,
   },
   {
     path: "/login",
     name: "Login",
     component: login,
-    header: true,
+    header: false,
   },
   {
     path: "/design",
@@ -125,9 +125,10 @@ const routes = [
     component: market,
   },
   {
-    path: "/complete",
-    name: "Complete",
-    component: complete,
+    path: "/update",
+    name: "update",
+    component: Update,
+    header:false
   },
 ];
 

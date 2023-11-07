@@ -6,6 +6,26 @@ export const tokenRequestInterceptor = (request) => {
     return request
  }
 
+ function ensureFormData(obj) {
+    if (obj instanceof FormData) {
+        return obj;
+    } else if (obj instanceof Object) {
+        const formData = new FormData();
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                formData.append(key, obj[key]);
+            }
+        }
+        return formData;
+    }
+    return new FormData()
+}
+
+ export const formDataFormatRequestInterceptor = (request) => {
+    request.data = ensureFormData(request.data);
+    return request
+ }
+
  export const tokenResponseInterceptor = (response) => {
   response.headers.token && (useLoginStatusStore().token = response.headers.token);
   return response;

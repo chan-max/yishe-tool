@@ -19,8 +19,7 @@
             justify-content: center;
           "
         ></div>
-
-
+        
         <el-menu-item index="/admin">
           <el-icon><House /></el-icon>
           <span>首页</span>
@@ -37,8 +36,9 @@
             <span>模型管理</span>
           </template>
           <el-menu-item-group>
+            <el-menu-item index="/admin/model">基础模型</el-menu-item>
+            <el-menu-item index="/admin/model/upload">上传基础模型</el-menu-item>
             <el-menu-item index="/admin/model">所有模型</el-menu-item>
-            <el-menu-item index="/admin/model/upload">上传模型</el-menu-item>
           </el-menu-item-group>
         </el-sub-menu>
 
@@ -127,20 +127,11 @@ import {
   Coin,
 } from "@element-plus/icons-vue";
 
-import { HomeOutlined } from "@ant-design/icons-vue";
-
 import { ref, computed } from "vue";
-import { useLoginStatusStore } from "@/store/stores/user";
 
 // 菜单书否处于折叠状态
 const isCollapse = ref(false);
 
-const loginStatusStore = useLoginStatusStore();
-
-const avatar = computed(() => {
-  const loginStatusStore = useLoginStatusStore();
-  return loginStatusStore?.userInfo?.avatar || "/default-user-avatar.png";
-});
 </script>
 <style>
 .admin {

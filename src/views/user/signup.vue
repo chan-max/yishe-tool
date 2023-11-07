@@ -141,11 +141,7 @@ async function submit() {
   formData.append('validateCode',signupForm.validateCode)
 
 
-  let res = await signup(formData);
-  let status = res.status;
-  if (status === ResponseStatusCodeEnum.SIGNUP_SUCCESS) {
-      router.replace({name:'Login'})
-  }
+  await signup(formData);
 }
 
 

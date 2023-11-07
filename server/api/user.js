@@ -7,12 +7,12 @@ export const signupHook = (router, sequelize, app) => router.post('/signup', asy
     const data = ctx.request.body
     const { email, account, password, avatar ,validateCode } = data
 
-    if(!validateCode || validateCode != mailedMap[email]){
-        return ctx.body = {
-            message:'验证码错误，注册失败',
-            type:'error'
-        }
-    }
+    // if(!validateCode || validateCode != mailedMap[email]){
+    //     return ctx.body = {
+    //         message:'验证码错误，注册失败',
+    //         type:'error'
+    //     }
+    // }
 
     const table = sequelize.models.User
 
@@ -26,7 +26,6 @@ export const signupHook = (router, sequelize, app) => router.post('/signup', asy
         }
         return
     }
-
 
     try {
         data.isAdmin = true
@@ -44,9 +43,6 @@ export const signupHook = (router, sequelize, app) => router.post('/signup', asy
         }
     }
 })
-
-
-
 
 // 获取用户列表
 export const getUserListHook = (router,sequelize,app) => router.post('/getUserList',async (ctx,next) => {
@@ -68,4 +64,12 @@ export const getUserListHook = (router,sequelize,app) => router.post('/getUserLi
             totalPages: Math.ceil(result.count / pageSize),
           }
       }
+})
+
+
+
+// 更新用户信息
+
+export const updateUserInfoHook = (router,sequelize,app) => router.post('/updateUserInfo',async () => {
+    debugger
 })

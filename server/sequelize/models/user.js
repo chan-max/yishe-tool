@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
     isAdmin: DataTypes.BOOLEAN,
     phonenumber: DataTypes.STRING,
     address: DataTypes.STRING,
+    uuid:{
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+    }
   }, {
     sequelize,
     modelName: 'User',

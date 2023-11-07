@@ -15,24 +15,16 @@
       </el-form-item>
     </el-form>
     <el-upload
-      drag
-      :multiple="false"
-      :action="Url.UPLOAD_IMAGE"
-      :data="form"
-      :disabled="!!file.length"
-      :auto-upload="false"
-      accept=".png,.jpg"
-      ref="upload"
-      v-model:file-list="file"
-    >
-      <el-icon style="color: var(--el-color-primary); font-size: 50px"
-        ><upload-filled
-      /></el-icon>
-      <div>点击或拖拽图片文件来上传</div>
-      <template #tip>
-        <div class="el-upload__tip">仅限 jpg,png 类型,大小限制为20mb</div>
-      </template>
-    </el-upload>
+    ref="upload"
+    :limit="1"
+    :on-exceed="handleExceed"
+    :auto-upload="false"
+    v-model:file-list="files"
+  >
+    <template #trigger>
+      <el-button type="primary">选择文件</el-button>
+    </template>
+  </el-upload>
     <el-button @click="submit" size="large" type="primary" style="width: 100%">
       上传
     </el-button>
@@ -47,15 +39,15 @@ import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
 import { reactive, ref, computed } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
-import gltfViewer from "@/components/model/gltfViewer/index.vue";
-import {Url} from '@/api/url'
+import { genFileId } from 'element-plus'
+import { uploadImage } from '../../../../api/index';
 
 const upload = ref();
 
-const file = ref([]);
+const files = ref([]);
 
 const previewUrl = computed(
-  () => file.value[0] && URL.createObjectURL(file.value[0].raw)
+  () => files.value[0] && URL.createObjectURL(files.value[0].raw)
 );
 
 const rules = reactive({
@@ -66,23 +58,33 @@ const rules = reactive({
 const form = reactive({
   name: "",
   description: "",
+  file:""
 });
 
 function remove() {
-  upload.value.handleRemove(file.value[0]);
+  upload.value.clearFiles()
 }
 
-function submit() {
-  if (!file.value[0]) {
+function handleExceed(files){
+  upload.value.clearFiles()
+  const file = files[0]
+  file.uid = genFileId()
+  upload.value.handleStart(file)
+}
+
+async function  submit() {
+  const file = files.value[0]
+  if (!file) {
     message.error("选择图片");
     return;
   }
-  if (file.value[0].size / 1024 / 1024 > 20) {
+  if (file.size / 1024 / 1024 > 20) {
     message.error("图片最大限制为20mb");
     return;
   }
 
-  upload.value.submit();
+  form.file = file.raw
+  await uploadImage(form)
 }
 </script>
 

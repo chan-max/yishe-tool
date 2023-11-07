@@ -20,7 +20,7 @@ import imageIndex from "@/views/admin/view/image/index/index.vue";
 import imageUpload from "@/views/admin/view/image/imageUpload.vue";
 import fontIndex from "@/views/admin/view/font/fontUpload.vue";
 import fontUpload from "@/views/admin/view/font/fontUpload.vue";
-import update from '@/views/user/update.vue'
+import update from '@/views/user/update/index.vue'
 import adminUserManage from '@/views/admin/view/user/index.vue'
 
 const routes = [
@@ -126,8 +126,8 @@ const routes = [
   },
   {
     path: "/update",
-    name: "update",
-    component: Update,
+    name: "Update",
+    component: update,
     header:false
   },
 ];

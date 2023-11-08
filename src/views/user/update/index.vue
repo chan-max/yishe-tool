@@ -6,22 +6,29 @@
 
     <div class="user-update-content">
       <div class="user-update-content-left">
-        <div style="font-weight: bold; font-size: 16px; padding: 10px; width: 200px">
-          修改头像
-        </div>
+        <div class="user-update-content-right-subtitle" style="width: 60%">修改头像</div>
         <avatar-upload />
       </div>
       <div class="user-update-content-right">
         <el-form size="large" label-position="top">
-          <div class="user-update-content-right-title">基本信息</div>
+          <div class="user-update-content-right-subtitle">基本信息</div>
           <el-form-item label="名字">
             <el-input v-model="form.name" />
           </el-form-item>
-          <el-form-item label="Activity zone">
+          <el-form-item label="手机号">
             <el-input v-model="form.phonenumber" />
           </el-form-item>
-          <el-form-item label="Activity form">
+          <el-form-item label="收货地址">
             <el-input v-model="form.address" />
+          </el-form-item>
+
+          <div class="user-update-content-right-subtitle">性别</div>
+          <el-form-item>
+            <el-radio-group v-model="form.gender" size="large">
+              <el-radio  label="男" />
+              <el-radio  label="女" />
+              <el-radio  label="保密" />
+            </el-radio-group>
           </el-form-item>
         </el-form>
       </div>
@@ -32,7 +39,6 @@
 <script setup lang="ts">
 import avatarUpload from "./avatarUpload.vue";
 import { reactive } from "vue";
-
 const form = reactive({});
 </script>
 
@@ -53,8 +59,12 @@ const form = reactive({});
   .el-input__inner {
     height: 45px;
   }
-  .el-input__wrapper {
-  }
+
+  .el-radio-group{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 }
 .user-update-header {
   width: 100%;
@@ -92,4 +102,18 @@ const form = reactive({});
   font-weight: bold;
   color: #333;
 }
+
+.user-update-content-right-subtitle {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.user-update-content-right-desc {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+
 </style>

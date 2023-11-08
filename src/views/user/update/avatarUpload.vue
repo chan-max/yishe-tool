@@ -1,38 +1,39 @@
 <template>
   <el-upload
     class="avatar-uploader"
+    :auto-upload="false"
     :show-file-list="false"
-    :on-success="handleAvatarSuccess"
-    :before-upload="beforeAvatarUpload"
+    v-model:file-list="files"
+    :limit="1"
+    :on-exceed="handleExceed"
+    ref="upload"
   >
-    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+    <img v-if="files[0]" :src="previewUrl" class="avatar" />
     <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
   </el-upload>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, reactive, watch, computed } from 'vue';
 import { ElMessage } from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
 
-import type { UploadProps } from "element-plus";
+import  { UploadProps,genFileId } from "element-plus";
 
-const imageUrl = ref("");
+const files = ref([])
+const upload = ref()
 
-const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
-  imageUrl.value = URL.createObjectURL(uploadFile.raw!);
-};
+const previewUrl = computed(() => {
+  return  URL.createObjectURL(files.value[0].raw)
+})
 
-const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
-  if (rawFile.type !== "image/jpeg") {
-    ElMessage.error("Avatar picture must be JPG format!");
-    return false;
-  } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error("Avatar picture size can not exceed 2MB!");
-    return false;
-  }
-  return true;
-};
+function handleExceed(files){
+  upload.value.clearFiles()
+  const file = files[0]
+  file.uid = genFileId()
+  upload.value.handleStart(file)
+}
+
 </script>
 
 <style scoped>
@@ -40,6 +41,7 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
   width: 178px;
   height: 178px;
   display: block;
+  object-fit: cover;
 }
 </style>
 

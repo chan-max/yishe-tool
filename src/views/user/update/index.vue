@@ -6,8 +6,7 @@
 
     <div class="user-update-content">
       <div class="user-update-content-left">
-        <div class="user-update-content-right-subtitle" style="width: 60%">修改头像</div>
-        <avatar-upload />
+        <avatar-upload @select="selectAvatar"/>
       </div>
       <div class="user-update-content-right">
         <el-form size="large" label-position="top">
@@ -39,7 +38,18 @@
 <script setup lang="ts">
 import avatarUpload from "./avatarUpload.vue";
 import { reactive } from "vue";
-const form = reactive({});
+const form = reactive({
+  avatar
+});
+
+function selectAvatar(file){
+  form.avatar = file
+}
+
+function submit(){
+  
+}
+
 </script>
 
 <style lang="less">

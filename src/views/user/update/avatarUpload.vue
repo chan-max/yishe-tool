@@ -14,17 +14,24 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch, computed } from 'vue';
+import { ref, reactive, watch, computed ,defineEmits} from 'vue';
 import { ElMessage } from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
 
 import  { UploadProps,genFileId } from "element-plus";
 
+const emits = defineEmits(['select'])
+
 const files = ref([])
 const upload = ref()
 
 const previewUrl = computed(() => {
-  return  URL.createObjectURL(files.value[0].raw)
+    let file = files.value[0]
+    if(file){
+        emits('select',file)
+        return URL.createObjectURL(file.raw)
+    }
+  return  ''
 })
 
 function handleExceed(files){

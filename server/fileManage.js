@@ -23,7 +23,7 @@ export const getUploadPath = () => {
 }
 
 // 获取已上传文件的相对路径
-export function getRePath(_path){
+export function getRelativePath(_path){
     if(!_path) return null
     let basePath = uploadsPath
     return _path.split(basePath)[1]

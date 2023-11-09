@@ -14,7 +14,7 @@ export const sendEmailHook = (router,sequelize) => router.post('/sendEmail', asy
             type:'info'
         }
     }
-
+    
 
     const validateCode = generateVerificationCode()
     var res = null

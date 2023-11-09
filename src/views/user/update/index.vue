@@ -6,7 +6,7 @@
 
     <div class="user-update-content">
       <div class="user-update-content-left">
-        <avatar-upload @select="selectAvatar"/>
+        <avatar-upload @select="selectAvatar" />
       </div>
       <div class="user-update-content-right">
         <el-form size="large" label-position="top">
@@ -24,11 +24,12 @@
           <div class="user-update-content-right-subtitle">性别</div>
           <el-form-item>
             <el-radio-group v-model="form.gender" size="large">
-              <el-radio  label="男" />
-              <el-radio  label="女" />
-              <el-radio  label="保密" />
+              <el-radio label="男" />
+              <el-radio label="女" />
+              <el-radio label="保密" />
             </el-radio-group>
           </el-form-item>
+          <el-button @click="submit" type="primary"> 确认修改 </el-button>
         </el-form>
       </div>
     </div>
@@ -38,18 +39,24 @@
 <script setup lang="ts">
 import avatarUpload from "./avatarUpload.vue";
 import { reactive } from "vue";
+import { updateUserInfo } from "@/api/index";
+import { useLoginStatusStore } from "@/store/stores/user";
+
 const form = reactive({
-  avatar
+  avatar: "",
 });
 
-function selectAvatar(file){
-  form.avatar = file
+function selectAvatar(file) {
+  form.avatar = file;
 }
 
-function submit(){
-  
+async function submit() {
+  const userStore = useLoginStatusStore();
+  await updateUserInfo({
+    ...userStore.userInfo,
+    ...form,
+  });
 }
-
 </script>
 
 <style lang="less">
@@ -70,11 +77,11 @@ function submit(){
     height: 45px;
   }
 
-  .el-radio-group{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
+  .el-radio-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 .user-update-header {
   width: 100%;
@@ -124,6 +131,4 @@ function submit(){
   font-weight: 500;
   color: #333;
 }
-
-
 </style>

@@ -1,4 +1,4 @@
-import { getRePath } from '../../fileManage.js'
+import { getRelativePath } from '../../fileManage.js'
 
 
 export const imageUploadHook =  (router,sequelize) => router.post('/imageUpload',async (ctx) => {
@@ -7,7 +7,7 @@ export const imageUploadHook =  (router,sequelize) => router.post('/imageUpload'
 
     const { file } = ctx.request.files; // 模型文件, 图片
 
-    var filePath = getRePath(file.filepath);
+    var filePath = getRelativePath(file.filepath);
   
     await table.create({
       name,

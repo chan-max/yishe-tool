@@ -19,4 +19,10 @@ export function sleep(s){
     }, s * 1000);
   })
 }
+
+// 格式化文件路径
+export function formatFilePath(path) {
+  const formattedPath = path.replace(/([^:]\/)\/+/g, '$1');
+  return formattedPath;
+}
   

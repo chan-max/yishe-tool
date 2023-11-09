@@ -14,11 +14,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch, computed ,defineEmits} from 'vue';
-import { ElMessage } from "element-plus";
+import { ref, reactive, watch, computed ,defineEmits,shallowRef} from 'vue';
 import { Plus } from "@element-plus/icons-vue";
-
-import  { UploadProps,genFileId } from "element-plus";
+import  { genFileId } from "element-plus";
 
 const emits = defineEmits(['select'])
 
@@ -28,7 +26,7 @@ const upload = ref()
 const previewUrl = computed(() => {
     let file = files.value[0]
     if(file){
-        emits('select',file)
+        emits('select',file.raw)
         return URL.createObjectURL(file.raw)
     }
   return  ''

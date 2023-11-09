@@ -1,11 +1,6 @@
 <template lang="">
     <div class="user-avatar">
-        <el-button  v-if="!loginStatusStore.isLogin" @click="$router.push({name:'Login'})" type="primary" round size="small">
-            <span style="font-weight: bold;font-size: 12px;">登 录</span>
-        </el-button>
-
         <el-popover
-        v-else
         placement="bottom"
         :title="` 欢迎, ${loginStatusStore.userInfo?.account} !`"
         trigger="hover"
@@ -22,6 +17,7 @@
             </div>
             <div><el-button @click="doLogout" size="small">退出登录</el-button></div>
         </div>
+
         <template #reference>
             <el-avatar size="normal" shape="circle" :src="avatar" />
         </template>

@@ -31,7 +31,7 @@ module.exports = {
       isAdmin: {
         type: Sequelize.BOOLEAN
       },
-      avator:{
+      avatar:{
         type: Sequelize.STRING
       },
       address:{

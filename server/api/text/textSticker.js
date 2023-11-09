@@ -1,7 +1,7 @@
 import TextToSvg from 'text-to-svg'
 import sharp from 'sharp';
 import path from 'path'
-import {getRePath} from '../../fileManage.js';
+import {getRelativePath} from '../../fileManage.js';
 
 // 获取所有可用的字体列表 
 export const getFontsHook = (router,sequelize) => router.get('/getFonts', async (ctx) => {
@@ -18,8 +18,8 @@ export const uploadFontHook = (router,sequelize) => router.post('/uploadFont', a
     const { name, description } = ctx.request.body;
     var { file, img } = ctx.request.files; // 模型文件, 图片
     
-    file = getRePath(file?.filepath);
-    img  = getRePath(img?.filepath);
+    file = getRelativePath(file?.filepath);
+    img  = getRelativePath(img?.filepath);
     
     await table.create({
       name,

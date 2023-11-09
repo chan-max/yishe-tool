@@ -49,9 +49,12 @@ app.use(router.allowedMethods());
 
 const port = 3000
 
-export function host(){
+// 获取当前服务运行的主机名
+
+
+export function getHost(){
     return  ip.address() + ':' + port
 }
 
-await app.listen(port)
-console.log("server is running at http://localhost:3000");
+await app.listen(port);
+console.log("1s is running at http://localhost:3000");

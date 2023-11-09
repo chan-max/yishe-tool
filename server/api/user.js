@@ -29,7 +29,11 @@ export const signupHook = (router, sequelize, app) =>
     }
 
     try {
-      data.isAdmin = true;
+
+      const data = {
+        email, account, password,
+        isAdmin : true
+      }
       await table.create(data);
       return (ctx.body = {
         message: "注册成功",

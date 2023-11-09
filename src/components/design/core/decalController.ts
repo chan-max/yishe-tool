@@ -13,6 +13,7 @@ import {
   Vector2,
   Vector3,
 } from "three";
+
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { operatingDecal, showDecalControlDialog } from '../store';
 
@@ -133,6 +134,11 @@ export class DecalController {
   }
 
   onClick(cb){
+  }
+
+  // 在当前鼠标位置进行贴图
+  stickToMousePosition(){
+
   }
 }
 

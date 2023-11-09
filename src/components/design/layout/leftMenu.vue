@@ -108,6 +108,7 @@ import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canv
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  flex-shrink:0;
   color:var(--1s-icon-color);
   svg {
     width: 14px;

@@ -1,7 +1,7 @@
 <template>
   <div id="loading">
     <div class="designiy-loader-text">
-      加载中...
+      正在创建场景...
     </div>
     <span class="designiy-loader"></span>
   </div>
@@ -20,7 +20,7 @@
   justify-content: center;
   align-items: center;
   backdrop-filter: blur(6px);
-  background:rgba(155,155,155,.3);
+  background:rgba(155,155,155,.5);
 }
 
 
@@ -32,7 +32,7 @@
 }
 
 .designiy-loader {
-  width: 200px;
+  width: 160px;
   height: 4.8px;
   display: inline-block;
   position: relative;

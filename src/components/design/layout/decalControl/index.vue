@@ -7,8 +7,9 @@
 import { onMounted, ref,computed,watch } from "vue";
 import { operatingDecal } from '../../store.ts';
 
-watch(operatingDecal,( ) => {
+watch(operatingDecal,() => {
       window.decal = operatingDecal
+      debugger
 })
 
 </script>

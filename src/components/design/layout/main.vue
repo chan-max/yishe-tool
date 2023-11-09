@@ -169,7 +169,9 @@ watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacit
 // 渲染动画
 onMounted(() => {
   modelController.render(mountContainer.value);
-  isLoading.value = false;
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 1000);
 });
 
 // 贴图逻辑暂时保留

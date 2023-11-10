@@ -238,7 +238,7 @@ export class ModelController {
     // 禁止滑动触发点击事件
     let mousedownX = null;
     let mousedownY = null;
-    let radius = 5;
+    let radius = 3;
 
     this.canvasContainer.addEventListener("mousedown", (event: any) => {
       mousedownX = event.offsetX;
@@ -270,8 +270,9 @@ export class ModelController {
   decalControllers: any = [];
 
   // 进行贴图
-  stickOnMousePosition(img,info) {
-    var decal = new DecalController(this,img,info)
+  stickToMousePosition(img,info) {
+    const decal = new DecalController(this,img,info)
+    decal.stickToMousePosition()
   }
 
   // 恢复模型模型位置
@@ -293,7 +294,6 @@ export class ModelController {
 
   // 解析 1stf 格式化信息 ， 并初始化系统
   parse1stf() {
-
   }
 
   getScreenShotFile() {
@@ -304,7 +304,4 @@ export class ModelController {
 
   // 导出 1stf 格式化信息
   exportTo1stf = null;
-  
-  initDecalClickEvent(){
-  }
 }

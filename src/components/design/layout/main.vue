@@ -171,12 +171,12 @@ onMounted(() => {
   modelController.render(mountContainer.value);
   setTimeout(() => {
     isLoading.value = false;
-  }, 1000);
+  },200);
 });
 
 // 贴图逻辑暂时保留
 function stickeOn(img, info) {
-  modelController.stickOnMousePosition(img, info);
+  modelController.stickToMousePosition(img, info);
 }
 
 </script>

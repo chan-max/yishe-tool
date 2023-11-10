@@ -3,7 +3,7 @@
     <div class="designiy-loader-text">
       正在创建场景...
     </div>
-    <span class="designiy-loader"></span>
+    <span class="loader"></span>
   </div>
 </template>
 <script setup>
@@ -31,35 +31,36 @@
   padding:10px 0px;
 }
 
-.designiy-loader {
-  width: 160px;
-  height: 4.8px;
-  display: inline-block;
-  position: relative;
-  background: rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-.designiy-loader::after {
-  content: '';
-  width: 50px;
-  height: 4.8px;
-  background: var(--1s-main);
-  position: absolute;
-  top: 0;
-  left: 0;
-  box-sizing: border-box;
-  animation: animloader 2s linear infinite;
-}
-
-@keyframes animloader {
-  0% {
-    left: 0;
-    transform: translateX(-100%);
-  }
-  100% {
-    left: 100%;
-    transform: translateX(0%);
-  }
-}
+.loader{
+      display: block;
+      position: relative;
+      height: 10px;
+      width: 200px;
+      border: 1px solid #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .loader::after {
+      content: '';
+      width: 200px;
+      height: 100%;
+      background: var(--1s-main);
+      position: absolute;
+      top: 0;
+      left: 0;
+      box-sizing: border-box;
+      animation: animloader 2s linear infinite;
+    }
+    
+    @keyframes animloader {
+      0% {
+        left: 0;
+        transform: translateX(-100%);
+      }
+      100% {
+        left: 100%;
+        transform: translateX(0%);
+      }
+    }
     
 </style>

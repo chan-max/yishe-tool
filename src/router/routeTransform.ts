@@ -16,7 +16,7 @@ export function routeTransform(routes): any {
       if (routeKey in routeMetaKeys) {
         meta[routeKey] = route[routeKey];
       }
-
+      
       if(route.children){
         routeTransform(route.children)
       }

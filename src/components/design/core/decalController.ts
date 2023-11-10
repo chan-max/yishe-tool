@@ -31,11 +31,21 @@ export class DecalController {
   material = null;
 
   // 位置
-  position = null;
+  private _position = null
+  get position() {
+    return this._position
+  }
 
-  size = null;
+  // 尺寸
+  get size() {
+    return new Vector3(0.1, 0.1 / this.imgAspectRatio, 0.1);
+  }
 
-  rotation = null;
+  // 角度
+  private _rotation = null
+  get rotation() {
+    return this._rotation
+  }
 
   // 保存当前的decal实例
   decal = null;
@@ -43,20 +53,30 @@ export class DecalController {
   // 当前使用的材质信息
 
   // 记录贴花添加时的鼠标位置
-  mousePositon = null
+  get mousePositon() {
+    return new Vector2(this.modelController.mouse.x, this.modelController.mouse.y)
+  }
+
+  get mesh() {
+    return this.modelController.mainMesh;
+  }
 
   // 记录贴画时摄像机的位置
   cameraPosition = null
 
-  constructor(modelController: ModelController, img: HTMLImageElement,stickerInfo) {
+  constructor(modelController: ModelController, img: HTMLImageElement, info) {
 
     this.modelController = modelController;
     this.img = img;
-    
+
     this.imgAspectRatio = this.img.width / this.img.height;
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(this.img.src);
-    
+
+    this.modelController.decalControllers.push(this);
+    showDecalControlDialog.value = true;
+    operatingDecal.value = this
+
     this.material = new MeshPhongMaterial({
       map: texture,
       transparent: true,
@@ -66,64 +86,16 @@ export class DecalController {
       polygonOffsetFactor: -4,
       wireframe: false,
     });
-
-    this.create();
-    modelController.decalControllers.push(this);
-    showDecalControlDialog.value = true;
-    operatingDecal.value = this
   }
 
   // 创建该贴纸
   create() {
-    const mesh = this.modelController.mainMesh;
-    if (!mesh) {
-      return;
+    // 检查是否已创建，并清除旧贴纸
+    if (this.decal) {
+      this.modelController.scene.remove(this.decal);
     }
 
-    let raycaster = new Raycaster();
-
-    raycaster.setFromCamera(
-      this.modelController.mouse,
-      this.modelController.camera
-    );
-    
-    this.mousePositon = new Vector2(this.modelController.mouse.x,this.modelController.mouse.y)
-    
-    const intersects = raycaster.intersectObject(mesh, true);
-
-    if (intersects.length == 0) {
-      // 未选中任何贴纸
-      return;
-    }
-
-    var position = intersects[0].point;
-
-    this.position = position;
-
-    var n = intersects[0].face.normal.clone();
-    n.transformDirection(mesh.matrixWorld);
-    n.add(position);
-    
-    const helper = new Object3D();
-    
-    helper.position.copy(position);
-
-    helper.lookAt(n);
-
-    let rotation = helper.rotation;
-
-    this.rotation = rotation;
-
-    // 贴纸旋转角度
-    this.rotation.z = Math.random() * 2 * Math.PI;
-
-    // 贴图尺寸
-    var size = new Vector3(0.3, 0.3 / this.imgAspectRatio, 0.3);
-    
-    this.size = size;
-    
-    var decalGeometry = new DecalGeometry(mesh, position, rotation, size);
-
+    var decalGeometry = new DecalGeometry(this.mesh, this.position, this.rotation, this.size);
     this.decal = new Mesh(decalGeometry, this.material);
     this.modelController.scene.add(this.decal);
   }
@@ -133,12 +105,60 @@ export class DecalController {
     this.modelController.scene.remove(this.decal);
   }
 
-  onClick(cb){
+  // 当前贴纸被点击时
+  onClick(cb) {
   }
 
   // 在当前鼠标位置进行贴图
-  stickToMousePosition(){
+  stickToMousePosition() {
+    const raycaster = new Raycaster();
+    raycaster.setFromCamera(this.modelController.mouse, this.modelController.camera);
+    const intersects = raycaster.intersectObject(this.mesh, true);
 
+    if (intersects.length == 0) {
+      // 未选中
+      return;
+    }
+
+    const position = intersects[0].point;
+
+    this._position = position;
+    const copy = intersects[0].face.normal.clone();
+    copy.transformDirection(this.mesh.matrixWorld);
+    copy.add(position);
+    const helper = new Object3D();
+    helper.position.copy(position);
+    helper.lookAt(copy);
+    let rotation = helper.rotation;
+    this._rotation = rotation;
+
+    this.create()
+
+    setInterval(() => {
+      this.rotation.z = Math.random() * 2 * Math.PI;
+      this.create()
+    }, 10000)
+  }
+
+
+  // 移除当前贴纸
+  remove(){
+    this.modelController.scene.remove(this.decal);
+  }
+
+  // 旋转
+  rotate(){
+
+  }
+
+  // 移动
+  move(){
+
+  }
+
+  // 缩放
+  scale(){
+    
   }
 }
 

@@ -1,6 +1,7 @@
 <template>
     <div class="designiy-decal-control">
         操作当前贴纸
+        
     </div>
 </template>
 <script setup>
@@ -9,7 +10,6 @@ import { operatingDecal } from '../../store.ts';
 
 watch(operatingDecal,() => {
       window.decal = operatingDecal
-      debugger
 })
 
 </script>

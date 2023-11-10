@@ -73,7 +73,7 @@ async function save() {
   box-sizing: border-box;
   column-gap: 10px;
   border-bottom: var(--1s-header-border-bottom);
-  padding-right: 5px;
+  padding-right: 10px;
   padding-left: 5px;
 }
 

@@ -12,18 +12,18 @@
         <el-form size="large" label-position="top">
           <div class="user-update-content-right-subtitle">基本信息</div>
           <el-form-item label="名字">
-            <el-input v-model="form.name" />
+            <el-input />
           </el-form-item>
           <el-form-item label="手机号">
-            <el-input v-model="form.phonenumber" />
+            <el-input  />
           </el-form-item>
           <el-form-item label="收货地址">
-            <el-input v-model="form.address" />
+            <el-input />
           </el-form-item>
 
           <div class="user-update-content-right-subtitle">性别</div>
           <el-form-item>
-            <el-radio-group v-model="form.gender" size="large">
+            <el-radio-group size="large">
               <el-radio label="男" />
               <el-radio label="女" />
               <el-radio label="保密" />

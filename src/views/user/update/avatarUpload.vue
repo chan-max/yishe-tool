@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch, computed ,defineEmits,shallowRef} from 'vue';
+import { ref, reactive, watch, computed , shallowRef} from 'vue';
 import { Plus } from "@element-plus/icons-vue";
 import  { genFileId } from "element-plus";
 

@@ -120,7 +120,7 @@ export interface UserListInfo {
   pageSize: number;
   totalPages: number;
 }
-export const getUserList = (params) =>
+export const getUserList = (params?:any) =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.post(Url.GET_USER_LIST, params);
     resolve(res.data.data);

@@ -73,8 +73,8 @@
 import { ref, onMounted } from "vue";
 import { getUserList } from "@/api";
 
-const total = ref(0);
 const list = ref([]);
+const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(1);
 const totalPages = ref(10);
@@ -84,13 +84,15 @@ onMounted(async () => {
 });
 
 async function initTable() {
-  const data = await getUserList();
+  var data:any = await getUserList();
   total.value = data.total;
   list.value = data.list;
   currentPage.value = data.currentPage;
   pageSize.value = data.pageSize;
-  totalPages.data = data.totalPages;
+  totalPages.value = data.totalPages;
 }
+
+
 </script>
 
 <style></style>

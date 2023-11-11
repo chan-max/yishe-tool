@@ -19,21 +19,23 @@ const __dirname = path.dirname(__filename);
 const app = new Koa();
 const router = new Router();
 
+app.use(cors({ origin: "*", credentials: true }));
+
+
 import db from './sequelize/models/index.js'
 
 initRouter(router, db.sequelize, app);
 
 // 前端打包后的代码
 app.use(_static(path.join(__dirname, "../dist")));
-
 app.use(_static(path.join(__dirname, "../static")));
 
 import { uploadsPath } from "./fileManage.js"
+import { formatFilePath } from "./util.js";
 
 app.use(_static(uploadsPath));
 
 
-app.use(cors({ origin: "*", credentials: true }));
 
 app.use(koaBody({ multipart: true ,    
     formidable: {
@@ -43,6 +45,15 @@ app.use(koaBody({ multipart: true ,
     keepExtensions: true,
 }}));
 
+// 定义中间件
+app.use(async (ctx,next) => {
+    // 将文件将对路径转换为全路径
+    ctx.toFullPath = (path) => {
+        return formatFilePath(`${ctx.protocol}://${ctx.host}${path}`);
+    }
+    await next()
+  })
+
 
 app.use(router.routes());
 app.use(router.allowedMethods());
@@ -50,8 +61,6 @@ app.use(router.allowedMethods());
 const port = 3000
 
 // 获取当前服务运行的主机名
-
-
 export function getHost(){
     return  ip.address() + ':' + port
 }

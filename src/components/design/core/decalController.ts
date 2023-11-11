@@ -13,7 +13,7 @@ import {
   Vector2,
   Vector3,
 } from "three";
-
+  
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { operatingDecal, showDecalControlDialog } from '../store';
 
@@ -29,7 +29,7 @@ export class DecalController {
 
   // 材质
   material = null;
-
+  
   // 位置
   private _position = null
   get position() {
@@ -37,8 +37,9 @@ export class DecalController {
   }
 
   // 尺寸
+  _size = 0.1
   get size() {
-    return new Vector3(0.1, 0.1 / this.imgAspectRatio, 0.1);
+    return new Vector3(this._size, this._size / this.imgAspectRatio, this._size);
   }
 
   // 角度
@@ -64,18 +65,24 @@ export class DecalController {
   // 记录贴画时摄像机的位置
   cameraPosition = null
 
-  constructor(modelController: ModelController, img: HTMLImageElement, info) {
+  info = null
 
+   constructor(modelController: ModelController, img: HTMLImageElement, info) {
     this.modelController = modelController;
     this.img = img;
-
+    this.info = info;
     this.imgAspectRatio = this.img.width / this.img.height;
-    const textureLoader = new TextureLoader();
-    const texture = textureLoader.load(this.img.src);
-
+    this.initTexture();
     this.modelController.decalControllers.push(this);
     showDecalControlDialog.value = true;
     operatingDecal.value = this
+  }
+
+   initTexture(){
+    const textureLoader = new TextureLoader();
+    textureLoader.setWithCredentials(true)
+    textureLoader.setCrossOrigin('*')
+    const texture = textureLoader.load(this.img.src);
 
     this.material = new MeshPhongMaterial({
       map: texture,
@@ -102,7 +109,9 @@ export class DecalController {
 
   //  销毁该贴纸
   destroy() {
-    this.modelController.scene.remove(this.decal);
+    this.remove()
+    this.modelController.decalControllers.splice(this.modelController.decalControllers.indexOf(this), 1)
+    operatingDecal.value = null
   }
 
   // 当前贴纸被点击时
@@ -131,13 +140,7 @@ export class DecalController {
     helper.lookAt(copy);
     let rotation = helper.rotation;
     this._rotation = rotation;
-
     this.create()
-
-    setInterval(() => {
-      this.rotation.z = Math.random() * 2 * Math.PI;
-      this.create()
-    }, 10000)
   }
 
 
@@ -146,9 +149,11 @@ export class DecalController {
     this.modelController.scene.remove(this.decal);
   }
 
-  // 旋转
-  rotate(){
 
+  // 旋转
+  rotate(rotation){
+    this.rotation.z = rotation;
+    this.create()
   }
 
   // 移动

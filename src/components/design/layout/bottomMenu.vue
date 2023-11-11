@@ -1,5 +1,24 @@
 <template>
 <div class="designiy-bottom-menu">
+
+  <el-tooltip :hide-after="0" content="重置当前场景" placement="top">
+      <div class="bottom-menu-item" >
+        <font-awesome-icon :icon="['fas', 'arrows-rotate']" />
+      </div>
+    </el-tooltip>
+
+  <el-tooltip :hide-after="0" content="上一步" placement="top">
+      <div class="bottom-menu-item" >
+        <font-awesome-icon :icon="['fas', 'reply']" />
+      </div>
+    </el-tooltip>
+
+    <el-tooltip :hide-after="0" content="下一步" placement="top">
+      <div class="bottom-menu-item">
+        <font-awesome-icon :icon="['fas', 'share']" />
+      </div>
+    </el-tooltip>
+
     <el-tooltip :hide-after="0" content="重制模型位置" placement="top">
       <div class="bottom-menu-item" @click="locate">
         <font-awesome-icon :icon="['fas', 'crosshairs']" />
@@ -15,7 +34,6 @@
         <font-awesome-icon :icon="['fas', 'arrows-spin']" />
       </div>
     </el-tooltip>
-
 </div>
 </template>
 <script setup>

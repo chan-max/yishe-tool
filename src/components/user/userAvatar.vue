@@ -19,7 +19,7 @@
         </div>
 
         <template #reference>
-            <el-avatar size="normal" shape="circle" :src="avatar" />
+            <el-avatar shape="circle" :src="avatar" />
         </template>
         </el-popover>
     </div>

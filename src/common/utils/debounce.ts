@@ -1,5 +1,5 @@
 
-export function debounce(fn: Function, wait: number) {
+export function debounce(fn: Function, wait: number = 200) {
     let timeoutId: any = null
     return () => {
         if (timeoutId !== null) {

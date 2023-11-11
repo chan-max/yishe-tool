@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import os from 'os'
 
+// 定义文件上传的路径
 export const uploadsPath = path.join(os.homedir(),'Desktop','uploads')
 
 function getDir(){
@@ -29,9 +30,6 @@ export function getRelativePath(_path){
     return _path.split(basePath)[1]
 }
 
-function toFullpath(relative){
-    
-}
 
 
 

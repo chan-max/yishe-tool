@@ -2,7 +2,7 @@
     <div class="designiy-image-sticker">
     <div class="designiy-image-sticker-container">
       <div class="designiy-image-sticker-container-item" title="拖动来进行贴图" v-for="i in images" draggable="false">
-          <el-image @load="load($event,i)" :src="i.previewUrl" style="width: 100%;height: 100%;" fit="contain" lazy>
+          <el-image @load="load($event,i)" :src="i.path" style="width: 100%;height: 100%;" fit="contain" lazy>
             <template #placeholder>
                 <div class="designiy-image-sticker-container-item_loading">
                   <el-icon class="rolling-icon"><Loading /></el-icon>

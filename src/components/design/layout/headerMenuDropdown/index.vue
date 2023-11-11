@@ -26,7 +26,7 @@ const showHeaderMenuDropdown = ref(false);
 .designiy-header-menu-dropdown {
   width: 30px;
   height: 30px;
-  background: #e6e6e6;
+  background: #f1f1f1;
   display: flex;
   justify-content: center;
   align-items: center;

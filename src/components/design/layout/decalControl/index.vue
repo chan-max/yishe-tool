@@ -1,24 +1,23 @@
 <template>
-    <div class="designiy-decal-control">
-        操作当前贴纸
-        
-    </div>
+  <div class="designiy-decal-control">
+    <decal-empty v-if="!operatingDecal"/>
+    <decal-main v-else/>
+  </div>
 </template>
 <script setup>
-import { onMounted, ref,computed,watch } from "vue";
-import { operatingDecal } from '../../store.ts';
+import { onMounted, ref, computed, watch } from "vue";
+import { operatingDecal } from "../../store.ts";
+import { debounce } from "../../utils/utils.ts";
+import decalEmpty from "./empty.vue";
+import decalMain from './main.vue';
 
-watch(operatingDecal,() => {
-      window.decal = operatingDecal
-})
 
 </script>
 <style lang="less">
-.designiy-decal-control{
-    width:300px;
-    padding: 10px;
-    display:flex;
-    align-items:center;
+.designiy-decal-control {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  height:100%;
 }
 </style>
-  

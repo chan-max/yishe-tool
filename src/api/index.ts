@@ -63,8 +63,8 @@ export const getImageList = () =>
   new Promise(async (resolve: any, reject: any) => {
     let res = await apiInstance.get(Url.GET_IMAGE_LIST);
     let data = res.data.data.map((item: any) => ({
-      previewUrl: resolveFilePath(item.path),
-      realUrl: item.path,
+      path:item.path,
+      previewPath:item.previewPath,
       name: item.name,
       description: item.description,
     }));

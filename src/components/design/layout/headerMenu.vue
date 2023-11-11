@@ -3,16 +3,7 @@
     <div class="designiy-header-logo"></div>
 
     <header-menu-dropdown />
-
-    <div class="designiy-header-item">
-      撤销
-      <font-awesome-icon style="transform: scaleX(-1)" :icon="['fas', 'share']" />
-    </div>
-    <div class="designiy-header-item">
-      <font-awesome-icon :icon="['fas', 'share']" />
-      重做
-    </div>
-
+    
     <div style="flex-grow: 1"></div>
 
     <div @click="save" class="cursor-pointer" style="font-weight: bold; font-size: 12px;color:var(--1s-text-color);">

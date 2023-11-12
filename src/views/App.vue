@@ -41,23 +41,4 @@ body {
   flex-shrink: 0;
 }
 
-/* 滚动条样式 */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgb(239, 239, 239);
-}
-::-webkit-scrollbar-thumb {
-  background: #bfbfbf;
-  border-radius: 5px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
-::-webkit-scrollbar-corner {
-
-}
 </style>

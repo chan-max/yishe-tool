@@ -1,14 +1,21 @@
 <template>
   <div class="designiy-text-sticker">
     <div class="designiy-text-sticker-tab">
-      <el-tabs v-model="activeName" type="card" @tab-click="handleClick" :stretch="true">
-        <el-tab-pane label="自定义文字">
-          <custom/>
-        </el-tab-pane>
-        <el-tab-pane label="网络文字">Config</el-tab-pane>
-      </el-tabs>
+      <el-radio-group v-model="tab">
+        <el-radio-button label="resource"
+          ><el-icon><Picture /></el-icon> 网络贴纸
+        </el-radio-button>
+        <el-radio-button label="custom">
+          <el-icon><EditPen /></el-icon>
+          自定义贴纸
+        </el-radio-button>
+      </el-radio-group>
     </div>
-    <!-- <custom/> -->
+
+    <div class="designiy-text-sticker-content">
+      <custom v-if="tab === 'custom'"></custom>
+      <resource v-if="tab === 'resource'"></resource>
+    </div>
   </div>
 </template>
 
@@ -16,8 +23,9 @@
 import custom from "./custom.vue";
 import resource from "./resource.vue";
 import { ref } from "vue";
+import { EditPen, Picture } from "@element-plus/icons-vue";
 
-const showCustom = ref(true);
+const tab = ref("resource");
 </script>
 
 <style lang="less">
@@ -25,30 +33,42 @@ const showCustom = ref(true);
   display: flex;
   flex-direction: column;
   width: auto;
-  width: 280px;
+  width: 300px;
   height: 100%;
-  padding: 10px;
+  justify-content: space-between;
+}
+
+.designiy-text-sticker-content {
+  height: 100%;
+  overflow: auto;
 }
 
 .designiy-text-sticker-tab {
-  .el-tabs__header{
-    border: none !important;
-    --el-tabs-header-height:24px;
+  .el-radio-group {
+    width: 100%;
   }
-  .el-tabs__nav{
-    background:#fafafa;
-    padding:5px;
+  .el-radio-button {
+    width: 50%;
   }
-  .el-tabs__header * {
-    border: none !important;
+  .el-radio-button__inner {
+    width: 100%;
+    font-size: 10px !important;
+    font-weight: 400;
+    display: flex;
+    justify-content: center;
+    color: #aaa;
+    align-items: center;
+    padding: 10px !important;
+    background-color: #f6f6f6;
+    border-radius: 0 !important;
+    border: none !important ;
+    box-shadow: none !important;
   }
-  .el-tabs__item{
-    font-size: 10px;
-    border-radius:5px;
-    color:#666;
-  }
-  .el-tabs__item.is-active{
-    background:#eee;
+  .el-radio-button.is-active {
+    .el-radio-button__inner {
+      background-color: #fff;
+      color: var(--1s-main);
+    }
   }
 }
 </style>

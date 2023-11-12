@@ -43,7 +43,6 @@ export const canvasBgColor = ref('')
 // 画布背景透明度
 export const canvasBgOpacity = ref('1')
 
-
 // 画布颜色随着暗色模式的变化而变化
 watchEffect(() => {
     canvasBgColor.value = isDarkMode.value ? '#1d1d1d' : '#f2f2f2'
@@ -63,6 +62,12 @@ export const showSceneControlDialog = ref(false)
 
 // 是否展示图片贴图的弹窗
 export const showImageStickerDialog = ref(false)
+
+watch(showImageStickerDialog,(value) => {
+    if(value){
+        showTextStickerDialog.value = false
+    }
+})
 
 // 是否展示艺术字弹窗
 export const showTextStickerDialog = ref(false)

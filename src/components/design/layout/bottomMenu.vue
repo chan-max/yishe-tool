@@ -57,7 +57,6 @@ function animate(){
     align-items: center;
     padding: 0 50px;
     box-shadow:rgba(0, 0, 0, 0.15) 0px 2px 6px;
-    border-radius: 5px;
 }
 
 .bottom-menu-item{

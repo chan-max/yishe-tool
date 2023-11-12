@@ -2,7 +2,7 @@
   <transition
     enter-active-class="animate__animated animate__bounceIn"
     leave-active-class="animate__animated animate__bounceOut"
-    duration="80"
+    duration="20"
   >
     <Draggable
       v-if="show"

@@ -65,7 +65,6 @@ async function save() {
   column-gap: 10px;
   border-bottom: var(--1s-header-border-bottom);
   padding-right: 10px;
-  padding-left: 5px;
 }
 
 
@@ -87,9 +86,9 @@ async function save() {
 }
 
 .designiy-header-logo {
-  width: 30px;
-  height: 30px;
-  background: #ddd;
+  width: 32px;
+  height: 32px;
+  background:#6900ff;
 }
 
 .designiy-header-item {

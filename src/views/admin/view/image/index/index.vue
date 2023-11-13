@@ -3,7 +3,7 @@
     <el-card class="admin-image-index-card" v-for="i in images" shadow="never">
       <img
         style="width: 100%; height: 100%"
-        :src="i.previewUrl"
+        :src="i.fullpath"
       />
     </el-card>
     <el-card

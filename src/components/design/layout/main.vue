@@ -13,6 +13,7 @@
       bottom: 0;
       width: var(--1s-left-menu-width);
       height: calc(100% - var(--1s-header-height));
+      border-right:var(--1s-left-menu-border-right);
     "
   >
     <left-menu></left-menu>

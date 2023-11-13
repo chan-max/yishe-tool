@@ -1,41 +1,18 @@
 <template>
   <div class="designiy-image-sticker">
-    <div class="designiy-image-sticker-tab">
-      <div class="designiy-image-sticker-tab-item">
-        网络贴图
-      </div>
-      <div class="designiy-image-sticker-tab-item">
-        我的上传
-      </div>
+    <div class="designiy-image-sticker-header">
+      <el-input v-model="input" placeholder="搜索贴纸">
+        <template #prefix>
+          <el-icon ><Search /></el-icon>
+        </template>
+        <template #suffix>
+          <el-icon><Operation /></el-icon>
+        </template>
+      </el-input>
     </div>
-
-    <!-- <div class="designiy-image-sticker-container">
-      <div
-        class="designiy-image-sticker-container-item"
-        title="拖动来进行贴图"
-        v-for="i in images"
-        draggable="false"
-      >
-        <el-image
-          @load="load($event, i)"
-          :src="i.fullpath"
-          style="width: 100%; height: 100%"
-          fit="contain"
-          lazy
-        >
-          <template #placeholder>
-            <div class="designiy-image-sticker-container-item_loading">
-              <el-icon class="rolling-icon"><Loading /></el-icon>
-            </div>
-          </template>
-          <template #error>
-            <div class="designiy-image-sticker-container-item_error">
-              <el-icon style="color: #888"><Picture /></el-icon>
-            </div>
-          </template>
-        </el-image>
-      </div>
-    </div> -->
+    <div class="designiy-image-sticker-content">
+      <new-image></new-image>
+    </div>
   </div>
 </template>
 <script setup>
@@ -49,6 +26,9 @@ import {
 import { Loading, CloseBold, CircleCloseFilled, Picture } from "@element-plus/icons-vue";
 import { getImageList } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
+import { Search, Operation } from "@element-plus/icons-vue";
+import fold from './fold.vue'
+import newImage from './new.vue'
 
 const emits = defineEmits(["dragover"]);
 
@@ -67,58 +47,24 @@ onMounted(async () => {
 </script>
 <style lang="less">
 .designiy-image-sticker {
-  width: 320px;
+  width: 300px;
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.designiy-image-sticker-container {
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: 10px;
-  column-gap: 10px;
-  justify-content: center;
-}
-
-.designiy-image-sticker-container-item {
-  margin: 5px 0;
-  width: 110px;
-  height: 70px;
-  padding: 5px;
-  background-color: var(--1s-image-sticker-image-background-color);
-  border-radius: 5px;
-  cursor: pointer;
-  &_loading,
-  &_error {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.designiy-image-sticker-header{
+  padding:10px;
+  .el-input__wrapper {
+    box-shadow: none;
+    background-color: #f6f6f6;
+    font-size: 12px;
   }
 }
 
-@keyframes rolling {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.rolling-icon {
-  animation: rolling 3s linear infinite;
-}
-
-.designiy-image-sticker-tab{
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-.designiy-image-sticker-tab-item{
-  flex: auto;
-  text-align: center;
+.designiy-image-sticker-content{
+  flex:1;
+  overflow:auto;
+  padding:10px;
 }
 </style>

@@ -109,9 +109,7 @@ import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canv
   flex-direction: column;
   align-items: center;
   padding-top: 10px;
-  padding-bottom: 10px;
   row-gap:6px;
-  border-right:var(--1s-left-menu-border-right);
 }
 
 .menu-bar-item {
@@ -127,8 +125,8 @@ import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canv
   flex-shrink:0;
   color:var(--1s-icon-color);
   svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
   span{
     font-size: 10px;

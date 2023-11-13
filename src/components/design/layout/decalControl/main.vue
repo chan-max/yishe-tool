@@ -26,10 +26,15 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from "vue";
-import { operatingDecal } from "../../store.ts";
-import { debounce } from "../../utils/utils.ts";
+import { operatingDecal } from "../../store";
+import { debounce } from "../../utils/utils";
 
 const rotation = ref(0);
+
+/*
+  该尺寸会有一个最大值和最小值，并受宽高比影响
+*/
+
 const size = ref(0)
 
 
@@ -41,7 +46,9 @@ const onSizeInput = debounce((value) => {
   operatingDecal.value?.scale(value / 100);
 });
 
-watch(operatingDecal, () => {});
+watch(operatingDecal, () => {
+  
+});
 
 function remove() {
   operatingDecal.value.destroy()

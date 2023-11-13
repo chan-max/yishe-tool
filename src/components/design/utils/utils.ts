@@ -5,7 +5,7 @@ export function onWindowResize(callback: any, immediate: boolean = false) {
     return () => window.onresize = null
 }
 
-export function debounce(fn: Function, wait: number) {
+export function debounce(fn: Function, wait: number = 10) {
     let timeoutId: any = null
     return (...params) => {
         if (timeoutId !== null) {

@@ -64,7 +64,7 @@ export const getImageList = () =>
     let res = await apiInstance.get(Url.GET_IMAGE_LIST);
     let data = res.data.data.map((item: any) => ({
       path:item.path,
-      previewPath:item.previewPath,
+      fullpath:item.fullpath,
       name: item.name,
       description: item.description,
     }));

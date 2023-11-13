@@ -7,7 +7,7 @@ export const getImageListHook = (router,sequelize) => router.get('/getImageList'
     const table = sequelize.models.Image;
     const imgs =  await table.findAll()
     imgs.forEach(img => {
-        img.path = ctx.toFullPath(img.path)
+        img.dataValues.fullpath = ctx.toFullpath(img.path)
     });
     ctx.body = {
         data:imgs

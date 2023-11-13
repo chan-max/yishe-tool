@@ -36,6 +36,12 @@ export class DecalController {
     return this._position
   }
 
+    // 贴纸尺寸限制
+    minSize: number
+    maxSize: number
+  
+    // 尺寸比 0 - 1 最小尺寸 到最大尺寸
+    sizeRatio = 1
   // 尺寸
   _size = 0.1
   get size() {
@@ -101,7 +107,7 @@ export class DecalController {
     if (this.decal) {
       this.modelController.scene.remove(this.decal);
     }
-
+    
     var decalGeometry = new DecalGeometry(this.mesh, this.position, this.rotation, this.size);
     this.decal = new Mesh(decalGeometry, this.material);
     this.modelController.scene.add(this.decal);
@@ -162,8 +168,9 @@ export class DecalController {
   }
 
   // 缩放
-  scale(){
-    
+  scale(ratio){
+    this._size = ratio
+    this.create()
   }
 }
 

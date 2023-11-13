@@ -24,9 +24,9 @@
 
   <diydialog
     :show="showBaseModelSelectDialog"
-    title="选择模型"
     @close="showBaseModelSelectDialog = false"
   >
+    <template #title> 选择基础服装</template>
     <base-model-select></base-model-select>
   </diydialog>
 
@@ -121,10 +121,16 @@ import {
   PointLight,
   AxesHelper,
   GridHelper,
+  MeshPhongMaterial,
+  DoubleSide
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
 isLoading.value = true;
+
+setTimeout(() => {
+  isLoading.value = false;
+}, 500);
 
 // 挂载容器
 const mountContainer = ref();
@@ -162,6 +168,7 @@ pointLight.position.set(0, 0, 2); // 设置光源位置
 scene.add(pointLight);
 
 // scene.add(new AxesHelper(0.5))
+// scene.add(new Mesh(new BoxGeometry(0.5, 0.5, 0.5),new MeshBasicMaterial({ color: 0x6900ff,side: DoubleSide })));
 
 // 改变画布背景颜色
 watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacity.value));
@@ -169,16 +176,13 @@ watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacit
 // 渲染动画
 onMounted(() => {
   modelController.render(mountContainer.value);
-  setTimeout(() => {
-    isLoading.value = false;
-  },200);
 });
+
 
 // 贴图逻辑暂时保留
 function stickeOn(img, info) {
   modelController.stickToMousePosition(img, info);
 }
-
 </script>
 
 <style lang="less">

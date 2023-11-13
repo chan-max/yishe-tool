@@ -1,25 +1,24 @@
 <template>
-  <transition
-    enter-active-class="animate__animated animate__bounceIn"
-    leave-active-class="animate__animated animate__bounceOut"
-    duration="20"
-  >
+  <transition>
     <Draggable
       v-if="show"
       @vue:mounted="mounted"
       class="designiy-dialog"
       v-slot="{ x, y }"
-      :initial-value="{ x, y}"
+      :initial-value="{ x, y }"
       :prevent-default="true"
       :handle="handle"
-      :style="{zIndex}"
+      :style="{ zIndex }"
     >
-        <div ref="handle" v-show="header" class="designiy-dialog-header">
-          <div class="designiy-dialog-header-title">{{ title }}</div>
-          <div @click="close" class="designiy-dialog-header-close">
-            <font-awesome-icon :icon="['fas', 'xmark']" />
-          </div>
+      <div ref="handle" v-show="header" class="designiy-dialog-header">
+        <div class="designiy-dialog-header-title">
+          <slot name="title" v-if="$slots.title"></slot>
+          <span v-else> {{ title }} </span>
         </div>
+        <div @click="close" class="designiy-dialog-header-close">
+          <font-awesome-icon :icon="['fas', 'xmark']" />
+        </div>
+      </div>
       <div class="designiy-dialog-content">
         <slot></slot>
       </div>
@@ -27,64 +26,59 @@
   </transition>
 </template>
 <script setup>
-import { defineProps, ref,onMounted, computed } from "vue";
+import { defineProps, ref, onMounted, computed } from "vue";
 import { useDraggable } from "@vueuse/core";
-import { UseDraggable as Draggable } from '@vueuse/components'
-import {zIndexDialog} from '../store'
+import { UseDraggable as Draggable } from "@vueuse/components";
+import { zIndexDialog } from "../store";
 
-const handle  = ref()
+const handle = ref();
 const { x, y, style } = useDraggable(handle, {
-  initialValue: {
-  },
+  initialValue: {},
 });
 
 const props = defineProps({
-  draggable:false, //
-  title:'', // 顶部标题
-  show:{
-    default:true
+  draggable: false, //
+  title: "", // 顶部标题
+  show: {
+    default: true,
   }, // 是否展示
-  header:{
-    default:true
+  header: {
+    default: true,
   },
-  position:{
-    default(props){
+  position: {
+    default(props) {
       return {
-        top:'',
-        bottom:'',
-        left:'',
-        right:'',
-        ...props.position
-      }
-    }
-  }
+        top: "",
+        bottom: "",
+        left: "",
+        right: "",
+        ...props.position,
+      };
+    },
+  },
 });
-
 
 const emits = defineEmits(["close"]);
 
 function close() {
   emits("close");
 }
- 
 
-const zIndex = ref()
+const zIndex = ref();
 
-function mounted(){
-    zIndex.value = zIndexDialog.value 
-    zIndexDialog.value += 1
+function mounted() {
+  zIndex.value = zIndexDialog.value;
+  zIndexDialog.value += 1;
 }
-
 </script>
 <style>
 .designiy-dialog {
   z-index: 9;
-  background:var(--1s-dialog-background);
-  box-shadow:var(--1s-dialog-box-shadow);
-  top:v-bind("props.position.top");
-  left:v-bind("props.position.left");
-  bottom:v-bind("props.position.bottom");
-  right:v-bind("props.position.right");
+  background: var(--1s-dialog-background);
+  top: v-bind("props.position.top");
+  left: v-bind("props.position.left");
+  bottom: v-bind("props.position.bottom");
+  right: v-bind("props.position.right");
   position: absolute;
 }
 

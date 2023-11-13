@@ -52,8 +52,8 @@ const tab = ref("resource");
   }
   .el-radio-button__inner {
     width: 100%;
-    font-size: 10px !important;
-    font-weight: 400;
+    font-size: 12px !important;
+    font-weight: 500;
     display: flex;
     justify-content: center;
     color: #aaa;

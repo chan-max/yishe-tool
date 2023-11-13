@@ -48,7 +48,7 @@ app.use(koaBody({ multipart: true ,
 // 定义中间件
 app.use(async (ctx,next) => {
     // 将文件将对路径转换为全路径
-    ctx.toFullPath = (path) => {
+    ctx.toFullpath = (path) => {
         return formatFilePath(`${ctx.protocol}://${ctx.host}${path}`);
     }
     await next()

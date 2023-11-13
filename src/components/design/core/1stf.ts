@@ -4,7 +4,6 @@ import { canvasBgColor, currentBaseModelUrl, isDarkMode } from "../store";
 
 export const _1stfExporterMixin = (modelController: ModelController) => {
   modelController.exportTo1stf = () => {
-
     const decals = modelController.decalControllers.map((dc: any) => {
 
       const position = {
@@ -24,9 +23,9 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
         y: dc.size.y,
         z: dc.size.z,
       };
-      
+
       return {
-        src: dc.stickerInfo.realUrl,
+        src: dc.info.path,
         position,
         rotation,
         size,

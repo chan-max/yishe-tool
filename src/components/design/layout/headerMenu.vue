@@ -10,10 +10,12 @@
       保 存
     </div>
 
-    <div class="designiy-header-quit">
+    <!-- <div class="designiy-header-quit">
       <font-awesome-icon :icon="['fas', 'right-from-bracket']" />
-    </div>
+    </div> -->
     <user-avatar />
+
+  
   </div>
 </template>
 
@@ -86,8 +88,8 @@ async function save() {
 }
 
 .designiy-header-logo {
-  width: 32px;
-  height: 32px;
+  width: 60px;
+  height: 46px;
   background:#6900ff;
 }
 

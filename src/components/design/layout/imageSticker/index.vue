@@ -1,6 +1,13 @@
 <template>
   <div class="designiy-image-sticker">
-    
+    <div class="designiy-image-sticker-tab">
+      <div class="designiy-image-sticker-tab-item">
+        网络贴图
+      </div>
+      <div class="designiy-image-sticker-tab-item">
+        我的上传
+      </div>
+    </div>
 
     <!-- <div class="designiy-image-sticker-container">
       <div
@@ -61,6 +68,9 @@ onMounted(async () => {
 <style lang="less">
 .designiy-image-sticker {
   width: 320px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .designiy-image-sticker-container {
@@ -100,5 +110,15 @@ onMounted(async () => {
 
 .rolling-icon {
   animation: rolling 3s linear infinite;
+}
+
+.designiy-image-sticker-tab{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.designiy-image-sticker-tab-item{
+  flex: auto;
+  text-align: center;
 }
 </style>

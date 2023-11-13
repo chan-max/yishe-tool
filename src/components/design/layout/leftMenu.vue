@@ -1,25 +1,25 @@
 <template>
   <div class="menu-bar">
     <el-tooltip :hide-after="0" content="工作台" placement="right">
-      <div class="menu-bar-item" @click="showWorkTreeDialog = !showWorkTreeDialog">
+      <div class="menu-bar-item" :class="{'menu-bar-item-focus':showWorkTreeDialog}" @click="showWorkTreeDialog = !showWorkTreeDialog">
         <font-awesome-icon :icon="['fas', 'desktop']" />
         <span>工作台</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="选择服装模型" placement="right">
-      <div class="menu-bar-item" @click="showBaseModelSelectDialog = !showBaseModelSelectDialog">
+      <div class="menu-bar-item" :class="{'menu-bar-item-focus':showBaseModelSelectDialog}" @click="showBaseModelSelectDialog = !showBaseModelSelectDialog">
         <font-awesome-icon :icon="['fas', 'shirt']" />
         <span>服装</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="图片贴图" placement="right">
-      <div class="menu-bar-item" @click="showImageStickerDialog = !showImageStickerDialog">
+      <div class="menu-bar-item" :class="{'menu-bar-item-focus':showImageStickerDialog}" @click="showImageStickerDialog = !showImageStickerDialog">
         <font-awesome-icon :icon="['faR', 'image']" />
         <span>图片</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
-      <div class="menu-bar-item" @click="showTextStickerDialog = !showTextStickerDialog">
+      <div class="menu-bar-item" :class="{'menu-bar-item-focus':showTextStickerDialog}" @click="showTextStickerDialog = !showTextStickerDialog">
         <font-awesome-icon :icon="['fas', 'font']" />
         <span>文字</span>
       </div>
@@ -140,5 +140,9 @@ import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canv
   &:hover {
     background:var(--1s-left-menu-icon-hover-background-color);
   }
+}
+
+.menu-bar-item-focus{
+  background:var(--1s-left-menu-icon-hover-background-color);
 }
 </style>

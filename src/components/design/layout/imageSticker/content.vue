@@ -1,7 +1,4 @@
 <template>
-  <fold>
-    <template #header> 最近更新 </template>
-    <template #content>
       <div class="section">
         <div class="item" title="拖动来进行贴图" v-for="i in images" draggable="false">
           <el-image
@@ -24,28 +21,23 @@
           </el-image>
         </div>
       </div>
-    </template>
-  </fold>
 </template>
 
 <script setup lang="ts">
-import fold from "./fold.vue";
 import { onMounted, ref, computed } from "vue";
 import {
   showBaseModelSelectDialog,
   currentModelInfo,
   canvasBgColor,
   canvasBgOpacity,
-} from "../../store.ts";
+} from "../../store";
 import { Loading, CloseBold, CircleCloseFilled, Picture } from "@element-plus/icons-vue";
 import { getImageList } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
 import { Search, Operation } from "@element-plus/icons-vue";
-import newImage from "./new.vue";
-
 const emits = defineEmits(["dragover"]);
 
-const images = ref([]);
+const images:any = ref([]);
 
 // image load success
 function load(e, info) {
@@ -54,9 +46,12 @@ function load(e, info) {
   });
 }
 
+
+
 onMounted(async () => {
   images.value = await getImageList();
 });
+
 </script>
 
 <style lang="less">

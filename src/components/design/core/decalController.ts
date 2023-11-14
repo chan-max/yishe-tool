@@ -126,6 +126,11 @@ export class DecalController {
 
   // 在当前鼠标位置进行贴图
   stickToMousePosition() {
+
+    if(!this.mesh){
+      return
+    }
+
     const raycaster = new Raycaster();
     raycaster.setFromCamera(this.modelController.mouse, this.modelController.camera);
     const intersects = raycaster.intersectObject(this.mesh, true);

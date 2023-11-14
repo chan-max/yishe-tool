@@ -1,25 +1,41 @@
 <template>
   <div class="menu-bar">
     <el-tooltip :hide-after="0" content="工作台" placement="right">
-      <div class="menu-bar-item" :class="{'menu-bar-item-focus':showWorkTreeDialog}" @click="showWorkTreeDialog = !showWorkTreeDialog">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showWorkTreeDialog }"
+        @click="showWorkTreeDialog = !showWorkTreeDialog"
+      >
         <font-awesome-icon :icon="['fas', 'desktop']" />
         <span>工作台</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="选择服装模型" placement="right">
-      <div class="menu-bar-item" :class="{'menu-bar-item-focus':showBaseModelSelectDialog}" @click="showBaseModelSelectDialog = !showBaseModelSelectDialog">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showBaseModelSelectDialog }"
+        @click="showBaseModelSelectDialog = !showBaseModelSelectDialog"
+      >
         <font-awesome-icon :icon="['fas', 'shirt']" />
         <span>服装</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="图片贴图" placement="right">
-      <div class="menu-bar-item" :class="{'menu-bar-item-focus':showImageStickerDialog}" @click="showImageStickerDialog = !showImageStickerDialog">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showImageStickerDialog }"
+        @click="showImageStickerDialog = !showImageStickerDialog"
+      >
         <font-awesome-icon :icon="['faR', 'image']" />
         <span>图片</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
-      <div class="menu-bar-item" :class="{'menu-bar-item-focus':showTextStickerDialog}" @click="showTextStickerDialog = !showTextStickerDialog">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showTextStickerDialog }"
+        @click="showTextStickerDialog = !showTextStickerDialog"
+      >
         <font-awesome-icon :icon="['fas', 'font']" />
         <span>文字</span>
       </div>
@@ -51,7 +67,10 @@
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="设置场景" placement="right">
-      <div class="menu-bar-item" @click="showSceneControlDialog = !showSceneControlDialog">
+      <div
+        class="menu-bar-item"
+        @click="showSceneControlDialog = !showSceneControlDialog"
+      >
         <font-awesome-icon :icon="['fas', 'video']" />
         <span>场景</span>
       </div>
@@ -80,7 +99,7 @@
         <span>导出</span>
       </div>
     </el-tooltip>
-    <div style="flex:1"></div>
+    <div style="flex: 1"></div>
 
     <el-tooltip :hide-after="0" content="切换外观模式" placement="right">
       <div class="menu-bar-item" @click="isDarkMode = !isDarkMode">
@@ -99,7 +118,22 @@
   </div>
 </template>
 <script setup>
-import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canvasBgOpacity, showSceneControlDialog,showImageStickerDialog,showTextStickerDialog, showWorkTreeDialog} from "../store";
+import {
+  showBaseModelSelectDialog,
+  isDarkMode,
+  isFullScreen,
+  canvasBgColor,
+  canvasBgOpacity,
+  showSceneControlDialog,
+  showImageStickerDialog,
+  showTextStickerDialog,
+  showWorkTreeDialog,
+} from "../store";
+
+import svgIcon from '@/components/svgIcon.vue'
+
+
+
 </script>
 <style lang="less">
 .menu-bar {
@@ -108,39 +142,40 @@ import { showBaseModelSelectDialog, isDarkMode, isFullScreen,canvasBgColor, canv
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 10px;
-  row-gap:6px;
+  padding: 20px 0;
+  row-gap: 6px;
 }
 
 .menu-bar-item {
   width: 50px;
   height: 50px;
-  display: flex; 
-  border-radius:5px;
+  display: flex;
+  border-radius: 5px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  flex-shrink:0;
-  color:var(--1s-icon-color);
+  row-gap: 5px;
+  flex-shrink: 0;
+  color: var(--1s-icon-color);
   svg {
     width: 18px;
     height: 18px;
   }
-  span{
+  span {
     font-size: 10px;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
     max-width: 50px;
   }
   &:hover {
-    background:var(--1s-left-menu-icon-hover-background-color);
+    background: var(--1s-left-menu-icon-hover-background-color);
   }
 }
 
-.menu-bar-item-focus{
-  background:var(--1s-left-menu-icon-hover-background-color);
+.menu-bar-item-focus {
+  background: var(--1s-left-menu-icon-hover-background-color);
 }
 </style>

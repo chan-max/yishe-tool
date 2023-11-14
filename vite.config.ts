@@ -5,10 +5,20 @@ import alias from "@rollup/plugin-alias";
 import { resolve } from 'path'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
-
-
+import svgSprites from 'rollup-plugin-svg-sprites'
+import { basename } from 'path';
 export default defineConfig({
-  plugins: [vue(), alias()],
+  plugins: [
+    vue(), 
+    alias(),
+    svgSprites({
+      exclude: ['node_modules/**'],
+	    symbolId(path, query) {
+		    const fileName = basename(path).replace('.svg', '');
+		    return `icon-${fileName}`;
+	    },
+    })
+  ],
   build: {
     rollupOptions: {
       input: {

@@ -12,11 +12,7 @@ export default defineConfig({
     vue(), 
     alias(),
     svgSprites({
-      exclude: ['node_modules/**'],
-	    symbolId(path, query) {
-		    const fileName = basename(path).replace('.svg', '');
-		    return `icon-${fileName}`;
-	    },
+      exclude: ['node_modules/**']
     })
   ],
   build: {

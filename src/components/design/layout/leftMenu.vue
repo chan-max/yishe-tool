@@ -6,7 +6,7 @@
         :class="{ 'menu-bar-item-focus': showWorkTreeDialog }"
         @click="showWorkTreeDialog = !showWorkTreeDialog"
       >
-        <font-awesome-icon :icon="['fas', 'desktop']" />
+        <icon-workspace></icon-workspace>
         <span>工作台</span>
       </div>
     </el-tooltip>
@@ -16,7 +16,7 @@
         :class="{ 'menu-bar-item-focus': showBaseModelSelectDialog }"
         @click="showBaseModelSelectDialog = !showBaseModelSelectDialog"
       >
-        <font-awesome-icon :icon="['fas', 'shirt']" />
+        <icon-shirt></icon-shirt>
         <span>服装</span>
       </div>
     </el-tooltip>
@@ -26,7 +26,7 @@
         :class="{ 'menu-bar-item-focus': showImageStickerDialog }"
         @click="showImageStickerDialog = !showImageStickerDialog"
       >
-        <font-awesome-icon :icon="['faR', 'image']" />
+        <icon-photo></icon-photo>
         <span>图片</span>
       </div>
     </el-tooltip>
@@ -36,33 +36,33 @@
         :class="{ 'menu-bar-item-focus': showTextStickerDialog }"
         @click="showTextStickerDialog = !showTextStickerDialog"
       >
-        <font-awesome-icon :icon="['fas', 'font']" />
+      <icon-text></icon-text>
         <span>文字</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="自定义涂鸦" placement="right">
       <div class="menu-bar-item">
-        <font-awesome-icon :icon="['fas', 'palette']" />
+        <icon-paint></icon-paint>
         <span>涂鸦</span>
       </div>
     </el-tooltip>
 
     <el-tooltip :hide-after="0" content="几何图形" placement="right">
       <div class="menu-bar-item">
-        <font-awesome-icon :icon="['fas', 'circle-nodes']" />
+        <icon-box></icon-box>
         <span>几何图</span>
       </div>
     </el-tooltip>
 
     <el-tooltip :hide-after="0" content="喷图" placement="right">
       <div class="menu-bar-item">
-        <font-awesome-icon :icon="['fas', 'paint-roller']" />
+        <icon-brush></icon-brush>
         <span>喷漆</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="尺寸测量工具" placement="right">
       <div class="menu-bar-item">
-        <font-awesome-icon :icon="['fas', 'ruler']" />
+        <icon-ruler></icon-ruler>
         <span>测量</span>
       </div>
     </el-tooltip>
@@ -71,47 +71,42 @@
         class="menu-bar-item"
         @click="showSceneControlDialog = !showSceneControlDialog"
       >
-        <font-awesome-icon :icon="['fas', 'video']" />
+      <icon-earth></icon-earth>
         <span>场景</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="灯光调整" placement="right">
       <div class="menu-bar-item">
-        <font-awesome-icon :icon="['fas', 'lightbulb']" />
+        <icon-light></icon-light>
         <span>灯光</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="预览模型" placement="right">
       <div class="menu-bar-item">
-        <font-awesome-icon :icon="['fas', 'eye']" />
+        <icon-eye></icon-eye>
         <span>预览</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="使用帮助" placement="right">
       <div class="menu-bar-item">
-        <font-awesome-icon :icon="['fas', 'circle-question']" />
+        <icon-help></icon-help>
         <span>帮助</span>
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" content="导出当前模型" placement="right">
-      <div class="menu-bar-item">
-        <font-awesome-icon :icon="['fas', 'file-export']" />
-        <span>导出</span>
-      </div>
-    </el-tooltip>
+
     <div style="flex: 1"></div>
 
     <el-tooltip :hide-after="0" content="切换外观模式" placement="right">
       <div class="menu-bar-item" @click="isDarkMode = !isDarkMode">
-        <font-awesome-icon v-if="isDarkMode" :icon="['fas', 'sun']" />
-        <font-awesome-icon v-else :icon="['fas', 'moon']" />
+        <icon-sun v-if="isDarkMode" ></icon-sun>
+        <icon-moon v-else ></icon-moon>
         <span>外观</span>
       </div>
     </el-tooltip>
 
     <el-tooltip :hide-after="0" content="系统设置" placement="right">
       <div class="menu-bar-item">
-        <font-awesome-icon :icon="['fas', 'gear']" />
+        <icon-setting></icon-setting>
         <span>设置</span>
       </div>
     </el-tooltip>
@@ -130,8 +125,21 @@ import {
   showWorkTreeDialog,
 } from "../store";
 
-import svgIcon from '@/components/svgIcon.vue'
-
+import iconWorkspace from "@/icon/workspace.svg?vueComponent";
+import iconShirt from "@/icon/shirt.svg?vueComponent";
+import iconPhoto from "@/icon/photo.svg?vueComponent";
+import iconText from "@/icon/text.svg?vueComponent";
+import iconPaint from "@/icon/paint.svg?vueComponent";
+import iconBox from "@/icon/box.svg?vueComponent";
+import iconBrush from "@/icon/brush.svg?vueComponent";
+import iconRuler from "@/icon/ruler.svg?vueComponent";
+import iconEarth from "@/icon/earth.svg?vueComponent";
+import iconLight from "@/icon/light.svg?vueComponent";
+import iconEye from "@/icon/eye.svg?vueComponent";
+import iconHelp from "@/icon/help.svg?vueComponent";
+import iconSun from "@/icon/sun.svg?vueComponent";
+import iconMoon from "@/icon/moon.svg?vueComponent";
+import iconSetting from "@/icon/setting.svg?vueComponent";
 
 
 </script>

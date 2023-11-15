@@ -49,7 +49,7 @@ watchEffect(() => {
 })
 
 // 是否展示基础模型选择菜单
-export const showBaseModelSelectDialog = ref(false);
+export const showBaseModelSelectContainer = ref(false);
 
 // 当前选中的模型文件路径
 export const currentModelFilePath = ref()
@@ -58,32 +58,30 @@ export const currentModelFilePath = ref()
 export const currentModelInfo = ref()
 
 // 是否展示场景控制弹窗
-export const showSceneControlDialog = ref(false)
+export const showSceneControlContainer = ref(false)
 
 // 是否展示图片贴图的弹窗
-export const showImageStickerDialog = ref(false)
+export const showImageStickerContainer = ref(false)
 
-watch(showImageStickerDialog,(value) => {
+watch(showImageStickerContainer,(value) => {
     if(value){
-        showTextStickerDialog.value = false
+        showTextStickerContainer.value = false
     }
 })
 
 // 是否展示艺术字弹窗
-export const showTextStickerDialog = ref(false)
+export const showTextStickerContainer = ref(false)
 
 
 // 是否展示工作数窗口
-export const showWorkTreeDialog = ref(false)
+export const showWorkTreeContainer = ref(false)
 
 // 是否展示贴画控制弹窗
 
-export const showDecalControlDialog = ref(true)
+export const showDecalControlContainer = ref(true)
 
 // 保存弹窗当前的zIndex
-export const zIndexDialog = ref(10)
-
-
+export const zIndexContainer = ref(10)
 
 
 // 文字贴纸文字

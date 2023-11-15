@@ -15,7 +15,7 @@ import {
 } from "three";
   
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
-import { operatingDecal, showDecalControlDialog } from '../store';
+import { operatingDecal, showDecalControlContainer } from '../store';
 
 export class DecalController {
   // 核心控制器
@@ -80,7 +80,7 @@ export class DecalController {
     this.imgAspectRatio = this.img.width / this.img.height;
     this.initTexture();
     this.modelController.decalControllers.push(this);
-    showDecalControlDialog.value = true;
+    showDecalControlContainer.value = true;
     operatingDecal.value = this
   }
 

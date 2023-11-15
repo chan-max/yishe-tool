@@ -3,23 +3,26 @@
     <Draggable
       v-if="show"
       @vue:mounted="mounted"
-      class="designiy-dialog"
+      class="designiy-container"
       v-slot="{ x, y }"
       :initial-value="{ x, y }"
       :prevent-default="true"
       :handle="handle"
-      :style="{ zIndex }"
+      :style="{ zIndex: czIndex }"
     >
-      <div ref="handle" v-show="header" class="designiy-dialog-header">
-        <div class="designiy-dialog-header-title">
+      <Teleport to="body">
+        <div v-if="mask" class="container-mask" :style="{ zIndex: mzIndex }"></div>
+      </Teleport>
+      <div ref="handle" v-show="header" class="designiy-container-header">
+        <div class="designiy-container-header-title">
           <slot name="title" v-if="$slots.title"></slot>
           <span v-else> {{ title }} </span>
         </div>
-        <div @click="close" class="designiy-dialog-header-close">
-          <font-awesome-icon :icon="['fas', 'xmark']" />
+        <div @click="close" class="designiy-container-header-close">
+          <el-icon><CloseBold /></el-icon>
         </div>
       </div>
-      <div class="designiy-dialog-content">
+      <div class="designiy-container-content">
         <slot></slot>
       </div>
     </Draggable>
@@ -29,7 +32,8 @@
 import { defineProps, ref, onMounted, computed } from "vue";
 import { useDraggable } from "@vueuse/core";
 import { UseDraggable as Draggable } from "@vueuse/components";
-import { zIndexDialog } from "../store";
+import { zIndexContainer } from "../store";
+import { CloseBold } from "@element-plus/icons-vue";
 
 const handle = ref();
 const { x, y, style } = useDraggable(handle, {
@@ -45,16 +49,8 @@ const props = defineProps({
   header: {
     default: true,
   },
-  position: {
-    default(props) {
-      return {
-        top: "",
-        bottom: "",
-        left: "",
-        right: "",
-        ...props.position,
-      };
-    },
+  mask: {
+    default: false,
   },
 });
 
@@ -64,25 +60,23 @@ function close() {
   emits("close");
 }
 
-const zIndex = ref();
+// 当前弹窗的zindex
+const czIndex = ref(0);
+
+const mzIndex = ref(0);
 
 function mounted() {
-  zIndex.value = zIndexDialog.value;
-  zIndexDialog.value += 1;
+  mzIndex.value = (czIndex.value = zIndexContainer.value += 2) - 1;
 }
 </script>
 <style>
-.designiy-dialog {
+.designiy-container {
   z-index: 9;
-  background: var(--1s-dialog-background);
-  top: v-bind("props.position.top");
-  left: v-bind("props.position.left");
-  bottom: v-bind("props.position.bottom");
-  right: v-bind("props.position.right");
+  background: var(--1s-container-background);
   position: absolute;
 }
 
-.designiy-dialog-header {
+.designiy-container-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -90,8 +84,8 @@ function mounted() {
   cursor: move;
 }
 
-.designiy-dialog-header-close {
-  color: var(--1s-dialog-header-text-color);
+.designiy-container-header-close {
+  color: var(--1s-container-header-text-color);
   cursor: pointer;
   display: flex;
   padding: 5px;
@@ -99,16 +93,26 @@ function mounted() {
   align-items: center;
 }
 
-.designiy-dialog-header-title {
-  color: var(--1s-dialog-header-text-color);
+.designiy-container-header-title {
+  color: var(--1s-container-header-text-color);
   font-size: 12px;
   font-weight: bold;
 }
 
-.designiy-dialog-content {
+.designiy-container-content {
   width: 100%;
   height: 100%;
   text-align: left;
   overflow-y: auto;
+}
+
+.container-mask {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: #000;
+  opacity:.2
 }
 </style>

@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
 import {
-  showBaseModelSelectDialog,
+  showBaseModelSelectContainer,
   currentModelInfo,
   canvasBgColor,
   canvasBgOpacity,

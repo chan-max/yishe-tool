@@ -33,7 +33,7 @@ import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
 import { currentBaseModelUrl } from "../store";
-import { operatingDecal, showDecalControlDialog } from "../store";
+import { operatingDecal, showDecalControlContainer } from "../store";
 
 const mixins = [
   _1stfExporterMixin

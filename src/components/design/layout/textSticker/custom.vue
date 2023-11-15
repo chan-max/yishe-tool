@@ -141,7 +141,7 @@
 <script setup>
 import { onMounted, ref, computed, watch, reactive } from "vue";
 import {
-  showBaseModelSelectDialog,
+  showBaseModelSelectContainer,
   currentModelInfo,
   canvasBgColor,
   canvasBgOpacity,

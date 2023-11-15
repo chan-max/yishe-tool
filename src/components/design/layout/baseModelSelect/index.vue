@@ -10,7 +10,7 @@
 <script setup>
 import { getBaseModelList } from "@/api";
 import { onMounted, ref } from "vue";
-import { showBaseModelSelectDialog, currentModelInfo } from "../../store.ts";
+import { showBaseModelSelectContainer, currentModelInfo } from "../../store.ts";
 
 const models = ref([]);
 
@@ -20,7 +20,7 @@ onMounted(async () => {
 });
 
 function selectModel(m) {
-  showBaseModelSelectDialog.value = false;
+  showBaseModelSelectContainer.value = false;
   currentModelInfo.value = m;
 }
 </script>

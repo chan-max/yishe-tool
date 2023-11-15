@@ -2,45 +2,52 @@
   <div id="designiy-canvas-container" ref="mountContainer"></div>
   <loading v-if="isLoading"></loading>
 
-  <diydialog :header="false" style="width: 100%; height: var(--1s-header-height); top: 0">
+  <diycontainer
+    :header="false"
+    style="width: 100%; height: var(--1s-header-height); top: 0"
+  >
     <header-menu />
-  </diydialog>
+  </diycontainer>
 
-  <diydialog
+  <diycontainer
     :header="false"
     style="
       left: 0;
       bottom: 0;
       width: var(--1s-left-menu-width);
       height: calc(100% - var(--1s-header-height));
-      border-right:var(--1s-left-menu-border-right);
+      border-right: var(--1s-left-menu-border-right);
     "
   >
     <left-menu></left-menu>
-  </diydialog>
+  </diycontainer>
 
-  <diydialog :header="false" style="height: var(--1s-bottom-menu-height); bottom: 30px">
+  <diycontainer
+    :header="false"
+    style="height: var(--1s-bottom-menu-height); bottom: 30px"
+  >
     <bottom-menu></bottom-menu>
-  </diydialog>
+  </diycontainer>
 
-  <diydialog
-    :show="showBaseModelSelectDialog"
-    @close="showBaseModelSelectDialog = false"
+  <diycontainer
+    mask="true"
+    :show="showBaseModelSelectContainer"
+    @close="showBaseModelSelectContainer = false"
   >
     <template #title> 选择基础服装</template>
     <base-model-select></base-model-select>
-  </diydialog>
+  </diycontainer>
 
-  <diydialog
+  <diycontainer
     title="设置场景"
-    :show="showSceneControlDialog"
-    @close="showSceneControlDialog = false"
+    :show="showSceneControlContainer"
+    @close="showSceneControlContainer = false"
   >
     <scene-control></scene-control>
-  </diydialog>
-  <diydialog
+  </diycontainer>
+  <diycontainer
     :header="false"
-    :show="showImageStickerDialog"
+    :show="showImageStickerContainer"
     style="
       height: calc(100% - var(--1s-header-height));
       bottom: 0;
@@ -48,10 +55,10 @@
     "
   >
     <image-sticker @dragover="stickeOn"></image-sticker>
-  </diydialog>
-  <diydialog
+  </diycontainer>
+  <diycontainer
     :header="false"
-    :show="showTextStickerDialog"
+    :show="showTextStickerContainer"
     style="
       height: calc(100% - var(--1s-header-height));
       bottom: 0;
@@ -59,23 +66,23 @@
     "
   >
     <text-sticker></text-sticker>
-  </diydialog>
+  </diycontainer>
 
-  <diydialog
+  <diycontainer
     :header="false"
-    :show="showWorkTreeDialog"
+    :show="showWorkTreeContainer"
     style="height: calc(100% - var(--1s-header-height)); bottom: 0; right: 0"
   >
     <work-tree></work-tree>
-  </diydialog>
+  </diycontainer>
 
-  <diydialog
+  <diycontainer
     :header="false"
-    :show="showDecalControlDialog"
+    :show="showDecalControlContainer"
     style="height: calc(100% - var(--1s-header-height)); bottom: 0; right: 0"
   >
     <decal-control></decal-control>
-  </diydialog>
+  </diycontainer>
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect, watch } from "vue";
@@ -86,19 +93,19 @@ import {
   currentController,
   canvasBgColor,
   canvasBgOpacity,
-  showBaseModelSelectDialog,
+  showBaseModelSelectContainer,
   currentModelInfo,
-  showSceneControlDialog,
-  showImageStickerDialog,
-  showTextStickerDialog,
-  showWorkTreeDialog,
-  showDecalControlDialog,
+  showSceneControlContainer,
+  showImageStickerContainer,
+  showTextStickerContainer,
+  showWorkTreeContainer,
+  showDecalControlContainer,
   isLoading,
 } from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
 import leftMenu from "./leftMenu.vue";
-import diydialog from "../components/dialog.vue";
+import diycontainer from "../components/container.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
 import sceneControl from "./sceneControl/index.vue";
 import imageSticker from "./imageSticker/index.vue";
@@ -123,7 +130,7 @@ import {
   AxesHelper,
   GridHelper,
   MeshPhongMaterial,
-  DoubleSide
+  DoubleSide,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
@@ -178,7 +185,6 @@ watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacit
 onMounted(() => {
   modelController.render(mountContainer.value);
 });
-
 
 // 贴图逻辑暂时保留
 function stickeOn(img, info) {

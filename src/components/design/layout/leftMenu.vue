@@ -3,8 +3,8 @@
     <el-tooltip :hide-after="0" content="工作台" placement="right">
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showWorkTreeDialog }"
-        @click="showWorkTreeDialog = !showWorkTreeDialog"
+        :class="{ 'menu-bar-item-focus': showWorkTreeContainer }"
+        @click="showWorkTreeContainer = !showWorkTreeContainer"
       >
         <icon-workspace></icon-workspace>
         <span>工作台</span>
@@ -13,8 +13,8 @@
     <el-tooltip :hide-after="0" content="选择服装模型" placement="right">
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showBaseModelSelectDialog }"
-        @click="showBaseModelSelectDialog = !showBaseModelSelectDialog"
+        :class="{ 'menu-bar-item-focus': showBaseModelSelectContainer }"
+        @click="showBaseModelSelectContainer = !showBaseModelSelectContainer"
       >
         <icon-shirt></icon-shirt>
         <span>服装</span>
@@ -23,8 +23,8 @@
     <el-tooltip :hide-after="0" content="图片贴图" placement="right">
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showImageStickerDialog }"
-        @click="showImageStickerDialog = !showImageStickerDialog"
+        :class="{ 'menu-bar-item-focus': showImageStickerContainer }"
+        @click="showImageStickerContainer = !showImageStickerContainer"
       >
         <icon-photo></icon-photo>
         <span>图片</span>
@@ -33,8 +33,8 @@
     <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showTextStickerDialog }"
-        @click="showTextStickerDialog = !showTextStickerDialog"
+        :class="{ 'menu-bar-item-focus': showTextStickerContainer }"
+        @click="showTextStickerContainer = !showTextStickerContainer"
       >
       <icon-text></icon-text>
         <span>文字</span>
@@ -69,7 +69,7 @@
     <el-tooltip :hide-after="0" content="设置场景" placement="right">
       <div
         class="menu-bar-item"
-        @click="showSceneControlDialog = !showSceneControlDialog"
+        @click="showSceneControlContainer = !showSceneControlContainer"
       >
       <icon-earth></icon-earth>
         <span>场景</span>
@@ -114,15 +114,15 @@
 </template>
 <script setup>
 import {
-  showBaseModelSelectDialog,
+  showBaseModelSelectContainer,
   isDarkMode,
   isFullScreen,
   canvasBgColor,
   canvasBgOpacity,
-  showSceneControlDialog,
-  showImageStickerDialog,
-  showTextStickerDialog,
-  showWorkTreeDialog,
+  showSceneControlContainer,
+  showImageStickerContainer,
+  showTextStickerContainer,
+  showWorkTreeContainer,
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?vueComponent";

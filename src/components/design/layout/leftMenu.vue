@@ -164,7 +164,7 @@ import iconSetting from "@/icon/setting.svg?vueComponent";
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  row-gap: 5px;
+  row-gap: 3px;
   flex-shrink: 0;
   color: var(--1s-icon-color);
   svg {

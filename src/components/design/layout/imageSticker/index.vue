@@ -9,49 +9,66 @@
           <el-icon><Operation /></el-icon>
         </template>
       </el-input>
-      <el-cascader placeholder="选择图片分类" :options="options" filterable />
+      <el-select v-model="value" placeholder="选择图片分类">
+        <template #prefix>
+          <el-icon><FolderOpened /></el-icon>
+        </template>
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
     </div>
     <div class="designiy-image-sticker-content">
       <content @dragover="dragover"></content>
     </div>
     <div class="designiy-image-sticker-footer">
-      <el-button type="primary"> 上传图片 </el-button>
+      <upload></upload>
     </div>
   </div>
 </template>
 <script setup>
-import { Loading, CloseBold, CircleCloseFilled, Picture } from "@element-plus/icons-vue";
-import { getImageList } from "@/api/index";
-import { initDraggableElement } from "../../utils/draggable";
+import { FolderOpened } from "@element-plus/icons-vue";
+
 import { Search, Operation } from "@element-plus/icons-vue";
 import content from "./content.vue";
+import upload from "./upload.vue";
+import {ref} from 'vue'
+
+const value = ref('')
+
+const options = [
+  {
+    value: 'Option1',
+    label: 'Option1',
+  },
+  {
+    value: 'Option2',
+    label: 'Option2',
+  },
+  {
+    value: 'Option3',
+    label: 'Option3',
+  },
+  {
+    value: 'Option4',
+    label: 'Option4',
+  },
+  {
+    value: 'Option5',
+    label: 'Option5',
+  },
+]
+
+
 const emits = defineEmits(["dragover"]);
+
 function dragover() {
   emits("dragover", ...arguments);
 }
 
-const options = [
-  {
-    value: "guide",
-    label: "Guide",
-    children: [
-      {
-        value: "navigation",
-        label: "Navigation",
-        children: [
-          {
-            value: "side nav",
-            label: "Side Navigation",
-          },
-          {
-            value: "top nav",
-            label: "Top Navigation",
-          },
-        ],
-      },
-    ],
-  },
-];
 </script>
 <style lang="less">
 .designiy-image-sticker {
@@ -71,7 +88,7 @@ const options = [
     background-color: #f6f6f6;
     font-size: 12px;
   }
-  .el-cascader{
+  .el-cascader {
     width: 100%;
   }
 }
@@ -82,10 +99,10 @@ const options = [
   padding: 10px;
 }
 
-.designiy-image-sticker-footer{
+.designiy-image-sticker-footer {
   width: 100%;
   padding: 10px;
-  button{
+  button {
     width: 100%;
   }
 }

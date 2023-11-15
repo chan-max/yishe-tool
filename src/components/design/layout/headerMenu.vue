@@ -23,9 +23,7 @@
 import { getBaseModelList, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
 import { canvasBgColor, canvasBgOpacity, isDarkMode, currentController } from "../store";
-import Color from "color";
-import { Upload } from "@element-plus/icons-vue";
-import { ElMessage, ElMessageBox } from 'element-plus'
+import {  ElMessageBox } from 'element-plus'
 import { uploadModel } from '@/api'
 import userAvatar from '@/components/user/userAvatar.vue'
 import headerMenuDropdown from './headerMenuDropdown/index.vue'

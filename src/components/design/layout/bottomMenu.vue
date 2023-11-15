@@ -3,41 +3,48 @@
 
   <el-tooltip :hide-after="0" content="重置当前场景" placement="top">
       <div class="bottom-menu-item" >
-        <font-awesome-icon :icon="['fas', 'arrows-rotate']" />
+        <icon-refresh></icon-refresh>
       </div>
     </el-tooltip>
 
   <el-tooltip :hide-after="0" content="上一步" placement="top">
       <div class="bottom-menu-item" >
-        <font-awesome-icon :icon="['fas', 'reply']" />
+        <icon-prev></icon-prev>
       </div>
     </el-tooltip>
 
     <el-tooltip :hide-after="0" content="下一步" placement="top">
       <div class="bottom-menu-item">
-        <font-awesome-icon :icon="['fas', 'share']" />
+        <icon-next></icon-next>
       </div>
     </el-tooltip>
 
     <el-tooltip :hide-after="0" content="重制模型位置" placement="top">
       <div class="bottom-menu-item" @click="locate">
-        <font-awesome-icon :icon="['fas', 'crosshairs']" />
+        <icon-locate></icon-locate>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" :content="isFullScreen ? '退出全屏' : '进入全屏'" placement="top">
       <div class="bottom-menu-item" @click="isFullScreen = !isFullScreen">
-        <font-awesome-icon :icon="['fas', 'expand']" />
+        <icon-fullscreen></icon-fullscreen>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="旋转动画" placement="top">
       <div class="bottom-menu-item" @click="animate">
-        <font-awesome-icon :icon="['fas', 'arrows-spin']" />
+        <icon-rotate></icon-rotate>
       </div>
     </el-tooltip>
 </div>
 </template>
 <script setup>
 import {isFullScreen,currentController} from '../store'
+import iconFullscreen from '@/icon/fullscreen.svg?vueComponent'
+import iconRotate from '@/icon/rotate.svg?vueComponent'
+import iconLocate from '@/icon/locate.svg?vueComponent'
+import iconPrev from '@/icon/prev.svg?vueComponent'
+import iconNext from '@/icon/next.svg?vueComponent'
+import iconRefresh from '@/icon/refresh.svg?vueComponent'
+
 
 function locate(){
     currentController.value.resetPosition()
@@ -48,7 +55,7 @@ function animate(){
 }
 
 </script>
-<style>
+<style lang="less">
 .designiy-bottom-menu{
     height:100%;
     width: auto;
@@ -67,5 +74,9 @@ function animate(){
     justify-content: center;
     align-items: center;
     color:var(--1s-icon-color);
+    svg{
+      width: 14px;
+      height: 14px;
+    }
 }
 </style>

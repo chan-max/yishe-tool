@@ -6,7 +6,7 @@
   >
     <template #reference>
       <div class="designiy-header-menu-dropdown">
-        <font-awesome-icon :icon="['fas', 'bars']" />
+        <icon-menu></icon-menu> 
       </div>
     </template>
     <template #default>
@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import iconMenu from '@/icon/menu.svg?vueComponent'
 
 const showHeaderMenuDropdown = ref(false);
 </script>
@@ -34,5 +35,9 @@ const showHeaderMenuDropdown = ref(false);
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
+  svg{
+    height:16px;
+    width:16px;
+  }
 }
 </style>

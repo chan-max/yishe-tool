@@ -10,7 +10,7 @@
           >
             <template #placeholder>
               <div class="item_loading">
-                <el-icon class="rolling-icon"><Loading /></el-icon>
+              
               </div>
             </template>
             <template #error>
@@ -69,7 +69,15 @@ onMounted(async () => {
   border-radius: 4px;
   overflow: hidden;
   cursor: pointer;
-  &_loading,
+  &_loading{
+    width: 100%;
+    height: 100%;
+    list-style: none;
+    background-image: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+    background-size: 400% 100%;
+    background-position: 100% 50%;
+    animation: skeleton-loading 1.4s ease infinite;
+  }
   &_error {
     width: 100%;
     height: 100%;
@@ -78,6 +86,16 @@ onMounted(async () => {
     align-items: center;
   }
 }
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
 
 @keyframes rolling {
   0% {
@@ -88,7 +106,4 @@ onMounted(async () => {
   }
 }
 
-.rolling-icon {
-  animation: rolling 3s linear infinite;
-}
 </style>

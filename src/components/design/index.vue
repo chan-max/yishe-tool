@@ -8,7 +8,7 @@ import mainView from "./layout/main.vue";
 import { isDarkMode } from "./store";
 import { usePreventScreenResize } from './composition/preventScreenResize';
 
-usePreventScreenResize()
+// usePreventScreenResize()
 
 </script>
 <style lang="less">

@@ -14,6 +14,9 @@
     <div class="designiy-image-sticker-content">
       <content @dragover="dragover"></content>
     </div>
+    <div class="designiy-image-sticker-footer">
+      <el-button type="primary"> 上传图片 </el-button>
+    </div>
   </div>
 </template>
 <script setup>
@@ -77,5 +80,13 @@ const options = [
   flex: 1;
   overflow: auto;
   padding: 10px;
+}
+
+.designiy-image-sticker-footer{
+  width: 100%;
+  padding: 10px;
+  button{
+    width: 100%;
+  }
 }
 </style>

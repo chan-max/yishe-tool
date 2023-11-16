@@ -25,7 +25,7 @@
       <content @dragover="dragover"></content>
     </div>
     <div class="designiy-image-sticker-footer">
-      <upload></upload>
+      <el-button type="pirmary"  @click="showImageUplaodContainer = true"> 上传图片 </el-button>
     </div>
   </div>
 </template>
@@ -34,31 +34,19 @@ import { FolderOpened } from "@element-plus/icons-vue";
 
 import { Search, Operation } from "@element-plus/icons-vue";
 import content from "./content.vue";
-import upload from "./upload.vue";
 import {ref} from 'vue'
+import { showImageUplaodContainer } from "../../store";
 
 const value = ref('')
 
 const options = [
   {
-    value: 'Option1',
-    label: 'Option1',
+    value: 'mine',
+    label: '我的上传',
   },
   {
-    value: 'Option2',
-    label: 'Option2',
-  },
-  {
-    value: 'Option3',
-    label: 'Option3',
-  },
-  {
-    value: 'Option4',
-    label: 'Option4',
-  },
-  {
-    value: 'Option5',
-    label: 'Option5',
+    value: 'saved',
+    label: '我的收藏',
   },
 ]
 

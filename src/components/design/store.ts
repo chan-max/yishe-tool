@@ -105,3 +105,6 @@ export const textStickerIsItalic = ref(false)
 
 // 当前正在操作的贴花
 export const operatingDecal = shallowRef()
+
+// 是否展示图片上传弹窗
+export const showImageUplaodContainer = ref(false)

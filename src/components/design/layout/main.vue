@@ -10,6 +10,20 @@
   </diycontainer>
 
   <diycontainer
+    title="图片上传"
+    mask="true"
+    :show="showImageUplaodContainer"
+    @close="showImageUplaodContainer = false"
+    :animation="{
+      'enter-active-class': 'animate__animated animate__bounceIn',
+      'leave-active-class': 'animate__animated animate__bounceOut',
+      duration: 100,
+    }"
+  >
+    <image-upload></image-upload>
+  </diycontainer>
+
+  <diycontainer
     :header="false"
     style="
       left: 0;
@@ -33,6 +47,11 @@
     mask="true"
     :show="showBaseModelSelectContainer"
     @close="showBaseModelSelectContainer = false"
+    :animation="{
+      'enter-active-class': 'animate__animated animate__bounceIn',
+      'leave-active-class': 'animate__animated animate__bounceOut',
+      duration: 100,
+    }"
   >
     <template #title> 选择基础服装</template>
     <base-model-select></base-model-select>
@@ -101,6 +120,7 @@ import {
   showWorkTreeContainer,
   showDecalControlContainer,
   isLoading,
+  showImageUplaodContainer,
 } from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -113,6 +133,7 @@ import textSticker from "./textSticker/index.vue";
 import workTree from "./workTree/index.vue";
 import bottomMenu from "./bottomMenu.vue";
 import decalControl from "./decalControl/index.vue";
+import imageUpload from "./imageUpload/index.vue";
 
 import {
   Mesh,

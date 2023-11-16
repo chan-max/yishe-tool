@@ -16,7 +16,7 @@
   </el-popover>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from "vue";
 import iconMenu from '@/icon/menu.svg?vueComponent'
 

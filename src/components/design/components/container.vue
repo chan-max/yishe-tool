@@ -1,5 +1,5 @@
 <template>
-  <transition>
+  <transition v-bind="animation">
     <Draggable
       v-if="show"
       @vue:mounted="mounted"
@@ -52,6 +52,7 @@ const props = defineProps({
   mask: {
     default: false,
   },
+  animation: {},
 });
 
 const emits = defineEmits(["close"]);
@@ -91,6 +92,9 @@ function mounted() {
   padding: 5px;
   justify-content: center;
   align-items: center;
+  &:hover{
+    background-color: #eee;
+  }
 }
 
 .designiy-container-header-title {
@@ -113,6 +117,6 @@ function mounted() {
   top: 0;
   left: 0;
   background: #000;
-  opacity:.2
+  opacity: 0.2;
 }
 </style>

@@ -18,6 +18,9 @@
 <script setup lang="ts">
 import { Search, Operation } from "@element-plus/icons-vue";
 import { ref } from "vue";
+
+const input = ref('')
+
 </script>
 
 <style>

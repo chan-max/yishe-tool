@@ -9,43 +9,60 @@
       :on-exceed="handleExceed"
       ref="upload"
     >
-      <img v-if="files[0]" :src="previewUrl"/>
+      <img v-if="files[0]" :src="previewUrl" />
       <template v-else>
-        <icon-upload style="width:50px;height:50px;"></icon-upload>
-        <div> 点击或拖拽文件上传 </div>
+        <icon-upload style="width: 50px; height: 50px"></icon-upload>
+        <div>点击或拖拽文件上传</div>
       </template>
     </el-upload>
 
     <div class="designiy-image-upload-form">
-        <el-input></el-input>
-      <el-button type="primary"> 上传该图片 </el-button>
+      <div class="designiy-image-upload-form-label">贴纸名称</div>
+      <el-input></el-input>
+      <div class="designiy-image-upload-form-label">描述</div>
+      <el-input type="textarea"></el-input>
+      <div style="flex:1;"></div>
+      <el-button :loading="loading" @click="submit" :disabled="!previewUrl"> 上传该图片 </el-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import iconUpload from "@/icon/upload.svg?vueComponent";
-import { ref, reactive, watch, computed , shallowRef} from 'vue';
+import { ref, reactive, watch, computed, shallowRef } from "vue";
 import { Plus } from "@element-plus/icons-vue";
-import  { genFileId } from "element-plus";
+import { genFileId } from "element-plus";
+import {uploadImage} from '@/api/index'
 
-const files = ref([])
-const upload = ref()
+const files = ref([]);
+const upload = ref();
+const loading = ref(false)
+const name = ref('')
+const desc = ref('')
 
 const previewUrl = computed(() => {
-    let file = files.value[0]
-    if(file){
-        return URL.createObjectURL(file.raw)
-    }
-  return  ''
-})
+  let file = files.value[0];
+  if (file) {
+    return URL.createObjectURL(file.raw);
+  }
+  return false;
+});
 
-function handleExceed(files){
-  upload.value.clearFiles()
-  const file = files[0]
-  upload.value.handleStart(file)
+function handleExceed(files) {
+  upload.value.clearFiles();
+  const file = files[0];
+  upload.value.handleStart(file);
 }
 
+async function submit(){
+    loading.value = true
+    await uploadImage({
+        name:'',
+        description:'',
+        file:files.value[0].raw
+    })
+    loading.value = false
+}
 
 </script>
 
@@ -53,34 +70,42 @@ function handleExceed(files){
 .designiy-image-upload {
   padding: 20px;
   display: flex;
+//   flex-direction:column;
   column-gap: 20px;
 }
 
 .designiy-image-upload-main {
   width: 260px;
   height: 260px;
-  border:1px dashed #ddd;
+  border: 1px dashed #ddd;
 
-  &:hover{
-    border:1px dashed #6900ff;
+  &:hover {
+    border: 1px dashed #6900ff;
   }
   .el-upload {
     width: 100%;
     height: 100%;
-    display:flex;
+    display: flex;
     flex-direction: column;
-    justify-content:center;
-    row-gap:10px;
-    align-itemsc:center;
+    justify-content: center;
+    row-gap: 10px;
+    align-itemsc: center;
   }
-
 }
 
 .designiy-image-upload-form {
   width: 260px;
   height: 260px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+.designiy-image-upload-form-label{
+    padding:5px 0;
+    font-size:12px;
+    font-weight:bold;
+    color:#666;
 }
 </style>

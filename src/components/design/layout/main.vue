@@ -3,8 +3,8 @@
   <loading v-if="isLoading"></loading>
 
   <diycontainer
-    zIndex="zIndex"
     :header="false"
+    zIndex="2"
     style="width: 100%; height: var(--1s-header-height); top: 0"
   >
     <header-menu />
@@ -121,6 +121,7 @@ import {
   showDecalControlContainer,
   isLoading,
   showImageUplaodContainer,
+  zIndex
 } from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -154,7 +155,7 @@ import {
   DoubleSide,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
-import { zIndex } from '../store';
+
 
 isLoading.value = true;
 

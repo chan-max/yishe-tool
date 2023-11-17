@@ -2,7 +2,7 @@
   <div class="designiy-header">
     <div class="designiy-header-logo"></div>
 
-    <header-menu-dropdown />
+    <header-menu-dropdown/>
     
     <div style="flex-grow: 1"></div>
 

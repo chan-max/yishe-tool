@@ -1,6 +1,8 @@
 import { setFullscreen } from "@/common/browser";
 import { computed, ref, shallowRef, watchEffect,watch } from "vue"
 
+// export const zIndex = 2147483647
+
 // 当前实例
 export const currentController = shallowRef(null);
 
@@ -80,8 +82,8 @@ export const showWorkTreeContainer = ref(false)
 
 export const showDecalControlContainer = ref(true)
 
-// 保存弹窗当前的zIndex
-export const zIndex = ref(10)
+// 记录弹窗的最大zIndex
+export const zIndex = ref(1)
 
 // 文字贴纸文字
 export const textStickerText = ref(`breaking

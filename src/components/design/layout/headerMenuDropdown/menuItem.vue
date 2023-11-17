@@ -38,8 +38,7 @@ function itemClick() {
 
 .designiy-dropdown-menu-item-content {
   width: 100%;
-  height: 40px;
-  padding: 10px;
+  padding: 10px 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -1,10 +1,9 @@
 <template>
   <div class="designiy-header-menu-dropdown">
-    <icon-menu @click="toggle"></icon-menu>
+    <icon-menu @click.stop="toggle"></icon-menu>
     <div
       v-if="showHeaderMenuDropdown"
       class="designiy-header-menu-dropdown-content"
-      :style="{ zIndex: zIndex++ }"
     >
       <menu-main>
         <menu-item>
@@ -50,8 +49,11 @@ function toggle() {
 }
 
 onMounted(() => {
-  document.body.addEventListener("click", () => {});
+  document.body.addEventListener("click", (e) => {
+    showHeaderMenuDropdown.value = false
+  });
 });
+
 </script>
 
 <style lang="less">

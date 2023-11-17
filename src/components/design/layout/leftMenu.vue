@@ -152,6 +152,7 @@ import iconSetting from "@/icon/setting.svg?vueComponent";
   align-items: center;
   padding: 20px 0;
   row-gap: 6px;
+  overflow:auto;
 }
 
 .menu-bar-item {

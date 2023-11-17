@@ -8,12 +8,13 @@
       :initial-value="{ x, y }"
       :prevent-default="true"
       :handle="handle"
-      :style="{ zIndex: activeIndex }"
+      :style="{ zIndex: activeIndex}"
     >
       <Teleport to="body">
         <div
           v-if="mask"
           class="container-mask"
+          @click="$emit('close')"
           :style="{ zIndex: activeIndex - 1 }"
         ></div>
       </Teleport>
@@ -52,6 +53,7 @@ const props = defineProps({
   header: {
     default: false,
   },
+  // 存在遮罩层时
   mask: {
     default: false,
   },
@@ -69,7 +71,14 @@ function close() {
 const activeIndex = ref(0);
 
 function mounted(){
-  activeIndex.value = props.zIndex || (zIndex.value += 2);
+  console.log(props)
+  if(props.mask){
+    activeIndex.value = 999
+  }else if(props.zIndex){
+    activeIndex.value = props.zIndex
+  }else{
+    activeIndex.value = zIndex.value
+  }
 }
 
 </script>

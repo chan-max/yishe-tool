@@ -1,26 +1,26 @@
 <template>
-  <div class="designiy-dropdown-menu-item" @click.stop="itemClick">
-    <div class="designiy-dropdown-menu-item-icon">
-      <slot name="icon"></slot>
-    </div>
-    <div class="designiy-dropdown-menu-item-title">
-      <slot name="title"></slot>
-    </div>
+    <div class="designiy-dropdown-menu-item" @click.stop="itemClick">
+      <div class="designiy-dropdown-menu-item-icon">
+        <slot name="icon"></slot>
+      </div>
+      <div class="designiy-dropdown-menu-item-title">
+        <slot name="title"></slot>
+      </div>
 
-    <div style="flex: 1"></div>
-    <div class="designiy-dropdown-menu-item-suffix">
-      <slot name="suffix"></slot>
+      <div style="flex: 1"></div>
+      <div class="designiy-dropdown-menu-item-suffix">
+        <slot name="suffix"></slot>
+      </div>
+      <div class="designiy-dropdown-menu-item-arrow" v-if="$slots.children">
+        <icon-right-arrow></icon-right-arrow>
+      </div>
+      <div
+        v-if="$slots.children && showChildren"
+        class="designiy-dropdown-menu-item-children"
+      >
+        <slot name="children"> </slot>
+      </div>
     </div>
-    <div class="designiy-dropdown-menu-item-arrow" v-if="$slots.children">
-      <icon-right-arrow></icon-right-arrow>
-    </div>
-    <div
-      v-if="$slots.children && showChildren"
-      class="designiy-dropdown-menu-item-children"
-    >
-      <slot name="children"> </slot>
-    </div>
-  </div>
 </template>
 <script setup>
 import iconRightArrow from "@/icon/rightArrow.svg?vueComponent";
@@ -60,14 +60,13 @@ function itemClick() {
   }
 }
 
-.designiy-dropdown-menu-item:hover {
-  background-color: #f6f6f6;
-}
-
 .designiy-dropdown-menu-item-arrow {
+  width: 12px;
+  height: 12px;
   svg {
     width: 12px;
     height: 12px;
   }
 }
+
 </style>

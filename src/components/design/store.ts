@@ -81,8 +81,7 @@ export const showWorkTreeContainer = ref(false)
 export const showDecalControlContainer = ref(true)
 
 // 保存弹窗当前的zIndex
-export const zIndexContainer = ref(10)
-
+export const zIndex = ref(10)
 
 // 文字贴纸文字
 export const textStickerText = ref(`breaking

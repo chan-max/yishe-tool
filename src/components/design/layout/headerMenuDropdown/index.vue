@@ -1,26 +1,57 @@
 <template>
-  <el-popover
-    trigger="click"
-    placement="bottom-start"
-    v-model:visible="showHeaderMenuDropdown"
-  >
-    <template #reference>
-      <div class="designiy-header-menu-dropdown">
-        <icon-menu></icon-menu> 
-      </div>
-    </template>
-    <template #default>
-      <div class="designiy-header-menu-dropdown-content">
-      </div>
-    </template>
-  </el-popover>
+  <div class="designiy-header-menu-dropdown">
+    <icon-menu @click="toggle"></icon-menu>
+    <div
+      v-if="showHeaderMenuDropdown"
+      class="designiy-header-menu-dropdown-content"
+      :style="{ zIndex: zIndex++ }"
+    >
+      <menu-main>
+        <menu-item>
+          <template #title> 新建 </template>
+          <template #children>
+            <menu-main>
+              <menu-item>
+                <template #title>111</template>
+              </menu-item>
+              <menu-item>
+                <template #title>2222</template>
+                <template #children>
+                  <menu-main>
+                    <menu-item>
+                      <template #title>111</template>
+                    </menu-item>
+                    <menu-item> <template #title>2222</template></menu-item>
+                  </menu-main>
+                </template>
+              </menu-item>
+            </menu-main>
+          </template>
+        </menu-item>
+        <menu-item>
+          <template #title> 导入 </template>
+        </menu-item>
+      </menu-main>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import iconMenu from '@/icon/menu.svg?vueComponent'
+import { ref, onMounted } from "vue";
+import iconMenu from "@/icon/menu.svg?vueComponent";
+import menuMain from "./menu.vue";
+import menuItem from "./menuItem.vue";
+import { zIndex } from "../../store";
 
 const showHeaderMenuDropdown = ref(false);
+
+function toggle() {
+  showHeaderMenuDropdown.value = !showHeaderMenuDropdown.value
+}
+
+onMounted(() => {
+  document.body.addEventListener("click", () => {});
+});
 </script>
 
 <style lang="less">
@@ -34,10 +65,16 @@ const showHeaderMenuDropdown = ref(false);
   color: #000;
   border-radius: 5px;
   font-size: 16px;
-  cursor: pointer;
-  svg{
-    height:16px;
-    width:16px;
+  position: relative;
+  svg {
+    height: 16px;
+    width: 16px;
   }
+}
+
+.designiy-header-menu-dropdown-content {
+  position: absolute;
+  top: 42px;
+  left: 0;
 }
 </style>

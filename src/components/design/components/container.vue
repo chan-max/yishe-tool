@@ -8,10 +8,14 @@
       :initial-value="{ x, y }"
       :prevent-default="true"
       :handle="handle"
-      :style="{ zIndex: czIndex }"
+      :style="{ zIndex: activeIndex }"
     >
       <Teleport to="body">
-        <div v-if="mask" class="container-mask" :style="{ zIndex: mzIndex }"></div>
+        <div
+          v-if="mask"
+          class="container-mask"
+          :style="{ zIndex: activeIndex - 1 }"
+        ></div>
       </Teleport>
       <div ref="handle" v-show="header" class="designiy-container-header">
         <div class="designiy-container-header-title">
@@ -29,10 +33,10 @@
   </transition>
 </template>
 <script setup>
-import { defineProps, ref, onMounted, computed } from "vue";
+import { defineProps, ref, onMounted, onBeforeMount, computed, watch } from 'vue';
 import { useDraggable } from "@vueuse/core";
 import { UseDraggable as Draggable } from "@vueuse/components";
-import { zIndexContainer } from "../store";
+import { zIndex } from "../store";
 import { CloseBold } from "@element-plus/icons-vue";
 
 const handle = ref();
@@ -41,17 +45,17 @@ const { x, y, style } = useDraggable(handle, {
 });
 
 const props = defineProps({
-  draggable: false, //
   title: "", // 顶部标题
   show: {
     default: true,
   }, // 是否展示
   header: {
-    default: true,
+    default: false,
   },
   mask: {
     default: false,
   },
+  zIndex: {},
   animation: {},
 });
 
@@ -62,13 +66,12 @@ function close() {
 }
 
 // 当前弹窗的zindex
-const czIndex = ref(0);
+const activeIndex = ref(0);
 
-const mzIndex = ref(0);
-
-function mounted() {
-  mzIndex.value = (czIndex.value = zIndexContainer.value += 2) - 1;
+function mounted(){
+  activeIndex.value = props.zIndex || (zIndex.value += 2);
 }
+
 </script>
 <style>
 .designiy-container {
@@ -81,7 +84,7 @@ function mounted() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 20px;
   cursor: move;
 }
 
@@ -92,7 +95,7 @@ function mounted() {
   padding: 5px;
   justify-content: center;
   align-items: center;
-  &:hover{
+  &:hover {
     background-color: #eee;
   }
 }
@@ -107,7 +110,6 @@ function mounted() {
   width: 100%;
   height: 100%;
   text-align: left;
-  overflow-y: auto;
 }
 
 .container-mask {

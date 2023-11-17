@@ -8,6 +8,7 @@
       :limit="1"
       :on-exceed="handleExceed"
       ref="upload"
+      drag
     >
       <img v-if="files[0]" :src="previewUrl" />
       <template v-else>
@@ -77,19 +78,18 @@ async function submit(){
 .designiy-image-upload-main {
   width: 260px;
   height: 260px;
-  border: 1px dashed #ddd;
-
-  &:hover {
-    border: 1px dashed #6900ff;
+  .el-upload{
+    width:100%;
+    height:100%;
   }
-  .el-upload {
+  .el-upload-dragger {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     row-gap: 10px;
-    align-itemsc: center;
+    align-items: center;
   }
 }
 

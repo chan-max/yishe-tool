@@ -3,6 +3,7 @@
   <loading v-if="isLoading"></loading>
 
   <diycontainer
+    zIndex="zIndex"
     :header="false"
     style="width: 100%; height: var(--1s-header-height); top: 0"
   >
@@ -11,6 +12,7 @@
 
   <diycontainer
     title="图片上传"
+    :header="true"
     mask="true"
     :show="showImageUplaodContainer"
     @close="showImageUplaodContainer = false"
@@ -45,6 +47,7 @@
 
   <diycontainer
     mask="true"
+    :header="true"
     :show="showBaseModelSelectContainer"
     @close="showBaseModelSelectContainer = false"
     :animation="{
@@ -58,6 +61,7 @@
   </diycontainer>
 
   <diycontainer
+  :header="true"
     title="设置场景"
     :show="showSceneControlContainer"
     @close="showSceneControlContainer = false"
@@ -65,7 +69,6 @@
     <scene-control></scene-control>
   </diycontainer>
   <diycontainer
-    :header="false"
     :show="showImageStickerContainer"
     style="
       height: calc(100% - var(--1s-header-height));
@@ -76,7 +79,6 @@
     <image-sticker @dragover="stickeOn"></image-sticker>
   </diycontainer>
   <diycontainer
-    :header="false"
     :show="showTextStickerContainer"
     style="
       height: calc(100% - var(--1s-header-height));
@@ -88,7 +90,6 @@
   </diycontainer>
 
   <diycontainer
-    :header="false"
     :show="showWorkTreeContainer"
     style="height: calc(100% - var(--1s-header-height)); bottom: 0; right: 0"
   >
@@ -96,7 +97,6 @@
   </diycontainer>
 
   <diycontainer
-    :header="false"
     :show="showDecalControlContainer"
     style="height: calc(100% - var(--1s-header-height)); bottom: 0; right: 0"
   >
@@ -154,6 +154,7 @@ import {
   DoubleSide,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
+import { zIndex } from '../store';
 
 isLoading.value = true;
 

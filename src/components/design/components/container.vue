@@ -1,90 +1,25 @@
 <template>
-  <transition v-bind="animation">
-    <Draggable
-      v-if="show"
-      @vue:mounted="mounted"
-      class="designiy-container"
-      v-slot="{ x, y }"
-      :initial-value="{ x, y }"
-      :prevent-default="true"
-      :handle="handle"
-      :style="{ zIndex: activeIndex}"
-    >
-      <Teleport to="body">
-        <div
-          v-if="mask"
-          class="container-mask"
-          @click="$emit('close')"
-          :style="{ zIndex: activeIndex - 1 }"
-        ></div>
-      </Teleport>
-      <div ref="handle" v-show="header" class="designiy-container-header">
-        <div class="designiy-container-header-title">
-          <slot name="title" v-if="$slots.title"></slot>
-          <span v-else> {{ title }} </span>
-        </div>
-        <div @click="close" class="designiy-container-header-close">
-          <el-icon><CloseBold /></el-icon>
-        </div>
-      </div>
-      <div class="designiy-container-content">
-        <slot></slot>
-      </div>
-    </Draggable>
-  </transition>
+  <div v-if="show" class="designiy-container">
+    <div class="designiy-container-content">
+      <slot></slot>
+    </div>
+  </div>
 </template>
 <script setup>
-import { defineProps, ref, onMounted, onBeforeMount, computed, watch } from 'vue';
-import { useDraggable } from "@vueuse/core";
-import { UseDraggable as Draggable } from "@vueuse/components";
-import { zIndex } from "../store";
-import { CloseBold } from "@element-plus/icons-vue";
+import { defineProps, ref, onMounted, onBeforeMount, computed, watch } from "vue";
 
-const handle = ref();
-const { x, y, style } = useDraggable(handle, {
-  initialValue: {},
-});
 
 const props = defineProps({
-  title: "", // 顶部标题
   show: {
     default: true,
   }, // 是否展示
-  header: {
-    default: false,
-  },
-  // 存在遮罩层时
-  mask: {
-    default: false,
-  },
   zIndex: {},
-  animation: {},
 });
-
-const emits = defineEmits(["close"]);
-
-function close() {
-  emits("close");
-}
-
-// 当前弹窗的zindex
-const activeIndex = ref(0);
-
-function mounted(){
-  console.log(props)
-  if(props.mask){
-    activeIndex.value = 999
-  }else if(props.zIndex){
-    activeIndex.value = props.zIndex
-  }else{
-    activeIndex.value = zIndex.value
-  }
-}
 
 </script>
 <style>
 .designiy-container {
-  z-index: 9;
+  z-index: 1;
   background: var(--1s-container-background);
   position: absolute;
 }

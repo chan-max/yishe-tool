@@ -2,14 +2,13 @@
     <div ref="headerBar" class="header-bar flex justify-center z-10">
         <div class="header-bar-content flex justify-between items-center">
             <div class="header-bar-content-menu">
-                <font-awesome-icon :icon="['fas', 'bars']" />
                 导航
             </div>
             <div style="flex:1"></div>
             <div class="header-bar-content-search">
                 <el-input class="" v-model="search" placeholder="搜索服装" size="default">
                     <template #suffix>
-                        <div style="cursor:pointer"> <font-awesome-icon :icon="['fas', 'magnifying-glass']" /></div>
+                        <div style="cursor:pointer"></div>
                     </template>
                 </el-input>
             </div>

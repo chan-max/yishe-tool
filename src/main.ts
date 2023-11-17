@@ -20,11 +20,7 @@ import 'animate.css';
 import './style/base.less'
 import 'default-passive-events'
 
-import { FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
-
 const app = createApp(App)
-
-app.component('font-awesome-icon', FontAwesomeIcon)
 
 app.use(Antd)
 

@@ -3,14 +3,12 @@
   <loading v-if="isLoading"></loading>
 
   <diycontainer
-    :header="false"
-    zIndex="2"
-    style="width: 100%; height: var(--1s-header-height); top: 0"
+    style="width: 100%; height: var(--1s-header-height); top: 0;zIndex:2;"
   >
     <header-menu />
   </diycontainer>
 
-  <diycontainer
+  <diydialog
     title="图片上传"
     :header="true"
     mask="true"
@@ -23,10 +21,9 @@
     }"
   >
     <image-upload></image-upload>
-  </diycontainer>
+  </diydialog>
 
   <diycontainer
-    :header="false"
     style="
       left: 0;
       bottom: 0;
@@ -39,15 +36,12 @@
   </diycontainer>
 
   <diycontainer
-    :header="false"
     style="height: var(--1s-bottom-menu-height); bottom: 30px"
   >
     <bottom-menu></bottom-menu>
   </diycontainer>
 
-  <diycontainer
-    mask="true"
-    :header="true"
+  <diydialog
     :show="showBaseModelSelectContainer"
     @close="showBaseModelSelectContainer = false"
     :animation="{
@@ -58,16 +52,15 @@
   >
     <template #title> 选择基础服装</template>
     <base-model-select></base-model-select>
-  </diycontainer>
+  </diydialog>
 
-  <diycontainer
-  :header="true"
+  <diydialog
     title="设置场景"
     :show="showSceneControlContainer"
     @close="showSceneControlContainer = false"
   >
     <scene-control></scene-control>
-  </diycontainer>
+  </diydialog>
   <diycontainer
     :show="showImageStickerContainer"
     style="
@@ -127,6 +120,7 @@ import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
 import leftMenu from "./leftMenu.vue";
 import diycontainer from "../components/container.vue";
+import diydialog from "../components/dialog.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
 import sceneControl from "./sceneControl/index.vue";
 import imageSticker from "./imageSticker/index.vue";

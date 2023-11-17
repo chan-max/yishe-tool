@@ -1,13 +1,16 @@
 <template>
   <div class="designiy-header-menu-dropdown">
-    <icon-menu @click.stop="toggle"></icon-menu>
+    <icon-menu style="width:16px;height:16px;" @click.stop="toggle"></icon-menu>
     <div
       v-if="showHeaderMenuDropdown"
       class="designiy-header-menu-dropdown-content"
     >
       <menu-main>
         <menu-item>
+          <template #icon>
+          </template>
           <template #title> 新建 </template>
+          <template #suffix> ctrl q</template>
           <template #children>
             <menu-main>
               <menu-item>
@@ -28,7 +31,10 @@
           </template>
         </menu-item>
         <menu-item>
-          <template #title> 导入 </template>
+          <template #icon> 
+            <icon-logout></icon-logout>
+          </template>
+          <template #title> 退出 </template>
         </menu-item>
       </menu-main>
     </div>
@@ -41,6 +47,7 @@ import iconMenu from "@/icon/menu.svg?vueComponent";
 import menuMain from "./menu.vue";
 import menuItem from "./menuItem.vue";
 import { zIndex } from "../../store";
+import iconLogout from '@/icon/logout.svg?vueComponent';
 
 const showHeaderMenuDropdown = ref(false);
 
@@ -68,15 +75,12 @@ onMounted(() => {
   border-radius: 5px;
   font-size: 16px;
   position: relative;
-  svg {
-    height: 16px;
-    width: 16px;
-  }
 }
 
 .designiy-header-menu-dropdown-content {
   position: absolute;
   top: 42px;
   left: 0;
+  z-index:1;
 }
 </style>

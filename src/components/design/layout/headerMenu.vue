@@ -10,9 +10,6 @@
       保 存
     </div>
 
-    <!-- <div class="designiy-header-quit">
-      <font-awesome-icon :icon="['fas', 'right-from-bracket']" />
-    </div> -->
     <user-avatar />
 
   

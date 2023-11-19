@@ -65,9 +65,7 @@ export enum Url {
     // 获取图片
     GET_IMAGE_LIST = url('/getImageList'),
 
-    // 获取文字贴图
-    GET_TEXT_STICKER = url('/textSticker'),
-
+    // 上传字体
     UPLOAD_FONT = url('/uploadFont'),
 
     GET_FONTS = url('/getFonts'),
@@ -84,5 +82,10 @@ export enum Url {
     GET_USER_LIST = url('/getUserList'),
 
     // 更新用户信息
-    UPDATE_USER_INFO = url('/updateUserInfo')
+    UPDATE_USER_INFO = url('/updateUserInfo'),
+
+    UPLOAD_TEXT_STICKER = url('/uploadTextSticker'),
+
+    // 获取所有文字贴纸
+    GET_TEXT_STICKER = url('/getTextSticker'),
 }

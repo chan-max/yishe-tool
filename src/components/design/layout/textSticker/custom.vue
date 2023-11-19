@@ -107,7 +107,7 @@
     <div style="flex: 1"></div>
 
     <div>
-      <el-button type="primary" style="width: 100%"> 保存该贴纸 </el-button>
+      <el-button type="primary" style="width: 100%" @click="save"> 保存该贴纸 </el-button>
     </div>
   </div>
 </template>
@@ -126,11 +126,15 @@ import {
   operatingTextStickerTextOrientation,
   currentController
 } from "../../store.ts";
-import { getFonts, getTextStickerUrl } from "@/api/index";
+import { getFonts, uploadTextSticker } from "@/api/index";
 import { useDebounceFn } from "@vueuse/core";
 import { More } from "@element-plus/icons-vue";
 import { toPng } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
+import {base64ToFile} from '@/common/transform/base64ToFile';
+
+
+const base64 = ref('')
 
 const textStickerEl = ref();
 
@@ -168,10 +172,10 @@ async function initTextSticker() {
   el.style.textOrientation = operatingTextStickerTextOrientation.value;
   el.style.fontStyle = operatingTextStickerIsItalic.value ? "italic" : "normal";
 
-  const base64 = await toPng(textStickerEl.value);
+  base64.value = await toPng(textStickerEl.value);
   initDraggableElement(textStickerEl.value, (img) => {
     currentController.value.stickToMousePosition(img);
-  },base64);
+  },base64.value);
 }
 
 var id = 0;
@@ -192,6 +196,13 @@ onMounted(async () => {
   initTextSticker()
   fonts.value = await getFonts();
 });
+
+async function save(){
+  await uploadTextSticker({
+    img:base64ToFile(base64.value)
+  });
+}
+
 </script>
 <style lang="less">
 .designiy-text-sticker-custom {

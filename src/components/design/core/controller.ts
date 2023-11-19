@@ -56,7 +56,7 @@ export class ModelController {
   private _mouse = new Vector2();
 
   // 记录原始摄像机位置
-  public defaultCameraPosition = new Vector3(0, 0, 1);
+  public defaultCameraPosition = new Vector3(0, 0, .7);
 
   public get mouse() {
     this._mouse.x = (this.x.value / this.width) * 2 - 1;
@@ -102,7 +102,7 @@ export class ModelController {
     this.controller = new OrbitControls(this.camera, this.renderer.domElement);
     this.controller.minDistance = 0.5
     this.controller.maxDistance = 5
-    // this.controller.enablePan = false
+    this.controller.enablePan = false
     this.canvasContainer.appendChild(this.renderer.domElement);
     this.resizeObserver = new ResizeObserver(
       debounce(() => {

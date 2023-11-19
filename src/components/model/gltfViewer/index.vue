@@ -73,7 +73,7 @@ const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
 
 camera.lookAt(0, 0, 0);
 
-camera.position.set(0, 0, 1);
+camera.position.set(0, 0, .7);
 
 
 const getWidth = (el) => Number(window.getComputedStyle(el).width.slice(0, -2));

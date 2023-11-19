@@ -22,16 +22,47 @@
       </el-select>
     </div>
     <div class="designiy-text-sticker-resource-content">
-      <div class="designiy-text-sticker-resource-item" v-for="i in 20"></div>
+      <div class="designiy-text-sticker-resource-item" v-for="item in data">
+        <el-image
+          @load="load($event, item)"
+          :src="item.imgFullpath"
+          style="width: 100%; height: 100%;padding:10px;"
+          fit="contain"
+          lazy
+        >
+          <template #placeholder>
+            Loading
+          </template>
+          <template #error>
+            error
+          </template>
+        </el-image>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Search, Operation, FolderOpened } from "@element-plus/icons-vue";
-import { ref } from "vue";
-
+import { ref,onBeforeMount } from "vue";
+import {getTextSticker} from '@/api'
+import {currentController} from '../../store'
+import { initDraggableElement } from "../../utils/draggable";
 const input = ref("");
+
+const data = ref()
+
+onBeforeMount(async () => {
+  data.value = await getTextSticker()
+})
+
+function load(e,item){
+  var el = e.target
+  initDraggableElement(el,() => {
+    currentController.value.stickToMousePosition(el)
+  })
+}
+
 </script>
 
 <style>
@@ -57,14 +88,16 @@ const input = ref("");
   width: 100%;
   flex: 1;
   columns: 2;
-  column-gap: 5px;
+  column-gap: 6px;
   overflow: auto;
   padding:10px;
 }
 
 .designiy-text-sticker-resource-item{
-  height:100px;
-  margin-bottom: 5px;
+  height:120px;
+  margin-bottom: 6px;
+  background-color:#fafafa;
+  border-radius:10px;
 }
 
 </style>

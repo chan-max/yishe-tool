@@ -1,16 +1,43 @@
 <template>
   <div class="admin-model-upload">
-    <el-form :rules="rules" label-position="right" label-width="100px" :model="form" style="">
+    <el-form
+      :rules="rules"
+      label-position="right"
+      label-width="100px"
+      :model="form"
+      style=""
+    >
       <el-form-item prop="name" required>
         <el-input v-model="form.name" size="large" placeholder="模型名称" />
       </el-form-item>
       <el-form-item prop="description" required>
         <el-input v-model="form.description" size="large" placeholder="模型描述" />
       </el-form-item>
+      <el-form-item prop="sizes">
+        <el-select v-model="form.sizes" placeholder="支持的服装尺寸" multiple style="width: 240px">
+          <el-option
+            v-for="size in sizes"
+            :key="size"
+            :label="size"
+            :value="size"
+          />
+        </el-select>
+      </el-form-item>
     </el-form>
-    <el-upload drag :multiple="false" :action="__DEV__ ? '/api/baseModelUpload' : '/baseModelUpload'" :data="form"
-      :disabled="!!file.length" :auto-upload="false" accept=".glb,.gltf" ref="upload" v-model:file-list="file">
-      <el-icon style="color: var(--el-color-primary); font-size: 50px"><upload-filled /></el-icon>
+    <el-upload
+      drag
+      :multiple="false"
+      :action="__DEV__ ? '/api/baseModelUpload' : '/baseModelUpload'"
+      :data="form"
+      :disabled="!!file.length"
+      :auto-upload="false"
+      accept=".glb,.gltf"
+      ref="upload"
+      v-model:file-list="file"
+    >
+      <el-icon style="color: var(--el-color-primary); font-size: 50px"
+        ><upload-filled
+      /></el-icon>
       <div>点击或拖拽模型文件来上传</div>
       <template #tip>
         <div class="el-upload__tip">仅限 glb,gltf 类型,大小限制为20mb</div>
@@ -22,7 +49,11 @@
     <el-button @click="remove" size="large" style="width: 100%; margin: 20px 0">
       移除当前文件
     </el-button>
-    <gltf-viewer ref="gltfViewerRef" style="width: 900px; height: 600px; margin: auto" :model="prerviewModel"></gltf-viewer>
+    <gltf-viewer
+      ref="gltfViewerRef"
+      style="width: 900px; height: 600px; margin: auto"
+      :model="prerviewModel"
+    ></gltf-viewer>
   </div>
 </template>
 <script setup>
@@ -37,17 +68,16 @@ const upload = ref();
 
 const file = ref([]);
 
+const sizes = ref(['S','M','L','XL','XXL','XXXL','XXXXL'])
+
+
 const gltfViewerRef = ref();
 
-const prerviewModel = computed(
-  () => {
-    return {
-      baseModelUrl: file.value[0] && URL.createObjectURL(file.value[0].raw)
-    }
-  }
-);
-
-
+const prerviewModel = computed(() => {
+  return {
+    baseModelUrl: file.value[0] && URL.createObjectURL(file.value[0].raw),
+  };
+});
 
 const rules = reactive({
   name: [{ required: true, message: "请输入模型名称", trigger: "blur" }],
@@ -58,6 +88,7 @@ const form = reactive({
   name: "",
   description: "",
   img: "",
+  sizes
 });
 
 function remove() {

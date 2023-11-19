@@ -6,8 +6,8 @@ export const getBaseModelListHook = (router, sequelize, app) =>
     const res = await table.findAll();
 
     res.forEach((item) => {
-      item.dataValues.imgFullpath = ctx.toFullpath(item.imgPath);
-      item.dataValues.fileFullpath = ctx.toFullpath(item.filePath);
+      item.dataValues.imgFullpath = ctx.relativePathToPreviewPath(item.imgPath);
+      item.dataValues.fileFullpath = ctx.relativePathToPreviewPath(item.filePath);
     });
 
     ctx.body = {

@@ -14,7 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   t_text_sticker.init({
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    description:DataTypes.STRING,
+    img:DataTypes.STRING
   }, {
     sequelize,
     modelName: 't_text_sticker',

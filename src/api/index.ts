@@ -71,10 +71,6 @@ export const getImageList = () =>
     resolve(data);
   });
 
-// 获取文字贴图地址
-export const getTextStickerUrl = (querys: any) =>
-  buildURL(Url.GET_TEXT_STICKER, querys);
-
 // 上传文字字体文件
 export const uploadFont = (data) => apiInstance.post(Url.UPLOAD_FONT, data);
 
@@ -129,3 +125,14 @@ export const getUserList = (params?:any) =>
 
 // 更新用户信息
 export const updateUserInfo = (params) => apiInstance.post(Url.UPDATE_USER_INFO,params)
+
+
+// 上传文字贴纸
+export const uploadTextSticker = (params) => apiInstance.post(Url.UPLOAD_TEXT_STICKER,params)
+
+
+// 获取文字贴纸
+export const getTextSticker = (params) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_TEXT_STICKER,params)
+  resolve(data.data.data)
+}) 

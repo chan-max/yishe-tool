@@ -6,8 +6,9 @@ draggingImage.style.pointerEvents = 'none';
 draggingImage.style.width = '100px'
 draggingImage.style.zIndex = '999999';
 draggingImage.style.cursor  = 'pointer'
+draggingImage.style.objectFit = 'contain';
 document.body.appendChild(draggingImage);
-
+    
 export const initDraggableElement = (drager,cb,src = drager.src) => {
     // 创建一个新的 image 元素
     drager.addEventListener('dragstart',(e) => {

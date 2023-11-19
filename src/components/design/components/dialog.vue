@@ -70,9 +70,9 @@ function close() {
 </script>
 <style>
 .designiy-dialog {
-  z-index: 9;
   background: var(--1s-container-background);
   position: absolute;
+  border-radius:6px;
 }
 
 .designiy-dialog-header {

@@ -10,7 +10,7 @@ import { initRouter } from "./router.js"
 import http from "http";
 import ip from "ip";
 
-import { getUploadPath } from "./fileManage.js"
+import { getRelativePath, getUploadPath } from "./fileManage.js"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,9 +48,15 @@ app.use(koaBody({ multipart: true ,
 // 定义中间件
 app.use(async (ctx,next) => {
     // 将文件将对路径转换为全路径
-    ctx.toFullpath = (path) => {
+    ctx.relativePathToPreviewPath = (path) => {
         return formatFilePath(`${ctx.protocol}://${ctx.host}${path}`);
     }
+
+    // 获取上传文件的相对路径
+    ctx.getUploadFileRelativePath = (key = 'file') => {
+        return getRelativePath(ctx.request.files[key].filepath)
+    }
+    
     await next()
   })
 

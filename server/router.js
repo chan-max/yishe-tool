@@ -10,6 +10,7 @@ import { getImageListHook } from './api/common/getImageList.js';
 import { uploadModelHook } from './api/base/uploadModel.js';
 import {getModelListHook} from './api/model.js';
 import {sendEmailHook} from './api/email.js'
+import {uploadTextSticker,getTextSticker} from './api/sticker.js'
 
 export const initRouter = (router, sequelize, app) => {
     let hooks = [
@@ -29,7 +30,9 @@ export const initRouter = (router, sequelize, app) => {
         getModelListHook,
         sendEmailHook,
         getUserListHook,
-        updateUserInfoHook
+        updateUserInfoHook,
+        uploadTextSticker,
+        getTextSticker
     ]
     hooks.forEach((hook) => hook(router, sequelize, app))
 }

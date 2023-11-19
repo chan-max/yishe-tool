@@ -13,9 +13,7 @@ import './style/cover-antdesign.less'
 import i18n from './i18n/index'
 import './style/index.less'
 import 'element-plus/theme-chalk/display.css'
-import '@icon-park/vue/styles/index.css'
 import { setupAction } from './actions/setupAction';
-import './resource/fontAwesome'
 import 'animate.css';
 import './style/base.less'
 import 'default-passive-events'

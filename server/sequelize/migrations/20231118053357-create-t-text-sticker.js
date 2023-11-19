@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('t_fonts', {
+    await queryInterface.createTable('t_text_stickers', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -15,10 +15,7 @@ module.exports = {
       description: {
         type: Sequelize.STRING
       },
-      file: {
-        type: Sequelize.STRING
-      },
-      img: {
+      data: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -32,6 +29,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Fonts');
+    await queryInterface.dropTable('t_text_stickers');
   }
 };

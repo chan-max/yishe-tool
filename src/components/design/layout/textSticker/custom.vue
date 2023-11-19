@@ -1,24 +1,9 @@
 <template>
   <div class="designiy-text-sticker-custom">
-    <div class="designiy-text-sticker-title">贴纸预览</div>
     <div class="designiy-text-sticker-canvas">
-      <div
-        id="text-sticker"
-        ref="textStickerEl"
-        :class="{ 'text-vertical': textStickerVertical }"
-        :style="{
-          color: textStickerColor,
-          fontWeight: textStickerWeight,
-          letterSpacing: textStickerLetterSpacing + 'px',
-          fontSize: textStickerFontSize + 'px',
-          lineHeight: textStickerLineHeight + 'em',
-          writingMode: textStickerVertical ? 'vertical-rl' : '',
-          textOrientation: textStickerVertical ? 'upright' : '',
-          fontStyle: textStickerIsItalic ? 'italic' : 'normal',
-        }"
-        style="white-space: pre"
-      >
-        {{ textStickerText }}
+
+      <div id="text-sticker" ref="textStickerEl">
+        {{ operatingTextStickerText }}
       </div>
     </div>
 
@@ -26,7 +11,7 @@
     <textarea
       class="designiy-text-sticker-textarea"
       placeholder="输入贴纸内容..."
-      v-model="textStickerText"
+      v-model="operatingTextStickerText"
     />
 
     <div class="designiy-text-sticker-title">文字属性</div>
@@ -44,7 +29,7 @@
         step="100"
         max="900"
         min="0"
-        v-model="textStickerWeight"
+        v-model="operatingTextStickerWeight"
       />
     </div>
 
@@ -54,7 +39,7 @@
         class="designiy-text-sticker-form-item-input"
         type="number"
         step="1"
-        v-model="textStickerLetterSpacing"
+        v-model="operatingTextStickerLetterSpacing"
       />
     </div>
 
@@ -66,7 +51,7 @@
         step="1"
         max="100"
         min="0"
-        v-model="textStickerFontSize"
+        v-model="operatingTextStickerFontSize"
       />
     </div>
 
@@ -78,7 +63,7 @@
         step="0.1"
         max="100"
         min="0"
-        v-model="textStickerLineHeight"
+        v-model="operatingTextStickerLineHeight"
       />
     </div>
 
@@ -86,9 +71,9 @@
       <div class="designiy-text-sticker-form-item-label">纵向排列</div>
       <div
         class="designiy-text-sticker-form-item-textbtn"
-        @click="textStickerVertical = !textStickerVertical"
+        @click="operatingTextStickerWritingMode = !operatingTextStickerWritingMode"
       >
-        {{ textStickerVertical ? "是" : "否" }}
+        {{ operatingTextStickerWritingMode ? "是" : "否" }}
       </div>
     </div>
 
@@ -96,9 +81,9 @@
       <div class="designiy-text-sticker-form-item-label">使用斜体</div>
       <div
         class="designiy-text-sticker-form-item-textbtn"
-        @click="textStickerIsItalic = !textStickerIsItalic"
+        @click="operatingTextStickerIsItalic = !operatingTextStickerIsItalic"
       >
-        {{ textStickerIsItalic ? "是" : "否" }}
+        {{ operatingTextStickerIsItalic ? "是" : "否" }}
       </div>
     </div>
 
@@ -119,42 +104,33 @@
     <div class="designiy-text-sticker-form-item">
       <div class="designiy-text-sticker-form-item-label">文字装饰</div>
     </div>
-
-    <div class="designiy-text-sticker-title">背景属性</div>
-
-    <div class="designiy-text-sticker-title">背景属性</div>
-
-    <div class="designiy-text-sticker-title">背景属性</div>
-
-    <div class="designiy-text-sticker-title">背景属性</div>
-
-    <div class="designiy-text-sticker-title">背景属性</div>
-
-    <div class="designiy-text-sticker-title">背景属性</div>
-
-    <div class="designiy-text-sticker-title">背景属性</div>
-
-    <div class="designiy-text-sticker-title">背景属性</div>
     <div style="flex: 1"></div>
+
+    <div>
+      <el-button type="primary" style="width: 100%"> 保存该贴纸 </el-button>
+    </div>
   </div>
 </template>
-<script setup>
-import { onMounted, ref, computed, watch, reactive } from "vue";
+<script setup lang="ts">
+import { onMounted, ref, computed, watch, reactive, watchEffect } from "vue";
 import {
   showBaseModelSelectContainer,
-  currentModelInfo,
-  canvasBgColor,
-  canvasBgOpacity,
-  textStickerText,
-  textStickerColor,
-  textStickerWeight,
-  textStickerFontSize,
-  textStickerLineHeight,
+  operatingTextStickerText,
+  operatingTextStickerColor,
+  operatingTextStickerWeight,
+  operatingTextStickerFontSize,
+  operatingTextStickerLineHeight,
+  operatingTextStickerIsItalic,
+  operatingTextStickerLetterSpacing,
+  operatingTextStickerWritingMode,
+  operatingTextStickerTextOrientation,
+  currentController
 } from "../../store.ts";
 import { getFonts, getTextStickerUrl } from "@/api/index";
 import { useDebounceFn } from "@vueuse/core";
 import { More } from "@element-plus/icons-vue";
-import { textStickerIsItalic } from "../../store";
+import { toPng } from "html-to-image";
+import { initDraggableElement } from "../../utils/draggable";
 
 const textStickerEl = ref();
 
@@ -164,10 +140,39 @@ const fonts = ref();
 // 当前字体文件路径
 const fontFile = ref();
 
-// 文字是否垂直排列
-const textStickerVertical = ref(false);
+watch(
+  [
+    operatingTextStickerText,
+    operatingTextStickerColor,
+    operatingTextStickerWeight,
+    operatingTextStickerFontSize,
+    operatingTextStickerLineHeight,
+    operatingTextStickerIsItalic,
+  ],
+  async () => {
+    initTextSticker()
+  },
+);
 
-const textStickerLetterSpacing = ref(5);
+async function initTextSticker() {
+  let el = textStickerEl.value;
+  if (!el) {
+    return;
+  }
+  el.style.color = operatingTextStickerColor.value;
+  el.style.fontWeight = operatingTextStickerWeight.value;
+  el.style.letterSpacing = operatingTextStickerLetterSpacing.value + "px";
+  el.style.fontSize = operatingTextStickerFontSize.value + "px";
+  el.style.lineHeight = operatingTextStickerLineHeight.value + "em";
+  el.style.writingMode = operatingTextStickerWritingMode.value;
+  el.style.textOrientation = operatingTextStickerTextOrientation.value;
+  el.style.fontStyle = operatingTextStickerIsItalic.value ? "italic" : "normal";
+
+  const base64 = await toPng(textStickerEl.value);
+  initDraggableElement(textStickerEl.value, (img) => {
+    currentController.value.stickToMousePosition(img);
+  },base64);
+}
 
 var id = 0;
 watch(fontFile, (url) => {
@@ -184,12 +189,16 @@ watch(fontFile, (url) => {
 });
 
 onMounted(async () => {
+  initTextSticker()
   fonts.value = await getFonts();
 });
 </script>
 <style lang="less">
 .designiy-text-sticker-custom {
-  padding: 0 10px;
+  padding: 10px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .designiy-text-sticker-canvas {
@@ -200,6 +209,8 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  overflow: auto;
   background-image: linear-gradient(
       45deg,
       #ccc 25%,
@@ -216,8 +227,14 @@ onMounted(async () => {
 }
 
 #text-sticker {
-  max-width: 100%;
-  font-size: 30px;
+  white-space: pre;
+}
+
+.designiy-text-sticker-drager {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  // visibility: hidden;
 }
 
 #textStickerImg {
@@ -228,7 +245,6 @@ onMounted(async () => {
 
 .text-vertical {
   writing-mode: vertical-rl;
-  text-orientation: upright;
 }
 
 .designiy-text-sticker-textarea {
@@ -267,13 +283,6 @@ onMounted(async () => {
   position: relative;
   display: inline-block;
   padding-right: 5px;
-  &::-webkit-inner-spin-button {
-    position: absolute;
-    margin-left: 10px;
-    width: 20px;
-    height: 16px !important;
-    left: 0%;
-  }
 }
 
 .designiy-text-sticker-form-item-textbtn {
@@ -306,7 +315,7 @@ onMounted(async () => {
 }
 
 .designiy-text-sticker-color {
-  width: 20px;
+  width: 12px;
   height: 12px;
 }
 

@@ -5,7 +5,7 @@ import {getRelativePath} from '../../fileManage.js';
 
 // 获取所有可用的字体列表 
 export const getFontsHook = (router,sequelize) => router.get('/getFonts', async (ctx) => {
-    const table = sequelize.models.Font;
+    const table = sequelize.models.t_font;
     const fonts = await table.findAll();
     ctx.body = {
       data:fonts
@@ -14,7 +14,7 @@ export const getFontsHook = (router,sequelize) => router.get('/getFonts', async 
 
 
 export const uploadFontHook = (router,sequelize) => router.post('/uploadFont', async (ctx) => {
-    const table = sequelize.models.Font;
+    const table = sequelize.models.t_font;
     const { name, description } = ctx.request.body;
     var { file, img } = ctx.request.files; // 模型文件, 图片
     

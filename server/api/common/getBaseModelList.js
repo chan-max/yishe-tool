@@ -2,7 +2,7 @@
 
 export const getBaseModelListHook = (router, sequelize, app) =>
   router.get("/getBaseModelList", async (ctx) => {
-    const table = sequelize.models.BaseModel;
+    const table = sequelize.models.t_base_model;
     const res = await table.findAll();
 
     res.forEach((item) => {

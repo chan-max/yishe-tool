@@ -86,23 +86,38 @@ export const showDecalControlContainer = ref(true)
 export const zIndex = ref(1)
 
 // 文字贴纸文字
-export const textStickerText = ref(`breaking
+export const operatingTextStickerText = ref(`breaking
           bad`)
 
 // 文字贴纸颜色
-export const textStickerColor = ref('#000')
+export const operatingTextStickerColor = ref('#000')
 
 // 文字厚度
-export const textStickerWeight = ref(500)
+export const operatingTextStickerWeight = ref(500)
 
 // 字号大小， 字号大小只用于显示
-export const textStickerFontSize = ref(32)
+export const operatingTextStickerFontSize = ref(32)
 
 // 行高
-export const textStickerLineHeight = ref(1)
+export const operatingTextStickerLineHeight = ref(1)
 
 // 是否斜体
-export const textStickerIsItalic = ref(false)
+export const operatingTextStickerIsItalic = ref(false)
+
+// 文字间距
+export const operatingTextStickerLetterSpacing = ref(5);
+
+// 文字书写方式
+export const operatingTextStickerWritingMode = ref('initial')
+export const enum TextStickerWritingMode {
+     INITIAL = 'initial',
+     VERTICAL_RL = 'vertical-rl',
+     VERTICAL_LR = 'vertical-lr',
+} 
+
+export const operatingTextStickerTextOrientation = ref('upright')
+
+
 
 // 当前正在操作的贴花
 export const operatingDecal = shallowRef()

@@ -15,7 +15,7 @@ export const signupHook = (router, sequelize, app) =>
     //     }
     // }
 
-    const table = sequelize.models.User;
+    const table = sequelize.models.t_user;
 
     const _user = await table.findOne({ where: { account } });
 
@@ -55,7 +55,7 @@ export const getUserListHook = (router, sequelize, app) =>
     const pageSize = 5;
     const currentPage = 1;
 
-    const result = await sequelize.models.User.findAndCountAll({
+    const result = await sequelize.models.t_user.findAndCountAll({
       limit: pageSize,
       offset: (currentPage - 1) * pageSize,
     });
@@ -79,7 +79,7 @@ export const updateUserInfoHook = (router, sequelize, app) =>
 
     const avatar = getRelativePath(ctx.request.files.avatar.filepath);
 
-    await sequelize.models.User.update(
+    await sequelize.models.t_user.update(
       {
         avatar,
       },
@@ -102,7 +102,7 @@ import jwt from "jsonwebtoken";
 export const loginHook = (router, sequelize) => router.post('/login', async (ctx) => {
     const data = ctx.request.body
     const { account, password } = data
-    const table = sequelize.models.User
+    const table = sequelize.models.t_user
 
     const user = await table.findOne({ where: { account } })
 

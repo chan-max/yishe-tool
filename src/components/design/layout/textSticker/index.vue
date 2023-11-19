@@ -1,15 +1,12 @@
 <template>
   <div class="designiy-text-sticker">
     <div class="designiy-text-sticker-tab">
-      <el-radio-group v-model="tab">
-        <el-radio-button label="resource"
-          ><el-icon><Picture /></el-icon> 网络贴纸
-        </el-radio-button>
-        <el-radio-button label="custom">
-          <el-icon><EditPen /></el-icon>
-          自定义贴纸
-        </el-radio-button>
-      </el-radio-group>
+      <div @click="tab = 'resource'" class="designiy-text-sticker-tab-item" :class=" (tab === 'resource') && 'designiy-text-sticker-tab-item-focus'">
+          所有文字贴纸
+      </div>
+      <div @click="tab = 'custom'" class="designiy-text-sticker-tab-item" :class=" (tab === 'custom') && 'designiy-text-sticker-tab-item-focus'">
+        自定义贴纸
+      </div>
     </div>
 
     <div class="designiy-text-sticker-content">
@@ -44,31 +41,27 @@ const tab = ref("resource");
 }
 
 .designiy-text-sticker-tab {
-  .el-radio-group {
-    width: 100%;
-  }
-  .el-radio-button {
-    width: 50%;
-  }
-  .el-radio-button__inner {
-    width: 100%;
-    font-size: 12px !important;
-    font-weight: 500;
-    display: flex;
-    justify-content: center;
-    color: #aaa;
-    align-items: center;
-    padding: 10px !important;
-    background-color: #f6f6f6;
-    border-radius: 0 !important;
-    border: none !important ;
-    box-shadow: none !important;
-  }
-  .el-radio-button.is-active {
-    .el-radio-button__inner {
-      background-color: #fff;
-      color: var(--1s-main);
-    }
-  }
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background-color:#fafafa;
+  margin:10px;
+  padding:5px;
+  border-radius:20px;
+}
+
+.designiy-text-sticker-tab-item{
+  width:50%;
+  color:#777;
+  padding:3px 5px;
+  font-size:12px;
+  border-radius:20px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.designiy-text-sticker-tab-item-focus{
+  background-color:#eee;
+  color:#555;
 }
 </style>

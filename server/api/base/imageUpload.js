@@ -2,7 +2,7 @@ import { getRelativePath } from '../../fileManage.js'
 
 
 export const imageUploadHook =  (router,sequelize) => router.post('/imageUpload',async (ctx) => {
-    const table = sequelize.models.Image;
+    const table = sequelize.models.t_image;
     const { name, description } = ctx.request.body;
 
     const { file } = ctx.request.files; // 模型文件, 图片

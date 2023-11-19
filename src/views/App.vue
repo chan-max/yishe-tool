@@ -29,7 +29,10 @@ body {
   padding: 0;
   height: 100%;
   overflow:hidden;
+
 }
+
+
 
 #app {
   width: 100%;

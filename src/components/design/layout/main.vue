@@ -69,7 +69,7 @@
       left: calc(var(--1s-left-menu-width));
     "
   >
-    <image-sticker @dragover="stickeOn"></image-sticker>
+    <image-sticker></image-sticker>
   </diycontainer>
   <diycontainer
     :show="showTextStickerContainer"
@@ -203,10 +203,7 @@ onMounted(() => {
   modelController.render(mountContainer.value);
 });
 
-// 贴图逻辑暂时保留
-function stickeOn(img, info) {
-  modelController.stickToMousePosition(img, info);
-}
+
 </script>
 
 <style lang="less">

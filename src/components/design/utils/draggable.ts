@@ -1,18 +1,16 @@
 // 使元素可拖拽
 
-const draggableImage = document.createElement('img');
-draggableImage.style.position = 'fixed';
-draggableImage.style.pointerEvents = 'none';
-draggableImage.style.width = '100px'
-draggableImage.style.zIndex = '999999';
-draggableImage.style.cursor  = 'pointer'
-document.body.appendChild(draggableImage);
+const draggingImage = document.createElement('img');
+draggingImage.style.position = 'fixed';
+draggingImage.style.pointerEvents = 'none';
+draggingImage.style.width = '100px'
+draggingImage.style.zIndex = '999999';
+draggingImage.style.cursor  = 'pointer'
+document.body.appendChild(draggingImage);
 
-
-
-export const initDraggableElement = (imageElement,cb) => {
+export const initDraggableElement = (drager,cb,src = drager.src) => {
     // 创建一个新的 image 元素
-    imageElement.addEventListener('dragstart',(e) => {
+    drager.addEventListener('dragstart',(e) => {
         e.preventDefault()
     })
     
@@ -45,21 +43,21 @@ export const initDraggableElement = (imageElement,cb) => {
             return
         }
 
-        draggableImage.src = imageElement.src;
-        draggableImage.style.display = 'block';
+        draggingImage.src = src;
+        draggingImage.style.display = 'block';
         // 设置image元素的位置
-        draggableImage.style.left = mouseX - draggableImage.width /2 + "px";
-        draggableImage.style.top = mouseY - draggableImage.height/2 + "px";
+        draggingImage.style.left = mouseX - draggingImage.width /2 + "px";
+        draggingImage.style.top = mouseY - draggingImage.height/2 + "px";
         document.addEventListener('mouseup', onMouseUp);
     }
   
     // 鼠标释放事件处理函数
     function onMouseUp(event) {
 
-      draggableImage.style.display = 'none'
+      draggingImage.style.display = 'none'
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
-      cb(draggableImage,event)
+      cb(draggingImage,event)
     }
 
     function onDoMouseUp(){
@@ -67,8 +65,8 @@ export const initDraggableElement = (imageElement,cb) => {
     }
   
     // 添加鼠标按下事件监听器
-    imageElement.addEventListener('mousedown', onMouseDown);
-    imageElement.addEventListener('mouseup', onDoMouseUp);
+    drager.addEventListener('mousedown', onMouseDown);
+    drager.addEventListener('mouseup', onDoMouseUp);
   
     // 返回拖动结束时的事件回调函数
     return 

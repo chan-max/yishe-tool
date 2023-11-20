@@ -105,7 +105,7 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref, computed, watch, reactive, watchEffect,nextTick } from "vue";
+import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import {
   showBaseModelSelectContainer,
   operatingTextStickerText,
@@ -125,7 +125,7 @@ import { More } from "@element-plus/icons-vue";
 import { toPng } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
 import { base64ToFile } from "@/common/transform/base64ToFile";
-import { debounce } from '@/common/utils/debounce';
+import { debounce } from "@/common/utils/debounce";
 
 const base64 = ref("");
 
@@ -147,8 +147,8 @@ watch(
     operatingTextStickerIsItalic,
   ],
   async () => {
-    await nextTick() 
-    initTextSticker()
+    await nextTick();
+    initTextSticker();
   }
 );
 
@@ -171,7 +171,7 @@ async function initTextSticker() {
   // console.log(base64.value)
   // var win = window.open("", "_blank");
   // win.document.write('<img src="' + base64.value + '"/>');
-  
+
   initDraggableElement(
     textStickerEl.value,
     (img) => {
@@ -186,11 +186,11 @@ watch(fontFile, (url) => {
   let fontId = id++;
   const fontStyles = document.createElement("style");
   fontStyles.innerHTML = `
-      @font-face {
-          font-family: font${fontId};
-          src: url(${url}); /* 替换为实际的字体文件相对路径 */
-      }
-    `;
+        @font-face {
+            font-family: font${fontId};
+            src: url(${url}); /* 替换为实际的字体文件相对路径 */
+        }
+      `;
   document.head.appendChild(fontStyles);
   textStickerEl.value.style.fontFamily = ` font${fontId++}`;
 });
@@ -210,6 +210,7 @@ async function save() {
 .designiy-text-sticker-custom {
   padding: 10px;
   height: 100%;
+  width:260px;
   display: flex;
   flex-direction: column;
 }

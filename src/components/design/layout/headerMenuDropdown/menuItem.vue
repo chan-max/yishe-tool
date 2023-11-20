@@ -12,8 +12,8 @@
       <div class="designiy-dropdown-menu-item-suffix">
         <slot name="suffix"></slot>
       </div>
-      <div class="designiy-dropdown-menu-item-arrow" v-if="$slots.children">
-        <icon-right-arrow></icon-right-arrow>
+      <div class="designiy-dropdown-menu-item-arrow">
+        <icon-right-arrow  v-if="$slots.children"> </icon-right-arrow>
       </div>
     </div>
 
@@ -71,6 +71,7 @@ function itemClick() {
 }
 
 .designiy-dropdown-menu-item-arrow {
+
   width: 12px;
   height: 12px;
   svg {

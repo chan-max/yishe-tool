@@ -2,7 +2,7 @@
   <div class="designiy-base-model-select">
     <div class="designiy-base-model-select-item" v-for="m in models">
       <div class="designiy-base-model-select-item-img">
-        <el-image :src="m.img" draggable="false" @click="selectModel(m)"></el-image>
+        <el-image :src="m.imgFullpath" draggable="false" @click="selectModel(m)"></el-image>
       </div>
     </div>
   </div>
@@ -10,7 +10,7 @@
 <script setup>
 import { getBaseModelList } from "@/api";
 import { onMounted, ref } from "vue";
-import { showBaseModelSelectContainer, currentModelInfo } from "../../store.ts";
+import { showBaseModelSelectContainer, currentOperatingModelInfo } from "../../store.ts";
 
 const models = ref([]);
 
@@ -21,7 +21,8 @@ onMounted(async () => {
 
 function selectModel(m) {
   showBaseModelSelectContainer.value = false;
-  currentModelInfo.value = m;
+  currentOperatingModelInfo.value = m;
+
 }
 </script>
 <style lang="less">

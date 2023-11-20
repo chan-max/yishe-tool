@@ -48,10 +48,22 @@
           <template #children>
             <menu-main>
               <menu-item>
-                <template #title>111</template>
+                <template #title> 选择模型 </template>
+                <template #suffix>
+                  <el-switch v-model="showBaseModelSelectContainer" size="small" />
+                </template> 
               </menu-item>
               <menu-item>
-                <template #title>2222</template>
+                <template #title> 操作贴纸 </template>
+                <template #suffix>
+                  <el-switch v-model="showDecalControlContainer" size="small" />
+                </template>
+              </menu-item>
+              <menu-item>
+                <template #title> 显示工作台 </template>
+                <template #suffix>
+                  <el-switch v-model="showWorkspaceContainer" size="small" />
+                </template>
               </menu-item>
             </menu-main>
           </template>
@@ -66,12 +78,11 @@ import { ref, onMounted } from "vue";
 import iconMenu from "@/icon/menu.svg?vueComponent";
 import menuMain from "./menu.vue";
 import menuItem from "./menuItem.vue";
-import { zIndex } from "../../store";
+import { showWorkspaceContainer, showBaseModelSelectContainer ,showDecalControlContainer} from "../../store";
 import iconLogout from "@/icon/logout.svg?vueComponent";
 import iconNew from "@/icon/new.svg?vueComponent";
 import iconView from "@/icon/view.svg?vueComponent";
 import iconScreenshot from "@/icon/screenshot.svg?vueComponent";
-
 
 const showHeaderMenuDropdown = ref(false);
 

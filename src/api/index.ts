@@ -30,14 +30,7 @@ export const getBaseModelList = () =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.get(Url.GET_BASE_MODEL_LIST);
     resolve(
-      res.data.data.map((item) => {
-        return {
-          name: item.name,
-          desc: item.description,
-          img: resolveFilePath(item.imgPath),
-          file: resolveFilePath(item.filePath),
-        };
-      })
+      res.data.data
     );
   });
 

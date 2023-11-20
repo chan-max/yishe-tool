@@ -1,6 +1,5 @@
 <template>
 <div class="login-container">
-  <div class="login-logo">1s.design</div>
   <div class="login-form">
     <div style="font-size: 16px;color: #666;text-align: left;padding: 20px 0px;">登录衣设账号</div>
     <el-form :model="loginForm"  ref="form"  :rules="rules" label-position="top">
@@ -150,11 +149,6 @@ async function submit(form) {
   color: var(--el-color-primary);
 }
 
-.login-logo{
-  position: absolute;
-  top: 50px;
-  left: 50px;
-}
 
 .login-link{
   color: #999;

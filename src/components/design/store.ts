@@ -1,8 +1,6 @@
 import { setFullscreen } from "@/common/browser";
 import { computed, ref, shallowRef, watchEffect,watch } from "vue"
 
-// export const zIndex = 2147483647
-
 // 当前实例
 export const currentController = shallowRef(null);
 
@@ -20,15 +18,6 @@ export const currentBaseModelUrl = shallowRef()
 
 // 保存引入文件场景中的模型
 export const currentModel = shallowRef()
-
-// 保存当前模型的材质
-export const currentMaterial = shallowRef()
-
-// 保留最重要的 canvas 元素 , 用于报存贴图信息
-export const textureCanvas = shallowRef()
-
-// 材质canvas抽象类
-export const currentCustomTextureCanvas = shallowRef()
 
 // 当前组件是否全屏
 export const isFullScreen = ref(false)
@@ -57,7 +46,7 @@ export const showBaseModelSelectContainer = ref(false);
 export const currentModelFilePath = ref()
 
 // 当前操作的模型信息
-export const currentModelInfo = ref()
+export const currentOperatingModelInfo = ref()
 
 // 是否展示场景控制弹窗
 export const showSceneControlContainer = ref(false)
@@ -75,12 +64,20 @@ watch(showImageStickerContainer,(value) => {
 export const showTextStickerContainer = ref(false)
 
 
-// 是否展示工作数窗口
-export const showWorkTreeContainer = ref(false)
+// 是否展示工作台窗口
+export const showWorkspaceContainer = ref(true)
+watch(showWorkspaceContainer,(value) => {
+    if(value){
+        showDecalControlContainer.value = false
+    }
+})
+
 
 // 是否展示贴画控制弹窗
+export const showDecalControlContainer = ref(false)
 
-export const showDecalControlContainer = ref(true)
+// 是否展示自定义文字贴纸
+export const showCustomTextStickerContainer = ref(false)
 
 // 记录弹窗的最大zIndex
 export const zIndex = ref(1)

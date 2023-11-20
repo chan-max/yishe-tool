@@ -7,7 +7,9 @@ draggingImage.style.width = '100px'
 draggingImage.style.zIndex = '999999';
 draggingImage.style.cursor = 'pointer'
 draggingImage.style.objectFit = 'contain';
+draggingImage.style.cursor = 'grab';
 document.body.appendChild(draggingImage);
+
 
 export const initDraggableElement = (el, cb, src = el.src) => {
 

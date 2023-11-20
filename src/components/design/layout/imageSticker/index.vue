@@ -52,7 +52,7 @@
 import { onMounted, ref, computed} from "vue";
 import {
   showBaseModelSelectContainer,
-  currentModelInfo,
+  currentOperatingModelInfo,
   canvasBgColor,
   canvasBgOpacity,
   currentController

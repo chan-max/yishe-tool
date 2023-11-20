@@ -3,21 +3,21 @@
     <el-tooltip :hide-after="0" content="工作台" placement="right">
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showWorkTreeContainer }"
-        @click="showWorkTreeContainer = !showWorkTreeContainer"
+        :class="{ 'menu-bar-item-focus': showWorkspaceContainer }"
+        @click="showWorkspaceContainer = !showWorkspaceContainer"
       >
         <icon-workspace></icon-workspace>
         <span>工作台</span>
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" content="选择服装模型" placement="right">
+    <el-tooltip :hide-after="0" content="选择模型" placement="right">
       <div
         class="menu-bar-item"
         :class="{ 'menu-bar-item-focus': showBaseModelSelectContainer }"
         @click="showBaseModelSelectContainer = !showBaseModelSelectContainer"
       >
         <icon-shirt></icon-shirt>
-        <span>服装</span>
+        <span>选择模型</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="图片贴图" placement="right">
@@ -37,13 +37,13 @@
         @click="showTextStickerContainer = !showTextStickerContainer"
       >
       <icon-text></icon-text>
-        <span>文字</span>
+        <span>网络文字</span>
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" content="自定义涂鸦" placement="right">
-      <div class="menu-bar-item">
+    <el-tooltip :hide-after="0" content="自定义文字" placement="right">
+      <div class="menu-bar-item" @click="showCustomTextStickerContainer= !showCustomTextStickerContainer">
         <icon-paint></icon-paint>
-        <span>涂鸦</span>
+        <span>文字创作</span>
       </div>
     </el-tooltip>
 
@@ -122,7 +122,8 @@ import {
   showSceneControlContainer,
   showImageStickerContainer,
   showTextStickerContainer,
-  showWorkTreeContainer,
+  showWorkspaceContainer,
+  showCustomTextStickerContainer
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?vueComponent";

@@ -5,7 +5,7 @@
 </template>
 <script setup>
   import { onMounted, ref,computed } from "vue";
-  import {showBaseModelSelectContainer,currentModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
+  import {showBaseModelSelectContainer,currentOperatingModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
 import Color from 'color'
 
 const predefineColors = ref(["#ffffff", "#dddddd", "#333333", "#555555"]);

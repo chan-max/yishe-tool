@@ -80,7 +80,6 @@ export class DecalController {
     this.imgAspectRatio = this.img.width / this.img.height;
     this.initTexture();
     this.modelController.decalControllers.push(this);
-    showDecalControlContainer.value = true;
     operatingDecal.value = this
   }
 

@@ -14,7 +14,7 @@
         <el-input v-model="form.description" size="large" placeholder="模型描述" />
       </el-form-item>
       <el-form-item prop="sizes">
-        <el-select v-model="form.sizes" placeholder="支持的服装尺寸" multiple style="width: 240px">
+        <el-select v-model="form.sizes" placeholder="尺寸" multiple style="width: 240px">
           <el-option
             v-for="size in sizes"
             :key="size"

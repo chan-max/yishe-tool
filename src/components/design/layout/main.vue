@@ -41,6 +41,8 @@
     <bottom-menu></bottom-menu>
   </diycontainer>
 
+
+
   <diydialog
     :show="showBaseModelSelectContainer"
     @close="showBaseModelSelectContainer = false"
@@ -50,7 +52,7 @@
       duration: 100,
     }"
   >
-    <template #title> 选择基础服装</template>
+    <template #title> 选择基础</template>
     <base-model-select></base-model-select>
   </diydialog>
 
@@ -71,6 +73,18 @@
   >
     <image-sticker></image-sticker>
   </diycontainer>
+
+  <diycontainer
+    :show="showCustomTextStickerContainer"
+    style="
+      height: calc(100% - var(--1s-header-height));
+      bottom: 0;
+      left: calc(var(--1s-left-menu-width));
+    "
+  >
+    <custom-text-sticker></custom-text-sticker>
+  </diycontainer>
+
   <diycontainer
     :show="showTextStickerContainer"
     style="
@@ -83,10 +97,10 @@
   </diycontainer>
 
   <diycontainer
-    :show="showWorkTreeContainer"
+    :show="showWorkspaceContainer"
     style="height: calc(100% - var(--1s-header-height)); bottom: 0; right: 0"
   >
-    <work-tree></work-tree>
+    <workspace></workspace>
   </diycontainer>
 
   <diycontainer
@@ -96,7 +110,7 @@
     <decal-control></decal-control>
   </diycontainer>
 </template>
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, watchEffect, watch } from "vue";
 import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";
@@ -106,15 +120,15 @@ import {
   canvasBgColor,
   canvasBgOpacity,
   showBaseModelSelectContainer,
-  currentModelInfo,
+  currentOperatingModelInfo,
   showSceneControlContainer,
   showImageStickerContainer,
   showTextStickerContainer,
-  showWorkTreeContainer,
+  showWorkspaceContainer,
   showDecalControlContainer,
   isLoading,
   showImageUplaodContainer,
-  zIndex
+  showCustomTextStickerContainer
 } from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -125,10 +139,11 @@ import baseModelSelect from "./baseModelSelect/index.vue";
 import sceneControl from "./sceneControl/index.vue";
 import imageSticker from "./imageSticker/index.vue";
 import textSticker from "./textSticker/index.vue";
-import workTree from "./workTree/index.vue";
+import workspace from "./workspace/index.vue";
 import bottomMenu from "./bottomMenu.vue";
 import decalControl from "./decalControl/index.vue";
 import imageUpload from "./imageUpload/index.vue";
+import customTextSticker from './customTextSticker/index.vue';
 
 import {
   Mesh,
@@ -166,9 +181,9 @@ const { scene } = modelController;
 
 currentController.value = modelController;
 
-watch(currentModelInfo, () => {
-  const { file } = currentModelInfo.value;
-  modelController.setMainModel(file);
+// 模型转换
+watch(currentOperatingModelInfo, () => {
+  modelController.setMainModel(currentOperatingModelInfo.value.fileFullpath);
 });
 
 // 创建场景、相机和渲染器等...

@@ -1,5 +1,4 @@
 import TextToSvg from 'text-to-svg'
-import sharp from 'sharp';
 import path from 'path'
 import {getRelativePath} from '../../fileManage.js';
 

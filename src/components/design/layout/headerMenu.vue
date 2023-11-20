@@ -83,7 +83,7 @@ async function save() {
 }
 
 .designiy-header-logo {
-  width: 70px;
+  width: var(--1s-left-menu-width);
   height: 46px;
   background:#6900ff;
 }

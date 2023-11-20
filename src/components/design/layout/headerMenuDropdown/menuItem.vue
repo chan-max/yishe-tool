@@ -42,8 +42,8 @@ function itemClick() {
 }
 
 .designiy-dropdown-menu-item-main {
-  width: 200px;
-  padding: 10px 20px;
+  width:180px;
+  padding: 7px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -28,7 +28,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import iconUpload from "@/icon/upload.svg?vueComponent";
 import { ref, reactive, watch, computed, shallowRef } from "vue";
 import { Plus } from "@element-plus/icons-vue";

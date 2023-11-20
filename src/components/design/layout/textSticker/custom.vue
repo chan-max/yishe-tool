@@ -1,7 +1,6 @@
 <template>
   <div class="designiy-text-sticker-custom">
     <div class="designiy-text-sticker-canvas">
-
       <div id="text-sticker" ref="textStickerEl">
         {{ operatingTextStickerText }}
       </div>
@@ -69,12 +68,6 @@
 
     <div class="designiy-text-sticker-form-item">
       <div class="designiy-text-sticker-form-item-label">纵向排列</div>
-      <div
-        class="designiy-text-sticker-form-item-textbtn"
-        @click="operatingTextStickerWritingMode = !operatingTextStickerWritingMode"
-      >
-        {{ operatingTextStickerWritingMode ? "是" : "否" }}
-      </div>
     </div>
 
     <div class="designiy-text-sticker-form-item">
@@ -111,8 +104,8 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
-import { onMounted, ref, computed, watch, reactive, watchEffect } from "vue";
+<script setup>
+import { onMounted, ref, computed, watch, reactive, watchEffect,nextTick } from "vue";
 import {
   showBaseModelSelectContainer,
   operatingTextStickerText,
@@ -124,17 +117,17 @@ import {
   operatingTextStickerLetterSpacing,
   operatingTextStickerWritingMode,
   operatingTextStickerTextOrientation,
-  currentController
-} from "../../store.ts";
+  currentController,
+} from "../../store";
 import { getFonts, uploadTextSticker } from "@/api/index";
 import { useDebounceFn } from "@vueuse/core";
 import { More } from "@element-plus/icons-vue";
 import { toPng } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
-import {base64ToFile} from '@/common/transform/base64ToFile';
+import { base64ToFile } from "@/common/transform/base64ToFile";
+import { debounce } from '@/common/utils/debounce';
 
-
-const base64 = ref('')
+const base64 = ref("");
 
 const textStickerEl = ref();
 
@@ -154,8 +147,9 @@ watch(
     operatingTextStickerIsItalic,
   ],
   async () => {
+    await nextTick() 
     initTextSticker()
-  },
+  }
 );
 
 async function initTextSticker() {
@@ -163,6 +157,7 @@ async function initTextSticker() {
   if (!el) {
     return;
   }
+
   el.style.color = operatingTextStickerColor.value;
   el.style.fontWeight = operatingTextStickerWeight.value;
   el.style.letterSpacing = operatingTextStickerLetterSpacing.value + "px";
@@ -173,9 +168,17 @@ async function initTextSticker() {
   el.style.fontStyle = operatingTextStickerIsItalic.value ? "italic" : "normal";
 
   base64.value = await toPng(textStickerEl.value);
-  initDraggableElement(textStickerEl.value, (img) => {
-    currentController.value.stickToMousePosition(img);
-  },base64.value);
+  // console.log(base64.value)
+  // var win = window.open("", "_blank");
+  // win.document.write('<img src="' + base64.value + '"/>');
+  
+  initDraggableElement(
+    textStickerEl.value,
+    (img) => {
+      currentController.value.stickToMousePosition(img);
+    },
+    base64.value
+  );
 }
 
 var id = 0;
@@ -193,16 +196,15 @@ watch(fontFile, (url) => {
 });
 
 onMounted(async () => {
-  initTextSticker()
+  initTextSticker();
   fonts.value = await getFonts();
 });
 
-async function save(){
+async function save() {
   await uploadTextSticker({
-    img:base64ToFile(base64.value)
+    img: base64ToFile(base64.value),
   });
 }
-
 </script>
 <style lang="less">
 .designiy-text-sticker-custom {

@@ -27,7 +27,6 @@
     <el-upload
       drag
       :multiple="false"
-      :action="__DEV__ ? '/api/baseModelUpload' : '/baseModelUpload'"
       :data="form"
       :disabled="!!file.length"
       :auto-upload="false"
@@ -59,10 +58,11 @@
 <script setup>
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
-import { reactive, ref, computed } from "vue";
+import { reactive, ref, computed ,shallowReactive} from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import { base64ToFile } from "@/common/transform/base64ToFile";
+import {uploadBaseModel} from '@/api'
 
 const upload = ref();
 
@@ -84,18 +84,19 @@ const rules = reactive({
   description: [{ required: true, message: "请输入模型描述", trigger: "blur" }],
 });
 
-const form = reactive({
+const form = shallowReactive({
   name: "",
   description: "",
   img: "",
-  sizes
+  file:'',
+  sizes:[]
 });
 
 function remove() {
   upload.value.handleRemove(file.value[0]);
 }
 
-function submit() {
+async function submit() {
   if (!file.value[0]) {
     message.error("选择模型文件");
     return;
@@ -105,9 +106,11 @@ function submit() {
     return;
   }
 
+  form.file = file.value[0].raw
   form.img = base64ToFile(gltfViewerRef.value.getScreenshot());
 
-  upload.value.submit();
+  await uploadBaseModel(form)
+  
 }
 </script>
 

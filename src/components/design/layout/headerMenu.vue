@@ -6,9 +6,9 @@
     
     <div style="flex-grow: 1"></div>
 
-    <div @click="save" class="cursor-pointer" style="font-weight: bold; font-size: 12px;color:var(--1s-text-color);">
+    <el-button @click="save" size="small" type="primary" round class="cursor-pointer" >
       保 存
-    </div>
+    </el-button>
 
     <user-avatar />
 

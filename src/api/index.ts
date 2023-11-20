@@ -132,7 +132,7 @@ export const uploadTextSticker = (params) => apiInstance.post(Url.UPLOAD_TEXT_ST
 
 
 // 获取文字贴纸
-export const getTextSticker = (params) => new Promise(async (resolve, reject) => {
+export const getTextSticker = (params?:any) => new Promise(async (resolve, reject) => {
   const data = await apiInstance.post(Url.GET_TEXT_STICKER,params)
   resolve(data.data.data)
 }) 

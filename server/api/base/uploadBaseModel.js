@@ -4,7 +4,7 @@ import fs from 'fs'
 
 import { getRelativePath } from '../../fileManage.js'
 
-export const baseModelUploadHook = (router, sequelize) => router.post("/baseModelUpload", async (ctx) => {
+export const uploadBaseModelHook = (router, sequelize) => router.post("/uploadBaseModel", async (ctx) => {
     const table = sequelize.models.t_base_model;
     const { name, description } = ctx.request.body;
     const { file, img } = ctx.request.files; // 模型文件, 图片
@@ -18,7 +18,7 @@ export const baseModelUploadHook = (router, sequelize) => router.post("/baseMode
       filePath,
       imgPath,
     });
-
+    
     ctx.body = {
       message: "模型上传成功",
       type:'success'

@@ -31,10 +31,8 @@
           lazy
         >
           <template #placeholder>
-            Loading
           </template>
           <template #error>
-            error
           </template>
         </el-image>
       </div>
@@ -51,6 +49,9 @@ import { initDraggableElement } from "../../utils/draggable";
 const input = ref("");
 
 const data = ref()
+
+const value = ref()
+const options = ref([])
 
 onBeforeMount(async () => {
   data.value = await getTextSticker()

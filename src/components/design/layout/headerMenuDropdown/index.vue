@@ -39,6 +39,23 @@
           </template>
           <template #title> 退出 </template>
         </menu-item>
+
+        <menu-item>
+          <template #icon>
+            <icon-view></icon-view>
+          </template>
+          <template #title> 视图 </template>
+          <template #children>
+            <menu-main>
+              <menu-item>
+                <template #title>111</template>
+              </menu-item>
+              <menu-item>
+                <template #title>2222</template>
+              </menu-item>
+            </menu-main>
+          </template>
+        </menu-item>
       </menu-main>
     </div>
   </div>
@@ -52,6 +69,7 @@ import menuItem from "./menuItem.vue";
 import { zIndex } from "../../store";
 import iconLogout from "@/icon/logout.svg?vueComponent";
 import iconNew from "@/icon/new.svg?vueComponent";
+import iconView from "@/icon/view.svg?vueComponent";
 import iconScreenshot from "@/icon/screenshot.svg?vueComponent";
 
 

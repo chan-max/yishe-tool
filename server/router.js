@@ -3,7 +3,7 @@ import {getBaseModelListHook} from './api/common/getBaseModelList.js'
 import {getBaseSkyboxHook } from "./api/common/getSkybox.js";
 import { getWebStickersHook } from "./api/design/getStickers.js";
 import { textStickerHook,uploadFontHook,getFontsHook } from "./api/text/textSticker.js";
-import { baseModelUploadHook } from "./api/base/baseModelUpload.js";
+import { uploadBaseModelHook } from "./api/base/uploadBaseModel.js";
 import { signupHook ,getUserListHook,updateUserInfoHook,loginHook } from "./api/user.js";
 import {imageUploadHook} from './api/base/imageUpload.js'
 import { getImageListHook } from './api/common/getImageList.js';
@@ -20,7 +20,7 @@ export const initRouter = (router, sequelize, app) => {
         getBaseModelListHook,
         getBaseSkyboxHook,
         getWebStickersHook,
-        baseModelUploadHook,
+        uploadBaseModelHook,
         imageUploadHook,
         getImageListHook,
         textStickerHook,

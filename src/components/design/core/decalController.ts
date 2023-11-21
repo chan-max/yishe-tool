@@ -13,13 +13,13 @@ import {
   Vector2,
   Vector3,
 } from "three";
-  
+
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { operatingDecal, showDecalControlContainer } from '../store';
 
 
 export interface DecalControllerParams {
-  
+
 }
 
 export class DecalController {
@@ -34,19 +34,19 @@ export class DecalController {
 
   // 材质
   material = null;
-  
+
   // 位置
   private _position = null
   get position() {
     return this._position
   }
 
-    // 贴纸尺寸限制
-    minSize: number
-    maxSize: number
-  
-    // 尺寸比 0 - 1 最小尺寸 到最大尺寸
-    sizeRatio = 1
+  // 贴纸尺寸限制
+  minSize: number
+  maxSize: number
+
+  // 尺寸比 0 - 1 最小尺寸 到最大尺寸
+  sizeRatio = 1
   // 尺寸
   _size = 0.1
   get size() {
@@ -60,17 +60,17 @@ export class DecalController {
   }
 
   // 保存当前的decal实例
-  decal = null;
+  mesh = null;
 
   // 当前使用的材质信息
 
   // 记录贴花添加时的鼠标位置
-  get mousePositon() {
+  get mouse() {
     return new Vector2(this.modelController.mouse.x, this.modelController.mouse.y)
   }
 
-  get mesh() {
-    return this.modelController.mainMesh;
+  get parentMesh() {
+    return this.modelController.mesh;
   }
 
   // 记录贴画时摄像机的位置
@@ -78,18 +78,18 @@ export class DecalController {
 
   info = null
 
-   constructor(modelController: ModelController, img: HTMLImageElement, info) {
+  constructor(modelController: ModelController, img: HTMLImageElement, info) {
     this.modelController = modelController;
     this.img = img;
     this.info = info;
-    this.imgAspectRatio = (this.img.naturalWidth ||  this.img.width) / (this.img.naturalHeight || this.img.height);
-
+    this.imgAspectRatio = (this.img.naturalWidth || this.img.width) / (this.img.naturalHeight || this.img.height);
     this.initTexture();
     this.modelController.decalControllers.push(this);
     operatingDecal.value = this
+    this.initDecalClickEvent()
   }
 
-   initTexture(){
+  initTexture() {
     const textureLoader = new TextureLoader();
     textureLoader.setWithCredentials(true)
     textureLoader.setCrossOrigin('*')
@@ -109,13 +109,13 @@ export class DecalController {
   // 创建该贴纸
   create() {
     // 检查是否已创建，并清除旧贴纸
-    if (this.decal) {
-      this.modelController.scene.remove(this.decal);
+    if (this.mesh) {
+      this.modelController.scene.remove(this.mesh);
     }
-    
-    var decalGeometry = new DecalGeometry(this.mesh, this.position, this.rotation, this.size);
-    this.decal = new Mesh(decalGeometry, this.material);
-    this.modelController.scene.add(this.decal);
+
+    var decalGeometry = new DecalGeometry(this.parentMesh, this.position, this.rotation, this.size);
+    this.mesh = new Mesh(decalGeometry, this.material);
+    this.modelController.scene.add(this.mesh);
   }
 
   //  销毁该贴纸
@@ -132,13 +132,13 @@ export class DecalController {
   // 在当前鼠标位置进行贴图
   stickToMousePosition() {
 
-    if(!this.mesh){
+    if (!this.parentMesh) {
       return
     }
 
     const raycaster = new Raycaster();
     raycaster.setFromCamera(this.modelController.mouse, this.modelController.camera);
-    const intersects = raycaster.intersectObject(this.mesh, true);
+    const intersects = raycaster.intersectObject(this.parentMesh, true);
 
     if (intersects.length == 0) {
       // 未选中
@@ -149,7 +149,7 @@ export class DecalController {
 
     this._position = position;
     const copy = intersects[0].face.normal.clone();
-    copy.transformDirection(this.mesh.matrixWorld);
+    copy.transformDirection(this.parentMesh.matrixWorld);
     copy.add(position);
     const helper = new Object3D();
     helper.position.copy(position);
@@ -161,26 +161,40 @@ export class DecalController {
 
 
   // 移除当前贴纸
-  remove(){
-    this.modelController.scene.remove(this.decal);
+  remove() {
+    this.modelController.scene.remove(this.mesh);
   }
 
 
   // 旋转
-  rotate(rotation){
+  rotate(rotation) {
     this.rotation.z = rotation;
     this.create()
   }
 
   // 移动
-  move(){
+  move() {
 
   }
 
   // 缩放
-  scale(ratio){
+  scale(ratio) {
     this._size = ratio
     this.create()
+  }
+
+  initDecalClickEvent() {
+    function decalClick() {
+      const raycaster = new Raycaster()
+      raycaster.setFromCamera(this.modelController.mouse, this.modelController.camera)
+      const intersects = raycaster.intersectObject(this.mesh, true)
+      const intersect = intersects[0]
+      if (!intersect) {
+        return
+      }
+      debugger
+    }
+    this.modelController.onClick(decalClick.bind(this))
   }
 }
 

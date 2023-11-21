@@ -115,13 +115,13 @@ async function initModel() {
 
   currentMesh = findMainMesh(gltf)
   function findMainMesh(gltf) {
-    let mainMesh = null;
+    let mesh = null;
     gltf.scene.traverse((child) => {
-      if (child.isMesh && !mainMesh) {
-        mainMesh = child;
+      if (child.isMesh && !mesh) {
+        mesh = child;
       }
     });
-    return mainMesh;
+    return mesh;
   }
 
   // 同步摄像机位置

@@ -35,11 +35,29 @@
         </menu-item>
         <menu-item>
           <template #icon>
-            <icon-logout></icon-logout>
+            <icon-upload></icon-upload>
           </template>
-          <template #title> 退出 </template>
+          <template #title> 上传 </template>
+          <template #children>
+            <menu-main>
+              <menu-item>
+                <template #title> 上传模型 </template>
+              </menu-item>
+              <menu-item>
+                <template #title> 上传图片 </template>
+              </menu-item>
+              <menu-item>
+                <template #title> 上传字体文件 </template>
+              </menu-item>
+              <menu-item>
+                <template #title> 上传文字贴纸 </template>
+              </menu-item>
+              <menu-item>
+                <template #title> 上传自定义模型 </template>
+              </menu-item>
+            </menu-main>
+          </template>
         </menu-item>
-
         <menu-item>
           <template #icon>
             <icon-view></icon-view>
@@ -68,6 +86,12 @@
             </menu-main>
           </template>
         </menu-item>
+        <menu-item>
+          <template #icon>
+            <icon-logout></icon-logout>
+          </template>
+          <template #title> 退出 </template>
+        </menu-item>
       </menu-main>
     </div>
   </div>
@@ -82,6 +106,7 @@ import { showWorkspaceContainer, showBaseModelSelectContainer ,showDecalControlC
 import iconLogout from "@/icon/logout.svg?vueComponent";
 import iconNew from "@/icon/new.svg?vueComponent";
 import iconView from "@/icon/view.svg?vueComponent";
+import iconUpload from "@/icon/upload-normal.svg?vueComponent";
 import iconScreenshot from "@/icon/screenshot.svg?vueComponent";
 
 const showHeaderMenuDropdown = ref(false);

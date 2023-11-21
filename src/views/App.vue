@@ -33,12 +33,18 @@ body {
 }
 
 
+@font-face{
+    font-family: 'alimama';
+    src : url('/public/fonts/AlimamaFangYuanTiVF-Thin.ttf');
+}
 
 #app {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  /* font-family: alimama;
+  font-weight: 500; */
 }
 
 #app > * {

@@ -174,7 +174,7 @@ import iconSetting from "@/icon/setting.svg?vueComponent";
     height: 18px;
   }
   span {
-    font-size: 10px;
+    font-size: 12px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;

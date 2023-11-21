@@ -110,7 +110,7 @@
     <decal-control></decal-control>
   </diycontainer>
 </template>
-<script setup lang="ts">
+<script setup>
 import { computed, onMounted, ref, watchEffect, watch } from "vue";
 import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";

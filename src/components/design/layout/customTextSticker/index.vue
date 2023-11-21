@@ -210,7 +210,7 @@ async function save() {
 .designiy-text-sticker-custom {
   padding: 10px;
   height: 100%;
-  width:260px;
+  width:300px;
   display: flex;
   flex-direction: column;
 }

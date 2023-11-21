@@ -17,6 +17,11 @@ import {
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { operatingDecal, showDecalControlContainer } from '../store';
 
+
+export interface DecalControllerParams {
+  
+}
+
 export class DecalController {
   // 核心控制器
   modelController: ModelController = null;
@@ -77,7 +82,8 @@ export class DecalController {
     this.modelController = modelController;
     this.img = img;
     this.info = info;
-    this.imgAspectRatio = this.img.width / this.img.height;
+    this.imgAspectRatio = (this.img.naturalWidth ||  this.img.width) / (this.img.naturalHeight || this.img.height);
+
     this.initTexture();
     this.modelController.decalControllers.push(this);
     operatingDecal.value = this

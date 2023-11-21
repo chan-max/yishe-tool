@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import custom from "./custom.vue";
 import resource from "./resource.vue";
 import { ref } from "vue";
 import { EditPen, Picture } from "@element-plus/icons-vue";

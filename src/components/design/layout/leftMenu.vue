@@ -1,4 +1,5 @@
 <template>
+   <div class="menu-bar-container">
   <div class="menu-bar">
     <el-tooltip :hide-after="0" content="工作台" placement="right">
       <div
@@ -111,6 +112,7 @@
       </div>
     </el-tooltip>
   </div>
+  </div>
 </template>
 <script setup>
 import {
@@ -145,16 +147,28 @@ import iconSetting from "@/icon/setting.svg?vueComponent";
 
 </script>
 <style lang="less">
+
+
+.menu-bar-container{
+  width: 100%;
+  height: 100%;
+  padding:0 4px;
+  background:var(--1s-left-menu-container-background-color);
+}
+
 .menu-bar {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 0;
+  padding: 10px 0;
+  border-radius:2px;
   row-gap: 6px;
   overflow:auto;
+  background:var(--1s-left-menu-background-color);
 }
+
 
 .menu-bar-item {
   width: 50px;

@@ -1,8 +1,6 @@
 <template>
   <div v-if="show" class="designiy-container">
-    <div class="designiy-container-content">
       <slot></slot>
-    </div>
   </div>
 </template>
 <script setup>
@@ -50,11 +48,7 @@ const props = defineProps({
   font-weight: bold;
 }
 
-.designiy-container-content {
-  width: 100%;
-  height: 100%;
-  text-align: left;
-}
+
 
 .container-mask {
   position: fixed;

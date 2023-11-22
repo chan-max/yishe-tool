@@ -1,3 +1,3 @@
 
-export const eventMixin = (modelController:ModelController) => {
+export const eventMixin = () => {
 }

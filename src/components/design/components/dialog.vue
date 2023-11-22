@@ -87,7 +87,6 @@ function close() {
   color: var(--1s-container-header-text-color);
   cursor: pointer;
   display: flex;
-  padding: 5px;
   justify-content: center;
   align-items: center;
   &:hover {
@@ -98,7 +97,6 @@ function close() {
 .designiy-dialog-header-title {
   color: var(--1s-container-header-text-color);
   font-size: 12px;
-  font-weight: bold;
 }
 
 .designiy-dialog-content {

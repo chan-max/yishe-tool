@@ -83,6 +83,12 @@
                   <el-switch v-model="showWorkspaceContainer" size="small" />
                 </template>
               </menu-item>
+              <menu-item>
+                <template #title> 字体上传 </template>
+                <template #suffix>
+                  <el-switch v-model="showFontUploadContainer" size="small" />
+                </template>
+              </menu-item>
             </menu-main>
           </template>
         </menu-item>
@@ -102,7 +108,7 @@ import { ref, onMounted } from "vue";
 import iconMenu from "@/icon/menu.svg?vueComponent";
 import menuMain from "./menu.vue";
 import menuItem from "./menuItem.vue";
-import { showWorkspaceContainer, showBaseModelSelectContainer ,showDecalControlContainer} from "../../store";
+import { showWorkspaceContainer, showBaseModelSelectContainer ,showDecalControlContainer,showFontUploadContainer} from "../../store";
 import iconLogout from "@/icon/logout.svg?vueComponent";
 import iconNew from "@/icon/new.svg?vueComponent";
 import iconView from "@/icon/view.svg?vueComponent";

@@ -55,6 +55,20 @@
     <base-model-select></base-model-select>
   </diydialog>
 
+
+  <diydialog
+    :show="showFontUploadContainer"
+    @close="showFontUploadContainer = false"
+    :animation="{
+      'enter-active-class': 'animate__animated animate__bounceIn',
+      'leave-active-class': 'animate__animated animate__bounceOut',
+      duration: 100,
+    }"
+  >
+    <template #title> 字体上传 </template>
+    <font-upload></font-upload>
+  </diydialog>
+
   <diydialog
     title="设置场景"
     :show="showSceneControlContainer"
@@ -127,7 +141,8 @@ import {
   showDecalControlContainer,
   isLoading,
   showImageUplaodContainer,
-  showCustomTextStickerContainer
+  showCustomTextStickerContainer,
+  showFontUploadContainer
 } from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -143,6 +158,7 @@ import bottomMenu from "./bottomMenu.vue";
 import decalControl from "./decalControl/index.vue";
 import imageUpload from "./imageUpload/index.vue";
 import customTextSticker from './customTextSticker/index.vue';
+import fontUpload from './fontUpload/index.vue';
 
 import {
   Mesh,

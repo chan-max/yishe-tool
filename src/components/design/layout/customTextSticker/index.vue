@@ -100,7 +100,8 @@
     <div style="flex: 1"></div>
 
     <div>
-      <el-button type="primary" style="width: 100%" @click="save"> 保存该贴纸 </el-button>
+      <el-button type="primary"  @click=""> 上传字体 </el-button>
+      <el-button type="primary"  @click="save"> 保存该贴纸 </el-button>
     </div>
   </div>
 </template>

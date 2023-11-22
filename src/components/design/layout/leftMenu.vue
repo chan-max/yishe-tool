@@ -55,6 +55,15 @@
       </div>
     </el-tooltip>
 
+    <el-tooltip :hide-after="0" content="字体" placement="right">
+      <div
+        class="menu-bar-item"
+      >
+        <icon-font></icon-font>
+        <span>字体</span>
+      </div>
+    </el-tooltip>
+    
     <el-tooltip :hide-after="0" content="喷图" placement="right">
       <div class="menu-bar-item">
         <icon-brush></icon-brush>
@@ -143,16 +152,15 @@ import iconHelp from "@/icon/help.svg?vueComponent";
 import iconSun from "@/icon/sun.svg?vueComponent";
 import iconMoon from "@/icon/moon.svg?vueComponent";
 import iconSetting from "@/icon/setting.svg?vueComponent";
+import iconFont from "@/icon/font.svg?vueComponent";
 
 
 </script>
 <style lang="less">
-
-
 .menu-bar-container{
   width: 100%;
   height: 100%;
-  padding:0 4px;
+  padding:0 2px;
   background:var(--1s-left-menu-container-background-color);
 }
 
@@ -162,9 +170,9 @@ import iconSetting from "@/icon/setting.svg?vueComponent";
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 0;
+  padding: 16px 0;
   border-radius:2px;
-  row-gap: 6px;
+  row-gap: 15px;
   overflow:auto;
   background:var(--1s-left-menu-background-color);
 }
@@ -193,6 +201,7 @@ import iconSetting from "@/icon/setting.svg?vueComponent";
     white-space: nowrap;
     overflow: hidden;
     max-width: 50px;
+    font-weight:400;
   }
   &:hover {
     background: var(--1s-left-menu-icon-hover-background-color);

@@ -6,7 +6,8 @@
     
     <div style="flex-grow: 1"></div>
 
-    <el-button @click="save" size="small" type="primary" round class="cursor-pointer" >
+
+    <el-button @click="save" type="primary" round size="small" >
       保 存
     </el-button>
 
@@ -83,7 +84,7 @@ async function save() {
 }
 
 .designiy-header-logo {
-  width: 74px;
+  width: 80px;
   height: 46px;
 }
 

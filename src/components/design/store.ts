@@ -121,3 +121,6 @@ export const operatingDecal = shallowRef()
 
 // 是否展示图片上传弹窗
 export const showImageUplaodContainer = ref(false)
+
+
+export const showFontUploadContainer = ref(false)

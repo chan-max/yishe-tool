@@ -84,7 +84,7 @@ export class DecalController {
     this.info = info;
     this.imgAspectRatio = (this.img.naturalWidth || this.img.width) / (this.img.naturalHeight || this.img.height);
     this.initTexture();
-    this.modelController.decalControllers.push(this);
+    this.modelController.decalControllers.add(this);
     operatingDecal.value = this
     this.initDecalClickEvent()
   }
@@ -121,13 +121,10 @@ export class DecalController {
   //  销毁该贴纸
   destroy() {
     this.remove()
-    this.modelController.decalControllers.splice(this.modelController.decalControllers.indexOf(this), 1)
+    this.modelController.decalControllers.delete(this)
     operatingDecal.value = null
   }
 
-  // 当前贴纸被点击时
-  onClick(cb) {
-  }
 
   // 在当前鼠标位置进行贴图
   stickToMousePosition() {
@@ -182,6 +179,10 @@ export class DecalController {
     this._size = ratio
     this.create()
   }
+
+    // 当前贴纸被点击时
+    onClick(cb) {
+    }
 
   initDecalClickEvent() {
     function decalClick() {

@@ -20,12 +20,6 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
       },
-      external: 'html-to-image',
-      output: {
-        globals: {
-          'html-to-image': 'htmlToImage'
-        }
-      }
     }
   },
   css: {

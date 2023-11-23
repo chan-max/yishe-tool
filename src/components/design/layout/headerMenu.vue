@@ -7,7 +7,12 @@
     <div style="flex-grow: 1"></div>
 
 
-    <el-button @click="save" type="primary" round size="small" >
+      <div>
+        <icon-help style="width:24px;height:24px;"></icon-help>
+      </div>
+
+
+    <el-button @click="save" type="primary" round  >
       保 存
     </el-button>
 
@@ -23,9 +28,11 @@ import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
 import { canvasBgColor, canvasBgOpacity, isDarkMode, currentController } from "../store";
 import {  ElMessageBox } from 'element-plus'
 import { uploadModel } from '@/api'
+import {Share} from '@element-plus/icons-vue'
 import userAvatar from '@/components/user/userAvatar.vue'
 import headerMenuDropdown from './headerMenuDropdown/index.vue'
 import { onShortcutTrigger } from '../shortcut/index';
+import iconHelp from '@/icon/help.svg?vueComponent'
 
 const props = defineProps([]);
 

@@ -1,126 +1,123 @@
 <template>
-   <div class="menu-bar-container">
-  <div class="menu-bar">
-    <el-tooltip :hide-after="0" content="工作台" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showWorkspaceContainer }"
-        @click="showWorkspaceContainer = !showWorkspaceContainer"
-      >
-        <icon-workspace></icon-workspace>
-        <span>工作台</span>
-      </div>
-    </el-tooltip>
-    <el-tooltip :hide-after="0" content="选择模型" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showBaseModelSelectContainer }"
-        @click="showBaseModelSelectContainer = !showBaseModelSelectContainer"
-      >
-        <icon-shirt></icon-shirt>
-        <span>选择模型</span>
-      </div>
-    </el-tooltip>
-    <el-tooltip :hide-after="0" content="图片贴图" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showImageStickerContainer }"
-        @click="showImageStickerContainer = !showImageStickerContainer"
-      >
-        <icon-photo></icon-photo>
-        <span>图片</span>
-      </div>
-    </el-tooltip>
-    <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showTextStickerContainer }"
-        @click="showTextStickerContainer = !showTextStickerContainer"
-      >
-      <icon-text></icon-text>
-        <span>网络文字</span>
-      </div>
-    </el-tooltip>
-    <el-tooltip :hide-after="0" content="自定义文字" placement="right">
-      <div class="menu-bar-item" @click="showCustomTextStickerContainer= !showCustomTextStickerContainer">
-        <icon-paint></icon-paint>
-        <span>文字创作</span>
-      </div>
-    </el-tooltip>
+  <div class="menu-bar-container">
+    <div class="menu-bar">
+      <el-tooltip :hide-after="0" content="工作台" placement="right">
+        <div
+          class="menu-bar-item"
+          :class="{ 'menu-bar-item-focus': showWorkspaceContainer }"
+          @click="showWorkspaceContainer = !showWorkspaceContainer"
+        >
+          <div class="menu-bar-item-icon"><icon-workspace></icon-workspace></div>
+          <span>工作台</span>
+        </div>
+      </el-tooltip>
+      <el-tooltip :hide-after="0" content="选择模型" placement="right">
+        <div
+          class="menu-bar-item"
+          :class="{ 'menu-bar-item-focus': showBaseModelSelectContainer }"
+          @click="showBaseModelSelectContainer = !showBaseModelSelectContainer"
+        >
+          <div class="menu-bar-item-icon"><icon-shirt></icon-shirt></div>
+          <span>选择模型</span>
+        </div>
+      </el-tooltip>
+      <el-tooltip :hide-after="0" content="图片贴图" placement="right">
+        <div
+          class="menu-bar-item"
+          :class="{ 'menu-bar-item-focus': showImageStickerContainer }"
+          @click="showImageStickerContainer = !showImageStickerContainer"
+        >
+          <div class="menu-bar-item-icon"><icon-photo></icon-photo></div>
+          <span>图片</span>
+        </div>
+      </el-tooltip>
+      <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
+        <div
+          class="menu-bar-item"
+          :class="{ 'menu-bar-item-focus': showTextStickerContainer }"
+          @click="showTextStickerContainer = !showTextStickerContainer"
+        >
+          <div class="menu-bar-item-icon"><icon-text></icon-text></div>
+          <span>网络文字</span>
+        </div>
+      </el-tooltip>
+      <el-tooltip :hide-after="0" content="自定义文字" placement="right">
+        <div
+          class="menu-bar-item"
+          @click="showCustomTextStickerContainer = !showCustomTextStickerContainer"
+        >
+          <div class="menu-bar-item-icon"><icon-paint></icon-paint></div>
+          <span>文字创作</span>
+        </div>
+      </el-tooltip>
 
-    <el-tooltip :hide-after="0" content="几何图形" placement="right">
-      <div class="menu-bar-item">
-        <icon-box></icon-box>
-        <span>几何图</span>
-      </div>
-    </el-tooltip>
+      <el-tooltip :hide-after="0" content="几何图形" placement="right">
+        <div class="menu-bar-item">
+          <div class="menu-bar-item-icon"><icon-box></icon-box></div>
+          <span>几何图</span>
+        </div>
+      </el-tooltip>
 
-    <el-tooltip :hide-after="0" content="字体" placement="right">
-      <div
-        class="menu-bar-item"
-      >
-        <icon-font></icon-font>
-        <span>字体</span>
-      </div>
-    </el-tooltip>
-    
-    <el-tooltip :hide-after="0" content="喷图" placement="right">
-      <div class="menu-bar-item">
-        <icon-brush></icon-brush>
-        <span>喷漆</span>
-      </div>
-    </el-tooltip>
-    <el-tooltip :hide-after="0" content="尺寸测量工具" placement="right">
-      <div class="menu-bar-item">
-        <icon-ruler></icon-ruler>
-        <span>测量</span>
-      </div>
-    </el-tooltip>
-    <el-tooltip :hide-after="0" content="设置场景" placement="right">
-      <div
-        class="menu-bar-item"
-        @click="showSceneControlContainer = !showSceneControlContainer"
-      >
-      <icon-earth></icon-earth>
-        <span>场景</span>
-      </div>
-    </el-tooltip>
-    <el-tooltip :hide-after="0" content="灯光调整" placement="right">
-      <div class="menu-bar-item">
-        <icon-light></icon-light>
-        <span>灯光</span>
-      </div>
-    </el-tooltip>
-    <el-tooltip :hide-after="0" content="预览模型" placement="right">
-      <div class="menu-bar-item">
-        <icon-eye></icon-eye>
-        <span>预览</span>
-      </div>
-    </el-tooltip>
-    <el-tooltip :hide-after="0" content="使用帮助" placement="right">
-      <div class="menu-bar-item">
-        <icon-help></icon-help>
-        <span>帮助</span>
-      </div>
-    </el-tooltip>
+      <el-tooltip :hide-after="0" content="字体" placement="right">
+        <div class="menu-bar-item">
+          <div class="menu-bar-item-icon"><icon-font></icon-font></div>
+          <span>字体</span>
+        </div>
+      </el-tooltip>
 
-    <div style="flex: 1"></div>
+      <el-tooltip :hide-after="0" content="喷图" placement="right">
+        <div class="menu-bar-item">
+          <div class="menu-bar-item-icon"><icon-brush></icon-brush></div>
+          <span>喷漆</span>
+        </div>
+      </el-tooltip>
+      <el-tooltip :hide-after="0" content="尺寸测量工具" placement="right">
+        <div class="menu-bar-item">
+          <div class="menu-bar-item-icon"><icon-ruler></icon-ruler></div>
+          <span>测量</span>
+        </div>
+      </el-tooltip>
+      <el-tooltip :hide-after="0" content="设置场景" placement="right">
+        <div
+          class="menu-bar-item"
+          @click="showSceneControlContainer = !showSceneControlContainer"
+        >
+          <div class="menu-bar-item-icon"><icon-earth></icon-earth></div>
+          <span>场景</span>
+        </div>
+      </el-tooltip>
+      <el-tooltip :hide-after="0" content="灯光调整" placement="right">
+        <div class="menu-bar-item">
+          <div class="menu-bar-item-icon"><icon-light></icon-light></div>
+          <span>灯光</span>
+        </div>
+      </el-tooltip>
+      <el-tooltip :hide-after="0" content="预览模型" placement="right">
+        <div class="menu-bar-item">
+          <div class="menu-bar-item-icon"><icon-eye></icon-eye></div>
+          <span>预览</span>
+        </div>
+      </el-tooltip>
 
-    <el-tooltip :hide-after="0" content="切换外观模式" placement="right">
-      <div class="menu-bar-item" @click="isDarkMode = !isDarkMode">
-        <icon-sun v-if="isDarkMode" ></icon-sun>
-        <icon-moon v-else ></icon-moon>
-        <span>外观</span>
-      </div>
-    </el-tooltip>
+      <div style="flex: 1"></div>
 
-    <el-tooltip :hide-after="0" content="系统设置" placement="right">
-      <div class="menu-bar-item">
-        <icon-setting></icon-setting>
-        <span>设置</span>
-      </div>
-    </el-tooltip>
-  </div>
+      <el-tooltip :hide-after="0" content="切换外观模式" placement="right">
+        <div class="menu-bar-item" @click="isDarkMode = !isDarkMode">
+          <div class="menu-bar-item-icon">
+            <icon-sun v-if="isDarkMode"></icon-sun>
+            <icon-moon v-else></icon-moon>
+          </div>
+          <span>外观</span>
+        </div>
+      </el-tooltip>
+
+      <el-tooltip :hide-after="0" content="系统设置" placement="right">
+        <div class="menu-bar-item">
+          <div class="menu-bar-item-icon"><icon-setting></icon-setting></div>
+          <span>设置</span>
+        </div>
+      </el-tooltip>
+    </div>
   </div>
 </template>
 <script setup>
@@ -134,7 +131,7 @@ import {
   showImageStickerContainer,
   showTextStickerContainer,
   showWorkspaceContainer,
-  showCustomTextStickerContainer
+  showCustomTextStickerContainer,
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?vueComponent";
@@ -153,15 +150,13 @@ import iconSun from "@/icon/sun.svg?vueComponent";
 import iconMoon from "@/icon/moon.svg?vueComponent";
 import iconSetting from "@/icon/setting.svg?vueComponent";
 import iconFont from "@/icon/font.svg?vueComponent";
-
-
 </script>
 <style lang="less">
-.menu-bar-container{
+.menu-bar-container {
   width: 100%;
   height: 100%;
-  padding:0 2px;
-  background:var(--1s-left-menu-container-background-color);
+  padding: 0 2px;
+  background: var(--1s-left-menu-container-background-color);
 }
 
 .menu-bar {
@@ -171,26 +166,26 @@ import iconFont from "@/icon/font.svg?vueComponent";
   flex-direction: column;
   align-items: center;
   padding: 16px 0;
-  border-radius:2px;
+  border-radius: 2px;
   row-gap: 12px;
-  overflow:auto;
-  background:var(--1s-left-menu-background-color);
+  overflow: auto;
+  background: var(--1s-left-menu-background-color);
+  direction: rtl;
 }
 
-
 .menu-bar-item {
-  width: 50px;
-  height: 50px;
   display: flex;
-  border-radius: 5px;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  row-gap: 3px;
   flex-shrink: 0;
   color: var(--1s-icon-color);
+  row-gap: 3px;
+  width:60px;
+  height:50px;
   svg {
     width: 18px;
     height: 18px;
@@ -201,14 +196,15 @@ import iconFont from "@/icon/font.svg?vueComponent";
     white-space: nowrap;
     overflow: hidden;
     max-width: 50px;
-    font-weight:400;
+    font-weight: 400;
   }
+
   &:hover {
-    background: var(--1s-left-menu-icon-hover-background-color);
+      background: #eee;
   }
 }
 
 .menu-bar-item-focus {
-  background: var(--1s-left-menu-icon-hover-background-color);
+  background: #eee;
 }
 </style>

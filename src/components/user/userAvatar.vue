@@ -48,8 +48,8 @@ const avatar = computed(() => {
         justify-content: center;
         align-items: center;
         .el-avatar{
-            height:30px;
-            width:30px;
+            height:32px;
+            width:32px;
         }
     }
     

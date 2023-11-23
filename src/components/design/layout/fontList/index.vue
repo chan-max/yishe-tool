@@ -1,20 +1,39 @@
 <template>
   <div class="designiy-font-list">
-    {{  data }}
+    <div class="designiy-font-list-content">
+      <div class="designiy-font-list-item" v-for="item in data"></div>
+    </div>
   </div>
 </template>
 <script setup>
 import { ref, onBeforeMount } from "vue";
-import { getFonts } from '@/api';
+import { getFonts } from "@/api";
 const data = ref();
 
 onBeforeMount(async () => {
-    data.value = await getFonts()
+  data.value = await getFonts();
 });
-
 </script>
 <style lang="less">
 .designiy-font-list {
   width: 300px;
+}
+
+.designiy-font-list-content{
+  width:100%;
+  height:100%;
+  overflow: auto;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap:10px;
+  padding:10px;
+}
+
+.designiy-font-list-item{
+  width:100%;
+  height:140px;
+  background-color:#f6f6f6;
+  border-radius:12px;
 }
 </style>

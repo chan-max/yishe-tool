@@ -34,6 +34,11 @@
         <icon-rotate></icon-rotate>
       </div>
     </el-tooltip>
+    <el-tooltip :hide-after="0" content="截屏下载" placement="top">
+      <div class="bottom-menu-item" @click="downloadScreenshot">
+        <icon-camera></icon-camera>
+      </div>
+    </el-tooltip>
 </div>
 </template>
 <script setup>
@@ -44,7 +49,7 @@ import iconLocate from '@/icon/locate.svg?vueComponent'
 import iconPrev from '@/icon/prev.svg?vueComponent'
 import iconNext from '@/icon/next.svg?vueComponent'
 import iconRefresh from '@/icon/refresh.svg?vueComponent'
-
+import iconCamera from '@/icon/camera.svg?vueComponent'
 
 function locate(){
     currentController.value.resetPosition()
@@ -52,6 +57,10 @@ function locate(){
 
 function animate(){
     currentController.value.animate = !currentController.value.animate
+}
+
+function downloadScreenshot(){
+  currentController.value.downloadScreenshot()
 }
 
 </script>

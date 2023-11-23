@@ -172,7 +172,7 @@ import iconFont from "@/icon/font.svg?vueComponent";
   align-items: center;
   padding: 16px 0;
   border-radius:2px;
-  row-gap: 15px;
+  row-gap: 12px;
   overflow:auto;
   background:var(--1s-left-menu-background-color);
 }

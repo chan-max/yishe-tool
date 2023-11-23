@@ -12,7 +12,14 @@
       :disabled="files[0]"
       drag
     >
-      <div v-if="files[0]" class="designiy-font-upload-preview" contenteditable="true"></div>
+      <div
+        v-if="files[0]"
+        ref="previewEl"
+        class="designiy-font-upload-preview"
+        contenteditable="true"
+      >
+        breaking bad
+      </div>
 
       <div v-else class="designiy-font-upload-placeholder">
         <icon-upload style="width: 20px; height: 20px"></icon-upload>
@@ -31,20 +38,43 @@
       style="font-size: 10px"
     ></el-input>
     <div class="designiy-font-upload-footer">
-      <el-button size="small" text> 清除 </el-button>
-      <el-button size="small" type="primary"> 上传 </el-button>
+      <el-button size="small" @click="clear" text> 清除 </el-button>
+      <el-button size="small" type="primary" @click="submit"> 上传 </el-button>
     </div>
   </div>
 </template>
-
-<script setup>
-import iconUpload from "@/icon/upload-normal.svg?vueComponent";
-import { ref, reactive, watch, computed, shallowRef } from "vue";
+<script setup lang="ts">
+import { ref, reactive, watch, computed, shallowRef, nextTick } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import { genFileId } from "element-plus";
+import iconUpload from "@/icon/upload-normal.svg?vueComponent";
+import { toPng } from "html-to-image";
+import { uploadFont } from "@/api";
+import { base64ToFile } from "../../../../common/transform/base64ToFile";
 
 const files = ref([]);
 const upload = ref();
+const previewEl = ref();
+
+var id = 0;
+
+//
+watch(files, async (files) => {
+  await nextTick();
+  const file = files[0];
+  const { name, size, raw } = file;
+  previewEl.value.innerHTML = name;
+  let fontId = id++;
+  const fontStyles = document.createElement("style");
+  fontStyles.innerHTML = `
+      @font-face {
+          font-family: font${fontId};
+          src: url(${URL.createObjectURL(file.raw)}); /* 替换为实际的字体文件相对路径 */
+      }
+    `;
+  document.head.appendChild(fontStyles);
+  previewEl.value.style.fontFamily = ` font${fontId++}`;
+});
 
 function handleExceed(files) {
   upload.value.clearFiles();
@@ -52,10 +82,20 @@ function handleExceed(files) {
   upload.value.handleStart(file);
 }
 
-async function submit() {}
+function clear() {
+  upload.value.clearFiles();
+}
+
+async function submit() {
+  const base64 = await toPng(previewEl.value);
+  await uploadFont({
+    file: files.value[0].raw,
+    img: base64ToFile(base64),
+  });
+}
 </script>
 
-<style>
+<style lang="less">
 .designiy-font-upload {
   padding: 20px;
   row-gap: 10px;
@@ -68,6 +108,9 @@ async function submit() {}
   .el-upload-dragger {
     width: 480px;
     height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .el-upload-dragger {
@@ -91,8 +134,8 @@ async function submit() {}
 }
 
 .designiy-font-upload-preview {
-  width: 100%;
-  height: 100%;
   outline-style: none;
+  font-size: 40px;
+  color: #000;
 }
 </style>

@@ -88,6 +88,17 @@
   </diycontainer>
 
   <diycontainer
+    :show="showFontList"
+    style="
+      height: calc(100% - var(--1s-header-height));
+      bottom: 0;
+      left: calc(var(--1s-left-menu-width));
+    "
+  >
+    <font-list></font-list>
+  </diycontainer>
+  
+  <diycontainer
     :show="showCustomTextStickerContainer"
     style="
       height: calc(100% - var(--1s-header-height));
@@ -142,7 +153,8 @@ import {
   isLoading,
   showImageUplaodContainer,
   showCustomTextStickerContainer,
-  showFontUploadContainer
+  showFontUploadContainer,
+showFontList
 } from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -159,6 +171,7 @@ import decalControl from "./decalControl/index.vue";
 import imageUpload from "./imageUpload/index.vue";
 import customTextSticker from './customTextSticker/index.vue';
 import fontUpload from './fontUpload/index.vue';
+import fontList from './fontList/index.vue';
 
 import {
   Mesh,

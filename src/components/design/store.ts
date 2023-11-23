@@ -123,4 +123,9 @@ export const operatingDecal = shallowRef()
 export const showImageUplaodContainer = ref(false)
 
 
+// 是否展示字体上传弹窗
 export const showFontUploadContainer = ref(false)
+
+
+// 是否展示字体列表
+export const showFontList = ref(false)

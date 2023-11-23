@@ -56,8 +56,8 @@ export const getImageList = () =>
   new Promise(async (resolve: any, reject: any) => {
     let res = await apiInstance.get(Url.GET_IMAGE_LIST);
     let data = res.data.data.map((item: any) => ({
-      path:item.path,
-      fullpath:item.fullpath,
+      path: item.path,
+      fullpath: item.fullpath,
       name: item.name,
       description: item.description,
     }));
@@ -72,16 +72,8 @@ export const uploadFont = (data) => apiInstance.post(Url.UPLOAD_FONT, data);
 export const getFonts = () =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.get(Url.GET_FONTS);
-    const data = res.data.data.map((item) => {
-      return {
-        file: resolveFilePath(item.file),
-        img: resolveFilePath(item.img),
-        name: item.name,
-        description: item.description,
-      };
-    });
-    resolve(data);
-  });
+    resolve(res.data.data);
+});
 
 export const uploadModel = (data) => apiInstance.post(Url.UPLOAD_MODEL, data);
 
@@ -109,7 +101,7 @@ export interface UserListInfo {
   pageSize: number;
   totalPages: number;
 }
-export const getUserList = (params?:any) =>
+export const getUserList = (params?: any) =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.post(Url.GET_USER_LIST, params);
     resolve(res.data.data);
@@ -117,15 +109,15 @@ export const getUserList = (params?:any) =>
 
 
 // 更新用户信息
-export const updateUserInfo = (params) => apiInstance.post(Url.UPDATE_USER_INFO,params)
+export const updateUserInfo = (params) => apiInstance.post(Url.UPDATE_USER_INFO, params)
 
 
 // 上传文字贴纸
-export const uploadTextSticker = (params) => apiInstance.post(Url.UPLOAD_TEXT_STICKER,params)
+export const uploadTextSticker = (params) => apiInstance.post(Url.UPLOAD_TEXT_STICKER, params)
 
 
 // 获取文字贴纸
-export const getTextSticker = (params?:any) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_TEXT_STICKER,params)
+export const getTextSticker = (params?: any) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_TEXT_STICKER, params)
   resolve(data.data.data)
 }) 

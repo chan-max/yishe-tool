@@ -27,13 +27,16 @@
 </template>
 <script setup>
 import iconRightArrow from "@/icon/rightArrow.svg?vueComponent";
-import { ref } from "vue";
+import { ref,onMounted } from "vue";
 
 const showChildren = ref(false);
 
 function itemClick() {
   showChildren.value = !showChildren.value;
 }
+
+
+
 </script>
 <style lang="less">
 .designiy-dropdown-menu-item {

@@ -1,7 +1,11 @@
 <template>
   <div class="designiy-font-list">
     <div class="designiy-font-list-content">
-      <div class="designiy-font-list-item" v-for="item in data"></div>
+      <div class="designiy-font-list-item" v-for="item in data">
+      
+        <el-image :src="item.fullimgpath" class="w-full h-full" style="padding:20px;" fit="contain">
+        </el-image>
+      </div>
     </div>
   </div>
 </template>
@@ -13,6 +17,7 @@ const data = ref();
 onBeforeMount(async () => {
   data.value = await getFonts();
 });
+
 </script>
 <style lang="less">
 .designiy-font-list {

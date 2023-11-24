@@ -114,8 +114,6 @@ export const enum TextStickerWritingMode {
 
 export const operatingTextStickerTextOrientation = ref('upright')
 
-
-
 // 当前正在操作的贴花
 export const operatingDecal = shallowRef()
 
@@ -128,10 +126,11 @@ export const showFontUploadContainer = ref(false)
 
 
 // 是否展示字体列表
-export const showFontList = ref(true)
+export const showFontList = ref(false)
 
 watch(showFontList,(value) => {
     if(value){
 
     }
 })
+

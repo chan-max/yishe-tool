@@ -2,10 +2,20 @@
   <div id="designiy-canvas-container" ref="mountContainer"></div>
   <loading v-if="isLoading"></loading>
 
-  <diycontainer
-    style="width: 100%; height: var(--1s-header-height); top: 0;zIndex:2;"
-  >
+  <diycontainer style="width: 100%; height: var(--1s-header-height); top: 0; zindex: 2">
     <header-menu />
+  </diycontainer>
+
+  <diycontainer
+    style="
+      width: calc(100% - var(--1s-left-menu-width));
+      height: var(--1s-sub-header-height);
+      top: var(--1s-header-height);
+      zindex: 2;
+      left: var(--1s-left-menu-width);
+    "
+  >
+    <sub-header-menu />
   </diycontainer>
 
   <diydialog
@@ -34,13 +44,9 @@
     <left-menu></left-menu>
   </diycontainer>
 
-  <diycontainer
-    style="height: var(--1s-bottom-menu-height); bottom: 30px"
-  >
+  <diycontainer style="height: var(--1s-bottom-menu-height); bottom: 30px">
     <bottom-menu></bottom-menu>
   </diycontainer>
-
-
 
   <diydialog
     :show="showBaseModelSelectContainer"
@@ -54,7 +60,6 @@
     <template #title> 选择基础</template>
     <base-model-select></base-model-select>
   </diydialog>
-
 
   <diydialog
     :show="showFontUploadContainer"
@@ -79,7 +84,7 @@
   <diycontainer
     :show="showImageStickerContainer"
     style="
-      height: calc(100% - var(--1s-header-height));
+      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
       bottom: 0;
       left: calc(var(--1s-left-menu-width));
     "
@@ -90,18 +95,18 @@
   <diycontainer
     :show="showFontList"
     style="
-      height: calc(100% - var(--1s-header-height));
+      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
       bottom: 0;
       left: calc(var(--1s-left-menu-width));
     "
   >
     <font-list></font-list>
   </diycontainer>
-  
+
   <diycontainer
     :show="showCustomTextStickerContainer"
     style="
-      height: calc(100% - var(--1s-header-height));
+      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
       bottom: 0;
       left: calc(var(--1s-left-menu-width));
     "
@@ -112,7 +117,7 @@
   <diycontainer
     :show="showTextStickerContainer"
     style="
-      height: calc(100% - var(--1s-header-height));
+      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
       bottom: 0;
       left: calc(var(--1s-left-menu-width));
     "
@@ -122,14 +127,22 @@
 
   <diycontainer
     :show="showWorkspaceContainer"
-    style="height: calc(100% - var(--1s-header-height)); bottom: 0; right: 0"
+    style="
+      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
+      bottom: 0;
+      right: 0;
+    "
   >
     <workspace></workspace>
   </diycontainer>
 
   <diycontainer
     :show="showDecalControlContainer"
-    style="height: calc(100% - var(--1s-header-height)); bottom: 0; right: 0"
+    style="
+      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
+      bottom: 0;
+      right: 0;
+    "
   >
     <decal-control></decal-control>
   </diycontainer>
@@ -154,7 +167,7 @@ import {
   showImageUplaodContainer,
   showCustomTextStickerContainer,
   showFontUploadContainer,
-showFontList
+  showFontList,
 } from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -169,9 +182,10 @@ import workspace from "./workspace/index.vue";
 import bottomMenu from "./bottomMenu.vue";
 import decalControl from "./decalControl/index.vue";
 import imageUpload from "./imageUpload/index.vue";
-import customTextSticker from './customTextSticker/index.vue';
-import fontUpload from './fontUpload/index.vue';
-import fontList from './fontList/index.vue';
+import customTextSticker from "./customTextSticker/index.vue";
+import fontUpload from "./fontUpload/index.vue";
+import fontList from "./fontList/index.vue";
+import subHeaderMenu from "./subHeaderMenu/index.vue";
 
 import {
   Mesh,
@@ -192,7 +206,6 @@ import {
   DoubleSide,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
-
 
 isLoading.value = true;
 
@@ -245,9 +258,6 @@ watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacit
 onMounted(() => {
   modelController.render(mountContainer.value);
 });
-
-
-
 </script>
 
 <style lang="less">

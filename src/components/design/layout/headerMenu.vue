@@ -66,10 +66,10 @@ async function save() {
   display: flex;
   justify-content: start;
   align-items: center;
-  box-sizing: border-box;
   column-gap: 10px;
-  border-bottom: var(--1s-header-border-bottom);
+
   padding-right: 10px;
+  background:#222;
 }
 
 

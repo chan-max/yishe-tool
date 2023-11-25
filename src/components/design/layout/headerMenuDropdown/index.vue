@@ -127,11 +127,11 @@ function toggle() {
   showHeaderMenuDropdown.value = !showHeaderMenuDropdown.value;
 }
 
-onMounted(() => {
-  document.body.addEventListener("click", (e) => {
-    showHeaderMenuDropdown.value = false;
-  });
-});
+// onMounted(() => {
+//   document.body.addEventListener("click", (e) => {
+//     showHeaderMenuDropdown.value = false;
+//   });
+// });
 
 
 </script>

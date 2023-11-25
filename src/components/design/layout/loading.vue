@@ -19,8 +19,9 @@
   flex-direction:column;
   justify-content: center;
   align-items: center;
-  backdrop-filter: blur(6px);
-  background:rgba(155,155,155,.5);
+  /* backdrop-filter: blur(6px);
+  background:rgba(155,155,155,.5); */
+  background: rgba(0,0,0,0.2);
 }
 
 

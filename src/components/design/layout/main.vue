@@ -2,7 +2,7 @@
   <div id="designiy-canvas-container" ref="mountContainer"></div>
   <loading v-if="isLoading"></loading>
 
-  <diycontainer style="width: 100%; height: var(--1s-header-height); top: 0; zindex: 2">
+  <diycontainer style="width: 100%; height: var(--1s-header-height); top: 0; z-index: 3">
     <header-menu />
   </diycontainer>
 

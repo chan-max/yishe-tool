@@ -84,7 +84,7 @@ export class DecalController {
     this.info = info;
     this.imgAspectRatio = (this.img.naturalWidth || this.img.width) / (this.img.naturalHeight || this.img.height);
     this.initTexture();
-    this.modelController.decalControllers.add(this);
+    this.modelController.decalControllers.push(this);
     operatingDecal.value = this
     this.initDecalClickEvent()
   }
@@ -121,7 +121,7 @@ export class DecalController {
   //  销毁该贴纸
   destroy() {
     this.remove()
-    this.modelController.decalControllers.delete(this)
+    this.modelController.decalControllers.splice(this.modelController.decalControllers.indexOf(this), 1)
     operatingDecal.value = null
   }
 

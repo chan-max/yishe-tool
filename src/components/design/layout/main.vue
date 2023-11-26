@@ -135,7 +135,7 @@
   >
     <workspace></workspace>
   </diycontainer>
-
+  
   <diycontainer
     :show="showDecalControlContainer"
     style="

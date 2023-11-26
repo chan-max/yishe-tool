@@ -1,8 +1,13 @@
 <template>
-  <div class="designiy-sub-header"></div>
+  <div class="designiy-sub-header">
+    <header-menu-dropdown/>
+  </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import headerMenuDropdown from '../headerMenuDropdown/index.vue'
+
+</script>
 
 <style>
 .designiy-sub-header {
@@ -10,6 +15,9 @@
   height: 100%;
   background: #fff;
   box-sizing: border-box;
+  display:flex;
   border-bottom: var(--1s-sub-header-border-bottom);
+  align-items: center;
+  padding :0 10px;
 }
 </style>

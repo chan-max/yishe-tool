@@ -48,7 +48,9 @@ import { ref, reactive, watch, computed, shallowRef, nextTick } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import { genFileId } from "element-plus";
 import iconUpload from "@/icon/upload-normal.svg?vueComponent";
-import { toPng } from "html-to-image";
+
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
+
 import { uploadFont } from "@/api";
 import { base64ToFile } from "../../../../common/transform/base64ToFile";
 

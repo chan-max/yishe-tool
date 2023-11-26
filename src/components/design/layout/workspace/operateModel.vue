@@ -11,5 +11,6 @@ import { currentOperatingModelInfo } from "../../store";
 .designiy-workspace-operatemodel {
   width: 100%;
   height: 100%;
+  padding:20px;
 }
 </style>

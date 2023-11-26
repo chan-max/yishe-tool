@@ -6,7 +6,7 @@
         class="designiy-workspace-tab-item"
         @click="tab = Tab.MODEL"
       >
-        模型
+        模型信息
       </div>
       <div
         :class="tab == Tab.STICKER && 'designiy-workspace-tab-item-active'"
@@ -58,16 +58,16 @@ const tab = ref(Tab.MODEL);
 .designiy-workspace-tab {
   width: 100%;
   border-bottom: 1px solid #eee;
-  padding: 5px 16px 0 16px;
+  padding: 15px 15px 0 15px;
   display: flex;
-  column-gap: 20px;
+  column-gap: 10px;
 }
 
 .designiy-workspace-tab-item {
   font-size: 12px;
   cursor: pointer;
   color: #999;
-  line-height: 36px;
+  padding :5px;
 }
 
 .designiy-workspace-tab-item-active {

@@ -135,6 +135,28 @@
   >
     <workspace></workspace>
   </diycontainer>
+
+  <diycontainer
+    :show="showDecalList"
+    style="
+      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
+      bottom: 0;
+      right: 0;
+    "
+  >
+    <decal-list></decal-list>
+  </diycontainer>
+
+  <diycontainer
+    :show="showModelInfo"
+    style="
+      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
+      bottom: 0;
+      right: 0;
+    "
+  >
+    <model-info></model-info>
+  </diycontainer>
   
   <diycontainer
     :show="showDecalControlContainer"
@@ -168,6 +190,8 @@ import {
   showCustomTextStickerContainer,
   showFontUploadContainer,
   showFontList,
+  showModelInfo,
+  showDecalList
 } from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -186,6 +210,9 @@ import customTextSticker from "./customTextSticker/index.vue";
 import fontUpload from "./fontUpload/index.vue";
 import fontList from "./fontList/index.vue";
 import subHeaderMenu from "./subHeaderMenu/index.vue";
+import modelInfo from './modelInfo/index.vue';
+import decalList from './decalList/index.vue';
+
 
 import {
   Mesh,

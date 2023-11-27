@@ -65,7 +65,7 @@ export const showTextStickerContainer = ref(false)
 
 
 // 是否展示工作台窗口
-export const showWorkspaceContainer = ref(true)
+export const showWorkspaceContainer = ref(false)
 watch(showWorkspaceContainer,(value) => {
     if(value){
         showDecalControlContainer.value = false
@@ -134,3 +134,9 @@ watch(showFontList,(value) => {
     }
 })
 
+
+// 是否展示已使用的贴纸列表
+export const showDecalList = ref(true)
+
+// 是否展示模型信息
+export const showModelInfo = ref(false)

@@ -1,6 +1,6 @@
 <template>
-    <div class="designiy-workspace-operatesticker">
-      
+    <div class="designiy-model-info">
+      {{currentOperatingModelInfo}}
     </div>
   </template>
   <script setup>
@@ -8,9 +8,10 @@
   
   </script>
   <style lang="less">
-  .designiy-workspace-operatesticker {
+  .designiy-model-info {
     width: 100%;
     height: 100%;
+    padding:20px;
   }
   </style>
   

@@ -273,7 +273,7 @@ export class ModelController {
     
     // 进行贴图
     stickToMousePosition(img, info) {
-        const decal = new DecalController(this, img, info)
+        const decal = new DecalController(info)
         decal.stickToMousePosition()
     }
 

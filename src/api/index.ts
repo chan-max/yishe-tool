@@ -55,13 +55,7 @@ export const uploadImage = (data: any) =>
 export const getImageList = () =>
   new Promise(async (resolve: any, reject: any) => {
     let res = await apiInstance.get(Url.GET_IMAGE_LIST);
-    let data = res.data.data.map((item: any) => ({
-      path: item.path,
-      fullpath: item.fullpath,
-      name: item.name,
-      description: item.description,
-    }));
-    resolve(data);
+    resolve(res.data.data);
   });
 
 // 上传文字字体文件

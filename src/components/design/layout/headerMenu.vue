@@ -1,9 +1,9 @@
 <template>
   <div class="designiy-header">
-    <div class="designiy-header-logo"></div>
+    <div class="designiy-header-logo">
+      <icon-logo></icon-logo>
+    </div>
 
-    <header-menu-dropdown/>
-    
     <div style="flex-grow: 1"></div>
 
 
@@ -33,6 +33,8 @@ import userAvatar from '@/components/user/userAvatar.vue'
 import headerMenuDropdown from './headerMenuDropdown/index.vue'
 import { onShortcutTrigger } from '../shortcut/index';
 import iconHelp from '@/icon/help.svg?vueComponent'
+// import iconLogo from '@/icon/logo/logo.svg?vueComponent'
+
 
 const props = defineProps([]);
 

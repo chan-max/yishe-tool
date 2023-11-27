@@ -2,7 +2,7 @@
   <div id="designiy-canvas-container" ref="mountContainer"></div>
   <loading v-if="isLoading"></loading>
 
-  <diycontainer style="width: 100%; height: var(--1s-header-height); top: 0; z-index: 3">
+  <diycontainer style="width: 100%; height: var(--1s-header-height); top: 0;">
     <header-menu />
   </diycontainer>
 
@@ -11,7 +11,7 @@
       width: calc(100% - var(--1s-left-menu-width));
       height: var(--1s-sub-header-height);
       top: var(--1s-header-height);
-      zindex: 2;
+      z-index: 2;
       left: var(--1s-left-menu-width);
     "
   >

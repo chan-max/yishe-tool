@@ -123,7 +123,9 @@ import {
 import { getFonts, uploadTextSticker } from "@/api/index";
 import { useDebounceFn } from "@vueuse/core";
 import { More } from "@element-plus/icons-vue";
-import { toPng } from "html-to-image";
+import * as htmlToImage from 'html-to-image';
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
+
 import { initDraggableElement } from "../../utils/draggable";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { debounce } from "@/common/utils/debounce";

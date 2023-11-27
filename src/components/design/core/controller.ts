@@ -269,7 +269,7 @@ export class ModelController {
         this.y = y;
     }
 
-    decalControllers: any = reactive(new Set());
+    decalControllers: any = reactive([]);
     
     // 进行贴图
     stickToMousePosition(img, info) {

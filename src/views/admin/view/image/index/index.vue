@@ -23,13 +23,13 @@
 
 <script setup>
 import { UploadFilled } from "@element-plus/icons-vue";
-import { getImageList } from "@/api";
+import { getImage } from "@/api";
 import { onMounted, ref } from "vue";
 
 const images = ref([]);
 
 onMounted(async () => {
-  images.value = await getImageList();
+  images.value = await getImage();
 });
 
 </script>

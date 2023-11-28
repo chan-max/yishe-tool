@@ -4,7 +4,7 @@ import { resolveFilePath} from "./url";
 export function format1stf(source:any){
 
     if(!source){
-        return {}
+        return null
     }
 
     if(typeof source === 'string'){
@@ -14,12 +14,6 @@ export function format1stf(source:any){
             return {}
         }
     }
-
-    source.baseModelUrl = resolveFilePath( source.baseModelUrl)
-
     
-    source?.decals?.forEach((decal) => {
-        decal.src = resolveFilePath(decal.src)
-    })
     return source
 }

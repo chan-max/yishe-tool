@@ -36,7 +36,6 @@
 import { defineProps, ref, onMounted, onBeforeMount, computed, watch } from 'vue';
 import { useDraggable } from "@vueuse/core";
 import { UseDraggable as Draggable } from "@vueuse/components";
-import { zIndex } from "../store";
 import { CloseBold } from "@element-plus/icons-vue";
 
 const handle = ref();
@@ -56,7 +55,6 @@ const props = defineProps({
   mask: {
     default: true,
   },
-  zIndex: {},
   animation: {},
 });
 

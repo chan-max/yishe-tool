@@ -4,8 +4,8 @@
       <el-tooltip :hide-after="0" content="工作台" placement="right">
         <div
           class="menu-bar-item"
-          :class="{ 'menu-bar-item-focus': showWorkspaceContainer }"
-          @click="showWorkspaceContainer = !showWorkspaceContainer"
+          :class="{ 'menu-bar-item-focus': showWorkspace }"
+          @click="showWorkspace = !showWorkspace"
         >
           <div class="menu-bar-item-icon"><icon-workspace></icon-workspace></div>
           <span>工作台</span>
@@ -14,8 +14,8 @@
       <el-tooltip :hide-after="0" content="选择模型" placement="right">
         <div
           class="menu-bar-item"
-          :class="{ 'menu-bar-item-focus': showBaseModelSelectContainer }"
-          @click="showBaseModelSelectContainer = !showBaseModelSelectContainer"
+          :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
+          @click="showBaseModelSelect = !showBaseModelSelect"
         >
           <div class="menu-bar-item-icon"><icon-shirt></icon-shirt></div>
           <span>选择模型</span>
@@ -24,8 +24,8 @@
       <el-tooltip :hide-after="0" content="图片贴图" placement="right">
         <div
           class="menu-bar-item"
-          :class="{ 'menu-bar-item-focus': showImageStickerContainer }"
-          @click="showImageStickerContainer = !showImageStickerContainer"
+          :class="{ 'menu-bar-item-focus': showImageSticker }"
+          @click="showImageSticker = !showImageSticker"
         >
           <div class="menu-bar-item-icon"><icon-photo></icon-photo></div>
           <span>图片</span>
@@ -34,8 +34,8 @@
       <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
         <div
           class="menu-bar-item"
-          :class="{ 'menu-bar-item-focus': showTextStickerContainer }"
-          @click="showTextStickerContainer = !showTextStickerContainer"
+          :class="{ 'menu-bar-item-focus': showTextSticker }"
+          @click="showTextSticker = !showTextSticker"
         >
           <div class="menu-bar-item-icon"><icon-text></icon-text></div>
           <span>网络文字</span>
@@ -44,7 +44,7 @@
       <el-tooltip :hide-after="0" content="自定义文字" placement="right">
         <div
           class="menu-bar-item"
-          @click="showCustomTextStickerContainer = !showCustomTextStickerContainer"
+          @click="showCustomTextSticker = !showCustomTextSticker"
         >
           <div class="menu-bar-item-icon"><icon-paint></icon-paint></div>
           <span>文字创作</span>
@@ -80,7 +80,7 @@
       <el-tooltip :hide-after="0" content="设置场景" placement="right">
         <div
           class="menu-bar-item"
-          @click="showSceneControlContainer = !showSceneControlContainer"
+          @click="showSceneControl = !showSceneControl"
         >
           <div class="menu-bar-item-icon"><icon-earth></icon-earth></div>
           <span>场景</span>
@@ -122,16 +122,16 @@
 </template>
 <script setup>
 import {
-  showBaseModelSelectContainer,
+  showBaseModelSelect,
   isDarkMode,
   isFullScreen,
   canvasBgColor,
   canvasBgOpacity,
-  showSceneControlContainer,
-  showImageStickerContainer,
-  showTextStickerContainer,
-  showWorkspaceContainer,
-  showCustomTextStickerContainer,
+  showSceneControl,
+  showImageSticker,
+  showTextSticker,
+  showWorkspace,
+  showCustomTextSticker,
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?vueComponent";

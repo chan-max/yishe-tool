@@ -9,7 +9,14 @@
       <div class="designiy-decal-list-item">
         <el-image class="designiy-decal-list-item-image" :src="decal.fullpath" fit="cover">
         </el-image>
-        <div class="designiy-decal-list-item-desc">lll</div>
+        <div class="designiy-decal-list-item-desc">
+          <div >
+            这是一张贴纸
+        </div>
+        <div >
+          根深不怕风摇动，树正不怕月影斜
+        </div>
+        </div>
       </div>
     </template>
     </div>
@@ -27,7 +34,7 @@ const stickers = computed(() => {
 </script>
 <style lang="less">
 .designiy-decal-list {
-  width: 300px;
+  width: 320px;
   height: 100%;
   overflow: auto;
   display: flex;
@@ -63,6 +70,7 @@ const stickers = computed(() => {
   width: 80px;
   height: 80px;
   border-radius: 10px;
+  flex-shrink:0;
 }
 
 .designiy-decal-list-item-desc {

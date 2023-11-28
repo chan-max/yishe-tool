@@ -61,9 +61,8 @@ async function save() {
   justify-content: start;
   align-items: center;
   column-gap: 10px;
-
   padding-right: 10px;
-  background: #222;
+  background: #111;
 }
 
 .designiy-header-select-model {

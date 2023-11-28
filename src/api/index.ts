@@ -52,7 +52,7 @@ export const uploadImage = (data: any) =>
   apiInstance.post(Url.UPLOAD_IMAGE, data);
 
 // 获取图片列表
-export const getImageList = () =>
+export const getImage = () =>
   new Promise(async (resolve: any, reject: any) => {
     let res = await apiInstance.get(Url.GET_IMAGE_LIST);
     resolve(res.data.data);

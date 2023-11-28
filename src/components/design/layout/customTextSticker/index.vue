@@ -108,7 +108,7 @@
 <script setup>
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import {
-  showBaseModelSelectContainer,
+  showBaseModelSelect,
   operatingTextStickerText,
   operatingTextStickerColor,
   operatingTextStickerWeight,
@@ -213,15 +213,15 @@ async function save() {
 .designiy-text-sticker-custom {
   padding: 10px;
   height: 100%;
-  width:300px;
+  width:320px;
   display: flex;
   flex-direction: column;
 }
 
 .designiy-text-sticker-canvas {
-  width: 100%;
-  height: 160px;
-  min-height: 160px;
+  width: 300px;
+  height: 300px;
+  flex-shrink:0;
   background: #eee;
   display: flex;
   justify-content: center;

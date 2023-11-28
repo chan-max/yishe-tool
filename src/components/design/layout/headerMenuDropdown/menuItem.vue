@@ -27,15 +27,22 @@
 </template>
 <script setup>
 import iconRightArrow from "@/icon/rightArrow.svg?vueComponent";
-import { ref,onMounted } from "vue";
+import { ref,onMounted ,inject,watch} from "vue";
 
 const showChildren = ref(false);
 
 function itemClick() {
   showChildren.value = !showChildren.value;
+  clicker.value = !clicker.value;
 }
 
 
+
+onMounted(() => {
+  document.body.addEventListener("click", (e) => {
+    showChildren.value = false;
+  });
+});
 
 </script>
 <style lang="less">
@@ -45,7 +52,7 @@ function itemClick() {
 }
 
 .designiy-dropdown-menu-item-main {
-  width:180px;
+  min-width:180px;
   padding: 7px 10px;
   display: flex;
   justify-content: space-between;
@@ -58,10 +65,14 @@ function itemClick() {
   }
 }
 
+.designiy-dropdown-menu-item-title{
+  text-wrap: nowrap;
+}
+
 .designiy-dropdown-menu-item-children {
   position: absolute;
   top: 0;
-  left: calc(100% + 5px);
+  left: calc(100% - 5px);
 }
 
 .designiy-dropdown-menu-item-icon {

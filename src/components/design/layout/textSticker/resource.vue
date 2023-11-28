@@ -60,7 +60,7 @@ onBeforeMount(async () => {
 function load(e,item){
   var el = e.target
   initDraggableElement(el,() => {
-    currentController.value.stickToMousePosition(el)
+    currentController.value.stickToMousePosition(el,item)
   })
 }
 

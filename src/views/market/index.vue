@@ -40,7 +40,6 @@ onMounted(async () => {
     row-gap: 10px;
     column-gap: 10px;
     overflow: auto;
-    justify-content: center;
 }
 
 

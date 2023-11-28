@@ -42,7 +42,7 @@
       </div>
     </div>
     <div class="designiy-image-sticker-footer">
-      <el-button type="pirmary" @click="showImageUplaodContainer = true">
+      <el-button type="pirmary" @click="showImageUplaod = true">
         上传图片
       </el-button>
     </div>
@@ -51,16 +51,16 @@
 <script setup>
 import { onMounted, ref, computed} from "vue";
 import {
-  showBaseModelSelectContainer,
+  showBaseModelSelect,
   currentOperatingModelInfo,
   canvasBgColor,
   canvasBgOpacity,
   currentController
 } from "../../store";
 import { Loading, CloseBold, CircleCloseFilled, Picture,FolderOpened,Search, Operation   } from "@element-plus/icons-vue";
-import { getImageList } from "@/api/index";
+import { getImage } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
-import { showImageUplaodContainer } from "../../store";
+import { showImageUplaod } from "../../store";
 
 const value = ref("");
 
@@ -86,7 +86,7 @@ function load(e, info) {
 }
 
 onMounted(async () => {
-  images.value = await getImageList();
+  images.value = await getImage();
 });
 
 

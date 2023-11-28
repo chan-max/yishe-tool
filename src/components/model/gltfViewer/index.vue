@@ -47,6 +47,7 @@ Vector2
 import { debounce } from "@/common/utils/debounce";
 import { gltfLoader } from "@/common/threejsHelper";
 import { format1stf } from '@/api/format';
+import {getBaseModel,getImage} from '@/api'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
 const props = defineProps(['model']);
@@ -97,21 +98,26 @@ function initImportedModel(gltf) {
 
 async function initModel() {
 
-  const $ = format1stf(props.model)
-
-  const url = $.baseModelUrl;
-
-  if (!url) {
-    return;
+  const model = format1stf(props.model)
+  
+  if(!model){
+    return
   }
 
   loading.value = true;
+  var baseModelUrl = model.baseModelUrl
 
-  renderer.setClearColor($.canvasBgColor || '#474e56');
+  if(!baseModelUrl && model.baseModelId){
+    baseModelUrl = (await getBaseModel({id:model.baseModelId}))[0].fileFullpath
+  }
+
+
+
+  renderer.setClearColor(model.canvasBgColor || '#474e56');
 
   var currentMesh = null
 
-  let gltf = await gltfLoader(url);
+  let gltf = await gltfLoader(baseModelUrl);
 
   currentMesh = findMainMesh(gltf)
   function findMainMesh(gltf) {
@@ -126,18 +132,15 @@ async function initModel() {
 
   // 同步摄像机位置
 
-  if ($.camera) {
-    camera.position.set($.camera.position.x, $.camera.position.y, $.camera.position.z);
-    camera.rotation.set($.camera.rotation.x, $.camera.rotation.y, $.camera.rotation.z);
-    camera.fov = $.camera.fov;
-    camera.near = $.camera.near;
-    camera.far = $.camera.far;
+  if (model.camera) {
+    camera.position.set(model.camera.position.x, model.camera.position.y, model.camera.position.z);
+    camera.rotation.set(model.camera.rotation.x, model.camera.rotation.y, model.camera.rotation.z);
+    camera.fov = model.camera.fov;
+    camera.near = model.camera.near;
+    camera.far = model.camera.far;
   }
 
-
-
   let el = gltfViewer.value;
-
 
   function resetCameraAspect() {
     let width = getWidth(el);
@@ -187,9 +190,10 @@ pointLight.position.set(0, 0, 2); // 设置光源位置
 scene.add(pointLight);
 
 
-  if ($.decals) {
-    $.decals.forEach(decal => {
-      var { src, position, rotation, size } = decal
+  if (model.decals) {
+    model.decals.forEach(async decal => {
+      var { decalId, position, rotation, size } = decal
+      const image = (await getImage({id:decalId}))[0]
 
       position = new Vector3(position.x, position.y, position.z)
 
@@ -207,7 +211,7 @@ scene.add(pointLight);
       rotation = new Euler(rotation.x, rotation.y, rotation.z,)
       size = new Vector3(size.x, size.y, size.z)
       const textureLoader = new TextureLoader();
-      const texture = textureLoader.load(src);
+      const texture = textureLoader.load(image.fullpath);
       const material = new MeshPhongMaterial({
         map: texture,
         transparent: true,
@@ -224,10 +228,10 @@ scene.add(pointLight);
     });
   }
 
-  
 
   function render() {
     requestAnimationFrame(render);
+    // currentMesh.rotation.y+=.01
     renderer.render(scene, camera);
   }
 
@@ -236,13 +240,6 @@ scene.add(pointLight);
   loading.value = false;
   emits('load')
 }
-
-defineExpose({
-  getScreenshot() {
-    renderer.render(scene, camera); // 截取会出现白图片
-    return renderer.domElement.toDataURL("image/png");
-  },
-});
 
 watch(
   () => props.model,
@@ -253,15 +250,21 @@ watch(
   , { immediate: true });
 
 
+defineExpose({
+  getScreenshot() {
+    renderer.render(scene, camera); // 截取会出现白图片
+    return renderer.domElement.toDataURL("image/png");
+  },
+});
+
 function screenshot() {
   renderer.render(scene, camera); // 截取会出现白图片
   var img = renderer.domElement.toDataURL("image/png"); // base64
-
   // var win = window.open("", "_blank");
   // win.document.write('<img src="' + img + '"/>');
-
   emits("screenshot", img);
 }
+
 </script>
 <style lang="less">
 .gltf-viewer {

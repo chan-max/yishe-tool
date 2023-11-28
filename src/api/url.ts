@@ -63,7 +63,7 @@ export enum Url {
     GET_BASE_MODEL = url('/getBaseModel'),
 
     // 获取图片
-    GET_IMAGE_LIST = url('/getImageList'),
+    GET_IMAGE_LIST = url('/getImage'),
 
     // 上传字体
     UPLOAD_FONT = url('/uploadFont'),

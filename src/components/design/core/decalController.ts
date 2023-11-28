@@ -14,7 +14,7 @@ import {
 } from "three";
 
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
-import { currentController, operatingDecal, showDecalControlContainer } from '../store';
+import { currentController, operatingDecal, showDecalControl } from '../store';
 import { urlToImageElement } from "@/common/transform/urlToImageElement";
 
 

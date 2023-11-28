@@ -54,10 +54,11 @@ onMounted(async () => {
 }
 
 .home-banner-content{
-    padding: 0 50px;
+    padding: 0 20px;
     display: flex;
     width: 1200px;
     justify-content: space-between;
+    column-gap:20px;
 }
  
 .home-banner-desc {

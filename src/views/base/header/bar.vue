@@ -27,6 +27,7 @@ import iconArrowDown from "@/icon/arrow-down.svg?vueComponent";
   width: 100%;
   height: 64px;
   background: #fff;
+  border-bottom:1px solid #eee;
 }
 
 .header-bar-content {
@@ -46,6 +47,7 @@ import iconArrowDown from "@/icon/arrow-down.svg?vueComponent";
   align-items: center;
   justify-content: center;
   column-gap: 5px;
+  text-wrap: nowrap;
   cursor: pointer;
   svg{
     width: 10px;

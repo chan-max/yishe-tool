@@ -1,12 +1,23 @@
 <template>
-    <div class="designiy-scene-control">
-        <el-color-picker show-alpha size="small" v-model="bgColor" color-format="rgb" :predefine="predefineColors" />
-    </div>
+  <div class="designiy-scene-control">
+    <el-color-picker
+      show-alpha
+      size="small"
+      v-model="bgColor"
+      color-format="rgb"
+      :predefine="predefineColors"
+    />
+  </div>
 </template>
 <script setup>
-  import { onMounted, ref,computed } from "vue";
-  import {showBaseModelSelectContainer,currentOperatingModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
-import Color from 'color'
+import { onMounted, ref, computed } from "vue";
+import {
+  showBaseModelSelect,
+  currentOperatingModelInfo,
+  canvasBgColor,
+  canvasBgOpacity,
+} from "../../store.ts";
+import Color from "color";
 
 const predefineColors = ref(["#ffffff", "#dddddd", "#333333", "#555555"]);
 
@@ -24,15 +35,11 @@ const bgColor = computed({
     canvasBgColor.value = color.hex();
   },
 });
-
 </script>
 <style lang="less">
-.designiy-scene-control{
-  width:700px;
-  height:300px;
-  padding:10px;
+.designiy-scene-control {
+  width: 700px;
+  height: 300px;
+  padding: 20px;
 }
-
-
 </style>
-  

@@ -2,11 +2,15 @@
   <div id="designiy-canvas-container" ref="mountContainer"></div>
   <loading v-if="isLoading"></loading>
 
-  <diycontainer style="width: 100%; height: var(--1s-header-height); top: 0;">
+  <diycontainer
+    :show="showHeader"
+    style="width: 100%; height: var(--1s-header-height); top: 0"
+  >
     <header-menu />
   </diycontainer>
 
   <diycontainer
+    :show="showSubHeader"
     style="
       width: calc(100% - var(--1s-left-menu-width));
       height: var(--1s-sub-header-height);
@@ -22,8 +26,8 @@
     title="图片上传"
     :header="true"
     mask="true"
-    :show="showImageUplaodContainer"
-    @close="showImageUplaodContainer = false"
+    :show="showImageUplaod"
+    @close="showImageUplaod = false"
     :animation="{
       'enter-active-class': 'animate__animated animate__bounceIn',
       'leave-active-class': 'animate__animated animate__bounceOut',
@@ -34,6 +38,7 @@
   </diydialog>
 
   <diycontainer
+  :show="showLeftMenu" 
     style="
       left: 0;
       bottom: 0;
@@ -44,13 +49,13 @@
     <left-menu></left-menu>
   </diycontainer>
 
-  <diycontainer style="height: var(--1s-bottom-menu-height); bottom: 30px">
+  <diycontainer :show="showBottomMenu" style="height: var(--1s-bottom-menu-height); bottom: 30px">
     <bottom-menu></bottom-menu>
   </diycontainer>
 
   <diydialog
-    :show="showBaseModelSelectContainer"
-    @close="showBaseModelSelectContainer = false"
+    :show="showBaseModelSelect"
+    @close="showBaseModelSelect = false"
     :animation="{
       'enter-active-class': 'animate__animated animate__bounceIn',
       'leave-active-class': 'animate__animated animate__bounceOut',
@@ -62,8 +67,8 @@
   </diydialog>
 
   <diydialog
-    :show="showFontUploadContainer"
-    @close="showFontUploadContainer = false"
+    :show="showFontUpload"
+    @close="showFontUpload = false"
     :animation="{
       'enter-active-class': 'animate__animated animate__bounceIn',
       'leave-active-class': 'animate__animated animate__bounceOut',
@@ -76,13 +81,13 @@
 
   <diydialog
     title="设置场景"
-    :show="showSceneControlContainer"
-    @close="showSceneControlContainer = false"
+    :show="showSceneControl"
+    @close="showSceneControl = false"
   >
     <scene-control></scene-control>
   </diydialog>
   <diycontainer
-    :show="showImageStickerContainer"
+    :show="showImageSticker"
     style="
       height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
       bottom: 0;
@@ -104,7 +109,7 @@
   </diycontainer>
 
   <diycontainer
-    :show="showCustomTextStickerContainer"
+    :show="showCustomTextSticker"
     style="
       height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
       bottom: 0;
@@ -115,7 +120,7 @@
   </diycontainer>
 
   <diycontainer
-    :show="showTextStickerContainer"
+    :show="showTextSticker"
     style="
       height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
       bottom: 0;
@@ -126,7 +131,7 @@
   </diycontainer>
 
   <diycontainer
-    :show="showWorkspaceContainer"
+    :show="showWorkspace"
     style="
       height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
       bottom: 0;
@@ -157,9 +162,9 @@
   >
     <model-info></model-info>
   </diycontainer>
-  
+
   <diycontainer
-    :show="showDecalControlContainer"
+    :show="showDecalControl"
     style="
       height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
       bottom: 0;
@@ -178,20 +183,24 @@ import {
   currentController,
   canvasBgColor,
   canvasBgOpacity,
-  showBaseModelSelectContainer,
+  showBaseModelSelect,
   currentOperatingModelInfo,
-  showSceneControlContainer,
-  showImageStickerContainer,
-  showTextStickerContainer,
-  showWorkspaceContainer,
-  showDecalControlContainer,
+  showSceneControl,
+  showImageSticker,
+  showTextSticker,
+  showWorkspace,
+  showDecalControl,
   isLoading,
-  showImageUplaodContainer,
-  showCustomTextStickerContainer,
-  showFontUploadContainer,
+  showImageUplaod,
+  showCustomTextSticker,
+  showFontUpload,
   showFontList,
   showModelInfo,
-  showDecalList
+  showDecalList,
+  showHeader,
+  showSubHeader,
+  showLeftMenu,
+  showBottomMenu,
 } from "../store";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
@@ -210,9 +219,8 @@ import customTextSticker from "./customTextSticker/index.vue";
 import fontUpload from "./fontUpload/index.vue";
 import fontList from "./fontList/index.vue";
 import subHeaderMenu from "./subHeaderMenu/index.vue";
-import modelInfo from './modelInfo/index.vue';
-import decalList from './decalList/index.vue';
-
+import modelInfo from "./modelInfo/index.vue";
+import decalList from "./decalList/index.vue";
 
 import {
   Mesh,

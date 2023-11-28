@@ -60,7 +60,7 @@ export enum Url {
     GET_BANNER_MODEL = url('/getBannerModel'),
 
     // 获取基本模型列表
-    GET_BASE_MODEL_LIST = url('/getBaseModelList'),
+    GET_BASE_MODEL = url('/getBaseModel'),
 
     // 获取图片
     GET_IMAGE_LIST = url('/getImageList'),

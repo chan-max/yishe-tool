@@ -1,84 +1,59 @@
 <template>
-    <div ref="headerBar" class="header-bar flex justify-center z-10">
-        <div class="header-bar-content flex justify-between items-center">
-            <div class="header-bar-content-menu">
-                导航
-            </div>
-            <div style="flex:1"></div>
-            <div class="header-bar-content-search">
-                <el-input class="" v-model="search" placeholder="搜索" size="default">
-                    <template #suffix>
-                        <div style="cursor:pointer"></div>
-                    </template>
-                </el-input>
-            </div>
-            <user-avatar/>
-        </div>
+  <div ref="headerBar" class="header-bar flex justify-center z-10">
+    <div class="header-bar-content flex justify-between items-center">
+      <div class="header-bar-logo">1s.design</div>
+      <div class="header-bar-menu-item">
+        寻找模型
+        <icon-arrow-down></icon-arrow-down>
+      </div>
+      <div class="header-bar-menu-item">在线商场 <icon-arrow-down></icon-arrow-down></div>
+      <div class="header-bar-menu-item">设计工具 <icon-arrow-down></icon-arrow-down></div>
+      <div class="header-bar-menu-item">更多 <icon-arrow-down></icon-arrow-down></div>
+      <div style="flex: 1"></div>
+      <user-avatar />
     </div>
+  </div>
 </template>
-    
-<script setup lang='ts'>
-import { Search } from '@element-plus/icons-vue';
-import userAvatar from '@/components/user/userAvatar.vue'
-import { ref, onMounted, onUnmounted } from 'vue';
 
-const search = ref('')
-const headerBar = ref()
-
-onMounted(() => {
-    // 获取导航栏
-    var navbar = headerBar.value;
-    // 获取导航栏距离页面顶部的偏移量
-    var sticky = navbar.offsetTop;
-    // 当用户滚动页面时执行的函数
-    window.onscroll = function () {
-        // 如果滚动的距离大于或等于导航栏的偏移量，添加 "sticky" 类
-        if (window.pageYOffset >= sticky) {
-            navbar.classList.add("fixed")
-        } else {
-            // 否则，移除 "sticky" 类
-            navbar.classList.remove("fixed");
-        }
-    };
-})
-
+<script setup>
+import { Search } from "@element-plus/icons-vue";
+import userAvatar from "@/components/user/userAvatar.vue";
+import { ref, onMounted, onUnmounted } from "vue";
+import iconArrowDown from "@/icon/arrow-down.svg?vueComponent";
 </script>
-    
-<style>
+
+<style lang="less">
 .header-bar {
-    width: 100%;
-    height: 50px;
-    background: var(--1s-main);
+  width: 100%;
+  height: 64px;
+  background: #fff;
 }
 
 .header-bar-content {
-    width: 1200px;
-    padding: 0 30px;
+  width: 1600px;
+  padding: 0 30px;
+  column-gap: 50px;
 }
 
-.header-bar-content-menu {
-    color: #fff;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 5px;
-    font-family: 微软雅黑;
-    cursor: pointer;
+.header-bar-logo {
+  font-size: 15px;
+  font-weight: bold;
 }
 
-.header-bar-content-menu:hover {
-    opacity: .9;
-}
-
-.header-bar-content-search {
-    padding: 0 20px;
-
-    .el-input {
-        width: 300px;
-        outline: none;
-    }
+.header-bar-menu-item {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 5px;
+  cursor: pointer;
+  svg{
+    width: 10px;
+    height: 10px;
+  }
 }
 
 .fixed {
-    position: fixed;
+  position: fixed;
 }
 </style>

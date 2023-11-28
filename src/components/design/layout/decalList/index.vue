@@ -7,7 +7,7 @@
     <div class="designiy-decal-list-content">
         <template v-for="decal in stickers">
       <div class="designiy-decal-list-item">
-        <el-image class="designiy-decal-list-item-image" :src="decal.fullpath" fit="fill">
+        <el-image class="designiy-decal-list-item-image" :src="decal.fullpath" fit="cover">
         </el-image>
         <div class="designiy-decal-list-item-desc">lll</div>
       </div>

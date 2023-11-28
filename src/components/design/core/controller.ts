@@ -32,7 +32,6 @@ import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
-import { currentBaseModelUrl } from "../store";
 
 import { eventMixin } from "./event";
 
@@ -179,8 +178,6 @@ export class ModelController {
         let gltf: any = await gltfLoader(url);
         this.mainModel = gltf;
         this.baseModelUrl = url;
-        currentBaseModelUrl.value = url;
-        
         this.initModelPosition();
         this.scene.add(gltf.scene);
         this.mesh = this.findMainMesh(gltf);

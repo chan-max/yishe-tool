@@ -1,5 +1,5 @@
 import { getBannerModelHook } from "./api/common/getBannerModel.js";
-import { getBaseModelListHook } from "./api/common/getBaseModelList.js";
+import { injectBaseModelRoute } from "./api/baseModel.js";
 import { getBaseSkyboxHook } from "./api/common/getSkybox.js";
 import { getWebStickersHook } from "./api/design/getStickers.js";
 import { uploadFontHook, getFontsHook } from "./api/font.js";
@@ -22,7 +22,7 @@ export const initRouter = (router, sequelize, app) => {
     loginHook,
     signupHook,
     getBannerModelHook,
-    getBaseModelListHook,
+    injectBaseModelRoute,
     getBaseSkyboxHook,
     getWebStickersHook,
     uploadBaseModelHook,

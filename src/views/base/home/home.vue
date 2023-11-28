@@ -10,4 +10,9 @@ import banner from './banner.vue'
 </script>
 
 <style>
+
+.home{
+    height: 100%;
+    overflow: auto;
+}
 </style>

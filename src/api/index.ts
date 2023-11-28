@@ -26,9 +26,9 @@ export const getBannerModel = () =>
   });
 
 // 获取可以进行编辑的内置模型
-export const getBaseModelList = () =>
+export const getBaseModel = (params?: any) =>
   new Promise(async (resolve, reject) => {
-    const res = await apiInstance.get(Url.GET_BASE_MODEL_LIST);
+    const res = await apiInstance.get(Url.GET_BASE_MODEL, params);
     resolve(
       res.data.data
     );
@@ -67,7 +67,7 @@ export const getFonts = () =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.get(Url.GET_FONTS);
     resolve(res.data.data);
-});
+  });
 
 export const uploadModel = (data) => apiInstance.post(Url.UPLOAD_MODEL, data);
 

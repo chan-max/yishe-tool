@@ -23,14 +23,15 @@
 
 <script setup>
 import { UploadFilled } from "@element-plus/icons-vue";
-import { getBaseModelList } from "@/api";
+import { getBaseModel } from "@/api";
 import { onMounted, ref } from "vue";
 
 const models = ref([]);
 
 onMounted(async () => {
-   models.value = await getBaseModelList();
+   models.value = await getBaseModel();
 });
+
 </script>
 <style lang="less">
 .admin-model-index {

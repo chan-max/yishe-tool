@@ -6,24 +6,18 @@
 
     <div style="flex-grow: 1"></div>
 
+    <div>
+      <icon-help style="width: 24px; height: 24px"></icon-help>
+    </div>
 
-      <div>
-        <icon-help style="width:24px;height:24px;"></icon-help>
-      </div>
-
-
-    <el-button @click="save" type="primary" round  >
-      保 存
-    </el-button>
+    <el-button @click="save" type="primary" round> 保 存 </el-button>
 
     <user-avatar />
-
-  
   </div>
 </template>
 
 <script setup>
-import { getBaseModelList, getBaseSkybox } from "@/api/index.ts";
+import { getBaseModel, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
 import { canvasBgColor, canvasBgOpacity, isDarkMode, currentController } from "../store";
 import {  ElMessageBox } from 'element-plus'
@@ -50,12 +44,10 @@ async function save() {
       draggable: true,
     })
 
-
-  const img = currentController.value.getScreenShotFile()
-  const data = new FormData()
-  data.append('img', img)
-  data.append('modelInfo', JSON.stringify(currentController.value.exportTo1stf()))
-  await uploadModel(data)
+  await uploadModel({
+    img:currentController.value.getScreenShotFile(),
+    modelInfo:JSON.stringify(currentController.value.exportTo1stf())
+  })
 }
 
 
@@ -71,10 +63,8 @@ async function save() {
   column-gap: 10px;
 
   padding-right: 10px;
-  background:#222;
+  background: #222;
 }
-
-
 
 .designiy-header-select-model {
   margin: 0 10px;

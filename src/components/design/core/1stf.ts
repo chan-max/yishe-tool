@@ -1,11 +1,10 @@
 import { resolveFilePath, toRealPath } from "@/api/url";
 import { ModelController } from "./controller";
-import { canvasBgColor, currentBaseModelUrl, isDarkMode } from "../store";
+import { canvasBgColor, currentOperatingModelInfo, isDarkMode } from '../store';
 
 export const _1stfExporterMixin = (modelController: ModelController) => {
   modelController.exportTo1stf = () => {
-    const decals = modelController.decalControllers.forEach((dc: any) => {
-
+    const decals = modelController.decalControllers.map((dc: any) => {
       const position = {
         x: dc.position.x,
         y: dc.position.y,
@@ -25,7 +24,7 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
       };
 
       return {
-        src: dc.info.path,
+        decalId: dc.info.id,
         position,
         rotation,
         size,
@@ -33,20 +32,20 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
     });
     
     return {
-      baseModelUrl: toRealPath(currentBaseModelUrl.value),
+      baseModelId: currentOperatingModelInfo.value.id,
       decals,
       isDarkMode: isDarkMode.value,
       canvasBgColor: canvasBgColor.value,
-      camera:{
+      camera: {
         position: {
-          x:modelController.camera.position.x,
-          y:modelController.camera.position.y,
-          z:modelController.camera.position.z,
+          x: modelController.camera.position.x,
+          y: modelController.camera.position.y,
+          z: modelController.camera.position.z,
         },
         rotation: {
-          x:modelController.camera.rotation.x,
-          y:modelController.camera.rotation.y,
-          z:modelController.camera.rotation.z,
+          x: modelController.camera.rotation.x,
+          y: modelController.camera.rotation.y,
+          z: modelController.camera.rotation.z,
         },
         fov: modelController.camera.fov,
         // 根据试图尺寸自适应

@@ -8,14 +8,14 @@
   </div>
 </template>
 <script setup>
-import { getBaseModelList } from "@/api";
+import { getBaseModel } from "@/api";
 import { onMounted, ref } from "vue";
 import { showBaseModelSelectContainer, currentOperatingModelInfo } from "../../store.ts";
 
 const models = ref([]);
 
 onMounted(async () => {
-  const data = await getBaseModelList();
+  const data = await getBaseModel();
   models.value = data;
 });
 

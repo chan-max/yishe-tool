@@ -2,10 +2,10 @@
   <div class="home-banner">
     <div class="home-banner-content">
         <div class="home-banner-desc">
-      <div style="font-size: 46px; color: #111; font-weight: 600">
+      <div style="font-size: 46px; color: #fff; font-weight: 600">
         开放式服装设计&交易平台
       </div>
-      <div style="font-size: 14px; color: rgba(0, 0, 0, 0.6); line-height: 24px;padding: 20px 0;width:80%;">
+      <div style="font-size: 14px; color: rgba(255, 255, 255, 0.6); line-height: 24px;padding: 20px 0;width:80%;">
         这是一个专门面向设计师和买家的全新线上平台，旨在创造一个安全、公正和透明的环境，让创新与商业交易可以无缝衔接
       </div>
       <div style="padding-top: 10px">
@@ -45,7 +45,7 @@ onMounted(async () => {
 <style lang="less">
 
 .home-banner {
-  background:#fafafa;
+  background:#333;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -54,12 +54,12 @@ onMounted(async () => {
 }
 
 .home-banner-content{
-    padding: 0 20px;
+    padding: 0 50px;
     display: flex;
     width: 1200px;
     justify-content: space-between;
 }
-
+ 
 .home-banner-desc {
   text-align: left;
   height: 400px;

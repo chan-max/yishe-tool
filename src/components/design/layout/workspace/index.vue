@@ -1,5 +1,6 @@
 <template>
   <div class="designiy-workspace">
+    工作台导航
   </div>
 </template>
 <script setup lang="ts">

@@ -1,29 +1,26 @@
 <template>
-  <div class="designiy-text-sticker-custom">
-    <div class="designiy-text-sticker-canvas">
-      <div id="text-sticker" ref="textStickerEl">
+  <div class="designiy-custom-text-sticker">
+    <div class="designiy-custom-text-sticker-canvas">
+      <div id="custom-text-sticker" ref="textStickerEl">
         {{ operatingTextStickerText }}
       </div>
     </div>
 
-    <div class="designiy-text-sticker-title">贴纸内容</div>
     <textarea
-      class="designiy-text-sticker-textarea"
+      class="designiy-custom-text-sticker-textarea"
       placeholder="输入贴纸内容..."
       v-model="operatingTextStickerText"
     />
 
-    <div class="designiy-text-sticker-title">文字属性</div>
-
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">字体</div>
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">字体</div>
       <div></div>
     </div>
 
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">文字厚度</div>
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">文字厚度</div>
       <input
-        class="designiy-text-sticker-form-item-input"
+        class="designiy-custom-text-sticker-form-item-input"
         type="number"
         step="100"
         max="900"
@@ -32,20 +29,20 @@
       />
     </div>
 
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">文字间距</div>
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">文字间距</div>
       <input
-        class="designiy-text-sticker-form-item-input"
+        class="designiy-custom-text-sticker-form-item-input"
         type="number"
         step="1"
         v-model="operatingTextStickerLetterSpacing"
       />
     </div>
 
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">字号</div>
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">字号</div>
       <input
-        class="designiy-text-sticker-form-item-input"
+        class="designiy-custom-text-sticker-form-item-input"
         type="number"
         step="1"
         max="100"
@@ -54,10 +51,10 @@
       />
     </div>
 
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">行高</div>
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">行高</div>
       <input
-        class="designiy-text-sticker-form-item-input"
+        class="designiy-custom-text-sticker-form-item-input"
         type="number"
         step="0.1"
         max="100"
@@ -66,42 +63,42 @@
       />
     </div>
 
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">纵向排列</div>
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">纵向排列</div>
     </div>
 
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">使用斜体</div>
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">使用斜体</div>
       <div
-        class="designiy-text-sticker-form-item-textbtn"
+        class="designiy-custom-text-sticker-form-item-textbtn"
         @click="operatingTextStickerIsItalic = !operatingTextStickerIsItalic"
       >
         {{ operatingTextStickerIsItalic ? "是" : "否" }}
       </div>
     </div>
 
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">颜色</div>
-      <input class="designiy-text-sticker-color" type="color" />
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">颜色</div>
+      <input class="designiy-custom-text-sticker-color" type="color" />
     </div>
 
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">文字对齐方式</div>
-      <div class="designiy-text-sticker-form-item-textbtn"></div>
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">文字对齐方式</div>
+      <div class="designiy-custom-text-sticker-form-item-textbtn"></div>
     </div>
 
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">文字阴影</div>
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">文字阴影</div>
     </div>
 
-    <div class="designiy-text-sticker-form-item">
-      <div class="designiy-text-sticker-form-item-label">文字装饰</div>
+    <div class="designiy-custom-text-sticker-form-item">
+      <div class="designiy-custom-text-sticker-form-item-label">文字装饰</div>
     </div>
     <div style="flex: 1"></div>
 
     <div>
-      <el-button type="primary"  @click=""> 上传字体 </el-button>
-      <el-button type="primary"  @click="save"> 保存该贴纸 </el-button>
+      <el-button type="primary" @click=""> 上传字体 </el-button>
+      <el-button type="primary" @click="save"> 保存该贴纸 </el-button>
     </div>
   </div>
 </template>
@@ -123,8 +120,8 @@ import {
 import { getFonts, uploadTextSticker } from "@/api/index";
 import { useDebounceFn } from "@vueuse/core";
 import { More } from "@element-plus/icons-vue";
-import * as htmlToImage from 'html-to-image';
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
+import * as htmlToImage from "html-to-image";
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 
 import { initDraggableElement } from "../../utils/draggable";
 import { base64ToFile } from "@/common/transform/base64ToFile";
@@ -178,7 +175,9 @@ async function initTextSticker() {
   initDraggableElement(
     textStickerEl.value,
     (img) => {
-      currentController.value.stickToMousePosition(img);
+      currentController.value.stickToMousePosition({
+        img,
+      });
     },
     base64.value
   );
@@ -210,18 +209,19 @@ async function save() {
 }
 </script>
 <style lang="less">
-.designiy-text-sticker-custom {
+.designiy-custom-text-sticker {
   padding: 10px;
   height: 100%;
-  width:320px;
+  width: 320px;
   display: flex;
   flex-direction: column;
+  row-gap: 20px;
 }
 
-.designiy-text-sticker-canvas {
+.designiy-custom-text-sticker-canvas {
   width: 300px;
   height: 300px;
-  flex-shrink:0;
+  flex-shrink: 0;
   background: #eee;
   display: flex;
   justify-content: center;
@@ -243,15 +243,14 @@ async function save() {
   cursor: pointer;
 }
 
-#text-sticker {
+#custom-text-sticker {
   white-space: pre;
 }
 
-.designiy-text-sticker-drager {
+.designiy-custom-text-sticker-drager {
   width: 100%;
   height: 100%;
   position: absolute;
-  // visibility: hidden;
 }
 
 #textStickerImg {
@@ -260,23 +259,19 @@ async function save() {
   margin: auto;
 }
 
-.text-vertical {
-  writing-mode: vertical-rl;
-}
-
-.designiy-text-sticker-textarea {
+.designiy-custom-text-sticker-textarea {
   outline: none;
   width: 100%;
   background-color: transparent !important;
-  color: var(--1s-text-sticker-input-color) !important;
-  border: var(--1s-text-sticker-textarea-border);
+  color: var(--1s-custom-text-sticker-input-color) !important;
+  border: 1px solid #ddd;
   font-size: 12px;
   padding: 5px;
   height: 60px;
   min-height: 60px;
 }
 
-.designiy-text-sticker-form-item {
+.designiy-custom-text-sticker-form-item {
   display: flex;
   position: relative;
   align-items: center;
@@ -288,10 +283,10 @@ async function save() {
   }
 }
 
-.designiy-text-sticker-form-item-input {
+.designiy-custom-text-sticker-form-item-input {
   height: 24px;
   width: 60px;
-  color: var(--1s-text-sticker-input-color);
+  color: var(--1s-custom-text-sticker-input-color);
   font-size: 12px;
   text-align: right;
   background-color: transparent;
@@ -302,8 +297,8 @@ async function save() {
   padding-right: 5px;
 }
 
-.designiy-text-sticker-form-item-textbtn {
-  color: var(--1s-text-sticker-input-color);
+.designiy-custom-text-sticker-form-item-textbtn {
+  color: var(--1s-custom-text-sticker-input-color);
   font-size: 12px;
   padding-left: 5px;
   cursor: pointer;
@@ -314,7 +309,7 @@ async function save() {
   }
 }
 
-.designiy-text-sticker-form-item-label {
+.designiy-custom-text-sticker-form-item-label {
   color: #999;
   font-size: 10px;
   font-weight: bold;
@@ -325,13 +320,7 @@ async function save() {
   padding-left: 5px;
 }
 
-.designiy-text-sticker-title {
-  color: var(--1s-text-sticker-title-color);
-  padding: 10px 0 5px 0;
-  font-size: 12px;
-}
-
-.designiy-text-sticker-color {
+.designiy-custom-text-sticker-color {
   width: 12px;
   height: 12px;
 }

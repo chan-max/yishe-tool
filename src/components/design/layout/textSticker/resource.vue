@@ -9,17 +9,6 @@
           <el-icon><Operation /></el-icon>
         </template>
       </el-input>
-      <el-select v-model="value" placeholder="选择图片分类">
-        <template #prefix>
-          <el-icon><FolderOpened /></el-icon>
-        </template>
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
     </div>
     <div class="designiy-text-sticker-resource-content">
       <div class="designiy-text-sticker-resource-item" v-for="item in data">
@@ -60,7 +49,9 @@ onBeforeMount(async () => {
 function load(e,item){
   var el = e.target
   initDraggableElement(el,() => {
-    currentController.value.stickToMousePosition(el,item)
+    currentController.value.stickToMousePosition({
+      src:item.imgFullpath
+    })
   })
 }
 

@@ -269,7 +269,7 @@ export class ModelController {
     decalControllers: any = reactive([]);
     
     // 进行贴图
-    stickToMousePosition(img, info) {
+    stickToMousePosition(info) {
         const decal = new DecalController(info)
         decal.stickToMousePosition()
     }

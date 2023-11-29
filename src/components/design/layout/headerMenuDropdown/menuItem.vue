@@ -33,7 +33,6 @@ const showChildren = ref(false);
 
 function itemClick() {
   showChildren.value = !showChildren.value;
-  clicker.value = !clicker.value;
 }
 
 

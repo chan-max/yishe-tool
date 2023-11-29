@@ -246,6 +246,7 @@ isLoading.value = true;
 
 setTimeout(() => {
   isLoading.value = false;
+  showWorkspace.value = true
 }, 500);
 
 // 挂载容器

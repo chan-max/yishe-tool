@@ -111,8 +111,6 @@ async function initModel() {
     baseModelUrl = (await getBaseModel({id:model.baseModelId}))[0].fileFullpath
   }
 
-
-
   renderer.setClearColor(model.canvasBgColor || '#474e56');
 
   var currentMesh = null

@@ -1,5 +1,5 @@
 import { setFullscreen } from "@/common/browser";
-import { computed, ref, shallowRef, watchEffect,watch, reactive } from "vue"
+import { computed, ref, shallowRef, watchEffect, watch, reactive } from "vue"
 
 // 当前实例
 export const currentController = shallowRef(null);
@@ -41,10 +41,7 @@ export const showSceneControl = ref(false)
 // 是否展示图片贴图的弹窗
 export const showImageSticker = ref(false)
 
-watch(showImageSticker,(value) => {
-    if(value){
-        showTextSticker.value = false
-    }
+watch(showImageSticker, (value) => {
 })
 
 // 是否展示艺术字弹窗
@@ -53,8 +50,8 @@ export const showTextSticker = ref(false)
 
 // 是否展示工作台窗口
 export const showWorkspace = ref(false)
-watch(showWorkspace,(value) => {
-    if(value){
+watch(showWorkspace, (value) => {
+    if (value) {
         showDecalControl.value = false
     }
 })
@@ -69,7 +66,7 @@ export const showCustomTextSticker = ref(false)
 
 // 当前操作的文字内容
 export const operatingTextStyle = reactive({
-    
+
 })
 
 
@@ -98,10 +95,10 @@ export const operatingTextStickerLetterSpacing = ref(5);
 // 文字书写方式
 export const operatingTextStickerWritingMode = ref('initial')
 export const enum TextStickerWritingMode {
-     INITIAL = 'initial',
-     VERTICAL_RL = 'vertical-rl',
-     VERTICAL_LR = 'vertical-lr',
-} 
+    INITIAL = 'initial',
+    VERTICAL_RL = 'vertical-rl',
+    VERTICAL_LR = 'vertical-lr',
+}
 
 export const operatingTextStickerTextOrientation = ref('upright')
 
@@ -119,8 +116,8 @@ export const showFontUpload = ref(false)
 // 是否展示字体列表
 export const showFontList = ref(false)
 
-watch(showFontList,(value) => {
-    if(value){
+watch(showFontList, (value) => {
+    if (value) {
     }
 })
 
@@ -141,3 +138,26 @@ export const showSubHeader = ref(true)
 export const showLeftMenu = ref(true)
 
 export const showBottomMenu = ref(true)
+
+// 自定义贴纸的信息
+export const operatingTextStickerStyle = reactive({
+    fontFamily: '',
+})
+
+// 清空左侧布局
+export function clearLeftLayout() {
+    showImageSticker.value = false
+    showCustomTextSticker.value = false
+    showTextSticker.value = false
+}
+
+// 清空右侧布局
+export function clearRightLayout() {
+    showDecalList.value = false
+    showModelInfo.value = false
+    showWorkspace.value = false
+    showDecalControl.value = false
+}
+
+export function clearLayout(){    
+}   

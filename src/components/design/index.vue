@@ -21,5 +21,8 @@ import { usePreventScreenResize } from './composition/preventScreenResize';
   display: flex;
   justify-content: center;
   align-items: center;
+  *{
+    -webkit-user-drag: none;
+  }
 }
 </style>

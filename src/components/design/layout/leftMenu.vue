@@ -1,16 +1,9 @@
 <template>
   <div class="menu-bar-container">
     <div class="menu-bar">
-      <el-tooltip :hide-after="0" content="工作台" placement="right">
-        <div
-          class="menu-bar-item"
-          :class="{ 'menu-bar-item-focus': showWorkspace }"
-          @click="showWorkspace = !showWorkspace"
-        >
-          <div class="menu-bar-item-icon"><icon-workspace></icon-workspace></div>
-          <span>工作台</span>
-        </div>
-      </el-tooltip>
+
+      <div style="height:50px; width:50px;background:#ddd;"></div>
+
       <el-tooltip :hide-after="0" content="选择模型" placement="right">
         <div
           class="menu-bar-item"
@@ -28,7 +21,7 @@
           @click="showImageSticker = !showImageSticker"
         >
           <div class="menu-bar-item-icon"><icon-photo></icon-photo></div>
-          <span>图片</span>
+          <span>图片贴纸</span>
         </div>
       </el-tooltip>
       <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
@@ -38,9 +31,17 @@
           @click="showTextSticker = !showTextSticker"
         >
           <div class="menu-bar-item-icon"><icon-text></icon-text></div>
-          <span>网络文字</span>
+          <span>文字贴纸</span>
         </div>
       </el-tooltip>
+
+      <el-tooltip :hide-after="0" content="几何图形" placement="right">
+        <div class="menu-bar-item">
+          <div class="menu-bar-item-icon"><icon-box></icon-box></div>
+          <span>图形贴纸</span>
+        </div>
+      </el-tooltip>
+
       <el-tooltip :hide-after="0" content="自定义文字" placement="right">
         <div
           class="menu-bar-item"
@@ -51,12 +52,6 @@
         </div>
       </el-tooltip>
 
-      <el-tooltip :hide-after="0" content="几何图形" placement="right">
-        <div class="menu-bar-item">
-          <div class="menu-bar-item-icon"><icon-box></icon-box></div>
-          <span>几何图</span>
-        </div>
-      </el-tooltip>
 
       <el-tooltip :hide-after="0" content="字体" placement="right">
         <div class="menu-bar-item">

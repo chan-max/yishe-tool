@@ -17,13 +17,44 @@ import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { currentController, operatingDecal, showDecalControl } from '../store';
 import { urlToImageElement } from "@/common/transform/urlToImageElement";
 
-
 export interface DecalControllerParams {
+  // 定义贴纸的类型
+  type: 'image' | 'text',
+  // 贴纸的资源id,如果不是上传的文件则不需要
+  id?: any,
+  // 使用的图片元素
+  img?: HTMLImageElement
+
+  // 用来区分使用的是网络资源还是本地资源,本地资源保存时需要上传
+  local:boolean
 }
 
 export class DecalController {
-  // 核心控制器
 
+  // 该贴纸的创建时间
+  createdAt = new Date()
+
+  // 更新时间
+  updatedAt = new Date()
+
+  // 该贴纸的来源
+  origin = null
+
+  constructor(info: any) {
+    this.info = info
+
+    const {
+      img
+    } = info
+
+    this.img = img
+
+    this.initDecalClickEvent()
+    currentController.value.decalControllers.push(this);
+    operatingDecal.value = this
+  }
+
+  // 核心控制器
   // 当前贴花使用的图片
   private img = null;
 
@@ -84,21 +115,13 @@ export class DecalController {
 
   info = null
 
-  constructor(info: any) {
-    this.info = info
-    this.initDecalClickEvent()
-    currentController.value.decalControllers.push(this);
-    operatingDecal.value = this
-  }
 
-  async construct(info) {
-  }
 
   async initTexture() {
     const textureLoader = new TextureLoader();
     textureLoader.setWithCredentials(true)
     textureLoader.setCrossOrigin('*')
-    const texture = await textureLoader.loadAsync(this.info.fullpath);
+    const texture = await textureLoader.loadAsync(this.img?.src || this.info.src);
     this.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
     this.material = new MeshPhongMaterial({
       map: texture,

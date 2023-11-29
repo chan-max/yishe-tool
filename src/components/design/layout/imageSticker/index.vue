@@ -9,17 +9,6 @@
           <el-icon><Operation /></el-icon>
         </template>
       </el-input>
-      <el-select v-model="value" placeholder="选择图片分类">
-        <template #prefix>
-          <el-icon><FolderOpened /></el-icon>
-        </template>
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
     </div>
     <div class="designiy-image-sticker-content">
       <div class="item" title="拖动来进行贴图" v-for="i in images" draggable="false">
@@ -42,22 +31,28 @@
       </div>
     </div>
     <div class="designiy-image-sticker-footer">
-      <el-button type="pirmary" @click="showImageUplaod = true">
-        上传图片
-      </el-button>
+      <el-button type="pirmary" @click="showImageUplaod = true"> 上传图片 </el-button>
     </div>
   </div>
 </template>
 <script setup>
-import { onMounted, ref, computed} from "vue";
+import { onMounted, ref, computed } from "vue";
 import {
   showBaseModelSelect,
   currentOperatingModelInfo,
   canvasBgColor,
   canvasBgOpacity,
-  currentController
+  currentController,
 } from "../../store";
-import { Loading, CloseBold, CircleCloseFilled, Picture,FolderOpened,Search, Operation   } from "@element-plus/icons-vue";
+import {
+  Loading,
+  CloseBold,
+  CircleCloseFilled,
+  Picture,
+  FolderOpened,
+  Search,
+  Operation,
+} from "@element-plus/icons-vue";
 import { getImage } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
 import { showImageUplaod } from "../../store";
@@ -75,21 +70,20 @@ const options = [
   },
 ];
 
-
-const images= ref([]);
+const images = ref([]);
 
 // image load success
 function load(e, info) {
-  initDraggableElement(e.target, (img) => {
-    currentController.value.stickToMousePosition(img, info);
+  initDraggableElement(e.target, () => {
+    currentController.value.stickToMousePosition({
+      src: info.fullpath,
+    });
   });
 }
 
 onMounted(async () => {
   images.value = await getImage();
 });
-
-
 </script>
 <style lang="less">
 .designiy-image-sticker {

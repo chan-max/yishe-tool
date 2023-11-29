@@ -2,14 +2,14 @@
     <div class="designiy-model-info">
       {{currentOperatingModelInfo}}
     </div>
-  </template>
+</template>
   <script setup>
   import { currentOperatingModelInfo } from "../../store";
   
   </script>
   <style lang="less">
   .designiy-model-info {
-    width: 100%;
+    width: 320px;
     height: 100%;
     padding:20px;
   }

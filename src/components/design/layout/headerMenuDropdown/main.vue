@@ -32,38 +32,13 @@
         </menu-item>
         <menu-item>
           <template #icon>
-            <icon-upload></icon-upload>
-          </template>
-          <template #title> 上传 </template>
-          <template #children>
-            <menu-main>
-              <menu-item>
-                <template #title> 上传模型 </template>
-              </menu-item>
-              <menu-item>
-                <template #title> 上传图片 </template>
-              </menu-item>
-              <menu-item>
-                <template #title> 上传字体文件 </template>
-              </menu-item>
-              <menu-item>
-                <template #title> 上传文字贴纸 </template>
-              </menu-item>
-              <menu-item>
-                <template #title> 上传自定义模型 </template>
-              </menu-item>
-            </menu-main>
-          </template>
-        </menu-item>
-        <menu-item>
-          <template #icon>
             <icon-view></icon-view>
           </template>
           <template #title> 视图 </template>
           <template #children>
             <menu-main>
               <menu-item>
-                <template #title> 页面布局 </template>
+                <template #title> 基础页面布局 </template>
                 <template #children>
                   <menu-main>
                     <menu-item>
@@ -123,6 +98,31 @@
                   </menu-main>
                 </template>
               </menu-item>
+              <menu-item>
+                <template #title> 功能布局 </template>
+                <template #children>
+                  <menu-main>
+                    <menu-item>
+                      <template #title> 总工作台 </template>
+                      <template #suffix>
+                        <el-switch v-model="showWorkspace" size="small" />
+                      </template>
+                    </menu-item>
+                    <menu-item>
+                      <template #title> 当前操作的模型信息 </template>
+                      <template #suffix>
+                        <el-switch v-model="showModelInfo" size="small" />
+                      </template>
+                    </menu-item>
+                    <menu-item>
+                      <template #title> 已使用的贴纸 </template>
+                      <template #suffix>
+                        <el-switch v-model="showDecalList" size="small" />
+                      </template>
+                    </menu-item>
+                  </menu-main>
+                </template>
+              </menu-item>
             </menu-main>
           </template>
         </menu-item>
@@ -135,8 +135,8 @@
       </menu-main>
 </template>
     
-<script setup lang='ts'>
-    import menuMain from "./menu.vue";
+<script setup>
+import menuMain from "./menu.vue";
 import menuItem from "./menuItem.vue";
 import {
   showWorkspace,
@@ -147,7 +147,9 @@ import {
   showHeader,
   showSubHeader,
   showLeftMenu,
-  showBottomMenu
+  showBottomMenu,
+  showDecalList,
+showModelInfo
 } from "../../store";
 import iconLogout from "@/icon/logout.svg?vueComponent";
 import iconNew from "@/icon/new.svg?vueComponent";

@@ -225,7 +225,8 @@ export class DecalController {
       if (!intersect) {
         return
       }
-      debugger
+      operatingDecal.value = this
+      showDecalControl.value = true
     }
     currentController.value.onClick(decalClick.bind(this))
   }

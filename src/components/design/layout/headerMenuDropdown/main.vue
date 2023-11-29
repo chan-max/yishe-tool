@@ -103,7 +103,7 @@
                 <template #children>
                   <menu-main>
                     <menu-item>
-                      <template #title> 总工作台 </template>
+                      <template #title> 工作台 </template>
                       <template #suffix>
                         <el-switch v-model="showWorkspace" size="small" />
                       </template>

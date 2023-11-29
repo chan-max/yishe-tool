@@ -55,7 +55,7 @@ import {
 } from "@element-plus/icons-vue";
 import { getImage } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
-import { showImageUplaod } from "../../store";
+import { showImageUplaod ,showDecalControl} from "../../store";
 
 const value = ref("");
 
@@ -78,6 +78,7 @@ function load(e, info) {
     currentController.value.stickToMousePosition({
       src: info.fullpath,
     });
+    showDecalControl.value = true
   });
 }
 

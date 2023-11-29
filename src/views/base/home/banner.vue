@@ -45,7 +45,7 @@ onMounted(async () => {
 <style lang="less">
 
 .home-banner {
-  background:#333;
+background: linear-gradient(153deg, rgba(2,0,36,1) 0%, rgba(105,0,255,1) 100%);
   width: 100%;
   display: flex;
   justify-content: center;

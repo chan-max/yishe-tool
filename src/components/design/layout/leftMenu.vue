@@ -2,7 +2,7 @@
   <div class="menu-bar-container">
     <div class="menu-bar">
 
-      <div style="height:50px; width:50px;background:#ddd;"></div>
+      <div style="height:48px; width:48px;background:#f1f1f1;flex-shrink:0;"></div>
 
       <el-tooltip :hide-after="0" content="选择模型" placement="right">
         <div

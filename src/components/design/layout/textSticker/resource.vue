@@ -33,7 +33,7 @@
 import { Search, Operation, FolderOpened } from "@element-plus/icons-vue";
 import { ref,onBeforeMount } from "vue";
 import {getTextSticker} from '@/api'
-import {currentController} from '../../store'
+import {currentController,showDecalControl} from '../../store'
 import { initDraggableElement } from "../../utils/draggable";
 const input = ref("");
 
@@ -52,6 +52,7 @@ function load(e,item){
     currentController.value.stickToMousePosition({
       src:item.imgFullpath
     })
+    showDecalControl.value = true
   })
 }
 

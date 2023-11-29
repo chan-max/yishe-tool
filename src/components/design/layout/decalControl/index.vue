@@ -1,14 +1,12 @@
 <template>
   <div class="designiy-decal-control">
-    <decal-empty v-if="!operatingDecal"/>
-    <decal-main v-else/>
+    <decal-main/>
   </div>
 </template>
 <script setup>
 import { onMounted, ref, computed, watch } from "vue";
 import { operatingDecal } from "../../store.ts";
 import { debounce } from "../../utils/utils.ts";
-import decalEmpty from "./empty.vue";
 import decalMain from './main.vue';
 
 

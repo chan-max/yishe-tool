@@ -116,6 +116,7 @@ import {
   operatingTextStickerWritingMode,
   operatingTextStickerTextOrientation,
   currentController,
+  showDecalControl
 } from "../../store";
 import { getFonts, uploadTextSticker } from "@/api/index";
 import { useDebounceFn } from "@vueuse/core";
@@ -178,9 +179,11 @@ async function initTextSticker() {
       currentController.value.stickToMousePosition({
         img,
       });
+      showDecalControl.value = true
     },
     base64.value
   );
+
 }
 
 var id = 0;

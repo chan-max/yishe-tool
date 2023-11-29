@@ -1,5 +1,5 @@
 import { setFullscreen } from "@/common/browser";
-import { computed, ref, shallowRef, watchEffect, watch, reactive } from "vue"
+import { computed, ref, shallowRef, watchEffect, watch, reactive, nextTick } from "vue"
 
 // 当前实例
 export const currentController = shallowRef(null);
@@ -17,6 +17,8 @@ export const container = shallowRef();
 export const isFullScreen = ref(false)
 
 watchEffect(() => setFullscreen(isFullScreen.value))
+
+
 
 // 画布背景颜色 
 export const canvasBgColor = ref('')
@@ -42,6 +44,9 @@ export const showSceneControl = ref(false)
 export const showImageSticker = ref(false)
 
 watch(showImageSticker, (value) => {
+    if(value){
+
+    }
 })
 
 // 是否展示艺术字弹窗
@@ -59,6 +64,13 @@ watch(showWorkspace, (value) => {
 
 // 是否展示贴画控制弹窗
 export const showDecalControl = ref(false)
+watch(showDecalControl,(value) => {
+    if(value){
+        clearRightLayout()
+        showDecalControl.value = true
+    }
+})
+
 
 // 是否展示自定义文字贴纸
 export const showCustomTextSticker = ref(false)
@@ -124,10 +136,21 @@ watch(showFontList, (value) => {
 
 // 是否展示已使用的贴纸列表
 export const showDecalList = ref(false)
+watch(showDecalList, async (value) => {
+    if(value){
+        clearRightLayout()
+        showDecalList.value = true
+    }
+})
 
 // 是否展示模型信息
 export const showModelInfo = ref(false)
-
+watch(showModelInfo,async (value) => {
+    if(value){
+        clearRightLayout()
+        showModelInfo.value = true
+    }
+})
 
 // 是否展示顶部菜单
 export const showHeader = ref(true)
@@ -158,6 +181,8 @@ export function clearRightLayout() {
     showWorkspace.value = false
     showDecalControl.value = false
 }
+
+
 
 export function clearLayout(){    
 }   

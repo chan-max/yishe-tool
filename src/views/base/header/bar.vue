@@ -33,7 +33,7 @@ import iconArrowDown from "@/icon/arrow-down.svg?vueComponent";
 .header-bar-content {
   width: 1600px;
   padding: 0 30px;
-  column-gap: 50px;
+  column-gap: 40px;
 }
 
 .header-bar-logo {

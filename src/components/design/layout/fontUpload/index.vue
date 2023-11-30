@@ -43,7 +43,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script setup>
 import { ref, reactive, watch, computed, shallowRef, nextTick } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import { genFileId } from "element-plus";

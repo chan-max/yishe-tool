@@ -10,6 +10,7 @@ export function routeTransform(routes): any {
   if (!Array.isArray(routes)) {
     return;
   }
+  
   routes.forEach((route) => {
     let meta =  route.meta = { ...routeMetaKeys };
     for (let routeKey in route) {

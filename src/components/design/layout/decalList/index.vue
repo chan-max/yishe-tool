@@ -52,6 +52,7 @@ const stickers = computed(() => {
   width: 100%;
   height: 100%;
   overflow: auto;
+  padding:20px 0;
 }
 
 .designiy-decal-list-item {

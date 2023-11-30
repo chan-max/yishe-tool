@@ -7,18 +7,26 @@ import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
 import svgSprites from 'rollup-plugin-svg-sprites'
 import { basename } from 'path';
+import Components from 'unplugin-vue-components/vite';
+import { VantResolver } from '@vant/auto-import-resolver';
+
+
 export default defineConfig({
   plugins: [
     vue(), 
     alias(),
     svgSprites({
       exclude: ['node_modules/**']
-    })
+    }),
+    Components({
+      resolvers: [VantResolver()],
+    }),
   ],
   build: {
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        mobile: resolve(__dirname, 'mobile.html'),
       },
     }
   },

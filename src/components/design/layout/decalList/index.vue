@@ -79,7 +79,7 @@ const stickers = computed(() => {
   width:160px;
   display: flex;
   flex-direction:column;
-  row-gap:2px;
+  row-gap:6px;
   justify-content: center;
 }
 

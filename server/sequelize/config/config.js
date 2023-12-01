@@ -1,4 +1,3 @@
-/* 如果直接导出对象，会出现读配置文件为空的情况 */ 
 require('dotenv').config();
 
 module.exports = {

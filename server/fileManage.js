@@ -1,7 +1,8 @@
 import fs from "fs";
 import path from "path";
 import os from "os";
-
+import dotenv from 'dotenv'
+dotenv.config()
 // 定义文件上传的路径
 
 export const uploadsPath = () => path.join(process.env.uploads, "uploads");

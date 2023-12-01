@@ -12,7 +12,8 @@
     "docs:preview": "vitepress preview docs",
     "serve": "node server/server.js",
     "serve:dev": "nodemon  --inspect server/server.js",
-    "dev": "concurrently \"vite --host 0.0.0.0\"  \"vitepress dev docs\"   \"nodemon  --inspect server/server.js\""
+    "dev": "concurrently \"vite --host 0.0.0.0\"  \"vitepress dev docs\"   \"nodemon  --inspect server/server.js\"",
+    "db:init":"cd server/sequelize & npx sequelize-cli db:create & npx sequelize-cli db:migrate"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
@@ -74,6 +75,7 @@
     "@vue/cli-plugin-typescript": "^5.0.8",
     "@vue/cli-service-global": "^4.5.19",
     "autoprefixer": "^10.4.16",
+    "dotenv-cli": "^7.3.0",
     "postcss": "^8.4.31",
     "sequelize-cli": "^6.6.1",
     "tailwindcss": "^3.3.5",

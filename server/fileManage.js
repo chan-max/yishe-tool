@@ -3,8 +3,8 @@ import path from "path";
 import os from "os";
 
 // 定义文件上传的路径
-// C:\Users\kuaixue-50\Desktop\
-export const uploadsPath = path.join(process.env.uploads, "uploads");
+
+export const uploadsPath = () => path.join(process.env.uploads, "uploads");
 
 function getDir() {
   const date = new Date();
@@ -17,7 +17,7 @@ function getDir() {
 
 // 文件上传的路径
 export const getUploadPath = () => {
-  const dir = path.join(uploadsPath, getDir());
+  const dir = path.join(uploadsPath(), getDir());
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
@@ -27,6 +27,6 @@ export const getUploadPath = () => {
 // 获取已上传文件的相对路径
 export function getRelativePath(_path) {
   if (!_path) return null;
-  let basePath = uploadsPath;
+  let basePath = uploadsPath();
   return _path.split(basePath)[1];
 }

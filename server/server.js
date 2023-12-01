@@ -10,7 +10,10 @@ import { initRouter } from "./router.js"
 import ip from "ip";
 import { createRedisClient } from "./redis/index.js";
 import { getRelativePath, getUploadPath } from "./fileManage.js"
+
 import dotenv from 'dotenv'
+
+console.log('666')
 
 dotenv.config()
 
@@ -35,7 +38,7 @@ app.use(_static(path.join(__dirname, "../static")));
 import { uploadsPath } from "./fileManage.js"
 import { formatFilePath } from "./util.js";
 
-app.use(_static(uploadsPath));
+app.use(_static(uploadsPath()));
 
 app.use(koaBody({
     multipart: true,

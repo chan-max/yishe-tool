@@ -13,8 +13,6 @@ import { getRelativePath, getUploadPath } from "./fileManage.js"
 
 import dotenv from 'dotenv'
 
-console.log('666')
-
 dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url);

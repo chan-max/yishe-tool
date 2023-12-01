@@ -9,9 +9,10 @@ import { fileURLToPath } from "url";
 import { initRouter } from "./router.js"
 import ip from "ip";
 import { createRedisClient } from "./redis/index.js";
-
-
 import { getRelativePath, getUploadPath } from "./fileManage.js"
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,7 +23,6 @@ const app = new Koa();
 const router = new Router();
 
 app.use(cors({ origin: "*", credentials: true }));
-
 
 import db from './sequelize/models/index.js'
 
@@ -36,8 +36,6 @@ import { uploadsPath } from "./fileManage.js"
 import { formatFilePath } from "./util.js";
 
 app.use(_static(uploadsPath));
-
-
 
 app.use(koaBody({
     multipart: true,

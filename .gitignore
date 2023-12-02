@@ -26,6 +26,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-uploads
 docs/.vitepress/cache/
-.env

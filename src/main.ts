@@ -2,16 +2,16 @@ import { createApp } from 'vue'
 import App from './views/App.vue'
 import "tailwindcss/tailwind.css"
 import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
+
 import { createPinia } from 'pinia'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import router from './router/router'
+import 'element-plus/dist/index.css'
 import './style/cover-elementplus.scss'
 import 'element-plus/theme-chalk/display.css'
 import './style/cover-antdesign.less'
 import i18n from './i18n/index'
-import './style/index.less'
 
 import { setupAction } from './actions/setupAction';
 import 'animate.css';
@@ -38,4 +38,4 @@ app.config.globalProperties.__DEV__ = import.meta.env.DEV
 
 app.mount('#app')
 
-
+console.log(import.meta.env)

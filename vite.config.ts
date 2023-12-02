@@ -9,7 +9,7 @@ import svgSprites from 'rollup-plugin-svg-sprites'
 import { basename } from 'path';
 import Components from 'unplugin-vue-components/vite';
 import { VantResolver } from '@vant/auto-import-resolver';
-
+import { qrcode } from 'vite-plugin-qrcode';
 
 export default defineConfig({
   plugins: [
@@ -21,6 +21,7 @@ export default defineConfig({
     Components({
       resolvers: [VantResolver()],
     }),
+    qrcode()
   ],
   build: {
     rollupOptions: {

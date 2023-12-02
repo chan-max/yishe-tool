@@ -40,7 +40,7 @@ export function toRealPath(path){
 
 // 区分开发和生产api
 function url(url):any{
-    return `${import.meta.env.DEV ? '/api' :''}${url}`
+    return url
 }
 
 export enum Url {

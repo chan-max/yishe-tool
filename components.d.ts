@@ -37,12 +37,6 @@ declare module 'vue' {
     SubHeaderMenu: typeof import('./src/components/design/layout/subHeaderMenu/index.vue')['default']
     TextSticker: typeof import('./src/components/design/layout/textSticker/index.vue')['default']
     UserAvatar: typeof import('./src/components/user/userAvatar.vue')['default']
-    VanButton: typeof import('vant/es')['Button']
-    VanConfigProvider: typeof import('vant/es')['ConfigProvider']
-    VanField: typeof import('vant/es')['Field']
-    VanForm: typeof import('vant/es')['Form']
-    VanRate: typeof import('vant/es')['Rate']
-    VanSlider: typeof import('vant/es')['Slider']
     Workspace: typeof import('./src/components/design/layout/workspace/index.vue')['default']
   }
 }

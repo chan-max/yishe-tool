@@ -47,7 +47,7 @@
 <script setup>
 import { reactive, toRaw,ref, computed, onMounted} from "vue";
 import { login } from "@/api/index";
-import { ResponseStatusCodeEnum } from "@common/enum/statusCode.js";
+import { ResponseStatusCodeEnum } from "@common/statusCode.js";
 import { useLoginStatusStore } from "@/store/stores/user";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";

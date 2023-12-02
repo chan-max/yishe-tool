@@ -6,9 +6,9 @@ import { formDataFormatRequestInterceptor, messageResponseInterceptor, tokenRequ
 axios.defaults.timeout = 100000; // 时间超时设置100s
 axios.defaults.baseURL = import.meta.env.VITE_API;
 
-const apiInstance:any = axios.create();
+export const apiInstance:any = axios.create();
 
-
+export const source = axios.CancelToken.source();
 
 apiInstance.interceptors.request.use(tokenRequestInterceptor);
 apiInstance.interceptors.request.use(formDataFormatRequestInterceptor)
@@ -16,5 +16,3 @@ apiInstance.interceptors.request.use(formDataFormatRequestInterceptor)
 apiInstance.interceptors.response.use(tokenResponseInterceptor);
 apiInstance.interceptors.response.use(messageResponseInterceptor);
 
-
-export default apiInstance;

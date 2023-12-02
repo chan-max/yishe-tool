@@ -1,49 +1,90 @@
 <template>
   <div class="login">
     <div class="login-banner">
+      <el-button round>
+        <el-icon><Back /></el-icon>
+        返回
+      </el-button>
     </div>
     <div class="login-form">
       <div class="login-form-title">
-        <el-form label-position="top" :model="form"  :rules="rules" hide-required-asterisk>
-          <el-form-item> 
-            <div style="font-size:24px;"> 登录衣设网 </div>
+        <el-form
+          ref="formRef"
+          label-position="top"
+          :model="form"
+          :rules="rules"
+          hide-required-asterisk
+        >
+          <el-form-item>
+            <div style="font-size: 24px">登录衣设网</div>
           </el-form-item>
           <el-form-item prop="account">
-            <el-input v-model="form.account" placeholder="账号或者邮箱">
-            <template #prefix>
-                <el-icon><User/></el-icon>
-            </template>
+            <el-input
+              v-model="form.account"
+              placeholder="账号或者邮箱"
+              @blur="checkAccountStatus"
+            >
+              <template #prefix>
+                <el-icon><User /></el-icon>
+              </template>
+              <template #suffix>
+                <el-icon
+                  v-if="accountStatus == ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST"
+                  color="green"
+                  ><CircleCheck
+                /></el-icon>
+                <el-icon
+                  v-if="accountStatus == ResponseStatusCodeEnum.ACCOUNT_NOT_EXIST"
+                  color="red"
+                  ><CircleClose
+                /></el-icon>
+                <!-- <el-icon><Warning /></el-icon> -->
+              </template>
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input :type="showPassword ? 'text':'password'" v-model="form.password" placeholder="密码" >
-                <template #prefix>
-                <el-icon><Lock/></el-icon>
-            </template>
-                <template #suffix>
-                <span  @click="showPassword = !showPassword">
-              <el-icon v-if="showPassword"><View /></el-icon>
-              <el-icon v-else><Hide /></el-icon>
-            </span>
-          </template>
+            <el-input
+              :type="showPassword ? 'text' : 'password'"
+              v-model="form.password"
+              placeholder="密码"
+            >
+              <template #prefix>
+                <el-icon><Lock /></el-icon>
+              </template>
+              <template #suffix>
+                <el-icon v-if="showPassword" @click="showPassword = true"
+                  ><View
+                /></el-icon>
+                <el-icon v-else @click="showPassword = false"><Hide /></el-icon>
+              </template>
             </el-input>
           </el-form-item>
-
           <el-form-item>
-            <div style="display:flex;width:100%;justify-content:space-between;padding:0 4px;">
-                <el-link> 忘记密码? </el-link>
-                <el-link> 注册账号 </el-link>
+            <div
+              style="
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+                padding: 0 4px;
+              "
+            >
+              <el-link> 忘记密码? </el-link>
+              <el-link> 注册账号 </el-link>
             </div>
           </el-form-item>
           <el-form-item style="width: 100%">
-            <el-button @click="submit" style="width: 100%" type="primary"> 登 录 </el-button>
+            <el-button
+              :loading="loginLoading"
+              @click="submit"
+              style="width: 100%"
+              type="primary"
+            >
+              登 录
+            </el-button>
           </el-form-item>
-
           <el-form-item>
-            <div style="display:flex;justify-content:end;width:100%">
-                <el-checkbox>
-                    记住我
-                </el-checkbox>
+            <div style="display: flex; justify-content: end; width: 100%">
+              <el-checkbox> 记住我 </el-checkbox>
             </div>
           </el-form-item>
         </el-form>
@@ -52,30 +93,65 @@
   </div>
 </template>
 <script setup>
-import { reactive,ref } from "vue";
-import {User,Lock,View,Hide} from '@element-plus/icons-vue'
-import {login} from '@/api'
+import { reactive, ref } from "vue";
+import {
+  User,
+  Lock,
+  View,
+  Hide,
+  Back,
+  CircleCheck,
+  CircleClose,
+  Warning,
+} from "@element-plus/icons-vue";
+import { login, getAccountStatus } from "@/api";
+import { ResponseStatusCodeEnum } from "@common/statusCode.js";
 
 const rules = reactive({
-    account:[
-    { required: true, message: '请输入账号', trigger: 'blur' },
-  ],
-  password:[
-    { required: true, message: '请输入密码', trigger: 'blur' },
-  ]
-})
-
-const showPassword = ref(false)
-
-const loading = ref(true)
-
-var form = reactive({
-    account:'',
-    password:''
+  account: [{ required: true, message: "请输入账号", trigger: "blur" }],
+  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
 });
 
-function submit() {
-    
+const formRef = ref();
+
+// 密码输入框是否展示
+const showPassword = ref(false);
+
+// 是否正在登录
+const loginLoading = ref(false);
+
+// 账号是否可以登录
+const accountStatus = ref("");
+
+var form = reactive({
+  account: "",
+  password: "",
+});
+
+async function checkAccountStatus() {
+  var res = await getAccountStatus({
+    account: form.account,
+  });
+  accountStatus.value = res.status;
+}
+
+async function submit() {
+  try {
+    await formRef.value.validate();
+  } catch {
+    return;
+  }
+
+  loginLoading.value = true;
+  const res = await login(form);
+
+  if (res.status === ResponseStatusCodeEnum.LOGIN_SUCCESS) {
+    alert('login success')
+  }else if(res.status === ResponseStatusCodeEnum.PASSWORD_ERROR){
+    alert('账号密码错误')
+  }
+
+  loginLoading.value = false;
 }
 
 </script>
@@ -85,24 +161,25 @@ function submit() {
   height: 100%;
   display: flex;
   flex-direction: column;
-//   justify-content: center;
+  justify-content: space-around;
 }
 
-.login-banner{
-    height:280px;
+.login-banner {
+  padding: 30px;
 }
 
 .login-form {
-    width:auto;
-    margin: 30px;
+  width: auto;
+  padding: 30px;
 
   .el-input,
   .el-button {
     height: 48px;
   }
-  
-  .el-button,.el-input__wrapper{
-    border-radius:8px;
+
+  .el-button,
+  .el-input__wrapper {
+    border-radius: 8px;
   }
 }
 </style>

@@ -88,4 +88,6 @@ export enum Url {
 
     // 获取所有文字贴纸
     GET_TEXT_STICKER = url('/getTextSticker'),
+
+    GET_ACCOUNT_STATUS = url('/getAccountStatus'),
 }

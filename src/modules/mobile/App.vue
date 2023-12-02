@@ -43,8 +43,6 @@ import iconShop from '@/icon/mobile-shop.svg?vueComponent'
 import iconTool from '@/icon/mobile-tool.svg?vueComponent'
 import iconMe from '@/icon/mobile-me.svg?vueComponent'
 
-
-
 </script>
 
 <style lang="less">
@@ -76,12 +74,9 @@ import iconMe from '@/icon/mobile-me.svg?vueComponent'
 }
 
 .footer-item-icon{
-  width:20px;
-    height:20px;
-    /* overflow:hidden; */
   svg{
-    width:20px;
-    height:20px;
+    width:24px;
+    height:24px;
   }
 }
 

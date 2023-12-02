@@ -64,7 +64,7 @@
 <script setup>
 import { reactive, toRaw,ref } from "vue";
 import { signup ,sendEmail} from "@/api/index";
-import { ResponseStatusCodeEnum } from "@common/enum/statusCode.js";
+import { ResponseStatusCodeEnum } from "@common/statusCode.js";
 import {fileToBase64} from '@/common/transform/fileToBase64'
 
 import { View ,Hide,User,Lock,Message,InfoFilled,Bell} from "@element-plus/icons-vue";

@@ -1,5 +1,5 @@
 import { resolveFilePath } from "./url";
-import apiInstance from "./apiInstance";
+import{ apiInstance,source} from "./apiInstance";
 import { Url } from "./url";
 import { buildURL } from "@/common/url";
 import { format1stf } from "./format";
@@ -114,4 +114,11 @@ export const uploadTextSticker = (params) => apiInstance.post(Url.UPLOAD_TEXT_ST
 export const getTextSticker = (params?: any) => new Promise(async (resolve, reject) => {
   const data = await apiInstance.post(Url.GET_TEXT_STICKER, params)
   resolve(data.data.data)
+}) 
+
+
+// 获取账号的状态，，是否注册，是否已注册，是否是管理员，是否被禁用等
+export const getAccountStatus = (params) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_ACCOUNT_STATUS, params)
+  resolve(data.data)
 }) 

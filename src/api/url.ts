@@ -90,4 +90,6 @@ export enum Url {
     GET_TEXT_STICKER = url('/getTextSticker'),
 
     GET_ACCOUNT_STATUS = url('/getAccountStatus'),
+
+    GET_IMAGE_BY_ID = '/getImageById',
 }

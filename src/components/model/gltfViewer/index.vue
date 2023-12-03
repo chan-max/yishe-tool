@@ -47,7 +47,7 @@ Vector2
 import { debounce } from "@/common/utils/debounce";
 import { gltfLoader } from "@/common/threejsHelper";
 import { format1stf } from '@/api/format';
-import {getBaseModel,getImage} from '@/api'
+import {getBaseModel,getImage,getImageById} from '@/api'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
 const props = defineProps(['model']);
@@ -111,7 +111,7 @@ async function initModel() {
     baseModelUrl = (await getBaseModel({id:model.baseModelId}))[0].fileFullpath
   }
 
-  renderer.setClearColor(model.canvasBgColor || '#474e56');
+  renderer.setClearColor(0x6900ff,.05);
 
   var currentMesh = null
 
@@ -191,7 +191,17 @@ scene.add(pointLight);
   if (model.decals) {
     model.decals.forEach(async decal => {
       var { decalId, position, rotation, size } = decal
-      const image = (await getImage({id:decalId}))[0]
+      if(!decalId){
+        return
+      }
+
+      const image = await getImageById(decalId)
+  
+      if(!image){
+        // 图片丢失
+        return
+      }
+
 
       position = new Vector3(position.x, position.y, position.z)
 

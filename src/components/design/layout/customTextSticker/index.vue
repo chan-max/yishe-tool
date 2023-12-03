@@ -177,7 +177,10 @@ async function initTextSticker() {
     textStickerEl.value,
     (img) => {
       currentController.value.stickToMousePosition({
-        img,
+        base64:base64.value,
+        local:true,
+        type:'text',
+        img:img,
       });
       showDecalControl.value = true
     },
@@ -223,7 +226,7 @@ async function save() {
 
 .designiy-custom-text-sticker-canvas {
   width: 300px;
-  height: 300px;
+  height: 240px;
   flex-shrink: 0;
   background: #eee;
   display: flex;

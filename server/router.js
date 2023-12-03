@@ -12,7 +12,7 @@ import {
   getAccountStatusHook
 } from "./api/user.js";
 import { imageUploadHook } from "./api/base/imageUpload.js";
-import { getImageHook } from "./api/common/getImage.js";
+import { getImageHook,getImageById } from "./api/common/getImage.js";
 import { uploadModelHook } from "./api/base/uploadModel.js";
 import { getModelListHook } from "./api/model.js";
 import { sendEmailHook } from "./api/email.js";
@@ -38,7 +38,8 @@ export const initRouter = (router, sequelize, app) => {
     updateUserInfoHook,
     uploadTextSticker,
     getTextSticker,
-    getAccountStatusHook
+    getAccountStatusHook,
+    getImageById
   ];
   hooks.forEach((hook) => hook(router, sequelize, app));
 };

@@ -51,6 +51,11 @@ app.use(koaBody({
 app.use(async (ctx, next) => {
     // 将文件将对路径转换为全路径
     ctx.relativePathToPreviewPath = (path) => {
+
+        if(!path){
+            return ''
+        }
+
         return formatFilePath(`${ctx.protocol}://${ctx.host}${path}`);
     }
 

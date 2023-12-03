@@ -10,7 +10,11 @@
       <div class="header-bar-menu-item">设计工具 <icon-arrow-down></icon-arrow-down></div>
       <div class="header-bar-menu-item">更多 <icon-arrow-down></icon-arrow-down></div>
       <div style="flex: 1"></div>
-      <user-avatar />
+      <user-avatar v-if="loginStatusStore.isLogin" />
+      <div v-else>
+        <el-button @click="$router.push({name:'Signup'})" link round> 注 册 </el-button>
+        <el-button @click="$router.push({name:'Login'})" round type="primary"> 登 录 </el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -20,6 +24,9 @@ import { Search } from "@element-plus/icons-vue";
 import userAvatar from "@/components/user/userAvatar.vue";
 import { ref, onMounted, onUnmounted } from "vue";
 import iconArrowDown from "@/icon/arrow-down.svg?vueComponent";
+import { useLoginStatusStore } from "@/store/stores/user";
+
+const loginStatusStore = useLoginStatusStore();
 </script>
 
 <style lang="less">
@@ -27,12 +34,12 @@ import iconArrowDown from "@/icon/arrow-down.svg?vueComponent";
   width: 100%;
   height: 64px;
   background: #fff;
-  border-bottom:1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 
 .header-bar-content {
   width: 1600px;
-  padding: 0 30px;
+  padding: 0 20px;
   column-gap: 40px;
 }
 
@@ -49,7 +56,7 @@ import iconArrowDown from "@/icon/arrow-down.svg?vueComponent";
   column-gap: 5px;
   text-wrap: nowrap;
   cursor: pointer;
-  svg{
+  svg {
     width: 10px;
     height: 10px;
   }

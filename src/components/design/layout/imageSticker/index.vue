@@ -76,7 +76,9 @@ const images = ref([]);
 function load(e, info) {
   initDraggableElement(e.target, () => {
     currentController.value.stickToMousePosition({
+      local:false,
       src: info.fullpath,
+      ...info
     });
     showDecalControl.value = true
   });

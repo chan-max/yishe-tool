@@ -54,7 +54,7 @@ export const uploadImage = (data: any) =>
 // 获取图片列表
 export const getImage = () =>
   new Promise(async (resolve: any, reject: any) => {
-    let res = await apiInstance.get(Url.GET_IMAGE_LIST);
+    let res = await apiInstance.post(Url.GET_IMAGE_LIST);
     resolve(res.data.data);
   });
 
@@ -121,4 +121,10 @@ export const getTextSticker = (params?: any) => new Promise(async (resolve, reje
 export const getAccountStatus = (params) => new Promise(async (resolve, reject) => {
   const data = await apiInstance.post(Url.GET_ACCOUNT_STATUS, params)
   resolve(data.data)
+}) 
+
+// 根据图片id来查询图片
+export const getImageById = (id:string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_IMAGE_BY_ID, {id})
+  resolve(data.data.data)
 }) 

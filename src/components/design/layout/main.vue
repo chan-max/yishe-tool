@@ -62,7 +62,7 @@
       duration: 100,
     }"
   >
-    <template #title> 选择基础</template>
+    <template #title> 选择基础模型</template>
     <base-model-select></base-model-select>
   </diydialog>
 

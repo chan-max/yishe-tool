@@ -46,11 +46,13 @@ onBeforeMount(async () => {
   data.value = await getTextSticker()
 })
 
-function load(e,item){
+function load(e,info){
   var el = e.target
   initDraggableElement(el,() => {
     currentController.value.stickToMousePosition({
-      src:item.imgFullpath
+      type:'image',
+      src:item.imgFullpath,
+      ...info
     })
     showDecalControl.value = true
   })

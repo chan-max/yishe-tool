@@ -35,9 +35,9 @@ export const signupHook = (router, sequelize, app) =>
 
     const table = sequelize.models.t_user;
 
-    const _user = await table.findOne({ where: { account } });
+    const user = await table.findOne({ where: { account } });
 
-    if (_user) {
+    if (user) {
       ctx.body = {
         message: "该用户已存在",
         type: "info",
@@ -48,7 +48,10 @@ export const signupHook = (router, sequelize, app) =>
 
     try {
       const data = {
-        email, account, password,
+        email, 
+        account, 
+        password,
+        avatar,
         isAdmin: true
       }
       await table.create(data);
@@ -61,6 +64,8 @@ export const signupHook = (router, sequelize, app) =>
       });
     }
   });
+
+
 
 // 获取用户列表
 export const getUserListHook = (router, sequelize, app) =>

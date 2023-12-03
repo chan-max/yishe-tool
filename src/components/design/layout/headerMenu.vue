@@ -7,12 +7,13 @@
     <div style="flex-grow: 1"></div>
 
     <div>
-      <icon-help style="width: 24px; height: 24px"></icon-help>
+      <icon-help style="width: 24px; height: 24px;color:#fff;"></icon-help>
     </div>
 
-    <el-button @click="save" type="primary" round> 保 存 </el-button>
+    <el-button @click="save" type="primary" color="#333" round> 上 传 </el-button>
 
-    <user-avatar />
+    <user-avatar  v-if="loginStatusStore.isLogin"/>
+    <el-button @click="$router.push({name:'Login'})" v-else type="primary" round>  登 录 </el-button>
   </div>
 </template>
 
@@ -27,8 +28,10 @@ import userAvatar from '@/components/user/userAvatar.vue'
 import headerMenuDropdown from './headerMenuDropdown/index.vue'
 import { onShortcutTrigger } from '../shortcut/index';
 import iconHelp from '@/icon/help.svg?vueComponent'
-// import iconLogo from '@/icon/logo/logo.svg?vueComponent'
+import { useLoginStatusStore } from "@/store/stores/user";
 
+
+const loginStatusStore = useLoginStatusStore();
 
 const props = defineProps([]);
 
@@ -63,6 +66,10 @@ async function save() {
   column-gap: 10px;
   padding-right: 10px;
   background: #111;
+
+  .el-button + .el-button{
+    margin:0;
+  }
 }
 
 .designiy-header-select-model {

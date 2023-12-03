@@ -22,13 +22,13 @@
             <el-input
               v-model="form.account"
               placeholder="账号或者邮箱"
-              @blur="checkAccountStatus"
+              @input="checkAccountStatus"
             >
               <template #prefix>
                 <el-icon><User /></el-icon>
               </template>
               <template #suffix>
-                <el-icon
+                  <el-icon
                   v-if="accountStatus == ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST"
                   color="green"
                   ><CircleCheck
@@ -106,6 +106,7 @@ import {
 } from "@element-plus/icons-vue";
 import { login, getAccountStatus } from "@/api";
 import { ResponseStatusCodeEnum } from "@common/statusCode.js";
+import { useDebounceFn } from "@vueuse/core";
 
 const rules = reactive({
   account: [{ required: true, message: "请输入账号", trigger: "blur" }],
@@ -128,12 +129,12 @@ var form = reactive({
   password: "",
 });
 
-async function checkAccountStatus() {
+const checkAccountStatus = useDebounceFn(async () => {
   var res = await getAccountStatus({
     account: form.account,
   });
   accountStatus.value = res.status;
-}
+}, 2000);
 
 async function submit() {
   try {
@@ -146,14 +147,13 @@ async function submit() {
   const res = await login(form);
 
   if (res.status === ResponseStatusCodeEnum.LOGIN_SUCCESS) {
-    alert('login success')
-  }else if(res.status === ResponseStatusCodeEnum.PASSWORD_ERROR){
-    alert('账号密码错误')
+    alert("login success");
+  } else if (res.status === ResponseStatusCodeEnum.PASSWORD_ERROR) {
+    alert("账号密码错误");
   }
 
   loginLoading.value = false;
 }
-
 </script>
 <style lang="less">
 .login {

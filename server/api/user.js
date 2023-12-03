@@ -1,6 +1,5 @@
 import { ResponseStatusCodeEnum } from "../../common/statusCode.js";
 import { getRelativePath } from "../fileManage.js";
-import { generateVerificationCode, formatFilePath } from "../util.js";
 import { sendValidateCodeEmail } from "../util/email.js";
 import { mailedMap } from "./email.js";
 
@@ -54,14 +53,10 @@ export const signupHook = (router, sequelize, app) =>
       }
       await table.create(data);
       return (ctx.body = {
-        message: "注册成功",
-        type: "success",
         status: ResponseStatusCodeEnum.SIGNUP_SUCCESS,
       });
     } catch (error) {
       return (ctx.body = {
-        message: "注册失败",
-        type: "error",
         status: ResponseStatusCodeEnum.UNKNOW_ERROR,
       });
     }
@@ -142,10 +137,7 @@ export const loginHook = (router, sequelize) => router.post('/login', async (ctx
 
   ctx.set('Token', token)
 
-  user.avatar = formatFilePath(`${ctx.protocol}://${ctx.host}${user.avatar}`);
-
-
-  debugger
+  user.avatar = ctx.relativePathToPreviewPath(user.avatar)
   return ctx.body = {
     status: ResponseStatusCodeEnum.LOGIN_SUCCESS,
     data: user

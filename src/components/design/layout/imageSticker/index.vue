@@ -76,6 +76,7 @@ const images = ref([]);
 function load(e, info) {
   initDraggableElement(e.target, () => {
     currentController.value.stickToMousePosition({
+      type:'image',
       local:false,
       src: info.fullpath,
       ...info

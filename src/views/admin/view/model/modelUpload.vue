@@ -50,8 +50,9 @@
     </el-button>
     <gltf-viewer
       ref="gltfViewerRef"
-      style="width: 900px; height: 600px; margin: auto"
+      style="width: 600px; height: 600px; margin: auto"
       :model="prerviewModel"
+      :transparent="true"
     ></gltf-viewer>
   </div>
 </template>
@@ -69,7 +70,6 @@ const upload = ref();
 const file = ref([]);
 
 const sizes = ref(['S','M','L','XL','XXL','XXXL','XXXXL'])
-
 
 const gltfViewerRef = ref();
 
@@ -110,7 +110,6 @@ async function submit() {
   form.img = base64ToFile(gltfViewerRef.value.getScreenshot());
 
   await uploadBaseModel(form)
-  
 }
 </script>
 

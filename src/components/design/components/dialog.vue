@@ -95,6 +95,7 @@ function close() {
 .designiy-dialog-header-title {
   color: var(--1s-container-header-text-color);
   font-size: 12px;
+  font-weight: bold;
 }
 
 .designiy-dialog-content {

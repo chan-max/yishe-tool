@@ -128,3 +128,16 @@ export const getImageById = (id:string) => new Promise(async (resolve, reject) =
   const data = await apiInstance.post(Url.GET_IMAGE_BY_ID, {id})
   resolve(data.data.data)
 }) 
+
+
+// 根据图片id来查询图片
+export const getBaseModelById = (id:string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_BASE_MODEL_BY_ID , {id})
+  resolve(data.data.data)
+})
+
+
+export const getTextStickerById = (id:string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_TEXT_STICKER_BY_ID , {id})
+  resolve(data.data.data)
+})

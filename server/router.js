@@ -1,5 +1,5 @@
 import { getBannerModelHook } from "./api/common/getBannerModel.js";
-import { injectBaseModelRoute } from "./api/baseModel.js";
+import { injectBaseModelRoute,getBaseModelById } from "./api/baseModel.js";
 import { getBaseSkyboxHook } from "./api/common/getSkybox.js";
 import { getWebStickersHook } from "./api/design/getStickers.js";
 import { uploadFontHook, getFontsHook } from "./api/font.js";
@@ -16,7 +16,7 @@ import { getImageHook,getImageById } from "./api/common/getImage.js";
 import { uploadModelHook } from "./api/base/uploadModel.js";
 import { getModelListHook } from "./api/model.js";
 import { sendEmailHook } from "./api/email.js";
-import { uploadTextSticker, getTextSticker } from "./api/sticker.js";
+import { uploadTextSticker, getTextSticker,getTextStickerById } from "./api/textSticker.js";
 
 export const initRouter = (router, sequelize, app) => {
   let hooks = [
@@ -39,7 +39,9 @@ export const initRouter = (router, sequelize, app) => {
     uploadTextSticker,
     getTextSticker,
     getAccountStatusHook,
-    getImageById
+    getImageById,
+    getBaseModelById,
+    getTextStickerById
   ];
   hooks.forEach((hook) => hook(router, sequelize, app));
 };

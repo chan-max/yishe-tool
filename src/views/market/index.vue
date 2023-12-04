@@ -3,7 +3,7 @@
         <div class="market-title">
         </div>
         <div class="market-content">
-            <card v-for="model in modelList" :model="model"></card>
+            <card style="width:20%;" v-for="model in modelList" :model="model"></card>
         </div>
     </div>
 </template>
@@ -20,10 +20,14 @@ onMounted(async () => {
 
 </script>
 <style>
+
 .market-container{
     width: 100%;
     height: 100%;
     overflow: auto;
+    display:flex;
+    justify-content: center;
+ 
 }
 
 .market-title{
@@ -34,13 +38,16 @@ onMounted(async () => {
     background-color: #fff;
     border-bottom: 1px solid #e7e7e7;
 }
+
+
 .market-content{
     padding: 10px;
+    row-gap: 10px;
+    overflow: auto;
+    width:100%;
     display: flex;
     flex-wrap: wrap;
-    row-gap: 10px;
-    column-gap: 10px;
-    overflow: auto;
+    align-content: start;
 }
 
 

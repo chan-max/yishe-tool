@@ -46,6 +46,7 @@ function load(){
 <style>
 .market-card{
     width: 330px;
+    height: 280px;
     background-color: #fff;
     border-radius: 5px;
     overflow: hidden;

@@ -22,8 +22,9 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
         y: dc.size.y,
         z: dc.size.z,
       };
-
+      
       return {
+        type:dc.info.type,
         decalId: dc.info.id,
         position,
         rotation,

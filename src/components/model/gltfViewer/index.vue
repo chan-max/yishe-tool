@@ -1,11 +1,8 @@
 <template>
   <div class="gltf-viewer" ref="gltfViewer">
-    <div class="gltf-viewer-loading" v-if="loading">
-      ...
-    </div>
+    <div class="gltf-viewer-loading" v-if="loading">...</div>
     <div class="screenshot"></div>
-    <div class="gltf-viewer-menu">
-    </div>
+    <div class="gltf-viewer-menu"></div>
   </div>
 </template>
 <script setup>
@@ -42,17 +39,29 @@ import {
   AmbientLight,
   Raycaster,
   AxesHelper,
-Vector2
+  Vector2,
 } from "three";
 import { debounce } from "@/common/utils/debounce";
 import { gltfLoader } from "@/common/threejsHelper";
-import { format1stf } from '@/api/format';
-import {getBaseModel,getImage,getImageById} from '@/api'
+import { format1stf } from "@/api/format";
+import {
+  getBaseModel,
+  getImage,
+  getImageById,
+  getBaseModelById,
+  getTextStickerById,
+} from "@/api";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
-const props = defineProps(['model']);
+const props = defineProps({
+  // 模型信息
+  model: {},
+  transparent: {
+    default: false,
+  },
+});
 
-const emits = defineEmits(["screenshot", 'load']);
+const emits = defineEmits(["screenshot", "load"]);
 
 const loading = ref(false);
 
@@ -60,11 +69,9 @@ const gltfViewer = ref();
 
 const scene = new Scene();
 
-
 // 添加环境光
 const ambientLight = new AmbientLight(0xffffff, 0.1); // 设置颜色和强度
 scene.add(ambientLight);
-
 
 const renderer = new WebGLRenderer({
   alpha: true, // 透明背景
@@ -74,14 +81,23 @@ const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
 
 camera.lookAt(0, 0, 0);
 
-camera.position.set(0, 0, .7);
+camera.position.set(0, 0, 0.7);
 
-
-const getWidth = (el) => Number(window.getComputedStyle(el).width.slice(0, -2));
-const getHeight = (el) => Number(window.getComputedStyle(el).height.slice(0, -2));
+const getWidth = (el) => {
+  if (!el) {
+    return;
+  }
+  return Number(window.getComputedStyle(el).width.slice(0, -2));
+};
+const getHeight = (el) => {
+  if (!el) {
+    return;
+  }
+  return Number(window.getComputedStyle(el).height.slice(0, -2));
+};
 
 function initImportedModel(gltf) {
-  let flag = 1
+  let flag = 1;
   let object = gltf.scene;
   // 先处理尺寸，再居中
   const sizeBox = new Box3().setFromObject(object);
@@ -97,27 +113,30 @@ function initImportedModel(gltf) {
 }
 
 async function initModel() {
+  const model = format1stf(props.model);
 
-  const model = format1stf(props.model)
-  
-  if(!model){
-    return
+  if (!model) {
+    return;
   }
 
   loading.value = true;
-  var baseModelUrl = model.baseModelUrl
+  var baseModelUrl = model.baseModelUrl;
 
-  if(!baseModelUrl && model.baseModelId){
-    baseModelUrl = (await getBaseModel({id:model.baseModelId}))[0].fileFullpath
+  if (!baseModelUrl && model.baseModelId) {
+    baseModelUrl = (await getBaseModelById(model.baseModelId)).fullfilepath;
   }
 
-  renderer.setClearColor(0x6900ff,.05);
+  if (props.transparent) {
+    renderer.setClearColor(null, 0);
+  } else {
+    renderer.setClearColor(0x6900ff, 0.05);
+  }
 
-  var currentMesh = null
+  var currentMesh = null;
 
   let gltf = await gltfLoader(baseModelUrl);
 
-  currentMesh = findMainMesh(gltf)
+  currentMesh = findMainMesh(gltf);
   function findMainMesh(gltf) {
     let mesh = null;
     gltf.scene.traverse((child) => {
@@ -131,14 +150,26 @@ async function initModel() {
   // 同步摄像机位置
 
   if (model.camera) {
-    camera.position.set(model.camera.position.x, model.camera.position.y, model.camera.position.z);
-    camera.rotation.set(model.camera.rotation.x, model.camera.rotation.y, model.camera.rotation.z);
+    camera.position.set(
+      model.camera.position.x,
+      model.camera.position.y,
+      model.camera.position.z
+    );
+    camera.rotation.set(
+      model.camera.rotation.x,
+      model.camera.rotation.y,
+      model.camera.rotation.z
+    );
     camera.fov = model.camera.fov;
     camera.near = model.camera.near;
     camera.far = model.camera.far;
   }
 
   let el = gltfViewer.value;
+
+  if (!el) {
+    return;
+  }
 
   function resetCameraAspect() {
     let width = getWidth(el);
@@ -148,62 +179,66 @@ async function initModel() {
     renderer.setSize(width, height);
   }
 
-  resetCameraAspect()
+  resetCameraAspect();
 
   const controller = new OrbitControls(camera, renderer.domElement);
 
   controller.enablePan = false; // 禁止右键拖拽
 
-  let resizeOb = new ResizeObserver(
-    debounce(resetCameraAspect)
-  );
+  let resizeOb = new ResizeObserver(debounce(resetCameraAspect));
 
-  resizeOb.observe(el);
+  el && resizeOb.observe(el);
 
   renderer.setSize(getWidth(el), getHeight(el));
 
   initImportedModel(gltf);
 
-
-
   scene.add(gltf.scene);
 
-// 添加环境光
-const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
-scene.add(ambientLight);
+  // 添加环境光
+  const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
+  scene.add(ambientLight);
 
-// 添加平行光
-const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
-directionalLight1.position.set(1, 1, 1); // 设置光源位置
-scene.add(directionalLight1);
+  // 添加平行光
+  const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+  directionalLight1.position.set(1, 1, 1); // 设置光源位置
+  scene.add(directionalLight1);
 
-// 添加平行光
-const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
-directionalLight2.position.set(-1, -1, -1); // 设置光源位置
-scene.add(directionalLight2);
+  // 添加平行光
+  const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+  directionalLight2.position.set(-1, -1, -1); // 设置光源位置
+  scene.add(directionalLight2);
 
-// 添加点光源
-const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
-pointLight.position.set(0, 0, 2); // 设置光源位置
-scene.add(pointLight);
-
+  // 添加点光源
+  const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
+  pointLight.position.set(0, 0, 2); // 设置光源位置
+  scene.add(pointLight);
 
   if (model.decals) {
-    model.decals.forEach(async decal => {
-      var { decalId, position, rotation, size } = decal
-      if(!decalId){
-        return
+    model.decals.forEach(async (decal) => {
+      var { decalId, position, rotation, size, type } = decal;
+      if (!decalId) {
+        return;
       }
 
-      const image = await getImageById(decalId)
-  
-      if(!image){
-        // 图片丢失
-        return
+      var url = null;
+      if (type == "image") {
+        const image = await getImageById(decalId);
+        if (!image) {
+          return;
+        }
+        url = image.fullpath;
       }
 
+      if (type == "text") {
+        const text = await getTextStickerById(decalId);
+        if (!text) {
+          return;
+        }
+        url = text.imgfullpath;
+      }
 
-      position = new Vector3(position.x, position.y, position.z)
+      position = new Vector3(position.x, position.y, position.z);
 
       // 判断是否在网格上
       var raycaster = new Raycaster();
@@ -212,14 +247,14 @@ scene.add(pointLight);
       var intersects = raycaster.intersectObject(currentMesh);
       // 如果有交点，那么这个点就在模型上。
       if (intersects.length <= 0) {
-          console.log("贴花位置错误");
-          return
+        console.log("贴花位置错误");
+        return;
       }
 
-      rotation = new Euler(rotation.x, rotation.y, rotation.z,)
-      size = new Vector3(size.x, size.y, size.z)
+      rotation = new Euler(rotation.x, rotation.y, rotation.z);
+      size = new Vector3(size.x, size.y, size.z);
       const textureLoader = new TextureLoader();
-      const texture = textureLoader.load(image.fullpath);
+      const texture = textureLoader.load(url);
       const material = new MeshPhongMaterial({
         map: texture,
         transparent: true,
@@ -230,12 +265,11 @@ scene.add(pointLight);
         wireframe: false,
       });
 
-      const decalGeometry = new DecalGeometry(currentMesh, position, rotation, size)
+      const decalGeometry = new DecalGeometry(currentMesh, position, rotation, size);
       var decalMesh = new Mesh(decalGeometry, material);
       scene.add(decalMesh);
     });
   }
-
 
   function render() {
     requestAnimationFrame(render);
@@ -246,7 +280,7 @@ scene.add(pointLight);
   el.appendChild(renderer.domElement);
   render();
   loading.value = false;
-  emits('load')
+  emits("load");
 }
 
 watch(
@@ -254,9 +288,9 @@ watch(
   async () => {
     await nextTick();
     initModel();
-  }
-  , { immediate: true });
-
+  },
+  { immediate: true }
+);
 
 defineExpose({
   getScreenshot() {
@@ -272,7 +306,6 @@ function screenshot() {
   // win.document.write('<img src="' + img + '"/>');
   emits("screenshot", img);
 }
-
 </script>
 <style lang="less">
 .gltf-viewer {

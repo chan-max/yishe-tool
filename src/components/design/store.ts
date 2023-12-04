@@ -10,9 +10,6 @@ export const isDarkMode = ref(false)
 // 加载
 export const isLoading = shallowRef(false);
 
-// 模型的加载元素
-export const container = shallowRef();
-
 // 当前组件是否全屏
 export const isFullScreen = ref(false)
 

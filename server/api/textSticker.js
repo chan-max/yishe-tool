@@ -21,8 +21,21 @@ export const getTextSticker = (router, sequelize, app) => router.post('/getTextS
     data.forEach((item) => {
         item.dataValues.imgFullpath = ctx.relativePathToPreviewPath(item.img);
     })
-
+    
     ctx.body = {
         data
+    }
+})
+
+
+export const getTextStickerById = (router, sequelize, app) => router.post('/getTextStickerById', async (ctx) => {
+    const table = sequelize.models.t_text_sticker;
+    
+    const text = await table.findOne({where:{id: ctx.request.body.id}});
+
+    text.dataValues.imgfullpath = ctx.relativePathToPreviewPath(text.img);
+  
+    ctx.body = {
+        data:text
     }
 })

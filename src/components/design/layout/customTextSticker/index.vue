@@ -1,16 +1,21 @@
 <template>
   <div class="designiy-custom-text-sticker">
+    <div class="designiy-custom-text-sticker-title">
+    创作文本贴纸 
+    </div>
+
     <div class="designiy-custom-text-sticker-canvas">
-      <div id="custom-text-sticker" ref="textStickerEl">
+      <div
+        id="custom-text-sticker"
+        ref="textStickerEl"
+        contenteditable="true"
+        @keydown="keydown"
+      >
         {{ operatingTextStickerText }}
       </div>
     </div>
 
-    <textarea
-      class="designiy-custom-text-sticker-textarea"
-      placeholder="输入贴纸内容..."
-      v-model="operatingTextStickerText"
-    />
+    基本属性，背景相关，文字特效
 
     <div class="designiy-custom-text-sticker-form-item">
       <div class="designiy-custom-text-sticker-form-item-label">字体</div>
@@ -94,8 +99,6 @@
     <div class="designiy-custom-text-sticker-form-item">
       <div class="designiy-custom-text-sticker-form-item-label">文字装饰</div>
     </div>
-    <div style="flex: 1"></div>
-
     <div>
       <el-button type="primary" @click=""> 上传字体 </el-button>
       <el-button type="primary" @click="save"> 保存该贴纸 </el-button>
@@ -116,17 +119,17 @@ import {
   operatingTextStickerWritingMode,
   operatingTextStickerTextOrientation,
   currentController,
-  showDecalControl
+  showDecalControl,
 } from "../../store";
 import { getFonts, uploadTextSticker } from "@/api/index";
 import { useDebounceFn } from "@vueuse/core";
 import { More } from "@element-plus/icons-vue";
 import * as htmlToImage from "html-to-image";
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
-
 import { initDraggableElement } from "../../utils/draggable";
 import { base64ToFile } from "@/common/transform/base64ToFile";
-import { debounce } from "@/common/utils/debounce";
+import iconPen from '@/icon/pen.svg?vueComponent'
+
 
 const base64 = ref("");
 
@@ -153,7 +156,7 @@ watch(
   }
 );
 
-async function initTextSticker() {
+const initTextSticker = useDebounceFn(async () => {
   let el = textStickerEl.value;
   if (!el) {
     return;
@@ -169,24 +172,28 @@ async function initTextSticker() {
   el.style.fontStyle = operatingTextStickerIsItalic.value ? "italic" : "normal";
 
   base64.value = await toPng(textStickerEl.value);
-  // console.log(base64.value)
-  // var win = window.open("", "_blank");
-  // win.document.write('<img src="' + base64.value + '"/>');
 
   initDraggableElement(
     textStickerEl.value,
     (img) => {
       currentController.value.stickToMousePosition({
-        base64:base64.value,
-        local:true,
-        type:'text',
-        img:img,
+        base64: base64.value,
+        local: true,
+        type: "text",
+        img: img,
       });
-      showDecalControl.value = true
+      showDecalControl.value = true;
     },
     base64.value
   );
+}, 10);
 
+function keydown(e) {
+  // 阻止tab切换焦点
+  if (e.keyCode === 9) {
+    e.preventDefault();
+  }
+  initTextSticker();
 }
 
 var id = 0;
@@ -216,34 +223,42 @@ async function save() {
 </script>
 <style lang="less">
 .designiy-custom-text-sticker {
-  padding: 10px;
   height: 100%;
   width: 320px;
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
+  align-items: center;
+}
+
+.designiy-custom-text-sticker-title {
+  width: 100%;
+  padding:20px 10px;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items:center;
+  color: #333;
 }
 
 .designiy-custom-text-sticker-canvas {
   width: 300px;
-  height: 240px;
+  height: 300px;
   flex-shrink: 0;
-  background: #eee;
+  background: #fff;
+  background-image: linear-gradient(
+      45deg,
+      #eee 25%,
+      transparent 0,
+      transparent 75%,
+      #eee 0
+    ),
+    linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0);
+  background-position: 0 0, 10px 10px;
+  background-size: 20px 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  overflow: auto;
-  background-image: linear-gradient(
-      45deg,
-      #ccc 25%,
-      transparent 0,
-      transparent 75%,
-      #ccc 0
-    ),
-    linear-gradient(45deg, #ccc 25%, transparent 0, transparent 75%, #ccc 0);
-  background-position: -15px 5px, 15px 15px, 10px 10px, 20px 20px;
-  background-size: 20px 20px;
   overflow: auto;
   border-radius: 2px;
   cursor: pointer;
@@ -251,6 +266,8 @@ async function save() {
 
 #custom-text-sticker {
   white-space: pre;
+  padding: 20px;
+  outline: none;
 }
 
 .designiy-custom-text-sticker-drager {
@@ -270,7 +287,7 @@ async function save() {
   width: 100%;
   background-color: transparent !important;
   color: var(--1s-custom-text-sticker-input-color) !important;
-  border: 1px solid #ddd;
+  border: 1px solid #eee;
   font-size: 12px;
   padding: 5px;
   height: 60px;

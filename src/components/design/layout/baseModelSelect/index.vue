@@ -30,8 +30,9 @@ onMounted(async () => {
 
   // 适配鼠标滑轮横向滚动
   container.value.addEventListener("wheel", (event) => {
-    event.preventDefault();
+    console.log(event.deltaY)
     container.value.scrollLeft += event.deltaY;
+    // event.preventDefault();
   },{passive:false});
 });
 

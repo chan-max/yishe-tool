@@ -71,7 +71,12 @@ watch(showDecalControl,(value) => {
 
 // 是否展示自定义文字贴纸
 export const showCustomTextSticker = ref(false)
-
+watch(showCustomTextSticker,(value) => {
+    if(value){
+        clearLeftLayout()
+        showCustomTextSticker.value = true
+    }
+})
 
 // 当前操作的文字内容
 export const operatingTextStyle = reactive({

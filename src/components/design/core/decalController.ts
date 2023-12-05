@@ -49,7 +49,7 @@ export class DecalController {
 
     this.img = img
 
-    this.initDecalClickEvent()
+    this.initDecalClickEvent();
     currentController.value.decalControllers.push(this);
     operatingDecal.value = this
   }
@@ -212,12 +212,12 @@ export class DecalController {
     this.create()
   }
 
-  // 当前贴纸被点击时
-  onClick(cb) {
-  }
 
   private initDecalClickEvent() {
     function decalClick() {
+      if(!this.mesh){
+        return
+      }
       const raycaster = new Raycaster()
       raycaster.setFromCamera(currentController.value.mouse, currentController.value.camera)
       const intersects = raycaster.intersectObject(this.mesh, true)

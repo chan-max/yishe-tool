@@ -1,15 +1,12 @@
 <template>
-  <div class="designiy-custom-text-sticker-canvas">
-    <div
-      id="custom-text-sticker"
-      ref="textStickerEl"
-      :contenteditable="editable"
-      @keydown="keydown"
-      @blur="blur"
-    >
-      {{ operatingTextStickerText }}
+  <div class="designiy-custom-text-sticker-canvas" v-click="click">
+    <div id="canvas-container" ref="canvasContainerEl">
+      <div id="canvas-text" ref="canvasTextEl" :contenteditable="editable" @keydown="keydown" @blur="blur">
+        {{ operatingTextStickerText }}
+      </div>
     </div>
 
+    <div class="designiy-custom-text-sticker-canvas-menu"></div>
   </div>
 </template>
 <script setup>
@@ -37,8 +34,13 @@ import { initDraggableElement } from "../../utils/draggable";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import stickerCancas from "./canvas.vue";
 import { vClick } from "../../composition/vClick";
+import iconCopy from "@/icon/copy.svg?vueComponent";
+import iconPaste from "@/icon/paste.svg?vueComponent";
 
-const textStickerEl = ref();
+
+const canvasContainerEl = ref();
+const canvasTextEl = ref();
+
 const base64 = ref("");
 
 // 当前编辑的元素
@@ -65,7 +67,7 @@ watch(
 );
 
 const initTextSticker = useDebounceFn(async () => {
-  let el = textStickerEl.value;
+  let el = canvasContainerEl.value;
   if (!el) {
     return;
   }
@@ -79,10 +81,10 @@ const initTextSticker = useDebounceFn(async () => {
   el.style.textOrientation = operatingTextStickerTextOrientation.value;
   el.style.fontStyle = operatingTextStickerIsItalic.value ? "italic" : "normal";
 
-  base64.value = await toPng(textStickerEl.value);
+  base64.value = await toPng(canvasContainerEl.value);
 
   initDraggableElement(
-    textStickerEl.value,
+    canvasContainerEl.value,
     (img) => {
       currentController.value.stickToMousePosition({
         base64: base64.value,
@@ -106,14 +108,27 @@ function keydown(e) {
 
 const editable = ref(false);
 
-async function click() {
-  editable.value = true;
-  await nextTick();
-  textStickerEl.value.focus();
-}
-
+const blured = ref(false);
 function blur() {
   editable.value = false;
+  blured.value = true;
+}
+
+async function click() {
+  if (blured.value) {
+    blured.value = false;
+    return;
+  } else if (editable.value) {
+    return;
+  }
+
+  editable.value = true;
+  await nextTick();
+  canvasTextEl.value.focus();
+  //设置光标到最后
+  var range = window.getSelection();
+  range.selectAllChildren(canvasTextEl.value);
+  range.collapseToEnd();
 }
 
 var id = 0;
@@ -127,7 +142,7 @@ watch(fontFile, (url) => {
         }
       `;
   document.head.appendChild(fontStyles);
-  textStickerEl.value.style.fontFamily = ` font${fontId++}`;
+  canvasContainerEl.value.style.fontFamily = ` font${fontId++}`;
 });
 
 onMounted(async () => {
@@ -165,17 +180,34 @@ async function save() {
   border-radius: 2px;
   cursor: pointer;
   box-sizing: border-box;
-  border-radius: 8px;
   position: relative;
   border: 1px solid transparent;
-  &:focus-within{
+  &:focus-within {
     border: 1px solid #6900ff;
   }
 }
 
-#custom-text-sticker {
+.designiy-custom-text-sticker-canvas-menu {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 5px 10px;
+  display: flex;
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+#canvas-container {
+  position: relative;
+}
+
+#canvas-text {
   white-space: pre;
   outline: none;
-  min-width: 1px;  // 保证在没有内容时也能显示光标
+  min-width: 1px; // 保证在没有内容时也能显示光标
+  caret-color: #6900ff;
 }
 </style>

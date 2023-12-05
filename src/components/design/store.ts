@@ -185,6 +185,25 @@ export function clearRightLayout() {
 }
 
 
-
+// 清空所有布局元素
 export function clearLayout(){    
 }   
+
+
+export const textStickerOptions = reactive({
+    // 贴纸内容
+    content:`breaking
+    bad`,
+    // text color
+    color:'#000',
+    // font-weight
+    weight:500,
+    // font-size
+    size:30,
+    // line-height rem
+    lineHeight:1,
+    // font-style italic
+    italic:false,
+    // letter-spacing
+    letterSpacing :3,
+})

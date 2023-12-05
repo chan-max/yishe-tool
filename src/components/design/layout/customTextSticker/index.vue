@@ -5,9 +5,7 @@
     </div>
 
     <sticker-canvas></sticker-canvas>
-
-    基本属性，背景相关，文字特效
-
+    
     <div class="designiy-custom-text-sticker-form-item">
       <div class="designiy-custom-text-sticker-form-item-label">字体</div>
       <div></div>
@@ -91,7 +89,6 @@
       <div class="designiy-custom-text-sticker-form-item-label">文字装饰</div>
     </div>
     <div>
-      <el-button type="primary" @click=""> 上传字体 </el-button>
       <el-button type="primary" @click="save"> 保存该贴纸 </el-button>
     </div>
   </div>

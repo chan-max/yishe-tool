@@ -190,7 +190,8 @@ export function clearLayout(){
 }   
 
 
-export const textStickerOptions = reactive({
+// 记录当前正在操作的贴纸信息
+export const operatingTextStickerOptions = reactive({
     // 贴纸内容
     content:`breaking
     bad`,
@@ -206,4 +207,10 @@ export const textStickerOptions = reactive({
     italic:false,
     // letter-spacing
     letterSpacing :3,
+
+
+    // 背景颜色
+    backgoundColor:'',
+    backgroundBorderRadius:'',
+    backgroundPadding:'',
 })

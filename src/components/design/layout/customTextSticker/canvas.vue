@@ -32,11 +32,7 @@ import * as htmlToImage from "html-to-image";
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
 import { base64ToFile } from "@/common/transform/base64ToFile";
-import stickerCancas from "./canvas.vue";
 import { vClick } from "../../composition/vClick";
-import iconCopy from "@/icon/copy.svg?vueComponent";
-import iconPaste from "@/icon/paste.svg?vueComponent";
-
 
 const canvasContainerEl = ref();
 const canvasTextEl = ref();
@@ -98,6 +94,7 @@ const initTextSticker = useDebounceFn(async () => {
   );
 }, 10);
 
+
 function keydown(e) {
   // 阻止tab切换焦点
   if (e.keyCode === 9) {
@@ -123,6 +120,7 @@ async function click() {
   }
 
   editable.value = true;
+  blured.value = false;
   await nextTick();
   canvasTextEl.value.focus();
   //设置光标到最后

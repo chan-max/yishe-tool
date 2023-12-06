@@ -20,6 +20,7 @@ import 'default-passive-events'
 
 const app = createApp(App)
 
+
 app.use(Antd)
 
 app.use(i18n)

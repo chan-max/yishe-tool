@@ -1,34 +1,27 @@
 <template>
   <div class="designiy-custom-text-sticker-canvas" v-click="click">
     <div id="canvas-container" ref="canvasContainerEl">
-      <div id="canvas-text" ref="canvasTextEl" :contenteditable="editable" @keydown="keydown" @blur="blur">
-        {{ operatingTextStickerText }}
-      </div>
+      <div
+        id="canvas-text"
+        ref="canvasTextEl"
+        :contenteditable="editable"
+        @keydown="keydown"
+        @blur="blur"
+      ></div>
     </div>
-
     <div class="designiy-custom-text-sticker-canvas-menu"></div>
   </div>
 </template>
 <script setup>
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import {
-  showBaseModelSelect,
-  operatingTextStickerText,
-  operatingTextStickerColor,
-  operatingTextStickerWeight,
-  operatingTextStickerFontSize,
-  operatingTextStickerLineHeight,
-  operatingTextStickerIsItalic,
-  operatingTextStickerLetterSpacing,
-  operatingTextStickerWritingMode,
-  operatingTextStickerTextOrientation,
+  operatingTextStickerOptions,
   currentController,
   showDecalControl,
 } from "../../store";
+
 import { getFonts, uploadTextSticker } from "@/api/index";
 import { useDebounceFn } from "@vueuse/core";
-import { More } from "@element-plus/icons-vue";
-import * as htmlToImage from "html-to-image";
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
 import { base64ToFile } from "@/common/transform/base64ToFile";
@@ -47,38 +40,23 @@ const fonts = ref();
 // 当前字体文件路径
 const fontFile = ref();
 
-watch(
-  [
-    operatingTextStickerText,
-    operatingTextStickerColor,
-    operatingTextStickerWeight,
-    operatingTextStickerFontSize,
-    operatingTextStickerLineHeight,
-    operatingTextStickerIsItalic,
-  ],
-  async () => {
-    await nextTick();
-    initTextSticker();
-  }
-);
+watch(operatingTextStickerOptions, async () => {
+  await nextTick();
+  initTextSticker();
+});
+
 
 const initTextSticker = useDebounceFn(async () => {
-  let el = canvasContainerEl.value;
-  if (!el) {
-    return;
-  }
+  let textEl = canvasTextEl.value;
+  // let bgEl = canvasContainerEl.value;
+  textEl.style.fontSize = operatingTextStickerOptions.fontSize + "px";
+  textEl.style.fontWeight = operatingTextStickerOptions.fontWeight;
+  textEl.style.color = operatingTextStickerOptions.fontColor;
+  textEl.style.lineHeight = operatingTextStickerOptions.lineHeight;
+  textEl.style.letterSpacing = operatingTextStickerOptions.letterSpacing + 'em'
 
-  el.style.color = operatingTextStickerColor.value;
-  el.style.fontWeight = operatingTextStickerWeight.value;
-  el.style.letterSpacing = operatingTextStickerLetterSpacing.value + "px";
-  el.style.fontSize = operatingTextStickerFontSize.value + "px";
-  el.style.lineHeight = operatingTextStickerLineHeight.value + "em";
-  el.style.writingMode = operatingTextStickerWritingMode.value;
-  el.style.textOrientation = operatingTextStickerTextOrientation.value;
-  el.style.fontStyle = operatingTextStickerIsItalic.value ? "italic" : "normal";
 
   base64.value = await toPng(canvasContainerEl.value);
-
   initDraggableElement(
     canvasContainerEl.value,
     (img) => {
@@ -94,13 +72,11 @@ const initTextSticker = useDebounceFn(async () => {
   );
 }, 10);
 
-
 function keydown(e) {
   // 阻止tab切换焦点
   if (e.keyCode === 9) {
     e.preventDefault();
   }
-  initTextSticker();
 }
 
 const editable = ref(false);
@@ -109,6 +85,7 @@ const blured = ref(false);
 function blur() {
   editable.value = false;
   blured.value = true;
+  initTextSticker();
 }
 
 async function click() {
@@ -144,6 +121,7 @@ watch(fontFile, (url) => {
 });
 
 onMounted(async () => {
+  canvasTextEl.value.innerText = operatingTextStickerOptions.content
   initTextSticker();
   fonts.value = await getFonts();
 });

@@ -11,7 +11,7 @@
     >
       <Teleport to="body">
         <div
-          v-if="mask"
+          v-if="show && mask"
           class="dialog-mask"
           @click="$emit('close')"
           :style="{ zIndex: 999 }"
@@ -57,6 +57,8 @@ const props = defineProps({
   },
   animation: {},
 });
+
+
 
 const emits = defineEmits(["close"]);
 

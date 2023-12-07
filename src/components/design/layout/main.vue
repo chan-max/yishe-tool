@@ -97,16 +97,17 @@
     <image-sticker></image-sticker>
   </diycontainer>
 
-  <diycontainer
+  <diydialog
     :show="showFontList"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      left: calc(var(--1s-left-menu-width));
-    "
+    @close="showFontList = false"
+    :animation="{
+      'enter-active-class': 'animate__animated animate__bounceIn',
+      'leave-active-class': 'animate__animated animate__bounceOut',
+      duration: 100,
+    }"
   >
     <font-list></font-list>
-  </diycontainer>
+  </diydialog>
 
   <diycontainer
     :show="showCustomTextSticker"

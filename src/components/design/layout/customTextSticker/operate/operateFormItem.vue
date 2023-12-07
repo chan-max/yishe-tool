@@ -23,18 +23,18 @@ const props = defineProps(["name"]);
 }
 
 .operate-form-item-icon {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   color:#555;
   svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 }
 
 .operate-form-item-title{
     padding:0 10px;
-    font-size:13px;
+    font-size:12px;
 }
 
 

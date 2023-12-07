@@ -45,8 +45,7 @@
             <color-picker
               v-model:pureColor="operatingTextStickerOptions.fontColor"
               v-model:gradientColor="operatingTextStickerOptions.fontGradientColor"
-              style="width: 80px"
-              v-model="color"
+        
             ></color-picker>
           </template>
         </operate-form-item>
@@ -95,6 +94,25 @@
               </div>
           </template>
         </operate-form-item>
+        <operate-form-item>
+          <template #icon> <icon-italic></icon-italic> </template>
+          <template #name> 斜体 </template>
+          <template #content>
+              <div @click="operatingTextStickerOptions.italic = !operatingTextStickerOptions.italic">
+                 {{operatingTextStickerOptions.italic ? '是' : '否'}}
+              </div>
+          </template>
+        </operate-form-item>
+        <operate-form-item>
+          <template #icon> <icon-background-color></icon-background-color> </template>
+          <template #name> 背景色 </template>
+          <template #content>
+            <color-picker
+              v-model:pureColor="operatingTextStickerOptions.backgroundColor"
+              v-model:gradientColor="operatingTextStickerOptions.backgroundGradientColor"
+            ></color-picker>
+          </template>
+        </operate-form-item>
     </div>
   </div>
 </template>
@@ -111,6 +129,8 @@ import iconLineHeight from '@/icon/line-height.svg?vueComponent';
 import iconLetterSpacing from '@/icon/letter-spacing.svg?vueComponent'
 import iconWritingMode from '@/icon/writing-mode.svg?vueComponent'
 import iconFontFamily from '@/icon/font-family.svg?vueComponent'
+import iconBackgroundColor from '@/icon/background-color.svg?vueComponent'
+import iconItalic from '@/icon/italic.svg?vueComponent'
 
 import { operatingTextStickerOptions, showFontList } from "../../store";
 
@@ -166,7 +186,7 @@ const activeTab = ref("基础属性");
 
 .designiy-custom-text-sticker-title {
   width: 100%;
-  padding: 20px 10px;
+  padding: 10px 10px;
   font-size: 16px;
   font-weight: 500;
   display: flex;
@@ -177,5 +197,7 @@ const activeTab = ref("基础属性");
 .designiy-custom-text-sticker-content {
   height: 100%;
   width: 100%;
+  padding:10px 0;
+  overflow:auto;
 }
 </style>

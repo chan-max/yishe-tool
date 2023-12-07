@@ -1,15 +1,18 @@
 <template>
   <div class="designiy-custom-text-sticker-canvas" v-click="click">
-    <div id="canvas-container" ref="canvasContainerEl">
+    <div id="canvas-container" ref="canvasBackgroundEl">
       <div
         id="canvas-text"
         ref="canvasTextEl"
         :contenteditable="editable"
         @keydown="keydown"
         @blur="blur"
+        @paste="paste"
       ></div>
     </div>
-    <div class="designiy-custom-text-sticker-canvas-menu"></div>
+    <div class="designiy-custom-text-sticker-canvas-menu">
+      <div>{{ count }}</div>
+    </div>
   </div>
 </template>
 <script setup>
@@ -27,7 +30,9 @@ import { initDraggableElement } from "../../utils/draggable";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { vClick } from "../../composition/vClick";
 
-const canvasContainerEl = ref();
+const count = ref(0);
+
+const canvasBackgroundEl = ref();
 const canvasTextEl = ref();
 
 const base64 = ref("");
@@ -45,20 +50,21 @@ watch(operatingTextStickerOptions, async () => {
   initTextSticker();
 });
 
-
 const initTextSticker = useDebounceFn(async () => {
   let textEl = canvasTextEl.value;
-  // let bgEl = canvasContainerEl.value;
+  let backgroundEl = canvasBackgroundEl.value;
+
   textEl.style.fontSize = operatingTextStickerOptions.fontSize + "px";
   textEl.style.fontWeight = operatingTextStickerOptions.fontWeight;
   textEl.style.color = operatingTextStickerOptions.fontColor;
   textEl.style.lineHeight = operatingTextStickerOptions.lineHeight;
-  textEl.style.letterSpacing = operatingTextStickerOptions.letterSpacing + 'em'
+  textEl.style.fontStyle = operatingTextStickerOptions.italic ? "italic" : "";
+  textEl.style.letterSpacing = operatingTextStickerOptions.letterSpacing + "em";
+  backgroundEl.style.background = operatingTextStickerOptions.backgroundColor;
 
-
-  base64.value = await toPng(canvasContainerEl.value);
+  base64.value = await toPng(canvasBackgroundEl.value);
   initDraggableElement(
-    canvasContainerEl.value,
+    canvasBackgroundEl.value,
     (img) => {
       currentController.value.stickToMousePosition({
         base64: base64.value,
@@ -72,6 +78,7 @@ const initTextSticker = useDebounceFn(async () => {
   );
 }, 10);
 
+// 输入文字内容
 function keydown(e) {
   // 阻止tab切换焦点
   if (e.keyCode === 9) {
@@ -117,14 +124,25 @@ watch(fontFile, (url) => {
         }
       `;
   document.head.appendChild(fontStyles);
-  canvasContainerEl.value.style.fontFamily = ` font${fontId++}`;
+  canvasBackgroundEl.value.style.fontFamily = ` font${fontId++}`;
 });
 
 onMounted(async () => {
-  canvasTextEl.value.innerText = operatingTextStickerOptions.content
+  canvasTextEl.value.innerText = operatingTextStickerOptions.content;
   initTextSticker();
   fonts.value = await getFonts();
 });
+
+// 处理粘贴时富文本影响
+function paste(e) {
+  let paste = (event.clipboardData || window.clipboardData).getData('text');
+    paste = paste.toUpperCase();
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return false;
+    selection.deleteFromDocument();
+    selection.getRangeAt(0).insertNode(document.createTextNode(paste));
+    event.preventDefault();
+}
 
 async function save() {
   await uploadTextSticker({

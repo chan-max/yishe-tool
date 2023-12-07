@@ -20,9 +20,9 @@ onBeforeMount(async () => {
 </script>
 <style lang="less">
 .designiy-font-list {
-  width: 300px;
+  width: 800px;
   overflow:auto;
-  height:500px;
+  height:400px;
 }
 
 .designiy-font-list-content{

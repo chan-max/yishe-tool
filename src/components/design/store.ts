@@ -155,9 +155,9 @@ export function clearLayout() {
 export const operatingTextStickerOptions = reactive({
     // 贴纸内容
     content: `breaking
-    bad`,
+            bad`,
     // text color
-    fontColor: '#000',
+    fontColor: '#6900ff',
     fontGradientColor: '#6900ff',
     // font-weight
     fontWeight: 500,
@@ -173,8 +173,9 @@ export const operatingTextStickerOptions = reactive({
     fontFamilyId: '0',
 
     // 背景颜色
-    backgoundColor: '',
-    backgroundBorderRadius: '',
+    backgroundColor: 'rgba(0,0,0,0)',
+    backgroundGradientColor:'#6900ff',
+    backgroundBorderRadius: '5px',
     backgroundPadding: '',
 })
 

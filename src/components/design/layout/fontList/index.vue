@@ -16,6 +16,7 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 import { getFonts } from "@/api";
+import {operatingTextStickerOptions,showFontList} from '../../store.ts'
 const data = ref();
 
 onBeforeMount(async () => {
@@ -23,7 +24,8 @@ onBeforeMount(async () => {
 });
 
 function selectFont(font) {
-  debugger
+  operatingTextStickerOptions.fontFamilyInfo = font;
+  showFontList.value = false
 }
 
 </script>

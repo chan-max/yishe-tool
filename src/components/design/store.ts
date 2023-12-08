@@ -93,8 +93,6 @@ export const showFontUpload = ref(false)
 // 是否展示字体列表
 export const showFontList = ref(false)
 
-watch(showFontList, (value) => {
-})
 
 
 // 是否展示已使用的贴纸列表
@@ -170,8 +168,8 @@ export const operatingTextStickerOptions = reactive({
     // letter-spacing
     letterSpacing: .1,
 
-    // 记录当前引用的字体id
-    fontFamilyId: '',
+    // 记录当前引用的字体信息
+    fontFamilyInfo: '',
 
     
     // 背景颜色

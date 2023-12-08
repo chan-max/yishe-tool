@@ -10,9 +10,9 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "serve": "node server/server.js",
-    "serve:dev": "nodemon  --inspect server/server.js",
-    "dev": "concurrently \"vite --host 0.0.0.0\"  \"vitepress dev docs\"   \"nodemon  --inspect server/server.js\"",
+    "serve": "node server.js",
+    "serve:dev": "nodemon  --inspect server.js",
+    "dev": "concurrently \"vite --host 0.0.0.0\"  \"vitepress dev docs\"   \"nodemon  --inspect server.js\"",
     "db:init": "cd server/sequelize & npx sequelize-cli db:create & npx sequelize-cli db:migrate"
   },
   "dependencies": {

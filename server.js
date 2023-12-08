@@ -7,10 +7,10 @@ import path from "path";
 import _static from "koa-static";
 import { koaBody } from "koa-body";
 import { fileURLToPath } from "url";
-import { initRouter } from "./router.js"
+import { initRouter } from "./server/router.js"
 import ip from "ip";
-import { createRedisClient } from "./redis/index.js";
-import { getRelativePath, getUploadPath } from "./fileManage.js"
+import { createRedisClient } from "./server/redis/index.js";
+import { getRelativePath, getUploadPath } from "./server/fileManage.js"
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -19,12 +19,12 @@ const __dirname = path.dirname(__filename);
 
 const redis = await createRedisClient()
 
-const app = new Koa();
+ const app = new Koa();
 const router = new Router();
 
 app.use(cors({ origin: "*", credentials: true }));
 
-import db from './sequelize/models/index.js'
+import db from './server/sequelize/models/index.js'
 
 initRouter(router, db.sequelize, app, redis);
 
@@ -32,8 +32,8 @@ initRouter(router, db.sequelize, app, redis);
 app.use(_static(path.join(__dirname, "../dist")));
 app.use(_static(path.join(__dirname, "../static")));
 
-import { uploadsPath } from "./fileManage.js"
-import { formatFilePath } from "./util.js";
+import { uploadsPath } from "./server/fileManage.js"
+import { formatFilePath } from "./server/util.js";
 
 app.use(_static(uploadsPath()));
 

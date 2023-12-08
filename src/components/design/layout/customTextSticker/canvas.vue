@@ -1,7 +1,6 @@
 <template>
   <div class="designiy-custom-text-sticker-canvas" v-click="click">
-   editable {{ editable }} justblured {{ justBlured }}
-    <div id="canvas-container" ref="canvasBackgroundEl">
+    <div id="canvas-container" ref="canvasBackgroundEl" > 
       <div
         id="canvas-text"
         ref="canvasTextEl"
@@ -95,21 +94,24 @@ const editable = ref(false);
 const justBlured = ref(false);
 
  function blur() {
-  editable.value = false;
   justBlured.value = true;
+  editable.value = false;
+  setTimeout(() => {
+      justBlured.value = false;
+  }, 100);
 }
 
 async function click() {
 
-  // 可编辑状态
-  if (editable.value) {
+  if (justBlured.value) {
+    // 此情况为点击了画布但是非输入框的位置，此情况应该让失焦,并为不可编辑
+    editable.value = false;
     justBlured.value = false;
     return;
   }
 
-  if (justBlured.value) {
-    // 此情况为点击了画布但是非输入框的位置，此情况应该让失焦,并为不可编辑
-    editable.value = false;
+  // 可编辑状态
+  if (editable.value) {
     justBlured.value = false;
     return;
   }

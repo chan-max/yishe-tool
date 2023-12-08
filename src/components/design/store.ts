@@ -170,8 +170,10 @@ export const operatingTextStickerOptions = reactive({
     // letter-spacing
     letterSpacing: .1,
 
-    fontFamilyId: '0',
+    // 记录当前引用的字体id
+    fontFamilyId: '',
 
+    
     // 背景颜色
     backgroundColor: 'rgba(0,0,0,0)',
     backgroundGradientColor:'#6900ff',

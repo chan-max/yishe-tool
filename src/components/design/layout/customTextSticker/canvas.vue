@@ -1,17 +1,19 @@
 <template>
   <div class="designiy-custom-text-sticker-canvas" v-click="click">
+   editable {{ editable }} justblured {{ justBlured }}
     <div id="canvas-container" ref="canvasBackgroundEl">
       <div
         id="canvas-text"
         ref="canvasTextEl"
         :contenteditable="editable"
-        @keydown="keydown"
+        @input="input"
         @blur="blur"
+
         @paste="paste"
       ></div>
     </div>
     <div class="designiy-custom-text-sticker-canvas-menu">
-      <div>{{ count }}</div>
+      <div style="flex:1"></div>
     </div>
   </div>
 </template>
@@ -30,7 +32,7 @@ import { initDraggableElement } from "../../utils/draggable";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { vClick } from "../../composition/vClick";
 
-const count = ref(0);
+
 
 const canvasBackgroundEl = ref();
 const canvasTextEl = ref();
@@ -61,7 +63,7 @@ const initTextSticker = useDebounceFn(async () => {
   textEl.style.fontStyle = operatingTextStickerOptions.italic ? "italic" : "";
   textEl.style.letterSpacing = operatingTextStickerOptions.letterSpacing + "em";
   backgroundEl.style.background = operatingTextStickerOptions.backgroundColor;
-
+    
   base64.value = await toPng(canvasBackgroundEl.value);
   initDraggableElement(
     canvasBackgroundEl.value,
@@ -79,32 +81,41 @@ const initTextSticker = useDebounceFn(async () => {
 }, 10);
 
 // 输入文字内容
-function keydown(e) {
+function input(e) {
   // 阻止tab切换焦点
   if (e.keyCode === 9) {
     e.preventDefault();
   }
+  operatingTextStickerOptions.content = canvasTextEl.value.innerText
+  initTextSticker()
 }
 
 const editable = ref(false);
 
-const blured = ref(false);
-function blur() {
+const justBlured = ref(false);
+
+ function blur() {
   editable.value = false;
-  blured.value = true;
-  initTextSticker();
+  justBlured.value = true;
 }
 
 async function click() {
-  if (blured.value) {
-    blured.value = false;
+
+  // 可编辑状态
+  if (editable.value) {
+    justBlured.value = false;
     return;
-  } else if (editable.value) {
+  }
+
+  if (justBlured.value) {
+    // 此情况为点击了画布但是非输入框的位置，此情况应该让失焦,并为不可编辑
+    editable.value = false;
+    justBlured.value = false;
     return;
   }
 
   editable.value = true;
-  blured.value = false;
+  justBlured.value = false;
   await nextTick();
   canvasTextEl.value.focus();
   //设置光标到最后

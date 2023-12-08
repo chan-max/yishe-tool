@@ -10,7 +10,7 @@
 
         <operate-form-item>
           <template #icon> <icon-font-size></icon-font-size> </template>
-          <template #name> 字体大小 </template>
+          <template #name> 显示大小 </template>
           <template #content>
             <el-input
               type="number"
@@ -22,7 +22,7 @@
         </operate-form-item>
         <operate-form-item>
           <template #icon> <icon-bold></icon-bold> </template>
-          <template #name> 字体厚度 </template>
+          <template #name> 厚度 </template>
           <template #content>
             <el-select
               v-model="operatingTextStickerOptions.fontWeight"
@@ -51,7 +51,7 @@
         </operate-form-item>
         <operate-form-item>
           <template #icon> <icon-line-height></icon-line-height> </template>
-          <template #name> 字体行高 </template>
+          <template #name> 行高 </template>
           <template #content>
             <el-input
               type="number"
@@ -66,7 +66,7 @@
         </operate-form-item>
         <operate-form-item>
           <template #icon> <icon-letter-spacing></icon-letter-spacing> </template>
-          <template #name> 文字间距 </template>
+          <template #name> 间距 </template>
           <template #content>
             <el-input
               type="number"

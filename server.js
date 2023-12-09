@@ -1,4 +1,3 @@
-
 import Koa from "koa";
 import Router from "koa-router";
 import cors from "koa2-cors";
@@ -29,8 +28,8 @@ import db from './server/sequelize/models/index.js'
 initRouter(router, db.sequelize, app, redis);
 
 // 前端打包后的代码
-app.use(_static(path.join(__dirname, "../dist")));
-app.use(_static(path.join(__dirname, "../static")));
+app.use(_static(path.join(__dirname, "./www")));
+app.use(_static(path.join(__dirname, "./static")));
 
 import { uploadsPath } from "./server/fileManage.js"
 import { formatFilePath } from "./server/util.js";

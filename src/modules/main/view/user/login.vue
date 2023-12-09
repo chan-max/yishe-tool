@@ -54,7 +54,7 @@ import { message } from "ant-design-vue";
 import { ElMessage } from 'element-plus'
 
 import { View ,Hide,User,Lock} from "@element-plus/icons-vue";
-import { doLogin } from "../../actions/loginAction";
+import { doLogin } from "@/actions/loginAction";
 
 const userStore = useLoginStatusStore();
 const router = useRouter();

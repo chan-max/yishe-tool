@@ -40,7 +40,7 @@ import { ElMessage } from "element-plus";
 import { reactive, ref, computed } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import { genFileId } from 'element-plus'
-import { uploadImage } from '../../../../api/index';
+import { uploadImage } from '@/api/index';
 
 const upload = ref();
 

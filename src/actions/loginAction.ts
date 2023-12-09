@@ -1,5 +1,5 @@
 import { useLoginStatusStore } from "@/store/stores/user";
-import router from "@/router/router";
+import router from "@/modules/main/router";
 
 const LOGIN_FLAG = "1s_login";
 

@@ -24,10 +24,12 @@ export default defineConfig({
     qrcode()
   ],
   build: {
+    outDir:'www',
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+        main: resolve(__dirname, 'main.html'),
         mobile: resolve(__dirname, 'mobile.html'),
+        index: resolve(__dirname, 'index.html'),
       },
     }
   },

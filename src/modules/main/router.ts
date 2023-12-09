@@ -4,24 +4,24 @@ import {
   createWebHistory,
 } from "vue-router";
 
-import home from "../views/base/home/home.vue";
-import signup from "../views/user/signup.vue";
-import login from "../views/user/login.vue";
-import design from "../views/main/design.vue";
-import search from "@/views/base/search.vue";
-import workspace from "@/views/workspace/index.vue";
-import market from "@/views/market/index.vue";
-import unknown from "@/views/base/unknown.vue";
-import admin from "@/views/admin/index.vue";
-import adminHome from "@/views/admin/view/home.vue";
-import modelIndex from "@/views/admin/view/model/index/index.vue";
-import modelUpload from "@/views/admin/view/model/modelUpload.vue";
-import imageIndex from "@/views/admin/view/image/index/index.vue";
-import imageUpload from "@/views/admin/view/image/imageUpload.vue";
-import fontIndex from "@/views/admin/view/font/fontUpload.vue";
-import fontUpload from "@/views/admin/view/font/fontUpload.vue";
-import update from '@/views/user/update/index.vue'
-import adminUserManage from '@/views/admin/view/user/index.vue'
+import home from "./view/base/home/home.vue";
+import signup from "./view/user/signup.vue";
+import login from "./view/user/login.vue";
+import design from "./view/main/design.vue";
+import search from "./view/base/search.vue";
+import workspace from "./view/workspace/index.vue";
+import market from "./view/market/index.vue";
+import unknown from "./view/base/unknown.vue";
+import admin from "./view/admin/index.vue";
+import adminHome from "./view/admin/view/home.vue";
+import modelIndex from "./view/admin/view/model/index/index.vue";
+import modelUpload from "./view/admin/view/model/modelUpload.vue";
+import imageIndex from "./view/admin/view/image/index/index.vue";
+import imageUpload from "./view/admin/view/image/imageUpload.vue";
+import fontIndex from "./view/admin/view/font/fontUpload.vue";
+import fontUpload from "./view/admin/view/font/fontUpload.vue";
+import update from './view/user/update/index.vue'
+import adminUserManage from './view/admin/view/user/index.vue'
 
 const routes = [
   {
@@ -139,8 +139,8 @@ const router = createRouter({
   routes: _routes,
 });
 
-import { blockAdminPage, blockLoginPage, initDocumentTitle } from "./routerInterception";
-import { routeTransform } from "./routeTransform";
+import { blockAdminPage, blockLoginPage, initDocumentTitle } from "../../router/routerInterception";
+import { routeTransform } from "../../router/routeTransform";
 
 blockLoginPage(router);
 blockAdminPage(router);

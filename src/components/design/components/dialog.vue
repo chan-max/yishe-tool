@@ -79,7 +79,7 @@ function close() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding:15px 20px;
   cursor: move;
 }
 

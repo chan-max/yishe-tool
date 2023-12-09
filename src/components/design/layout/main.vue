@@ -242,7 +242,9 @@ import {
   DoubleSide,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
+import {initWebsocket} from '../utils/websocket.ts';
 
+initWebsocket()
 isLoading.value = true;
 
 setTimeout(() => {

@@ -40,5 +40,3 @@ setupAction(app,router,pinia)
 app.config.globalProperties.__DEV__ = import.meta.env.DEV
 
 app.mount('#app')
-
-console.log(import.meta.env)

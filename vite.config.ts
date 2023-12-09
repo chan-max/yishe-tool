@@ -24,6 +24,7 @@ export default defineConfig({
     qrcode()
   ],
   build: {
+    assetsDir:'./',
     outDir:'www',
     rollupOptions: {
       input: {

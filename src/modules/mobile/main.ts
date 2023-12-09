@@ -13,7 +13,11 @@ import 'element-plus/theme-chalk/display.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import '../../style/cover-elementplus.scss'
 import '../../style/base.less'
+import VConsole from 'vconsole';
 
+
+ 
+const vConsole = new VConsole({ theme: 'dark' });
 
 
 import {router} from './router'

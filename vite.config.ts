@@ -10,11 +10,14 @@ import { basename } from 'path';
 import Components from 'unplugin-vue-components/vite';
 import { VantResolver } from '@vant/auto-import-resolver';
 import { qrcode } from 'vite-plugin-qrcode';
+import basicSsl from '@vitejs/plugin-basic-ssl'
+
 
 export default defineConfig({
   plugins: [
     vue(), 
     alias(),
+    basicSsl(),
     svgSprites({
       exclude: ['node_modules/**']
     }),

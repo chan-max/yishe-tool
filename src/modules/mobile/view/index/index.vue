@@ -1,17 +1,9 @@
 <template>
-    <div class="homepage">
-    
-    </div>
+    index
 </template>
-    
-<script setup lang='ts'>
-    
-</script>
 
-    
-<style>
-    .homepage{
-        width: 100%;
-        height: 100%;
-    }
-</style>
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from "vue";
+
+
+</script>

@@ -5,9 +5,9 @@ export function cameraUsable() {
     return !!navigator?.mediaDevices.getUserMedia
 }
 
-export const userCameraOption = { video: { facingMode: "user" } }
+export const facingModeUserOption = { video: { facingMode: "user" } }
 
-export const environmentCameraOption = {
+export const facingModeEnvironmentOption = {
     video: {
         facingMode: { exact: "environment" }
     }

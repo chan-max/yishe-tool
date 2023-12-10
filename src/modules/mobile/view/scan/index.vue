@@ -7,7 +7,7 @@
       </div>
       <div class="scan-main-right">right</div>
       <canvas class="scan-canvas" ref="canvasEl" width="320" height="150"></canvas>
-      <video class="scan-video" ref="videoEl" playsinline></video>
+      <video class="scan-video" :class="facingModeIsUser && 'video-flip'" ref="videoEl" playsinline></video>
     </div>
 
     <div class="scan-tabs">
@@ -27,7 +27,7 @@
 import { ref, onMounted, onBeforeUnmount, computed ,shallowRef} from "vue";
 import iconClose from "@/icon/mobile/close.svg?vueComponent";
 import iconSwitchCamera from "@/icon/mobile/switch-camera.svg?vueComponent";
-import { cameraUsable, environmentCameraOption, userCameraOption } from "./media.ts";
+import { cameraUsable, facingModeEnvironmentOption, facingModeUserOption } from "./media.ts";
 import { showDialog, showConfirmDialog } from "vant";
 import { useRouter } from "vue-router";
 
@@ -48,20 +48,24 @@ onMounted(async () => {
   }
 });
 
+// 关闭扫码页面
 function close() {}
 
+// 当前选中的操作页面
 const active = ref();
-
-const usable = computed(() => {
-  return cameraUsable();
-});
 
 const canvasEl = ref();
 
 const videoEl = ref(null);
 let currentStream = null;
 
-const currentCameraOption = shallowRef(userCameraOption)
+// 当前使用的视频选项
+const currentFacingMode = shallowRef(facingModeUserOption)
+
+const facingModeIsUser = computed(() => {
+  return currentFacingMode.value === facingModeUserOption
+})
+
 
 function stopMediaTracks(stream) {
   if(!stream){
@@ -75,13 +79,13 @@ function stopMediaTracks(stream) {
 // 切换摄像头
 const switchCamera = () => {
   stopMediaTracks(videoEl.value.srcObject)
-  currentCameraOption.value = currentCameraOption.value === userCameraOption ? environmentCameraOption : userCameraOption
+  currentFacingMode.value = currentFacingMode.value === facingModeUserOption ? facingModeEnvironmentOption : facingModeUserOption
   startCamera()
 };
 
 function startCamera() {
   navigator.mediaDevices
-    .getUserMedia(currentCameraOption.value)
+    .getUserMedia(currentFacingMode.value)
     .then(function (mediaStream) {
       videoEl.value.srcObject = mediaStream;
       play();
@@ -141,6 +145,9 @@ onBeforeUnmount(() => {
   height: 100%;
   // 自拍镜像翻转
   object-fit: cover;
+}
+
+.video-flip{
   transform: rotateY(180deg);
 }
 

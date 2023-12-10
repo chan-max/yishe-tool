@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import login from './view/user/login/index.vue'
 import index from './view/index/index.vue';
 import signup from './view/user/signup/index.vue';
-import camera from './view/camera/index.vue';
+import scan from './view/scan/index.vue';
 
 const routes = [
     {
@@ -10,7 +10,8 @@ const routes = [
         name: "Home",
         component: index,
         meta:{
-            footer:true
+            footer:true,
+            header:true
         }
     },
     {
@@ -24,9 +25,9 @@ const routes = [
         component: signup,
     },
     {
-        path: "/camera",
-        name: "Camera",
-        component: camera,
+        path: "/scan",
+        name: "Scan",
+        component: scan,
         meta:{
             header:false,
             footer:false,

@@ -8,7 +8,7 @@
 import { computed, ref } from "vue";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
-import headerMenu from './base/header/index.vue'
+import headerMenu from './view/base/header/index.vue'
 import { useI18n } from "vue-i18n";
 
 const { t, locale, global } = useI18n();

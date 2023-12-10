@@ -28,10 +28,8 @@ export default defineConfig({
   ],
   build: {
     assetsDir:'./',
-    outDir:'www',
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'main.html'),
         mobile: resolve(__dirname, 'mobile.html'),
         index: resolve(__dirname, 'index.html'),
       },

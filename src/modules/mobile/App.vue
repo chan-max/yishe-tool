@@ -36,10 +36,13 @@ const isDark = ref(true)
 }
 
 :root{
-  --van-primary-color:#6900ff;
+  --van-primary-color:#6900ff!important;
 }
 
 .van-theme-dark body {
   background-color: black;
+  svg{
+    color:#fff;
+  }
 }
 </style>

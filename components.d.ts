@@ -41,12 +41,13 @@ declare module 'vue' {
     Tab: typeof import('./src/components/design/components/tab.vue')['default']
     TextSticker: typeof import('./src/components/design/layout/textSticker/index.vue')['default']
     UserAvatar: typeof import('./src/components/user/userAvatar.vue')['default']
-    VanButton: typeof import('vant/es')['Button']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
     VanIcon: typeof import('vant/es')['Icon']
     VanNavBar: typeof import('vant/es')['NavBar']
+    VanTab: typeof import('vant/es')['Tab']
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
+    VanTabs: typeof import('vant/es')['Tabs']
     Workspace: typeof import('./src/components/design/layout/workspace/index.vue')['default']
   }
 }

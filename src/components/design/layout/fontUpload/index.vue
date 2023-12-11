@@ -12,14 +12,13 @@
       :disabled="files[0]"
       drag
     >
-      <div
+      <input
         v-if="files[0]"
         ref="previewEl"
         class="designiy-font-upload-preview"
         contenteditable="true"
+        v-model="name"
       >
-        breaking bad
-      </div>
 
       <div v-else class="designiy-font-upload-placeholder">
         <icon-upload style="width: 20px; height: 20px"></icon-upload>
@@ -31,7 +30,7 @@
         >支持类型 ttf woff</span
       >
     </el-divider>
-    <el-input placeholder="定义字体名称" style="font-size: 10px"></el-input>
+    <el-input v-model="name" placeholder="定义字体名称" style="font-size: 10px"></el-input>
     <el-input
       type="textarea"
       placeholder="定义字体描述"
@@ -57,6 +56,7 @@ import { base64ToFile } from "../../../../common/transform/base64ToFile";
 const files = ref([]);
 const upload = ref();
 const previewEl = ref();
+const name = ref()
 
 var id = 0;
 
@@ -64,8 +64,9 @@ var id = 0;
 watch(files, async (files) => {
   await nextTick();
   const file = files[0];
-  const { name, size, raw } = file;
-  previewEl.value.innerHTML = name;
+  name.value = file.name;
+  debugger
+  previewEl.value.innerHTML = file.name;
   let fontId = id++;
   const fontStyles = document.createElement("style");
   fontStyles.innerHTML = `
@@ -93,6 +94,7 @@ async function submit() {
   await uploadFont({
     file: files.value[0].raw,
     img: base64ToFile(base64),
+    name:name.value,
   });
 }
 </script>

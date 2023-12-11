@@ -7,7 +7,6 @@
         :contenteditable="editable"
         @input="input"
         @blur="blur"
-
         @paste="paste"
       ></div>
     </div>
@@ -24,7 +23,7 @@ import {
   showDecalControl,
 } from "../../store";
 
-import { getFonts, uploadTextSticker } from "@/api/index";
+import { uploadTextSticker } from "@/api/index";
 import { useDebounceFn } from "@vueuse/core";
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
@@ -40,11 +39,6 @@ const base64 = ref("");
 
 // 当前编辑的元素
 
-// 所有可用字体信息
-const fonts = ref();
-
-// 当前字体文件路径
-const fontFile = ref();
 
 watch(operatingTextStickerOptions, async () => {
   await nextTick();
@@ -61,6 +55,8 @@ const initTextSticker = useDebounceFn(async () => {
   textEl.style.lineHeight = operatingTextStickerOptions.lineHeight;
   textEl.style.fontStyle = operatingTextStickerOptions.italic ? "italic" : "";
   textEl.style.letterSpacing = operatingTextStickerOptions.letterSpacing + "em";
+  textEl.style.fontFamily = 'abc'
+
   backgroundEl.style.background = operatingTextStickerOptions.backgroundColor;
     
   base64.value = await toPng(canvasBackgroundEl.value);
@@ -77,7 +73,7 @@ const initTextSticker = useDebounceFn(async () => {
     },
     base64.value
   );
-}, 10);
+}, 33);
 
 // 输入文字内容
 function input(e) {
@@ -102,7 +98,6 @@ const justBlured = ref(false);
 }
 
 async function click() {
-
   if (justBlured.value) {
     // 此情况为点击了画布但是非输入框的位置，此情况应该让失焦,并为不可编辑
     editable.value = false;
@@ -126,24 +121,9 @@ async function click() {
   range.collapseToEnd();
 }
 
-var id = 0;
-watch(fontFile, (url) => {
-  let fontId = id++;
-  const fontStyles = document.createElement("style");
-  fontStyles.innerHTML = `
-        @font-face {
-            font-family: font${fontId};
-            src: url(${url}); /* 替换为实际的字体文件相对路径 */
-        }
-      `;
-  document.head.appendChild(fontStyles);
-  canvasBackgroundEl.value.style.fontFamily = ` font${fontId++}`;
-});
-
 onMounted(async () => {
   canvasTextEl.value.innerText = operatingTextStickerOptions.content;
   initTextSticker();
-  fonts.value = await getFonts();
 });
 
 // 处理粘贴时富文本影响

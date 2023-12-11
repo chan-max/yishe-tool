@@ -99,6 +99,7 @@
 
   <diydialog
     :show="showFontList"
+    title="字体"
     @close="showFontList = false"
     :animation="{
       'enter-active-class': 'animate__animated animate__bounceIn',

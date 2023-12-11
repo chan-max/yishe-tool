@@ -123,10 +123,7 @@ export const showLeftMenu = ref(true)
 
 export const showBottomMenu = ref(true)
 
-// 自定义贴纸的信息
-export const operatingTextStickerStyle = reactive({
-    fontFamily: '',
-})
+
 
 // 清空左侧布局
 export function clearLeftLayout() {
@@ -168,9 +165,9 @@ export const operatingTextStickerOptions = reactive({
     // letter-spacing
     letterSpacing: .1,
 
-    // 记录当前引用的字体信息
+    // 记录当前引用的字体信息 
     fontFamilyInfo: '',
-
+    fontFamilyId:'',
     
     // 背景颜色
     backgroundColor: 'rgba(0,0,0,0)',

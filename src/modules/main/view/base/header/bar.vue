@@ -1,23 +1,36 @@
 <template>
   <div ref="headerBar" class="header-bar flex justify-center z-10">
-    <div class="header-bar-content flex justify-between items-center">
-      <div class="header-bar-logo">1s.design</div>
+      <div class="header-bar-logo" @click="$router.push({name:'Home'})">衣设</div>
+      <div class="header-bar-menu-item">寻找模型</div>
+      <div class="header-bar-menu-item">在线商场</div>
+      <div class="header-bar-menu-item">设计工具</div>
+      <div class="header-bar-menu-item">更多</div>
+      <router-link
+        active-class="sss"
+        v-slot="{ navigate, isActive, isExactActive }"
+        :to="{ name: 'Ai' }"
+        custom
+      >
+        <div
+          class="header-bar-menu-item"
+          :class="{'header-bar-menu-item-active':isActive}"
+          @click="navigate"
+        >
+          AI
+        </div>
+      </router-link>
 
-      <div style="width:30px;"></div>
-
-      <div class="header-bar-menu-item">
-        寻找模型
-      </div>
-      <div class="header-bar-menu-item">在线商场 </div>
-      <div class="header-bar-menu-item">设计工具 </div>
-      <div class="header-bar-menu-item">更多 </div>
       <div style="flex: 1"></div>
+
       <user-avatar v-if="loginStatusStore.isLogin" />
       <div v-else>
-        <el-button @click="$router.push({name:'Signup'})" link round> 注 册 </el-button>
-        <el-button @click="$router.push({name:'Login'})" round type="primary"> 登 录 </el-button>
+        <el-button @click="$router.push({ name: 'Signup' })" link round>
+          注 册
+        </el-button>
+        <el-button @click="$router.push({ name: 'Login' })" round type="primary">
+          登 录
+        </el-button>
       </div>
-    </div>
   </div>
 </template>
 
@@ -37,12 +50,13 @@ const loginStatusStore = useLoginStatusStore();
   height: 64px;
   background: #fff;
   border-bottom: 1px solid #eee;
+  display:flex;
+  align-items:center;
+  justify-center:space-between;
+  padding:0 20px;
+  column-gap:40px;
 }
 
-.header-bar-content {
-  width: 1600px;
-  padding: 0 20px;
-}
 
 .header-bar-logo {
   font-size: 15px;
@@ -51,8 +65,6 @@ const loginStatusStore = useLoginStatusStore();
 
 .header-bar-menu-item {
   font-size: 12px;
-  height:100%;
-  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,5 +80,8 @@ const loginStatusStore = useLoginStatusStore();
 .fixed {
   position: fixed;
 }
+
+.header-bar-menu-item-active {
+  border-bottom:2px solid #6900ff;
+}
 </style>
-@/store/stores/login

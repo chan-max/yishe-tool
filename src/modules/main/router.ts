@@ -22,6 +22,7 @@ import fontIndex from "./view/admin/view/font/fontUpload.vue";
 import fontUpload from "./view/admin/view/font/fontUpload.vue";
 import update from './view/user/update/index.vue'
 import adminUserManage from './view/admin/view/user/index.vue'
+import ai from './view/ai/index.vue';
 
 const routes = [
   {
@@ -130,6 +131,11 @@ const routes = [
     component: update,
     header:false
   },
+  {
+    path:'/ai',
+    name:'Ai',
+    component:ai
+  }
 ];
 
 let _routes = routeTransform(routes as any);
@@ -138,6 +144,7 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: _routes,
 });
+
 
 import { blockAdminPage, blockLoginPage, initDocumentTitle } from "../../router/routerInterception";
 import { routeTransform } from "../../router/routeTransform";

@@ -1,7 +1,7 @@
 <template>
-  <div class="login">
-    <div class="login-form">
-      <div class="login-form-title">
+  <div class="mobile-login">
+    <div class="mobile-login-form">
+      <div class="mobile-login-form-title">
         <el-form
           ref="formRef"
           label-position="top"
@@ -162,19 +162,18 @@ async function submit() {
 
 </script>
 <style lang="less">
-.login {
-  width: 100%;
+.mobile-login {width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
 
-.login-banner {
+.mobile-login-banner {
   padding: 30px;
 }
 
-.login-form {
+.mobile-login-form {
   width: auto;
   padding: 30px;
 

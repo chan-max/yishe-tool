@@ -54,7 +54,7 @@
 
 
       <el-tooltip :hide-after="0" content="字体" placement="right">
-        <div class="menu-bar-item">
+        <div class="menu-bar-item" @click="showFontList = true">
           <div class="menu-bar-item-icon"><icon-font></icon-font></div>
           <span>字体</span>
         </div>
@@ -127,6 +127,7 @@ import {
   showTextSticker,
   showWorkspace,
   showCustomTextSticker,
+  showFontList
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?vueComponent";

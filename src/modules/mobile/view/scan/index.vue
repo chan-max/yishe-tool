@@ -9,7 +9,6 @@
       <canvas class="scan-canvas" ref="canvasEl" width="320" height="150"></canvas>
       <video class="scan-video" :class="facingModeIsUser && 'video-flip'" ref="videoEl" playsinline></video>
     </div>
-
     <div class="scan-tabs">
       <van-tabs v-model:active="active">
         <van-tab title="二维码" name="qrcode"></van-tab>
@@ -66,7 +65,6 @@ const facingModeIsUser = computed(() => {
   return currentFacingMode.value === facingModeUserOption
 })
 
-
 function stopMediaTracks(stream) {
   if(!stream){
     return
@@ -106,6 +104,8 @@ function startCamera() {
     });
 }
 
+
+
 function play() {
   try {
     videoEl.value.play();
@@ -125,6 +125,8 @@ function play() {
 onBeforeUnmount(() => {
   stopMediaTracks(videoEl.value.srcObject);
 });
+
+
 </script>
 <style lang="less">
 .scan {
@@ -168,6 +170,7 @@ onBeforeUnmount(() => {
   left: 20px;
   z-index: 1;
   svg {
+    color:rgba(255,255,255,1);
     width: 36px;
     height: 36px;
   }
@@ -182,6 +185,7 @@ onBeforeUnmount(() => {
   right: 20px;
   z-index: 1;
   svg {
+    color:rgba(255,255,255,1);
     width: 36px;
     height: 36px;
   }

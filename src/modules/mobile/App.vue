@@ -12,8 +12,17 @@ import mFooter from "./view/footer/index.vue";
 import mHeader from './view/header/index.vue'
 import {ref} from 'vue'
 
-const isDark = ref(true)
+import { useDark, useToggle } from '@vueuse/core'
 
+const isDark = useDark({
+  selector:'html'
+})
+
+const toggleDark = useToggle(isDark)
+// 切换
+const handleChangeDark = () => {
+  toggleDark()
+}
 
 //
 document.addEventListener('gesturestart', function (event) {
@@ -47,8 +56,5 @@ document.addEventListener('gesturestart', function (event) {
 
 .van-theme-dark body {
   background-color: black;
-  svg{
-    color:#fff;
-  }
 }
 </style>

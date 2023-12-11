@@ -40,7 +40,7 @@
 import avatarUpload from "./avatarUpload.vue";
 import { reactive } from "vue";
 import { updateUserInfo } from "@/api/index";
-import { useLoginStatusStore } from "@/store/stores/user";
+import { useLoginStatusStore } from "@/store/stores/login";
 
 const form = reactive({
   avatar: "",
@@ -132,3 +132,4 @@ async function submit() {
   color: #333;
 }
 </style>
+@/store/stores/login

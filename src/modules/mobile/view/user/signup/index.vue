@@ -1,11 +1,5 @@
 <template>
   <div class="signup">
-    <div class="signup-banner">
-      <el-button round>
-        <el-icon><Back /></el-icon>
-        返回
-      </el-button>
-    </div>
     <div class="signup-form">
       <div class="signup-form-title">
         <el-form

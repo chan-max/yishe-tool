@@ -1,4 +1,4 @@
-import { useLoginStatusStore } from "@/store/stores/user";
+import { useLoginStatusStore } from "@/store/stores/login";
 import router from "@/modules/main/router";
 
 const LOGIN_FLAG = "1s_login";
@@ -32,7 +32,7 @@ export const updateLocalUserInfo = (data: Record<string, any>) => {
 
 export const isLogin = () => (getLocalUserInfo() ? true : false);
 
-export const doLogin = (userInfo, once) => {
+export const doLoginAction = (userInfo, once = false) => {
   // 保存登录时间
   const now = new Date().getTime();
 
@@ -53,7 +53,6 @@ export const doLogin = (userInfo, once) => {
 
 
   updateLocalUserInfo(localUserInfo);
-  router.push({ name: "Home" });
 };
 
 

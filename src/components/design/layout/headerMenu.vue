@@ -28,7 +28,7 @@ import userAvatar from '@/components/user/userAvatar.vue'
 import headerMenuDropdown from './headerMenuDropdown/index.vue'
 import { onShortcutTrigger } from '../shortcut/index';
 import iconHelp from '@/icon/help.svg?vueComponent'
-import { useLoginStatusStore } from "@/store/stores/user";
+import { useLoginStatusStore } from "@/store/stores/login";
 
 
 const loginStatusStore = useLoginStatusStore();
@@ -106,3 +106,4 @@ async function save() {
   font-size: 18px;
 }
 </style>
+@/store/stores/login

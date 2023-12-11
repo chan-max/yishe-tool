@@ -25,7 +25,7 @@ import 'element-plus/theme-chalk/display.css'
 import '@/style/cover-antdesign.less'
 import i18n from '@/i18n/index'
 
-import { setupAction } from '@/actions/setupAction';
+
 import 'animate.css';
 import '@/style/base.less'
 import 'default-passive-events'
@@ -51,8 +51,6 @@ export function createMainApp(){
     app.use(router)
     
     app.use(ElementPlus)
-    
-    setupAction(app, router, pinia)
     
     app.config.globalProperties.__DEV__ = import.meta.env.DEV
     

@@ -48,13 +48,13 @@
 import { reactive, toRaw,ref, computed, onMounted} from "vue";
 import { login } from "@/api/index";
 import { ResponseStatusCodeEnum } from "@common/statusCode.js";
-import { useLoginStatusStore } from "@/store/stores/user";
+import { useLoginStatusStore } from "@/store/stores/login";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
 import { ElMessage } from 'element-plus'
 
 import { View ,Hide,User,Lock} from "@element-plus/icons-vue";
-import { doLogin } from "@/actions/loginAction";
+import { doLoginAction } from "@/store/stores/loginAction";
 
 const userStore = useLoginStatusStore();
 const router = useRouter();
@@ -110,7 +110,7 @@ async function submit(form) {
     message.info("密码错误");
   } else if (status === ResponseStatusCodeEnum.LOGIN_SUCCESS) {
     message.success("登陆成功");
-    doLogin(res.data, isOnce.value);
+    doLoginAction(res.data, isOnce.value);
   }
 }
 

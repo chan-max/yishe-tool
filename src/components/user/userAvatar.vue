@@ -26,8 +26,8 @@
 </template>
 <script setup>
 
-import { useLoginStatusStore } from "@/store/stores/user";
-import { doLogout } from "@/actions/loginAction";
+import { useLoginStatusStore } from "@/store/stores/login";
+import { doLogout } from "@/store/stores/loginAction";
 import { computed, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { Pointer,CaretBottom } from "@element-plus/icons-vue";

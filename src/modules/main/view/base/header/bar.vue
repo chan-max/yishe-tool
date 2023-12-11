@@ -26,7 +26,7 @@ import { Search } from "@element-plus/icons-vue";
 import userAvatar from "@/components/user/userAvatar.vue";
 import { ref, onMounted, onUnmounted } from "vue";
 import iconArrowDown from "@/icon/arrow-down.svg?vueComponent";
-import { useLoginStatusStore } from "@/store/stores/user";
+import { useLoginStatusStore } from "@/store/stores/login";
 
 const loginStatusStore = useLoginStatusStore();
 </script>
@@ -69,3 +69,4 @@ const loginStatusStore = useLoginStatusStore();
   position: fixed;
 }
 </style>
+@/store/stores/login

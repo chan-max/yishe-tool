@@ -1,5 +1,5 @@
-import { isLogin } from "@/actions/loginAction";
-import { useLoginStatusStore } from "@/store/stores/user";
+import { isLogin } from "@/store/stores/loginAction";
+import { useLoginStatusStore } from "@/store/stores/login";
 
 export const blockLoginPage = (router) => {
   router.beforeEach((to, from, next) => {

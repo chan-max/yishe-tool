@@ -1,11 +1,5 @@
 <template>
   <div class="login">
-    <div class="login-banner">
-      <el-button round>
-        <el-icon><Back /></el-icon>
-        返回
-      </el-button>
-    </div>
     <div class="login-form">
       <div class="login-form-title">
         <el-form
@@ -107,6 +101,12 @@ import {
 import { login, getAccountStatus } from "@/api";
 import { ResponseStatusCodeEnum } from "@common/statusCode.js";
 import { useDebounceFn } from "@vueuse/core";
+import { useLoginStatusStore } from "@/store/stores/login";
+import { doLoginAction } from "@/store/stores/loginAction";
+import { useRouter } from "vue-router";
+import { showToast } from 'vant';
+
+const router  = useRouter()
 
 const rules = reactive({
   account: [{ required: true, message: "请输入账号", trigger: "blur" }],
@@ -133,6 +133,7 @@ const checkAccountStatus = useDebounceFn(async () => {
   var res = await getAccountStatus({
     account: form.account,
   });
+  
   accountStatus.value = res.status;
 }, 2000);
 
@@ -145,15 +146,20 @@ async function submit() {
 
   loginLoading.value = true;
   const res = await login(form);
-
   if (res.status === ResponseStatusCodeEnum.LOGIN_SUCCESS) {
-    alert("login success");
+    doLoginAction(res.data);
+    showToast({
+      message:'登陆成功',
+      onClose(){
+        router.replace({name:'Home'})
+      }
+    })
   } else if (res.status === ResponseStatusCodeEnum.PASSWORD_ERROR) {
     alert("账号密码错误");
   }
-
   loginLoading.value = false;
 }
+
 </script>
 <style lang="less">
 .login {

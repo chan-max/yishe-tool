@@ -1,4 +1,4 @@
-import { useLoginStatusStore } from "@/store/stores/user";
+import { useLoginStatusStore } from "@/store/stores/login";
 import { ElMessage } from 'element-plus'
 
 export const tokenRequestInterceptor = (request) => {

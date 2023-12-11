@@ -1,4 +1,4 @@
-import { getLocalUserInfo } from "@/actions/loginAction";
+import { getLocalUserInfo } from "@/store/stores/loginAction";
 import { defineStore } from "pinia";
 import { reactive, ref } from "vue";
 
@@ -13,7 +13,7 @@ export const useLoginStatusStore = defineStore("login_status", () => {
   const localUserInfo = getLocalUserInfo();
 
   if (localUserInfo) {
-    // 登录过
+    // 已经登录
     isLogin.value = true
     userInfo.value = localUserInfo
     loginTime.value = localUserInfo.loginTime
@@ -22,9 +22,8 @@ export const useLoginStatusStore = defineStore("login_status", () => {
     isAdmin.value = localUserInfo.isAdmin
   }
 
-
   return {
-    isLogin,
+    isLogin, //
     userInfo,
     loginTime,
     token,

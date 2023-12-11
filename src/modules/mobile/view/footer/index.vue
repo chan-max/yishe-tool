@@ -60,6 +60,7 @@ const active = ref("");
 }
 
 :root:root{
+  --van-tabbar-height:60px;
 }
 
 </style>

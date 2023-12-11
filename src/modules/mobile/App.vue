@@ -14,6 +14,12 @@ import {ref} from 'vue'
 
 const isDark = ref(true)
 
+
+//
+document.addEventListener('gesturestart', function (event) {
+    event.preventDefault()
+})
+
 </script>
 
 <style lang="less">

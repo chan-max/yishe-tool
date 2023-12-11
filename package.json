@@ -62,6 +62,7 @@
     "socket.io-client": "^4.7.2",
     "svg-sprite-loader": "^6.0.11",
     "svg2png": "^4.1.1",
+    "swiper": "^11.0.5",
     "text-to-svg": "^3.1.5",
     "three": "^0.149.0",
     "vant": "^4.8.0",

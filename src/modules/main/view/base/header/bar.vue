@@ -1,5 +1,6 @@
 <template>
   <div ref="headerBar" class="header-bar flex justify-center z-10">
+    <div class="header-bar-content flex justify-between items-center">
       <div class="header-bar-logo" @click="$router.push({name:'Home'})">衣设</div>
       <div class="header-bar-menu-item">寻找模型</div>
       <div class="header-bar-menu-item">在线商场</div>
@@ -31,6 +32,7 @@
           登 录
         </el-button>
       </div>
+      </div>
   </div>
 </template>
 
@@ -50,9 +52,16 @@ const loginStatusStore = useLoginStatusStore();
   height: 64px;
   background: #fff;
   border-bottom: 1px solid #eee;
+
+}
+
+.header-bar-content {
+  width: 1600px;
+  padding: 0 30px;
+  column-gap: 40px;
   display:flex;
   align-items:center;
-  justify-center:space-between;
+  justify-content:space-between;
   padding:0 20px;
   column-gap:40px;
 }

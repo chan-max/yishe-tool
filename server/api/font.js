@@ -5,8 +5,8 @@ export const getFontsHook = (router, sequelize) =>
     const fonts = await table.findAll();
 
     fonts.forEach((item) => {
-      item.dataValues.fullfilepath = ctx.relativePathToPreviewPath(item.file);
-      item.dataValues.fullimgpath = ctx.relativePathToPreviewPath(item.img);
+      item.dataValues.preview_file = ctx.relativePathToPreviewPath(item.file);
+      item.dataValues.preview_img = ctx.relativePathToPreviewPath(item.img);
     });
 
     ctx.body = {
@@ -34,3 +34,16 @@ export const uploadFontHook = (router, sequelize) =>
       type: "success",
     };
   });
+
+export const getFontById = (router, sequelize, app) => router.post('/getFontById', async (ctx) => {
+  const table = sequelize.models.t_font;
+
+  const font = await table.findOne({ where: { id: ctx.request.body.id } });
+
+  font.dataValues.preview_img = ctx.relativePathToPreviewPath(font.img);
+  font.dataValues.preview_file = ctx.relativePathToPreviewPath(font.file);
+
+  ctx.body = {
+    data: font
+  }
+})

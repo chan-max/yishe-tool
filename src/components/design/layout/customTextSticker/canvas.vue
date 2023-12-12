@@ -25,55 +25,10 @@ import {
 
 import { uploadTextSticker } from "@/api/index";
 import { useDebounceFn } from "@vueuse/core";
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { vClick } from "../../composition/vClick";
-
-
-
-const canvasBackgroundEl = ref();
-const canvasTextEl = ref();
-
-const base64 = ref("");
-
-// 当前编辑的元素
-
-
-watch(operatingTextStickerOptions, async () => {
-  await nextTick();
-  initTextSticker();
-});
-
-const initTextSticker = useDebounceFn(async () => {
-  let textEl = canvasTextEl.value;
-  let backgroundEl = canvasBackgroundEl.value;
-
-  textEl.style.fontSize = operatingTextStickerOptions.fontSize + "px";
-  textEl.style.fontWeight = operatingTextStickerOptions.fontWeight;
-  textEl.style.color = operatingTextStickerOptions.fontColor;
-  textEl.style.lineHeight = operatingTextStickerOptions.lineHeight;
-  textEl.style.fontStyle = operatingTextStickerOptions.italic ? "italic" : "";
-  textEl.style.letterSpacing = operatingTextStickerOptions.letterSpacing + "em";
-  textEl.style.fontFamily = 'abc'
-
-  backgroundEl.style.background = operatingTextStickerOptions.backgroundColor;
-    
-  base64.value = await toPng(canvasBackgroundEl.value);
-  initDraggableElement(
-    canvasBackgroundEl.value,
-    (img) => {
-      currentController.value.stickToMousePosition({
-        base64: base64.value,
-        local: true,
-        type: "text",
-        img: img,
-      });
-      showDecalControl.value = true;
-    },
-    base64.value
-  );
-}, 33);
+import {canvasTextEl,canvasBackgroundEl,base64,forceUpdateTextSticker} from './watch'
 
 // 输入文字内容
 function input(e) {
@@ -82,7 +37,6 @@ function input(e) {
     e.preventDefault();
   }
   operatingTextStickerOptions.content = canvasTextEl.value.innerText
-  initTextSticker()
 }
 
 const editable = ref(false);
@@ -123,7 +77,7 @@ async function click() {
 
 onMounted(async () => {
   canvasTextEl.value.innerText = operatingTextStickerOptions.content;
-  initTextSticker();
+  forceUpdateTextSticker()
 });
 
 // 处理粘贴时富文本影响
@@ -189,6 +143,7 @@ async function save() {
 
 #canvas-container {
   position: relative;
+  font-family:Microsoft Yahei;
 }
 
 #canvas-text {
@@ -196,5 +151,6 @@ async function save() {
   outline: none;
   min-width: 1px; // 保证在没有内容时也能显示光标
   caret-color: #6900ff;
+  font-family:Microsoft Yahei;
 }
 </style>

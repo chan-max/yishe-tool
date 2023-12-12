@@ -2,7 +2,7 @@ import { getBannerModelHook } from "./api/common/getBannerModel.js";
 import { injectBaseModelRoute,getBaseModelById } from "./api/baseModel.js";
 import { getBaseSkyboxHook } from "./api/common/getSkybox.js";
 import { getWebStickersHook } from "./api/design/getStickers.js";
-import { uploadFontHook, getFontsHook } from "./api/font.js";
+import { uploadFontHook, getFontsHook ,getFontById} from "./api/font.js";
 import { uploadBaseModelHook } from "./api/base/uploadBaseModel.js";
 import {
   signupHook,
@@ -41,7 +41,8 @@ export const initRouter = (router, sequelize, app) => {
     getAccountStatusHook,
     getImageById,
     getBaseModelById,
-    getTextStickerById
+    getTextStickerById,
+    getFontById
   ];
   hooks.forEach((hook) => hook(router, sequelize, app));
 };

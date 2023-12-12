@@ -4,17 +4,17 @@ import App from './App.vue'
 import 'animate.css';
 import 'default-passive-events'
 import "tailwindcss/tailwind.css"
-import '@/style/cover-antdesign.less'
-
 import { createPinia } from 'pinia'
-import Antd from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.css'
+
 import router from '../main/router'
 import i18n from '@/i18n/index'
 import 'animate.css';
 import '@/style/base.less'
 import 'default-passive-events'
 
+import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css'
+import '@/style/cover-antdesign.less'
 
 import ElementPlus from 'element-plus'
 

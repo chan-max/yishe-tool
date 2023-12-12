@@ -120,7 +120,7 @@
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import stickerCanvas from "./canvas.vue";
 import tab from "../../components/tab.vue";
-import operateFormItem from "./operate/operateFormItem.vue";
+import operateFormItem from "./operateFormItem.vue";
 import iconBold from "@/icon/bold.svg?vueComponent";
 import iconFontSize from "@/icon/font-size.svg?vueComponent";
 import iconFontColor from "@/icon/font-color.svg?vueComponent";
@@ -188,7 +188,7 @@ const activeTab = ref("基础属性");
   width: 100%;
   padding: 10px 10px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 400;
   display: flex;
   align-items: center;
   color: #333;

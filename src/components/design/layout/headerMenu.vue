@@ -6,9 +6,13 @@
 
     <div style="flex-grow: 1"></div>
 
-    <div>
-      <icon-help style="width: 24px; height: 24px;color:#fff;"></icon-help>
-    </div>
+    <a-switch v-model:checked="isDarkMode">
+
+      <template #checkedChildren> 夜间 </template>
+      <template #unCheckedChildren>白天  </template>
+    </a-switch>
+
+    <icon-help style="width: 24px; height: 24px;color:#fff;"></icon-help>
 
     <el-button @click="save" type="primary" color="#333" round> 上 传 </el-button>
 
@@ -29,6 +33,8 @@ import headerMenuDropdown from './headerMenuDropdown/index.vue'
 import { onShortcutTrigger } from '../shortcut/index';
 import iconHelp from '@/icon/help.svg?vueComponent'
 import { useLoginStatusStore } from "@/store/stores/login";
+import iconSun from "@/icon/sun.svg?vueComponent";
+import iconMoon from "@/icon/moon.svg?vueComponent";
 
 
 const loginStatusStore = useLoginStatusStore();
@@ -63,8 +69,9 @@ async function save() {
   display: flex;
   justify-content: start;
   align-items: center;
-  column-gap: 10px;
+  column-gap: 12px;
   padding-right: 10px;
+  border-bottom: 2px solid #f2f2f2;
   background: #111;
 
   .el-button + .el-button{

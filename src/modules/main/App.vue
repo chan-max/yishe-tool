@@ -33,10 +33,10 @@ body {
 }
 
 
-@font-face{
+/* @font-face{
     font-family: 'alimama';
     src : url('/public/fonts/AlimamaFangYuanTiVF-Thin.ttf');
-}
+} */
 
 #app {
   width: 100%;

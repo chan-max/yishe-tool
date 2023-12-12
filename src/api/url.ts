@@ -93,4 +93,6 @@ export enum Url {
     GET_BASE_MODEL_BY_ID = '/getBaseModelById',
 
     GET_TEXT_STICKER_BY_ID = '/getTextStickerById',
+
+    GET_FONT_BY_ID = '/getFontById',
 }

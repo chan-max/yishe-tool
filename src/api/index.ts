@@ -141,3 +141,9 @@ export const getTextStickerById = (id:string) => new Promise(async (resolve, rej
   const data = await apiInstance.post(Url.GET_TEXT_STICKER_BY_ID , {id})
   resolve(data.data.data)
 })
+
+
+export const getFontById = (id:string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_FONT_BY_ID , {id})
+  resolve(data.data.data)
+})

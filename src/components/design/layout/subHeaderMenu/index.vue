@@ -1,11 +1,16 @@
 <template>
   <div class="designiy-sub-header">
     <header-menu-dropdown/>
+
+    <div style="flex:1;"></div>
+
+
   </div>
 </template>
 
 <script setup lang="ts">
 import headerMenuDropdown from '../headerMenuDropdown/index.vue'
+import {isDarkMode} from '../../store'
 
 </script>
 

@@ -3,7 +3,7 @@
     <div class="designiy-font-list-content">
       <div class="designiy-font-list-item" v-for="item in data" @click="selectFont(item)">
         <el-image
-          :src="item.fullimgpath"
+          :src="item.preview_img"
           class="w-full h-full"
           style="padding: 20px"
           fit="contain"
@@ -25,6 +25,7 @@ onBeforeMount(async () => {
 
 function selectFont(font) {
   operatingTextStickerOptions.fontFamilyInfo = font;
+  operatingTextStickerOptions.fontFamilyId = font.id;
   showFontList.value = false
 }
 
@@ -54,4 +55,6 @@ function selectFont(font) {
   border-radius: 12px;
   flex-shrink: 0;
 }
+
+
 </style>

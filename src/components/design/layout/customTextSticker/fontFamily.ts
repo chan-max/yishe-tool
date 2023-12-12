@@ -17,4 +17,5 @@
 //       `;
 //   document.head.appendChild(fontStyles);
 //   canvasBackgroundEl.value.style.fontFamily = ` font${fontId++}`;
-// });
+// });.
+export default function(){}

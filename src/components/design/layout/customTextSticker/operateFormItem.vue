@@ -35,6 +35,7 @@ const props = defineProps(["name"]);
 .operate-form-item-title{
     padding:0 10px;
     font-size:12px;
+    line-height: normal;
 }
 
 

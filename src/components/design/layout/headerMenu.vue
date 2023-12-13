@@ -5,12 +5,13 @@
     </div>
 
     <div style="flex-grow: 1"></div>
-
-    <a-switch v-model:checked="isDarkMode">
-
-      <template #checkedChildren> 夜间 </template>
-      <template #unCheckedChildren>白天  </template>
-    </a-switch>
+    <el-switch
+    v-model="isDarkMode"
+    inline-prompt
+    style=" --el-switch-off-color: #bbb"
+    active-text="夜间"
+    inactive-text="白天"
+  />
 
     <icon-help style="width: 24px; height: 24px;color:#fff;"></icon-help>
 
@@ -36,7 +37,6 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import iconSun from "@/icon/sun.svg?vueComponent";
 import iconMoon from "@/icon/moon.svg?vueComponent";
 
-
 const loginStatusStore = useLoginStatusStore();
 
 const props = defineProps([]);
@@ -53,6 +53,8 @@ async function save() {
       draggable: true,
     })
 
+
+    
   await uploadModel({
     img:currentController.value.getScreenShotFile(),
     modelInfo:JSON.stringify(currentController.value.exportTo1stf())

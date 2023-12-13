@@ -3,7 +3,7 @@
         <div class="market-title">
         </div>
         <div class="market-content">
-            <card style="width:20%;" v-for="model in modelList" :model="model"></card>
+            <card  v-for="model in modelList" :model="model"></card>
         </div>
     </div>
 </template>
@@ -48,6 +48,8 @@ onMounted(async () => {
     display: flex;
     flex-wrap: wrap;
     align-content: start;
+    row-gap:20px;
+    column-gap:20px;
 }
 
 

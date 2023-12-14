@@ -14,15 +14,9 @@ import {ref} from 'vue'
 
 import { useDark, useToggle } from '@vueuse/core'
 
-const isDark = useDark({
-  selector:'html'
-})
+const isDark = ref(false)
 
-const toggleDark = useToggle(isDark)
-// 切换
-const handleChangeDark = () => {
-  toggleDark()
-}
+
 
 //
 document.addEventListener('gesturestart', function (event) {

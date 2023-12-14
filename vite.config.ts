@@ -9,8 +9,12 @@ import svgSprites from 'rollup-plugin-svg-sprites'
 import { basename } from 'path';
 import Components from 'unplugin-vue-components/vite';
 import { VantResolver } from '@vant/auto-import-resolver';
+// 移动端扫码进入项目
 import { qrcode } from 'vite-plugin-qrcode';
+// 开发环境使用 https 
 import basicSsl from '@vitejs/plugin-basic-ssl'
+// 编译文件支持旧游览器
+import legacy from '@vitejs/plugin-legacy';
 
 
 export default defineConfig({
@@ -24,12 +28,15 @@ export default defineConfig({
     Components({
       resolvers: [VantResolver()],
     }),
-    qrcode()
+    qrcode(),
+    legacy()
   ],
+  base:'./',
   build: {
     outDir:'www',
     assetsDir:'./',
     rollupOptions: {
+
       input: {
         mobile: resolve(__dirname, 'mobile.html'),
         index: resolve(__dirname, 'index.html'),

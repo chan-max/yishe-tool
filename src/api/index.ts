@@ -107,7 +107,10 @@ export const updateUserInfo = (params) => apiInstance.post(Url.UPDATE_USER_INFO,
 
 
 // 上传文字贴纸
-export const uploadTextSticker = (params) => apiInstance.post(Url.UPLOAD_TEXT_STICKER, params)
+export const uploadTextSticker = (params) => new Promise(async (resolve) => {
+  const res = await apiInstance.post(Url.UPLOAD_TEXT_STICKER, params)
+  resolve(res.data.data);
+})
 
 
 // 获取文字贴纸

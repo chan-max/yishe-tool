@@ -4,33 +4,7 @@ import { canvasBgColor, currentOperatingModelInfo, isDarkMode,canvasBgOpacity } 
 
 export const _1stfExporterMixin = (modelController: ModelController) => {
   modelController.exportTo1stf = () => {
-    const decals = modelController.decalControllers.map((dc: any) => {
-      const position = {
-        x: dc.position.x,
-        y: dc.position.y,
-        z: dc.position.z,
-      };
-      
-      const rotation = {
-        x: dc.rotation.x,
-        y: dc.rotation.y,
-        z: dc.rotation.z,
-      };
-
-      const size = {
-        x: dc.size.x,
-        y: dc.size.y,
-        z: dc.size.z,
-      };
-      
-      return {
-        type:dc.info.type,
-        decalId: dc.info.id,
-        position,
-        rotation,
-        size,
-      };
-    });
+    const decals = modelController.decalControllers.map((decal: any) => decal.export());
     
     return {
       baseModelId: currentOperatingModelInfo.value.id,

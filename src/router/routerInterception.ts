@@ -26,7 +26,7 @@ export const blockAdminPage = (router) => {
 
 export const initDocumentTitle = (router) => {
   router.beforeEach((to,from,next) => {
-    document.title = to.meta.title || '1s'
+    document.title = '1s 衣设网- ' +  to.meta.title || '1s'
     next()
   })
 }

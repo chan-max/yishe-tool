@@ -1,4 +1,3 @@
-import { ElMessage } from "element-plus";
 import {
   Box3,
   BoxGeometry,
@@ -224,6 +223,35 @@ export class DecalController {
       showDecalControl.value = true
     }
     currentController.value.onClick(decalClick.bind(this))
+  }
+
+  // 导出该信息
+  export(){
+    const position = {
+      x: this.position.x,
+      y: this.position.y,
+      z: this.position.z,
+    };
+    
+    const rotation = {
+      x: this.rotation.x,
+      y: this.rotation.y,
+      z: this.rotation.z,
+    };
+
+    const size = {
+      x: this.size.x,
+      y: this.size.y,
+      z: this.size.z,
+    };
+    
+    return {
+      type:this.info.type,
+      decalId: this.info.id,
+      position,
+      rotation,
+      size,
+    };
   }
 }
 

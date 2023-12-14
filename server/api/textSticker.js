@@ -3,13 +3,12 @@
 export const uploadTextSticker = (router, sequelize, app) => router.post('/uploadTextSticker', async (ctx) => {
     const table = sequelize.models.t_text_sticker;
 
-    await table.create({
+    var data = await table.create({
         img: ctx.getUploadFileRelativePath('img')
     });
 
     ctx.body = {
-        type: 'success',
-        message: '上传成功'
+        data:data,
     }
 })
 

@@ -34,6 +34,9 @@ const routes = [
     path: "/",
     name: "Home",
     component: home,
+    meta:{
+      header:true,
+    }
   },
   {
     path: "/admin",

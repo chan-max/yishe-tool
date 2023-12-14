@@ -6,21 +6,43 @@
 </template>
 <script setup>
 import { onShortcutTrigger } from "../../shortcut/index";
-import { uploadModel,uploadTextSticker } from "@/api";
+import { uploadModel, uploadTextSticker } from "@/api";
 import { ElMessageBox } from "element-plus";
 import { currentController } from "../../store";
-
+import { base64ToFile } from "@/common/transform/base64ToFile";
 
 async function save() {
-  let localDecals = currentController.value.decalControllers.filter((decal) => decal.isLocal);
+  // 上传本地贴纸
+  let localDecals = currentController.value.decalControllers.filter(
+    (decal) => decal.isLocal
+  );
 
-  await uploadTextSticker()
+  if (localDecals.length) {
+
+    await Promise.all(
+      localDecals.map((localDecal) => {
+        return new Promise(async (resolve) => {
+          const data = await uploadTextSticker({
+            name: "",
+            description: "",
+            data: "",
+            img: base64ToFile(localDecal.info.base64),
+          });
+          // 保存该贴纸的id
+          localDecal.info.id = data.id
+          resolve()
+        });
+      })
+    );
+  }
+
 
   await uploadModel({
     img: currentController.value.getScreenShotFile(),
     modelInfo: JSON.stringify(currentController.value.exportTo1stf()),
   });
 }
+
 </script>
 <style lang="less">
 .designiy-save-model {

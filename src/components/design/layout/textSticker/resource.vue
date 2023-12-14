@@ -51,7 +51,7 @@ function load(e,info){
   initDraggableElement(el,() => {
     currentController.value.stickToMousePosition({
       type:'text',
-      src:info.preview_file,
+      src:info.preview_img,
       ...info
     })
     showDecalControl.value = true

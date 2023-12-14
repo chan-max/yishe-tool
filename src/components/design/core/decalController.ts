@@ -15,7 +15,6 @@ import {
 
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { currentController, operatingDecal, showDecalControl } from '../store';
-import { urlToImageElement } from "@/common/transform/urlToImageElement";
 
 export interface DecalControllerParams {
   // 定义贴纸的类型
@@ -26,7 +25,10 @@ export interface DecalControllerParams {
   img?: HTMLImageElement
 
   // 用来区分使用的是网络资源还是本地资源,本地资源保存时需要上传
-  local:boolean
+  local:boolean,
+
+  // 该贴纸使用的base64编码
+  base64?:string
 }
 
 export class DecalController {
@@ -37,17 +39,11 @@ export class DecalController {
   // 更新时间
   updatedAt = new Date()
 
-  // 该贴纸的来源
-  origin = null
 
   constructor(info: any) {
     this.info = info
 
-    const {
-      img
-    } = info
-
-    this.img = img
+    this.img = info.img
 
     this.initDecalClickEvent();
     currentController.value.decalControllers.push(this);
@@ -58,11 +54,6 @@ export class DecalController {
   // 当前贴花使用的图片
   private img = null;
 
-  // 图片的资源路径
-  url = null
-
-  // 图片的相对资源路径
-  rawUrl = null
 
   // 宽高比
   imgAspectRatio = 1;
@@ -78,6 +69,7 @@ export class DecalController {
 
   // 贴纸尺寸限制
   minSize: number
+
   maxSize: number
 
   // 尺寸比 0 - 1 最小尺寸 到最大尺寸
@@ -97,6 +89,11 @@ export class DecalController {
   // 保存当前的decal实例
   mesh = null;
 
+  // 是否是本地资源
+  get isLocal(){
+    return this.info.local
+  }
+
   // 当前使用的材质信息
 
   // 记录贴花添加时的鼠标位置
@@ -114,8 +111,6 @@ export class DecalController {
   // params
 
   info = null
-
-
 
   async initTexture() {
     const textureLoader = new TextureLoader();
@@ -203,7 +198,7 @@ export class DecalController {
 
   // 移动
   move() {
-
+    
   }
 
   // 缩放

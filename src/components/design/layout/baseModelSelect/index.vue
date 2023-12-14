@@ -3,7 +3,7 @@
     <div class="designiy-base-model-select-item" v-for="m in models">
       <div class="designiy-base-model-select-item-img">
         <el-image
-          :src="m.imgFullpath"
+          :src="m.preview_img"
           draggable="false"
           @click="selectModel(m)"
         ></el-image>

@@ -1,6 +1,6 @@
 import { resolveFilePath, toRealPath } from "@/api/url";
 import { ModelController } from "./controller";
-import { canvasBgColor, currentOperatingModelInfo, isDarkMode } from '../store';
+import { canvasBgColor, currentOperatingModelInfo, isDarkMode,canvasBgOpacity } from '../store';
 
 export const _1stfExporterMixin = (modelController: ModelController) => {
   modelController.exportTo1stf = () => {
@@ -10,7 +10,7 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
         y: dc.position.y,
         z: dc.position.z,
       };
-
+      
       const rotation = {
         x: dc.rotation.x,
         y: dc.rotation.y,
@@ -37,6 +37,7 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
       decals,
       isDarkMode: isDarkMode.value,
       canvasBgColor: canvasBgColor.value,
+      canvasBgOpacity:canvasBgOpacity.value,
       camera: {
         position: {
           x: modelController.camera.position.x,

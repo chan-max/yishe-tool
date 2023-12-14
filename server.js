@@ -1,3 +1,3 @@
-import {start } from './server/index.js'
+import {startServe } from './server/index.js'
 
-start()
+startServe()

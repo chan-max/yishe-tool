@@ -184,3 +184,7 @@ export const enum TextStickerWritingMode {
 }
 
 export const operatingTextStickerTextOrientation = ref('upright')
+
+
+// 是否展示模型上传弹窗
+export const showSaveModel = ref(false)

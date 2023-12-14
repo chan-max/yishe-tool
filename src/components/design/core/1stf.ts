@@ -10,7 +10,7 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
         y: dc.position.y,
         z: dc.position.z,
       };
-
+      
       const rotation = {
         x: dc.rotation.x,
         y: dc.rotation.y,

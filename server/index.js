@@ -12,6 +12,8 @@ import http from 'http'
 
 import { createRedisClient } from "./redis/index.js";
 import { getRelativePath, getUploadPath } from "./fileManage.js"
+import { logger } from "./logger.js";
+
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -33,7 +35,6 @@ app.use(
         exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'] //设置获取其他自定义字段
     })
 );
-
 
 import db from './sequelize/models/index.js'
 
@@ -98,7 +99,8 @@ initWebsocket(server)
 
 export function start(){
     server.listen(3000, () => {
-        console.log('listening on *:3000');
+        logger.info('ok')
+        console.log('1s listening on *:3000');
     });
 }
 

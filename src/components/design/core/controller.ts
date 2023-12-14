@@ -303,9 +303,7 @@ export class ModelController {
 
     // 导出 1stf 格式化信息
     exportTo1stf = null;
-
     
-
     getScreenshotBase64(){
         this.renderer.render(this.scene, this.camera); // 截取会出现白图片
         return this.renderer.domElement.toDataURL("image/png");

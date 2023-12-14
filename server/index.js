@@ -25,7 +25,6 @@ const redis = await createRedisClient()
  const app = new Koa();
 const router = new Router();
 
-
 app.use(
     cors({
         origin: "*",
@@ -97,7 +96,7 @@ import {initWebsocket} from './websocket/index.js'
 initWebsocket(server)
 
 
-export function start(){
+export function startServe(){
     server.listen(3000, () => {
         logger.info('ok')
         console.log('1s listening on *:3000');

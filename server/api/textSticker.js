@@ -19,7 +19,7 @@ export const getTextSticker = (router, sequelize, app) => router.post('/getTextS
     const data = await table.findAll()
 
     data.forEach((item) => {
-        item.dataValues.imgFullpath = ctx.relativePathToPreviewPath(item.img);
+        item.dataValues.preview_img = ctx.relativePathToPreviewPath(item.img);
     })
     
     ctx.body = {
@@ -33,7 +33,7 @@ export const getTextStickerById = (router, sequelize, app) => router.post('/getT
     
     const text = await table.findOne({where:{id: ctx.request.body.id}});
 
-    text.dataValues.imgfullpath = ctx.relativePathToPreviewPath(text.img);
+    text.dataValues.preview_img = ctx.relativePathToPreviewPath(text.img);
   
     ctx.body = {
         data:text

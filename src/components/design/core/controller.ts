@@ -26,7 +26,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
-import { reactive, ref } from "vue";
+import { reactive, ref, shallowReactive } from "vue";
 import { reactify, useMouse } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
@@ -266,7 +266,7 @@ export class ModelController {
         this.y = y;
     }
 
-    decalControllers: any = reactive([]);
+    decalControllers: any = shallowReactive([]);
     
     // 进行贴图
     stickToMousePosition(info) {

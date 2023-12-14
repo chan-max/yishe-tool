@@ -5,17 +5,10 @@
     </div>
 
     <div style="flex-grow: 1"></div>
-    <el-switch
-    v-model="isDarkMode"
-    inline-prompt
-    style=" --el-switch-off-color: #bbb"
-    active-text="夜间"
-    inactive-text="白天"
-  />
 
     <icon-help style="width: 24px; height: 24px;color:#fff;"></icon-help>
 
-    <el-button @click="save" type="primary" color="#333" round> 上 传 </el-button>
+    <el-button @click="showSaveModel = true" type="primary" color="#333" round> 上 传 </el-button>
 
     <user-avatar  v-if="loginStatusStore.isLogin"/>
     <el-button @click="$router.push({name:'Login'})" v-else type="primary" round>  登 录 </el-button>
@@ -25,41 +18,22 @@
 <script setup>
 import { getBaseModel, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
-import { canvasBgColor, canvasBgOpacity, isDarkMode, currentController } from "../store";
-import {  ElMessageBox } from 'element-plus'
-import { uploadModel } from '@/api'
+import { canvasBgColor, canvasBgOpacity, isDarkMode, currentController, showSaveModel } from "../store";
+
+
 import {Share} from '@element-plus/icons-vue'
 import userAvatar from '@/components/user/userAvatar.vue'
 import headerMenuDropdown from './headerMenuDropdown/index.vue'
 import { onShortcutTrigger } from '../shortcut/index';
 import iconHelp from '@/icon/help.svg?vueComponent'
 import { useLoginStatusStore } from "@/store/stores/login";
-import iconSun from "@/icon/sun.svg?vueComponent";
-import iconMoon from "@/icon/moon.svg?vueComponent";
+
 
 const loginStatusStore = useLoginStatusStore();
 
 const props = defineProps([]);
 
-onShortcutTrigger(['Ctrl+S'],save)
 
-async function save() {
-  await ElMessageBox.confirm(
-    '确认将模型保存至工作台吗?',
-    {
-      confirmButtonText: '确认',
-      cancelButtonText: '取消',
-      type: 'info',
-      draggable: true,
-    })
-
-
-    
-  await uploadModel({
-    img:currentController.value.getScreenShotFile(),
-    modelInfo:JSON.stringify(currentController.value.exportTo1stf())
-  })
-}
 
 
 </script>
@@ -74,7 +48,6 @@ async function save() {
   column-gap: 12px;
   padding-right: 10px;
   border-bottom: 2px solid #f2f2f2;
-  background: #111;
 
   .el-button + .el-button{
     margin:0;
@@ -115,4 +88,3 @@ async function save() {
   font-size: 18px;
 }
 </style>
-@/store/stores/login

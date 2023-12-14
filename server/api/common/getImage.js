@@ -6,7 +6,7 @@ export const getImageHook = (router,sequelize) => router.post('/getImage' , asyn
     const table = sequelize.models.t_image;
     const imgs =  await table.findAll()
     imgs.forEach(img => {
-        img.dataValues.fullpath = ctx.relativePathToPreviewPath(img.path)
+        img.dataValues.preview_img = ctx.relativePathToPreviewPath(img.path)
     });
     ctx.body = {
         data:imgs
@@ -20,7 +20,7 @@ export const getImageById = (router,sequelize) => router.post('/getImageById' , 
     const table = sequelize.models.t_image;
     const img = await table.findOne({where:{id: ctx.request.body.id}})
     console.log(ctx.request.body.id)
-    img.dataValues.fullpath = ctx.relativePathToPreviewPath(img.path)
+    img.dataValues.preview_img = ctx.relativePathToPreviewPath(img.path)
     
     ctx.body = {
         data:img

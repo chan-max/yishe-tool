@@ -33,62 +33,80 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component:home,
+    component: home,
   },
   {
     path: "/admin",
     name: "Admin",
     component: admin,
-    header: false,
+    meta: {
+      header: false,
+    },
     children: [
       {
         name: "Admin",
         path: "",
         component: adminHome,
-        header: false,
+        meta: {
+          header: false,
+        }
       },
       {
         path: "model",
         name: "Model",
         component: modelIndex,
-        header: false,
+        meta: {
+          header: false,
+        }
       },
       {
         path: "model/upload",
         name: "ModelUpload",
         component: modelUpload,
-        header: false,
+        meta: {
+          header: false,
+        }
       },
       {
         path: "image",
         name: "Image",
         component: imageIndex,
-        header: false,
+        meta: {
+          header: false,
+        }
       },
       {
         path: "image/upload",
         name: "ImageUpload",
         component: imageUpload,
-        header: false,
+        meta: {
+          header: false,
+        }
       },
 
       {
         path: "font",
         name: "Font",
         component: fontIndex,
-        header: false,
+        meta: {
+          header: false,
+        }
       },
       {
         path: "font/upload",
         name: "FontUpload",
         component: fontUpload,
-        header: false,
+        meta: {
+          header: false,
+        }
       },
       {
         path: "user",
         name: "AdminUserManage",
         component: adminUserManage,
-        header: false,
+        meta: {
+          header: false,
+        }
       },
     ],
   },
@@ -96,19 +114,26 @@ const routes = [
     path: "/signup",
     name: "Signup",
     component: signup,
-    header: false,
+    meta: {
+      header: false,
+    }
   },
   {
     path: "/login",
     name: "Login",
     component: login,
-    header: false,
+    meta: {
+      header: false,
+    }
   },
   {
     path: "/design",
     name: "Design",
     component: design,
-    header: false,
+    meta: {
+      header: false,
+      title: '设计室'
+    }
   },
   {
     path: "/search",
@@ -129,25 +154,25 @@ const routes = [
     path: "/update",
     name: "Update",
     component: update,
-    header:false
+    meta: {
+      header: false
+    }
   },
   {
-    path:'/ai',
-    name:'Ai',
-    component:ai
+    path: '/ai',
+    name: 'Ai',
+    component: ai
   }
 ];
 
-let _routes = routeTransform(routes as any);
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: _routes,
+  routes: routes as any,
 });
 
 
 import { blockAdminPage, blockLoginPage, initDocumentTitle } from "../../router/routerInterception";
-import { routeTransform } from "../../router/routeTransform";
 
 blockLoginPage(router);
 blockAdminPage(router);

@@ -3,7 +3,7 @@
     <el-card class="admin-image-index-card" v-for="i in images" shadow="never">
       <img
         style="width: 100%; height: 100%"
-        :src="i.fullpath"
+        :src="i.preview_img"
       />
     </el-card>
     <el-card
@@ -14,9 +14,7 @@
       <el-icon style="color: var(--el-color-primary); font-size: 20px"
         ><UploadFilled
       /></el-icon>
-      <span style="font-size: 12px; font-weight: bold; padding: 5px; color: #888"
-        >上传图片</span
-      >
+      <span style="font-size: 12px; font-weight: bold; padding: 5px; color: #888">上传图片</span>
     </el-card>
   </div>
 </template>

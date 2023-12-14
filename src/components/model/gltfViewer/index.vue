@@ -227,7 +227,7 @@ async function initModel() {
         if (!image) {
           return;
         }
-        url = image.fullpath;
+        url = image.preview_img;
       }
 
       if (type == "text") {
@@ -235,7 +235,7 @@ async function initModel() {
         if (!text) {
           return;
         }
-        url = text.imgfullpath;
+        url = text.preview_img;
       }
 
       position = new Vector3(position.x, position.y, position.z);

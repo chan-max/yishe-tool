@@ -110,6 +110,21 @@
     <font-list></font-list>
   </diydialog>
 
+  <diydialog
+    :show="showSaveModel"
+    title="保存该模型"
+    @close="showSaveModel = false"
+    :animation="{
+      'enter-active-class': 'animate__animated animate__bounceIn',
+      'leave-active-class': 'animate__animated animate__bounceOut',
+      duration: 100,
+    }"
+  >
+  
+    <save-model></save-model>
+  </diydialog>
+
+
   <diycontainer
     :show="showCustomTextSticker"
     style="
@@ -203,9 +218,8 @@ import {
   showSubHeader,
   showLeftMenu,
   showBottomMenu,
+  showSaveModel
 } from "../store";
-import { message } from "ant-design-vue";
-import { ElMessage } from "element-plus";
 import leftMenu from "./leftMenu.vue";
 import diycontainer from "../components/container.vue";
 import diydialog from "../components/dialog.vue";
@@ -223,6 +237,7 @@ import fontList from "./fontList/index.vue";
 import subHeaderMenu from "./subHeaderMenu/index.vue";
 import modelInfo from "./modelInfo/index.vue";
 import decalList from "./decalList/index.vue";
+import saveModel from './saveModel/index.vue';
 
 import {
   Mesh,
@@ -264,7 +279,7 @@ currentController.value = modelController;
 
 // 模型转换
 watch(currentOperatingModelInfo, () => {
-  modelController.setMainModel(currentOperatingModelInfo.value.fileFullpath);
+  modelController.setMainModel(currentOperatingModelInfo.value.preview_file);
 });
 
 // 创建场景、相机和渲染器等...
@@ -312,7 +327,4 @@ onMounted(() => {
   z-index: 1;
 }
 
-.designiy-center-float {
-  z-index: 10;
-}
 </style>

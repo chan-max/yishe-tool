@@ -6,8 +6,8 @@ export const injectBaseModelRoute = (router, sequelize, app) => {
     const table = sequelize.models.t_base_model;
     const res = await table.findAll();
     res.forEach((item) => {
-      item.dataValues.imgFullpath = ctx.relativePathToPreviewPath(item.imgPath);
-      item.dataValues.fileFullpath = ctx.relativePathToPreviewPath(
+      item.dataValues.preview_img = ctx.relativePathToPreviewPath(item.imgPath);
+      item.dataValues.preview_file = ctx.relativePathToPreviewPath(
         item.filePath
       );
     });

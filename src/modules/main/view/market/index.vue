@@ -48,6 +48,7 @@ onMounted(async () => {
     display: flex;
     flex-wrap: wrap;
     align-content: start;
+    justify-content: space-around;
     row-gap:20px;
     column-gap:20px;
 }

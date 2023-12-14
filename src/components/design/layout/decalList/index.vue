@@ -9,7 +9,7 @@
     <div class="designiy-decal-list-content">
       <template v-for="decal in stickers">
         <div class="designiy-decal-list-item">
-          <el-image class="designiy-decal-list-item-image" :src="decal.src" fit="cover">
+          <el-image class="designiy-decal-list-item-image" :src="decal.src || decal.base64" fit="contain">
           </el-image>
           <div class="designiy-decal-list-item-content">
             <div class="designiy-decal-list-item-content-title">这是一张贴纸</div>
@@ -31,6 +31,7 @@ const stickers = computed(() => {
     return decal.info;
   });
 });
+
 </script>
 <style lang="less">
 .designiy-decal-list {

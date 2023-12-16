@@ -4,6 +4,8 @@
       <icon-logo></icon-logo>
     </div>
 
+    <div style="font-size:12px;font-weight: bold;color:#555;"> 新建未命名  </div>
+
     <div style="flex-grow: 1"></div>
 
     <icon-help style="width: 24px; height: 24px;color:#fff;"></icon-help>
@@ -71,7 +73,7 @@ const props = defineProps([]);
 }
 
 .designiy-header-logo {
-  width: 72px;
+  width: 80px;
   height: 46px;
 }
 

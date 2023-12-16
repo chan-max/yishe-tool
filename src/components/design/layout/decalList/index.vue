@@ -23,7 +23,7 @@
   </div>
 </template>
 <script setup>
-import { currentOperatingModelInfo, currentController } from "../../store";
+import { currentOperatingBaseModelInfo, currentController } from "../../store";
 import { computed } from "vue";
 
 const stickers = computed(() => {

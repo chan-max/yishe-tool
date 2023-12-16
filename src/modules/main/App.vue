@@ -1,7 +1,17 @@
+<!--
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2023-12-16 12:40:26
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2023-12-16 22:30:58
+ * @FilePath: /1s/src/modules/main/App.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+-->
 <template>
   <el-config-provider :locale="elementLocale">
       <header-menu v-if="$route.meta.header"></header-menu>
-      <router-view></router-view>
+      <div class="content"><router-view></router-view></div>
   </el-config-provider>
 </template>
 <script setup>
@@ -43,12 +53,16 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  /* font-family: alimama;
-  font-weight: 500; */
 }
 
 #app > * {
   flex-shrink: 0;
+}
+
+.content{
+  width: 100%;
+  flex:1%;
+  overflow:auto;
 }
 
 </style>

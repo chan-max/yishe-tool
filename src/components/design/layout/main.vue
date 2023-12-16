@@ -201,7 +201,7 @@ import {
   canvasBgColor,
   canvasBgOpacity,
   showBaseModelSelect,
-  currentOperatingModelInfo,
+  currentOperatingBaseModelInfo,
   showSceneControl,
   showImageSticker,
   showTextSticker,
@@ -260,13 +260,8 @@ import {
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import {initWebsocket} from '../utils/websocket.ts';
 
-initWebsocket()
-isLoading.value = true;
+initWebsocket();
 
-setTimeout(() => {
-  isLoading.value = false;
-  showWorkspace.value = true
-}, 500);
 
 // 挂载容器
 const mountContainer = ref();
@@ -278,8 +273,8 @@ const { scene } = modelController;
 currentController.value = modelController;
 
 // 模型转换
-watch(currentOperatingModelInfo, () => {
-  modelController.setMainModel(currentOperatingModelInfo.value.preview_file);
+watch(currentOperatingBaseModelInfo, () => {
+  modelController.setMainModel(currentOperatingBaseModelInfo.value.preview_file);
 });
 
 // 创建场景、相机和渲染器等...

@@ -16,7 +16,7 @@ import { getBaseModel } from "@/api";
 import { onMounted, ref } from "vue";
 import {
   showBaseModelSelect,
-  currentOperatingModelInfo,
+  currentOperatingBaseModelInfo,
   showModelInfo,
 } from "../../store.ts";
 
@@ -38,7 +38,7 @@ onMounted(async () => {
 
 function selectModel(model) {
   showBaseModelSelect.value = false;
-  currentOperatingModelInfo.value = model;
+  currentOperatingBaseModelInfo.value = model;
   showModelInfo.value = true;
 }
 </script>

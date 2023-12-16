@@ -133,6 +133,9 @@ const routes = [
     path: "/market",
     name: "Market",
     component: () => import("./view/market/index.vue"),
+    meta:{
+      header:true
+    }
   },
   {
     path: "/update",

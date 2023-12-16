@@ -1,3 +1,13 @@
+/*
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2023-11-26 11:13:28
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2023-12-17 00:27:44
+ * @FilePath: /1s/src/common/browser.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+ */
 
 
 export function setFullscreen(isFullscreen: boolean): void {
@@ -7,8 +17,6 @@ export function setFullscreen(isFullscreen: boolean): void {
                 doc.requestFullscreen();
             }
         } else {
-            if(document.exitFullscreen && doc.fullscreen) {
                 document.exitFullscreen();
-            }
         }
 }

@@ -1,10 +1,10 @@
 <template>
     <div class="designiy-model-info">
-      {{currentOperatingModelInfo}}
+      {{currentOperatingBaseModelInfo}}
     </div>
 </template>
   <script setup>
-  import { currentOperatingModelInfo } from "../../store";
+  import { currentOperatingBaseModelInfo } from "../../store";
   
   </script>
   <style lang="less">

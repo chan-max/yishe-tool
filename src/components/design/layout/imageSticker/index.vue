@@ -39,7 +39,7 @@
 import { onMounted, ref, computed } from "vue";
 import {
   showBaseModelSelect,
-  currentOperatingModelInfo,
+  currentOperatingBaseModelInfo,
   canvasBgColor,
   canvasBgOpacity,
   currentController,

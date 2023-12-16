@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-11-29 21:41:57
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2023-12-16 12:27:00
+ * @LastEditTime: 2023-12-16 23:56:11
  * @FilePath: /1s/src/components/design/layout/headerMenuDropdown/index.vue
  * @Description: 
  * 
@@ -10,7 +10,7 @@
 -->
 <template>
   <div class="designiy-header-menu-dropdown">
-    <icon-menu  style="width: 16px; height: 16px;color:#999;" @click.stop="toggle"></icon-menu>
+    <icon-menu  style="width: 16px; height: 16px;color:#555;   cursor: pointer;" @click.stop="toggle"></icon-menu>
     <div v-if="showHeaderMenuDropdown" class="designiy-header-menu-dropdown-content">
       <menu-main></menu-main>
     </div>
@@ -57,7 +57,7 @@ onMounted(() => {
 
 .designiy-header-menu-dropdown-content {
   position: absolute;
-  top: 42px;
+  top: 30px;
   left: 0;
   z-index: 1;
 }

@@ -33,6 +33,8 @@ declare module 'vue' {
     ModelInfo: typeof import('./src/components/design/layout/modelInfo/index.vue')['default']
     OnlinePoint: typeof import('./src/components/design/components/onlinePoint.vue')['default']
     OperateFormItem: typeof import('./src/components/design/layout/customTextSticker/operateFormItem.vue')['default']
+    OperatingForm: typeof import('./src/components/design/layout/customTextSticker/operatingForm.vue')['default']
+    Padding: typeof import('./src/components/design/layout/customTextSticker/formItems/padding.vue')['default']
     Resource: typeof import('./src/components/design/layout/textSticker/resource.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

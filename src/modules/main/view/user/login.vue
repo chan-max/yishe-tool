@@ -49,16 +49,21 @@ import { reactive, toRaw,ref, computed, onMounted} from "vue";
 import { login } from "@/api/index";
 import { ResponseStatusCodeEnum } from "@common/statusCode.js";
 import { useLoginStatusStore } from "@/store/stores/login";
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { message } from "ant-design-vue";
 import { ElMessage } from 'element-plus'
 
-import { View ,Hide,User,Lock} from "@element-plus/icons-vue";
+import { View ,Hide,User,Lock } from "@element-plus/icons-vue";
 import { doLoginAction } from "@/store/stores/loginAction";
 
 const userStore = useLoginStatusStore();
 const router = useRouter();
 
+const route = useRoute()
+
+
+// 有来源的话成功后会跳回去
+const from = route.query.form
 
 const showPassword = ref(false)
 

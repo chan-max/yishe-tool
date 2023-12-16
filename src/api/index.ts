@@ -1,4 +1,4 @@
-import { resolveFilePath } from "./url";
+
 import{ apiInstance,source} from "./apiInstance";
 import { Url } from "./url";
 import { buildURL } from "@/common/url";
@@ -75,14 +75,15 @@ export const uploadModel = (data) => apiInstance.post(Url.UPLOAD_MODEL, data);
 export const getModelList = (data) =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.post(Url.GET_MODEL_LIST, data);
-    const _data = res.data.data.map((item) => {
-      return {
-        img: resolveFilePath(item.img),
-        modelInfo: item.modelInfo,
-      };
-    });
-    resolve(_data);
+    resolve( res.data.data);
   });
+
+export const getModelById = (data) =>
+  new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_MODEL_BY_ID, data);
+  resolve( res.data.data);
+});
+
 
 // 发送邮件
 export const sendEmail = (data) => apiInstance.post(Url.SEND_MAIL, data);

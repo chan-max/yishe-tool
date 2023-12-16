@@ -7,8 +7,21 @@
 import mainView from "./layout/main.vue";
 import { isDarkMode } from "./store";
 import { usePreventScreenResize } from './composition/preventScreenResize';
+import {useRoute} from 'vue-router'
+import { onBeforeMount } from "vue";
 
-// usePreventScreenResize()
+// 阻止缩放屏幕影响使用体验
+
+const route = useRoute()
+
+// 有 id 为编辑模式
+const id = route.query.id
+
+onBeforeMount(() => {
+  
+})
+
+usePreventScreenResize()
 
 </script>
 <style lang="less">

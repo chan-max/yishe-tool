@@ -40,6 +40,8 @@ const mixins = [
     eventMixin
 ];
 
+
+
 export class ModelController {
     // 场景
     public scene: Scene;
@@ -317,4 +319,27 @@ export class ModelController {
         a.download = file.name
         a.click()
     }
+
+
+    // 上一步
+    prevStep(step = 1){
+
+    }
+
+    // 下一步
+    nextStep(step=1){
+
+    }
+
+    // 操作队列
+    
+    operationQuene = shallowReactive([])
 }
+
+// 当前工作台的操作类型
+export const enum DesignType {
+    NEW = 'new', /// 创建全新的模型
+    EDIT = 'edit', // 编辑模型
+}
+
+

@@ -1,43 +1,22 @@
+/*
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2023-12-16 12:40:25
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2023-12-16 22:38:36
+ * @FilePath: /1s/src/api/url.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+ */
 
 function unifySlashes(input) {
     return input.replace(/(\/+|\\+)/g, '/');
 }
 
-export const resolveFilePath = (path) => {
-
-    if(!path){
-        return ''
-    }
-
-    if(path.startsWith('blob')){
-        return path
-    }
-
-    path = unifySlashes(path)
-    
-    if(import.meta.env.DEV){
-        if(!path.startsWith('/api') && !path.startsWith('api')){
-            return '/api/' +  path
-        }
-    }else{
-        if(path.startsWith('/api')){
-            return path.slice(4)
-        }
-        if(path.startsWith('api')){
-            return path.slice(3)
-        }
-    }
-
-    return path
-}
-
-
 export function toRealPath(path){
     path = unifySlashes(path)
     return path.replace('api','')
 }
-
-
 
 
 export enum Url {
@@ -95,4 +74,6 @@ export enum Url {
     GET_TEXT_STICKER_BY_ID = '/getTextStickerById',
 
     GET_FONT_BY_ID = '/getFontById',
+
+    GET_MODEL_BY_ID = '/getModelById',
 }

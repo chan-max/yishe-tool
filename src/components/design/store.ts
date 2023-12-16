@@ -16,7 +16,6 @@ export const isFullScreen = ref(false)
 watchEffect(() => setFullscreen(isFullScreen.value))
 
 
-
 // 画布背景颜色 
 export const canvasBgColor = ref('')
 
@@ -32,7 +31,7 @@ watchEffect(() => {
 export const showBaseModelSelect = ref(false);
 
 // 当前操作的模型信息
-export const currentOperatingModelInfo = ref()
+export const currentOperatingBaseModelInfo = ref()
 
 // 是否展示场景控制弹窗
 export const showSceneControl = ref(false)
@@ -194,5 +193,11 @@ export const showSaveModel = ref(false)
 // 系统是否成功连接 websocket
 export const online = ref(true);
 watch(online,(value) => {
-
 })
+
+
+
+// 是否为编辑模式 ,  分为编辑模式和 新建模式 ， 编辑模式也会分为编辑自己的和其他人的
+export const isEdit = ref(false)
+// 当前正在编辑的模型信息, 只有为编辑模才会赋值
+export const currentEditingModelInfo = ref()

@@ -4,10 +4,7 @@
 
     <sticker-canvas></sticker-canvas>
 
-    <tab v-model="activeTab" :items="['基础属性', '背景属性', '其他特效']"></tab>
-
     <div class="designiy-custom-text-sticker-content">
-
         <operate-form-item>
           <template #icon> <icon-font-size></icon-font-size> </template>
           <template #name> 显示大小 </template>

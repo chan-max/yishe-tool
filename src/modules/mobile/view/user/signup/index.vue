@@ -1,7 +1,7 @@
 <template>
   <div class="signup">
-    <div class="signup-form">
-      <div class="signup-form-title">
+    <div class="mobile-signup-form">
+      <div class="mobile-signup-form-title">
         <el-form
           ref="formRef"
           label-position="top"
@@ -243,7 +243,7 @@ async function send() {
   padding: 30px;
 }
 
-.signup-form {
+.mobile-signup-form {
   width: auto;
   padding: 30px;
 

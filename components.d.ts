@@ -31,7 +31,7 @@ declare module 'vue' {
     Menu: typeof import('./src/components/design/layout/headerMenuDropdown/menu.vue')['default']
     MenuItem: typeof import('./src/components/design/layout/headerMenuDropdown/menuItem.vue')['default']
     ModelInfo: typeof import('./src/components/design/layout/modelInfo/index.vue')['default']
-    ModelUpload: typeof import('./src/components/design/layout/modelUpload/index.vue')['default']
+    OnlinePoint: typeof import('./src/components/design/components/onlinePoint.vue')['default']
     OperateFormItem: typeof import('./src/components/design/layout/customTextSticker/operateFormItem.vue')['default']
     Resource: typeof import('./src/components/design/layout/textSticker/resource.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

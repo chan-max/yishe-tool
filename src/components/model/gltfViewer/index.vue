@@ -215,8 +215,10 @@ async function initModel() {
   scene.add(pointLight);
 
   if (model.decals) {
+   
     model.decals.forEach(async (decal) => {
       var { decalId, position, rotation, size, type } = decal;
+
       if (!decalId) {
         return;
       }

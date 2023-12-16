@@ -1,8 +1,26 @@
-import { ResponseStatusCodeEnum } from "../../common/enum/statusCode.js";
+import { ResponseStatusCodeEnum } from "../../common/statusCode.js";
 import { getRelativePath } from "../fileManage.js";
-import { generateVerificationCode,formatFilePath } from "../util.js";
 import { sendValidateCodeEmail } from "../util/email.js";
 import { mailedMap } from "./email.js";
+
+// 获取账号的使用状态
+export const getAccountStatusHook = (router, sequelize, app) =>
+  router.post("/getAccountStatus", async (ctx, next) => {
+    const account = ctx.request.body.account
+
+    const user = await sequelize.models.t_user.findOne({ where: { account } });
+
+    if (user) {
+      return ctx.body = {
+        status: ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST,
+      }
+    }
+
+    return ctx.body = {
+      status: ResponseStatusCodeEnum.ACCOUNT_NOT_EXIST
+    }
+  })
+
 
 export const signupHook = (router, sequelize, app) =>
   router.post("/signup", async (ctx, next) => {
@@ -17,9 +35,9 @@ export const signupHook = (router, sequelize, app) =>
 
     const table = sequelize.models.t_user;
 
-    const _user = await table.findOne({ where: { account } });
+    const user = await table.findOne({ where: { account } });
 
-    if (_user) {
+    if (user) {
       ctx.body = {
         message: "该用户已存在",
         type: "info",
@@ -29,25 +47,25 @@ export const signupHook = (router, sequelize, app) =>
     }
 
     try {
-
       const data = {
-        email, account, password,
-        isAdmin : true
+        email, 
+        account, 
+        password,
+        avatar,
+        isAdmin: true
       }
       await table.create(data);
       return (ctx.body = {
-        message: "注册成功",
-        type: "success",
         status: ResponseStatusCodeEnum.SIGNUP_SUCCESS,
       });
     } catch (error) {
       return (ctx.body = {
-        message: "注册失败",
-        type: "error",
         status: ResponseStatusCodeEnum.UNKNOW_ERROR,
       });
     }
   });
+
+
 
 // 获取用户列表
 export const getUserListHook = (router, sequelize, app) =>
@@ -91,8 +109,8 @@ export const updateUserInfoHook = (router, sequelize, app) =>
     );
 
     ctx.body = {
-      type:'success',
-      message:'用户信息更新成功'
+      type: 'success',
+      message: '用户信息更新成功'
     };
   });
 
@@ -100,35 +118,33 @@ export const updateUserInfoHook = (router, sequelize, app) =>
 import jwt from "jsonwebtoken";
 
 export const loginHook = (router, sequelize) => router.post('/login', async (ctx) => {
-    const data = ctx.request.body
-    const { account, password } = data
-    const table = sequelize.models.t_user
+  const data = ctx.request.body
+  const { account, password } = data
+  const table = sequelize.models.t_user
 
-    const user = await table.findOne({ where: { account } })
+  const user = await table.findOne({ where: { account } })
 
-    if (!user) {
-        return ctx.body = {
-            status: ResponseStatusCodeEnum.ACCOUNT_NOT_EXIST
-        }
-    }
-    
-    if (password !== user.dataValues.password) {
-        return ctx.body = {
-            status: ResponseStatusCodeEnum.PASSWORD_ERROR
-        }
-    } 
-
-    // 登陆成功，签发token
-
-    const token = jwt.sign({ account, exp: Date.now() + 60 * 60 }, '1s');
-
-    ctx.set('Token',token)
-    
-    user.avatar = formatFilePath(`${ctx.protocol}://${ctx.host}${user.avatar}`);
-    
-
+  if (!user) {
     return ctx.body = {
-        status: ResponseStatusCodeEnum.LOGIN_SUCCESS,
-        data: user
+      status: ResponseStatusCodeEnum.ACCOUNT_NOT_EXIST
     }
+  }
+
+  if (password !== user.dataValues.password) {
+    return ctx.body = {
+      status: ResponseStatusCodeEnum.PASSWORD_ERROR
+    }
+  }
+
+  // 登陆成功，签发token
+
+  const token = jwt.sign({ account, exp: Date.now() + 60 * 60 }, '1s');
+
+  ctx.set('Token', token)
+
+  user.avatar = ctx.relativePathToPreviewPath(user.avatar)
+  return ctx.body = {
+    status: ResponseStatusCodeEnum.LOGIN_SUCCESS,
+    data: user
+  }
 })

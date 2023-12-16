@@ -62,7 +62,7 @@
       duration: 100,
     }"
   >
-    <template #title> 选择基础</template>
+    <template #title> 选择基础模型</template>
     <base-model-select></base-model-select>
   </diydialog>
 
@@ -97,16 +97,33 @@
     <image-sticker></image-sticker>
   </diycontainer>
 
-  <diycontainer
+  <diydialog
     :show="showFontList"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      left: calc(var(--1s-left-menu-width));
-    "
+    title="字体"
+    @close="showFontList = false"
+    :animation="{
+      'enter-active-class': 'animate__animated animate__bounceIn',
+      'leave-active-class': 'animate__animated animate__bounceOut',
+      duration: 100,
+    }"
   >
     <font-list></font-list>
-  </diycontainer>
+  </diydialog>
+
+  <diydialog
+    :show="showSaveModel"
+    title="保存该模型"
+    @close="showSaveModel = false"
+    :animation="{
+      'enter-active-class': 'animate__animated animate__bounceIn',
+      'leave-active-class': 'animate__animated animate__bounceOut',
+      duration: 100,
+    }"
+  >
+  
+    <save-model></save-model>
+  </diydialog>
+
 
   <diycontainer
     :show="showCustomTextSticker"
@@ -201,9 +218,8 @@ import {
   showSubHeader,
   showLeftMenu,
   showBottomMenu,
+  showSaveModel
 } from "../store";
-import { message } from "ant-design-vue";
-import { ElMessage } from "element-plus";
 import leftMenu from "./leftMenu.vue";
 import diycontainer from "../components/container.vue";
 import diydialog from "../components/dialog.vue";
@@ -221,6 +237,7 @@ import fontList from "./fontList/index.vue";
 import subHeaderMenu from "./subHeaderMenu/index.vue";
 import modelInfo from "./modelInfo/index.vue";
 import decalList from "./decalList/index.vue";
+import saveModel from './saveModel/index.vue';
 
 import {
   Mesh,
@@ -241,7 +258,9 @@ import {
   DoubleSide,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
+import {initWebsocket} from '../utils/websocket.ts';
 
+initWebsocket()
 isLoading.value = true;
 
 setTimeout(() => {
@@ -260,7 +279,7 @@ currentController.value = modelController;
 
 // 模型转换
 watch(currentOperatingModelInfo, () => {
-  modelController.setMainModel(currentOperatingModelInfo.value.fileFullpath);
+  modelController.setMainModel(currentOperatingModelInfo.value.preview_file);
 });
 
 // 创建场景、相机和渲染器等...
@@ -308,7 +327,4 @@ onMounted(() => {
   z-index: 1;
 }
 
-.designiy-center-float {
-  z-index: 10;
-}
 </style>

@@ -11,7 +11,7 @@
     >
       <Teleport to="body">
         <div
-          v-if="mask"
+          v-if="show && mask"
           class="dialog-mask"
           @click="$emit('close')"
           :style="{ zIndex: 999 }"
@@ -58,6 +58,8 @@ const props = defineProps({
   animation: {},
 });
 
+
+
 const emits = defineEmits(["close"]);
 
 function close() {
@@ -77,7 +79,7 @@ function close() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding:15px 20px;
   cursor: move;
 }
 
@@ -95,6 +97,7 @@ function close() {
 .designiy-dialog-header-title {
   color: var(--1s-container-header-text-color);
   font-size: 12px;
+  font-weight: bold;
 }
 
 .designiy-dialog-content {

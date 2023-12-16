@@ -1,9 +1,6 @@
 <template>
   <div class="menu-bar-container">
     <div class="menu-bar">
-
-      <div style="height:48px; width:48px;background:#f1f1f1;flex-shrink:0;"></div>
-
       <el-tooltip :hide-after="0" content="选择模型" placement="right">
         <div
           class="menu-bar-item"
@@ -54,7 +51,7 @@
 
 
       <el-tooltip :hide-after="0" content="字体" placement="right">
-        <div class="menu-bar-item">
+        <div class="menu-bar-item" @click="showFontList = true">
           <div class="menu-bar-item-icon"><icon-font></icon-font></div>
           <span>字体</span>
         </div>
@@ -96,16 +93,6 @@
 
       <div style="flex: 1"></div>
 
-      <el-tooltip :hide-after="0" content="切换外观模式" placement="right">
-        <div class="menu-bar-item" @click="isDarkMode = !isDarkMode">
-          <div class="menu-bar-item-icon">
-            <icon-sun v-if="isDarkMode"></icon-sun>
-            <icon-moon v-else></icon-moon>
-          </div>
-          <span>外观</span>
-        </div>
-      </el-tooltip>
-
       <el-tooltip :hide-after="0" content="系统设置" placement="right">
         <div class="menu-bar-item">
           <div class="menu-bar-item-icon"><icon-setting></icon-setting></div>
@@ -127,6 +114,7 @@ import {
   showTextSticker,
   showWorkspace,
   showCustomTextSticker,
+  showFontList
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?vueComponent";
@@ -141,8 +129,7 @@ import iconEarth from "@/icon/earth.svg?vueComponent";
 import iconLight from "@/icon/light.svg?vueComponent";
 import iconEye from "@/icon/eye.svg?vueComponent";
 import iconHelp from "@/icon/help.svg?vueComponent";
-import iconSun from "@/icon/sun.svg?vueComponent";
-import iconMoon from "@/icon/moon.svg?vueComponent";
+
 import iconSetting from "@/icon/setting.svg?vueComponent";
 import iconFont from "@/icon/font.svg?vueComponent";
 </script>
@@ -162,7 +149,7 @@ import iconFont from "@/icon/font.svg?vueComponent";
   align-items: center;
   padding: 16px 0;
   border-radius: 2px;
-  row-gap: 12px;
+  row-gap: 10px;
   overflow: auto;
   background: var(--1s-left-menu-background-color);
   direction: rtl;
@@ -180,7 +167,11 @@ import iconFont from "@/icon/font.svg?vueComponent";
   color: var(--1s-icon-color);
   row-gap: 3px;
   width:60px;
-  height:50px;
+  height:60px;
+  .menu-bar-item-icon{
+    width: 18px;
+    height: 18px;
+  }
   svg {
     width: 18px;
     height: 18px;

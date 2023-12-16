@@ -1,5 +1,5 @@
 import { resolveFilePath } from "./url";
-import apiInstance from "./apiInstance";
+import{ apiInstance,source} from "./apiInstance";
 import { Url } from "./url";
 import { buildURL } from "@/common/url";
 import { format1stf } from "./format";
@@ -54,7 +54,7 @@ export const uploadImage = (data: any) =>
 // 获取图片列表
 export const getImage = () =>
   new Promise(async (resolve: any, reject: any) => {
-    let res = await apiInstance.get(Url.GET_IMAGE_LIST);
+    let res = await apiInstance.post(Url.GET_IMAGE_LIST);
     resolve(res.data.data);
   });
 
@@ -107,7 +107,10 @@ export const updateUserInfo = (params) => apiInstance.post(Url.UPDATE_USER_INFO,
 
 
 // 上传文字贴纸
-export const uploadTextSticker = (params) => apiInstance.post(Url.UPLOAD_TEXT_STICKER, params)
+export const uploadTextSticker = (params) => new Promise(async (resolve) => {
+  const res = await apiInstance.post(Url.UPLOAD_TEXT_STICKER, params)
+  resolve(res.data.data);
+})
 
 
 // 获取文字贴纸
@@ -115,3 +118,35 @@ export const getTextSticker = (params?: any) => new Promise(async (resolve, reje
   const data = await apiInstance.post(Url.GET_TEXT_STICKER, params)
   resolve(data.data.data)
 }) 
+
+
+// 获取账号的状态，，是否注册，是否已注册，是否是管理员，是否被禁用等
+export const getAccountStatus = (params) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_ACCOUNT_STATUS, params)
+  resolve(data.data)
+}) 
+
+// 根据图片id来查询图片
+export const getImageById = (id:string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_IMAGE_BY_ID, {id})
+  resolve(data.data.data)
+}) 
+
+
+// 根据图片id来查询图片
+export const getBaseModelById = (id:string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_BASE_MODEL_BY_ID , {id})
+  resolve(data.data.data)
+})
+
+
+export const getTextStickerById = (id:string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_TEXT_STICKER_BY_ID , {id})
+  resolve(data.data.data)
+})
+
+
+export const getFontById = (id:string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_FONT_BY_ID , {id})
+  resolve(data.data.data)
+})

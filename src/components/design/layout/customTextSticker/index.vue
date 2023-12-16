@@ -1,337 +1,200 @@
 <template>
   <div class="designiy-custom-text-sticker">
-    <div class="designiy-custom-text-sticker-canvas">
-      <div id="custom-text-sticker" ref="textStickerEl">
-        {{ operatingTextStickerText }}
-      </div>
-    </div>
+    <div class="designiy-custom-text-sticker-title">创作文本贴纸</div>
 
-    <textarea
-      class="designiy-custom-text-sticker-textarea"
-      placeholder="输入贴纸内容..."
-      v-model="operatingTextStickerText"
-    />
+    <sticker-canvas></sticker-canvas>
 
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">字体</div>
-      <div></div>
-    </div>
-
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">文字厚度</div>
-      <input
-        class="designiy-custom-text-sticker-form-item-input"
-        type="number"
-        step="100"
-        max="900"
-        min="0"
-        v-model="operatingTextStickerWeight"
-      />
-    </div>
-
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">文字间距</div>
-      <input
-        class="designiy-custom-text-sticker-form-item-input"
-        type="number"
-        step="1"
-        v-model="operatingTextStickerLetterSpacing"
-      />
-    </div>
-
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">字号</div>
-      <input
-        class="designiy-custom-text-sticker-form-item-input"
-        type="number"
-        step="1"
-        max="100"
-        min="0"
-        v-model="operatingTextStickerFontSize"
-      />
-    </div>
-
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">行高</div>
-      <input
-        class="designiy-custom-text-sticker-form-item-input"
-        type="number"
-        step="0.1"
-        max="100"
-        min="0"
-        v-model="operatingTextStickerLineHeight"
-      />
-    </div>
-
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">纵向排列</div>
-    </div>
-
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">使用斜体</div>
-      <div
-        class="designiy-custom-text-sticker-form-item-textbtn"
-        @click="operatingTextStickerIsItalic = !operatingTextStickerIsItalic"
-      >
-        {{ operatingTextStickerIsItalic ? "是" : "否" }}
-      </div>
-    </div>
-
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">颜色</div>
-      <input class="designiy-custom-text-sticker-color" type="color" />
-    </div>
-
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">文字对齐方式</div>
-      <div class="designiy-custom-text-sticker-form-item-textbtn"></div>
-    </div>
-
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">文字阴影</div>
-    </div>
-
-    <div class="designiy-custom-text-sticker-form-item">
-      <div class="designiy-custom-text-sticker-form-item-label">文字装饰</div>
-    </div>
-    <div style="flex: 1"></div>
-
-    <div>
-      <el-button type="primary" @click=""> 上传字体 </el-button>
-      <el-button type="primary" @click="save"> 保存该贴纸 </el-button>
+    <div class="designiy-custom-text-sticker-content">
+        <operate-form-item>
+          <template #icon> <icon-font-size></icon-font-size> </template>
+          <template #name> 显示大小 </template>
+          <template #content>
+            <el-input
+              type="number"
+              v-model="operatingTextStickerOptions.fontSize"
+              size="small"
+              style="width: 80px"
+            ></el-input>
+          </template>
+        </operate-form-item>
+        <operate-form-item>
+          <template #icon> <icon-bold></icon-bold> </template>
+          <template #name> 厚度 </template>
+          <template #content>
+            <el-select
+              v-model="operatingTextStickerOptions.fontWeight"
+              size="small"
+              style="width: 80px"
+            >
+              <el-option
+                v-for="item in fontWeightOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </template>
+        </operate-form-item>
+        <operate-form-item>
+          <template #icon> <icon-font-color></icon-font-color> </template>
+          <template #name> 字体颜色</template>
+          <template #content>
+            <color-picker
+              v-model:pureColor="operatingTextStickerOptions.fontColor"
+              v-model:gradientColor="operatingTextStickerOptions.fontGradientColor"
+        
+            ></color-picker>
+          </template>
+        </operate-form-item>
+        <operate-form-item>
+          <template #icon> <icon-line-height></icon-line-height> </template>
+          <template #name> 行高 </template>
+          <template #content>
+            <el-input
+              type="number"
+              v-model="operatingTextStickerOptions.lineHeight"
+              size="small"
+              style="width: 80px"
+              min="0"
+              max="5"
+              step=".1"
+            ></el-input>
+          </template>
+        </operate-form-item>
+        <operate-form-item>
+          <template #icon> <icon-letter-spacing></icon-letter-spacing> </template>
+          <template #name> 间距 </template>
+          <template #content>
+            <el-input
+              type="number"
+              v-model="operatingTextStickerOptions.letterSpacing"
+              size="small"
+              style="width: 80px"
+              min="-1"
+              max="1"
+              step=".1"
+            ></el-input>
+          </template>
+        </operate-form-item>
+        <operate-form-item>
+          <template #icon> <icon-writing-mode></icon-writing-mode> </template>
+          <template #name> 排列方式 </template>
+          <template #content>
+          </template>
+        </operate-form-item>
+        <operate-form-item>
+          <template #icon> <icon-font-family></icon-font-family> </template>
+          <template #name> 个性字体 </template>
+          <template #content>
+              <div @click="showFontList = true">
+                 无
+              </div>
+          </template>
+        </operate-form-item>
+        <operate-form-item>
+          <template #icon> <icon-italic></icon-italic> </template>
+          <template #name> 斜体 </template>
+          <template #content>
+              <div @click="operatingTextStickerOptions.italic = !operatingTextStickerOptions.italic">
+                 {{operatingTextStickerOptions.italic ? '是' : '否'}}
+              </div>
+          </template>
+        </operate-form-item>
+        <operate-form-item>
+          <template #icon> <icon-background-color></icon-background-color> </template>
+          <template #name> 背景色 </template>
+          <template #content>
+            <color-picker
+              v-model:pureColor="operatingTextStickerOptions.backgroundColor"
+              v-model:gradientColor="operatingTextStickerOptions.backgroundGradientColor"
+            ></color-picker>
+          </template>
+        </operate-form-item>
     </div>
   </div>
 </template>
 <script setup>
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
-import {
-  showBaseModelSelect,
-  operatingTextStickerText,
-  operatingTextStickerColor,
-  operatingTextStickerWeight,
-  operatingTextStickerFontSize,
-  operatingTextStickerLineHeight,
-  operatingTextStickerIsItalic,
-  operatingTextStickerLetterSpacing,
-  operatingTextStickerWritingMode,
-  operatingTextStickerTextOrientation,
-  currentController,
-  showDecalControl
-} from "../../store";
-import { getFonts, uploadTextSticker } from "@/api/index";
-import { useDebounceFn } from "@vueuse/core";
-import { More } from "@element-plus/icons-vue";
-import * as htmlToImage from "html-to-image";
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
+import stickerCanvas from "./canvas.vue";
+import tab from "../../components/tab.vue";
+import operateFormItem from "./operateFormItem.vue";
+import iconBold from "@/icon/bold.svg?vueComponent";
+import iconFontSize from "@/icon/font-size.svg?vueComponent";
+import iconFontColor from "@/icon/font-color.svg?vueComponent";
+import colorPicker from "../../components/colorPicker.vue";
+import iconLineHeight from '@/icon/line-height.svg?vueComponent';
+import iconLetterSpacing from '@/icon/letter-spacing.svg?vueComponent'
+import iconWritingMode from '@/icon/writing-mode.svg?vueComponent'
+import iconFontFamily from '@/icon/font-family.svg?vueComponent'
+import iconBackgroundColor from '@/icon/background-color.svg?vueComponent'
+import iconItalic from '@/icon/italic.svg?vueComponent'
 
-import { initDraggableElement } from "../../utils/draggable";
-import { base64ToFile } from "@/common/transform/base64ToFile";
-import { debounce } from "@/common/utils/debounce";
+import { operatingTextStickerOptions, showFontList } from "../../store";
 
-const base64 = ref("");
+const fontWeightOptions = reactive([
+  {
+    value: "100",
+    label: "超细体",
+  },
+  {
+    value: "200",
+    label: "特细体",
+  },
+  {
+    value: "300",
+    label: "细体",
+  },
+  {
+    value: "400",
+    label: "正常体",
+  },
+  {
+    value: "500",
+    label: "中等体",
+  },
+  {
+    value: "600",
+    label: "半粗体",
+  },
+  {
+    value: "700",
+    label: "粗体",
+  },
+  {
+    value: "800",
+    label: "特粗体",
+  },
+  {
+    value: "900",
+    label: "超粗体",
+  },
+]);
 
-const textStickerEl = ref();
-
-// 所有可用字体信息
-const fonts = ref();
-
-// 当前字体文件路径
-const fontFile = ref();
-
-watch(
-  [
-    operatingTextStickerText,
-    operatingTextStickerColor,
-    operatingTextStickerWeight,
-    operatingTextStickerFontSize,
-    operatingTextStickerLineHeight,
-    operatingTextStickerIsItalic,
-  ],
-  async () => {
-    await nextTick();
-    initTextSticker();
-  }
-);
-
-async function initTextSticker() {
-  let el = textStickerEl.value;
-  if (!el) {
-    return;
-  }
-
-  el.style.color = operatingTextStickerColor.value;
-  el.style.fontWeight = operatingTextStickerWeight.value;
-  el.style.letterSpacing = operatingTextStickerLetterSpacing.value + "px";
-  el.style.fontSize = operatingTextStickerFontSize.value + "px";
-  el.style.lineHeight = operatingTextStickerLineHeight.value + "em";
-  el.style.writingMode = operatingTextStickerWritingMode.value;
-  el.style.textOrientation = operatingTextStickerTextOrientation.value;
-  el.style.fontStyle = operatingTextStickerIsItalic.value ? "italic" : "normal";
-
-  base64.value = await toPng(textStickerEl.value);
-  // console.log(base64.value)
-  // var win = window.open("", "_blank");
-  // win.document.write('<img src="' + base64.value + '"/>');
-
-  initDraggableElement(
-    textStickerEl.value,
-    (img) => {
-      currentController.value.stickToMousePosition({
-        img,
-      });
-      showDecalControl.value = true
-    },
-    base64.value
-  );
-
-}
-
-var id = 0;
-watch(fontFile, (url) => {
-  let fontId = id++;
-  const fontStyles = document.createElement("style");
-  fontStyles.innerHTML = `
-        @font-face {
-            font-family: font${fontId};
-            src: url(${url}); /* 替换为实际的字体文件相对路径 */
-        }
-      `;
-  document.head.appendChild(fontStyles);
-  textStickerEl.value.style.fontFamily = ` font${fontId++}`;
-});
-
-onMounted(async () => {
-  initTextSticker();
-  fonts.value = await getFonts();
-});
-
-async function save() {
-  await uploadTextSticker({
-    img: base64ToFile(base64.value),
-  });
-}
+const activeTab = ref("基础属性");
 </script>
 <style lang="less">
 .designiy-custom-text-sticker {
-  padding: 10px;
   height: 100%;
   width: 320px;
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
-}
-
-.designiy-custom-text-sticker-canvas {
-  width: 300px;
-  height: 300px;
-  flex-shrink: 0;
-  background: #eee;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  position: relative;
-  overflow: auto;
-  background-image: linear-gradient(
-      45deg,
-      #ccc 25%,
-      transparent 0,
-      transparent 75%,
-      #ccc 0
-    ),
-    linear-gradient(45deg, #ccc 25%, transparent 0, transparent 75%, #ccc 0);
-  background-position: -15px 5px, 15px 15px, 10px 10px, 20px 20px;
-  background-size: 20px 20px;
-  overflow: auto;
-  border-radius: 2px;
-  cursor: pointer;
 }
 
-#custom-text-sticker {
-  white-space: pre;
-}
-
-.designiy-custom-text-sticker-drager {
+.designiy-custom-text-sticker-title {
   width: 100%;
+  padding: 10px 10px;
+  font-size: 16px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  color: #333;
+}
+
+.designiy-custom-text-sticker-content {
   height: 100%;
-  position: absolute;
-}
-
-#textStickerImg {
-  max-height: 100%;
-  max-width: 100%;
-  margin: auto;
-}
-
-.designiy-custom-text-sticker-textarea {
-  outline: none;
   width: 100%;
-  background-color: transparent !important;
-  color: var(--1s-custom-text-sticker-input-color) !important;
-  border: 1px solid #ddd;
-  font-size: 12px;
-  padding: 5px;
-  height: 60px;
-  min-height: 60px;
-}
-
-.designiy-custom-text-sticker-form-item {
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 3px;
-  &:focus-within {
-    outline: 1px solid var(--el-color-primary);
-  }
-}
-
-.designiy-custom-text-sticker-form-item-input {
-  height: 24px;
-  width: 60px;
-  color: var(--1s-custom-text-sticker-input-color);
-  font-size: 12px;
-  text-align: right;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  position: relative;
-  display: inline-block;
-  padding-right: 5px;
-}
-
-.designiy-custom-text-sticker-form-item-textbtn {
-  color: var(--1s-custom-text-sticker-input-color);
-  font-size: 12px;
-  padding-left: 5px;
-  cursor: pointer;
-  text-align: right;
-  padding-right: 5px;
-  &:hover {
-    opacity: 0.9;
-  }
-}
-
-.designiy-custom-text-sticker-form-item-label {
-  color: #999;
-  font-size: 10px;
-  font-weight: bold;
-  flex-shrink: 0;
-  height: 24px;
-  line-height: 24px;
-  text-align: left;
-  padding-left: 5px;
-}
-
-.designiy-custom-text-sticker-color {
-  width: 12px;
-  height: 12px;
-}
-
-input[type="color"]::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-input[type="color"]::-webkit-color-swatch {
-  border: 0;
+  padding:10px 0;
+  overflow:auto;
 }
 </style>

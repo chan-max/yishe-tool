@@ -1,4 +1,3 @@
-import { ElMessage } from "element-plus";
 import {
   Box3,
   BoxGeometry,
@@ -15,7 +14,6 @@ import {
 
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { currentController, operatingDecal, showDecalControl } from '../store';
-import { urlToImageElement } from "@/common/transform/urlToImageElement";
 
 export interface DecalControllerParams {
   // 定义贴纸的类型
@@ -26,7 +24,10 @@ export interface DecalControllerParams {
   img?: HTMLImageElement
 
   // 用来区分使用的是网络资源还是本地资源,本地资源保存时需要上传
-  local:boolean
+  local:boolean,
+
+  // 该贴纸使用的base64编码
+  base64?:string
 }
 
 export class DecalController {
@@ -37,19 +38,13 @@ export class DecalController {
   // 更新时间
   updatedAt = new Date()
 
-  // 该贴纸的来源
-  origin = null
 
   constructor(info: any) {
     this.info = info
 
-    const {
-      img
-    } = info
+    this.img = info.img
 
-    this.img = img
-
-    this.initDecalClickEvent()
+    this.initDecalClickEvent();
     currentController.value.decalControllers.push(this);
     operatingDecal.value = this
   }
@@ -58,11 +53,6 @@ export class DecalController {
   // 当前贴花使用的图片
   private img = null;
 
-  // 图片的资源路径
-  url = null
-
-  // 图片的相对资源路径
-  rawUrl = null
 
   // 宽高比
   imgAspectRatio = 1;
@@ -78,6 +68,7 @@ export class DecalController {
 
   // 贴纸尺寸限制
   minSize: number
+
   maxSize: number
 
   // 尺寸比 0 - 1 最小尺寸 到最大尺寸
@@ -97,6 +88,11 @@ export class DecalController {
   // 保存当前的decal实例
   mesh = null;
 
+  // 是否是本地资源
+  get isLocal(){
+    return this.info.local
+  }
+
   // 当前使用的材质信息
 
   // 记录贴花添加时的鼠标位置
@@ -114,8 +110,6 @@ export class DecalController {
   // params
 
   info = null
-
-
 
   async initTexture() {
     const textureLoader = new TextureLoader();
@@ -203,7 +197,7 @@ export class DecalController {
 
   // 移动
   move() {
-
+    
   }
 
   // 缩放
@@ -212,12 +206,12 @@ export class DecalController {
     this.create()
   }
 
-  // 当前贴纸被点击时
-  onClick(cb) {
-  }
 
   private initDecalClickEvent() {
     function decalClick() {
+      if(!this.mesh){
+        return
+      }
       const raycaster = new Raycaster()
       raycaster.setFromCamera(currentController.value.mouse, currentController.value.camera)
       const intersects = raycaster.intersectObject(this.mesh, true)
@@ -229,6 +223,35 @@ export class DecalController {
       showDecalControl.value = true
     }
     currentController.value.onClick(decalClick.bind(this))
+  }
+
+  // 导出该信息
+  export(){
+    const position = {
+      x: this.position.x,
+      y: this.position.y,
+      z: this.position.z,
+    };
+    
+    const rotation = {
+      x: this.rotation.x,
+      y: this.rotation.y,
+      z: this.rotation.z,
+    };
+
+    const size = {
+      x: this.size.x,
+      y: this.size.y,
+      z: this.size.z,
+    };
+    
+    return {
+      type:this.info.type,
+      decalId: this.info.id,
+      position,
+      rotation,
+      size,
+    };
   }
 }
 

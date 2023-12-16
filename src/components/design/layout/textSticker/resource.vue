@@ -14,7 +14,7 @@
       <div class="designiy-text-sticker-resource-item" v-for="item in data">
         <el-image
           @load="load($event, item)"
-          :src="item.imgFullpath"
+          :src="item.preview_img"
           style="width: 100%; height: 100%;padding:10px;"
           fit="contain"
           lazy
@@ -46,11 +46,13 @@ onBeforeMount(async () => {
   data.value = await getTextSticker()
 })
 
-function load(e,item){
+function load(e,info){
   var el = e.target
   initDraggableElement(el,() => {
     currentController.value.stickToMousePosition({
-      src:item.imgFullpath
+      type:'text',
+      src:info.preview_img,
+      ...info
     })
     showDecalControl.value = true
   })

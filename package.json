@@ -10,16 +10,18 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "serve": "node server/server.js",
-    "serve:dev": "nodemon  --inspect server/server.js",
-    "dev": "concurrently \"vite --host 0.0.0.0\"  \"vitepress dev docs\"   \"nodemon  --inspect server/server.js\"",
-    "db:init":"cd server/sequelize & npx sequelize-cli db:create & npx sequelize-cli db:migrate"
+    "serve": "node server.js",
+    "serve:dev": "nodemon  --inspect server.js",
+    "dev": "concurrently \"vite --host 0.0.0.0\"  \"vitepress dev docs\"   \"nodemon  --inspect server.js\"",
+    "db:init": "cd server/sequelize & npx sequelize-cli db:create & npx sequelize-cli db:migrate"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
     "@element-plus/icons-vue": "^2.0.10",
     "@koa/multer": "^3.0.2",
     "@rollup/plugin-alias": "^5.0.0",
+    "@vitejs/plugin-basic-ssl": "^1.0.2",
+    "@vitejs/plugin-legacy": "^5.2.0",
     "@vueuse/components": "^9.13.0",
     "@vueuse/core": "^9.13.0",
     "animate.css": "^4.1.1",
@@ -57,14 +59,21 @@
     "sass": "^1.62.1",
     "scss": "^0.2.4",
     "sequelize": "^6.31.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
     "svg-sprite-loader": "^6.0.11",
     "svg2png": "^4.1.1",
+    "swiper": "^11.0.5",
     "text-to-svg": "^3.1.5",
     "three": "^0.149.0",
     "vant": "^4.8.0",
+    "vconsole": "^3.15.1",
     "vue": "^3.2.47",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.6",
+    "vue3-colorpicker": "^2.2.3",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1",
     "yarn": "^1.22.21"
   },
   "devDependencies": {
@@ -83,6 +92,7 @@
     "typescript": "^4.9.3",
     "unplugin-vue-components": "^0.25.2",
     "vite": "^4.1.0",
+    "vite-plugin-qrcode": "^0.2.2",
     "vitepress": "^1.0.0-alpha.75",
     "vue-tsc": "^1.0.24"
   }

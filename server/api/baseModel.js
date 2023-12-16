@@ -6,8 +6,8 @@ export const injectBaseModelRoute = (router, sequelize, app) => {
     const table = sequelize.models.t_base_model;
     const res = await table.findAll();
     res.forEach((item) => {
-      item.dataValues.imgFullpath = ctx.relativePathToPreviewPath(item.imgPath);
-      item.dataValues.fileFullpath = ctx.relativePathToPreviewPath(
+      item.dataValues.preview_img = ctx.relativePathToPreviewPath(item.imgPath);
+      item.dataValues.preview_file = ctx.relativePathToPreviewPath(
         item.filePath
       );
     });
@@ -16,3 +16,14 @@ export const injectBaseModelRoute = (router, sequelize, app) => {
     };
   });
 };
+
+
+export const getBaseModelById = (router,sequelize) => router.post('/getBaseModelById' , async (ctx) => {
+  const table = sequelize.models.t_base_model;
+  const baseModel = await table.findOne({where:{id: ctx.request.body.id}});
+  baseModel.dataValues.fullfilepath = ctx.relativePathToPreviewPath(baseModel.filePath);
+    
+  ctx.body = {
+      data:baseModel
+  } 
+})

@@ -38,54 +38,61 @@ export function toRealPath(path){
 }
 
 
-// 区分开发和生产api
-function url(url):any{
-    return `${import.meta.env.DEV ? '/api' :''}${url}`
-}
+
 
 export enum Url {
     // 图片上传
-    UPLOAD_IMAGE = url('/imageUpload') ,  
+    UPLOAD_IMAGE = '/imageUpload' ,  
 
     // 上传基础模型
-    UPLOAD_BASE_MODEL = url('/uploadBaseModel'),
+    UPLOAD_BASE_MODEL = '/uploadBaseModel',
 
     // 注册
-    SINGUP = url('/signup'),
+    SINGUP = '/signup',
 
     // 登录
-    LOGIN = url('/login'),
+    LOGIN = '/login',
 
     // 获取首页模型信息
-    GET_BANNER_MODEL = url('/getBannerModel'),
+    GET_BANNER_MODEL = '/getBannerModel',
 
     // 获取基本模型列表
-    GET_BASE_MODEL = url('/getBaseModel'),
+    GET_BASE_MODEL = '/getBaseModel',
 
     // 获取图片
-    GET_IMAGE_LIST = url('/getImage'),
+    GET_IMAGE_LIST = '/getImage',
 
     // 上传字体
-    UPLOAD_FONT = url('/uploadFont'),
+    UPLOAD_FONT = '/uploadFont',
 
-    GET_FONTS = url('/getFonts'),
+    GET_FONTS = '/getFonts',
 
     // 上传模型
-    UPLOAD_MODEL = url('/uploadModel'),
+    UPLOAD_MODEL = '/uploadModel',
 
     // 获取模型列表
-    GET_MODEL_LIST = url('/getModelList'),
+    GET_MODEL_LIST = '/getModelList',
     
-    SEND_MAIL = url('/sendEmail'),
+    SEND_MAIL = '/sendEmail',
 
     // 获取用户列表，后台使用
-    GET_USER_LIST = url('/getUserList'),
+    GET_USER_LIST = '/getUserList',
 
     // 更新用户信息
-    UPDATE_USER_INFO = url('/updateUserInfo'),
+    UPDATE_USER_INFO = '/updateUserInfo',
 
-    UPLOAD_TEXT_STICKER = url('/uploadTextSticker'),
+    UPLOAD_TEXT_STICKER = '/uploadTextSticker',
 
     // 获取所有文字贴纸
-    GET_TEXT_STICKER = url('/getTextSticker'),
+    GET_TEXT_STICKER = '/getTextSticker',
+
+    GET_ACCOUNT_STATUS = '/getAccountStatus',
+
+    GET_IMAGE_BY_ID = '/getImageById',
+
+    GET_BASE_MODEL_BY_ID = '/getBaseModelById',
+
+    GET_TEXT_STICKER_BY_ID = '/getTextStickerById',
+
+    GET_FONT_BY_ID = '/getFontById',
 }

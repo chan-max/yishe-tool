@@ -6,17 +6,8 @@ export default {
     siteTitle: "衣设网",
     sidebar: [
       {
-        text: "简介",
-        link: "index",
-      },
-      {
-        text: "项目介绍",
-        items: [
-          {
-            text: "配置文件说明",
-            link: "config",
-          },
-        ],
+        text: "AI遐想",
+        link: "ai",
       },
     ],
   },

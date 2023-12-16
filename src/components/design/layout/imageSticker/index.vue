@@ -14,7 +14,7 @@
       <div class="item" title="拖动来进行贴图" v-for="i in images" draggable="false">
         <el-image
           @load="load($event, i)"
-          :src="i.fullpath"
+          :src="i.preview_img"
           style="width: 100%; height: 100%"
           fit="contain"
           lazy
@@ -76,7 +76,10 @@ const images = ref([]);
 function load(e, info) {
   initDraggableElement(e.target, () => {
     currentController.value.stickToMousePosition({
-      src: info.fullpath,
+      type:'image',
+      local:false,
+      src: info.preview_img,
+      ...info
     });
     showDecalControl.value = true
   });

@@ -26,7 +26,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
-import { reactive, ref } from "vue";
+import { reactive, ref, shallowReactive } from "vue";
 import { reactify, useMouse } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
@@ -266,14 +266,14 @@ export class ModelController {
         this.y = y;
     }
 
-    decalControllers: any = reactive([]);
+    decalControllers: any = shallowReactive([]);
     
     // 进行贴图
     stickToMousePosition(info) {
         const decal = new DecalController(info)
         decal.stickToMousePosition()
     }
-
+    
     // 恢复模型模型位置
     resetPosition() {
         this.camera.position.copy(this.defaultCameraPosition);
@@ -303,9 +303,7 @@ export class ModelController {
 
     // 导出 1stf 格式化信息
     exportTo1stf = null;
-
-
-
+    
     getScreenshotBase64(){
         this.renderer.render(this.scene, this.camera); // 截取会出现白图片
         return this.renderer.domElement.toDataURL("image/png");

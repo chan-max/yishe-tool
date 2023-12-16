@@ -10,9 +10,6 @@ export const isDarkMode = ref(false)
 // 加载
 export const isLoading = shallowRef(false);
 
-// 模型的加载元素
-export const container = shallowRef();
-
 // 当前组件是否全屏
 export const isFullScreen = ref(false)
 
@@ -44,7 +41,7 @@ export const showSceneControl = ref(false)
 export const showImageSticker = ref(false)
 
 watch(showImageSticker, (value) => {
-    if(value){
+    if (value) {
 
     }
 })
@@ -64,8 +61,8 @@ watch(showWorkspace, (value) => {
 
 // 是否展示贴画控制弹窗
 export const showDecalControl = ref(false)
-watch(showDecalControl,(value) => {
-    if(value){
+watch(showDecalControl, (value) => {
+    if (value) {
         clearRightLayout()
         showDecalControl.value = true
     }
@@ -74,45 +71,13 @@ watch(showDecalControl,(value) => {
 
 // 是否展示自定义文字贴纸
 export const showCustomTextSticker = ref(false)
-
-
-// 当前操作的文字内容
-export const operatingTextStyle = reactive({
-
+watch(showCustomTextSticker, (value) => {
+    if (value) {
+        clearLeftLayout()
+        showCustomTextSticker.value = true
+    }
 })
 
-
-// 文字贴纸文字
-export const operatingTextStickerText = ref(`breaking
-          bad`)
-
-// 文字贴纸颜色
-export const operatingTextStickerColor = ref('#000')
-
-// 文字厚度
-export const operatingTextStickerWeight = ref(500)
-
-// 字号大小， 字号大小只用于显示
-export const operatingTextStickerFontSize = ref(32)
-
-// 行高
-export const operatingTextStickerLineHeight = ref(1)
-
-// 是否斜体
-export const operatingTextStickerIsItalic = ref(false)
-
-// 文字间距
-export const operatingTextStickerLetterSpacing = ref(5);
-
-// 文字书写方式
-export const operatingTextStickerWritingMode = ref('initial')
-export const enum TextStickerWritingMode {
-    INITIAL = 'initial',
-    VERTICAL_RL = 'vertical-rl',
-    VERTICAL_LR = 'vertical-lr',
-}
-
-export const operatingTextStickerTextOrientation = ref('upright')
 
 // 当前正在操作的贴花
 export const operatingDecal = shallowRef()
@@ -128,16 +93,12 @@ export const showFontUpload = ref(false)
 // 是否展示字体列表
 export const showFontList = ref(false)
 
-watch(showFontList, (value) => {
-    if (value) {
-    }
-})
 
 
 // 是否展示已使用的贴纸列表
 export const showDecalList = ref(false)
 watch(showDecalList, async (value) => {
-    if(value){
+    if (value) {
         clearRightLayout()
         showDecalList.value = true
     }
@@ -145,8 +106,8 @@ watch(showDecalList, async (value) => {
 
 // 是否展示模型信息
 export const showModelInfo = ref(false)
-watch(showModelInfo,async (value) => {
-    if(value){
+watch(showModelInfo, async (value) => {
+    if (value) {
         clearRightLayout()
         showModelInfo.value = true
     }
@@ -162,10 +123,7 @@ export const showLeftMenu = ref(true)
 
 export const showBottomMenu = ref(true)
 
-// 自定义贴纸的信息
-export const operatingTextStickerStyle = reactive({
-    fontFamily: '',
-})
+
 
 // 清空左侧布局
 export function clearLeftLayout() {
@@ -183,6 +141,58 @@ export function clearRightLayout() {
 }
 
 
+// 清空所有布局元素
+export function clearLayout() {
+}
 
-export function clearLayout(){    
-}   
+
+// 记录当前正在操作的贴纸信息
+export const operatingTextStickerOptions = reactive({
+    // 贴纸内容
+    content: `breaking
+        bad`,
+    // text color
+    fontColor: '#333',
+    fontGradientColor: '#333',
+    // font-weight
+    fontWeight: 500,
+    // font-size
+    fontSize: 30,
+    // line-height rem
+    lineHeight: 1,
+    // font-style italic
+    italic: false,
+    // letter-spacing
+    letterSpacing: .1,
+
+    // 记录当前引用的字体信息 
+    fontFamilyInfo: '',
+    fontFamilyId:'',
+    
+    // 背景颜色
+    backgroundColor: 'rgba(0,0,0,0)',
+    backgroundGradientColor:'#6900ff',
+    backgroundBorderRadius: '5px',
+    backgroundPadding: '',
+})
+
+export const operatingTextStickerWritingMode = ref('initial')
+export const enum TextStickerWritingMode {
+    INITIAL = 'initial',
+    VERTICAL_RL = 'vertical-rl',
+    VERTICAL_LR = 'vertical-lr',
+}
+
+export const operatingTextStickerTextOrientation = ref('upright')
+
+
+// 是否展示模型上传弹窗
+export const showSaveModel = ref(false)
+
+
+
+// 系统是否成功连接 websocket
+export const online = ref(true);
+watch(online,(value) => {
+
+})

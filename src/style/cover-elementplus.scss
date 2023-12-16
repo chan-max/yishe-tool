@@ -1,42 +1,9 @@
-$--colors: (
-  "primary": (
-    // "base": #6900ff,
-    // "base":#06f,
-    // "base":#146EF5
-    "base":#6900ff
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      'base': #6900ff,
+    ),
   ),
 );
 
-@forward "element-plus/theme-chalk/src/common/var.scss" with
-  (
-    $colors: $--colors,
-  );
 @use "element-plus/theme-chalk/src/index.scss" as *;
-
-.el-message {
-  // 修改背景颜色
-  background-color: #f0f0f0;
-  
-  // 修改文字颜色
-  color: #333;
-  
-  // 修改边框颜色
-  border-color: #ccc;
-  
-  // 修改圆角
-  border-radius: 4px;
-  
-  // 修改内边距
-  padding: 10px 15px;
-  
-  // 修改阴影效果
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
-  // 修改字体大小
-  font-size: 14px;
-  
-  // 修改图标的颜色
-  .el-icon-success, .el-icon-error, .el-icon-info {
-    color: #333;
-  }
-}

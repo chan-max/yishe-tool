@@ -2,9 +2,11 @@
     <div class="user-avatar">
         <el-popover
         placement="bottom"
-        :title="` 欢迎, ${loginStatusStore.userInfo?.account} !`"
         trigger="hover"
         >
+        <template #reference>
+            <el-avatar shape="circle" :src="avatar" />
+        </template>
         <div class="user-center-popover">
             <div><el-button size="small">个人中心</el-button></div>
             <div>
@@ -17,17 +19,13 @@
             </div>
             <div><el-button @click="doLogout" size="small">退出登录</el-button></div>
         </div>
-
-        <template #reference>
-            <el-avatar shape="circle" :src="avatar" />
-        </template>
         </el-popover>
     </div>
 </template>
 <script setup>
 
-import { useLoginStatusStore } from "@/store/stores/user";
-import { doLogout } from "@/actions/loginAction";
+import { useLoginStatusStore } from "@/store/stores/login";
+import { doLogout } from "@/store/stores/loginAction";
 import { computed, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { Pointer,CaretBottom } from "@element-plus/icons-vue";

@@ -6,49 +6,34 @@
 
     <div style="flex-grow: 1"></div>
 
-    <div>
-      <icon-help style="width: 24px; height: 24px"></icon-help>
-    </div>
+    <icon-help style="width: 24px; height: 24px;color:#fff;"></icon-help>
 
-    <el-button @click="save" type="primary" round> 保 存 </el-button>
+    <el-button @click="showSaveModel = true" type="primary" color="#333" round> 上 传 </el-button>
 
-    <user-avatar />
+    <user-avatar  v-if="loginStatusStore.isLogin"/>
+    <el-button @click="$router.push({name:'Login'})" v-else type="primary" round>  登 录 </el-button>
   </div>
 </template>
 
 <script setup>
 import { getBaseModel, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
-import { canvasBgColor, canvasBgOpacity, isDarkMode, currentController } from "../store";
-import {  ElMessageBox } from 'element-plus'
-import { uploadModel } from '@/api'
+import { canvasBgColor, canvasBgOpacity, isDarkMode, currentController, showSaveModel } from "../store";
+
+
 import {Share} from '@element-plus/icons-vue'
 import userAvatar from '@/components/user/userAvatar.vue'
 import headerMenuDropdown from './headerMenuDropdown/index.vue'
 import { onShortcutTrigger } from '../shortcut/index';
 import iconHelp from '@/icon/help.svg?vueComponent'
-// import iconLogo from '@/icon/logo/logo.svg?vueComponent'
+import { useLoginStatusStore } from "@/store/stores/login";
 
+
+const loginStatusStore = useLoginStatusStore();
 
 const props = defineProps([]);
 
-onShortcutTrigger(['Ctrl+S'],save)
 
-async function save() {
-  await ElMessageBox.confirm(
-    '确认将模型保存至工作台吗?',
-    {
-      confirmButtonText: '确认',
-      cancelButtonText: '取消',
-      type: 'info',
-      draggable: true,
-    })
-
-  await uploadModel({
-    img:currentController.value.getScreenShotFile(),
-    modelInfo:JSON.stringify(currentController.value.exportTo1stf())
-  })
-}
 
 
 </script>
@@ -60,9 +45,13 @@ async function save() {
   display: flex;
   justify-content: start;
   align-items: center;
-  column-gap: 10px;
+  column-gap: 8px;
   padding-right: 10px;
-  background: #111;
+  border-bottom: 2px solid #f2f2f2;
+
+  .el-button + .el-button{
+    margin:0;
+  }
 }
 
 .designiy-header-select-model {

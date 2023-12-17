@@ -18,8 +18,8 @@ const route = useRoute()
 const id = route.query.id
 
 onBeforeMount(() => {
-  
 })
+
 
 usePreventScreenResize()
 

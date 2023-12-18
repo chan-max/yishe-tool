@@ -13,7 +13,7 @@
 <div class="online-point" :class="online ? 'online-point-online' : 'online-point-offonline'"></div>
 </template>
 
-<script setup lang='ts'>
+<script setup>
 import {ref,defineProps } from 'vue'
 
 const props = defineProps(['online'])

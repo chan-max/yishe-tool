@@ -1,7 +1,7 @@
 /*
- * @Author: chan-max 2651308363@qq.com
+ * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-17 17:19:41
- * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditors: chan-max jackieontheway666@gmail.com
  * @LastEditTime: 2023-12-17 17:21:32
  * @FilePath: /1s/server/redis/keys.js
  * @Description: 用于定义所有redis使用的key

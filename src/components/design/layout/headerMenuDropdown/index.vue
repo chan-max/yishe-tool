@@ -1,7 +1,7 @@
 <!--
- * @Author: chan-max 2651308363@qq.com
+ * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-11-29 21:41:57
- * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditors: chan-max jackieontheway666@gmail.com
  * @LastEditTime: 2023-12-16 23:56:11
  * @FilePath: /1s/src/components/design/layout/headerMenuDropdown/index.vue
  * @Description: 

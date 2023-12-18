@@ -1,7 +1,7 @@
 /*
- * @Author: chan-max 2651308363@qq.com
+ * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-11-26 11:13:28
- * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditors: chan-max jackieontheway666@gmail.com
  * @LastEditTime: 2023-12-17 00:27:44
  * @FilePath: /1s/src/common/browser.ts
  * @Description: 

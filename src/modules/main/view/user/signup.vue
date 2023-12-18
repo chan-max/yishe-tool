@@ -153,6 +153,7 @@ async function submit() {
   align-items: center;
   width: 100%;
   flex: auto;
+  height:100%;
 }
 
 .signup-form{

@@ -16,17 +16,16 @@ const defaultOptions = {
     maxFiles: "14d",
 };
 
-
 export const logger = createLogger({
     format: customFormat,
     transports: [
         new transports.DailyRotateFile({
-            filename: "logs/info-%DATE%.log",
+            filename: "./server/logs/info-%DATE%.log",
             level: "info",
             ...defaultOptions,
         }),
         new transports.DailyRotateFile({
-            filename: "logs/error-%DATE%.log",
+            filename: "./server/logs/error-%DATE%.log",
             level: "error",
             ...defaultOptions,
         }),

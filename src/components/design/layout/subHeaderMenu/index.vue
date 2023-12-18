@@ -11,7 +11,7 @@
 <template>
   <div class="designiy-sub-header">
     <header-menu-dropdown />
-
+    <div style="font-size:12px;color:#555;">  {{  isEdit ? '编辑' : '新建'}}  </div>
     <div style="flex: 1"></div>
 
     <online-point :online="online"></online-point>
@@ -29,7 +29,7 @@
 import { ref } from "vue";
 import headerMenuDropdown from "../headerMenuDropdown/index.vue";
 import onlinePoint from "../../components/onlinePoint.vue";
-import { isDarkMode,online } from "../../store";
+import { isDarkMode, online, isEdit, currentEditingModelInfo } from '../../store';
 
 
 </script>
@@ -44,6 +44,6 @@ import { isDarkMode,online } from "../../store";
   border-bottom: var(--1s-sub-header-border-bottom);
   align-items: center;
   padding: 0 10px;
-  column-gap: 10px;
+  column-gap: 12px;
 }
 </style>

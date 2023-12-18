@@ -9,21 +9,26 @@ import { fileURLToPath } from "url";
 import { initRouter } from "./router.js"
 import ip from "ip";
 import http from 'http'
-
 import { createRedisClient } from "./redis/index.js";
 import { getRelativePath, getUploadPath } from "./fileManage.js"
 import { logger } from "./logger.js";
-
+import { middlewares } from "./middleware/index.js";
 import dotenv from 'dotenv'
 dotenv.config()
 
+const app = new Koa();
+
+const router = new Router();
+
+// 当前文件全名
 const __filename = fileURLToPath(import.meta.url);
+// 当前文件所在的路径
 const __dirname = path.dirname(__filename);
 
 const redis = await createRedisClient()
 
- const app = new Koa();
-const router = new Router();
+// 注册中间件
+middlewares.forEach((mw) => mw(app))
 
 app.use(
     cors({
@@ -34,6 +39,8 @@ app.use(
         exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'] //设置获取其他自定义字段
     })
 );
+
+
 
 import db from './sequelize/models/index.js'
 
@@ -47,6 +54,8 @@ import { uploadsPath } from "./fileManage.js"
 import { formatFilePath } from "./util.js";
 
 app.use(_static(uploadsPath()));
+
+
 
 app.use(koaBody({
     multipart: true,

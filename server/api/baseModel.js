@@ -15,15 +15,14 @@ export const injectBaseModelRoute = (router, sequelize, app, redis) => {
   // 该接口只有管理员更新基础模型信息时需要更新, 直接读缓存即可
   router.post("/getBaseModel", async (ctx) => {
 
-    const cache = await redis.get(REDIS_KEY_CACHE_BASE_MODELS)
+    // const cache = await redis.get(REDIS_KEY_CACHE_BASE_MODELS)
 
-    if (cache) {
-      return ctx.body = {
-        data: JSON.parse(cache),
-      };
-    }
+    // if (cache) {
+    //   return ctx.body = {
+    //     data: JSON.parse(cache),
+    //   };
+    // }
 
-    
     const table = sequelize.models.t_base_model;
     const data = await table.findAll();
     data.forEach((item) => {
@@ -34,7 +33,7 @@ export const injectBaseModelRoute = (router, sequelize, app, redis) => {
     });
 
     await redis.set(REDIS_KEY_CACHE_BASE_MODELS,JSON.stringify(data))
-
+    
     ctx.body = {
       data: data,
     };
@@ -51,3 +50,25 @@ export const getBaseModelById = (router, sequelize) => router.post('/getBaseMode
     data: baseModel
   }
 })
+
+import { getRelativePath } from '../fileManage.js'
+
+export const uploadBaseModelHook = (router, sequelize) => router.post("/uploadBaseModel", async (ctx) => {
+    const table = sequelize.models.t_base_model;
+    const { name, description } = ctx.request.body;
+    const { file, img,description_imgs} = ctx.request.files; // 模型文件, 图片
+
+
+    await table.create({
+      name,
+      description,
+      description_imgs: JSON.stringify(description_imgs.map((item) => getRelativePath(item.filepath))),
+      filePath:getRelativePath(file.filepath),
+      imgPath:getRelativePath(img.filepath),
+    });
+    
+    ctx.body = {
+      message: "模型上传成功",
+      type:'success'
+    };
+  });

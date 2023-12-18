@@ -42,24 +42,35 @@
         <div class="el-upload__tip">仅限 glb,gltf 类型,大小限制为20mb</div>
       </template>
     </el-upload>
-    <el-button @click="submit" size="large" type="primary" style="width: 100%">
-      上传
-    </el-button>
-    <el-button @click="remove" size="large" style="width: 100%; margin: 20px 0">
-      移除当前文件
-    </el-button>
     <gltf-viewer
       ref="gltfViewerRef"
       style="width: 600px; height: 600px; margin: auto"
       :model="prerviewModel"
       :transparent="true"
     ></gltf-viewer>
+
+    <el-upload
+    v-model:file-list="imgs"
+    list-type="picture"
+    multiple
+    :auto-upload="false"
+    accept=".jpg, .png, .gif, .jpeg,"
+  >
+    <el-button type="primary">上传实物图</el-button>
+  </el-upload>
+
+    <el-button @click="submit" size="large" type="primary" style="width: 100%">
+      上传
+    </el-button>
+    <el-button @click="remove" size="large" style="width: 100%; margin: 20px 0">
+      移除当前文件
+    </el-button>
   </div>
 </template>
 <script setup>
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
-import { reactive, ref, computed ,shallowReactive} from "vue";
+import { reactive, ref, computed ,shallowReactive,shallowRef} from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import { base64ToFile } from "@/common/transform/base64ToFile";
@@ -68,6 +79,9 @@ import {uploadBaseModel} from '@/api'
 const upload = ref();
 
 const file = ref([]);
+
+// 实物图支持多个图片
+const imgs = shallowRef([])
 
 const sizes = ref(['S','M','L','XL','XXL','XXXL','XXXXL'])
 
@@ -78,6 +92,8 @@ const prerviewModel = computed(() => {
     baseModelUrl: file.value[0] && URL.createObjectURL(file.value[0].raw),
   };
 });
+
+
 
 const rules = reactive({
   name: [{ required: true, message: "请输入模型名称", trigger: "blur" }],
@@ -106,11 +122,22 @@ async function submit() {
     return;
   }
 
-  form.file = file.value[0].raw
-  form.img = base64ToFile(gltfViewerRef.value.getScreenshot());
+  let _file = file.value[0].raw
+  let img = base64ToFile(gltfViewerRef.value.getScreenshot());
 
-  await uploadBaseModel(form)
+  let formData = new FormData()
+
+  formData.append('file', _file)
+  formData.append('img', img)
+  
+  imgs.value.forEach((item) => {
+      formData.append('description_imgs',item.raw)
+  })
+
+  await uploadBaseModel(formData)
 }
+
+
 </script>
 
 <style>

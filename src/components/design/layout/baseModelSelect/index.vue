@@ -27,7 +27,7 @@ const container = ref();
 onMounted(async () => {
   const data = await getBaseModel();
   models.value = data;
-
+  
   // 适配鼠标滑轮横向滚动
   container.value.addEventListener("wheel", (event) => {
     console.log(event.deltaY)

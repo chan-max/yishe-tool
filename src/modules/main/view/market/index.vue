@@ -36,11 +36,7 @@ function edit(model){
         name:'Design',
         query:{
             id:model.id
-        },
-        params:{
-            // 如火传入了model信息，则进入设计台不需要再获取
-            model:model
-        } 
+        }
     })
 }
 

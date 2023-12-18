@@ -4,8 +4,6 @@
       <icon-logo></icon-logo>
     </div>
 
-    <div style="font-size:12px;font-weight: bold;color:#555;"> 新建未命名  </div>
-
     <div style="flex-grow: 1"></div>
 
     <icon-help style="width: 24px; height: 24px;color:#fff;"></icon-help>
@@ -34,6 +32,7 @@ import { useLoginStatusStore } from "@/store/stores/login";
 const loginStatusStore = useLoginStatusStore();
 
 const props = defineProps([]);
+
 
 
 

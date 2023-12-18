@@ -5,19 +5,25 @@
 </template>
 <script setup>
 import mainView from "./layout/main.vue";
-import { isDarkMode } from "./store";
+import { isDarkMode, isEdit, currentEditingModelInfo } from './store';
 import { usePreventScreenResize } from './composition/preventScreenResize';
 import {useRoute} from 'vue-router'
 import { onBeforeMount } from "vue";
+import { getModelById } from '@/api';
 
 // 阻止缩放屏幕影响使用体验
 
 const route = useRoute()
 
-// 有 id 为编辑模式
-const id = route.query.id
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+  // 有 id 为编辑模式
+  const id = route.query.id
+  if(id){
+    isEdit.value = true
+    let model = await getModelById(id)
+    currentEditingModelInfo.value = model
+  }
 })
 
 

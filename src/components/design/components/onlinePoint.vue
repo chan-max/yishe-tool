@@ -23,8 +23,8 @@ const props = defineProps(['online'])
 <style lang="less">
 .online-point {
   position: relative;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
 }
 
@@ -32,7 +32,7 @@ const props = defineProps(['online'])
     background-color: rgba(0,255,0,.9);
 }
 .online-point-online:after{
-    box-shadow: 0px 0px 2px 2px rgba(0,255,0,.9) inset;
+    box-shadow: 0px 0px 2px 2px rgba(0,255,0,.3) inset;
 }
 
 .online-point-offonline{
@@ -49,14 +49,17 @@ const props = defineProps(['online'])
   border-radius: 50%;
   height: 100%;
   width: 100%;
-  animation: pulsate 1s ease-out;
+  animation: pulsate 2s ease-out ;
   animation-iteration-count: infinite;
   opacity: 1.0
 }
 
 @keyframes pulsate {
   0% {transform: scale(0.5, 0.5); opacity: 0.0;}
-  50% {opacity: 1.0;}
-  100% {transform: scale(2, 2); opacity: 0.0;}
+  25% {opacity: 1.0;}
+  50% {transform: scale(2, 2); opacity: 0.0;}
+  100%{
+    opacity: 0;
+  }
 }
 </style>

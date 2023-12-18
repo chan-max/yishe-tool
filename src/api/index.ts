@@ -78,9 +78,9 @@ export const getModelList = (data) =>
     resolve( res.data.data);
   });
 
-export const getModelById = (data) =>
+export const getModelById = (id) =>
   new Promise(async (resolve, reject) => {
-  const res = await apiInstance.post(Url.GET_MODEL_BY_ID, data);
+  const res = await apiInstance.post(Url.GET_MODEL_BY_ID, {id});
   resolve( res.data.data);
 });
 

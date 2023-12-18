@@ -9,10 +9,10 @@
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
  */
 import { getBannerModelHook } from "./api/common/getBannerModel.js";
-import { injectBaseModelRoute,getBaseModelById } from "./api/baseModel.js";
+import { injectBaseModelRoute,getBaseModelById,uploadBaseModelHook } from "./api/baseModel.js";
 import { getBaseSkyboxHook } from "./api/common/getSkybox.js";
 import { uploadFontHook, getFontsHook ,getFontById} from "./api/font.js";
-import { uploadBaseModelHook } from "./api/base/uploadBaseModel.js";
+
 import {
   signupHook,
   getUserListHook,
@@ -23,7 +23,7 @@ import {
 import { imageUploadHook } from "./api/base/imageUpload.js";
 import { getImageHook,getImageById } from "./api/common/getImage.js";
 import { uploadModelHook } from "./api/base/uploadModel.js";
-import { getModelListHook } from "./api/model.js";
+import { getModelListHook ,getModelById} from "./api/model.js";
 import { sendEmailHook } from "./api/email.js";
 import { uploadTextSticker, getTextSticker,getTextStickerById } from "./api/textSticker.js";
 
@@ -50,7 +50,8 @@ export const initRouter = (...params) => {
     getImageById,
     getBaseModelById,
     getTextStickerById,
-    getFontById
+    getFontById,
+    getModelById
   ];
   hooks.forEach((hook) => hook(...params));
 };

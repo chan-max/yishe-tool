@@ -14,7 +14,8 @@ import { REDIS_KEY_CACHE_BASE_MODELS } from "../redis/keys.js";
 export const injectBaseModelRoute = (router, sequelize, app, redis) => {
   // 该接口只有管理员更新基础模型信息时需要更新, 直接读缓存即可
   router.post("/getBaseModel", async (ctx) => {
-
+    debugger
+        
     // const cache = await redis.get(REDIS_KEY_CACHE_BASE_MODELS)
 
     // if (cache) {

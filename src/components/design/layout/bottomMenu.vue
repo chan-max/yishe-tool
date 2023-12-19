@@ -7,18 +7,6 @@
       </div>
     </el-tooltip>
 
-  <el-tooltip :hide-after="0" content="上一步" placement="top">
-      <div class="bottom-menu-item" >
-        <icon-prev></icon-prev>
-      </div>
-    </el-tooltip>
-
-    <el-tooltip :hide-after="0" content="下一步" placement="top">
-      <div class="bottom-menu-item">
-        <icon-next></icon-next>
-      </div>
-    </el-tooltip>
-
     <el-tooltip :hide-after="0" content="重制模型位置" placement="top">
       <div class="bottom-menu-item" @click="locate">
         <icon-locate></icon-locate>
@@ -46,8 +34,6 @@ import {isFullScreen,currentController} from '../store'
 import iconFullscreen from '@/icon/fullscreen.svg?vueComponent'
 import iconRotate from '@/icon/rotate.svg?vueComponent'
 import iconLocate from '@/icon/locate.svg?vueComponent'
-import iconPrev from '@/icon/prev.svg?vueComponent'
-import iconNext from '@/icon/next.svg?vueComponent'
 import iconRefresh from '@/icon/refresh.svg?vueComponent'
 import iconCamera from '@/icon/camera.svg?vueComponent'
 

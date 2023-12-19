@@ -19,7 +19,7 @@ import {ref,defineProps } from 'vue'
 const props = defineProps(['online'])
 
 </script>
-    
+
 <style lang="less">
 .online-point {
   position: relative;

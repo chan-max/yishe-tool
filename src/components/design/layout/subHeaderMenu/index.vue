@@ -11,8 +11,27 @@
 <template>
   <div class="designiy-sub-header">
     <header-menu-dropdown />
-    <div style="font-size:12px;color:#555;">  {{  isEdit ? '编辑' : '新建'}}  </div>
+
+    <div style="display:flex;">
+      <div class="designiy-sub-header-button">
+        <icon-prev class="designiy-sub-header-icon"></icon-prev>
+        撤销
+      </div>
+
+      <div class="designiy-sub-header-button">
+        <!-- 图标暂时用翻转代替 -->
+        <icon-prev
+          style="transform: rotateY(180deg)"
+          class="designiy-sub-header-icon"
+        ></icon-prev>
+        重做
+      </div>
+    </div>
+
     <div style="flex: 1"></div>
+    <div style="font-size: 12px; line-height: 12px; color: #555">
+      {{ isEdit ? "编辑" : "新建" }}
+    </div>
 
     <online-point :online="online"></online-point>
     <el-switch
@@ -25,13 +44,12 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from "vue";
 import headerMenuDropdown from "../headerMenuDropdown/index.vue";
 import onlinePoint from "../../components/onlinePoint.vue";
-import { isDarkMode, online, isEdit, currentEditingModelInfo } from '../../store';
-
-
+import { isDarkMode, online, isEdit, currentEditingModelInfo } from "../../store";
+import iconPrev from "@/icon/design/prev.svg?vueComponent";
 </script>
 
 <style>
@@ -45,5 +63,25 @@ import { isDarkMode, online, isEdit, currentEditingModelInfo } from '../../store
   align-items: center;
   padding: 0 10px;
   column-gap: 12px;
+}
+
+.designiy-sub-header-button {
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 8px 6px;
+  border-radius: 6px;
+  color: #333;
+  transition: all 0.3s;
+  &:hover {
+    background: #eaeaea;
+  }
+}
+
+.designiy-sub-header-icon {
+  width: 14px;
+  height: 14px;
 }
 </style>

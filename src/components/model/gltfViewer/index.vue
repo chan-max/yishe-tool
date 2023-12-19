@@ -114,7 +114,7 @@ function initImportedModel(gltf) {
 
 async function initModel() {
   const model = format1stf(props.model);
-
+    
   if (!model) {
     return;
   }

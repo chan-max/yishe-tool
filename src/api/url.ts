@@ -76,4 +76,7 @@ export enum Url {
     GET_FONT_BY_ID = '/getFontById',
 
     GET_MODEL_BY_ID = '/getModelById',
+
+
+    GET_BASIC_CONFIG = '/getBasicConfig'
 }

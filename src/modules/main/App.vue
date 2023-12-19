@@ -39,9 +39,7 @@ body {
   padding: 0;
   height: 100%;
   overflow:hidden;
-
 }
-
 
 /* @font-face{
     font-family: 'alimama';

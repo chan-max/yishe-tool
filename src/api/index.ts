@@ -1,8 +1,6 @@
 
 import{ apiInstance,source} from "./apiInstance";
 import { Url } from "./url";
-import { buildURL } from "@/common/url";
-import { format1stf } from "./format";
 
 // 注册 ，账号密码手机号
 export const signup = (data: any) =>

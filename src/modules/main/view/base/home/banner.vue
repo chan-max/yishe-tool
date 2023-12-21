@@ -3,7 +3,7 @@
     <div class="home-banner-content">
       <div class="home-banner-desc">
         <div style="font-size: 46px; color: #000; font-weight: 600">
-          开放式服装设计&交易平台
+          开放式设计&交易平台
         </div>
         <div
           style="

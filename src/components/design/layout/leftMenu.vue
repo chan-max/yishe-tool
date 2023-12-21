@@ -149,7 +149,7 @@ import iconFont from "@/icon/font.svg?vueComponent";
   align-items: center;
   padding: 16px 0;
   border-radius: 2px;
-  row-gap: 10px;
+  row-gap: 16px;
   overflow: auto;
   background: var(--1s-left-menu-background-color);
   direction: rtl;
@@ -166,11 +166,11 @@ import iconFont from "@/icon/font.svg?vueComponent";
   flex-shrink: 0;
   color: var(--1s-icon-color);
   row-gap: 3px;
-  width:60px;
-  height:60px;
+  padding: 4px 8px;
   .menu-bar-item-icon{
-    width: 18px;
-    height: 18px;
+    flex-shrink: 0;
+    padding:6px;
+    display:flex;
   }
   svg {
     width: 18px;

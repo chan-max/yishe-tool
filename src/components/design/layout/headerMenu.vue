@@ -3,7 +3,7 @@
     <div class="designiy-header-logo">
       <icon-logo></icon-logo>
     </div>
-
+    
     <div style="flex-grow: 1"></div>
 
     <icon-help style="width: 24px; height: 24px;color:#333;"></icon-help>

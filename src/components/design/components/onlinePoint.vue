@@ -10,7 +10,9 @@
 -->
 
 <template>
-<div class="online-point" :class="online ? 'online-point-online' : 'online-point-offonline'"></div>
+  <el-tooltip :content="online ? '网络连接正常': '已断线'">
+    <div class="online-point" :class="online ? 'online-point-online' : 'online-point-offonline'"></div>
+  </el-tooltip>
 </template>
 
 <script setup>

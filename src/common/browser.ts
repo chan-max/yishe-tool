@@ -11,12 +11,38 @@
 
 
 export function setFullscreen(isFullscreen: boolean): void {
-    let doc:any = document.documentElement;
-        if (isFullscreen) {
-            if(doc.requestFullscreen) {
-                doc.requestFullscreen();
-            }
-        } else {
-                document.exitFullscreen();
-        }
+    if (isFullscreen) {
+        setFull()
+    } else {
+        exitFullScreen()
+    }
+}
+
+export function setFull() {
+    let doc: any = document.documentElement;
+    if (doc.requestFullscreen) {
+        doc.requestFullscreen();
+    } else if (doc.mozRequestFullScreen) {
+        doc.mozRequestFullScreen();
+    } else if (doc.msRequestFullscreen) {
+        doc.msRequestFullscreen();
+    } else if (doc.webkitRequestFullscreen) {
+        doc.webkitRequestFullScreen();
+    }
+}
+
+export function exitFullScreen() {
+    let doc = document as any
+    if (!doc.fullscreenElement) {
+        return;
+    }
+    if (doc.exitFullscreen) {
+        doc.exitFullscreen();
+    } else if (doc.msExitFullscreen) {
+        doc.msExitFullscreen();
+    } else if (doc.mozCancelFullScreen) {
+        doc.mozCancelFullScreen();
+    } else if (doc.webkitExitFullscreen) {
+        doc.webkitExitFullscreen();
+    }
 }

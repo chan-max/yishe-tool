@@ -49,13 +49,12 @@ function selectModel(model) {
   overflow: auto;
   display: flex;
   column-gap: 10px;
-  margin: 10px 30px;
+  padding: 10px 30px;
 }
 
 .designiy-base-model-select-item {
   cursor: pointer;
   border-radius: 5px;
-  border: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
   padding: 16px;

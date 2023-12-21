@@ -1,8 +1,8 @@
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:26
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-16 22:30:58
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2023-12-21 20:21:00
  * @FilePath: /1s/src/modules/main/App.vue
  * @Description: 
  * 
@@ -59,7 +59,7 @@ body {
 
 .content{
   width: 100%;
-  flex:1%;
+  flex:1;
   overflow:auto;
 }
 

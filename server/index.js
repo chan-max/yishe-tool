@@ -7,7 +7,7 @@ import _static from "koa-static";
 import { koaBody } from "koa-body";
 import { fileURLToPath } from "url";
 import { initRouter } from "./router.js"
-import ip from "ip";
+// import ip from "ip";
 import http from 'http'
 import { createRedisClient } from "./redis/index.js";
 import { getRelativePath, getUploadPath } from "./fileManage.js"
@@ -94,9 +94,9 @@ app.use(router.allowedMethods());
 const port = 3000
 
 // 获取当前服务运行的主机名
-export function getHost() {
-    return ip.address() + ':' + port
-}
+// export function getHost() {
+//     return ip.address() + ':' + port
+// }
 
 var server = http.createServer(app.callback())
 

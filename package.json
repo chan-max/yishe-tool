@@ -7,12 +7,12 @@
     "": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "docs:dev": "vitepress dev docs",
+    "docs:dev": "vitepress dev docs --port 7788",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "serve": "node server.js",
     "serve:dev": "nodemon  --inspect server.js",
-    "dev": "concurrently \"vite --host 0.0.0.0\"   \"nodemon  --inspect server.js\"",
+    "dev": "concurrently \"vite --host 0.0.0.0\" \"vitepress dev docs --port 7788\"  \"nodemon  --inspect server.js\"",
     "db:init": "cd server/sequelize & npx sequelize-cli db:create & npx sequelize-cli db:migrate"
   },
   "dependencies": {

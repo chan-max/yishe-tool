@@ -6,7 +6,8 @@
         <icon-switch-camera @click="switchCamera"></icon-switch-camera>
       </div>
       <div class="scan-main-right">right</div>
-      <canvas class="scan-canvas" ref="canvasEl" width="320" height="150"></canvas>
+      
+      <canvas class="scan-canvas" ref="canvasEl"></canvas>
       <video class="scan-video" :class="facingModeIsUser && 'video-flip'" ref="videoEl" playsinline></video>
     </div>
     <div class="scan-tabs">
@@ -81,7 +82,7 @@ const switchCamera = () => {
   startCamera()
 };
 
-function startCamera() {
+function startCamera() { 
   navigator.mediaDevices
     .getUserMedia(currentFacingMode.value)
     .then(function (mediaStream) {
@@ -139,14 +140,14 @@ onBeforeUnmount(() => {
 .scan-main {
   width: 100%;
   height: 100%;
-  flex: 1;
 }
 
 .scan-video {
+  display: flex;
   width: 100%;
   height: 100%;
   // 自拍镜像翻转
-  object-fit: cover;
+  object-fit: contain; 
 }
 
 .video-flip{
@@ -191,6 +192,4 @@ onBeforeUnmount(() => {
   }
 }
 
-.van-theme-dark {
-}
 </style>

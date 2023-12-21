@@ -1,3 +1,13 @@
+/*
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2023-12-16 12:40:26
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2023-12-21 20:42:02
+ * @FilePath: /1s/vite.config.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+ */
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
@@ -57,7 +67,7 @@ export default defineConfig({
     },
   },
   server: {
-    port:6969,
+    port:6699,
     proxy: {
       "/api": {
         target: "http://localhost:3000",

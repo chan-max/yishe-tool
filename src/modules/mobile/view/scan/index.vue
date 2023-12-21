@@ -86,6 +86,9 @@ function startCamera() {
   navigator.mediaDevices
     .getUserMedia(currentFacingMode.value)
     .then(function (mediaStream) {
+      videoEl.value.onready = () => {
+      console.log('ready')
+    }
       videoEl.value.srcObject = mediaStream;
       play();
     })
@@ -109,7 +112,11 @@ function startCamera() {
 
 function play() {
   try {
+
     videoEl.value.play();
+
+
+
   } catch (e) {
     // 可能由于非用户触发的
     showConfirmDialog({
@@ -130,6 +137,7 @@ onBeforeUnmount(() => {
 
 </script>
 <style lang="less">
+
 .scan {
   display: flex;
   flex-direction: column;

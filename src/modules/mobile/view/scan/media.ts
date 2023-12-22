@@ -26,3 +26,7 @@ export const facingModeEnvironmentOption = {
     }
 }
 
+export function nextFrame(cb) {
+    cb()
+    requestAnimationFrame(() => nextFrame(cb));
+  }

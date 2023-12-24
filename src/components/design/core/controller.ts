@@ -44,9 +44,9 @@ const mixins = [
 
 export class ModelController {
     // 场景
-    public scene: Scene;
+    public scene: Scene = new Scene();
     // 渲染器
-    public renderer: WebGLRenderer;
+    public renderer: WebGLRenderer = new WebGLRenderer();
     // 摄像机
     public camera: any;
     // 当前画布容器
@@ -60,6 +60,25 @@ export class ModelController {
 
     // 记录原始摄像机位置
     public defaultCameraPosition = new Vector3(0, 0, .7);
+
+    // 天空盒子背景是否随着模型移动
+    private backgroundFixed = true
+
+    private background: any = null
+
+    private backgroundScene = new Scene();
+
+    private backgroundCamera = null
+
+    public backgroundRenderer: WebGLRenderer = new WebGLRenderer();
+
+    public setBackground() {
+        this.background = new Mesh(new BoxGeometry(15, 15, 15), new MeshBasicMaterial({ map: new TextureLoader().load('/defaultAvatar/avatar1.png'), side: DoubleSide }))
+        this.background.position.set(0, 0, 0);
+        this.backgroundCamera.position.set(0, 0, 1);
+        this.backgroundCamera.lookAt(0, 0, 0);
+        this.backgroundScene.add(this.background)
+    }
 
     public get mouse() {
         this._mouse.x = (this.x.value / this.width) * 2 - 1;
@@ -84,14 +103,19 @@ export class ModelController {
     constructor() {
         mixins.forEach((mixin) => mixin(this));
         // 初始化时暴露场景和渲染器
-        this.scene = new Scene();
-        this.renderer = new WebGLRenderer();
     }
 
     // 初始化容器
     private initCanvasContainer(canvasContainer: any) {
         this.canvasContainer = canvasContainer;
         this.camera = new PerspectiveCamera(
+            75,
+            this.width / this.height,
+            0.1,
+            1000
+        );
+
+        this.backgroundCamera = new PerspectiveCamera(
             75,
             this.width / this.height,
             0.1,
@@ -122,21 +146,34 @@ export class ModelController {
     // 记录已渲染的帧数
     public frameCount = 0;
 
-    private doRender() {
-        requestAnimationFrame(this.doRender.bind(this));
+    private execRender() {
+        requestAnimationFrame(this.execRender.bind(this));
+
+        // 记录渲染帧数
         this.frameCount++;
+
+        // 执行动画
         this.execAnimation();
+
+        // 处理背景相关
+        if (this.background && this.backgroundFixed) {
+            // 这样可以让背景不随着模型缩放
+            // this.background.position.copy(this.camera.position)
+        }
+
+        this.backgroundRenderer.render(this.backgroundScene, this.backgroundCamera)
+        
         this.renderer.render(this.scene, this.camera);
     }
 
-    isMounted = false;
+    public isMounted = false;
 
     public render(target: any) {
         if (this.isMounted) {
             return;
         }
         this.initCanvasContainer(target);
-        this.doRender();
+        this.execRender();
         this.isMounted = true;
     }
 
@@ -269,13 +306,13 @@ export class ModelController {
     }
 
     decalControllers: any = shallowReactive([]);
-    
+
     // 进行贴图
     stickToMousePosition(info) {
         const decal = new DecalController(info)
         decal.stickToMousePosition()
     }
-    
+
     // 恢复模型模型位置
     resetPosition() {
         this.camera.position.copy(this.defaultCameraPosition);
@@ -305,13 +342,13 @@ export class ModelController {
 
     // 导出 1stf 格式化信息
     exportTo1stf = null;
-    
-    getScreenshotBase64(){
+
+    getScreenshotBase64() {
         this.renderer.render(this.scene, this.camera); // 截取会出现白图片
         return this.renderer.domElement.toDataURL("image/png");
     }
 
-    downloadScreenshot(){
+    downloadScreenshot() {
         let base64 = this.getScreenshotBase64()
         let file = base64ToFile(base64)
         let a = document.createElement('a')
@@ -322,17 +359,17 @@ export class ModelController {
 
 
     // 上一步
-    prevStep(step = 1){
+    prevStep(step = 1) {
 
     }
 
     // 下一步
-    nextStep(step=1){
+    nextStep(step = 1) {
 
     }
 
     // 操作队列
-    
+
     operationQuene = shallowReactive([])
 }
 

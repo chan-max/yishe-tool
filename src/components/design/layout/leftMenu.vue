@@ -156,6 +156,8 @@ import iconFont from "@/icon/font.svg?vueComponent";
 }
 
 .menu-bar-item {
+  width: 64px;
+  height: 64px;
   display: flex;
   border-radius: 12px;
   display: flex;
@@ -165,8 +167,9 @@ import iconFont from "@/icon/font.svg?vueComponent";
   cursor: pointer;
   flex-shrink: 0;
   color: var(--1s-icon-color);
-  row-gap: 3px;
   padding: 4px 8px;
+
+  
   .menu-bar-item-icon{
     flex-shrink: 0;
     padding:6px;

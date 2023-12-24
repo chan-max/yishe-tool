@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2023-12-21 20:21:00
+ * @LastEditTime: 2023-12-23 08:07:35
  * @FilePath: /1s/src/modules/main/App.vue
  * @Description: 
  * 
@@ -11,14 +11,18 @@
 <template>
   <el-config-provider :locale="elementLocale">
       <header-menu v-if="$route.meta.header"></header-menu>
-      <div class="content"><router-view></router-view></div>
+      <div class="content"><router-view></router-view>
+      </div>
+
   </el-config-provider>
-</template>
+</template> 
 <script setup>
 import { computed, ref } from "vue";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
 import headerMenu from './view/base/header/index.vue'
+import footerMenu from './view/base/footer/index.vue'
+
 import { useI18n } from "vue-i18n";
 
 const { t, locale, global } = useI18n();

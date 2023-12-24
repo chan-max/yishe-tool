@@ -1,24 +1,24 @@
-<template lang="">
+<!--
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2023-12-16 12:40:25
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2023-12-23 15:12:31
+ * @FilePath: /1s/src/components/user/userAvatar.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+-->
+<template>
     <div class="user-avatar">
         <el-popover
-        placement="bottom"
-        trigger="hover"
+        placement="bottom-start"
+        trigger="click"
+        width="auto"
         >
         <template #reference>
             <el-avatar shape="circle" :src="avatar" />
         </template>
-        <div class="user-center-popover">
-            <div><el-button size="small">个人中心</el-button></div>
-            <div>
-            <el-button
-                v-if="loginStatusStore.isAdmin"
-                size="small"
-                @click="$router.push({ name: 'Admin' })"
-                >管理员</el-button
-            >
-            </div>
-            <div><el-button @click="doLogout" size="small">退出登录</el-button></div>
-        </div>
+        <user-avatar-form></user-avatar-form>
         </el-popover>
     </div>
 </template>
@@ -28,7 +28,7 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import { doLogout } from "@/store/stores/loginAction";
 import { computed, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
-import { Pointer,CaretBottom } from "@element-plus/icons-vue";
+import userAvatarForm from './userAvatarForm.vue'
 
 let route = useRoute();
 
@@ -36,6 +36,7 @@ let route = useRoute();
 const loginStatusStore = useLoginStatusStore();
 const avatar = computed(() => {
   const loginStatusStore = useLoginStatusStore();
+  // 默认头像
   return loginStatusStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
 });
 
@@ -50,20 +51,4 @@ const avatar = computed(() => {
             width:32px;
         }
     }
-    
-    .user-avatar-unlogin{
-        font-weight: bold;
-        font-size: 12px;
-        cursor: default;
-    }
-
-    .user-avatar-unlogin-item{
-        cursor: pointer;
-    }
-
-    .user-avatar-unlogin-item:hover{
-        cursor: pointer;
-        opacity: .9;
-    }
-    
 </style>

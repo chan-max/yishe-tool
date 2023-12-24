@@ -17,6 +17,8 @@ const routes = [
     component: () => import('./view/base/home/home.vue'),
     meta:{
       header:true,
+      footer:true,
+      auth:false
     }
   },
   {

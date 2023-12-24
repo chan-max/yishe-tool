@@ -1,3 +1,13 @@
+<!--
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2023-12-19 18:50:06
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2023-12-23 19:12:24
+ * @FilePath: /1s/src/components/design/layout/bottomMenu.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+-->
 <template>
 <div class="designiy-bottom-menu">
 
@@ -22,11 +32,6 @@
         <icon-rotate></icon-rotate>
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" content="截屏下载" placement="top">
-      <div class="bottom-menu-item" @click="downloadScreenshot">
-        <icon-camera></icon-camera>
-      </div>
-    </el-tooltip>
 </div>
 </template>
 <script setup>
@@ -35,7 +40,6 @@ import iconFullscreen from '@/icon/fullscreen.svg?vueComponent'
 import iconRotate from '@/icon/rotate.svg?vueComponent'
 import iconLocate from '@/icon/locate.svg?vueComponent'
 import iconRefresh from '@/icon/refresh.svg?vueComponent'
-import iconCamera from '@/icon/camera.svg?vueComponent'
 
 function locate(){
     currentController.value.resetPosition()
@@ -45,9 +49,7 @@ function animate(){
     currentController.value.animate = !currentController.value.animate
 }
 
-function downloadScreenshot(){
-  currentController.value.downloadScreenshot()
-}
+
 
 </script>
 <style lang="less">

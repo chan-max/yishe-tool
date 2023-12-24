@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-14 19:04:03
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-16 12:23:04
+ * @LastEditTime: 2023-12-24 10:27:52
  * @FilePath: /1s/src/components/design/layout/subHeaderMenu/index.vue
  * @Description: 
  * 
@@ -12,7 +12,12 @@
   <div class="designiy-sub-header">
     <header-menu-dropdown />
 
-    <div style="display:flex;">
+    <div style="font-size: 12px; line-height: 12px; color: #555">
+      {{ isEdit ? "编辑" : "新建" }}
+    </div>
+
+
+    <div style="display: flex">
       <div class="designiy-sub-header-button">
         <icon-prev class="designiy-sub-header-icon"></icon-prev>
         撤销
@@ -29,9 +34,15 @@
     </div>
 
     <div style="flex: 1"></div>
-    <div style="font-size: 12px; line-height: 12px; color: #555">
-      {{ isEdit ? "编辑" : "新建" }}
-    </div>
+
+    <el-tooltip content="截屏"> 
+      <icon-camera
+        @click="takephoto"
+        style="width: 16px; height: 16px;"
+      ></icon-camera>
+    </el-tooltip>
+    
+    <el-divider direction="vertical"/>
 
     <online-point :online="online"></online-point>
     <el-switch
@@ -42,14 +53,29 @@
       inactive-text="白天"
     />
   </div>
+
+
+
+<screenshot ref="screenshotInstance"></screenshot>
+
 </template>
 
 <script setup>
 import { ref } from "vue";
 import headerMenuDropdown from "../headerMenuDropdown/index.vue";
 import onlinePoint from "../../components/onlinePoint.vue";
-import { isDarkMode, online, isEdit, currentEditingModelInfo } from "../../store";
+import { isDarkMode, online, isEdit, currentEditingModelInfo ,currentController} from "../../store";
 import iconPrev from "@/icon/design/prev.svg?vueComponent";
+import iconCamera from "@/icon/camera.svg?vueComponent";
+import screenshot from '../../components/screenshot.vue'
+
+const screenshotInstance = ref()
+
+function takephoto() {
+  const base64 = currentController.value.getScreenshotBase64();
+  screenshotInstance.value.execScreenshot(base64)
+}
+
 </script>
 
 <style>
@@ -62,7 +88,7 @@ import iconPrev from "@/icon/design/prev.svg?vueComponent";
   border-bottom: var(--1s-sub-header-border-bottom);
   align-items: center;
   padding: 0 10px;
-  column-gap: 12px;
+  column-gap: 14px;
 }
 
 .designiy-sub-header-button {

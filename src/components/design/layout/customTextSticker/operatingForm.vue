@@ -3,8 +3,9 @@
     <operate-form-item>
       <template #icon> <icon-font-size></icon-font-size> </template>
       <template #name> 显示大小 </template>
-      <template #content>
+      <template #content> 
         <el-input
+          style="width:60px;"
           type="number"
           v-model="operatingTextStickerOptions.fontSize"
           size="small"
@@ -16,6 +17,7 @@
       <template #name> 厚度 </template>
       <template #content>
         <el-select
+          style="width:60px;"
           v-model="operatingTextStickerOptions.fontWeight"
           size="small"
         >

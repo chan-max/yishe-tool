@@ -305,9 +305,15 @@ scene.add(pointLight);
 watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacity.value));
 
 // 渲染动画
+
+
+
 onMounted(() => {
   modelController.render(mountContainer.value);
+  currentController.value.setBackground()
 });
+
+
 </script>
 
 <style lang="less">

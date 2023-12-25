@@ -1,17 +1,6 @@
 <template>
-  <div class="designiy-text-sticker-resource">
-    <div class="designiy-text-sticker-resource-header">
-      <el-input v-model="input" placeholder="寻找文字贴纸">
-        <template #prefix>
-          <el-icon><Search /></el-icon>
-        </template>
-        <template #suffix>
-          <el-icon><Operation /></el-icon>
-        </template>
-      </el-input>
-    </div>
-    <div class="designiy-text-sticker-resource-content">
-      <div class="designiy-text-sticker-resource-item" v-for="item in data">
+  <div class="designiy-text-sticker-items" v-infinite-scroll="scroll" >
+  <div class="designiy-text-sticker-item" v-for="item in data">
         <el-image
           @load="load($event, item)"
           :src="item.preview_img"
@@ -26,25 +15,21 @@
         </el-image>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
-import { Search, Operation, FolderOpened } from "@element-plus/icons-vue";
+
 import { ref,onBeforeMount } from "vue";
 import {getTextSticker} from '@/api'
 import {currentController,showDecalControl} from '../../store'
 import { initDraggableElement } from "../../utils/draggable";
-const input = ref("");
+import { getList } from "@/api";
 
-const data = ref()
+const data:any = ref([])
 
-const value = ref()
-const options = ref([])
-
-onBeforeMount(async () => {
-  data.value = await getTextSticker()
-})
+// onBeforeMount(async () => {
+//   data.value = await getTextSticker()
+// })
 
 function load(e,info){
   var el = e.target
@@ -58,38 +43,25 @@ function load(e,info){
   })
 }
 
+async function scroll(){
+  const res:any = await getList({
+    type:'textSticker',
+  })
+  data.value = data.value.concat(res.data)
+}
+
 </script>
 
 <style>
-.designiy-text-sticker-resource {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  .el-input__wrapper {
-    box-shadow: none;
-    background-color: #f9f9f9;
-    font-size: 12px;
-  }
-}
 
-.designiy-text-sticker-resource-header {
-  padding: 10px;
-  row-gap: 10px;
-  display: flex;
-  flex-direction: column;
-}
-
-.designiy-text-sticker-resource-content {
+.designiy-text-sticker-items{
   width: 100%;
-  flex: 1;
-  columns: 2;
-  column-gap: 6px;
-  overflow: auto;
-  padding:10px;
+  height: 100%;
 }
 
-.designiy-text-sticker-resource-item{
+.designiy-text-sticker-item{
   height:120px;
+  flex-shrink: 0;
   margin-bottom: 6px;
   background-color:#fafafa;
   border-radius:10px;

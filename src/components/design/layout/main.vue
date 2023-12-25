@@ -303,7 +303,7 @@ watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacit
 
 onMounted(() => {
   modelController.render(mountContainer.value);
-  currentController.value.setSkyballBackground()
+  // currentController.value.setSkyballBackground()
 });            
 </script>
 

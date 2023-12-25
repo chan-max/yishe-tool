@@ -1,5 +1,5 @@
 
-import{ apiInstance,source} from "./apiInstance";
+import { apiInstance, source } from "./apiInstance";
 import { Url } from "./url";
 
 // 注册 ，账号密码手机号
@@ -73,14 +73,14 @@ export const uploadModel = (data) => apiInstance.post(Url.UPLOAD_MODEL, data);
 export const getModelList = (data) =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.post(Url.GET_MODEL_LIST, data);
-    resolve( res.data.data);
+    resolve(res.data.data);
   });
 
 export const getModelById = (id) =>
   new Promise(async (resolve, reject) => {
-  const res = await apiInstance.post(Url.GET_MODEL_BY_ID, {id});
-  resolve( res.data.data);
-});
+    const res = await apiInstance.post(Url.GET_MODEL_BY_ID, { id });
+    resolve(res.data.data);
+  });
 
 
 // 发送邮件
@@ -116,43 +116,56 @@ export const uploadTextSticker = (params) => new Promise(async (resolve) => {
 export const getTextSticker = (params?: any) => new Promise(async (resolve, reject) => {
   const data = await apiInstance.post(Url.GET_TEXT_STICKER, params)
   resolve(data.data.data)
-}) 
+})
 
 
 // 获取账号的状态，，是否注册，是否已注册，是否是管理员，是否被禁用等
 export const getAccountStatus = (params) => new Promise(async (resolve, reject) => {
   const data = await apiInstance.post(Url.GET_ACCOUNT_STATUS, params)
   resolve(data.data)
-}) 
+})
 
 // 根据图片id来查询图片
-export const getImageById = (id:string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_IMAGE_BY_ID, {id})
-  resolve(data.data.data)
-}) 
-
-
-// 根据图片id来查询图片
-export const getBaseModelById = (id:string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_BASE_MODEL_BY_ID , {id})
+export const getImageById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_IMAGE_BY_ID, { id })
   resolve(data.data.data)
 })
 
 
-export const getTextStickerById = (id:string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_TEXT_STICKER_BY_ID , {id})
+// 根据图片id来查询图片
+export const getBaseModelById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_BASE_MODEL_BY_ID, { id })
   resolve(data.data.data)
 })
 
 
-export const getFontById = (id:string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_FONT_BY_ID , {id})
+export const getTextStickerById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_TEXT_STICKER_BY_ID, { id })
+  resolve(data.data.data)
+})
+
+
+export const getFontById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_FONT_BY_ID, { id })
   resolve(data.data.data)
 })
 
 
 
 export const getBasicConfig = () => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_BASIC_CONFIG)
-  resolve(data.data.data)
+  const res = await apiInstance.post(Url.GET_BASIC_CONFIG)
+  resolve(res.data.data)
+})
+
+
+/*
+  该接口作为获取列表资源的通用接口
+*/
+
+export interface GetListParams {
+  type: 'image' | 'textSticker' | 'model'
+}
+export const getList = (params:GetListParams) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_LIST,params)
+  resolve(res.data)
 })

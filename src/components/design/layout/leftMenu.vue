@@ -32,6 +32,19 @@
         </div>
       </el-tooltip>
 
+      <el-tooltip :hide-after="0" content="服装装饰品" placement="right">
+        <div
+          class="menu-bar-item"
+          @click="showTextSticker = !showTextSticker"
+        >
+          <div class="menu-bar-item-icon">
+            <icon-decorator></icon-decorator>
+          </div>
+          <span>饰品</span>
+        </div>
+      </el-tooltip>
+
+
       <el-tooltip :hide-after="0" content="几何图形" placement="right">
         <div class="menu-bar-item">
           <div class="menu-bar-item-icon"><icon-box></icon-box></div>
@@ -132,6 +145,8 @@ import iconHelp from "@/icon/help.svg?vueComponent";
 
 import iconSetting from "@/icon/setting.svg?vueComponent";
 import iconFont from "@/icon/font.svg?vueComponent";
+import iconDecorator from '@/icon/design/decorator.svg?vueComponent';
+
 </script>
 <style lang="less">
 .menu-bar-container {

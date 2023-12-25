@@ -19,6 +19,8 @@ import {
     Euler,
     MeshPhongMaterial,
     TextureLoader,
+    CubeTextureLoader,
+    BackSide,
 } from "three";
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -59,25 +61,61 @@ export class ModelController {
     private _mouse = new Vector2();
 
     // 记录原始摄像机位置
-    public defaultCameraPosition = new Vector3(0, 0, .7);
+    public defaultCameraPosition = new Vector3(0, 0, 1);
 
     // 天空盒子背景是否随着模型移动
     private backgroundFixed = true
 
     private background: any = null
 
-    private backgroundScene = new Scene();
-
-    private backgroundCamera = null
-
-    public backgroundRenderer: WebGLRenderer = new WebGLRenderer();
-
     public setBackground() {
-        this.background = new Mesh(new BoxGeometry(15, 15, 15), new MeshBasicMaterial({ map: new TextureLoader().load('/defaultAvatar/avatar1.png'), side: DoubleSide }))
-        this.background.position.set(0, 0, 0);
-        this.backgroundCamera.position.set(0, 0, 1);
-        this.backgroundCamera.lookAt(0, 0, 0);
-        this.backgroundScene.add(this.background)
+        // 这样可以保持背景固定
+        // var geometry = new BoxGeometry( 1000, 1000, 1000 );
+        // var material = new MeshBasicMaterial({
+        //     envMap: new CubeTextureLoader().setPath('/skybox/').load([
+        //     			'pos-x.jpg',
+        //     			'neg-x.jpg',
+        //     			'pos-y.jpg',
+        //     			'neg-y.jpg',
+        //     			'pos-z.jpg',
+        //     			'neg-z.jpg'
+        //     ])
+        // });
+        // material.side = BackSide// 内部显示贴图
+        // var skybox = new Mesh( geometry, material );
+        // this.scene.add( skybox );
+
+          this.scene.background = new CubeTextureLoader()
+            .setPath( '/skybox/' )
+            .load( [
+            			'pos-x.jpg',
+            			'neg-x.jpg',
+            			'pos-y.jpg',
+            			'neg-y.jpg',
+            			'pos-z.jpg',
+            			'neg-z.jpg'
+            		] );
+    }
+
+    public setSkyballBackground() {
+        var loader = new TextureLoader();
+        loader.load('/skyball2.jpeg', (texture) => {
+        
+            // 创建天空球的网格几何体
+            var sphereGeometry = new SphereGeometry(100);
+            
+            // 创建应用全景纹理的材料材质
+            var sphereMaterial = new MeshBasicMaterial({
+                map: texture,
+                side: BackSide, // 天空球内部才是可见的，所以材料应该渲染在背面
+            });
+        
+            // 使用几何体和材料创建天空球网格
+            var skybox = new Mesh(sphereGeometry, sphereMaterial);
+        
+            // 将天空球添加到场景中
+            this.scene.add(skybox);
+        });
     }
 
     public get mouse() {
@@ -114,13 +152,7 @@ export class ModelController {
             0.1,
             1000
         );
-
-        this.backgroundCamera = new PerspectiveCamera(
-            75,
-            this.width / this.height,
-            0.1,
-            1000
-        );
+        this.scene.add( this.camera );
 
         this.renderer.setSize(this.width, this.height);
         this.camera.lookAt(0, 0, 0);
@@ -130,6 +162,11 @@ export class ModelController {
         this.controller.minDistance = 0.5
         this.controller.maxDistance = 5
         this.controller.enablePan = false
+
+        this.controller.enableDamping = true
+        this.controller.dampingFactor = 0.05;
+ 
+
         this.canvasContainer.appendChild(this.renderer.domElement);
         this.resizeObserver = new ResizeObserver(
             debounce(() => {
@@ -161,8 +198,8 @@ export class ModelController {
             // this.background.position.copy(this.camera.position)
         }
 
-        this.backgroundRenderer.render(this.backgroundScene, this.backgroundCamera)
-        
+        this.controller.update();
+
         this.renderer.render(this.scene, this.camera);
     }
 

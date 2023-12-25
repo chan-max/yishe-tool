@@ -38,7 +38,7 @@
   </diydialog>
 
   <diycontainer
-  :show="showLeftMenu" 
+    :show="showLeftMenu"
     style="
       left: 0;
       bottom: 0;
@@ -49,7 +49,10 @@
     <left-menu></left-menu>
   </diycontainer>
 
-  <diycontainer :show="showBottomMenu" style="height: var(--1s-bottom-menu-height); bottom: 30px">
+  <diycontainer
+    :show="showBottomMenu"
+    style="height: var(--1s-bottom-menu-height); bottom: 30px"
+  >
     <bottom-menu></bottom-menu>
   </diycontainer>
 
@@ -79,11 +82,7 @@
     <font-upload></font-upload>
   </diydialog>
 
-  <diydialog
-    title="设置场景"
-    :show="showSceneControl"
-    @close="showSceneControl = false"
-  >
+  <diydialog title="设置场景" :show="showSceneControl" @close="showSceneControl = false">
     <scene-control></scene-control>
   </diydialog>
   <diycontainer
@@ -120,10 +119,8 @@
       duration: 100,
     }"
   >
-  
     <save-model></save-model>
   </diydialog>
-
 
   <diycontainer
     :show="showCustomTextSticker"
@@ -218,7 +215,7 @@ import {
   showSubHeader,
   showLeftMenu,
   showBottomMenu,
-  showSaveModel
+  showSaveModel,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diycontainer from "../components/container.vue";
@@ -237,8 +234,8 @@ import fontList from "./fontList/index.vue";
 import subHeaderMenu from "./subHeaderMenu/index.vue";
 import modelInfo from "./modelInfo/index.vue";
 import decalList from "./decalList/index.vue";
-import saveModel from './saveModel/index.vue';
-
+import saveModel from "./saveModel/index.vue";
+import {CubeTextureLoader} from 'three'
 import {
   Mesh,
   MeshBasicMaterial,
@@ -258,10 +255,9 @@ import {
   DoubleSide,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
-import {initWebsocket} from '../utils/websocket.ts';
+import { initWebsocket } from "../utils/websocket.ts";
 
 initWebsocket();
-
 
 // 挂载容器
 const mountContainer = ref();
@@ -299,21 +295,16 @@ pointLight.position.set(0, 0, 2); // 设置光源位置
 scene.add(pointLight);
 
 // scene.add(new AxesHelper(0.5))
-// scene.add(new Mesh(new BoxGeometry(0.5, 0.5, 0.5),new MeshBasicMaterial({ color: 0x6900ff,side: DoubleSide })));
 
 // 改变画布背景颜色
 watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacity.value));
 
 // 渲染动画
 
-
-
 onMounted(() => {
   modelController.render(mountContainer.value);
-  currentController.value.setBackground()
-});
-
-
+  currentController.value.setSkyballBackground()
+});            
 </script>
 
 <style lang="less">
@@ -327,5 +318,4 @@ onMounted(() => {
   left: 0;
   z-index: 1;
 }
-
 </style>

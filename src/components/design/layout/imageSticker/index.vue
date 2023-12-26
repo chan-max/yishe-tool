@@ -10,8 +10,13 @@
         </template>
       </el-input>
     </div>
-    <div class="designiy-image-sticker-content">
-      <div class="item" title="拖动来进行贴图" v-for="i in images" draggable="false">
+    <div
+      class="designiy-image-sticker-content"
+      v-infinite-scroll="scroll"
+      :infinite-scroll-distance="150"
+      :infinite-scroll-disabled="disabled"
+    >
+      <div class="item" title="拖动来进行贴图" v-for="i in list" draggable="false">
         <el-image
           @load="load($event, i)"
           :src="i.preview_img"
@@ -55,39 +60,37 @@ import {
 } from "@element-plus/icons-vue";
 import { getImage } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
-import { showImageUplaod ,showDecalControl} from "../../store";
+import { showImageUplaod, showDecalControl } from "../../store";
 
-const value = ref("");
-
-const options = [
-  {
-    value: "mine",
-    label: "我的上传",
-  },
-  {
-    value: "saved",
-    label: "我的收藏",
-  },
-];
-
-const images = ref([]);
+const list = ref([]);
 
 // image load success
 function load(e, info) {
   initDraggableElement(e.target, () => {
     currentController.value.stickToMousePosition({
-      type:'image',
-      local:false,
+      type: "image",
+      local: false,
       src: info.preview_img,
-      ...info
+      ...info,
     });
-    showDecalControl.value = true
+    showDecalControl.value = true;
   });
 }
 
-onMounted(async () => {
-  images.value = await getImage();
-});
+const page = ref(1);
+const disabled = ref(false);
+
+async function scroll() {
+  const res = await getImage({
+    page: page.value++,
+  });
+
+  if (!res.list.length) {
+    return (disable.value = true);
+  }
+
+  list.value = list.value.concat(res.list);
+}
 </script>
 <style lang="less">
 .designiy-image-sticker {

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-17 17:33:39
+ * @LastEditTime: 2023-12-26 22:08:08
  * @FilePath: /1s/server/api/baseModel.js
  * @Description: 
  * 
@@ -14,13 +14,12 @@ import { REDIS_KEY_CACHE_BASE_MODELS } from "../redis/keys.js";
 export const injectBaseModelRoute = (router, sequelize, app, redis) => {
   // 该接口只有管理员更新基础模型信息时需要更新, 直接读缓存即可
   router.post("/getBaseModel", async (ctx) => {
-    debugger
     // const cache = await redis.get(REDIS_KEY_CACHE_BASE_MODELS)
 
     // if (cache) {
     //   return ctx.body = {
     //     data: JSON.parse(cache),
-    //   };
+    //   }; 
     // }
 
     const table = sequelize.models.t_base_model;
@@ -37,9 +36,9 @@ export const injectBaseModelRoute = (router, sequelize, app, redis) => {
     ctx.body = {
       data: data,
     };
-  });
-};
-
+  })
+}
+ 
 
 export const getBaseModelById = (router, sequelize) => router.post('/getBaseModelById', async (ctx) => {
   const table = sequelize.models.t_base_model;
@@ -53,6 +52,8 @@ export const getBaseModelById = (router, sequelize) => router.post('/getBaseMode
 
 import { getRelativePath } from '../fileManage.js'
 
+
+
 export const uploadBaseModelHook = (router, sequelize) => router.post("/uploadBaseModel", async (ctx) => {
     const table = sequelize.models.t_base_model;
     const { name, description } = ctx.request.body;
@@ -62,7 +63,7 @@ export const uploadBaseModelHook = (router, sequelize) => router.post("/uploadBa
     await table.create({
       name,
       description,
-      description_imgs: JSON.stringify(description_imgs.map((item) => getRelativePath(item.filepath))),
+      description_imgs: description_imgs && JSON.stringify(description_imgs.map((item) => getRelativePath(item.filepath))),
       filePath:getRelativePath(file.filepath),
       imgPath:getRelativePath(img.filepath),
     });

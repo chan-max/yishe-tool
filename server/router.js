@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-25 21:44:06
+ * @LastEditTime: 2023-12-26 21:20:17
  * @FilePath: /1s/server/router.js
  * @Description: 
  * 
@@ -20,8 +20,8 @@ import {
   loginHook,
   getAccountStatusHook
 } from "./api/user.js";
-import { imageUploadHook } from "./api/base/imageUpload.js";
-import { getImageHook,getImageById } from "./api/common/getImage.js";
+
+import { getImageHook,getImageById,imageUploadHook } from "./api/image.js";
 import { uploadModelHook } from "./api/base/uploadModel.js";
 import { getModelListHook ,getModelById} from "./api/model.js";
 import { sendEmailHook } from "./api/email.js";

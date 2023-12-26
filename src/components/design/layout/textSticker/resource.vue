@@ -58,7 +58,6 @@ async function scroll() {
 }
 
 </script>
-
 <style>
 .designiy-text-sticker-items {
   width: 100%;

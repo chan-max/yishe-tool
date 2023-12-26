@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-14 19:04:03
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-24 10:27:52
+ * @LastEditTime: 2023-12-26 21:01:55
  * @FilePath: /1s/src/components/design/layout/subHeaderMenu/index.vue
  * @Description: 
  * 
@@ -97,7 +97,7 @@ function takephoto() {
   column-gap: 4px;
   font-size: 12px;
   cursor: pointer;
-  padding: 8px 6px;
+  padding: 4px;
   border-radius: 6px;
   color: #333;
   transition: all 0.3s;

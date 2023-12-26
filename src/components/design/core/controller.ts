@@ -164,7 +164,7 @@ export class ModelController {
         this.controller.enablePan = false
 
         this.controller.enableDamping = true
-        this.controller.dampingFactor = 0.05;
+        this.controller.dampingFactor = 0.1;
  
 
         this.canvasContainer.appendChild(this.renderer.domElement);

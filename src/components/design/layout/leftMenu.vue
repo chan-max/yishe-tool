@@ -35,10 +35,10 @@
       <el-tooltip :hide-after="0" content="服装装饰品" placement="right">
         <div
           class="menu-bar-item"
-          @click="showTextSticker = !showTextSticker"
+          @click="showDecoration = !showDecoration"
         >
           <div class="menu-bar-item-icon">
-            <icon-decorator></icon-decorator>
+            <icon-decoration></icon-decoration>
           </div>
           <span>饰品</span>
         </div>
@@ -127,7 +127,8 @@ import {
   showTextSticker,
   showWorkspace,
   showCustomTextSticker,
-  showFontList
+  showFontList,
+showDecoration
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?vueComponent";
@@ -145,7 +146,7 @@ import iconHelp from "@/icon/help.svg?vueComponent";
 
 import iconSetting from "@/icon/setting.svg?vueComponent";
 import iconFont from "@/icon/font.svg?vueComponent";
-import iconDecorator from '@/icon/design/decorator.svg?vueComponent';
+import iconDecoration from '@/icon/design/decoration.svg?vueComponent';
 
 </script>
 <style lang="less">

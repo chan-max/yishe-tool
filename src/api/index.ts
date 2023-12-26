@@ -114,8 +114,8 @@ export const uploadTextSticker = (params) => new Promise(async (resolve) => {
 
 // 获取文字贴纸
 export const getTextSticker = (params?: any) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_TEXT_STICKER, params)
-  resolve(data.data.data)
+  const res = await apiInstance.post(Url.GET_TEXT_STICKER, params)
+  resolve(res.data.data)
 })
 
 
@@ -163,7 +163,8 @@ export const getBasicConfig = () => new Promise(async (resolve, reject) => {
 */
 
 export interface GetListParams {
-  type: 'image' | 'textSticker' | 'model'
+  type: 'image' | 'textSticker' | 'model',
+  page:number
 }
 export const getList = (params:GetListParams) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post(Url.GET_LIST,params)

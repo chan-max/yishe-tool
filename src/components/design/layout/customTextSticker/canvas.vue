@@ -10,9 +10,6 @@
         @paste="paste"
       ></div>
     </div>
-    <div class="designiy-custom-text-sticker-canvas-menu">
-      <div style="flex:1"></div>
-    </div>
   </div>
 </template>
 <script setup>
@@ -91,11 +88,6 @@ function paste(e) {
     event.preventDefault();
 }
 
-async function save() {
-  await uploadTextSticker({
-    img: base64ToFile(base64.value),
-  });
-}
 </script>
 <style lang="less">
 .designiy-custom-text-sticker-canvas {
@@ -128,18 +120,6 @@ async function save() {
   }
 }
 
-.designiy-custom-text-sticker-canvas-menu {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 5px 10px;
-  display: flex;
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-}
 
 #canvas-container {
   position: relative;

@@ -19,8 +19,8 @@ const table_map = {
 
 export const getList = (router, sequelize, app) => router.post("/getList", async (ctx) => {
     const page = parseInt(ctx.request.body.page) || 1;
-    const pageSize = parseInt(ctx.request.body.pageSize) || 20; // 默认 20 条
-  
+    const pageSize = parseInt(ctx.request.body.pageSize) || 5; // 默认 20 条
+
     let condition = {};
         
     if (ctx.request.body.keyword) {
@@ -42,7 +42,6 @@ export const getList = (router, sequelize, app) => router.post("/getList", async
     }
     
 
-
     if (ctx.request.body.startTime && ctx.request.body.endTime) {
       condition = {
         ...condition, 
@@ -52,24 +51,23 @@ export const getList = (router, sequelize, app) => router.post("/getList", async
       };
     }
     
-
-    
+        
     const table = sequelize.models[table_map[ctx.request.body.type]]
     
-    const {count,rows} =  await table.findAndCountAll({
+    const {count,rows:data} =  await table.findAndCountAll({
       where: condition,
       limit: pageSize,
       offset: (page - 1) * pageSize,
       order: [['createdAt', 'DESC']]
     })
- 
+    
     let pages = Math.ceil(count / pageSize);
-
+    
     ctx.body = {
-        count: count,
+        count,
         pages,
         page,
         pageSize,
-        data: rows
+        data
       }
 })

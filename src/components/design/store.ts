@@ -201,3 +201,7 @@ watch(online,(value) => {
 export const isEdit = ref(false)
 // 当前正在编辑的模型信息, 只有为编辑模型时才会赋值
 export const currentEditingModelInfo = ref()
+
+
+// 模型装饰品
+export const showDecoration  = ref(false)

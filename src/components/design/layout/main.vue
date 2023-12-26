@@ -49,6 +49,9 @@
     <left-menu></left-menu>
   </diycontainer>
 
+
+
+
   <diycontainer
     :show="showBottomMenu"
     style="height: var(--1s-bottom-menu-height); bottom: 30px"
@@ -236,6 +239,9 @@ import modelInfo from "./modelInfo/index.vue";
 import decalList from "./decalList/index.vue";
 import saveModel from "./saveModel/index.vue";
 import {CubeTextureLoader} from 'three'
+import decoration from './decoration/index.vue';
+
+
 import {
   Mesh,
   MeshBasicMaterial,

@@ -59,7 +59,7 @@
       </diycontainer>
       </div>        
 
-      <div id="layout-right-body" style="flex:1;display:flex;">
+      <div id="layout-right-body" style="flex:1;display:flex;height:calc(100% - var(--1s-sub-header-height));">
 
         <div id="layout-placeholder" style="height:100%;flex:1;"></div>
 

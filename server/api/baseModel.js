@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-26 22:08:08
+ * @LastEditTime: 2023-12-27 20:35:31
  * @FilePath: /1s/server/api/baseModel.js
  * @Description: 
  * 
@@ -11,6 +11,7 @@
 import { REDIS_KEY_CACHE_BASE_MODELS } from "../redis/keys.js";
 
 
+// 基础模型数量不会很多，暂时不需要分批查询 
 export const injectBaseModelRoute = (router, sequelize, app, redis) => {
   // 该接口只有管理员更新基础模型信息时需要更新, 直接读缓存即可
   router.post("/getBaseModel", async (ctx) => {
@@ -21,15 +22,14 @@ export const injectBaseModelRoute = (router, sequelize, app, redis) => {
     //     data: JSON.parse(cache),
     //   }; 
     // }
-
+    
     const table = sequelize.models.t_base_model;
     const data = await table.findAll();
     data.forEach((item) => {
       item.dataValues.preview_img = ctx.relativePathToPreviewPath(item.imgPath);
-      item.dataValues.preview_file = ctx.relativePathToPreviewPath(
-        item.filePath
-      );
-    });
+      item.dataValues.preview_file = ctx.relativePathToPreviewPath( item.filePath );
+      item.dataValues.preview_description_imgs = JSON.parse(item.description_imgs || null)?.map((item) => ctx.relativePathToPreviewPath(item))
+    }); 
 
     await redis.set(REDIS_KEY_CACHE_BASE_MODELS,JSON.stringify(data))
     

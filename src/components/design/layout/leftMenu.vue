@@ -151,9 +151,8 @@ import iconDecoration from '@/icon/design/decoration.svg?vueComponent';
 </script>
 <style lang="less">
 .menu-bar-container {
-  width: 100%;
+  width: 80px;
   height: 100%;
-  padding: 0 2px;
   background: var(--1s-left-menu-container-background-color);
 }
 

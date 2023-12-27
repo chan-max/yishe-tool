@@ -1,26 +1,79 @@
 <template>
-  <div id="designiy-canvas-container" ref="mountContainer"></div>
+  <div id="designiy-canvas-container" ref="mountContainer" style="z-index: 0"></div>
   <loading v-if="isLoading"></loading>
-
-  <diycontainer
-    :show="showHeader"
-    style="width: 100%; height: var(--1s-header-height); top: 0"
-  >
-    <header-menu />
-  </diycontainer>
-
-  <diycontainer
-    :show="showSubHeader"
+  <div
+    id="layout-container"
     style="
-      width: calc(100% - var(--1s-left-menu-width));
-      height: var(--1s-sub-header-height);
-      top: var(--1s-header-height);
-      z-index: 2;
-      left: var(--1s-left-menu-width);
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      border: 10px solid red;
     "
   >
-    <sub-header-menu />
-  </diycontainer>
+    <div id="layout-header">
+      <diycontainer
+        :show="showHeader"
+        style="width: 100%; height: var(--1s-header-height)"
+      >
+        <header-menu />
+      </diycontainer>
+    </div>
+
+    <div
+      id="layout-body"
+      style="
+        display: flex;
+        flex: 1;
+        flex-shrink: 0;
+        height: calc(100% - var(--1s-header-height));
+      "
+    >
+      <diycontainer :show="showLeftMenu" style="height: 100%">
+        <left-menu></left-menu>
+      </diycontainer>
+
+      <div id="layout-left" style="height: 100%">
+        <diycontainer :show="showTextSticker" style="height: 100%">
+          <text-sticker></text-sticker>
+        </diycontainer>
+
+        <diycontainer :show="showImageSticker" style="height: 100%">
+          <image-sticker></image-sticker>
+        </diycontainer>
+      </div>
+
+      <diycontainer :show="showCustomTextSticker" style="height: 100%">
+        <custom-text-sticker></custom-text-sticker>
+      </diycontainer>
+
+      <diycontainer
+        :show="showSubHeader"
+        style="width: auto; height: var(--1s-sub-header-height); flex: 1"
+      >
+        <sub-header-menu />
+      </diycontainer>
+
+      <div id="layout-right">
+        <diycontainer :show="showWorkspace" style="height: 100%">
+          <workspace></workspace>
+        </diycontainer>
+
+        <diycontainer :show="showDecalList" style="height: 100%">
+          <decal-list></decal-list>
+        </diycontainer>
+
+        <diycontainer :show="showModelInfo" style="height: 100%">
+          <model-info></model-info>
+        </diycontainer>
+
+        <diycontainer :show="showDecalControl" style="height: 100%">
+          <decal-control></decal-control>
+        </diycontainer>
+      </div>
+    </div>
+  </div>
 
   <diydialog
     title="图片上传"
@@ -38,23 +91,13 @@
   </diydialog>
 
   <diycontainer
-    :show="showLeftMenu"
-    style="
-      left: 0;
-      bottom: 0;
-      width: var(--1s-left-menu-width);
-      height: calc(100% - var(--1s-header-height));
-    "
-  >
-    <left-menu></left-menu>
-  </diycontainer>
-
-
-
-
-  <diycontainer
     :show="showBottomMenu"
-    style="height: var(--1s-bottom-menu-height); bottom: 30px"
+    style="
+      height: var(--1s-bottom-menu-height);
+      position: absolute;
+      z-index: 9;
+      bottom: 30px;
+    "
   >
     <bottom-menu></bottom-menu>
   </diycontainer>
@@ -88,16 +131,6 @@
   <diydialog title="设置场景" :show="showSceneControl" @close="showSceneControl = false">
     <scene-control></scene-control>
   </diydialog>
-  <diycontainer
-    :show="showImageSticker"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      left: calc(var(--1s-left-menu-width));
-    "
-  >
-    <image-sticker></image-sticker>
-  </diycontainer>
 
   <diydialog
     :show="showFontList"
@@ -124,72 +157,6 @@
   >
     <save-model></save-model>
   </diydialog>
-
-  <diycontainer
-    :show="showCustomTextSticker"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      left: calc(var(--1s-left-menu-width));
-    "
-  >
-    <custom-text-sticker></custom-text-sticker>
-  </diycontainer>
-
-  <diycontainer
-    :show="showTextSticker"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      left: calc(var(--1s-left-menu-width));
-    "
-  >
-    <text-sticker></text-sticker>
-  </diycontainer>
-
-  <diycontainer
-    :show="showWorkspace"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      right: 0;
-    "
-  >
-    <workspace></workspace>
-  </diycontainer>
-
-  <diycontainer
-    :show="showDecalList"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      right: 0;
-    "
-  >
-    <decal-list></decal-list>
-  </diycontainer>
-
-  <diycontainer
-    :show="showModelInfo"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      right: 0;
-    "
-  >
-    <model-info></model-info>
-  </diycontainer>
-
-  <diycontainer
-    :show="showDecalControl"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      right: 0;
-    "
-  >
-    <decal-control></decal-control>
-  </diycontainer>
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect, watch } from "vue";
@@ -238,9 +205,8 @@ import subHeaderMenu from "./subHeaderMenu/index.vue";
 import modelInfo from "./modelInfo/index.vue";
 import decalList from "./decalList/index.vue";
 import saveModel from "./saveModel/index.vue";
-import {CubeTextureLoader} from 'three'
-import decoration from './decoration/index.vue';
-
+import { CubeTextureLoader } from "three";
+import decoration from "./decoration/index.vue";
 
 import {
   Mesh,
@@ -310,7 +276,7 @@ watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacit
 onMounted(() => {
   modelController.render(mountContainer.value);
   // currentController.value.setSkyballBackground()
-});            
+});
 </script>
 
 <style lang="less">
@@ -323,5 +289,20 @@ onMounted(() => {
   top: 0;
   left: 0;
   z-index: 1;
+}
+
+
+/* 顺序不能乱 */
+#layout-container{
+  pointer-events: none;
+}
+#layout-container{
+  *{
+    pointer-events: auto;
+  }
+}
+
+#layout-body {
+  pointer-events: none;
 }
 </style>

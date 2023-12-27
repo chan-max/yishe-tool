@@ -48,8 +48,6 @@ const props = defineProps([]);
   align-items: center;
   column-gap: 8px;
   padding-right: 10px;
-  border-bottom: 2px solid #f2f2f2;
-
   .el-button + .el-button{
     margin:0;
   }

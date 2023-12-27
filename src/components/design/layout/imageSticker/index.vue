@@ -14,7 +14,7 @@
       class="designiy-image-sticker-content"
       v-infinite-scroll="scroll"
       :infinite-scroll-distance="150"
-      :infinite-scroll-disabled="disabled"
+      :infinite-scroll-disabled="disabled || loading"
     >
       <div class="item" title="拖动来进行贴图" v-for="i in list" draggable="false">
         <el-image
@@ -79,17 +79,27 @@ function load(e, info) {
 
 const page = ref(1);
 const disabled = ref(false);
+const pages = ref();
+const loading = ref(false);
 
 async function scroll() {
+  if (page.value > pages.value) {
+    return;
+  }
+
+  loading.value = true;
   const res = await getImage({
     page: page.value++,
   });
 
   if (!res.list.length) {
-    return (disable.value = true);
+    disabled.value = true;
+    return false;
   }
 
+  pages.value = res.pages;
   list.value = list.value.concat(res.list);
+  loading.value = false;
 }
 </script>
 <style lang="less">

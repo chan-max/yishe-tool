@@ -19,7 +19,6 @@ const props = defineProps({
 .designiy-container {
   z-index: 1;
   background: var(--1s-container-background);
-  position: absolute;
 }
 
 .designiy-container-header {

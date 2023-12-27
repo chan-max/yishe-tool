@@ -85,7 +85,6 @@ function takephoto() {
   background: #fff;
   box-sizing: border-box;
   display: flex;
-  border-bottom: var(--1s-sub-header-border-bottom);
   align-items: center;
   padding: 0 10px;
   column-gap: 14px;

@@ -45,7 +45,6 @@ declare module 'vue' {
     Screenshot: typeof import('./src/components/design/components/screenshot.vue')['default']
     Setting: typeof import('./src/components/design/layout/setting/index.vue')['default']
     SubHeaderMenu: typeof import('./src/components/design/layout/subHeaderMenu/index.vue')['default']
-    Tab: typeof import('./src/components/design/components/tab.vue')['default']
     TextSticker: typeof import('./src/components/design/layout/textSticker/index.vue')['default']
     UserAvatar: typeof import('./src/components/user/userAvatar.vue')['default']
     UserAvatarForm: typeof import('./src/components/user/userAvatarForm.vue')['default']

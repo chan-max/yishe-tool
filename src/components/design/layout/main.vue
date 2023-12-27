@@ -9,7 +9,6 @@
       position: absolute;
       display: flex;
       flex-direction: column;
-      border: 10px solid red;
     "
   >
     <div id="layout-header">
@@ -34,7 +33,7 @@
         <left-menu></left-menu>
       </diycontainer>
 
-      <div id="layout-left" style="height: 100%">
+      <div id="layout-left" style="height: 100%;display:flex;">
         <diycontainer :show="showTextSticker" style="height: 100%">
           <text-sticker></text-sticker>
         </diycontainer>
@@ -48,14 +47,22 @@
         <custom-text-sticker></custom-text-sticker>
       </diycontainer>
 
-      <diycontainer
+
+      <div id="layout-right" style="height:100%;display:flex;flex-direction: column;flex:1;">
+
+      <div id="layout-right-header">
+        <diycontainer
         :show="showSubHeader"
         style="width: auto; height: var(--1s-sub-header-height); flex: 1"
       >
         <sub-header-menu />
       </diycontainer>
+      </div>        
 
-      <div id="layout-right">
+      <div id="layout-right-body" style="flex:1;display:flex;">
+
+        <div id="layout-placeholder" style="height:100%;flex:1;"></div>
+
         <diycontainer :show="showWorkspace" style="height: 100%">
           <workspace></workspace>
         </diycontainer>
@@ -71,6 +78,7 @@
         <diycontainer :show="showDecalControl" style="height: 100%">
           <decal-control></decal-control>
         </diycontainer>
+      </div>
       </div>
     </div>
   </div>
@@ -296,13 +304,21 @@ onMounted(() => {
 #layout-container{
   pointer-events: none;
 }
-#layout-container{
-  *{
-    pointer-events: auto;
-  }
-}
+
 
 #layout-body {
   pointer-events: none;
 }
+
+#layout-right{
+  pointer-events: none;
+}
+
+#layout-right-body{
+  pointer-events: none;
+}
+#layout-placeholder{
+  pointer-events: none;
+}
+
 </style>

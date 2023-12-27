@@ -15,10 +15,14 @@ const props = defineProps({
 });
 
 </script>
-<style>
+<style lang="less">
 .designiy-container {
   z-index: 1;
   background: var(--1s-container-background);
+
+  *{
+    pointer-events: auto!important;
+  }
 }
 
 .designiy-container-header {

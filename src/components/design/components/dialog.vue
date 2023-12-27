@@ -66,11 +66,14 @@ function close() {
   emits("close");
 }
 </script>
-<style>
+<style lang="less">
 .designiy-dialog {
   background: var(--1s-container-background);
   position: absolute;
   border-radius: 6px;
+  *{
+    pointer-events: auto!important;
+  }
 }
 
 .designiy-dialog-header {

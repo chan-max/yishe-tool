@@ -10,26 +10,20 @@
 -->
 <template>
   <div class="designiy-model-info">
-    <h5>基础模型信息</h5>
-    <div style="display: flex;justify-content: space-between;">
-      <base-gltf-viewer
-        style="width: 200px; height: 200px"
-        :src="currentOperatingBaseModelInfo.preview_file"
-      ></base-gltf-viewer>
-      <div style="width:100px;height:200px;">
-        <el-carousel height="200px" direction="vertical" type="card" :autoplay="false">
-          <el-carousel-item v-for="item in 4" :key="item">
-            <div style="background:red;">0000</div>
-          </el-carousel-item>
-        </el-carousel>
-      </div>
-    </div>
+    <h5>基础模型</h5>
+    <base-gltf-viewer
+      style="width: 100%; height: 200px"
+      :src="currentOperatingBaseModelInfo.preview_file"
+    ></base-gltf-viewer>
+    <description-imgs></description-imgs>
     {{ currentOperatingBaseModelInfo }}
   </div>
 </template>
 <script setup>
 import { currentOperatingBaseModelInfo } from "../../store";
 import baseGltfViewer from "@/components/baseGltfViewer/index.vue";
+import descriptionImgs from './descriptionImgs.vue'
+
 </script>
 <style lang="less">
 .designiy-model-info {

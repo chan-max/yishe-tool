@@ -123,8 +123,10 @@ async function initModel() {
 
   const controller = new OrbitControls(camera, renderer.domElement);
 
+  controller.minDistance = 0.5
+  controller.maxDistance = 5
   controller.enablePan = false; // 禁止右键拖拽
-
+  
   let resizeOb = new ResizeObserver(debounce(resetCameraAspect));
 
   el && resizeOb.observe(el);

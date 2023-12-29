@@ -1,9 +1,10 @@
 <template>
   <h5>实物图</h5>
   <div style="width: 100%; height: 200px;display:flex;align-items: center;justify-content: center;">
-    <template v-if="currentOperatingBaseModelInfo.description_imgs ">
+    <template v-if="currentOperatingBaseModelInfo.description_imgs">
       <el-carousel style="width:100%;" height="200px" type="card" :autoplay="false">
-        <el-carousel-item v-for="item in 4" :key="item">
+        <el-carousel-item v-for="item in currentOperatingBaseModelInfo.description_imgs" :key="item">
+          13213213
         </el-carousel-item>
       </el-carousel>
     </template>
@@ -16,4 +17,5 @@
 import { currentOperatingBaseModelInfo } from "../../store";
 </script>
 <style>
+
 </style>

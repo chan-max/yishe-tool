@@ -59,6 +59,25 @@ camera.lookAt(0, 0, 0);
 
 camera.position.set(0, 0, 0.7);
 
+  // 添加环境光
+  const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
+  scene.add(ambientLight);
+
+  // 添加平行光
+  const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+  directionalLight1.position.set(1, 1, 1); // 设置光源位置
+  scene.add(directionalLight1);
+
+  // 添加平行光
+  const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+  directionalLight2.position.set(-1, -1, -1); // 设置光源位置
+  scene.add(directionalLight2);
+
+  // 添加点光源
+  const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
+  pointLight.position.set(0, 0, 2); // 设置光源位置
+  scene.add(pointLight);
+
 const getWidth = (el) => {
   if (!el) {
     return;
@@ -87,6 +106,8 @@ function initImportedModel(gltf) {
   object.position.y += object.position.y - center.y;
   object.position.z += object.position.z - center.z;
 }
+
+var currentGltf = null
 
 async function initModel() {
 
@@ -135,27 +156,12 @@ async function initModel() {
 
   initImportedModel(gltf);
 
+  if(currentGltf){
+    scene.remove(currentGltf.scene);
+  }
+
   scene.add(gltf.scene);
-
-  // 添加环境光
-  const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
-  scene.add(ambientLight);
-
-  // 添加平行光
-  const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
-  directionalLight1.position.set(1, 1, 1); // 设置光源位置
-  scene.add(directionalLight1);
-
-  // 添加平行光
-  const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
-  directionalLight2.position.set(-1, -1, -1); // 设置光源位置
-  scene.add(directionalLight2);
-
-  // 添加点光源
-  const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
-  pointLight.position.set(0, 0, 2); // 设置光源位置
-  scene.add(pointLight);
-
+  currentGltf = gltf
 
   function render() {
     requestAnimationFrame(render);
@@ -185,5 +191,6 @@ watch(() => props.src,initModel,{immediate:true})
   font-weight: bold;
   color: rgba(255, 255, 255, 0.7);
 }
+
 
 </style>

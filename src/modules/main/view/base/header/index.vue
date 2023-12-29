@@ -2,13 +2,20 @@
     <div ref="headerBar" class="header-bar flex justify-center z-10">
         <div class="header-bar-content flex justify-between items-center">
             <div class="header-bar-logo" @click="$router.push({ name: 'Home' })">衣设</div>
-            <div class="header-bar-menu-item">寻找模型</div>
-            <div class="header-bar-menu-item">在线商场</div>
-            <div class="header-bar-menu-item">设计工具</div>
-            <div class="header-bar-menu-item">更多</div>
-            <router-link active-class="sss" v-slot="{ navigate, isActive, isExactActive }" :to="{ name: 'Ai' }" custom>
+            <router-link  v-slot="{ navigate, isActive, isExactActive }" :to="{ name: 'Market' }" custom>
+                <div class="header-bar-menu-item" :class="{ 'header-bar-menu-item-active': isActive }" @click="navigate">
+                    在线商场
+                </div>
+            </router-link>
+            <router-link  v-slot="{ navigate, isActive, isExactActive }" :to="{ name: 'Ai' }" custom>
                 <div class="header-bar-menu-item" :class="{ 'header-bar-menu-item-active': isActive }" @click="navigate">
                     AI
+                </div>
+            </router-link>
+            
+            <router-link  v-slot="{ navigate, isActive, isExactActive }" :to="{ name: 'Workspace' }" custom>
+                <div class="header-bar-menu-item" :class="{ 'header-bar-menu-item-active': isActive }" @click="navigate">
+                    我的工作台
                 </div>
             </router-link>
 

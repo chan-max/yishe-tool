@@ -14,7 +14,6 @@
             <div class="market-card-main-img">
             <el-image v-if="showImg" fit="cover" :src="props.model.preview_img" draggable="false">
                 <template #placeholder>
-                    loading
                 </template>
                 <template #error>
                     <span style="font-weight: bold;color:#ddd;">加载失败</span>
@@ -27,6 +26,7 @@
         </div>
     </div>
 </template>
+
 <script setup>
 import { defineProps,ref } from 'vue';
 import gltfViewer from '@/components/model/gltfViewer/index.vue';
@@ -52,8 +52,8 @@ function load(){
 </script>
 <style>
 .market-card{
-    width: 330px;
-    height: 280px;
+    width: 100%;
+    height: 100%;
     background-color: #fff;
     border-radius: 5px;
     overflow: hidden;
@@ -80,8 +80,6 @@ function load(){
     }
 }
 
-
-
 .market-card-main-img{
     position: absolute;
     width: 100%;
@@ -93,4 +91,6 @@ function load(){
     width: 100%;
     height: 100%;
 }
+
+
 </style>

@@ -22,8 +22,7 @@
 <script setup>
 import { currentOperatingBaseModelInfo } from "../../store";
 import baseGltfViewer from "@/components/baseGltfViewer/index.vue";
-import descriptionImgs from './descriptionImgs.vue'
-
+import descriptionImgs from "./descriptionImgs.vue";
 </script>
 <style lang="less">
 .designiy-model-info {

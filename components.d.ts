@@ -7,12 +7,13 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    ADivider: typeof import('ant-design-vue/es')['Divider']
+    AQrcode: typeof import('ant-design-vue/es')['QRCode']
     BaseGltfViewer: typeof import('./src/components/baseGltfViewer/index.vue')['default']
     BaseModelSelect: typeof import('./src/components/design/layout/baseModelSelect/index.vue')['default']
     BottomMenu: typeof import('./src/components/design/layout/bottomMenu.vue')['default']
     Canvas: typeof import('./src/components/design/layout/customTextSticker/canvas.vue')['default']
     ColorPicker: typeof import('./src/components/design/components/colorPicker.vue')['default']
-    Container: typeof import('./src/components/design/components/container.vue')['default']
     CustomTextSticker: typeof import('./src/components/design/layout/customTextSticker/index.vue')['default']
     DecalControl: typeof import('./src/components/design/layout/decalControl/index.vue')['default']
     DecalList: typeof import('./src/components/design/layout/decalList/index.vue')['default']

@@ -24,7 +24,7 @@
             <span v-else> {{ title }} </span>
           </div>
           <div @click="close" class="designiy-dialog-header-close">
-            <el-icon><CloseBold /></el-icon>
+            <el-icon size="16"><CloseBold /></el-icon>
           </div>
         </div>
         <div class="designiy-dialog-content">
@@ -82,6 +82,7 @@ function close() {
   align-items: center;
   padding: 15px 20px;
   cursor: move;
+  position: relative;
 }
 
 .designiy-dialog-header-close {
@@ -90,6 +91,14 @@ function close() {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  right: -14px;
+  top: -14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   &:hover {
     background-color: #eee;
   }

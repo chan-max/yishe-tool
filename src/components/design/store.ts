@@ -1,5 +1,5 @@
 import { setFullscreen } from "@/common/browser";
-import { computed, ref, shallowRef, watchEffect, watch, reactive, nextTick } from "vue"
+import { computed, ref, shallowRef, watchEffect, watch, reactive, nextTick, shallowReactive } from "vue"
 
 // 当前实例
 export const currentController = shallowRef(null);
@@ -191,7 +191,7 @@ export const showSaveModel = ref(false)
 
 
 // 系统是否成功连接 websocket
-export const online = ref(true);
+export const online = ref(false);
 watch(online,(value) => {
 })
 
@@ -205,3 +205,8 @@ export const currentEditingModelInfo = ref()
 
 // 模型装饰品
 export const showDecoration  = ref(false)
+
+
+
+// 保留用户的截图，用于后续自行下载或者上传至网络
+export const screenshots = shallowReactive([])

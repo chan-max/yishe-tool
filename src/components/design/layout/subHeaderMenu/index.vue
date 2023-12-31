@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-14 19:04:03
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-26 21:01:55
+ * @LastEditTime: 2023-12-30 11:27:32
  * @FilePath: /1s/src/components/design/layout/subHeaderMenu/index.vue
  * @Description: 
  * 
@@ -10,13 +10,10 @@
 -->
 <template>
   <div class="designiy-sub-header">
-    <header-menu-dropdown />
-
     <div style="font-size: 12px; line-height: 12px; color: #555">
       {{ isEdit ? "编辑" : "新建" }}
     </div>
-
-
+    
     <div style="display: flex">
       <div class="designiy-sub-header-button">
         <icon-prev class="designiy-sub-header-icon"></icon-prev>
@@ -37,7 +34,7 @@
 
     <el-tooltip content="截屏"> 
       <icon-camera
-        @click="takephoto"
+        @click="$emit('takephoto')"
         style="width: 16px; height: 16px;"
       ></icon-camera>
     </el-tooltip>
@@ -54,10 +51,6 @@
     />
   </div>
 
-
-
-<screenshot ref="screenshotInstance"></screenshot>
-
 </template>
 
 <script setup>
@@ -67,14 +60,7 @@ import onlinePoint from "../../components/onlinePoint.vue";
 import { isDarkMode, online, isEdit, currentEditingModelInfo ,currentController} from "../../store";
 import iconPrev from "@/icon/design/prev.svg?vueComponent";
 import iconCamera from "@/icon/camera.svg?vueComponent";
-import screenshot from '../../components/screenshot.vue'
 
-const screenshotInstance = ref()
-
-function takephoto() {
-  const base64 = currentController.value.getScreenshotBase64();
-  screenshotInstance.value.execScreenshot(base64)
-}
 
 </script>
 

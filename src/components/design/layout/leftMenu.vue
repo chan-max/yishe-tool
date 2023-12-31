@@ -1,5 +1,4 @@
 <template>
-  <div class="menu-bar-container">
     <div class="menu-bar">
       <el-tooltip :hide-after="0" content="选择模型" placement="right">
         <div
@@ -113,7 +112,6 @@
         </div>
       </el-tooltip>
     </div>
-  </div>
 </template>
 <script setup>
 import {
@@ -150,24 +148,20 @@ import iconDecoration from '@/icon/design/decoration.svg?vueComponent';
 
 </script>
 <style lang="less">
-.menu-bar-container {
-  width: 80px;
-  height: 100%;
-  background: var(--1s-left-menu-container-background-color);
-}
 
 .menu-bar {
-  width: 100%;
+  width: 80px;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 0;
   border-radius: 2px;
   row-gap: 16px;
   overflow: auto;
-  background: var(--1s-left-menu-background-color);
   direction: rtl;
+  background: var(--1s-left-menu-background-color);
+  padding: 16px 0;
+  box-sizing: border-box;
 }
 
 .menu-bar-item {
@@ -182,9 +176,7 @@ import iconDecoration from '@/icon/design/decoration.svg?vueComponent';
   cursor: pointer;
   flex-shrink: 0;
   color: var(--1s-icon-color);
-  padding: 4px 8px;
-
-  
+    
   .menu-bar-item-icon{
     flex-shrink: 0;
     padding:6px;

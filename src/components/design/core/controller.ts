@@ -29,7 +29,7 @@ import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
 import { reactive, ref, shallowReactive } from "vue";
-import { reactify, useMouse } from "@vueuse/core";
+import { reactify, useMouse, useMouseInElement } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
@@ -85,34 +85,34 @@ export class ModelController {
         // var skybox = new Mesh( geometry, material );
         // this.scene.add( skybox );
 
-          this.scene.background = new CubeTextureLoader()
-            .setPath( '/skybox/' )
-            .load( [
-            			'pos-x.jpg',
-            			'neg-x.jpg',
-            			'pos-y.jpg',
-            			'neg-y.jpg',
-            			'pos-z.jpg',
-            			'neg-z.jpg'
-            		] );
+        this.scene.background = new CubeTextureLoader()
+            .setPath('/skybox/')
+            .load([
+                'pos-x.jpg',
+                'neg-x.jpg',
+                'pos-y.jpg',
+                'neg-y.jpg',
+                'pos-z.jpg',
+                'neg-z.jpg'
+            ]);
     }
 
     public setSkyballBackground() {
         var loader = new TextureLoader();
         loader.load('/skyball2.jpeg', (texture) => {
-        
+
             // 创建天空球的网格几何体
             var sphereGeometry = new SphereGeometry(100);
-            
+
             // 创建应用全景纹理的材料材质
             var sphereMaterial = new MeshBasicMaterial({
                 map: texture,
                 side: BackSide, // 天空球内部才是可见的，所以材料应该渲染在背面
             });
-        
+
             // 使用几何体和材料创建天空球网格
             var skybox = new Mesh(sphereGeometry, sphereMaterial);
-        
+
             // 将天空球添加到场景中
             this.scene.add(skybox);
         });
@@ -152,7 +152,7 @@ export class ModelController {
             0.1,
             1000
         );
-        this.scene.add( this.camera );
+        this.scene.add(this.camera);
 
         this.renderer.setSize(this.width, this.height);
         this.camera.lookAt(0, 0, 0);
@@ -165,19 +165,19 @@ export class ModelController {
 
         this.controller.enableDamping = true
         this.controller.dampingFactor = 0.1;
- 
+
 
         this.canvasContainer.appendChild(this.renderer.domElement);
         this.resizeObserver = new ResizeObserver(
-            debounce(() => {
+            () => {
                 this.camera.aspect = this.width / this.height;
                 this.camera.updateProjectionMatrix();
                 this.renderer.setSize(this.width, this.height);
-            }, 10)
+            }
         );
         this.resizeObserver.observe(canvasContainer);
         this.initClickEvent();
-        this.initMousePositionHandler();
+        this.initMousePositionHandler(this.canvasContainer);
     }
 
     // 记录已渲染的帧数
@@ -336,10 +336,10 @@ export class ModelController {
     // 保存鼠标坐标信息
     private x = null;
     private y = null;
-    private initMousePositionHandler() {
-        const { x, y } = useMouse();
-        this.x = x;
-        this.y = y;
+    private initMousePositionHandler(target = document.body) {
+        const { x, y, elementX, elementY } = useMouseInElement(target);
+        this.x = elementX;
+        this.y = elementY;
     }
 
     decalControllers: any = shallowReactive([]);

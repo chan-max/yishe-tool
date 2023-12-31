@@ -8,7 +8,7 @@ import mainView from "./layout/main.vue";
 import { isDarkMode, isEdit, currentEditingModelInfo } from './store';
 import { usePreventScreenResize } from './composition/preventScreenResize';
 import {useRoute} from 'vue-router'
-import { onBeforeMount } from "vue";
+import { onBeforeMount,onMounted } from "vue";
 import { getModelById } from '@/api';
 
 // 阻止缩放屏幕影响使用体验
@@ -24,6 +24,23 @@ onBeforeMount(async () => {
     currentEditingModelInfo.value = model
   }
 })
+
+// onMounted(() => {
+//   const element = document.querySelector('.designiy');
+//   element.addEventListener('mousewheel', function(event) {
+//   // 滚动到右边的最大宽度
+//   var maxX = this.scrollWidth - this.offsetWidth;
+
+//   // 如果这个事件看起来要滚动到元素的边界之外，要阻止它
+//   // 其中一个是滚动到最左边，一个是滚动到最右边
+//   if (this.scrollLeft + event.deltaX < 0 || 
+//     this.scrollLeft + event.deltaX > maxX) {
+//     // 阻止事件
+//     event.preventDefault();
+//   }
+// }, {passive:false});
+// })
+
 
 
 usePreventScreenResize()
@@ -42,5 +59,6 @@ usePreventScreenResize()
   *{
     -webkit-user-drag: none;
   }
+  
 }
 </style>

@@ -162,7 +162,7 @@ export class DecalController {
     const raycaster = new Raycaster();
     raycaster.setFromCamera(currentController.value.mouse, currentController.value.camera);
     const intersects = raycaster.intersectObject(this.parentMesh, true);
-
+    
     if (intersects.length == 0) {
       // 未选中
       return;

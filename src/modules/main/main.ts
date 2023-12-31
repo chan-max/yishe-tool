@@ -13,7 +13,7 @@ import '@/style/base.less'
 import 'default-passive-events'
 
 import Antd from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.css'
+//  import "ant-design-vue/dist/antd.css";
 import '@/style/cover-antdesign.less'
 
 import ElementPlus from 'element-plus'

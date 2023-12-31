@@ -1,9 +1,21 @@
+<!--
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2023-12-27 19:20:45
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2023-12-30 10:39:20
+ * @FilePath: /1s/src/components/design/layout/headerMenu.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+-->
 <template>
   <div class="designiy-header">
     <div class="designiy-header-logo">
       <icon-logo></icon-logo>
     </div>
     
+    <header-menu-dropdown />
+
     <div style="flex-grow: 1"></div>
 
     <icon-help style="width: 24px; height: 24px;color:#333;"></icon-help>

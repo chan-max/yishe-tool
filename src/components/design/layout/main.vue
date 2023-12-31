@@ -1,84 +1,67 @@
 <template>
-  <div id="designiy-canvas-container" ref="mountContainer" style="z-index: 0"></div>
   <loading v-if="isLoading"></loading>
   <div
     id="layout-container"
-    style="
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      display: flex;
-      flex-direction: column;
-    "
+    style="width: 100%; height: 100%; display: flex; flex-direction: column"
   >
-    <div id="layout-header">
-      <diycontainer
-        :show="showHeader"
-        style="width: 100%; height: var(--1s-header-height)"
-      >
+    <div
+      id="layout-header"
+      style="border-bottom: 2px solid #f6f6f6; height: var(--1s-header-height)"
+    >
+      <div v-if="showHeader" style="width: 100%; height: 100%;display:flex;">
         <header-menu />
-      </diycontainer>
+      </div>
     </div>
 
     <div
       id="layout-body"
-      style="
-        display: flex;
-        flex: 1;
-        flex-shrink: 0;
-        height: calc(100% - var(--1s-header-height));
-      "
+      style="display: flex; flex: 1; height: calc(100% - var(--1s-header-height))"
     >
-      <diycontainer :show="showLeftMenu" style="height: 100%">
-        <left-menu></left-menu>
-      </diycontainer>
-
-      <div id="layout-left" style="height: 100%;display:flex;">
-        <diycontainer :show="showTextSticker" style="height: 100%">
-          <text-sticker></text-sticker>
-        </diycontainer>
-
-        <diycontainer :show="showImageSticker" style="height: 100%">
-          <image-sticker></image-sticker>
-        </diycontainer>
+      <div id="layout-left-menu" style="height: 100%; border-right: 2px solid #f6f6f6">
+          <left-menu v-if="showLeftMenu"></left-menu>
       </div>
 
-      <diycontainer :show="showCustomTextSticker" style="height: 100%">
-        <custom-text-sticker></custom-text-sticker>
-      </diycontainer>
+      <div id="layout-left" style="height: 100%; display: flex">
+        <div style="height: 100%">
+          <component :is="leftComponent"></component>
+        </div>
+      </div>
 
-
-      <div id="layout-right" style="height:100%;display:flex;flex-direction: column;flex:1;">
-
-      <div id="layout-right-header">
-        <diycontainer
-        :show="showSubHeader"
-        style="width: auto; height: var(--1s-sub-header-height); flex: 1"
+      <div
+        id="layout-right"
+        style="height: 100%; width: 100%; display: flex; flex-direction: column; flex: 1"
       >
-        <sub-header-menu />
-      </diycontainer>
-      </div>        
+        <div
+          id="layout-right-header"
+          style="
+            border-bottom: 2px solid #f6f6f6;
+            width: auto;
+            height: var(--1s-sub-header-height);
+          "
+        >
+          <div v-if="showSubHeader" style="width: 100%; height: 100%; flex: 1">
+            <sub-header-menu @takephoto="takephoto" />
+          </div>
+        </div>
 
-      <div id="layout-right-body" style="flex:1;display:flex;height:calc(100% - var(--1s-sub-header-height));">
+        <div
+          id="layout-right-body"
+          style="flex: 1; display: flex; height: calc(100% - var(--1s-sub-header-height))"
+        >
+          <!-- 这里的父子元素使用绝对和相对布局存在问题 -->
+          <div id="layout-canvas" style="height: 100%; flex: 1; position: relative">
+            <screenshot ref="screenshotInstance"></screenshot>
+            <div
+              id="designiy-canvas-container"
+              ref="mountContainer"
+              style="position: absolute"
+            ></div>
+          </div>
 
-        <div id="layout-placeholder" style="height:100%;flex:1;"></div>
-
-        <diycontainer :show="showWorkspace" style="height: 100%">
-          <workspace></workspace>
-        </diycontainer>
-
-        <diycontainer :show="showDecalList" style="height: 100%">
-          <decal-list></decal-list>
-        </diycontainer>
-
-        <diycontainer :show="showModelInfo" style="height: 100%">
-          <model-info></model-info>
-        </diycontainer>
-
-        <diycontainer :show="showDecalControl" style="height: 100%">
-          <decal-control></decal-control>
-        </diycontainer>
-      </div>
+          <div style="height: 100%">
+            <component :is="rightComponent"></component>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -98,8 +81,8 @@
     <image-upload></image-upload>
   </diydialog>
 
-  <diycontainer
-    :show="showBottomMenu"
+  <div
+    v-if="showBottomMenu"
     style="
       height: var(--1s-bottom-menu-height);
       position: absolute;
@@ -108,7 +91,7 @@
     "
   >
     <bottom-menu></bottom-menu>
-  </diycontainer>
+  </div>
 
   <diydialog
     :show="showBaseModelSelect"
@@ -196,7 +179,6 @@ import {
   showSaveModel,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
-import diycontainer from "../components/container.vue";
 import diydialog from "../components/dialog.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
 import sceneControl from "./sceneControl/index.vue";
@@ -215,6 +197,7 @@ import decalList from "./decalList/index.vue";
 import saveModel from "./saveModel/index.vue";
 import { CubeTextureLoader } from "three";
 import decoration from "./decoration/index.vue";
+import screenshot from "../components/screenshot.vue";
 
 import {
   Mesh,
@@ -238,6 +221,35 @@ import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { initWebsocket } from "../utils/websocket.ts";
 
 initWebsocket();
+
+const screenshotInstance = ref();
+
+function takephoto() {
+  const base64 = currentController.value.getScreenshotBase64();
+  screenshotInstance.value.execScreenshot(base64);
+}
+
+const leftComponent = computed(() => {
+  return showImageSticker.value
+    ? imageSticker
+    : showTextSticker.value
+    ? textSticker
+    : showCustomTextSticker.value
+    ? customTextSticker
+    : null;
+});
+
+const rightComponent = computed(() => {
+  return showWorkspace.value
+    ? workspace
+    : showModelInfo.value
+    ? modelInfo
+    : showDecalControl.value
+    ? decalControl
+    : showDecalList.value
+    ? decalList
+    : null;
+});
 
 // 挂载容器
 const mountContainer = ref();
@@ -293,32 +305,5 @@ onMounted(() => {
   height: 100%;
   background: #fff;
   overflow: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
 }
-
-
-/* 顺序不能乱 */
-#layout-container{
-  pointer-events: none;
-}
-
-
-#layout-body {
-  pointer-events: none;
-}
-
-#layout-right{
-  pointer-events: none;
-}
-
-#layout-right-body{
-  pointer-events: none;
-}
-#layout-placeholder{
-  pointer-events: none;
-}
-
 </style>

@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-23 20:38:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-24 18:06:12
+ * @LastEditTime: 2023-12-30 20:09:47
  * @FilePath: /1s/src/components/design/components/screenshot.vue
  * @Description: 
  * 
@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { ref, defineExpose, nextTick } from "vue";
-import {message} from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 
 // 组件一旦展示就会进入动画流程
 const show = ref(false);
@@ -50,13 +50,10 @@ function mouseleave(){
 
 function clear(){
   clearTimeout(timer)
-  console.log('leave')
   timer = setTimeout(() => {
     show.value = false
   }, 3000);
 }
-
-
 
 async function execScreenshot(base64) {
   audio.value.play();
@@ -77,36 +74,25 @@ async function execScreenshot(base64) {
 defineExpose({
   execScreenshot,
 });
+
+
 </script>
 <style>
 .screenshot {
-  position: fixed;
+  position: absolute;
   z-index: 9;
-  z-index: 1;
+  z-index: 9;
   width: 200px;
   height: auto;
   right: 30px;
   bottom: 30px;
   border: 5px solid #fff;
-  /* animation: screenshot 0.5s forwards; */
   box-shadow: 0px 10px 15px 0px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
+  background-color: #fff;
+  z-index: 10;
 }
 
-/* @keyframes screenshot {
-  0% {
-    width: 100%;
-    height: 100%;
-    bottom: 0;
-    right: 0;
-  }
-  100% {
-    bottom: 30px;
-    right: 30px;
-    width: 200px;
-    height: auto;
-  }
-} */
 
 .screenshot-enter-from{
   width: 100%;
@@ -116,7 +102,7 @@ defineExpose({
 }
 
 .screenshot-enter-active{
-  transition: all .3s ease-out;
+  transition: all .2s ease-out;
 }
 
 .screenshot-enter-to{

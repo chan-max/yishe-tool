@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-31 14:18:44
+ * @LastEditTime: 2024-01-01 10:02:57
  * @FilePath: /1s/vite.config.ts
  * @Description: 
  * 
@@ -41,7 +41,7 @@ export default defineConfig((config:any) => {
     rollupOptions: {
       input: {
         mobile: resolve(__dirname, 'mobile.html'),
-        index: resolve(__dirname, 'index.html'),
+        index: resolve(__dirname, 'pc.html'),
       },
     }
   }
@@ -50,7 +50,7 @@ export default defineConfig((config:any) => {
     outDir:'app',
     assetsDir:'./',
     rollupOptions: {
-      input:resolve(__dirname, 'app.html'),
+      input:resolve(__dirname, 'index.html'),
     }
   }
 
@@ -66,11 +66,11 @@ export default defineConfig((config:any) => {
       }),
       qrcode(),
       legacy(),
-      vue({
-        template: { transformAssetUrls }
-      }),
       quasar({
         sassVariables: 'src/style/quasar-variables.sass'
+      }),
+      vue({
+        template: { transformAssetUrls }
       })
     ],
     base:'./',

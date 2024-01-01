@@ -20,6 +20,12 @@ dependencies:
   '@element-plus/icons-vue':
     specifier: ^2.0.10
     version: 2.3.1(vue@3.3.13)
+  '@ionic/vue':
+    specifier: ^7.6.2
+    version: 7.6.2
+  '@ionic/vue-router':
+    specifier: ^7.6.2
+    version: 7.6.2
   '@koa/multer':
     specifier: ^3.0.2
     version: 3.0.2(multer@1.4.5-lts.1)
@@ -89,6 +95,9 @@ dependencies:
   html2canvas:
     specifier: ^1.4.1
     version: 1.4.1
+  ionicons:
+    specifier: ^7.2.2
+    version: 7.2.2
   jsonwebtoken:
     specifier: ^9.0.0
     version: 9.0.2
@@ -2246,6 +2255,14 @@ packages:
       - supports-color
     dev: false
 
+  /@ionic/core@7.6.2:
+    resolution: {integrity: sha512-PEeCAjKrtKkc7PqCF7WlXn36PmowBbswnMADmoJ75ozyheRMe+v+GY2a75dGsBxB8nMZP9X9wYBXvZ3BgYUdLw==}
+    dependencies:
+      '@stencil/core': 4.9.0
+      ionicons: 7.2.2
+      tslib: 2.6.2
+    dev: false
+
   /@ionic/utils-array@2.1.6:
     resolution: {integrity: sha512-0JZ1Zkp3wURnv8oq6Qt7fMPo5MpjbLoUoa9Bu2Q4PJuSDWM8H8gwF3dQO7VTeUj3/0o1IB1wGkFWZZYgUXZMUg==}
     engines: {node: '>=16.0.0'}
@@ -2350,6 +2367,19 @@ packages:
       wrap-ansi: 7.0.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@ionic/vue-router@7.6.2:
+    resolution: {integrity: sha512-/9vAMfRxteM2lEeBCSTkeuhdcAbAcSK2CCMgvSI36rZquQDUDi+qH8ugrvhjW1JE9p2npCIl108haW0VcHk3Lw==}
+    dependencies:
+      '@ionic/vue': 7.6.2
+    dev: false
+
+  /@ionic/vue@7.6.2:
+    resolution: {integrity: sha512-+qamnvbplyPN0RASemYvxMCPcwJ+lrJVJeDQ8Cw14OIuItVkMsidM2pF4hzZaxXyS+aHqCaVTewvLJ2/cUpzTw==}
+    dependencies:
+      '@ionic/core': 7.6.2
+      ionicons: 7.2.2
     dev: false
 
   /@isaacs/cliui@8.0.2:
@@ -2735,6 +2765,12 @@ packages:
   /@soda/get-current-script@1.0.2:
     resolution: {integrity: sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==}
     dev: true
+
+  /@stencil/core@4.9.0:
+    resolution: {integrity: sha512-aWSkhBmk3yPwRAkUwBbzRwmdhb8hKiQ/JMr9m5jthpBZLjtppYbzz6PN2MhSMDfRp6K93eQw5WogSEH4HHuB6w==}
+    engines: {node: '>=16.0.0', npm: '>=7.10.0'}
+    hasBin: true
+    dev: false
 
   /@sxzz/popperjs-es@2.11.7:
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
@@ -9992,6 +10028,12 @@ packages:
   /invert-kv@1.0.0:
     resolution: {integrity: sha512-xgs2NH9AE66ucSq4cNG1nhSFghr5l6tdL15Pk+jl46bmmBapgoaY/AacXyaDznAqmGL99TiLSQgO/XazFSKYeQ==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /ionicons@7.2.2:
+    resolution: {integrity: sha512-I3iYIfc9Q9FRifWyFSwTAvbEABWlWY32i0sAVDDPGYnaIZVugkLCZFbEcrphW6ixVPg8tt1oLwalo/JJwbEqnA==}
+    dependencies:
+      '@stencil/core': 4.9.0
     dev: false
 
   /ip-regex@2.1.0:

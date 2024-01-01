@@ -57,8 +57,6 @@ import { formatFilePath } from "./util.js";
 
 app.use(_static(uploadsPath()));
 
-
-
 app.use(koaBody({
     multipart: true,
     formidable: {

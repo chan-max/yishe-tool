@@ -14,7 +14,7 @@ package-lock.json
 node_modules
 dist
 www
-app
+/app
 dist-ssr
 *.local
 

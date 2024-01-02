@@ -1,6 +1,9 @@
 <template>
   <ion-page>
     <ion-menu content-id="main-content">
+      <ion-header>
+        <ion-toolbar> </ion-toolbar>
+      </ion-header>
       <ion-content class="ion-padding">
         <index-side-menu></index-side-menu>
       </ion-content>
@@ -12,6 +15,15 @@
             <ion-menu-button></ion-menu-button>
           </ion-buttons>
           <ion-title>1s</ion-title>
+          <ion-buttons slot="end">
+            <ion-button>
+              <ion-icon
+                slot="icon-only"
+                :ios="ellipsisHorizontal"
+                :md="ellipsisVertical"
+              ></ion-icon>
+            </ion-button>
+          </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content :fullscreen="true">
@@ -57,16 +69,20 @@ import {
   IonContent,
   IonButton,
   IonMenu,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonMenuButton,
+  IonButtons,
+  IonAlert,
+  IonActionSheet,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonIcon
 } from "@ionic/vue";
-import { ActionSheet, ActionSheetButtonStyle } from "@capacitor/action-sheet";
-import {ref} from 'vue'
-import indexSideMenu from './indexSideMenu.vue'
-
-const isDark = ref(false)
-
-function toggleDark(){
-
-}
+import { ref } from "vue";
+import indexSideMenu from "./indexSideMenu.vue";
+import { ellipsisHorizontal, ellipsisVertical } from "ionicons/icons";
 
 const actionSheetButtons = [
   {

@@ -1,3 +1,13 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2024-01-02 19:17:55
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-01-02 22:57:18
+ * @FilePath: /1s/src/modules/app/main.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+ */
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
@@ -25,12 +35,26 @@ import VConsole from 'vconsole';
 import './theme/variables.css';
 
 
-if(import.meta.env.DEV){
+import ElementPlus from 'element-plus'
+
+import 'element-plus/dist/index.css'
+import '@/style/cover-elementplus.scss'
+import 'element-plus/theme-chalk/display.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
+
+import { createPinia } from 'pinia'
+
+if(true || import.meta.env.DEV){
   const vConsole = new VConsole({ theme: 'dark' });
 }
-
 const app = createApp(App)
-  .use(IonicVue)
+
+const pinia = createPinia()
+    
+app.use(pinia)
+
+
+  app.use(IonicVue).use(ElementPlus)
   .use(router);
   
 

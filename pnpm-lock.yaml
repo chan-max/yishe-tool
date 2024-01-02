@@ -8,6 +8,18 @@ dependencies:
   '@ant-design/icons-vue':
     specifier: ^6.1.0
     version: 6.1.0(vue@3.3.13)
+  '@capacitor-community/admob':
+    specifier: ^5.3.1
+    version: 5.3.1
+  '@capacitor/action-sheet':
+    specifier: ^5.0.6
+    version: 5.0.6(@capacitor/core@5.6.0)
+  '@capacitor/android':
+    specifier: ^5.6.0
+    version: 5.6.0(@capacitor/core@5.6.0)
+  '@capacitor/camera':
+    specifier: ^5.0.8
+    version: 5.0.8(@capacitor/core@5.6.0)
   '@capacitor/cli':
     specifier: ^5.6.0
     version: 5.6.0
@@ -1617,6 +1629,37 @@ packages:
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
 
+  /@capacitor-community/admob@5.3.1:
+    resolution: {integrity: sha512-S+WsJPX8fDkyxniPW85pzFk/MC3HA45TDJz3xXLxHnduFvjt0Y97t+70gzpiS+DYpyO5/IfTWOyFeksbJUvgTA==}
+    engines: {node: '>=16.0.0'}
+    dependencies:
+      '@capacitor/core': 6.0.0-beta.2
+    dev: false
+
+  /@capacitor/action-sheet@5.0.6(@capacitor/core@5.6.0):
+    resolution: {integrity: sha512-WeiHz5KYfqypphd4JwD8DSxhi9QIk9Wh4XZFMlBivZm6tXhlJLjAo0kHzZGNX3J7H+rpn0n0aFVcZylnP34erQ==}
+    peerDependencies:
+      '@capacitor/core': ^5.0.0
+    dependencies:
+      '@capacitor/core': 5.6.0
+    dev: false
+
+  /@capacitor/android@5.6.0(@capacitor/core@5.6.0):
+    resolution: {integrity: sha512-6O7xV6K6c8WvQzKxOe7fnhRyoVpS3TNDXy1FyfhvOvclBvu+1JddSdFvW4e4dSL60s2c00sCzNRgYhm+cn0/dQ==}
+    peerDependencies:
+      '@capacitor/core': ^5.6.0
+    dependencies:
+      '@capacitor/core': 5.6.0
+    dev: false
+
+  /@capacitor/camera@5.0.8(@capacitor/core@5.6.0):
+    resolution: {integrity: sha512-V9kuBJV4s2AEFMiUiB5vpPD1qdfKRq/iFQ9euntuUYP+bOHQwGnwuERsQd48PoLUPV1up/08J8tJwGxMkDvPTQ==}
+    peerDependencies:
+      '@capacitor/core': ^5.0.0
+    dependencies:
+      '@capacitor/core': 5.6.0
+    dev: false
+
   /@capacitor/cli@5.6.0:
     resolution: {integrity: sha512-h2HLkjPn+hd95F0iOlSWROW15kxj/0qNuzXgktSNQ55Z3dCeWmelgfkbYwjo0eqiunv5zNa31H0YvrpnIVdKEA==}
     engines: {node: '>=16.0.0'}
@@ -1645,6 +1688,12 @@ packages:
 
   /@capacitor/core@5.6.0:
     resolution: {integrity: sha512-xJhCOUGPHw0QYDA3YH+CmL6qiV9DH4Ij3yPxSenymjrtLuXI197u9ddCZwGEwgVIkh9kGZBBKzsNkn89SZ2gdQ==}
+    dependencies:
+      tslib: 2.6.2
+    dev: false
+
+  /@capacitor/core@6.0.0-beta.2:
+    resolution: {integrity: sha512-gaJqeAA/GeOtaXH55Xx8Xod/bQfHZNovfhuY6ZjOPcASTHuO9HxzRYANVJD36ZluG0SWwRmx0xcbL0tuUAogcQ==}
     dependencies:
       tslib: 2.6.2
     dev: false

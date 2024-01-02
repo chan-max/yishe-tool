@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-11-28 01:16:00
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-01 22:52:17
+ * @LastEditTime: 2024-01-02 22:01:48
  * @FilePath: /1s/src/modules/app/views/home.vue
  * @Description: 
  * 
@@ -76,7 +76,7 @@ import iconUserFilled from "@/icon/mobile/footer/user-filled.svg?vueComponent";
 }
 
 .tab-selected{
-  color: #6900ff;
+  color: rgba(105, 0, 255, .8);
 }
 
 .tab-selected {

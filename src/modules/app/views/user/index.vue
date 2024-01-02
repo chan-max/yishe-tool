@@ -11,9 +11,9 @@
 <template>
     <ion-page>
       <ion-header >
-        <ion-toolbar>
-          <ion-title>用户</ion-title>
-        </ion-toolbar>
+          <ion-toolbar>
+            <ion-title>用户</ion-title>
+          </ion-toolbar>
       </ion-header>
       <ion-content :fullscreen="true">
       </ion-content>
@@ -21,8 +21,12 @@
 </template>
     
 <script setup lang='ts'>
+import { onMounted } from 'vue';
       import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
   
+      onMounted(() => {
+      })
+      
 </script>
     
 <style>

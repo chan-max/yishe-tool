@@ -10,7 +10,7 @@
  */
 
 
-import { defineConfig } from "vite";
+import { defineConfig ,loadEnv} from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import alias from "@rollup/plugin-alias";
@@ -31,7 +31,7 @@ import AntdvResolver from 'antdv-component-resolver'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 
 export default defineConfig((config:any) => {
-  console.log('config',config)
+  console.log('load vite config',config)
 
   const isApp = config.mode === 'app'
 
@@ -57,7 +57,8 @@ export default defineConfig((config:any) => {
   return {
     plugins: [
       alias(),
-      basicSsl(),
+      // https dev
+      // basicSsl(),
       svgSprites({
         exclude: ['node_modules/**']
       }),

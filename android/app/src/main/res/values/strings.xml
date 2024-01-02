@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">衣设</string>
+    <string name="title_activity_main">衣设</string>
+    <string name="package_name">design.1s</string>
+    <string name="custom_url_scheme">design.1s</string>
+</resources>

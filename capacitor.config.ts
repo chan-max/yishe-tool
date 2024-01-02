@@ -12,7 +12,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'design.1s',
-  appName: '1s',
+  appName: '衣设',
   webDir: 'app',
   server: {
     androidScheme: 'https'

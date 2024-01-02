@@ -55,6 +55,8 @@ import iconMarketFilled from "@/icon/mobile/footer/market-filled.svg?vueComponen
 import iconWorkspaceFilled from "@/icon/mobile/footer/workspace-filled.svg?vueComponent";
 import iconTalkFilled from "@/icon/mobile/footer/talk-filled.svg?vueComponent";
 import iconUserFilled from "@/icon/mobile/footer/user-filled.svg?vueComponent";
+
+
 </script>
 
 <style scoped lang="less">
@@ -68,6 +70,15 @@ import iconUserFilled from "@/icon/mobile/footer/user-filled.svg?vueComponent";
   font-size: 9px;
   
 }
+
+.ion-activatable{
+  color: rgba(100, 100, 100, .8);
+}
+
+.tab-selected{
+  color: #6900ff;
+}
+
 .tab-selected {
   .icon{
     transform: scale(1.2);

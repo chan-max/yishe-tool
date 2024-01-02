@@ -29,7 +29,7 @@ import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
 import { reactive, ref, shallowReactive } from "vue";
-import { reactify, useMouse, useMouseInElement } from "@vueuse/core";
+import { reactify, useDebounceFn, useMouse, useMouseInElement } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
@@ -169,11 +169,11 @@ export class ModelController {
 
         this.canvasContainer.appendChild(this.renderer.domElement);
         this.resizeObserver = new ResizeObserver(
-            () => {
+            useDebounceFn(() => {
                 this.camera.aspect = this.width / this.height;
                 this.camera.updateProjectionMatrix();
                 this.renderer.setSize(this.width, this.height);
-            }
+            },3)
         );
         this.resizeObserver.observe(canvasContainer);
         this.initClickEvent();

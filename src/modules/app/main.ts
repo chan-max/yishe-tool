@@ -23,7 +23,11 @@ import VConsole from 'vconsole';
 
 /* Theme variables */
 import './theme/variables.css';
-const vConsole = new VConsole({ theme: 'dark' });
+
+
+if(import.meta.env.DEV){
+  const vConsole = new VConsole({ theme: 'dark' });
+}
 
 const app = createApp(App)
   .use(IonicVue)

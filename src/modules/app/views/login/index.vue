@@ -9,11 +9,14 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-   <ion-page>
-    <div style="width: 100%;height:100%;">
-            <ion-button  href="/"> 返回首页 </ion-button>
-        </div>
-   </ion-page>
+ <ion-header>
+    <ion-toolbar>
+      <ion-title>登录</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <h1>Content</h1>
+  </ion-content>
 </template>
     
 <script setup lang='ts'>

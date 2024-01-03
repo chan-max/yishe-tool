@@ -1,7 +1,6 @@
 <template>
   <div class="gltf-viewer" ref="gltfViewer">
     <div class="gltf-viewer-loading" v-if="loading">...</div>
-    <div class="screenshot"></div>
     <div class="gltf-viewer-menu"></div>
   </div>
 </template>

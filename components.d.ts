@@ -7,6 +7,8 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    ADivider: typeof import('ant-design-vue/es')['Divider']
+    AQrcode: typeof import('ant-design-vue/es')['QRCode']
     BaseGltfViewer: typeof import('./src/components/baseGltfViewer/index.vue')['default']
     BaseModelSelect: typeof import('./src/components/design/layout/baseModelSelect/index.vue')['default']
     BottomMenu: typeof import('./src/components/design/layout/bottomMenu.vue')['default']
@@ -49,6 +51,13 @@ declare module 'vue' {
     TextSticker: typeof import('./src/components/design/layout/textSticker/index.vue')['default']
     UserAvatar: typeof import('./src/components/user/userAvatar.vue')['default']
     UserAvatarForm: typeof import('./src/components/user/userAvatarForm.vue')['default']
+    VanConfigProvider: typeof import('vant/es')['ConfigProvider']
+    VanNavBar: typeof import('vant/es')['NavBar']
+    VanPopup: typeof import('vant/es')['Popup']
+    VanTab: typeof import('vant/es')['Tab']
+    VanTabbar: typeof import('vant/es')['Tabbar']
+    VanTabbarItem: typeof import('vant/es')['TabbarItem']
+    VanTabs: typeof import('vant/es')['Tabs']
     Workspace: typeof import('./src/components/design/layout/workspace/index.vue')['default']
   }
 }

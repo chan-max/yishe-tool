@@ -7,8 +7,9 @@ import _static from "koa-static";
 import { koaBody } from "koa-body";
 import { fileURLToPath } from "url";
 import { initRouter } from "./router.js"
-
+import fs from "fs";
 import http from 'http'
+import https from 'https'
 import { createRedisClient } from "./redis/index.js";
 import { getRelativePath, getUploadPath } from "./fileManage.js"
 import { logger } from "./logger.js";
@@ -101,7 +102,12 @@ export function getHost() {
 
 
 
-var server = http.createServer(app.callback())
+const options = {
+    key: fs.readFileSync('./ssl/private.key'),
+    cert: fs.readFileSync('./ssl/certificate.crt'),
+}
+
+var server = https.createServer(options,app.callback())
 
 import {initWebsocket} from './websocket/index.js'
 

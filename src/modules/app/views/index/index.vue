@@ -16,13 +16,7 @@
           </ion-buttons>
           <ion-title>1s</ion-title>
           <ion-buttons slot="end">
-            <ion-button>
-              <ion-icon
-                slot="icon-only"
-                :ios="ellipsisHorizontal"
-                :md="ellipsisVertical"
-              ></ion-icon>
-            </ion-button>
+            <index-header-dropdown></index-header-dropdown>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
@@ -82,7 +76,8 @@ import {
 } from "@ionic/vue";
 import { ref } from "vue";
 import indexSideMenu from "./indexSideMenu.vue";
-import { ellipsisHorizontal, ellipsisVertical } from "ionicons/icons";
+
+import indexHeaderDropdown from "./indexHeaderDropdown.vue";
 
 const actionSheetButtons = [
   {

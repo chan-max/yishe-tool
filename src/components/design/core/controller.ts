@@ -22,7 +22,7 @@ import {
     CubeTextureLoader,
     BackSide,
 } from "three";
-
+import { message } from 'ant-design-vue';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
@@ -36,13 +36,12 @@ import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
 
 import { eventMixin } from "./event";
+import { currentOperatingBaseModelInfo } from "../store";
 
 const mixins = [
     _1stfExporterMixin,
     eventMixin
 ];
-
-
 
 export class ModelController {
     // 场景
@@ -173,7 +172,7 @@ export class ModelController {
                 this.camera.aspect = this.width / this.height;
                 this.camera.updateProjectionMatrix();
                 this.renderer.setSize(this.width, this.height);
-            },3)
+            }, 3)
         );
         this.resizeObserver.observe(canvasContainer);
         this.initClickEvent();
@@ -230,7 +229,7 @@ export class ModelController {
     }
 
     // 主模型
-    mainModel: any = null;
+    gltf: any = null;
     // 主网格
     mesh: any = null;
 
@@ -245,33 +244,39 @@ export class ModelController {
         return mesh;
     }
 
-    gltf: any = null;
 
     baseModelUrl: any = null;
 
     public async setMainModel(url: any) {
         this.removeMainModel();
-        let gltf: any = await gltfLoader(url);
-        this.mainModel = gltf;
+        message.loading({ content: `正在加载模型...`, key: 'loadingmodel', duration: 0 });
+        try {
+            this.gltf = await gltfLoader(url);
+            message.success({ content: '模型加载成功', key: 'loadingmodel', duration: 1 });
+        } catch (e) {
+            message.error({ content: '模型加载失败!', key: 'loadingmodel', duration: 1 });
+            return
+        }
+
         this.baseModelUrl = url;
         this.initModelPosition();
-        this.scene.add(gltf.scene);
-        this.mesh = this.findMainMesh(gltf);
+        this.scene.add(this.gltf.scene);
+        this.mesh = this.findMainMesh(this.gltf);
     }
 
     // 移除主模型
     public removeMainModel() {
-        if (!this.mainModel) {
+        if (!this.gltf) {
             return;
         }
-        this.scene.remove(this.mainModel.scene);
+        this.scene.remove(this.gltf.scene);
         this.mesh = null;
-        this.mainModel = null;
+        this.gltf = null;
     }
 
     // 模型居中和调整尺寸
     private initModelPosition() {
-        let object = this.mainModel.scene;
+        let object = this.gltf.scene;
         let flag = 1
         // 先处理尺寸，再居中
         const sizeBox = new Box3().setFromObject(object);
@@ -361,10 +366,10 @@ export class ModelController {
     animate = false;
 
     execAnimation() {
-        if (!this.mainModel || !this.animate) {
+        if (!this.gltf || !this.animate) {
             return;
         }
-        this.mainModel.scene.rotation.y += 0.008;
+        this.gltf.scene.rotation.y += 0.008;
     }
 
     // 解析 1stf 格式化信息 ， 并初始化系统

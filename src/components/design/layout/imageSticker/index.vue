@@ -66,8 +66,10 @@ const list = ref([]);
 
 // image load success
 function load(e, info) {
-  initDraggableElement(e.target, () => {
+  const img = e.target
+  initDraggableElement(img, () => {
     currentController.value.stickToMousePosition({
+      img:img,
       type: "image",
       local: false,
       src: info.preview_img,

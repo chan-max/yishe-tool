@@ -260,7 +260,10 @@ const { scene } = modelController;
 
 currentController.value = modelController;
 
-// 模型转换
+/*
+  切换主模型
+  需要保留之前的操作
+*/
 watch(currentOperatingBaseModelInfo, () => {
   modelController.setMainModel(currentOperatingBaseModelInfo.value.preview_file);
 });

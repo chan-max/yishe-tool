@@ -20,9 +20,6 @@ export const initDraggableElement = (el, cb, src = el.src) => {
         return
     }
 
-
-
-
     // 创建一个新的 image 元素
     el.addEventListener('dragstart', (e) => {
         e.preventDefault()

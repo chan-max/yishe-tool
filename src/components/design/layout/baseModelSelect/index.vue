@@ -36,10 +36,12 @@ onMounted(async () => {
 });
 
 function selectModel(model) {
+  // 选择基础模型
   showBaseModelSelect.value = false;
   currentOperatingBaseModelInfo.value = model;
   showModelInfo.value = true;
 }
+
 </script>
 <style lang="less">
 .designiy-base-model-select {

@@ -121,7 +121,6 @@ export const base64 = ref("");
 
 // 创建可拖拽的文字贴纸 
 export async function initDraggableTextSticker(){
-
   base64.value = await toPng(canvasBackgroundEl.value);
   initDraggableElement(
     canvasBackgroundEl.value,

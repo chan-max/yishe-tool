@@ -61,22 +61,35 @@ import {
 import { getImage } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
 import { showImageUplaod, showDecalControl } from "../../store";
+import {
+  imgToFile,
+  createImgObjectURL,
+  imgToBase64,
+} from "../../../../common/transform/index";
 
 const list = ref([]);
 
 // image load success
 function load(e, info) {
-  const img = e.target
-  initDraggableElement(img, () => {
-    currentController.value.stickToMousePosition({
-      img:img,
-      type: "image",
-      local: false,
-      src: info.preview_img,
-      ...info,
-    });
-    showDecalControl.value = true;
-  });
+  const img = e.target;
+  initDraggableElement(
+    img,
+    () => {
+      console.time("x");
+      const src = createImgObjectURL(img);
+      const base64 = imgToBase64(img);
+      console.timeEnd("x");
+      currentController.value.stickToMousePosition({
+        img: img,
+        type: "image",
+        local: false,
+        src: src,
+        ...info,
+        base64: base64,
+      });
+      showDecalControl.value = true;
+    }
+  );
 }
 
 const page = ref(1);

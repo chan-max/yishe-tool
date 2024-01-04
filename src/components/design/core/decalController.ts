@@ -234,6 +234,11 @@ export class DecalController {
 
   // 导出该信息
   export() {
+
+    if(!this.position){
+      return
+    }
+
     const position = {
       x: this.position.x,
       y: this.position.y,

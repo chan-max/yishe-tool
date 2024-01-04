@@ -64,11 +64,10 @@ import iconUserFilled from "@/icon/mobile/footer/user-filled.svg?vueComponent";
   width: 24px;
   height: 24px;
   margin: 4px;
-  transition: all .2s;
+  transition: all .1s;
 }
 .label {
   font-size: 9px;
-  
 }
 
 .ion-activatable{

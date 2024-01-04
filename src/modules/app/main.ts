@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-02 22:57:18
+ * @LastEditTime: 2024-01-04 21:30:01
  * @FilePath: /1s/src/modules/app/main.ts
  * @Description: 
  * 
@@ -16,7 +16,6 @@ import { IonicVue } from '@ionic/vue';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
-
 /* Basic CSS for apps built with Ionic */
 import '@ionic/vue/css/normalize.css';
 import '@ionic/vue/css/structure.css';
@@ -36,27 +35,34 @@ import './theme/variables.css';
 
 
 import ElementPlus from 'element-plus'
-
 import 'element-plus/dist/index.css'
 import '@/style/cover-elementplus.scss'
 import 'element-plus/theme-chalk/display.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 
+
+import { ConfigProvider } from 'vant';
+import 'vant/lib/index.css';
+
+
 import { createPinia } from 'pinia'
 
-if(true || import.meta.env.DEV){
+if (true || import.meta.env.DEV) {
   const vConsole = new VConsole({ theme: 'dark' });
 }
 const app = createApp(App)
 
+app.use(ConfigProvider);
+
 const pinia = createPinia()
-    
+
 app.use(pinia)
 
+app.use(IonicVue)
 
-  app.use(IonicVue).use(ElementPlus)
-  .use(router);
-  
+app.use(ElementPlus)
+app.use(router);
+
 
 router.isReady().then(() => {
   app.mount('#app');

@@ -44,7 +44,7 @@ onMounted(async () => {
       confirmButtonText: "返回",
       confirmButtonColor: "var(--van-text-color)",
     });
-    router.replace({ name: "Home" });
+    router.replace({ name: "HomeIndex" });
   } else {
     startCamera();
   }
@@ -110,7 +110,7 @@ function startCamera() {
           startCamera();
         })
         .catch(() => {
-          router.replace({ name: "Home" });
+          router.replace({ name: "HomeIndex" });
         });
     });
 }
@@ -118,10 +118,6 @@ function startCamera() {
 function play() {
   try {
     videoEl.value.play();
-    // nextFrame(() => {
-    //   let ctx = canvasEl.value.getContext("2d");
-    //     ctx.drawImage(videoEl.value, 0, 0, canvasEl.value.width, canvasEl.value.height);
-    // })
   } catch (e) {
     // 可能由于非用户触发的
     showConfirmDialog({

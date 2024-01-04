@@ -1,10 +1,10 @@
 <template>
   <ion-page>
-    <ion-menu content-id="main-content">
-      <ion-header>
-        <ion-toolbar> </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
+    <ion-menu content-id="main-content" type="push">
+      <ion-content
+        class="ion-padding"
+        style="--padding-top: calc(var(--ion-safe-area-top) + 20px)"
+      >
         <index-side-menu></index-side-menu>
       </ion-content>
     </ion-menu>
@@ -72,12 +72,33 @@ import {
   IonActionSheet,
   IonCardTitle,
   IonCardSubtitle,
-  IonIcon
+  IonIcon,
+  alertController,
 } from "@ionic/vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import indexSideMenu from "./indexSideMenu.vue";
-
 import indexHeaderDropdown from "./indexHeaderDropdown.vue";
+import { useLoginStatusStore } from "@/store/stores/login";
+
+const loginStatusStore = useLoginStatusStore();
+
+// 未登录提示
+onMounted(async () => {
+  if (true || !loginStatusStore.isLogin) {
+    const alert = await alertController.create({
+      header: "提示",
+      message: "暂未登录，是否去登录",
+      buttons: [{
+        text:'取消',
+        role:'cancel',
+      },{
+        text:'去登录',
+        role:'confirm'
+      }],
+    });
+    await alert.present();
+  }
+});
 
 const actionSheetButtons = [
   {

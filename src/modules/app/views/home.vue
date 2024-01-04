@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-11-28 01:16:00
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-02 22:01:48
+ * @LastEditTime: 2024-01-04 20:43:47
  * @FilePath: /1s/src/modules/app/views/home.vue
  * @Description: 
  * 
@@ -37,7 +37,6 @@
     </ion-tabs>
   </ion-page>
 </template>
-
 <script setup>
 import {
   IonTabBar,
@@ -48,8 +47,6 @@ import {
   IonPage,
   IonRouterOutlet,
 } from "@ionic/vue";
-import { ellipse, square, triangle, home } from "ionicons/icons";
-
 import iconHomeFilled from "@/icon/mobile/footer/home-filled.svg?vueComponent";
 import iconMarketFilled from "@/icon/mobile/footer/market-filled.svg?vueComponent";
 import iconWorkspaceFilled from "@/icon/mobile/footer/workspace-filled.svg?vueComponent";
@@ -75,7 +72,7 @@ import iconUserFilled from "@/icon/mobile/footer/user-filled.svg?vueComponent";
 }
 
 .tab-selected{
-  color: rgba(105, 0, 255, .8);
+  color: rgba(105, 0, 255);
 }
 
 .tab-selected {

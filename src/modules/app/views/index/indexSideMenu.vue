@@ -30,7 +30,7 @@ import {toggle,isDark} from '../../helper/dark.ts'
 const loginStatusStore = useLoginStatusStore();
 
 const avatar = computed(() => {
-  return loginStatusStore.userInfo.avatar || "/defaultAvatar/avatar3.png";
+  return loginStatusStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
 });
 
 

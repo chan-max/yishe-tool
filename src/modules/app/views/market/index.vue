@@ -9,21 +9,37 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-<ion-page>
-      <ion-header >
-        <ion-toolbar>
-          <ion-title>逛一逛</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content :fullscreen="true">
-      </ion-content>
-    </ion-page>
+  <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>逛一逛</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content :fullscreen="true">
+      <ion-card  v-for="i in 100">
+        <ion-card-header>
+          <ion-card-title>Card Title</ion-card-title>
+          <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content> Card Content </ion-card-content>
+      </ion-card>
+    </ion-content>
+  </ion-page>
 </template>
-    
-<script setup lang='ts'>
-      import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
+
+<script setup>
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue";
+import { getModelList } from "@/api";
+import { onBeforeMount } from "vue";
+
+onBeforeMount(async () => {
+  let list = await getModelList();
+});
 </script>
-    
+
 <style>
-    
+/* ion-toolbar {
+  --opacity: 0.5;
+} */
 </style>

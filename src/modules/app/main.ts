@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-04 21:30:01
+ * @LastEditTime: 2024-01-06 22:58:44
  * @FilePath: /1s/src/modules/app/main.ts
  * @Description: 
  * 
@@ -28,17 +28,20 @@ import '@ionic/vue/css/text-alignment.css';
 import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
+
+
 import VConsole from 'vconsole';
 
 /* Theme variables */
-import './theme/variables.css';
+import './theme/variables.less';
+import './theme/native.less'
 
 
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import '@/style/cover-elementplus.scss'
-import 'element-plus/theme-chalk/display.css'
-import 'element-plus/theme-chalk/dark/css-vars.css'
+// import ElementPlus from 'element-plus'
+// import 'element-plus/dist/index.css'
+// import '@/style/cover-elementplus.scss'
+// import 'element-plus/theme-chalk/display.css'
+// import 'element-plus/theme-chalk/dark/css-vars.css'
 
 
 import { ConfigProvider } from 'vant';
@@ -60,7 +63,6 @@ app.use(pinia)
 
 app.use(IonicVue)
 
-app.use(ElementPlus)
 app.use(router);
 
 

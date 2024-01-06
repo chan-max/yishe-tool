@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-26 19:23:47
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-26 21:32:03
+ * @LastEditTime: 2024-01-06 21:41:46
  * @FilePath: /1s/server/middleware/paging.js
  * @Description: 
  * 
@@ -25,8 +25,8 @@ export const getPagingInfoFromContext = (ctx) => {
   } = ctx.request.body || {};
 
   return {
-    page: page || 1,
-    pageSize: pageSize || 10,
+    page: Number(page || 1),
+    pageSize: Number(pageSize || 10),
   };
 };
 
@@ -52,6 +52,7 @@ export const mw_paging = (app) =>
             list,
           });
         } catch (e) {
+          debugger
           reject(e);
         }
       });

@@ -12,7 +12,7 @@
       <ion-header>
         <ion-toolbar>
           <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
+            <ion-menu-button style="color: var(--ion-text-color);"></ion-menu-button>
           </ion-buttons>
           <ion-title>1s</ion-title>
           <ion-buttons slot="end">
@@ -84,7 +84,7 @@ const loginStatusStore = useLoginStatusStore();
 
 // 未登录提示
 onMounted(async () => {
-  if (true || !loginStatusStore.isLogin) {
+  if (!loginStatusStore.isLogin) {
     const alert = await alertController.create({
       header: "提示",
       message: "暂未登录，是否去登录",

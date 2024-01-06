@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-16 23:12:29
+ * @LastEditTime: 2024-01-06 20:24:18
  * @FilePath: /1s/src/modules/main/view/market/index.vue
  * @Description: 
  * 
@@ -32,7 +32,7 @@ const router = useRouter();
 const modelList = ref();
 
 onMounted(async () => {
-  modelList.value = await getModelList();
+  modelList.value = (await getModelList()).list;
 });
 
 function edit(model) {

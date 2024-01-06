@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-01 10:02:57
+ * @LastEditTime: 2024-01-06 07:41:08
  * @FilePath: /1s/vite.config.ts
  * @Description: 
  * 
@@ -58,7 +58,7 @@ export default defineConfig((config:any) => {
     plugins: [
       alias(),
       // https dev
-      basicSsl(),
+      // basicSsl(),
       svgSprites({
         exclude: ['node_modules/**']
       }),

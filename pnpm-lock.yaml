@@ -8,9 +8,6 @@ dependencies:
   '@ant-design/icons-vue':
     specifier: ^6.1.0
     version: 6.1.0(vue@3.3.13)
-  '@capacitor-community/admob':
-    specifier: ^5.3.1
-    version: 5.3.1
   '@capacitor/action-sheet':
     specifier: ^5.0.6
     version: 5.0.6(@capacitor/core@5.6.0)
@@ -101,15 +98,24 @@ dependencies:
   fast-glob:
     specifier: ^3.3.2
     version: 3.3.2
+  fs:
+    specifier: ^0.0.1-security
+    version: 0.0.1-security
   html-to-image:
     specifier: ^1.11.11
     version: 1.11.11
   html2canvas:
     specifier: ^1.4.1
     version: 1.4.1
+  https:
+    specifier: ^1.0.0
+    version: 1.0.0
   ionicons:
     specifier: ^7.2.2
     version: 7.2.2
+  ip:
+    specifier: ^1.1.8
+    version: 1.1.8
   jsonwebtoken:
     specifier: ^9.0.0
     version: 9.0.2
@@ -131,6 +137,9 @@ dependencies:
   koa-router:
     specifier: ^12.0.0
     version: 12.0.1
+  koa-sslify:
+    specifier: ^5.0.1
+    version: 5.0.1
   koa-static:
     specifier: ^5.0.0
     version: 5.0.0
@@ -194,6 +203,9 @@ dependencies:
   three:
     specifier: ^0.149.0
     version: 0.149.0
+  timeago.js:
+    specifier: ^4.0.2
+    version: 4.0.2
   vant:
     specifier: ^4.8.0
     version: 4.8.1(vue@3.3.13)
@@ -1629,13 +1641,6 @@ packages:
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
 
-  /@capacitor-community/admob@5.3.1:
-    resolution: {integrity: sha512-S+WsJPX8fDkyxniPW85pzFk/MC3HA45TDJz3xXLxHnduFvjt0Y97t+70gzpiS+DYpyO5/IfTWOyFeksbJUvgTA==}
-    engines: {node: '>=16.0.0'}
-    dependencies:
-      '@capacitor/core': 6.0.0-beta.2
-    dev: false
-
   /@capacitor/action-sheet@5.0.6(@capacitor/core@5.6.0):
     resolution: {integrity: sha512-WeiHz5KYfqypphd4JwD8DSxhi9QIk9Wh4XZFMlBivZm6tXhlJLjAo0kHzZGNX3J7H+rpn0n0aFVcZylnP34erQ==}
     peerDependencies:
@@ -1688,12 +1693,6 @@ packages:
 
   /@capacitor/core@5.6.0:
     resolution: {integrity: sha512-xJhCOUGPHw0QYDA3YH+CmL6qiV9DH4Ij3yPxSenymjrtLuXI197u9ddCZwGEwgVIkh9kGZBBKzsNkn89SZ2gdQ==}
-    dependencies:
-      tslib: 2.6.2
-    dev: false
-
-  /@capacitor/core@6.0.0-beta.2:
-    resolution: {integrity: sha512-gaJqeAA/GeOtaXH55Xx8Xod/bQfHZNovfhuY6ZjOPcASTHuO9HxzRYANVJD36ZluG0SWwRmx0xcbL0tuUAogcQ==}
     dependencies:
       tslib: 2.6.2
     dev: false
@@ -9005,6 +9004,10 @@ packages:
   /fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
+  /fs@0.0.1-security:
+    resolution: {integrity: sha512-3XY9e1pP0CVEUCdj5BmfIZxRBTSDycnbqhIOGec9QYtmVH2fbLpj86CFWkrNOkt/Fvty4KZG5lTglL9j/gJ87w==}
+    dev: false
+
   /fsevents@1.2.13:
     resolution: {integrity: sha512-oWb1Z6mkHIskLzEJ/XWX0srkpkTQ7vaopMQkyaEIoq0fmtFVxOthb8cCxeT+p3ynTdkk/RZwbgG4brR5BeWECw==}
     engines: {node: '>= 4.0'}
@@ -9849,6 +9852,10 @@ packages:
   /https-browserify@1.0.0:
     resolution: {integrity: sha512-J+FkSdyD+0mA0N+81tMotaRMfSL9SGi+xpD3T6YApKsc3bGSXJlfXri3VyFOeYkfLRQisDk1W+jIFFKBeUBbBg==}
     dev: true
+
+  /https@1.0.0:
+    resolution: {integrity: sha512-4EC57ddXrkaF0x83Oj8sM6SLQHAWXw90Skqu2M4AEWENZ3F02dFJE/GARA8igO79tcgYqGrD7ae4f5L3um2lgg==}
+    dev: false
 
   /human-signals@1.1.1:
     resolution: {integrity: sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==}
@@ -10904,6 +10911,11 @@ packages:
       uuid: 8.3.2
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /koa-sslify@5.0.1:
+    resolution: {integrity: sha512-QwQgMvNPyePpngghYZxeuPzeQqMOFYUXiKu8pd4wz9rd7ZmoOq4VKtoEIjctLt3Qcfv2aHL/0UIRAmIK4qDczg==}
+    engines: {node: '>6.0.0'}
     dev: false
 
   /koa-static-cache@5.1.4:
@@ -15852,6 +15864,10 @@ packages:
   /thunky@1.1.0:
     resolution: {integrity: sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==}
     dev: true
+
+  /timeago.js@4.0.2:
+    resolution: {integrity: sha512-a7wPxPdVlQL7lqvitHGGRsofhdwtkoSXPGATFuSOA2i1ZNQEPLrGnj68vOp2sOJTCFAQVXPeNMX/GctBaO9L2w==}
+    dev: false
 
   /timers-browserify@2.0.12:
     resolution: {integrity: sha512-9phl76Cqm6FhSX9Xe1ZUAMLtm1BLkKj2Qd5ApyWkXzsMRaA7dgr81kf4wJmQf/hAvg8EEyJxDo3du/0KlhPiKQ==}

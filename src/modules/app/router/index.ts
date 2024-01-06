@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-11-28 01:16:00
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-02 20:43:10
+ * @LastEditTime: 2024-01-06 17:59:24
  * @FilePath: /1s/src/modules/app/router/index.ts
  * @Description: 
  * 
@@ -26,6 +26,11 @@ const routes: Array<RouteRecordRaw> = [
     path:'/login',
     name:'Login',
     component:() => import('../views/login/index.vue')
+  },
+  {
+    path:'/signup',
+    name:'Signup',
+    component:() => import('../views/signup/index.vue')
   },
   {
     path: '/home/',

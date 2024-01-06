@@ -82,7 +82,6 @@ export const getModelById = (id) =>
     resolve(res.data.data);
   });
 
-
 // 发送邮件
 export const sendEmail = (data) => apiInstance.post(Url.SEND_MAIL, data);
 

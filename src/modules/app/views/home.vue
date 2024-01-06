@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-11-28 01:16:00
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-04 20:43:47
+ * @LastEditTime: 2024-01-06 19:30:45
  * @FilePath: /1s/src/modules/app/views/home.vue
  * @Description: 
  * 
@@ -10,30 +10,33 @@
 -->
 <template>
   <ion-page>
+    <floating-button></floating-button>
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
-      <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="tab1" href="/home/index">
-          <icon-home-filled class="icon"></icon-home-filled>
-          <ion-label class="label">首页</ion-label>
-        </ion-tab-button>
-        <ion-tab-button tab="tab2" href="/home/market">
-          <icon-market-filled class="icon"></icon-market-filled>
-          <ion-label class="label">逛一逛</ion-label>
-        </ion-tab-button>
-        <ion-tab-button tab="tab3" href="/home/workspace">
-          <icon-workspace-filled class="icon"></icon-workspace-filled>
-          <ion-label class="label">工作台</ion-label>
-        </ion-tab-button>
-        <ion-tab-button tab="tab4" href="/home/talk">
-          <icon-talk-filled class="icon"></icon-talk-filled>
-          <ion-label class="label">论坛</ion-label>
-        </ion-tab-button>
-        <ion-tab-button tab="tab5" href="/home/user">
-          <icon-user-filled class="icon"></icon-user-filled>
-          <ion-label class="label">我的衣设</ion-label>
-        </ion-tab-button>
-      </ion-tab-bar>
+      <div class="app-footer">
+        <ion-tab-bar slot="bottom">
+          <ion-tab-button tab="tab1" href="/home/index">
+            <icon-home-filled class="icon"></icon-home-filled>
+            <ion-label class="label">首页</ion-label>
+          </ion-tab-button>
+          <ion-tab-button tab="tab2" href="/home/market">
+            <icon-market-filled class="icon"></icon-market-filled>
+            <ion-label class="label">逛一逛</ion-label>
+          </ion-tab-button>
+          <ion-tab-button tab="tab3" href="/home/workspace">
+            <icon-workspace-filled class="icon"></icon-workspace-filled>
+            <ion-label class="label">工作台</ion-label>
+          </ion-tab-button>
+          <ion-tab-button tab="tab4" href="/home/talk">
+            <icon-talk-filled class="icon"></icon-talk-filled>
+            <ion-label class="label">消息</ion-label>
+          </ion-tab-button>
+          <ion-tab-button tab="tab5" href="/home/user">
+            <icon-user-filled class="icon"></icon-user-filled>
+            <ion-label class="label">我的衣设</ion-label>
+          </ion-tab-button>
+        </ion-tab-bar>
+      </div>
     </ion-tabs>
   </ion-page>
 </template>
@@ -53,6 +56,7 @@ import iconWorkspaceFilled from "@/icon/mobile/footer/workspace-filled.svg?vueCo
 import iconTalkFilled from "@/icon/mobile/footer/talk-filled.svg?vueComponent";
 import iconUserFilled from "@/icon/mobile/footer/user-filled.svg?vueComponent";
 
+import floatingButton from '../components/floatingButton.vue'
 
 </script>
 
@@ -61,23 +65,23 @@ import iconUserFilled from "@/icon/mobile/footer/user-filled.svg?vueComponent";
   width: 24px;
   height: 24px;
   margin: 4px;
-  transition: all .1s;
+  transition: all 0.1s;
 }
 .label {
   font-size: 9px;
 }
 
-.ion-activatable{
-  color: rgba(100, 100, 100, .8);
-}
-
-.tab-selected{
-  color: rgba(105, 0, 255);
-}
-
 .tab-selected {
-  .icon{
+  .icon {
     transform: scale(1.2);
   }
+}
+
+.dark{}
+
+.app-footer {
+  z-index: 10;
+  display: block;
+  width: 100%;
 }
 </style>

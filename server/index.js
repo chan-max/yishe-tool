@@ -14,7 +14,7 @@ import { createRedisClient } from "./redis/index.js";
 import { getRelativePath, getUploadPath } from "./fileManage.js"
 import { logger } from "./logger.js";
 import { middlewares } from "./middleware/index.js";
-// import ip from 'ip'
+import ip from 'ip'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -28,7 +28,16 @@ const __filename = fileURLToPath(import.meta.url);
 // 当前文件所在的路径
 const __dirname = path.dirname(__filename);
 
-const redis = await createRedisClient()
+var redis = null
+
+try{
+   redis = await createRedisClient()
+}catch(e){
+    console.log('redis 链接失败')
+}
+
+
+
 
 // 注册中间件
 middlewares.forEach((mw) => mw(app))
@@ -72,14 +81,12 @@ app.use(koaBody({
 app.use(async (ctx, next) => {
     // 将文件将对路径转换为全路径
     ctx.relativePathToPreviewPath = (path) => {
-
         if(!path){
             return ''
         }
-
-        return formatFilePath(`${ctx.protocol}://${ctx.host}${path}`);
+        return formatFilePath(`${ctx.protocol}://${getHost()}${path}`);
     }
-
+    
     // 获取上传文件的相对路径
     ctx.getUploadFileRelativePath = (key = 'file') => {
         return getRelativePath(ctx.request.files[key].filepath)
@@ -100,14 +107,12 @@ export function getHost() {
     return ip.address() + ':' + port
 }
 
-
-
 const options = {
     key: fs.readFileSync('./ssl/private.key'),
     cert: fs.readFileSync('./ssl/certificate.crt'),
 }
 
-var server = https.createServer(options,app.callback())
+var server = process.env.protool === 'http' ?  http.createServer(options,app.callback()) :  https.createServer(options,app.callback())
 
 import {initWebsocket} from './websocket/index.js'
 
@@ -115,7 +120,6 @@ initWebsocket(server)
 
 export function startServe(){
     server.listen(3000, () => {
-        logger.info('ok')
         console.log('1s listening on *:3000');
     });
 }

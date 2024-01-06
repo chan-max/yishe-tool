@@ -12,7 +12,7 @@
     <ion-page>
       <ion-header >
         <ion-toolbar>
-          <ion-title>论坛</ion-title>
+          <ion-title>消息</ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content :fullscreen="true">

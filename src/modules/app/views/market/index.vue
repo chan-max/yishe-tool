@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:33:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-06 22:20:14
+ * @LastEditTime: 2024-01-07 09:22:19
  * @FilePath: /1s/src/modules/app/views/market/index.vue
  * @Description: 
  * 
@@ -38,7 +38,9 @@
           <template #nav-left> </template>
           <template #nav-right> </template>
           <template #nav-bottom> </template>
-          <van-tab v-for="tab,index in tabs" :title="tab" :name="index"> </van-tab>
+          <van-tab v-for="tab,index in tabs" :title="tab" :name="index">
+            <!-- 这里可以放一些具体化的分类 -->
+          </van-tab>
         </van-tabs>
       </ion-toolbar>
     </ion-header>
@@ -48,7 +50,7 @@
           <div style="width: 100%; height: 10px">{{ item }}</div>
         </ion-item>
       </ion-list>
-      <ion-infinite-scroll  @ionInfinite="ionInfinite">
+      <ion-infinite-scroll @ionInfinite="ionInfinite">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-content>
@@ -75,16 +77,16 @@ import {
   IonInfiniteScrollContent,
   IonItem,
   IonLabel,
-  createGesture
+  createGesture,
 } from "@ionic/vue";
 import { getModelList } from "@/api";
-import { onBeforeMount, ref, reactive,onMounted } from "vue";
+import { onBeforeMount, ref, reactive, onMounted } from "vue";
 import { timeago } from "@/common/time";
 import { searchOutline, filterOutline } from "ionicons/icons";
 
-const active = ref(0);
+const active = ref(2);
 
-const content = ref()
+const content = ref();
 
 const tabs = reactive([
   "推荐",
@@ -98,7 +100,6 @@ const tabs = reactive([
 ]);
 
 const list = reactive([]);
-
 
 const ionInfinite = async (ev) => {
   await getList();
@@ -117,7 +118,7 @@ async function getList() {
 
   var res = await getModelList({
     page: page++,
-    pageSize:20,
+    pageSize: 20,
   });
   pages = res.pages;
   for (let i in res.list) {
@@ -126,25 +127,6 @@ async function getList() {
 }
 
 getList();
-
-onMounted(() => {
-      const gesture = createGesture({
-        el: content.value.$el,
-        gestureName: 'swipe',
-          direction: 'x',
-          onEnd: (detail) => {
-            if (detail.deltaX > 100) {
-              active.value--
-              console.log('right')
-            } else if (detail.deltaX < -100) {
-              // Left swipe
-              active.value++
-              console.log('left')
-            }
-          }
-      });
-      gesture.enable(true);
-    });
 </script>
 
 <style scoped>

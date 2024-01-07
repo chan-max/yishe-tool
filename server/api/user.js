@@ -9,7 +9,7 @@ export const getAccountStatusHook = (router, sequelize, app) =>
     const account = ctx.request.body.account
 
     const user = await sequelize.models.t_user.findOne({ where: { account } });
-
+    
     if (user) {
       return ctx.body = {
         status: ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST,

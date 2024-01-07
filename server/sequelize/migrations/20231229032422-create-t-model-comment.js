@@ -18,7 +18,7 @@ module.exports = {
       parent_id: {
         type: Sequelize.INTEGER
       },
-      user_id: {
+      t_user_id: {
         type: Sequelize.INTEGER
       },
       createdAt: {

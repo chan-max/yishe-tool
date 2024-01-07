@@ -14,14 +14,14 @@ export const addModelComment = (router, sequelize, app, redis) => {
   // 该接口只有管理员更新基础模型信息时需要更新, 直接读缓存即可
   router.post("/addModelComment", async (ctx) => {
     // 模型id
-    const { model_id, parent_id, user_id, content } = ctx.request.body;
+    const { model_id, parent_id, t_user_id, content } = ctx.request.body;
 
     const table = sequelize.models.t_model_comment;
 
     var data = table.create({
       model_id,
       parent_id,
-      user_id,
+      t_user_id,
       content,
     });
     

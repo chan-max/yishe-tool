@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:33:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-07 09:22:19
+ * @LastEditTime: 2024-01-07 21:51:16
  * @FilePath: /1s/src/modules/app/views/market/index.vue
  * @Description: 
  * 
@@ -10,12 +10,9 @@
 -->
 <template>
   <ion-page>
-    <ion-header>
+    <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-button style="--color: var(--ion-text-color)"> 更多 </ion-button>
-        </ion-buttons>
-        <ion-buttons slot="end">
           <ion-button>
             <ion-icon
               style="color: var(--ion-text-color)"
@@ -23,6 +20,8 @@
               :icon="filterOutline"
             ></ion-icon>
           </ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end">
           <ion-button>
             <ion-icon
               style="color: var(--ion-text-color)"
@@ -38,25 +37,19 @@
           <template #nav-left> </template>
           <template #nav-right> </template>
           <template #nav-bottom> </template>
-          <van-tab v-for="tab,index in tabs" :title="tab" :name="index">
+          <van-tab v-for="(tab, index) in tabs" :title="tab.title" :name="tab.name">
             <!-- 这里可以放一些具体化的分类 -->
           </van-tab>
         </van-tabs>
       </ion-toolbar>
     </ion-header>
     <ion-content ref="content" :fullscreen="true">
-      <ion-list>
-        <ion-item v-for="(item, index) in list">
-          <div style="width: 100%; height: 10px">{{ item }}</div>
-        </ion-item>
-      </ion-list>
-      <ion-infinite-scroll @ionInfinite="ionInfinite">
-        <ion-infinite-scroll-content></ion-infinite-scroll-content>
-      </ion-infinite-scroll>
+      <keep-alive>
+        <component :is="aliveComponent"></component>
+      </keep-alive>
     </ion-content>
   </ion-page>
-</template>
-
+</template> 
 <script setup>
 import {
   IonPage,
@@ -64,75 +57,76 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
   IonIcon,
   IonButtons,
-  IonButton,
-  IonList,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  IonItem,
-  IonLabel,
-  createGesture,
+  IonButton
 } from "@ionic/vue";
 import { getModelList } from "@/api";
 import { onBeforeMount, ref, reactive, onMounted } from "vue";
 import { timeago } from "@/common/time";
 import { searchOutline, filterOutline } from "ionicons/icons";
+import model from  './model/index.vue'
+import recommend from  './recommend/index.vue'
+import { shallowReactive,computed } from "vue";
 
-const active = ref(2);
+const active = ref('recommend');
 
 const content = ref();
 
-const tabs = reactive([
-  "推荐",
-  "最新",
-  "模型",
-  "图片贴纸",
-  "文字贴纸",
-  "艺术字体",
-  "更多",
-  "其他",
+const aliveComponent = computed(() => {
+  return tabs.find((tab) => tab.name == active.value).component
+})
+
+const tabs = shallowReactive([
+  {
+    name:'recommend',
+    title:'推荐',
+    component:recommend
+  },
+  {
+    name:'latest',
+    title:'最新',
+    component:model
+  },
+  {
+    name:'model',
+    title:'模型',
+    component:model
+  },
+  {
+    name:'imageSticker',
+    title:'图片贴纸',
+    component:model
+  },
+  {
+    name:'textSticker',
+    title:'文字贴纸',
+    component:model
+  },
+  {
+    name:'font',
+    title:'艺术字体',
+    component:model
+  },
+  {
+    name:'more',
+    title:'更多',
+    component:model
+  },
+  {
+    name:'other',
+    title:'其他',
+    component:model
+  },
 ]);
 
-const list = reactive([]);
 
-const ionInfinite = async (ev) => {
-  await getList();
-  ev.target.complete();
-};
-
-// 已经请求的页数
-var page = 1;
-// 总页数
-var pages = Infinity;
-
-async function getList() {
-  if (page > pages) {
-    return;
-  }
-
-  var res = await getModelList({
-    page: page++,
-    pageSize: 20,
-  });
-  pages = res.pages;
-  for (let i in res.list) {
-    list.push(res.list[i]);
-  }
-}
-
-getList();
 </script>
 
 <style scoped>
-ion-toolbar {
+/* ion-toolbar {
   --opacity: 0.95;
-}
+} */
 
 ion-button {
   --background: transparent;

@@ -1,3 +1,13 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2023-11-29 21:41:56
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-01-07 13:59:02
+ * @FilePath: /1s/server/sequelize/models/t_user.js
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+ */
 'use strict';
 const {
   Model
@@ -10,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
     }
   }
   User.init({

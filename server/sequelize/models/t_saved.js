@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   t_saved.init({
-    user_id: DataTypes.INTEGER,
+    t_user_id: DataTypes.INTEGER,
     type: DataTypes.STRING,
     data_id: DataTypes.STRING
   }, {

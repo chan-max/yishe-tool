@@ -2,31 +2,24 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-07 20:59:05
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-07 21:33:21
- * @FilePath: /1s/src/modules/app/views/market/modelList/index.vue
+ * @LastEditTime: 2024-01-08 21:56:48
+ * @FilePath: /1s/src/modules/app/views/market/model/index.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
   <div class="model-layout-double">
-    <div  class="item" v-for="(item, index) in list">
-      <ion-card >
-        <img
-          alt="preview"
-          :src="item.preview_img"
-        />
-        <ion-card-header>
-          <ion-card-title> {{ index }} </ion-card-title>
-          <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        </ion-card-header>
-
-        <ion-card-content>
-          Here's a small text description for the card content. Nothing more, nothing
-          less.
-        </ion-card-content>
-      </ion-card>
-    </div>
+    <ion-card class="item" v-for="item,index in list">
+      <img alt="preview" :src="item.preview_img" />
+      <ion-card-header>
+        <ion-card-title> {{ index }} </ion-card-title>
+        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        Here's a small text description for the card content. Nothing more, nothing less.
+      </ion-card-content>
+    </ion-card>
   </div>
   <ion-infinite-scroll @ionInfinite="ionInfinite">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
@@ -50,7 +43,6 @@ import { timeago } from "@/common/time";
 import { getModelList } from "@/api";
 import { LazyImg, Waterfall } from "vue-waterfall-plugin-next";
 import "vue-waterfall-plugin-next/dist/style.css";
-
 
 
 type DisplayMode = "single" | "double";
@@ -85,19 +77,19 @@ getList();
 
 <style scoped>
 .model-layout-double {
-  width: 100%;
-  padding: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: 10px;
+  width:100%;
+  padding:10px;
+  display:flex;
+  flex-wrap:wrap;
+  row-gap:5px;
+  column-gap:4px;
 }
 
 .item {
-  width: 50%;
+  width:calc(50% - 2px);
 }
 
 ion-card {
   margin: 0;
-  margin-bottom: 10px;
 }
 </style>

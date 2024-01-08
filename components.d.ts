@@ -61,6 +61,7 @@ declare module 'vue' {
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
     VanTabs: typeof import('vant/es')['Tabs']
+    Waterfall: typeof import('./src/components/layout/waterfall/index.vue')['default']
     Workspace: typeof import('./src/components/design/layout/workspace/index.vue')['default']
   }
 }

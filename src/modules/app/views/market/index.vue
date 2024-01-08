@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:33:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-07 21:51:16
+ * @LastEditTime: 2024-01-08 21:43:39
  * @FilePath: /1s/src/modules/app/views/market/index.vue
  * @Description: 
  * 
@@ -67,6 +67,7 @@ import { timeago } from "@/common/time";
 import { searchOutline, filterOutline } from "ionicons/icons";
 import model from  './model/index.vue'
 import recommend from  './recommend/index.vue'
+import imageLayout from  './image/index.vue'
 import { shallowReactive,computed } from "vue";
 
 const active = ref('model');
@@ -96,7 +97,7 @@ const tabs = shallowReactive([
   {
     name:'imageSticker',
     title:'图片贴纸',
-    component:model
+    component:imageLayout
   },
   {
     name:'textSticker',

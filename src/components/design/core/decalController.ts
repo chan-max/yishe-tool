@@ -108,7 +108,6 @@ export class DecalController {
   cameraPosition = null
 
   // params
-
   info = null
 
   async initTexture() {

@@ -32,7 +32,9 @@ const router = useRouter();
 const modelList = ref();
 
 onMounted(async () => {
-  modelList.value = (await getModelList()).list;
+  modelList.value = (await getModelList({
+    pageSize:9999
+  })).list;
 });
 
 function edit(model) {

@@ -9,15 +9,23 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-  <ion-list>
-    <ion-item v-for="(item, index) in list">
-      <ion-card>
+  <div class="model-layout-double">
+    <!-- <Waterfall :list="list">
+  <template #item="{ item, url, index }">
+    <div class="card">
+      <LazyImg :url="url" />
+      <p class="text">这是具体内容</p>
+    </div>
+  </template>
+</Waterfall> -->
+    <!-- <div  class="item" v-for="(item, index) in list">
+      <ion-card >
         <img
-          alt="Silhouette of mountains"
-          src="https://ionicframework.com/docs/img/demos/card-media.png"
+          alt="preview"
+          :src="item.preview_img"
         />
         <ion-card-header>
-          <ion-card-title>Card Title</ion-card-title>
+          <ion-card-title> {{ index }} </ion-card-title>
           <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
         </ion-card-header>
 
@@ -26,14 +34,16 @@
           less.
         </ion-card-content>
       </ion-card>
-    </ion-item>
-  </ion-list>
+    </div> -->
+
+
+  </div>
   <ion-infinite-scroll @ionInfinite="ionInfinite">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   IonCard,
   IonCardContent,
@@ -49,7 +59,10 @@ import { onBeforeMount, ref, reactive, onMounted } from "vue";
 import { timeago } from "@/common/time";
 import { getModelList } from "@/api";
 
-const list = reactive([]);
+type DisplayMode = 'single' | 'double';
+
+const list = ref([]);
+
 
 const ionInfinite = async (ev) => {
   await getList();
@@ -71,12 +84,25 @@ async function getList() {
     pageSize: 20,
   });
   pages = res.pages;
-  for (let i in res.list) {
-    list.push(res.list[i]);
-  }
+  list.value =  list.value.concat(res.list)
 }
 
 getList();
 </script>
 
-<style></style>
+<style scoped>
+.model-layout-double{
+    width:100%;
+    padding:10px;
+    column-count:2;
+}
+
+.item{
+
+}
+
+ion-card{
+  margin:0;
+  margin-bottom:10px;
+}
+</style>

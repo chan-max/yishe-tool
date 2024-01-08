@@ -69,7 +69,7 @@ import model from  './model/index.vue'
 import recommend from  './recommend/index.vue'
 import { shallowReactive,computed } from "vue";
 
-const active = ref('recommend');
+const active = ref('model');
 
 const content = ref();
 

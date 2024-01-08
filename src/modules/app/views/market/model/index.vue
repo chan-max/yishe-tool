@@ -10,15 +10,7 @@
 -->
 <template>
   <div class="model-layout-double">
-    <Waterfall :list="list">
-  <template #item="{ item, url, index }">
-    <div class="card">
-      <LazyImg :url="url" />
-      <p style="color:red;">这是具体内容</p>
-    </div>
-  </template>
-</Waterfall>
-    <!-- <div  class="item" v-for="(item, index) in list">
+    <div  class="item" v-for="(item, index) in list">
       <ion-card >
         <img
           alt="preview"
@@ -34,9 +26,7 @@
           less.
         </ion-card-content>
       </ion-card>
-    </div> -->
-
-
+    </div>
   </div>
   <ion-infinite-scroll @ionInfinite="ionInfinite">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
@@ -58,14 +48,14 @@ import {
 import { onBeforeMount, ref, reactive, onMounted } from "vue";
 import { timeago } from "@/common/time";
 import { getModelList } from "@/api";
-import { LazyImg, Waterfall } from 'vue-waterfall-plugin-next'
-import 'vue-waterfall-plugin-next/dist/style.css'
+import { LazyImg, Waterfall } from "vue-waterfall-plugin-next";
+import "vue-waterfall-plugin-next/dist/style.css";
 
 
-type DisplayMode = 'single' | 'double';
+
+type DisplayMode = "single" | "double";
 
 const list = ref([]);
-
 
 const ionInfinite = async (ev) => {
   await getList();
@@ -87,25 +77,27 @@ async function getList() {
     pageSize: 20,
   });
   pages = res.pages;
-  list.value =  list.value.concat(res.list)
+  list.value = list.value.concat(res.list);
 }
 
 getList();
 </script>
 
 <style scoped>
-.model-layout-double{
-    width:100%;
-    padding:10px;
-    column-count:2;
+.model-layout-double {
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 10px;
 }
 
-.item{
-
+.item {
+  width: 50%;
 }
 
-ion-card{
-  margin:0;
-  margin-bottom:10px;
+ion-card {
+  margin: 0;
+  margin-bottom: 10px;
 }
 </style>

@@ -1,3 +1,4 @@
+
 /*
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
@@ -44,6 +45,8 @@ import './theme/native.less'
 // import 'element-plus/theme-chalk/dark/css-vars.css'
 
 
+
+
 import { ConfigProvider } from 'vant';
 import 'vant/lib/index.css';
 
@@ -69,3 +72,4 @@ app.use(router);
 router.isReady().then(() => {
   app.mount('#app');
 });
+

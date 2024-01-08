@@ -10,14 +10,14 @@
 -->
 <template>
   <div class="model-layout-double">
-    <!-- <Waterfall :list="list">
+    <Waterfall :list="list">
   <template #item="{ item, url, index }">
     <div class="card">
       <LazyImg :url="url" />
-      <p class="text">这是具体内容</p>
+      <p style="color:red;">这是具体内容</p>
     </div>
   </template>
-</Waterfall> -->
+</Waterfall>
     <!-- <div  class="item" v-for="(item, index) in list">
       <ion-card >
         <img
@@ -58,6 +58,9 @@ import {
 import { onBeforeMount, ref, reactive, onMounted } from "vue";
 import { timeago } from "@/common/time";
 import { getModelList } from "@/api";
+import { LazyImg, Waterfall } from 'vue-waterfall-plugin-next'
+import 'vue-waterfall-plugin-next/dist/style.css'
+
 
 type DisplayMode = 'single' | 'double';
 

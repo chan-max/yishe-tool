@@ -10,10 +10,11 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-  <waterfall :columns="columns" :list="list" v-slot="{item}">
-    id: {{ item.id }}
+  <div class="content">
+    <waterfall :columns="columns" :list="list" v-slot="{item}">
     <img :src="item.preview_img" style="width:100%;display:block;">
   </waterfall>
+  </div>
   <ion-infinite-scroll @ionInfinite="ionInfinite">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
@@ -35,7 +36,7 @@ import {
 } from "@ionic/vue";
 import waterfall from "@/components/layout/waterfall/index.vue";
 
-const columns = ref(2)
+const columns = ref(3)
 
 window.columns = columns
 
@@ -67,4 +68,8 @@ async function getList() {
 getList();
 </script>
 
-<style></style>
+<style>
+.content{
+  padding:10px;
+}
+</style>

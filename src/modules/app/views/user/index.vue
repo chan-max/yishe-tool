@@ -9,26 +9,30 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-    <ion-page>
-      <ion-header >
-          <ion-toolbar>
-            <ion-title>用户</ion-title>
-          </ion-toolbar>
-      </ion-header>
-      <ion-content :fullscreen="true">
-      </ion-content>
-    </ion-page>
+  <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>用户</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content :fullscreen="true"> </ion-content>
+  </ion-page>
 </template>
-    
-<script setup lang='ts'>
-import { onMounted } from 'vue';
-      import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-  
-      onMounted(() => {
-      })
-      
+
+<script setup>
+import { onMounted } from "vue";
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue";
+import { useLoginStatusStore } from '@/store/stores/login';
+
+const loginStore = useLoginStatusStore()
+
+onMounted(() => {
+  if(!loginStore.isLogin){
+    alert(666)
+  }
+});
+
+
 </script>
-    
-<style>
-    
-</style>
+
+<style></style>

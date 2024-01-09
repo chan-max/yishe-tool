@@ -18,7 +18,6 @@
     >
       <template v-for="rowIndex in rowMax">
         <div v-if="getItemByColAndRow(colIndex,rowIndex)" class="column-item">
-            col: {{ colIndex }} row : {{ rowIndex }}
           <slot :item="getItemByColAndRow(colIndex,rowIndex)"></slot>
    
         </div>
@@ -27,7 +26,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup >
 import { ref, computed } from "vue";
 const props = defineProps({
   list: {

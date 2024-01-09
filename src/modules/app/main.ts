@@ -3,7 +3,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-06 22:58:44
+ * @LastEditTime: 2024-01-09 21:49:09
  * @FilePath: /1s/src/modules/app/main.ts
  * @Description: 
  * 
@@ -38,11 +38,11 @@ import './theme/variables.less';
 import './theme/native.less'
 
 
-// import ElementPlus from 'element-plus'
-// import 'element-plus/dist/index.css'
-// import '@/style/cover-elementplus.scss'
-// import 'element-plus/theme-chalk/display.css'
-// import 'element-plus/theme-chalk/dark/css-vars.css'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import '@/style/cover-elementplus.scss'
+import 'element-plus/theme-chalk/display.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 
 
@@ -68,6 +68,7 @@ app.use(IonicVue)
 
 app.use(router);
 
+app.use(ElementPlus)
 
 router.isReady().then(() => {
   app.mount('#app');

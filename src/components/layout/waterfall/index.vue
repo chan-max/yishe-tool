@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-08 21:58:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-08 23:39:54
+ * @LastEditTime: 2024-01-09 21:40:44
  * @FilePath: /1s/src/components/layout/waterfall/index.vue
  * @Description: 
  * 
@@ -70,5 +70,9 @@ const rowMax = computed(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.column-item{
+    flex-shrink: 0;
 }
 </style>

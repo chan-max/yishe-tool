@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-08 21:32:35
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-08 23:14:25
+ * @LastEditTime: 2024-01-09 21:56:48
  * @FilePath: /1s/src/modules/app/views/market/image/index.vue
  * @Description: 
 
@@ -11,9 +11,14 @@
 -->
 <template>
   <div class="content">
-    <waterfall :columns="columns" :list="list" v-slot="{item}">
-    <img :src="item.preview_img" style="width:100%;display:block;">
-  </waterfall>
+    <waterfall :columns="columns" :list="list" v-slot="{ item }">
+      <el-image :src="item.preview_img" fit="contain">
+        <template #placeholder>
+          <ion-skeleton-text :animated="true"></ion-skeleton-text>
+        </template>
+        <template #error> error </template>
+      </el-image>
+    </waterfall>
   </div>
   <ion-infinite-scroll @ionInfinite="ionInfinite">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
@@ -33,12 +38,14 @@ import {
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonList,
+  IonImg,
+  IonSkeletonText,
 } from "@ionic/vue";
 import waterfall from "@/components/layout/waterfall/index.vue";
 
-const columns = ref(3)
+const columns = ref(3);
 
-window.columns = columns
+window.columns = columns;
 
 const list = ref([]);
 
@@ -59,7 +66,7 @@ async function getList() {
 
   var res = await getImage({
     page: page++,
-    pageSize: 20,
+    pageSize: 30,
   });
   pages = res.pages;
   list.value = list.value.concat(res.list);
@@ -69,7 +76,7 @@ getList();
 </script>
 
 <style>
-.content{
-  padding:10px;
+.content {
+  padding: 10px;
 }
 </style>

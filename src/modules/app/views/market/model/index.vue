@@ -9,26 +9,27 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-  <div style="padding:10px;">
-    <waterfall :columns="2" :list="list" v-slot="{item}">
-    <ion-card class="item">
-      <img alt="preview" :src="item.preview_img" style="width:100%;" />
-      <ion-card-header>
-        <ion-card-title> title </ion-card-title>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        Here's a small text description for the card content. Nothing more, nothing less.
-      </ion-card-content>
-    </ion-card>
-  </waterfall>
+  <div style="padding: 10px">
+    <waterfall :columns="2" :list="list" v-slot="{ item }">
+      <ion-card class="item" @click="go(item)">
+        <img alt="preview" :src="item.preview_img" style="width: 100%" />
+        <ion-card-header>
+          <ion-card-title> title </ion-card-title>
+          <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          Here's a small text description for the card content. Nothing more, nothing
+          less.
+        </ion-card-content>
+      </ion-card>
+    </waterfall>
   </div>
   <ion-infinite-scroll @ionInfinite="ionInfinite">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import {
   IonCard,
   IonCardContent,
@@ -40,13 +41,13 @@ import {
   IonInfiniteScrollContent,
   IonList,
 } from "@ionic/vue";
-import { onBeforeMount, ref, reactive, onMounted } from "vue";
+import { onBeforeMount, ref, reactive, onMounted, onActivated, onDeactivated } from "vue";
 import { timeago } from "@/common/time";
 import { getModelList } from "@/api";
 import waterfall from "@/components/layout/waterfall/index.vue";
-
-
-type DisplayMode = "single" | "double";
+import { onBeforeRouteLeave } from "vue-router";
+import { useIonRouter, createAnimation } from "@ionic/vue";
+const router = useIonRouter();
 
 const list = ref([]);
 
@@ -73,12 +74,39 @@ async function getList() {
   list.value = list.value.concat(res.list);
 }
 
+const customAnimation = (baseEl, opts) => {
+  // 右滑动画
+  return createAnimation()
+    .addElement(baseEl)
+    .duration(100)
+    .fromTo("transform", "translateX(0px)", "translateX(-300px)")
+    .fromTo("opacity", "1", "0.2");
+  // 淡出动画
+  return createAnimation().addElement(baseEl).duration(200).fromTo("opacity", "1", "0");
+};
+
+function go(item) {
+  router.push(
+    {
+      name: "ModelDetail",
+      query: {
+        modelInfo: JSON.stringify(item),
+      },
+    },
+    customAnimation
+  );
+}
+
 getList();
+
+let scrollTop = ref();
+
+onActivated(() => {});
+
+onDeactivated(() => {});
 </script>
 
 <style scoped>
-
-
 ion-card {
   margin: 0;
 }

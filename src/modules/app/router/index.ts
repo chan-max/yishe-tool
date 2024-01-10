@@ -33,6 +33,11 @@ const routes: Array<RouteRecordRaw> = [
     component:() => import('../views/signup/index.vue')
   },
   {
+    path:'/modelDetail',
+    name:'ModelDetail',
+    component:() => import('../views/modelDetail/index.vue')
+  },
+  {
     path: '/home/',
     name:'Home',
     component: home,

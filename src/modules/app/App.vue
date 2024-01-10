@@ -11,7 +11,9 @@
 <template>
   <van-config-provider  :theme="isDark ? 'dark':'light'">
     <ion-app>
-      <ion-router-outlet></ion-router-outlet>
+      <keep-alive>
+        <ion-router-outlet></ion-router-outlet>
+      </keep-alive>
     </ion-app>
   </van-config-provider>
 </template>

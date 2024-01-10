@@ -40,6 +40,7 @@ import { getList } from "./api/list.js";
 import { addModelComment, getModelComment } from "./api/comment.js";
 
 import { test } from "./api/test.js";
+import {file} from './api/file.js';
 
 
 export const initRouter = (...params) => {
@@ -70,7 +71,8 @@ export const initRouter = (...params) => {
     getList,
     addModelComment,
     getModelComment,
-    test
+    test,
+    file
   ];
   hooks.forEach((hook) => hook(...params));
 };

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:31:40
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-01 14:45:23
+ * @LastEditTime: 2024-01-10 22:49:24
  * @FilePath: /1s/src/modules/app/views/user/index.vue
  * @Description: 
  * 
@@ -11,28 +11,67 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar>
-        <ion-title>用户</ion-title>
+      <ion-toolbar collapse="fade">
+        <ion-buttons slot="start" style="padding:10px 20px">
+          chan-max
+        </ion-buttons>
+        <ion-buttons slot="end">
+          <ion-button>
+            <ion-icon size="small" slot="icon-only" :icon="timeOutline"></ion-icon>
+          </ion-button>
+          <ion-button>
+            <ion-icon
+              size="small"
+              slot="icon-only"
+              :icon="chatbubbleEllipsesOutline"
+            ></ion-icon>
+          </ion-button>
+          <ion-button>
+            <ion-icon size="small" slot="icon-only" :icon="settingsOutline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true"> </ion-content>
+    <ion-content :fullscreen="true" class="ion-padding">
+        <ion-avatar>
+          <img
+            alt="我的头像"
+            src="/mobileDefaultAvatar.svg"
+          />
+        </ion-avatar>
+
+    </ion-content>
   </ion-page>
 </template>
 
 <script setup>
 import { onMounted } from "vue";
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue";
-import { useLoginStatusStore } from '@/store/stores/login';
+import { useLoginStatusStore } from "@/store/stores/login";
+import {
+  settingsOutline,
+  createOutline,
+  personCircle,
+  search,
+  chatbubbleEllipsesOutline,
+  timeOutline,
+} from "ionicons/icons";
 
-const loginStore = useLoginStatusStore()
+const loginStore = useLoginStatusStore();
 
 onMounted(() => {
-  if(!loginStore.isLogin){
-    alert(666)
+  if (!loginStore.isLogin) {
+    alert(666);
   }
 });
-
-
 </script>
 
-<style></style>
+<style scoped>
+ion-button {
+  --background: transparent;
+}
+ion-avatar{
+  width:100px;
+  height:100px
+}
+</style>

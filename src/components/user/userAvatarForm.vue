@@ -31,7 +31,7 @@
                 <icon-admin></icon-admin>
                 系统管理
             </div>
-            <div  class="user-avatar-form-item">
+            <div @click="logout" class="user-avatar-form-item">
                 <icon-logout></icon-logout>
                 退出
             </div>
@@ -58,6 +58,11 @@ const avatar = computed(() => {
     // 默认头像
     return loginStatusStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
 });
+
+function logout(params) {
+    doLogout()
+}
+
 </script>
     
 <style>

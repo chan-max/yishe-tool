@@ -11,19 +11,23 @@
 <template>
   <div style="padding: 10px">
     <waterfall :columns="2" :list="list" v-slot="{ item }">
-      <ion-card class="item" @click="go(item)">
+
+        <ion-card class="item" @click="go(item)">
         <img alt="preview" :src="item.preview_img" style="width: 100%" />
         <ion-card-header>
           <ion-card-title> title </ion-card-title>
           <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
         </ion-card-header>
-        <ion-card-content>
-          Here's a small text description for the card content. Nothing more, nothing
-          less.
+        <ion-card-content style="overflow:auto;">
+          {{ item }}
         </ion-card-content>
       </ion-card>
+
     </waterfall>
   </div>
+  <ion-modal :is-open="isOpen">
+    <modal-content></modal-content>
+  </ion-modal>
   <ion-infinite-scroll @ionInfinite="ionInfinite">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
@@ -40,6 +44,7 @@ import {
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonList,
+  IonModal,
 } from "@ionic/vue";
 import { onBeforeMount, ref, reactive, onMounted, onActivated, onDeactivated } from "vue";
 import { timeago } from "@/common/time";
@@ -47,6 +52,9 @@ import { getModelList } from "@/api";
 import waterfall from "@/components/layout/waterfall/index.vue";
 import { onBeforeRouteLeave } from "vue-router";
 import { useIonRouter, createAnimation } from "@ionic/vue";
+import modalContent from "./modalContent.vue";
+import { isOpen, modalInfo } from "./index.ts";
+
 const router = useIonRouter();
 
 const list = ref([]);
@@ -86,20 +94,11 @@ const customAnimation = (baseEl, opts) => {
 };
 
 function go(item) {
-  router.push(
-    {
-      name: "ModelDetail",
-      query: {
-        modelInfo: JSON.stringify(item),
-      },
-    },
-    customAnimation
-  );
+  isOpen.value = true;
+  modalInfo.value = item;
 }
 
 getList();
-
-let scrollTop = ref();
 
 onActivated(() => {});
 

@@ -4,6 +4,8 @@ import { sendValidateCodeEmail } from "../util/email.js";
 import { mailedMap } from "./email.js";
 
 // 获取账号的使用状态
+
+
 export const getAccountStatusHook = (router, sequelize, app) =>
   router.post("/getAccountStatus", async (ctx, next) => {
     const account = ctx.request.body.account

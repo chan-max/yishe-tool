@@ -37,11 +37,11 @@ const props = defineProps({
   },
   columnGap: {
     // px
-    default: "4",
+    default: "6",
   },
   rowGap: {
     // px
-    default: "4",
+    default: "6",
   },
 });
 
@@ -70,6 +70,9 @@ const rowMax = computed(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
+
+  /* width 0   可以解决flex子元素超出父元素问题 */ 
+  width: 0;
 }
 
 .column-item{

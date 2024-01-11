@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-07 20:59:05
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-09 20:39:02
+ * @LastEditTime: 2024-01-11 21:25:15
  * @FilePath: /1s/src/modules/app/views/market/model/index.vue
  * @Description: 
  * 
@@ -11,18 +11,16 @@
 <template>
   <div style="padding: 10px">
     <waterfall :columns="2" :list="list" v-slot="{ item }">
-
-        <ion-card class="item" @click="go(item)">
+      <ion-card class="item" @click="go(item)">
         <img alt="preview" :src="item.preview_img" style="width: 100%" />
         <ion-card-header>
           <ion-card-title> title </ion-card-title>
           <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
         </ion-card-header>
-        <ion-card-content style="overflow:auto;">
+        <ion-card-content>
           {{ item }}
         </ion-card-content>
       </ion-card>
-
     </waterfall>
   </div>
   <ion-modal :is-open="isOpen">

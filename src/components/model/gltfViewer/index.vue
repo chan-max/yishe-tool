@@ -128,7 +128,7 @@ async function initModel() {
   if (props.transparent) {
     renderer.setClearColor(null, 0);
   } else {
-    renderer.setClearColor(0x6900ff, 0.05);
+    renderer.setClearColor(0x6900ff, 0);
   }
 
   var currentMesh = null;
@@ -183,6 +183,12 @@ async function initModel() {
   const controller = new OrbitControls(camera, renderer.domElement);
 
   controller.enablePan = false; // 禁止右键拖拽
+  controller.minDistance = 0.5
+  controller.maxDistance = 5
+
+  controller.enableDamping = true
+  controller.dampingFactor = 1;
+
 
   let resizeOb = new ResizeObserver(debounce(resetCameraAspect));
 

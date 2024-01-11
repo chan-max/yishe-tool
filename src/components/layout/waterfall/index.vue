@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-08 21:58:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-09 21:40:44
+ * @LastEditTime: 2024-01-11 22:24:08
  * @FilePath: /1s/src/components/layout/waterfall/index.vue
  * @Description: 
  * 
@@ -37,11 +37,11 @@ const props = defineProps({
   },
   columnGap: {
     // px
-    default: "6",
+    default: "4",
   },
   rowGap: {
     // px
-    default: "6",
+    default: "4",
   },
 });
 

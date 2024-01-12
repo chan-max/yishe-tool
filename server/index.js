@@ -104,7 +104,7 @@ const port = 3000
 
 // 获取当前服务运行的主机名
 export function getHost() {
-    return ip.address() + ':' + port
+    return process.env.localhost+ ':' + port
 }
 
 const options = {

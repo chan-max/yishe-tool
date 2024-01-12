@@ -18,7 +18,8 @@
           <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
-          {{ item }}
+          <!-- {{ item }} -->
+          123213123123
         </ion-card-content>
       </ion-card>
     </waterfall>

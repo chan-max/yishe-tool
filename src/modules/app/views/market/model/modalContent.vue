@@ -12,7 +12,7 @@
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="end">
-        <ion-button @click="close" style="--background:transparent;">
+        <ion-button @click="close" style="--background: transparent">
           <ion-icon
             style="color: var(--ion-text-color)"
             slot="icon-only"
@@ -27,13 +27,16 @@
       <div class="viewer">
         <gltf-viewer :model="model"></gltf-viewer>
       </div>
-
       <ion-text> 221213 </ion-text>
       <div style="flex: 1"></div>
       <div class="bottom">
-        <ion-button fill="outline" shape="round">购买</ion-button>
+        <ion-button fill="outline" shape="round">收藏</ion-button>
         <ion-button fill="outline" shape="round">评论</ion-button>
-        <ion-button shape="round">点赞</ion-button>
+        <div style="flex: 1"></div>
+        <ion-button shape="round" id="buy">
+          <ion-icon slot="start" :icon="star"></ion-icon>
+          购 买
+        </ion-button>
       </div>
     </div>
   </ion-content>
@@ -53,17 +56,17 @@ import {
   IonInfiniteScrollContent,
   IonList,
   IonModal,
+  IonTitle,
   IonHeader,
   IonButton,
   IonButtons,
   IonToolbar,
-  IonTitle,
   IonContent,
   IonIcon,
   IonText,
 } from "@ionic/vue";
 
-import { closeOutline } from "ionicons/icons";
+import { closeOutline, star } from "ionicons/icons";
 
 const model = ref();
 
@@ -79,18 +82,22 @@ onBeforeMount(() => {
 <style lang="less" scoped>
 .viewer {
   width: 100%;
-  height: 360px;
+  height: 320px;
 }
 
-
-.content{
+.content {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.bottom{
+.bottom {
   display: flex;
+}
+
+#buy {
+  --background: #6900ff;
+  --background-activated: rgb(125, 0, 255);
 }
 </style>

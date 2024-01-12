@@ -1,11 +1,11 @@
 <template>
-    <van-floating-bubble  axis="xy"  magnetic="x" icon="chat" />
+  <van-floating-bubble axis="xy" magnetic="x">
+    +
+  </van-floating-bubble>
 </template>
-    
-<script setup lang='ts'>
-    
+
+<script setup>
+import { add } from "ionicons/icons";
 </script>
-    
-<style>
-    
-</style>
+
+<style></style>

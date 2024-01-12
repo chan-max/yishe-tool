@@ -112,7 +112,7 @@ const options = {
     cert: fs.readFileSync('./ssl/certificate.crt'),
 }
 
-var server = process.env.protool === 'http' ?  http.createServer(options,app.callback()) :  https.createServer(options,app.callback())
+var server = process.env.protool === 'https' ?  https.createServer(options,app.callback()) : http.createServer(options,app.callback())
 
 import {initWebsocket} from './websocket/index.js'
 

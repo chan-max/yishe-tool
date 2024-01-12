@@ -13,17 +13,11 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 import {
   operatingTextStickerOptions,
-  currentController,
-  showDecalControl,
 } from "../../store";
 
-import { uploadTextSticker } from "@/api/index";
-import { useDebounceFn } from "@vueuse/core";
-import { initDraggableElement } from "../../utils/draggable";
-import { base64ToFile } from "@/common/transform/base64ToFile";
 import { vClick } from "../../composition/vClick";
 import {canvasTextEl,canvasBackgroundEl,base64,forceUpdateTextSticker} from './watch'
 

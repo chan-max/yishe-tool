@@ -35,11 +35,11 @@
     <ion-content :fullscreen="true" class="ion-padding">
         <ion-avatar>
           <img
+            size="small"
             alt="我的头像"
             src="/mobileDefaultAvatar.svg"
           />
         </ion-avatar>
-
     </ion-content>
   </ion-page>
 </template>

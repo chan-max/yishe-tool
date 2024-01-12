@@ -75,10 +75,9 @@ function load(e, info) {
   initDraggableElement(
     img,
     () => {
-      console.time("x");
       const src = createImgObjectURL(img);
       const base64 = imgToBase64(img);
-      console.timeEnd("x");
+
       currentController.value.stickToMousePosition({
         img: img,
         type: "image",

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-11-29 21:41:57
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-30 14:08:28
+ * @LastEditTime: 2024-01-13 15:59:38
  * @FilePath: /1s/src/components/design/layout/modelInfo/index.vue
  * @Description: 
  * 
@@ -22,7 +22,7 @@
 </template>
 <script setup>
 import { currentOperatingBaseModelInfo } from "../../store";
-import baseGltfViewer from "@/components/baseGltfViewer/index.vue";
+import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
 import descriptionImgs from "./descriptionImgs.vue";
 </script>
 <style lang="less">

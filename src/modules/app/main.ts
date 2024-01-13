@@ -3,7 +3,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-09 21:49:09
+ * @LastEditTime: 2024-01-13 10:25:23
  * @FilePath: /1s/src/modules/app/main.ts
  * @Description: 
  * 
@@ -13,7 +13,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
 
-import { IonicVue } from '@ionic/vue';
+import { IonButton, IonicVue } from '@ionic/vue';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -69,6 +69,10 @@ app.use(IonicVue)
 app.use(router);
 
 app.use(ElementPlus)
+
+import {initIonicComponents} from './helper/ionic.ts'
+
+initIonicComponents(app)
 
 router.isReady().then(() => {
   app.mount('#app');

@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-11-28 01:16:00
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-06 19:30:45
+ * @LastEditTime: 2024-01-13 15:53:45
  * @FilePath: /1s/src/modules/app/views/home.vue
  * @Description: 
  * 
@@ -10,7 +10,7 @@
 -->
 <template>
   <ion-page>
-    <floating-button></floating-button>
+    <!-- <floating-button></floating-button> -->
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <div class="app-footer">

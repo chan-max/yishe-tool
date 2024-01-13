@@ -67,6 +67,8 @@ export class ModelController {
 
     private background: any = null
 
+    public initialCameraPosition = new Vector3();
+
     public setBackground() {
         // 这样可以保持背景固定
         // var geometry = new BoxGeometry( 1000, 1000, 1000 );
@@ -155,7 +157,6 @@ export class ModelController {
 
         this.renderer.setSize(this.width, this.height);
         this.camera.lookAt(0, 0, 0);
-        this.camera.position.copy(this.defaultCameraPosition);
 
         this.controller = new OrbitControls(this.camera, this.renderer.domElement);
         this.controller.minDistance = 0.5
@@ -164,7 +165,7 @@ export class ModelController {
 
         this.controller.enableDamping = true
         this.controller.dampingFactor = 0.1;
-
+        this.camera.position.copy(this.defaultCameraPosition);
 
         this.canvasContainer.appendChild(this.renderer.domElement);
         this.resizeObserver = new ResizeObserver(
@@ -177,6 +178,7 @@ export class ModelController {
         this.resizeObserver.observe(canvasContainer);
         this.initClickEvent();
         this.initMousePositionHandler(this.canvasContainer);
+
     }
 
     // 记录已渲染的帧数
@@ -197,7 +199,7 @@ export class ModelController {
             // this.background.position.copy(this.camera.position)
         }
 
-        this.controller.update();
+        this.controller?.update();
 
         this.renderer.render(this.scene, this.camera);
     }
@@ -262,6 +264,7 @@ export class ModelController {
         this.initModelPosition();
         this.scene.add(this.gltf.scene);
         this.mesh = this.findMainMesh(this.gltf);
+        this.initialCameraPosition.copy(this.camera.position);
     }
 
     // 移除主模型
@@ -369,7 +372,7 @@ export class ModelController {
         if (!this.gltf || !this.animate) {
             return;
         }
-        this.gltf.scene.rotation.y += 0.008;
+        this.controller.update();
     }
 
     // 解析 1stf 格式化信息 ， 并初始化系统
@@ -413,6 +416,37 @@ export class ModelController {
     // 操作队列
 
     operationQuene = shallowReactive([])
+
+
+    setCameraPosition(x, y, z) {
+        x && (this.camera.position.x = x)
+        y && (this.camera.position.y = y)
+        z && (this.camera.position.z = z)
+    }
+
+    lookFront() {
+
+    }
+
+    lookBack(){
+      this.camera.position.z = -this.camera.position.z
+    }
+
+    lookTop(){
+
+    }
+
+    lookBottom(){
+
+    }
+    
+    lookLeft(){
+
+    }
+
+    lookRight(){
+
+    }
 }
 
 // 当前工作台的操作类型

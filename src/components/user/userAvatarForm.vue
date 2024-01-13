@@ -1,8 +1,8 @@
 <!--
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-23 11:17:00
- * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2023-12-23 18:54:04
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-01-13 16:02:01
  * @FilePath: /1s/src/components/user/userAvatarForm.vue
  * @Description: 
  * 
@@ -56,7 +56,7 @@ const loginStatusStore = useLoginStatusStore();
 const avatar = computed(() => {
     const loginStatusStore = useLoginStatusStore();
     // 默认头像
-    return loginStatusStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
+    return loginStatusStore.userInfo?.preview_avatar || "/defaultAvatar/avatar3.png";
 });
 
 function logout(params) {

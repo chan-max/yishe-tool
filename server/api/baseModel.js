@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-27 20:35:31
+ * @LastEditTime: 2024-01-13 17:22:43
  * @FilePath: /1s/server/api/baseModel.js
  * @Description: 
  * 
@@ -43,7 +43,7 @@ export const injectBaseModelRoute = (router, sequelize, app, redis) => {
 export const getBaseModelById = (router, sequelize) => router.post('/getBaseModelById', async (ctx) => {
   const table = sequelize.models.t_base_model;
   const baseModel = await table.findOne({ where: { id: ctx.request.body.id } });
-  baseModel.dataValues.fullfilepath = ctx.relativePathToPreviewPath(baseModel.filePath);
+  baseModel.dataValues.preview_file = ctx.relativePathToPreviewPath(baseModel.filePath);
 
   ctx.body = {
     data: baseModel

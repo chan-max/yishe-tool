@@ -6,6 +6,7 @@ import { mailedMap } from "./email.js";
 // 获取账号的使用状态
 
 
+
 export const getAccountStatusHook = (router, sequelize, app) =>
   router.post("/getAccountStatus", async (ctx, next) => {
     const account = ctx.request.body.account
@@ -119,6 +120,7 @@ export const updateUserInfoHook = (router, sequelize, app) =>
 
 import jwt from "jsonwebtoken";
 
+
 export const loginHook = (router, sequelize) => router.post('/login', async (ctx) => {
   const data = ctx.request.body
   const { account, password } = data
@@ -144,7 +146,7 @@ export const loginHook = (router, sequelize) => router.post('/login', async (ctx
 
   ctx.set('Token', token)
 
-  user.avatar = ctx.relativePathToPreviewPath(user.avatar)
+  user.setDataValue('preview_avatar', ctx.relativePathToPreviewPath(user.avatar))
   return ctx.body = {
     status: ResponseStatusCodeEnum.LOGIN_SUCCESS,
     data: user

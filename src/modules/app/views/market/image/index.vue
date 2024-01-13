@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-08 21:32:35
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-09 21:56:48
+ * @LastEditTime: 2024-01-12 22:29:22
  * @FilePath: /1s/src/modules/app/views/market/image/index.vue
  * @Description: 
 
@@ -12,7 +12,7 @@
 <template>
   <div class="content">
     <waterfall :columns="columns" :list="list" v-slot="{ item }">
-      <el-image :src="item.preview_img" fit="contain">
+      <el-image  :src="item.preview_img" fit="contain">
         <template #placeholder>
           <ion-skeleton-text :animated="true"></ion-skeleton-text>
         </template>
@@ -78,5 +78,9 @@ getList();
 <style>
 .content {
   padding: 10px;
+}
+
+.el-image{
+  display: block;
 }
 </style>

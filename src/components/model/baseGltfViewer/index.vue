@@ -165,7 +165,6 @@ async function initModel() {
 
   function render() {
     requestAnimationFrame(render);
-    // currentMesh.rotation.y+=.01
     renderer.render(scene, camera);
   }
 

@@ -2,15 +2,16 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-11-29 21:41:56
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-07 18:49:21
+ * @LastEditTime: 2024-01-13 10:16:33
  * @FilePath: /1s/server/api/model.js
- * @Description:
+ * @Description: 关于模型操作的所有api
  *
  * Copyright (c) 2023 by 1s, All Rights Reserved.
  */
 
-
-
+/* 
+  获取模型列表,关联上传者
+*/
 export const getModelListHook = (router, sequelize) =>
   router.post("/getModelList", async (ctx) => {
     
@@ -22,6 +23,7 @@ export const getModelListHook = (router, sequelize) =>
 
     data.list.forEach(item => {
       item.dataValues.preview_img = ctx.relativePathToPreviewPath(item.img);
+      item.t_user.setDataValue('preview_avatar', ctx.relativePathToPreviewPath(item.t_user.avatar))
     });
 
     ctx.body = {
@@ -43,10 +45,9 @@ export const getModelById = (router, sequelize, app) =>
 });
 
 
-
-
 // 获取随机模型 
 export const getRandomModel = () => {
+
 }
 
 import { getRelativePath } from '../fileManage.js'

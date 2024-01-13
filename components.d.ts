@@ -9,7 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ADivider: typeof import('ant-design-vue/es')['Divider']
     AQrcode: typeof import('ant-design-vue/es')['QRCode']
-    BaseGltfViewer: typeof import('./src/components/baseGltfViewer/index.vue')['default']
+    BaseGltfViewer: typeof import('./src/components/model/baseGltfViewer/index.vue')['default']
     BaseModelSelect: typeof import('./src/components/design/layout/baseModelSelect/index.vue')['default']
     BottomMenu: typeof import('./src/components/design/layout/bottomMenu.vue')['default']
     Canvas: typeof import('./src/components/design/layout/customTextSticker/canvas.vue')['default']
@@ -55,6 +55,8 @@ declare module 'vue' {
     VanFloatingBubble: typeof import('vant/es')['FloatingBubble']
     VanNavBar: typeof import('vant/es')['NavBar']
     VanPopup: typeof import('vant/es')['Popup']
+    VanSwipe: typeof import('vant/es')['Swipe']
+    VanSwipeItem: typeof import('vant/es')['SwipeItem']
     VanTab: typeof import('vant/es')['Tab']
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']

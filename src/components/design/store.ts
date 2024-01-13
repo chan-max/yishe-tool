@@ -3,6 +3,7 @@ import { computed, ref, shallowRef, watchEffect, watch, reactive, nextTick, shal
 
 // 当前实例
 export const currentController = shallowRef(null);
+(window as any).controller = currentController
 
 // 是否为暗色模式
 export const isDarkMode = ref(false)

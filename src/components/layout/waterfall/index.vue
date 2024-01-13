@@ -26,7 +26,7 @@
   </div>
 </template>
 
-<script setup >
+<script setup>
 import { ref, computed } from "vue";
 const props = defineProps({
   list: {

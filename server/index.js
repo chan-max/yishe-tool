@@ -30,9 +30,9 @@ const __dirname = path.dirname(__filename);
 
 var redis = null
 
-try{
-   redis = await createRedisClient()
-}catch(e){
+try {
+    redis = await createRedisClient()
+} catch (e) {
     console.log('redis 链接失败')
 }
 
@@ -81,12 +81,12 @@ app.use(koaBody({
 app.use(async (ctx, next) => {
     // 将文件将对路径转换为全路径
     ctx.relativePathToPreviewPath = (path) => {
-        if(!path){
+        if (!path) {
             return ''
         }
         return formatFilePath(`${ctx.protocol}://${getHost()}${path}`);
     }
-    
+
     // 获取上传文件的相对路径
     ctx.getUploadFileRelativePath = (key = 'file') => {
         return getRelativePath(ctx.request.files[key].filepath)
@@ -104,7 +104,7 @@ const port = 3000
 
 // 获取当前服务运行的主机名
 export function getHost() {
-    return process.env.localhost+ ':' + port
+    return (process.env.localhost || ip.address()) + ':' + port
 }
 
 const options = {
@@ -112,13 +112,13 @@ const options = {
     cert: fs.readFileSync('./ssl/certificate.crt'),
 }
 
-var server = process.env.protool === 'https' ?  https.createServer(options,app.callback()) : http.createServer(options,app.callback())
+var server = process.env.protool === 'https' ? https.createServer(options, app.callback()) : http.createServer(options, app.callback())
 
-import {initWebsocket} from './websocket/index.js'
+import { initWebsocket } from './websocket/index.js'
 
 initWebsocket(server)
 
-export function startServe(){
+export function startServe() {
     server.listen(3000, () => {
         console.log('1s listening on *:3000');
     });

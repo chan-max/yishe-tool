@@ -425,15 +425,16 @@ export class ModelController {
     }
 
     lookFront() {
-
+        this.camera.position.copy(this.initialCameraPosition)
     }
 
     lookBack(){
-      this.camera.position.z = -this.camera.position.z
+      let v = new Vector3(this.initialCameraPosition.x, this.initialCameraPosition.y, -this.initialCameraPosition.z)
+      this.camera.position.copy(v)
     }
 
     lookTop(){
-
+        
     }
 
     lookBottom(){
@@ -445,6 +446,10 @@ export class ModelController {
     }
 
     lookRight(){
+
+    }
+
+    getFullViewImages(){
 
     }
 }

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-11 20:37:37
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-13 20:07:47
+ * @LastEditTime: 2024-01-14 19:55:00
  * @FilePath: /1s/src/modules/app/views/market/model/index.ts
  * @Description: 
  * 
@@ -17,6 +17,5 @@ export  const isOpen = ref(false);
 export const modalInfo = shallowRef()
 
 export interface ModelInfo {
-    
 }
 

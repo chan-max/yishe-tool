@@ -2,14 +2,14 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-11 20:37:37
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-13 20:34:42
+ * @LastEditTime: 2024-01-14 23:18:02
  * @FilePath: /1s/src/modules/app/views/market/model/modalContent.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-   <ion-loading :is-open="loading" message="正在加载模型..."> </ion-loading>
+  <ion-loading :is-open="loading" message="正在加载模型..."> </ion-loading>
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="end">
@@ -26,21 +26,27 @@
   <ion-content style="--padding-bottom: var(--ion-safe-area-bottom)">
     <div class="content">
       <div class="viewer">
-        <gltf-viewer :model="model" @before-load="beforeLoad" @loaded="loaded"></gltf-viewer>
+        <gltf-viewer
+          :model="model"
+          @before-load="beforeLoad"
+          @loaded="loaded"
+        ></gltf-viewer>
       </div>
-      <div class="thumbnails"> 缩略图 </div>
-      <div class="ion-padding" style="display:flex;flex-direction: column;height:100%;">
-        <ion-text style="font-size:40px;font-weight: bold;"> 221213 </ion-text>
+      <div class="thumbnails">缩略图</div>
+      <ion-text style="font-size: 32px; font-weight: bold"> 默认名字 </ion-text>
       <div style="flex: 1"></div>
       <div class="bottom">
         <ion-button fill="outline" shape="round">收藏</ion-button>
-        <ion-button fill="outline" shape="round">评论</ion-button>
+    
+        <ion-button id="open-comment-modal" fill="outline" shape="round" expand="block"
+          >评论</ion-button
+        >    
+        <comment></comment>
         <div style="flex: 1"></div>
         <ion-button shape="round" id="buy">
           <ion-icon slot="start" :icon="star"></ion-icon>
           购 买
         </ion-button>
-      </div>
       </div>
     </div>
   </ion-content>
@@ -69,19 +75,19 @@ import {
   IonIcon,
   IonText,
 } from "@ionic/vue";
-
 import { closeOutline, star } from "ionicons/icons";
+import comment from "./comment.vue";
 
 const model = ref();
 
-const loading = ref(true)
+const loading = ref(true);
 
-function loaded(){
-  loading.value = false
+function loaded() {
+  loading.value = false;
 }
 
-function beforeLoad(){
-  loading.value = true
+function beforeLoad() {
+  loading.value = true;
 }
 
 function close() {
@@ -90,9 +96,7 @@ function close() {
 
 onBeforeMount(() => {
   model.value = JSON.parse(modalInfo.value.modelInfo);
-  console.log(modalInfo)
 });
-
 </script>
 <style lang="less" scoped>
 .viewer {

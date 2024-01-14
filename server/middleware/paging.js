@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-26 19:23:47
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-07 14:57:23
+ * @LastEditTime: 2024-01-14 23:15:05
  * @FilePath: /1s/server/middleware/paging.js
  * @Description: 
  * 
@@ -60,7 +60,6 @@ export const mw_paging = (app) =>
             list,
           });
         } catch (e) {
-          debugger
           reject(e);
         }
       });

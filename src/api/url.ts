@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-25 23:04:37
+ * @LastEditTime: 2024-01-14 22:57:20
  * @FilePath: /1s/src/api/url.ts
  * @Description: 
  * 
@@ -80,5 +80,10 @@ export enum Url {
 
     GET_BASIC_CONFIG = '/getBasicConfig',
 
-    GET_LIST = '/getList'
+    GET_LIST = '/getList',
+
+
+    ADD_MODEL_COMMENT = '/addModelComment',
+
+    GET_MODEL_COMMENT = '/getModelComment',
 }

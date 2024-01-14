@@ -1,3 +1,13 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2023-12-29 20:40:22
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-01-14 23:12:47
+ * @FilePath: /1s/server/sequelize/migrations/20231229032422-create-t-model-comment.js
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+ */
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -18,7 +28,7 @@ module.exports = {
       parent_id: {
         type: Sequelize.INTEGER
       },
-      t_user_id: {
+      user_id: {
         type: Sequelize.INTEGER
       },
       createdAt: {

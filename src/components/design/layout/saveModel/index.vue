@@ -51,7 +51,7 @@ async function save() {
   await uploadModel({
     img: currentController.value.getScreenShotFile(),
     modelInfo: JSON.stringify(currentController.value.exportTo1stf()),
-    t_user_id: loginStore.userInfo.id,
+    user_id: loginStore.userInfo.id,
   });
 }
 </script>

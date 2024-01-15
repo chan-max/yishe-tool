@@ -55,13 +55,13 @@ import { getRelativePath } from '../fileManage.js'
 export const uploadModelHook = (router, sequelize) => router.post("/uploadModel", async (ctx) => {
     const table = sequelize.models.t_model;
     const { img } = ctx.request.files; // 模型文件, 图片
-    const { t_user_id ,modelInfo} = ctx.request.body;
+    const { user_id ,modelInfo} = ctx.request.body;
     var imgPath = getRelativePath(img.filepath);
     
     await table.create({
         modelInfo,
         img:imgPath,
-        t_user_id
+        user_id
     }); 
 
     ctx.body = {

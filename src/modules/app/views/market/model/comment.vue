@@ -18,9 +18,17 @@
       </ion-header>
       <ion-content>
         <ion-list class="ion-padding">
-          <h1 v-for="(item, index) in list">
-            {{ item }}
-          </h1>
+          <ion-item v-for="(item, index) in list">
+            <ion-avatar slot="start">
+              <img
+                style="width:20px;height:20px"
+                alt="Silhouette of a person's head"
+                :src="item.t_user.preview_avatar"
+              />
+            </ion-avatar>
+            <ion-label>Item Avatar</ion-label>
+            <ion-label>cotent</ion-label>
+          </ion-item>
         </ion-list>
         <ion-infinite-scroll @ionInfinite="ionInfinite">
           <ion-infinite-scroll-content></ion-infinite-scroll-content>
@@ -28,6 +36,9 @@
       </ion-content>
       <ion-footer>
         <div class="footer ion-padding">
+          <ion-avatar>
+            <img class="avatar" :src="avatar">
+          </ion-avatar>
           <ion-input v-model="comment" placeholder="快来评论吧"></ion-input>
           <ion-button @click="addComment" size="small">
             评论
@@ -39,7 +50,7 @@
   </ion-modal>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from 'vue';
 import { modalInfo } from "./index";
 import { addModelComment } from "@/api/api/comment";
 import { chatbubbleEllipsesOutline } from "ionicons/icons";
@@ -49,10 +60,14 @@ import { getModelComment } from "@/api/api/comment";
 
 const loginStore = useLoginStatusStore();
 
+const avatar = computed(() => {
+  return loginStore.userInfo?.preview_avatar || '/mobileDefaultAvatar.svg'
+})
+
+
 const comment = ref();
 
 const { page, pages, list, getList } = usePaging(getModelComment);
-
 
 const ionInfinite = async (ev) => {
   await getList({
@@ -60,8 +75,6 @@ const ionInfinite = async (ev) => {
   });
   ev.target.complete();
 };
-
-
 
 async function addComment() {
   if (!comment.value) {
@@ -106,10 +119,20 @@ ion-list {
   background-color: transparent;
 }
 
+
+ion-avatar{
+  flex-shrink: 0;
+  height: 30px;
+  width: 30px;
+}
+
+
 .footer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   border-top: 1px solid #eee;
+  column-gap: 20px;
 }
 
 .dark {

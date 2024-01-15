@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       /*  关联用户表用于查询该模型的作者 */
       models.t_model.belongsTo(models.t_user, {
-        foreignKey:'t_user_id',
+        foreignKey:'user_id',
         targetKey:'id',
       });
     }
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
   t_model.init({
     modelInfo: DataTypes.TEXT('long'),
     img: DataTypes.STRING,
-    t_user_id: {
+    user_id: {
       type:DataTypes.INTEGER,
     }
   }, {

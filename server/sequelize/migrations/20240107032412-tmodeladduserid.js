@@ -13,7 +13,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.addColumn('t_models', 't_user_id', {
+    await queryInterface.addColumn('t_models', 'user_id', {
       type: Sequelize.INTEGER,
       allowNull: true,
     });

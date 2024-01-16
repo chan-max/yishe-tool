@@ -23,7 +23,7 @@ export const getModelListHook = (router, sequelize) =>
 
     data.list.forEach(item => {
       item.dataValues.preview_img = ctx.relativePathToPreviewPath(item.img);
-      item.t_user.setDataValue('preview_avatar', ctx.relativePathToPreviewPath(item.t_user.avatar))
+      item.t_user?.setDataValue('preview_avatar', ctx.relativePathToPreviewPath(item.t_user.avatar))
     });
 
     ctx.body = {

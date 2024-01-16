@@ -12,6 +12,11 @@ export interface ApiParamsGetModelComment {
     id: string|number; // 模型id
 }
 
+export interface CommentTree {
+    id: string
+    parentId:string
+}
+
 export const getModelComment = (params) => new Promise(async (resolve, reject) => {
     try{
        let res =  await apiInstance.post(Url.GET_MODEL_COMMENT,params)

@@ -37,10 +37,9 @@
       <div style="flex: 1"></div>
       <div class="bottom">
         <ion-button fill="outline" shape="round">收藏</ion-button>
-    
         <ion-button id="open-comment-modal" fill="outline" shape="round" expand="block"
           >评论</ion-button
-        >    
+        >
         <comment></comment>
         <div style="flex: 1"></div>
         <ion-button shape="round" id="buy">

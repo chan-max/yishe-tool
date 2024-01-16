@@ -18,17 +18,10 @@
       </ion-header>
       <ion-content>
         <ion-list class="ion-padding">
-          <ion-item v-for="(item, index) in list">
-            <ion-avatar slot="start">
-              <img
-                style="width:20px;height:20px"
-                alt="Silhouette of a person's head"
-                :src="item.t_user.preview_avatar"
-              />
-            </ion-avatar>
-            <ion-label>Item Avatar</ion-label>
-            <ion-label>cotent</ion-label>
-          </ion-item>
+          <comment-item v-for="(item, index) in list"
+          :data="item"
+          >
+          </comment-item>
         </ion-list>
         <ion-infinite-scroll @ionInfinite="ionInfinite">
           <ion-infinite-scroll-content></ion-infinite-scroll-content>
@@ -39,8 +32,8 @@
           <ion-avatar>
             <img class="avatar" :src="avatar">
           </ion-avatar>
-          <ion-input v-model="comment" placeholder="快来评论吧"></ion-input>
-          <ion-button @click="addComment" size="small">
+          <ion-textarea v-model="comment" placeholder="快来评论吧"></ion-textarea>
+          <ion-button @click="addComment" size="small" style="height:40px;">
             评论
             <ion-icon slot="end" :icon="chatbubbleEllipsesOutline"></ion-icon>
           </ion-button>
@@ -57,6 +50,8 @@ import { chatbubbleEllipsesOutline } from "ionicons/icons";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { usePaging } from "@/modules/app/helper/paging";
 import { getModelComment } from "@/api/api/comment";
+import commentItem from './commentItem.vue'
+
 
 const loginStore = useLoginStatusStore();
 

@@ -53,6 +53,8 @@ declare module 'vue' {
     UserAvatarForm: typeof import('./src/components/user/userAvatarForm.vue')['default']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
     VanFloatingBubble: typeof import('vant/es')['FloatingBubble']
+    VanImage: typeof import('vant/es')['Image']
+    VanLoading: typeof import('vant/es')['Loading']
     VanNavBar: typeof import('vant/es')['NavBar']
     VanPopup: typeof import('vant/es')['Popup']
     VanSwipe: typeof import('vant/es')['Swipe']

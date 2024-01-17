@@ -1,5 +1,9 @@
 import {Ref, ref} from 'vue'
 
+/*
+    通用分页逻辑
+*/
+
 export interface UsePaging {
     page:Ref,
     pages:Ref,
@@ -17,10 +21,8 @@ export const usePaging = (getListFn) => {
     const pages = ref(Infinity)
     // 尺寸
     const pageSize = ref(30)
-
     // 总数
     const count = ref(0)
-
     // 是否立即触发一次
     const immediate = ref(true)
 
@@ -30,8 +32,7 @@ export const usePaging = (getListFn) => {
         if (page.value > pages.value) {
             return;
           }
-
-
+          
         try{
            let res = await getListFn({
             page: page.value++,

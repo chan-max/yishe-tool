@@ -14,15 +14,19 @@
   </div>
 </template>
 <script setup>
-import { defineProps, ref, onMounted } from "vue";
+import { defineProps, ref, onMounted, watch, onUnmounted } from 'vue';
 import { activeIndex, activeIndexChange } from "./index.ts";
 
 const props = defineProps(["item", "index"]);
 
 watch(activeIndex,() => {
     if(activeIndex.value == props.index){
-        console.log(666)
+        console.log( props.index)
     }
+},{immediate:true})
+
+onUnmounted(() => {
+  console.log( "onUnmounted")
 })
 
 // 是否展示图片

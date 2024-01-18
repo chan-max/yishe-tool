@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-17 22:21:34
+ * @LastEditTime: 2024-01-18 22:30:00
  * @FilePath: /1s/src/modules/app/views/index/swiper/index.vue
  * @Description: 
  * 
@@ -18,6 +18,11 @@
       virtual
       @reachEnd="reachEnd"
       @activeIndexChange="activeIndexChange"
+      @touchStart="touchStart"
+      @touchEnd="touchEnd"
+      @transitionStart="transitionStart"
+      @transitionEnd="transitionEnd"
+      @sliderMove="sliderMove"
     >
       <swiper-slide
         style="height: 100%; width: 100%"
@@ -28,7 +33,6 @@
         <item :item="item" :index="index"></item>
       </swiper-slide>
     </swiper>
-    import { log } from "console";
   </div>
 </template>
 <script setup>
@@ -40,12 +44,48 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
 import "@ionic/vue/css/ionic-swiper.css";
 import item from "./item.vue";
-import { activeIndex, activeIndexChange } from "./index.ts";
+import { activeIndex, activeIndexChange,gltfViewerRef } from "./index.ts";
+
 const { list, page, getList } = usePaging(getModelList);
 
 // 滑动到最新
 function reachEnd() {
   getList();
 }
+
+
+/*
+  上下滑动式禁用模型控制器，防止一起滚动的错误操作体验
+*/
+
+function touchStart(){
+  console.log('touchStart')
+}
+
+
+function sliderMove(){
+  // 此事件在移动过程中持续触发，用于开始滑动的事件
+  if(gltfViewerRef.value ){
+    gltfViewerRef.value.controller.enabled = false 
+  }
+}
+
+function touchEnd(){
+  console.log('touchEnd');
+  if(gltfViewerRef.value){
+    gltfViewerRef.value.controller.enabled = true
+  }
+}
+
+function transitionStart(){
+  console.log('transitionStart')
+}
+
+function transitionEnd(){
+  console.log('transitionEnd')
+}
+
 </script>
-<style lang="less" scoped></style>
+
+<style lang="less" scoped>
+</style>

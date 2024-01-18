@@ -1,3 +1,13 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2024-01-18 19:22:11
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-01-18 21:20:51
+ * @FilePath: /1s/src/modules/app/helper/ionic.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+ */
 import {
     IonTextarea,
     IonButtons,
@@ -24,7 +34,8 @@ import {
     IonCardContent,
     IonCardTitle,
     IonCardSubtitle,
-    IonSkeletonText
+    IonSkeletonText,
+    IonProgressBar
 } from "@ionic/vue";
 
 export function initIonicComponents(app) {
@@ -54,7 +65,8 @@ export function initIonicComponents(app) {
         IonTitle,
         IonModal,
         IonInput,
-        IonSkeletonText
+        IonSkeletonText,
+        IonProgressBar
     ]
 
     components.forEach((component) => {

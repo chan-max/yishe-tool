@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-13 13:25:47
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-13 21:05:50
+ * @LastEditTime: 2024-01-18 22:11:55
  * @FilePath: /1s/src/components/model/gltfViewer/index.ts
  * @Description: 
  * 
@@ -59,23 +59,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce } from "@/common/utils/debounce";
 
 
-function startAnimate() {
-    animate.value = true;
-}
-
-function stopAnimate() {
-    animate.value = false;
-}
-
-// 是否执行动画
-const animate = ref(true);
-
-const loading = ref(false);
-
-var currentMesh = null;
-    
-
-
 const getWidth = (el) => {
     if (!el) {
         return;
@@ -110,6 +93,21 @@ function initImportedModel(gltf) {
 export const useViewer = (gltfViewerRef,props,emits) => {
     const scene = new Scene();
 
+    function startAnimate() {
+        animate.value = true;
+    }
+    
+    function stopAnimate() {
+        animate.value = false;
+    }
+    
+    // 是否执行动画
+    const animate = ref(true);
+    
+    const loading = ref(false);
+    
+    var currentMesh = null;
+
     // 添加环境光
     const ambientLight = new AmbientLight(0xffffff, 0.1); // 设置颜色和强度
     scene.add(ambientLight);
@@ -124,6 +122,24 @@ export const useViewer = (gltfViewerRef,props,emits) => {
     
     camera.position.set(0, 0, 0.7);
 
+
+    const controller = new OrbitControls(camera, renderer.domElement);
+    
+    controller.enablePan = false; // 禁止右键拖拽
+    controller.minDistance = 0.5;
+    controller.maxDistance = 5;
+    controller.enableDamping = true;
+    controller.dampingFactor = 1;
+    controller.autoRotate = true
+
+    function enableController(){
+        controller.enabled = true;
+    }
+
+    function disableController(){
+        controller.enabled = false;
+    }
+
     async function initModel() {
         emits('beforeLoad')
         const model = format1stf(props.model);
@@ -136,7 +152,6 @@ export const useViewer = (gltfViewerRef,props,emits) => {
         var baseModelUrl = model.baseModelUrl;
     
         if (!baseModelUrl && model.baseModelId) {
-    
             baseModelUrl = ((await getBaseModelById(model.baseModelId)) as any).preview_file;
         }
     
@@ -194,14 +209,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
     
         resetCameraAspect();
     
-        const controller = new OrbitControls(camera, renderer.domElement);
-    
-        controller.enablePan = false; // 禁止右键拖拽
-        controller.minDistance = 0.5;
-        controller.maxDistance = 5;
-        controller.enableDamping = true;
-        controller.dampingFactor = 1;
-        controller.autoRotate = true
+
         const resizeOb = new ResizeObserver(debounce(resetCameraAspect));
     
         
@@ -323,6 +331,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
         emits("screenshot", img);
     }
 
+    
     watch(
         () => props.model,
         async () => {
@@ -333,12 +342,14 @@ export const useViewer = (gltfViewerRef,props,emits) => {
     );
 
 
+
     return {
         emits,
         loading,
         props,
         startAnimate,
         stopAnimate,
-        gltfViewerRef
+        gltfViewerRef,
+        controller,
     }
 }

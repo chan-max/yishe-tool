@@ -17,6 +17,7 @@
       :slides-per-view="1"
       virtual
       @reachEnd="reachEnd"
+      @activeIndexChange="activeIndexChange"
     >
       <swiper-slide
         style="height: 100%; width: 100%"
@@ -24,74 +25,27 @@
         :key="index"
         :virtualIndex="index"
       >
-        <div class="swiper-item">
-          <div class="viewer">
-            <van-image
-              style="width: 100%; height: 100%"
-              fit="cover"
-              :src="item.preview_img"
-            >
-              <template v-slot:loading>
-                <van-loading type="spinner" size="20" />
-              </template>
-            </van-image>
-          </div>
-          <div class="menu">
-            {{ item }}
-          </div>
-        </div>
+        <item :item="item" :index="index"></item>
       </swiper-slide>
     </swiper>
     import { log } from "console";
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, watchEffect } from "vue";
 import { usePaging } from "../../../helper/paging.ts";
 import { getModelList } from "@/api/index.ts";
 import { Virtual } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
 import "@ionic/vue/css/ionic-swiper.css";
-
-/*
-    该无限滑动使用轮播图模拟，由三个元素轮循模拟
-    获取随机推荐列表
-*/
-
+import item from "./item.vue";
+import { activeIndex, activeIndexChange } from "./index.ts";
 const { list, page, getList } = usePaging(getModelList);
-
-// 当前正在操作的模型
-const cursor = ref(0);
 
 // 滑动到最新
 function reachEnd() {
   getList();
 }
 </script>
-<style lang="less" scoped>
-.swiper-item {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.viewer {
-  flex: 1;
-  height:calc(100% - 50px);
-}
-
-::v-deep {
-  .viewer img {
-    width: 100%;
-    height: 100%;
-  }
-}
-
-.menu {
-  width: 100%;
-  height: 50px;
-}
-</style>
+<style lang="less" scoped></style>

@@ -1,8 +1,34 @@
-import { IonTextarea,IonButtons, IonModal, IonInput, IonList, IonItem, IonInfiniteScroll, IonInfiniteScrollContent, IonToolbar, IonContent, IonTitle, IonHeader, IonFooter, IonButton, IonIcon, IonAvatar, IonRippleEffect, IonThumbnail, IonCardHeader, IonLabel, IonCard, IonLoading, IonCardContent, IonCardTitle, IonCardSubtitle } from "@ionic/vue";
-
+import {
+    IonTextarea,
+    IonButtons,
+    IonModal,
+    IonInput,
+    IonList,
+    IonItem,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
+    IonToolbar,
+    IonContent,
+    IonTitle,
+    IonHeader,
+    IonFooter,
+    IonButton,
+    IonIcon,
+    IonAvatar,
+    IonRippleEffect,
+    IonThumbnail,
+    IonCardHeader,
+    IonLabel,
+    IonCard,
+    IonLoading,
+    IonCardContent,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonSkeletonText
+} from "@ionic/vue";
 
 export function initIonicComponents(app) {
-    [
+    const components = [
         IonTextarea,
         IonButtons,
         IonList,
@@ -27,8 +53,11 @@ export function initIonicComponents(app) {
         IonContent,
         IonTitle,
         IonModal,
-        IonInput
-    ].forEach((component) => {
+        IonInput,
+        IonSkeletonText
+    ]
+
+    components.forEach((component) => {
         app.component(component.name, component)
     })
 }

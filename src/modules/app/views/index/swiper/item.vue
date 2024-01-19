@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-18 22:06:01
+ * @LastEditTime: 2024-01-19 23:22:28
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -12,7 +12,7 @@
   <div class="item">
     <Transition
       leave-active-class="animate__animated animate__fadeOut"
-      :duration="50"
+      :duration="200 "
     >
     <div class="image" v-if="showImage">
       <van-image style="width: 100%; height: 100%" fit="cover" :src="item.preview_img">
@@ -33,7 +33,7 @@
     </div>
     <right-menu @openComment="$emit('openComment', index)"></right-menu>
     <div class="menu-bottom">
-      <!-- {{ item.t_user }} -->
+      <bottom-menu></bottom-menu>
     </div>
     <div v-if="loading" class="progress">
       <ion-progress-bar type="indeterminate"></ion-progress-bar>
@@ -45,6 +45,7 @@ import { defineProps, ref, onMounted, watch, onUnmounted } from "vue";
 import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import rightMenu from "./rightMenu.vue";
+import bottomMenu from './bottomMenu.vue'
 
 const props = defineProps(["item", "index"]);
 

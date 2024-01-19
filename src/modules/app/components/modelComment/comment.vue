@@ -2,14 +2,13 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-14 11:33:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-14 23:00:52
- * @FilePath: /1s/src/modules/app/views/market/model/comment.vue
+ * @LastEditTime: 2024-01-20 00:24:09
+ * @FilePath: /1s/src/modules/app/components/modelComment/comment.vue
  * @Description:
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-  <ion-modal :is-open="isOpen" :initial-breakpoint="1" :breakpoints="[0, 1]" @ionModalDidDismiss="ionModalDidDismiss">
     <div class="comment">
       <ion-header>
         <ion-toolbar>
@@ -19,7 +18,7 @@
       <ion-content>
         <ion-list class="ion-padding">
           <comment-item v-for="(item, index) in list"
-          :data="item"
+          :commentInfo="item"
           >
           </comment-item>
         </ion-list>
@@ -32,7 +31,7 @@
           <ion-avatar>
             <img class="avatar" :src="avatar">
           </ion-avatar>
-          <ion-textarea v-model="comment" placeholder="快来评论吧"></ion-textarea>
+          <ion-input v-model="comment" placeholder="快来评论吧"></ion-input>
           <ion-button @click="addComment" size="small" style="height:40px;">
             评论
             <ion-icon slot="end" :icon="chatbubbleEllipsesOutline"></ion-icon>
@@ -40,11 +39,10 @@
         </div>
       </ion-footer>
     </div>
-  </ion-modal>
 </template>
 <script setup>
 import { reactive, ref, computed } from 'vue';
-import { modalInfo } from "./index";
+import { modelInfo } from "./index";
 import { addModelComment } from "@/api/api/comment";
 import { chatbubbleEllipsesOutline } from "ionicons/icons";
 import { useLoginStatusStore } from "@/store/stores/login";
@@ -59,14 +57,13 @@ const avatar = computed(() => {
   return loginStore.userInfo?.preview_avatar || '/mobileDefaultAvatar.svg'
 })
 
-
 const comment = ref();
 
 const { page, pages, list, getList } = usePaging(getModelComment);
 
 const ionInfinite = async (ev) => {
   await getList({
-    modelId: modalInfo.value.id,
+    modelId:  modelInfo.value.id,
   });
   ev.target.complete();
 };
@@ -77,7 +74,7 @@ async function addComment() {
   }
   try {
     await addModelComment({
-      modelId: modalInfo.value.id,
+      modelId:   modelInfo.value.id,
       content: comment.value,
       userId: loginStore.userInfo?.id,
       parentId: null,
@@ -87,9 +84,6 @@ async function addComment() {
   }
 }
 
-function ionModalDidDismiss(){
-  isOpen.value = false
-}
 </script>
 
 <style lang="less" scoped>

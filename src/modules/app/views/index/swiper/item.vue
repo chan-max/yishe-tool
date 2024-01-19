@@ -10,6 +10,10 @@
 -->
 <template>
   <div class="item">
+    <Transition
+      leave-active-class="animate__animated animate__fadeOut"
+      :duration="50"
+    >
     <div class="image" v-if="showImage">
       <van-image style="width: 100%; height: 100%" fit="cover" :src="item.preview_img">
         <template v-slot:loading>
@@ -17,19 +21,30 @@
         </template>
       </van-image>
     </div>
+    </Transition>
+
     <div class="viewer" v-if="showViewer">
-      <gltf-viewer ref="gltfViewerRef" :model="item.modelInfo" @beforeLoad="beforeLoad" @loaded="loaded" ></gltf-viewer>
+      <gltf-viewer
+        ref="gltfViewerRef"
+        :model="item.modelInfo"
+        @beforeLoad="beforeLoad"
+        @loaded="loaded"
+      ></gltf-viewer>
     </div>
-    <div class="menu">
-      {{ item }}
+    <right-menu @openComment="$emit('openComment', index)"></right-menu>
+    <div class="menu-bottom">
+      <!-- {{ item.t_user }} -->
     </div>
-    <div v-if="loading" class="progress"><ion-progress-bar type="indeterminate"></ion-progress-bar></div>
+    <div v-if="loading" class="progress">
+      <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    </div>
   </div>
 </template>
 <script setup>
-import { defineProps, ref, onMounted, watch, onUnmounted } from 'vue';
-import { activeIndex, activeIndexChange,gltfViewerRef } from "./index.ts";
-import gltfViewer from '@/components/model/gltfViewer/index.vue'
+import { defineProps, ref, onMounted, watch, onUnmounted } from "vue";
+import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
+import gltfViewer from "@/components/model/gltfViewer/index.vue";
+import rightMenu from "./rightMenu.vue";
 
 const props = defineProps(["item", "index"]);
 
@@ -39,29 +54,29 @@ const showImage = ref(true);
 // 是否展示模型预览
 const showViewer = ref(false);
 
-const loading = ref(true)
+const loading = ref(true);
 
-
-
-
-watch(activeIndex,() => {
-    if(activeIndex.value != props.index){
-        return 
+watch(
+  activeIndex,
+  () => {
+    if (activeIndex.value != props.index) {
+      return;
     }
     setTimeout(() => {
-      showViewer.value = true
+      showViewer.value = true;
     }, 1000);
-},{immediate:true})
+  },
+  { immediate: true }
+);
 
-function beforeLoad(){
-  loading.value = true
+function beforeLoad() {
+  loading.value = true;
 }
 
-function loaded(){
+function loaded() {
   showImage.value = false;
-  loading.value = false 
+  loading.value = false;
 }
-
 </script>
 <style lang="less" scoped>
 .item {
@@ -77,7 +92,7 @@ function loaded(){
   width: 100%;
   height: 100%;
   position: absolute;
-  z-index: 2;
+  z-index: 1;
 }
 
 ::v-deep {
@@ -91,26 +106,27 @@ function loaded(){
   width: 100%;
   height: 100%;
   position: absolute;
-  z-index: 1;
+  z-index: 0;
 }
 
-.menu {
+.menu-bottom {
   width: 100%;
-  height: 50px;
+  height: auto;
   position: absolute;
   bottom: 0;
-  z-index: 10;
+  z-index: 2;
+  align-items: center;
 }
 
-.progress{
+.progress {
   position: absolute;
   bottom: 0;
-  z-index: 11;
+  z-index: 13;
   width: 100%;
 }
 
-ion-progress-bar{
-  --background:rgba(0,0,0,0);
-  --progress-background:rgba(105,0,255,.5);
+ion-progress-bar {
+  --background: rgba(0, 0, 0, 0);
+  --progress-background: rgba(105, 0, 255, 0.5);
 }
 </style>

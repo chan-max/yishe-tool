@@ -279,9 +279,10 @@ export const useViewer = (gltfViewerRef,props,emits) => {
                     // 如果有交点，那么这个点就在模型上。
                     if (intersects.length <= 0) {
                         console.log("贴花位置错误");
+                        resolve(void 0)
                         return;
                     }
-        
+                    
                     rotation = new Euler(rotation.x, rotation.y, rotation.z);
                     size = new Vector3(size.x, size.y, size.z);
                     const textureLoader = new TextureLoader();

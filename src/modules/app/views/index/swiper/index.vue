@@ -30,10 +30,11 @@
         :key="index"
         :virtualIndex="index"
       >
-        <item :item="item" :index="index"></item>
+        <item @openComment="openComment" :item="item" :index="index" ></item>
       </swiper-slide>
     </swiper>
   </div>
+  <model-comment></model-comment>
 </template>
 <script setup>
 import { ref, onMounted, watch, watchEffect } from "vue";
@@ -45,6 +46,8 @@ import "swiper/css";
 import "@ionic/vue/css/ionic-swiper.css";
 import item from "./item.vue";
 import { activeIndex, activeIndexChange,gltfViewerRef } from "./index.ts";
+import modelComment from '../../../components/modelComment/index.vue'
+import {isOpen,openModelComment} from '../../../components/modelComment/index.ts'
 
 const { list, page, getList } = usePaging(getModelList);
 
@@ -83,6 +86,12 @@ function transitionStart(){
 
 function transitionEnd(){
   console.log('transitionEnd')
+}
+
+// 打开评论
+function openComment(index) {
+    console.log('openComment',)
+    openModelComment(list.value[0])
 }
 
 </script>

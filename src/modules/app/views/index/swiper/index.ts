@@ -19,6 +19,5 @@ export function activeIndexChange(params) {
   activeIndex.value = params.activeIndex;
 }
 
-
 // 预览模型实例
 export const gltfViewerRef = ref()

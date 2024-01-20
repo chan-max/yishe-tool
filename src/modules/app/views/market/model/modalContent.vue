@@ -37,10 +37,6 @@
       <div style="flex: 1"></div>
       <div class="bottom">
         <ion-button fill="outline" shape="round">收藏</ion-button>
-        <ion-button id="open-comment-modal" fill="outline" shape="round" expand="block"
-          >评论</ion-button
-        >
-        <comment></comment>
         <div style="flex: 1"></div>
         <ion-button shape="round" id="buy">
           <ion-icon slot="start" :icon="star"></ion-icon>
@@ -75,7 +71,6 @@ import {
   IonText,
 } from "@ionic/vue";
 import { closeOutline, star } from "ionicons/icons";
-import comment from "./comment.vue";
 
 const model = ref();
 

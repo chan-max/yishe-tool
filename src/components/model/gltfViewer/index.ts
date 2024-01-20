@@ -154,11 +154,11 @@ export const useViewer = (gltfViewerRef,props,emits) => {
         if (!baseModelUrl && model.baseModelId) {
             baseModelUrl = ((await getBaseModelById(model.baseModelId)) as any).preview_file;
         }
-    
+        
         if (props.transparent) {
             renderer.setClearColor(null, 0);
         } else {
-            renderer.setClearColor(0x6900ff, 0);
+            renderer.setClearColor(0xeeeeee, 1);
         }
     
     

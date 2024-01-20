@@ -1,15 +1,12 @@
 <template>
   <div class="menu-right">
+    <like-button></like-button>
     <div class="menu-item">
       <heart-outlined class="icon"></heart-outlined>
       <div class="text">69</div>
     </div>
     <div class="menu-item" @click="$emit('openComment')">
       <comment-outlined class="icon"></comment-outlined>
-      <div class="text">69</div>
-    </div>
-    <div class="menu-item">
-      <star-outlined class="icon"></star-outlined>
       <div class="text">69</div>
     </div>
     <div class="menu-item">
@@ -28,6 +25,8 @@ import commentOutlined from "@/icon/mobile/commentOutlined.svg?vueComponent";
 import starOutlined from "@/icon/mobile/starOutlined.svg?vueComponent";
 import shareOutlined from "@/icon/mobile/shareOutlined.svg?vueComponent";
 import shoppingCartOutlined from "@/icon/mobile/shoppingCartOutlined.svg?vueComponent";
+import likeButton from '@/components/button/likeButton/index.vue'
+
 </script>
 <style lang="less" scoped>
 .menu-right {

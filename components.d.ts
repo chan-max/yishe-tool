@@ -31,6 +31,7 @@ declare module 'vue' {
     ImageUpload: typeof import('./src/components/design/layout/imageUpload/index.vue')['default']
     Layout: typeof import('./src/components/design/layout/layout.vue')['default']
     LeftMenu: typeof import('./src/components/design/layout/leftMenu.vue')['default']
+    LikeButton: typeof import('./src/components/button/likeButton/index.vue')['default']
     Loading: typeof import('./src/components/design/layout/loading.vue')['default']
     Main: typeof import('./src/components/design/layout/main.vue')['default']
     Menu: typeof import('./src/components/design/layout/headerMenuDropdown/menu.vue')['default']

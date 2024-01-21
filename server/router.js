@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-14 23:03:22
+ * @LastEditTime: 2024-01-21 16:48:36
  * @FilePath: /1s/server/router.js
  * @Description:
  *
@@ -27,7 +27,7 @@ import {
 
 import { getImageHook, getImageById, imageUploadHook } from "./api/image.js";
 
-import { getModelListHook, getModelById,uploadModelHook  } from "./api/model.js";
+import { getModelListHook, getModelById,uploadModelHook,likeModel  } from "./api/model.js";
 import { sendEmailHook } from "./api/email.js";
 import {
   uploadTextSticker,
@@ -41,6 +41,7 @@ import { addModelComment, getModelComment } from "./api/comment.js";
 
 import { test } from "./api/test.js";
 import {file} from './api/file.js';
+
 
 export const initRouter = (...params) => {
   let hooks = [
@@ -71,7 +72,8 @@ export const initRouter = (...params) => {
     addModelComment,
     getModelComment,
     test,
-    file
+    file,
+    likeModel
   ];
   hooks.forEach((hook) => hook(...params));
 };

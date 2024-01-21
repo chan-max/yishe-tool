@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-26 19:23:47
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-14 23:15:05
+ * @LastEditTime: 2024-01-21 11:51:38
  * @FilePath: /1s/server/middleware/paging.js
  * @Description: 
  * 
@@ -28,7 +28,6 @@ export const getPagingInfoFromContext = (ctx) => {
     keywords,
     startTime,
     endTime,
-
   } = ctx.request.body || {};
 
   return {

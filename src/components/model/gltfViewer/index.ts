@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-13 13:25:47
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-18 22:11:55
+ * @LastEditTime: 2024-01-21 05:19:00
  * @FilePath: /1s/src/components/model/gltfViewer/index.ts
  * @Description: 
  * 
@@ -158,7 +158,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
         if (props.transparent) {
             renderer.setClearColor(null, 0);
         } else {
-            renderer.setClearColor(0xeeeeee, 1);
+            renderer.setClearColor(0xeeeeee, 0);
         }
     
     

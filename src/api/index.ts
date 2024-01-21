@@ -171,3 +171,17 @@ export const getList = (params:GetListParams) => new Promise(async (resolve, rej
   const res = await apiInstance.post(Url.GET_LIST,params)
   resolve(res.data)
 })
+
+
+
+
+/*
+  点赞模型，
+  取消点赞模型
+*/
+
+export const likeModel = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.LIKE_MODEL,params)
+  resolve(res.data)
+})
+

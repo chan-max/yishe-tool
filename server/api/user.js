@@ -140,13 +140,14 @@ export const loginHook = (router, sequelize) => router.post('/login', async (ctx
     }
   }
 
-  // 登陆成功，签发token
-
-  const token = jwt.sign({ account, exp: Date.now() + 60 * 60 }, '1s');
-
-  ctx.set('Token', token)
 
   user.setDataValue('preview_avatar', ctx.relativePathToPreviewPath(user.avatar))
+
+
+  ctx.set('Token', ctx.signToken({
+    userId: user.id,
+  }))
+  
   return ctx.body = {
     status: ResponseStatusCodeEnum.LOGIN_SUCCESS,
     data: user

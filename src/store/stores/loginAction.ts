@@ -1,3 +1,13 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2023-12-16 12:40:26
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-01-21 13:17:16
+ * @FilePath: /1s/src/store/stores/loginAction.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+ */
 import { useLoginStatusStore } from "@/store/stores/login";
 import router from "@/modules/main/router";
 
@@ -30,7 +40,10 @@ export const updateLocalUserInfo = (data: Record<string, any>) => {
   }
 };
 
-export const isLogin = () => (getLocalUserInfo() ? true : false);
+export const isLogin = () => {
+  let local =  getLocalUserInfo()
+  return local && local.isLogin
+};
 
 export const doLoginAction = (userInfo, once = false) => {
   // 保存登录时间
@@ -43,26 +56,13 @@ export const doLoginAction = (userInfo, once = false) => {
   loginStatusStore.loginTime = now;
   loginStatusStore.once = once;
   loginStatusStore.isAdmin = userInfo.isAdmin;
-
-  // 保存用户信息到本地
-  const localUserInfo = {
-    loginTime: now,
-    ...userInfo,
-    once,
-  };
-
-
-  updateLocalUserInfo(localUserInfo);
 };
 
 
 
 export const doLogout = () => {
   const loginStatusStore = useLoginStatusStore();
-
   loginStatusStore.isLogin = false;
   loginStatusStore.userInfo = null;
   loginStatusStore.loginTime = null;
-  // 清空本地登录信息
-  clearLocalUserInfo();
 };

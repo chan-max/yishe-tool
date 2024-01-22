@@ -13,6 +13,9 @@
       <ion-header>
         <ion-toolbar>
           <ion-title> 评论（99+） </ion-title>
+          <ion-buttons slot="end">
+            <ion-button @click="toggleSort"> {{ sortType == CommentSortType.HOTEST ? '按热度排序' : '按时间排序' }} </ion-button>
+          </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content>
@@ -42,14 +45,14 @@
 </template>
 <script setup>
 import { reactive, ref, computed } from 'vue';
-import { modelInfo } from "./index";
-import { addModelComment } from "@/api/api/comment";
+import { modelInfo,sortType,toggleSort } from "./index";
+import { addModelComment,CommentSortType } from "@/api/api/comment";
 import { chatbubbleEllipsesOutline } from "ionicons/icons";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { usePaging } from "@/modules/app/helper/paging";
 import { getModelComment } from "@/api/api/comment";
 import commentItem from './commentItem.vue'
-import { isOpen } from './index.ts';
+
 
 const loginStore = useLoginStatusStore();
 
@@ -59,7 +62,12 @@ const avatar = computed(() => {
 
 const comment = ref();
 
-const { page, pages, list, getList } = usePaging(getModelComment);
+const { page, pages, list, getList } = usePaging(() => {
+  return getModelComment({
+    modelId:modelInfo.value.id,
+    sortType:sortType.value
+  })
+});
 
 const ionInfinite = async (ev) => {
   await getList({
@@ -118,7 +126,6 @@ ion-avatar{
   height: 30px;
   width: 30px;
 }
-
 
 .footer {
   display: flex;

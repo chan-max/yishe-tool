@@ -185,3 +185,9 @@ export const likeModel = (params) => new Promise(async (resolve, reject) => {
   resolve(res.data)
 })
 
+
+
+export const likeModelComment = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.LIKE_MODEl_COMMENT,params)
+  resolve(res.data)
+})

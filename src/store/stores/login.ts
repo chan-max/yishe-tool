@@ -24,13 +24,13 @@ export const useLoginStatusStore = defineStore("login_status", () => {
   if (localUserInfo) {
     // 已经登录
     isLogin.value = true
-    userInfo.value = localUserInfo
+    userInfo.value = localUserInfo.userInfo
     loginTime.value = localUserInfo.loginTime
     token.value = localUserInfo.token
     once.value = localUserInfo.once
     isAdmin.value = localUserInfo.isAdmin
   }
-
+  
   return {
     isLogin, //
     userInfo,
@@ -41,14 +41,15 @@ export const useLoginStatusStore = defineStore("login_status", () => {
   };
 });
 
-const loginStore = useLoginStatusStore()
 
-// 同步登录信息到本地
-watch(loginStore.$state, () => {
-  updateLocalUserInfo(deepToRaw(loginStore.$state))
-})
-
-
+// 同步用户信息到本地
+export function syncUserInfoToLocal(){
+  const loginStore = useLoginStatusStore()
+  // 同步登录信息到本地
+  watch(loginStore.$state, () => {
+    updateLocalUserInfo(deepToRaw(loginStore.$state))
+  })
+}
 
 function deepToRaw(data) {
   if (isRef(data)) {

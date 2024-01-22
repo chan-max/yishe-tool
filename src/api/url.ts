@@ -87,5 +87,6 @@ export enum Url {
     GET_MODEL_COMMENT = '/getModelComment',
 
     LIKE_MODEL = '/likeModel',
-    
+
+    LIKE_MODEl_COMMENT = '/likeModelComment'
 }

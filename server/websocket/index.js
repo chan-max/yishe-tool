@@ -22,7 +22,9 @@ export function initWebsocket(server){
 
   io.on("connection", function (socket) {  
   });
-  
+
+  return io
 }
+
 
 

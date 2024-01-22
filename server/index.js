@@ -6,7 +6,7 @@ import path from "path";
 import _static from "koa-static";
 import { koaBody } from "koa-body";
 import { fileURLToPath } from "url";
-import { initRouter } from "./router.js"
+import { initRouter ,initController} from "./router.js"
 import fs from "fs";
 import http from 'http'
 import https from 'https'
@@ -57,6 +57,13 @@ app.use(
 import db from './sequelize/models/index.js'
 
 initRouter(router, db.sequelize, app, redis);
+
+initController({
+    router,
+    app,
+    sequelize:db.sequelize,
+    redis
+})
 
 // 前端打包后的代码
 app.use(_static(path.join(__dirname, "../www")));

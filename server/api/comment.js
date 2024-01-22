@@ -8,21 +8,33 @@
  *
  * Copyright (c) 2024 by 1s, All Rights Reserved.
  */
-// 基础模型数量不会很多，暂时不需要分批查询
 
 export const getModelComment = (router, sequelize, app, redis) => {
   // 该接口只有管理员更新基础模型信息时需要更新, 直接读缓存即可
   router.post("/getModelComment", async (ctx) => {
     // 模型id
+
+    // 默认使用最新的排序类型
+    const sortType = ctx.request.body.sortType || "latest";
+
     let data = await ctx.queryList(sequelize.models.t_model_comment, {
+      where: {
+        model_id: ctx.request.body.modelId,
+      },
+      order: [
+        sortType == 'latest' ? ["createdAt", "DESC"] : ["like_count", "DESC"]
+      ],
       include: {
         model: sequelize.models.t_user,
       },
     });
-
+    
     data.list.forEach((item) => {
-      item.t_user.setDataValue('preview_avatar', ctx.relativePathToPreviewPath(item.t_user.avatar))
-    })
+      item.t_user.setDataValue(
+        "preview_avatar",
+        ctx.relativePathToPreviewPath(item.t_user.avatar)
+      );
+    });
 
     ctx.body = {
       data,
@@ -55,3 +67,6 @@ export const addModelComment = (router, sequelize, app, redis) => {
     };
   });
 };
+
+
+

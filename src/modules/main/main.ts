@@ -24,29 +24,32 @@ import 'element-plus/theme-chalk/display.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import {syncUserInfoToLocal} from '@/store/stores/login.ts'
+
+const app = createApp(App)
+
+ const pinia = createPinia()
+
+app.use(pinia)
+
+syncUserInfoToLocal()
+
+app.use(VueVirtualScroller)
+
+app.use(Antd)
+
+app.use(i18n)
 
 
-export function createMainApp(){
-    const app = createApp(App)
 
-    app.use(VueVirtualScroller)
+app.use(router)
 
-    app.use(Antd)
-    
-    app.use(i18n)
-    
-    const pinia = createPinia()
-    
-    app.use(pinia)
-    
-    app.use(router)
-    
-    app.use(ElementPlus)
-    
-    app.config.globalProperties.__DEV__ = import.meta.env.DEV
-    
-    app.mount('#app')
-}
+app.use(ElementPlus)
+
+app.config.globalProperties.__DEV__ = import.meta.env.DEV
+
+app.mount('#app')
+
 
 
 

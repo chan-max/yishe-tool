@@ -31,7 +31,11 @@ module.exports = (sequelize, DataTypes) => {
     model_id: DataTypes.INTEGER,
     content: DataTypes.TEXT,
     parent_id: DataTypes.INTEGER,
-    user_id: DataTypes.INTEGER
+    user_id: DataTypes.INTEGER,
+    like_count: {
+      type:DataTypes.INTEGER,
+      defaultValue:0
+    }
   }, {
     sequelize,
     modelName: 't_model_comment',

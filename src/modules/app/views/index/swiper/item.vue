@@ -12,7 +12,7 @@
   <div class="item">
     <Transition leave-active-class="animate__animated animate__fadeOut" :duration="200">
       <div class="image" v-if="showImage">
-        <van-image style="width: 100%; height: 100%" fit="cover" :src="item.preview_img">
+        <van-image style="width: 100%; height: 100%" fit="cover" :src="modelInfo.preview_img">
           <template v-slot:loading>
             <ion-skeleton-text :animated="true"></ion-skeleton-text>
           </template>
@@ -21,7 +21,7 @@
     </Transition>
 
     <div class="viewer" v-if="showViewer">
-      <gltf-viewer ref="gltfViewerRef" :model="item.modelInfo" @beforeLoad="beforeLoad" @loaded="loaded"></gltf-viewer>
+      <gltf-viewer ref="gltfViewerRef" :model="modelInfo.modelInfo" @beforeLoad="beforeLoad" @loaded="loaded"></gltf-viewer>
     </div>
 
     <div class="menu-right">
@@ -46,14 +46,14 @@
     <div class="menu-bottom"></div>
     <div class="menu-top">
       <ion-avatar style="width: 32px; height: 32px;" class="avatar-border">
-        <img :src="item.t_user.preview_avatar" />
+        <img :src="modelInfo.t_user.preview_avatar" style="width: 32px; height: 32px;" />
       </ion-avatar>
       <div>
         <div style="font-size: 12px; font-weight: bold; line-height: 20px">
-          {{ item.t_user.name || "无名氏" }}
+          {{ modelInfo.t_user.name || "无名氏" }}
         </div>
         <div style="font-size: 12px; font-weight: 300">
-          创建于 {{ timeago(item.createdAt) }}
+          创建于 {{ timeago(modelInfo.createdAt) }}
         </div>
       </div>
       <div style="flex: 1"></div>
@@ -78,12 +78,13 @@ import { timeago } from "@/common/time";
 
 const isLike = ref(false);
 
-const props = defineProps(["item", "index"]);
+const props = defineProps(["modelInfo", "index"]);
+
 
 // 点赞收藏模型
 watch(isLike, async () => {
   await likeModel({
-    modelId: props.item.id,
+    modelId: props.modelInfo.id,
     isLike: isLike.value,
   });
 });
@@ -194,7 +195,8 @@ ion-progress-bar {
   width: 30px;
   height: 30px;
   transition: all 0.3s;
-
+  /* 为图标增加阴影效果 */
+  filter: drop-shadow(0px 1px 5px rgba(0, 0, 0, 0.2));
   &:active {
     transform: scale(0.8);
   }
@@ -202,6 +204,7 @@ ion-progress-bar {
 
 .text {
   font-size: 12px;
+  text-shadow:  0px 1px 5px rgba(0, 0, 0, 0.5);
 }
 
 .menu-top {
@@ -214,6 +217,7 @@ ion-progress-bar {
   align-items: center;
   column-gap: 12px;
   padding: 10px;
+  z-index:2;
 }
 
 

@@ -24,13 +24,13 @@
           <span class="name">{{ commentInfo.t_user.name || "未命名" }} </span>
           <span class="timeago"> {{ timeago(commentInfo.createdAt) }}</span>
         </div>
-        <div class="comment-content">
+        <div class="comment-content">w
           {{ commentInfo.content }}
         </div>
       </div>
-      <div class="like">
-         <thumbup style="width: 14px; height: 14px;"></thumbup>
-         {{ Math.floor(Math.random() * 100) }}
+      <div class="like" @click="like" :class="{liked:commentInfo.liked}">
+         <thumbup class="thumbup" style="width: 14px; height: 14px;"></thumbup>
+         {{ commentInfo.like_count || 0 }}
       </div>
     </div>
     <div class="children"></div>
@@ -40,8 +40,22 @@
 import { defineProps } from "vue";
 import { timeago } from "@/common/time";
 import thumbup from '@/icon/mobile/thumbup.svg?vueComponent';
+import {likeModelComment} from '@/api'
 
 const props = defineProps(["commentInfo"]);
+
+// 顶评论
+async function like() {
+  // 只要点过赞，就设为点赞状态
+  props.commentInfo.liked = true;
+  (props.commentInfo.like_count)++
+  await likeModelComment({
+    commentId:props.commentInfo.id,
+    count: 1
+  })
+}
+
+
 </script>
 
 <style lang="less" scoped>
@@ -95,5 +109,15 @@ const props = defineProps(["commentInfo"]);
   display: flex;
   align-items: center;
   column-gap: 4px;
+  transition: all .2s;
+  padding: 4px;
+}
+
+.like:active{
+  transform: scale(.8);
+}
+
+.liked{
+  color: #6900ff;
 }
 </style>

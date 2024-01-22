@@ -8,6 +8,8 @@
  *
  * Copyright (c) 2023 by 1s, All Rights Reserved.
  */
+
+
 import { getBannerModelHook } from "./api/common/getBannerModel.js";
 import {
   injectBaseModelRoute,
@@ -36,12 +38,12 @@ import {
 } from "./api/textSticker.js";
 
 import { getList } from "./api/list.js";
-
 import { addModelComment, getModelComment } from "./api/comment.js";
 
 import { test } from "./api/test.js";
 import {file} from './api/file.js';
 
+import { modelCommentController } from "./controller/modelComment.controller.js";
 
 export const initRouter = (...params) => {
   let hooks = [
@@ -77,3 +79,10 @@ export const initRouter = (...params) => {
   ];
   hooks.forEach((hook) => hook(...params));
 };
+
+export const initController = (...params) => {
+  let controllers = [
+    modelCommentController
+  ];
+  controllers.forEach((controller) => controller(...params));
+}

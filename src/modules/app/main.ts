@@ -54,9 +54,13 @@ import 'vant/lib/index.css';
 
 import { createPinia } from 'pinia'
 
+import {syncUserInfoToLocal} from '@/store/stores/login.ts'
+
+
 if (true || import.meta.env.DEV) {
   const vConsole = new VConsole({ theme: 'dark' });
 }
+
 const app = createApp(App)
 
 app.use(ConfigProvider);
@@ -71,11 +75,14 @@ app.use(router);
 
 app.use(ElementPlus)
 
+
+
 import {initIonicComponents} from './helper/ionic.ts'
 
 initIonicComponents(app)
 
 router.isReady().then(() => {
+  syncUserInfoToLocal()
   app.mount('#app');
 });
 

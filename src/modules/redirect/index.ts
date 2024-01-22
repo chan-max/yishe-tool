@@ -1,6 +1,4 @@
-import { createMainApp } from "../main/main";
 import { createMobileApp } from "../mobile/main";
-
 
 function isMobile() {
     const mobile = ['iphone', 'ipad', 'android', 'blackberry', 'nokia', 'opera mini', 'windows mobile'];
@@ -8,7 +6,7 @@ function isMobile() {
     return false;
 }
 
-isMobile() ? createMobileApp() : createMainApp()
+isMobile() ? createMobileApp() : null
 
 
 

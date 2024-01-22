@@ -30,11 +30,10 @@
         :key="index"
         :virtualIndex="index"
       >
-        <item @openComment="openComment" :item="item" :index="index" ></item>
+        <item @openComment="openComment" :model-info="item" :index="index" ></item>
       </swiper-slide>
     </swiper>
   </div>
-  <model-comment></model-comment>
 </template>
 <script setup>
 import { ref, onMounted, watch, watchEffect } from "vue";
@@ -46,7 +45,6 @@ import "swiper/css";
 import "@ionic/vue/css/ionic-swiper.css";
 import item from "./item.vue";
 import { activeIndex, activeIndexChange,gltfViewerRef } from "./index.ts";
-import modelComment from '../../../components/modelComment/index.vue'
 import {isOpen,openModelComment} from '../../../components/modelComment/index.ts'
 
 const { list, page, getList } = usePaging(getModelList);
@@ -91,10 +89,15 @@ function transitionEnd(){
 // 打开评论
 function openComment(index) {
     console.log('openComment',)
-    openModelComment(list.value[0])
+    openModelComment(list.value[activeIndex.value])
 }
 
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
+
+/* 用于设置固定高度的评论弹层 */
+ion-modal {
+  --height: auto;
+}
 </style>

@@ -43,16 +43,9 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import {
-  showBaseModelSelect,
-  currentOperatingBaseModelInfo,
-  canvasBgColor,
-  canvasBgOpacity,
   currentController,
 } from "../../store";
 import {
-  Loading,
-  CloseBold,
-  CircleCloseFilled,
   Picture,
   FolderOpened,
   Search,
@@ -65,7 +58,9 @@ import {
   imgToFile,
   createImgObjectURL,
   imgToBase64,
-} from "../../../../common/transform/index";
+} from "@/common/transform/index";
+
+const input = ref()
 
 const list = ref([]);
 
@@ -141,10 +136,13 @@ async function scroll() {
 
 .designiy-image-sticker-content {
   flex: 1;
+  display: flex;
+  flex-wrap: wrap;
   overflow: auto;
-  padding: 10px;
-  columns: 2;
-  column-gap: 5px;
+  justify-content: space-between;
+  padding:10px;
+  column-gap: 4px;
+  row-gap: 4px;
   .el-image {
     display: block;
   }
@@ -159,7 +157,7 @@ async function scroll() {
 }
 
 .item {
-  margin-bottom: 5px;
+  width: calc(50% - 2px);
   background-color: var(--1s-image-sticker-image-background-color);
   border-radius: 4px;
   overflow: hidden;

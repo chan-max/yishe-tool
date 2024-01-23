@@ -43,7 +43,7 @@ import { onBeforeRouteLeave } from "vue-router";
 import { useIonRouter, createAnimation } from "@ionic/vue";
 import modalContent from "./modalContent.vue";
 import modelCard from './modelCard.vue';
-import { isOpen, modalInfo } from "./index.ts";
+import { isOpen, } from "./index.ts";
 
 const router = useIonRouter();
 
@@ -51,6 +51,7 @@ const list = ref([]);
 
 const ionInfinite = async (ev) => {
   await getList();
+
   ev.target.complete();
 };
 

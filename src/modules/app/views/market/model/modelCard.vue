@@ -33,11 +33,12 @@ import { isOpen, modalInfo } from "./index.ts";
 import {timeago} from '@/common/time'
 const props = defineProps(["item"]);
 
-
 function go(item) {
   modalInfo.value = item;
   isOpen.value = true;
 }
+
+
 </script>
 
 <style scoped>

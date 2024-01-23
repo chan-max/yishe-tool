@@ -54,7 +54,7 @@ import 'vant/lib/index.css';
 
 import { createPinia } from 'pinia'
 
-import {syncUserInfoToLocal} from '@/store/stores/login.ts'
+import { syncUserInfoToLocal } from '@/store/stores/login.ts'
 
 
 if (true || import.meta.env.DEV) {

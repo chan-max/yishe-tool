@@ -23,7 +23,7 @@ export const useLoginStatusStore = defineStore("login_status", () => {
   const localUserInfo = getLocalUserInfo();
   if (localUserInfo) {
     // 已经登录
-    isLogin.value = true
+    isLogin.value = localUserInfo && localUserInfo.isLogin
     userInfo.value = localUserInfo.userInfo
     loginTime.value = localUserInfo.loginTime
     token.value = localUserInfo.token

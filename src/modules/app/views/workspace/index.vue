@@ -10,14 +10,19 @@
 -->
 <template>
   <ion-page>
+    <button @click="logout"> 退出登录 </button>
   </ion-page>
 </template>
 
 <script setup lang="ts">
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue";
 import { ref } from "vue";
+import { doLogout } from "@/store/stores/loginAction";
 
-const active = ref("");
+function logout() {
+  doLogout()
+}
+
 </script>
 
 <style></style>

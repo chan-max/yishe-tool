@@ -12,7 +12,11 @@
   <div class="item">
     <Transition leave-active-class="animate__animated animate__fadeOut" :duration="200">
       <div class="image" v-if="showImage">
-        <van-image style="width: 100%; height: 100%" fit="cover" :src="modelInfo.preview_img">
+        <van-image
+          style="width: 100%; height: 100%"
+          fit="cover"
+          :src="modelInfo.preview_img"
+        >
           <template v-slot:loading>
             <ion-skeleton-text :animated="true"></ion-skeleton-text>
           </template>
@@ -21,12 +25,21 @@
     </Transition>
 
     <div class="viewer" v-if="showViewer">
-      <gltf-viewer ref="gltfViewerRef" :model="modelInfo.modelInfo" @beforeLoad="beforeLoad" @loaded="loaded"></gltf-viewer>
+      <gltf-viewer
+        @beforeLoad="beforeLoad"
+        @loaded="loaded"
+        ref="gltfViewerRef"
+        :model="modelInfo.modelInfo"
+      ></gltf-viewer>
     </div>
 
     <div class="menu-right">
       <div class="menu-item">
-        <heart class="icon" @click="isLike = !isLike" :style="{ color: isLike ? '#ea3323' : '' }"></heart>
+        <heart
+          class="icon"
+          @click="isLike = !isLike"
+          :style="{ color: isLike ? '#ea3323' : '' }"
+        ></heart>
         <div class="text">69</div>
       </div>
       <div class="menu-item">
@@ -45,12 +58,12 @@
 
     <div class="menu-bottom"></div>
     <div class="menu-top">
-      <ion-avatar style="width: 32px; height: 32px;" class="avatar-border">
-        <img :src="modelInfo.t_user.preview_avatar" style="width: 32px; height: 32px;" />
+      <ion-avatar style="width: 32px; height: 32px" class="avatar-border">
+        <img :src="modelInfo.t_user.preview_avatar" style="width: 32px; height: 32px" />
       </ion-avatar>
       <div>
         <div style="font-size: 12px; font-weight: bold; line-height: 20px">
-          {{ modelInfo.t_user.name || "无名氏" }}
+          {{ modelInfo.t_user.name || "小芳" }}
         </div>
         <div style="font-size: 12px; font-weight: 300">
           创建于 {{ timeago(modelInfo.createdAt) }}
@@ -64,6 +77,8 @@
       <ion-progress-bar type="indeterminate"></ion-progress-bar>
     </div>
   </div>
+
+  <drag-to-move></drag-to-move>
 </template>
 <script setup>
 import { defineProps, ref, onMounted, watch, onUnmounted } from "vue";
@@ -75,11 +90,11 @@ import share from "@/icon/mobile/share.svg?vueComponent";
 import shoppingCart from "@/icon/mobile/shoppingCart.svg?vueComponent";
 import { likeModel } from "@/api";
 import { timeago } from "@/common/time";
+import dragToMove from '@/components/tips/dragToMove/index.vue'
 
 const isLike = ref(false);
 
 const props = defineProps(["modelInfo", "index"]);
-
 
 // 点赞收藏模型
 watch(isLike, async () => {
@@ -96,6 +111,9 @@ const showImage = ref(true);
 const showViewer = ref(false);
 
 const loading = ref(true);
+
+// 是否展示移动提示
+const showMoveTip = ref(false);
 
 watch(
   activeIndex,
@@ -114,10 +132,16 @@ function beforeLoad() {
   loading.value = true;
 }
 
+/* 模型完全加载完成 */
 function loaded() {
+  // 隐藏缩略图
   showImage.value = false;
+  // 移除loading
   loading.value = false;
+  // 首次提示拖拽
+  showMoveTip.value = true;
 }
+
 </script>
 <style lang="less" scoped>
 .item {
@@ -204,7 +228,7 @@ ion-progress-bar {
 
 .text {
   font-size: 12px;
-  text-shadow:  0px 1px 5px rgba(0, 0, 0, 0.5);
+  text-shadow: 0px 1px 5px rgba(0, 0, 0, 0.5);
 }
 
 .menu-top {
@@ -217,9 +241,8 @@ ion-progress-bar {
   align-items: center;
   column-gap: 12px;
   padding: 10px;
-  z-index:2;
+  z-index: 2;
 }
-
 
 .avatar-border {
   border-radius: 50%;
@@ -228,7 +251,7 @@ ion-progress-bar {
 }
 
 .avatar-border::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   right: 0;

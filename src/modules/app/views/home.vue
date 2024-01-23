@@ -32,7 +32,10 @@
             <ion-label class="label">消息</ion-label>
           </ion-tab-button>
           <ion-tab-button tab="tab5" href="/home/user">
-            <icon-user-filled class="icon"></icon-user-filled>
+            <icon-user-filled v-if="!loginStore.isLogin" class="icon"></icon-user-filled>
+            <ion-avatar class="icon" v-else style="border: 1px solid rgba(105,0,255,1);">
+              <img :src="loginStore.userInfo?.preview_avatar" >
+            </ion-avatar>
             <ion-label class="label">我的衣设</ion-label>
           </ion-tab-button>
         </ion-tab-bar>
@@ -55,8 +58,10 @@ import iconMarketFilled from "@/icon/mobile/footer/market-filled.svg?vueComponen
 import iconWorkspaceFilled from "@/icon/mobile/footer/workspace-filled.svg?vueComponent";
 import iconTalkFilled from "@/icon/mobile/footer/talk-filled.svg?vueComponent";
 import iconUserFilled from "@/icon/mobile/footer/user-filled.svg?vueComponent";
-
 import floatingButton from '../components/floatingButton.vue'
+import { useLoginStatusStore } from '@/store/stores/login';
+
+const loginStore = useLoginStatusStore()
 
 </script>
 
@@ -65,8 +70,11 @@ import floatingButton from '../components/floatingButton.vue'
   width: 24px;
   height: 24px;
   margin: 4px;
-  transition: all 0.1s;
+
 }
+
+
+
 .label {
   font-size: 9px;
 }
@@ -76,8 +84,6 @@ import floatingButton from '../components/floatingButton.vue'
     transform: scale(1.2);
   }
 }
-
-.dark{}
 
 .app-footer {
   z-index: 10;

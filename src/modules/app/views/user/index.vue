@@ -4,7 +4,7 @@
  * @LastEditors: chan-max jackieontheway666@gmail.com
  * @LastEditTime: 2024-01-10 22:49:24
  * @FilePath: /1s/src/modules/app/views/user/index.vue
- * @Description: 
+ * @Description: 移动端个人信息页面
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
@@ -13,7 +13,7 @@
     <ion-header>
       <ion-toolbar collapse="fade">
         <ion-buttons slot="start" style="padding:10px 20px">
-          chan-max
+         账号 : {{ loginStore.userInfo?.account }}
         </ion-buttons>
         <ion-buttons slot="end">
           <ion-button>
@@ -61,9 +61,11 @@ const loginStore = useLoginStatusStore();
 
 onMounted(() => {
   if (!loginStore.isLogin) {
-    alert(666);
+    alert('暂未登录');
   }
 });
+
+
 </script>
 
 <style scoped>

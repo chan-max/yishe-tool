@@ -46,7 +46,8 @@ const props = defineProps({
 const emits = defineEmits([
   "screenshot", // 触发截屏
   "loaded", // 模型完全加载完成 , 包括基础模型和贴纸
-  "beforeLoad",
+  "beforeLoad",// 开始加载前
+  "dragStart"
 ]);
 
 function touchmove(e) {

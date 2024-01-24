@@ -31,8 +31,7 @@ import AntdvResolver from 'antdv-component-resolver'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 
 export default defineConfig((config:any) => {
-  console.log('load vite config',config)
-
+  
   const isApp = config.mode === 'app'
 
   const baseBuild =   {

@@ -24,7 +24,7 @@
 import { onMounted, computed } from "vue";
 import { IonToggle, IonItem, IonLabel, IonAvatar } from "@ionic/vue";
 import { useLoginStatusStore } from "@/store/stores/login.ts";
-import {toggle,isDark} from '../../helper/dark.ts'
+import {toggle,isDark} from '@/store/stores/app.ts'
 
 
 const loginStatusStore = useLoginStatusStore();

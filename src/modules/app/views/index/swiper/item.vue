@@ -25,9 +25,11 @@
     </Transition>
 
     <div class="viewer" v-if="showViewer">
+      <drag-to-move v-if="showMovableTip"></drag-to-move>
       <gltf-viewer
         @beforeLoad="beforeLoad"
         @loaded="loaded"
+        @dragStart="dragStart"
         ref="gltfViewerRef"
         :model="modelInfo.modelInfo"
       ></gltf-viewer>
@@ -43,7 +45,7 @@
         <div class="text">69</div>
       </div>
       <div class="menu-item">
-        <comment @click="$emit('openComment')" class="icon"></comment>
+        <comment @click="openComment" class="icon"></comment>
         <div class="text">69</div>
       </div>
       <div class="menu-item">
@@ -78,7 +80,6 @@
     </div>
   </div>
 
-  <drag-to-move></drag-to-move>
 </template>
 <script setup>
 import { defineProps, ref, onMounted, watch, onUnmounted } from "vue";
@@ -91,10 +92,18 @@ import shoppingCart from "@/icon/mobile/shoppingCart.svg?vueComponent";
 import { likeModel } from "@/api";
 import { timeago } from "@/common/time";
 import dragToMove from '@/components/tips/dragToMove/index.vue'
+import {isOpen,openModelComment} from '../../../components/modelComment/index.ts'
+import {showMovableTip} from '@/store/stores/app.ts'
 
 const isLike = ref(false);
 
 const props = defineProps(["modelInfo", "index"]);
+
+// 打开评论
+function openComment() {
+    openModelComment(props.modelInfo)
+}
+
 
 // 点赞收藏模型
 watch(isLike, async () => {
@@ -112,8 +121,10 @@ const showViewer = ref(false);
 
 const loading = ref(true);
 
-// 是否展示移动提示
-const showMoveTip = ref(false);
+
+function dragStart(){
+  showMovableTip.value = false
+}
 
 watch(
   activeIndex,
@@ -138,8 +149,6 @@ function loaded() {
   showImage.value = false;
   // 移除loading
   loading.value = false;
-  // 首次提示拖拽
-  showMoveTip.value = true;
 }
 
 </script>
@@ -172,6 +181,9 @@ function loaded() {
   height: 100%;
   position: absolute;
   z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   // background: #333;
 }
 

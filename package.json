@@ -80,6 +80,7 @@
     "rollup-plugin-svg-sprites": "^1.2.5",
     "scss": "^0.2.4",
     "sequelize": "^6.31.0",
+    "sequelize-auto": "^0.8.8",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "svg-sprite-loader": "^6.0.11",

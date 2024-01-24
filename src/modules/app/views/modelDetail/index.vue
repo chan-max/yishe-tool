@@ -18,7 +18,6 @@ import { useRoute } from "vue-router";
 const route = useRoute();
 
 const modelInfo = JSON.parse(route.query.modelInfo || null);
-console.log(modelInfo);
 </script>
 
 <style></style>

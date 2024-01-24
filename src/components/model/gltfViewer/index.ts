@@ -132,6 +132,10 @@ export const useViewer = (gltfViewerRef,props,emits) => {
     controller.dampingFactor = 1;
     controller.autoRotate = true
 
+    controller.addEventListener( 'start', function() { 
+        emits('dragStart')
+    }); 
+
     function enableController(){
         controller.enabled = true;
     }
@@ -143,7 +147,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
     async function initModel() {
         emits('beforeLoad')
         const model = format1stf(props.model);
-    
+        
         if (!model) {
             return;
         }

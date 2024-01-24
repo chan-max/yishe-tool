@@ -19,7 +19,6 @@ export function gltfLoader(url) {
             let gltf = await loader.loadAsync(url)
             resolve(gltf)
         }catch(e){
-            console.log('gltf load error',url)
             reject(e)
         }
     })

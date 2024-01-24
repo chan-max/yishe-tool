@@ -8,17 +8,33 @@
       id="layout-header"
       style="border-bottom: 2px solid #f6f6f6; height: var(--1s-header-height)"
     >
-      <div v-if="showHeader" style="width: 100%; height: 100%;display:flex;">
+      <div v-if="showHeader" style="width: 100%; height: 100%; display: flex">
         <header-menu />
+      </div>
+    </div>
+    <div
+      id="layout-sub-header"
+      style="
+        border-bottom: 2px solid #f6f6f6;
+        width: auto;
+        height: var(--1s-sub-header-height);
+      "
+    >
+      <div v-if="showSubHeader" style="width: 100%; height: 100%; flex: 1">
+        <sub-header-menu @takephoto="takephoto" />
       </div>
     </div>
 
     <div
       id="layout-body"
-      style="display: flex; flex: 1; height: calc(100% - var(--1s-header-height))"
+      style="
+        display: flex;
+        flex: 1;
+        height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
+      "
     >
       <div id="layout-left-menu" style="height: 100%; border-right: 2px solid #f6f6f6">
-          <left-menu v-if="showLeftMenu"></left-menu>
+        <left-menu v-if="showLeftMenu"></left-menu>
       </div>
 
       <div id="layout-left" style="height: 100%; display: flex">
@@ -27,40 +43,17 @@
         </div>
       </div>
 
+      <div id="layout-canvas" style="height: 100%; flex: 1;width:0">
+        <screenshot ref="screenshotInstance"></screenshot>
+        <div id="designiy-canvas-container" ref="mountContainer"></div>
+      </div>
+
       <div
         id="layout-right"
-        style="height: 100%; width: 100%; display: flex; flex-direction: column; flex: 1"
+        style="display: flex;"
       >
-        <div
-          id="layout-right-header"
-          style="
-            border-bottom: 2px solid #f6f6f6;
-            width: auto;
-            height: var(--1s-sub-header-height);
-          "
-        >
-          <div v-if="showSubHeader" style="width: 100%; height: 100%; flex: 1">
-            <sub-header-menu @takephoto="takephoto" />
-          </div>
-        </div>
-
-        <div
-          id="layout-right-body"
-          style="flex: 1; display: flex; height: calc(100% - var(--1s-sub-header-height))"
-        >
-          <!-- 这里的父子元素使用绝对和相对布局存在问题 -->
-          <div id="layout-canvas" style="height: 100%; flex: 1; position: relative">
-            <screenshot ref="screenshotInstance"></screenshot>
-            <div
-              id="designiy-canvas-container"
-              ref="mountContainer"
-              style="position: absolute"
-            ></div>
-          </div>
-
-          <div style="height: 100%">
-            <component :is="rightComponent"></component>
-          </div>
+        <div style="height: 100%">
+          <component :is="rightComponent"></component>
         </div>
       </div>
     </div>

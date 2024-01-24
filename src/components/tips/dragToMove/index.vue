@@ -24,7 +24,7 @@ import iconFingerMove from "@/icon/mobile/fingerMove.svg?vueComponent";
 }
 
 .swipe {
-  animation: swipe-animation 1.5s ease infinite;
+  animation: swipe-animation 3s ease infinite;
   position: relative;
 }
 
@@ -35,7 +35,7 @@ import iconFingerMove from "@/icon/mobile/fingerMove.svg?vueComponent";
   position: absolute;
   top: -10px;
   left: 12px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .text {
@@ -49,8 +49,11 @@ import iconFingerMove from "@/icon/mobile/fingerMove.svg?vueComponent";
   0% {
     transform: translateX(0) translateY(0) rotate(0deg);
   }
-  100% {
+  50% {
     transform: translateX(100px) translateY(10px) rotate(20deg);
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg);
   }
 }
 </style>

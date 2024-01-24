@@ -20,5 +20,5 @@
 
 <script setup lang="ts">
 import { IonApp, IonRouterOutlet, IonPage } from "@ionic/vue";
-import {isDark} from './helper/dark'
+import {isDark} from '@/store/stores/app.ts'
 </script>

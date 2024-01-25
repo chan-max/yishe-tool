@@ -57,7 +57,7 @@ export default defineConfig((config:any) => {
     plugins: [
       alias(),
       // https dev
-      // basicSsl(),
+      basicSsl(),
       svgSprites({
         exclude: ['node_modules/**']
       }),

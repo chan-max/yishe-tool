@@ -45,8 +45,7 @@ import '@/style/cover-elementplus.scss'
 import 'element-plus/theme-chalk/display.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 
-
-
+import "tailwindcss/tailwind.css"
 
 import { ConfigProvider } from 'vant';
 import 'vant/lib/index.css';
@@ -80,6 +79,9 @@ app.use(ElementPlus)
 import {initIonicComponents} from './helper/ionic.ts'
 
 initIonicComponents(app)
+
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+defineCustomElements(window);
 
 router.isReady().then(() => {
   syncUserInfoToLocal()

@@ -84,8 +84,6 @@ const customAnimation = (baseEl, opts) => {
   return createAnimation().addElement(baseEl).duration(200).fromTo("opacity", "1", "0");
 };
 
-
-
 getList();
 
 onActivated(() => {});

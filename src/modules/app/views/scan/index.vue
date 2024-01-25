@@ -9,7 +9,6 @@
         ref="videoEl"
         playsinline
       ></video>
-
       <div class="scan-main-left">
         <icon-close @click="close"></icon-close>
         <icon-switch-camera @click="switchCamera"></icon-switch-camera>
@@ -53,7 +52,7 @@ onMounted(async () => {
 
 // 关闭扫码页面
 function close() {
-  router.push({name:'HomeIndex'})
+  router.back()
 }
 
 // 当前选中的操作页面
@@ -141,6 +140,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   width: 100%;
   height: 100%;
+  background: #000;
 }
 
 .scan-main {

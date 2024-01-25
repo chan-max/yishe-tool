@@ -13,8 +13,8 @@ export const isDark = useDark({
 });
 
 
-const toggleDark = useToggle(isDark);
+const _toggleDark = useToggle(isDark);
 
-export function toggle() {
-    toggleDark();
+export function toggleDark() {
+    _toggleDark();
 }

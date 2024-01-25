@@ -10,19 +10,25 @@
 -->
 <template>
   <ion-page>
-    <button @click="logout"> 退出登录 </button>
+    <button @click="logout">退出登录</button>
+    <button @click="take">拍照</button>
   </ion-page>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue";
 import { ref } from "vue";
 import { doLogout } from "@/store/stores/loginAction";
+import { takePhoto } from "../../helper/camera.ts";
 
-function logout() {
-  doLogout()
+
+function take(){
+  takePhoto()
 }
 
+function logout() {
+  doLogout();
+}
 </script>
 
 <style></style>

@@ -12,7 +12,7 @@
 
 // 摄像头是否可用
 export function cameraUsable() {
-    return !!navigator?.mediaDevices.getUserMedia
+    return !!navigator?.mediaDevices?.getUserMedia
 }
 
 export const facingModeUserOption = { video: { 

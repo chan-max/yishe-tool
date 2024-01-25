@@ -10,40 +10,78 @@
 -->
 <template>
   <ion-page>
-    <ion-header collapse="fade">
+    <ion-header collapse="fade" translucent="true">
       <ion-toolbar collapse="fade">
-        <ion-buttons slot="start" style="padding: 10px 20px">
-          <!-- 账号 : {{ loginStore.userInfo?.account }} -->
-        </ion-buttons>
+        <ion-buttons slot="start" style="padding: 10px 20px"> </ion-buttons>
         <ion-buttons slot="end">
-          <ion-button router-link="/home/user/setting" router-direction="forward">
-            <ion-icon slot="icon-only" :icon="settingsOutline"></ion-icon>
+          <ion-button @click="isDark = !isDark">
+            <icon-dark-mode
+              v-if="isDark"
+              style="width: 26px; height: 26px"
+            ></icon-dark-mode>
+            <icon-light-mode v-else style="width: 26px; height: 26px"></icon-light-mode>
+          </ion-button>
+          <ion-button router-link="/scan">
+            <icon-scan-search style="width: 26px; height: 26px"></icon-scan-search>
+          </ion-button>
+          <ion-button @click="goSetting">
+            <icon-setting style="width: 26px; height: 26px"></icon-setting>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true" class="ion-padding">
-      <ion-avatar>
-        <img alt="我的头像" src="/mobileDefaultAvatar.svg" />
-      </ion-avatar>
+      <div class="flex justify-between align-middle" style="padding: 10px 5px">
+        <div class="flex flex-col justify-around">
+          <div style="font-size: 26px; font-weight: bold">用户名</div>
+          <div style="opacity: 0.7">{{ loginStore.userInfo?.account }}</div>
+        </div>
+        <div class="flex items-center">
+          <ion-avatar style="width: 66px; height: 66px">
+            <img :src="avatar" />
+          </ion-avatar>
+        </div>
+      </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup>
-import { onMounted } from "vue";
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue";
-import { useLoginStatusStore } from "@/store/stores/login";
+import { onMounted, computed } from "vue";
 import {
-  settingsOutline,
-  createOutline,
-  personCircle,
-  search,
-  chatbubbleEllipsesOutline,
-  timeOutline,
-} from "ionicons/icons";
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  useIonRouter,
+  createAnimation
+} from "@ionic/vue";
+import { useLoginStatusStore } from "@/store/stores/login";
+import { settingsOutline } from "ionicons/icons";
+import iconSetting from "@/icon/mobile/setting.svg?vueComponent";
+import iconScanSearch from "@/icon/mobile/scanSearch.svg?vueComponent";
+import iconLightMode from "@/icon/mobile/lightMode.svg?vueComponent";
+import iconDarkMode from "@/icon/mobile/darkMode.svg?vueComponent";
+import { isDark, toggleDark } from "@/store/stores/app.ts";
+const router = useIonRouter();
 
 const loginStore = useLoginStatusStore();
+
+const avatar = computed(() => {
+  return loginStore.userInfo?.preview_avatar || "/mobileDefaultAvatar.svg";
+});
+
+function goSetting() {
+  router.push(
+    { name: "UserSetting" },
+    createAnimation()
+      .addElement(baseEl)
+      .duration(100)
+      .fromTo("transform", "translateX(0px)", "translateX(-300px)")
+      .fromTo("opacity", "1", "0.2")
+  );
+}
 
 onMounted(() => {
   if (!loginStore.isLogin) {

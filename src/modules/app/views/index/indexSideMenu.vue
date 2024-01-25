@@ -10,13 +10,7 @@
 -->
 <template>
   <div style="display: flex; flex-direction: column; width: 100%; height: 100%">
-    <ion-avatar>
-      <img alt="头像" :src="avatar" />
-    </ion-avatar>
     <div style="flex: 1"></div>
-    <ion-toggle label-placement="end" @ionChange="toggle" :checked="isDark">
-      启用夜间模式
-    </ion-toggle>
   </div>
 </template>
 <script setup>
@@ -24,7 +18,6 @@
 import { onMounted, computed } from "vue";
 import { IonToggle, IonItem, IonLabel, IonAvatar } from "@ionic/vue";
 import { useLoginStatusStore } from "@/store/stores/login.ts";
-import {toggle,isDark} from '@/store/stores/app.ts'
 
 
 const loginStatusStore = useLoginStatusStore();

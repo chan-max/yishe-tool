@@ -55,7 +55,7 @@ import {
   IonTitle,
   IonContent,
   useIonRouter,
-  createAnimation
+  createAnimation,
 } from "@ionic/vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { settingsOutline } from "ionicons/icons";
@@ -73,14 +73,14 @@ const avatar = computed(() => {
 });
 
 function goSetting() {
-  router.push(
-    { name: "UserSetting" },
-    createAnimation()
+  router.push({ name: "UserSetting" }, (baseEl, opts) => {
+    // 右滑动画
+    return createAnimation()
       .addElement(baseEl)
       .duration(100)
       .fromTo("transform", "translateX(0px)", "translateX(-300px)")
-      .fromTo("opacity", "1", "0.2")
-  );
+      .fromTo("opacity", "1", "0.2");
+  });
 }
 
 onMounted(() => {

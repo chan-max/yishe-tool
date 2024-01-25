@@ -3,7 +3,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-13 10:25:23
+ * @LastEditTime: 2024-01-25 20:43:35
  * @FilePath: /1s/src/modules/app/main.ts
  * @Description: 
  * 
@@ -50,6 +50,8 @@ import "tailwindcss/tailwind.css"
 import { ConfigProvider } from 'vant';
 import 'vant/lib/index.css';
 
+import { IonicVue } from '@ionic/vue';
+
 
 import { createPinia } from 'pinia'
 
@@ -68,15 +70,15 @@ const pinia = createPinia()
 
 app.use(pinia)
 
-app.use(IonicVue)
-
 app.use(router);
 
-app.use(ElementPlus)
+app.use(ElementPlus);
 
+app.use(IonicVue, {
+  swipeBackEnabled:false
+});
 
-
-import {initIonicComponents} from './helper/ionic.ts'
+import { initIonicComponents } from './helper/ionic.ts'
 
 initIonicComponents(app)
 

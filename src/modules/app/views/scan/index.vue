@@ -1,28 +1,25 @@
 <template>
-<ion-page>
-  <div class="scan">
-    <div class="scan-main">
-      <canvas class="scan-canvas" style="display: none;" ref="canvasEl"></canvas>
+  <ion-page>
+    <div class="scan">
       <video
         class="scan-video"
         :class="facingModeIsUser && 'video-flip'"
         ref="videoEl"
         playsinline
       ></video>
-      <div class="scan-main-left">
+      <canvas class="scan-canvas" style="display: none" ref="canvasEl"></canvas>
+      <!-- <div class="scan-main-left">
         <icon-close @click="close"></icon-close>
         <icon-switch-camera @click="switchCamera"></icon-switch-camera>
-      </div>
-      <div class="scan-main-right">right</div>
+      </div> -->
     </div>
-  </div>
-</ion-page>
+  </ion-page>
 </template>
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed, shallowRef } from "vue";
 import iconClose from "@/icon/mobile/close.svg?vueComponent";
 import iconSwitchCamera from "@/icon/mobile/switch-camera.svg?vueComponent";
-import {IonPage} from '@ionic/vue'
+import { IonPage } from "@ionic/vue";
 
 import {
   cameraUsable,
@@ -49,10 +46,9 @@ onMounted(async () => {
   }
 });
 
-
 // 关闭扫码页面
 function close() {
-  router.back()
+  router.back();
 }
 
 // 当前选中的操作页面
@@ -93,6 +89,9 @@ function startCamera() {
   navigator.mediaDevices
     .getUserMedia(currentFacingMode.value)
     .then(function (mediaStream) {
+
+      console.log(mediaStream.active)
+
       videoEl.value.srcObject = mediaStream;
       play();
     })
@@ -141,11 +140,6 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   background: #000;
-}
-
-.scan-main {
-  width: 100%;
-  height: 100%;
   position: relative;
 }
 
@@ -153,6 +147,10 @@ onBeforeUnmount(() => {
   display: flex;
   width: 100%;
   height: 100%;
+  left: 0;
+  top:0;
+  position: absolute;
+  border: 2px solid red;
   // 自拍镜像翻转
   object-fit: cover;
 }

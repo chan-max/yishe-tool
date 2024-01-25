@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-21 22:48:42
+ * @LastEditTime: 2024-01-25 21:11:51
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -205,7 +205,7 @@ function loaded() {
 
 ion-progress-bar {
   --background: rgba(0, 0, 0, 0);
-  --progress-background: rgba(105, 0, 255, 0.5);
+  --progress-background: rgba(105, 0, 255, 0.99);
 }
 
 .menu-right {

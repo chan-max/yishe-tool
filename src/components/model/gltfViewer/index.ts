@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-13 13:25:47
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-21 05:19:00
+ * @LastEditTime: 2024-01-25 21:09:23
  * @FilePath: /1s/src/components/model/gltfViewer/index.ts
  * @Description: 
  * 
@@ -129,7 +129,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
     controller.minDistance = 0.5;
     controller.maxDistance = 5;
     controller.enableDamping = true;
-    controller.dampingFactor = 1;
+    controller.dampingFactor = .1;
     controller.autoRotate = true
 
     controller.addEventListener( 'start', function() { 
@@ -165,7 +165,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
             renderer.setClearColor(0xeeeeee, 0);
         }
     
-    
+        
         let gltf: any = await gltfLoader(baseModelUrl);
     
         currentMesh = findMainMesh(gltf);

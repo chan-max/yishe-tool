@@ -23,12 +23,24 @@ dependencies:
   '@capacitor/core':
     specifier: ^5.6.0
     version: 5.6.0
+  '@capacitor/filesystem':
+    specifier: ^5.2.0
+    version: 5.2.0(@capacitor/core@5.6.0)
   '@capacitor/ios':
     specifier: ^5.6.0
     version: 5.6.0(@capacitor/core@5.6.0)
+  '@capacitor/local-notifications':
+    specifier: ^5.0.6
+    version: 5.0.6(@capacitor/core@5.6.0)
+  '@capacitor/preferences':
+    specifier: ^5.0.6
+    version: 5.0.6(@capacitor/core@5.6.0)
   '@element-plus/icons-vue':
     specifier: ^2.0.10
     version: 2.3.1(vue@3.3.13)
+  '@ionic/pwa-elements':
+    specifier: ^3.2.2
+    version: 3.2.2
   '@ionic/vue':
     specifier: ^7.6.2
     version: 7.6.2
@@ -191,6 +203,9 @@ dependencies:
   sequelize:
     specifier: ^6.31.0
     version: 6.35.2(mysql2@3.6.5)
+  sequelize-auto:
+    specifier: ^0.8.8
+    version: 0.8.8(sequelize@6.35.2)
   socket.io:
     specifier: ^4.7.2
     version: 4.7.2
@@ -1755,10 +1770,34 @@ packages:
       tslib: 2.6.2
     dev: false
 
+  /@capacitor/filesystem@5.2.0(@capacitor/core@5.6.0):
+    resolution: {integrity: sha512-fyv+yWVFfglobPPveIRm4+ryMGI8vW27vjX63HDwB7K5fscSYajid+ie3qfwl2wkbPhlX8KTPes7IPij0lCmQg==}
+    peerDependencies:
+      '@capacitor/core': ^5.1.1
+    dependencies:
+      '@capacitor/core': 5.6.0
+    dev: false
+
   /@capacitor/ios@5.6.0(@capacitor/core@5.6.0):
     resolution: {integrity: sha512-iswpOcD5us10hIF5zS4w6k/ekW0A+2pXhDV4AHOBXR4VOkOMI8QJaavgl9JvZ/NVvVNJdEN2rOKCMNh4AH08sw==}
     peerDependencies:
       '@capacitor/core': ^5.6.0
+    dependencies:
+      '@capacitor/core': 5.6.0
+    dev: false
+
+  /@capacitor/local-notifications@5.0.6(@capacitor/core@5.6.0):
+    resolution: {integrity: sha512-DB+ZBjv3Ri/0mtSzjMxLMHNGfg5m615ewDfQxp++mu7pYUM1RkxfSiigw73+PlZXDow1YNQJRlzTkwEKs6Pf+g==}
+    peerDependencies:
+      '@capacitor/core': ^5.0.0
+    dependencies:
+      '@capacitor/core': 5.6.0
+    dev: false
+
+  /@capacitor/preferences@5.0.6(@capacitor/core@5.6.0):
+    resolution: {integrity: sha512-aDe4wGTVSAIue6XXdUFgyz7SGszxK/Ptt/iWTydMpzc1PlZXw1XTTnciM+S+SLLNZFzXlkpXT3wMnh9t0DojUA==}
+    peerDependencies:
+      '@capacitor/core': ^5.0.0
     dependencies:
       '@capacitor/core': 5.6.0
     dev: false
@@ -2382,6 +2421,11 @@ packages:
       '@stencil/core': 4.9.0
       ionicons: 7.2.2
       tslib: 2.6.2
+    dev: false
+
+  /@ionic/pwa-elements@3.2.2:
+    resolution: {integrity: sha512-gCQsHdvkaWa83T3ToKsr6FOtzSmLIYFWy+zZisXVDqU3ry4Hv581dFSxDUgokgoWSxIERe/nvYnhoN8zIIEKQQ==}
+    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
     dev: false
 
   /@ionic/utils-array@2.1.6:
@@ -3860,7 +3904,7 @@ packages:
       clipboardy: 2.3.0
       cliui: 6.0.0
       copy-webpack-plugin: 5.1.2(webpack@4.47.0)
-      css-loader: 3.6.0(webpack@4.47.0)
+      css-loader: 3.6.0(webpack@5.89.0)
       cssnano: 4.1.11
       debug: 4.3.4(supports-color@5.5.0)
       default-gateway: 5.0.5
@@ -3870,7 +3914,7 @@ packages:
       fs-extra: 7.0.1
       globby: 9.2.0
       hash-sum: 2.0.0
-      html-webpack-plugin: 3.2.0(webpack@4.47.0)
+      html-webpack-plugin: 3.2.0(webpack@5.89.0)
       launch-editor-middleware: 2.6.1
       lodash.defaultsdeep: 4.6.1
       lodash.mapvalues: 4.6.0
@@ -4292,7 +4336,7 @@ packages:
       html-webpack-plugin: '>=2.26.0'
       webpack: '>=4.0.0'
     dependencies:
-      html-webpack-plugin: 3.2.0(webpack@4.47.0)
+      html-webpack-plugin: 3.2.0(webpack@5.89.0)
       webpack: 4.47.0
     dev: true
 
@@ -6108,7 +6152,6 @@ packages:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
-    dev: true
 
   /cliui@8.0.1:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
@@ -6912,7 +6955,7 @@ packages:
       utrie: 1.0.2
     dev: false
 
-  /css-loader@3.6.0(webpack@4.47.0):
+  /css-loader@3.6.0(webpack@5.89.0):
     resolution: {integrity: sha512-M5lSukoWi1If8dhQAUCvj4H8vUt3vOnwbQBH9DdTm/s4Ym2B/3dPMtYZeJmq7Q3S3Pa+I94DcZ7pc9bP14cWIQ==}
     engines: {node: '>= 8.9.0'}
     peerDependencies:
@@ -6931,7 +6974,7 @@ packages:
       postcss-value-parser: 4.2.0
       schema-utils: 2.7.1
       semver: 6.3.1
-      webpack: 4.47.0
+      webpack: 5.89.0
     dev: true
 
   /css-loader@6.8.1(webpack@5.89.0):
@@ -9918,7 +9961,7 @@ packages:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
     dev: true
 
-  /html-webpack-plugin@3.2.0(webpack@4.47.0):
+  /html-webpack-plugin@3.2.0(webpack@5.89.0):
     resolution: {integrity: sha512-Br4ifmjQojUP4EmHnRBoUIYcZ9J7M4bTMcm7u6xoIAIuq2Nte4TzXX0533owvkQKQD1WeMTTTyD4Ni4QKxS0Bg==}
     engines: {node: '>=6.9'}
     deprecated: 3.x is no longer supported
@@ -9932,7 +9975,7 @@ packages:
       tapable: 1.1.3
       toposort: 1.0.7
       util.promisify: 1.0.0
-      webpack: 4.47.0
+      webpack: 5.89.0
     dev: true
 
   /html-webpack-plugin@5.6.0(webpack@5.89.0):
@@ -14522,6 +14565,10 @@ packages:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
     dev: true
 
+  /reserved-words@0.1.2:
+    resolution: {integrity: sha512-0S5SrIUJ9LfpbVl4Yzij6VipUdafHrOTzvmfazSw/jeZrZtQK303OPZW+obtkaw7jQlTQppy0UvZWm9872PbRw==}
+    dev: false
+
   /resize-observer-polyfill@1.5.1:
     resolution: {integrity: sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==}
     dev: false
@@ -14929,6 +14976,20 @@ packages:
 
   /seq-queue@0.0.5:
     resolution: {integrity: sha512-hr3Wtp/GZIc/6DAGPDcV4/9WoZhjrkXsi5B/07QgX8tsdc6ilr7BFM6PM6rbdAX1kFSDYeZGLipIZZKyQP0O5Q==}
+    dev: false
+
+  /sequelize-auto@0.8.8(sequelize@6.35.2):
+    resolution: {integrity: sha512-9o0qi2yMA86oFqcA5Nh14PnQSHP0E9WPEB4hP/NgxqdFE44Nq2u8Di5O3xmvWwXMIV6W+Q0YI/2VTLvlMJAjnQ==}
+    engines: {node: '>= 10'}
+    hasBin: true
+    peerDependencies:
+      sequelize: '>3.30.0'
+    dependencies:
+      lodash: 4.17.21
+      mkdirp: 1.0.4
+      reserved-words: 0.1.2
+      sequelize: 6.35.2(mysql2@3.6.5)
+      yargs: 16.2.0
     dev: false
 
   /sequelize-cli@6.6.2:
@@ -17225,7 +17286,7 @@ packages:
       '@vue/compiler-sfc': 3.3.13
       '@vue/component-compiler-utils': 3.3.0(lodash@4.17.21)
       cache-loader: 4.1.0(webpack@4.47.0)
-      css-loader: 3.6.0(webpack@4.47.0)
+      css-loader: 3.6.0(webpack@5.89.0)
       hash-sum: 1.0.2
       loader-utils: 1.4.2
       vue-hot-reload-api: 2.3.4
@@ -18267,7 +18328,6 @@ packages:
   /yargs-parser@20.2.9:
     resolution: {integrity: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==}
     engines: {node: '>=10'}
-    dev: true
 
   /yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
@@ -18306,7 +18366,6 @@ packages:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 20.2.9
-    dev: true
 
   /yargs@17.7.2:
     resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}

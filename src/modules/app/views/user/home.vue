@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:31:40
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-24 21:35:27
+ * @LastEditTime: 2024-01-25 21:17:33
  * @FilePath: /1s/src/modules/app/views/user/home.vue
  * @Description: 移动端个人信息页面
  * 
@@ -33,7 +33,12 @@
     <ion-content :fullscreen="true" class="ion-padding">
       <div class="flex justify-between align-middle" style="padding: 10px 5px">
         <div class="flex flex-col justify-around">
-          <div style="font-size: 26px; font-weight: bold">用户名</div>
+          <div v-if="loginStore.isLogin" style="font-size: 26px; font-weight: bold">
+            {{ loginStore.userInfo.name || '古三通' }}
+          </div>
+          <div v-else style="font-size: 26px; font-weight: bold">
+                登录
+          </div>
           <div style="opacity: 0.7">{{ loginStore.userInfo?.account }}</div>
         </div>
         <div class="flex items-center">

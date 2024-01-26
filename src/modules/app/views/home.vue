@@ -60,8 +60,19 @@ import iconTalkFilled from "@/icon/mobile/footer/talk-filled.svg?vueComponent";
 import iconUserFilled from "@/icon/mobile/footer/user-filled.svg?vueComponent";
 import floatingButton from '../components/floatingButton.vue'
 import { useLoginStatusStore } from '@/store/stores/login';
-
+import { onBeforeMount } from 'vue';
+import { useIonRouter } from "@ionic/vue";
+import {onBeforeRouteUpdate} from 'vue-router'
+const router = useIonRouter()
 const loginStore = useLoginStatusStore()
+
+onBeforeMount(() => {
+  if(!loginStore.isLogin){
+    router.replace({
+      name:"Login"
+    })
+  }
+})
 
 </script>
 

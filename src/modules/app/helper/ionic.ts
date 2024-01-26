@@ -38,7 +38,8 @@ import {
     IonSkeletonText,
     IonProgressBar,
     IonMenuToggle,
-    IonRouterOutlet
+    IonRouterOutlet,
+    IonBackButton
 } from "@ionic/vue";
 
 export function initIonicComponents(app) {
@@ -72,7 +73,8 @@ export function initIonicComponents(app) {
         IonSkeletonText,
         IonProgressBar,
         IonMenuToggle,
-        IonRouterOutlet
+        IonRouterOutlet,
+        IonBackButton
     ]
 
     components.forEach((component) => {

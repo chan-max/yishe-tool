@@ -75,7 +75,11 @@ app.use(router);
 app.use(ElementPlus);
 
 app.use(IonicVue, {
-  swipeBackEnabled:false
+  mode: "ios",
+  // animated: false, // 不设置该值会存在右滑返回时的错误动画
+  swipeGesture: false,
+  swipeBackEnabled: false,
+  backButtonText:'返回'
 });
 
 import { initIonicComponents } from './helper/ionic.ts'

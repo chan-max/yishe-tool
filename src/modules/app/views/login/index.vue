@@ -10,14 +10,6 @@
 -->
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button default-href="/" text="首页"> </ion-back-button>
-        </ion-buttons>
-        <ion-title>登录</ion-title>
-      </ion-toolbar>
-    </ion-header>
     <ion-content :fullscreen="true" class="ion-padding">
       <ion-list-header>
         <ion-label>登录到衣设</ion-label>

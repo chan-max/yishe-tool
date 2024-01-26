@@ -8,10 +8,10 @@
         playsinline
       ></video>
       <canvas class="scan-canvas" style="display: none" ref="canvasEl"></canvas>
-      <!-- <div class="scan-main-left">
+      <div class="scan-main-left">
         <icon-close @click="close"></icon-close>
         <icon-switch-camera @click="switchCamera"></icon-switch-camera>
-      </div> -->
+      </div>
     </div>
   </ion-page>
 </template>

@@ -73,16 +73,6 @@ async function getList() {
   list.value = list.value.concat(res.list);
 }
 
-const customAnimation = (baseEl, opts) => {
-  // 右滑动画
-  return createAnimation()
-    .addElement(baseEl)
-    .duration(100)
-    .fromTo("transform", "translateX(0px)", "translateX(-300px)")
-    .fromTo("opacity", "1", "0.2");
-  // 淡出动画
-  return createAnimation().addElement(baseEl).duration(200).fromTo("opacity", "1", "0");
-};
 
 getList();
 

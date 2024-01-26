@@ -9,8 +9,8 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-  <ion-page>
-    <ion-header collapse="fade" translucent="true">
+<ion-page>
+  <ion-header collapse="fade" translucent="true">
       <ion-toolbar collapse="fade">
         <ion-buttons slot="start" style="padding: 10px 20px"> </ion-buttons>
         <ion-buttons slot="end">
@@ -48,7 +48,7 @@
         </div>
       </div>
     </ion-content>
-  </ion-page>
+</ion-page>
 </template>
 
 <script setup>
@@ -77,22 +77,19 @@ const avatar = computed(() => {
   return loginStore.userInfo?.preview_avatar || "/mobileDefaultAvatar.svg";
 });
 
+// (baseEl, opts) => {
+//     // 右滑动画
+//     return createAnimation()
+//       .addElement(baseEl)
+//       .duration(100)
+//       .fromTo("transform", "translateX(0px)", "translateX(-300px)")
+//       .fromTo("opacity", "1", "0.2");
+//   }
+
 function goSetting() {
-  router.push({ name: "UserSetting" }, (baseEl, opts) => {
-    // 右滑动画
-    return createAnimation()
-      .addElement(baseEl)
-      .duration(100)
-      .fromTo("transform", "translateX(0px)", "translateX(-300px)")
-      .fromTo("opacity", "1", "0.2");
-  });
+  router.push({ name: "UserSetting" });
 }
 
-onMounted(() => {
-  if (!loginStore.isLogin) {
-    alert("暂未登录");
-  }
-});
 </script>
 
 <style scoped>

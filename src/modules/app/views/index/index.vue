@@ -67,24 +67,4 @@ import swiper from "./swiper/index.vue";
 
 const loginStatusStore = useLoginStatusStore();
 
-// 未登录提示
-onMounted(async () => {
-  if (!loginStatusStore.isLogin) {
-    const alert = await alertController.create({
-      header: "提示",
-      message: "暂未登录，是否去登录",
-      buttons: [
-        {
-          text: "取消",
-          role: "cancel",
-        },
-        {
-          text: "去登录",
-          role: "confirm",
-        },
-      ],
-    });
-    await alert.present();
-  }
-});
 </script>

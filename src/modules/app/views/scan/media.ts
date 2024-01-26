@@ -15,9 +15,12 @@ export function cameraUsable() {
     return !!navigator?.mediaDevices?.getUserMedia
 }
 
-export const facingModeUserOption = { video: { 
-    facingMode: { exact: "user" }
- }}
+export const facingModeUserOption = {
+    video: {
+        width: 1280, height: 720,
+        facingMode: { exact: "user" }
+    }
+}
 
 export const facingModeEnvironmentOption = {
     video: {

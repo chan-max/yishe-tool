@@ -10,13 +10,14 @@
  */
 
 
-import { createRouter,  createWebHashHistory } from '@ionic/vue-router';
+import { createRouter, createWebHashHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
+    name: 'Index',
     redirect: '/home/index'
   },
   {
@@ -40,12 +41,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/modelDetail/index.vue')
   },
   {
-    path: '/home/',
+    path: '/home',
     name: 'Home',
     component: () => import('../views/home.vue'),
     children: [
       {
-        name: 'Redirect',
         path: '',
         redirect: '/home/index'
       },
@@ -73,16 +73,25 @@ const routes: Array<RouteRecordRaw> = [
         name: 'User',
         path: 'user',
         component: () => import('../views/user/index.vue'),
-        children:[
+        children: [
+          {
+            path: '',
+            redirect: '/home/user/index'
+          },
           {
             name: 'UserIndex',
-            path: '',
+            path: 'index',
             component: () => import('../views/user/home.vue')
           },
           {
-            path:'setting',
-            name:"UserSetting",
-            component: () => import('../views/user/setting/index.vue')
+            path: 'setting',
+            name: "UserSetting",
+            component: () => import('../views/user/setting/index.vue'),
+          },
+          {
+            name: 'UpdateUserInfo',
+            path: 'updateUserInfo',
+            component: () => import('../views/user/setting/userInfoSetting.vue')
           }
         ]
       }

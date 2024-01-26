@@ -10,11 +10,8 @@
 -->
 <template>
   <ion-page>
-    <ion-router-outlet></ion-router-outlet>
+    <ion-router-outlet :animated="false"></ion-router-outlet>
   </ion-page>
 </template>
-
-<script setup>
-</script>
-<style scoped>
-</style>
+<script setup></script>
+<style scoped></style>

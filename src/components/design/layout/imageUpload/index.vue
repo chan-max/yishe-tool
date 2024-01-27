@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import iconUpload from "@/icon/upload.svg?vueComponent";
+import iconUpload from "@/icon/upload.svg?component";
 import { ref, reactive, watch, computed, shallowRef } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import { genFileId } from "element-plus";

@@ -42,11 +42,11 @@
 
 <script setup>
 import { User, Lock, View, Hide } from "@element-plus/icons-vue";
-import iconHome from "@/icon/mobile/footer/home-filled.svg?vueComponent";
-import iconWorkspace from "@/icon/mobile-workspace.svg?vueComponent";
-import iconShop from "@/icon/mobile-shop.svg?vueComponent";
-import iconTool from "@/icon/mobile-tool.svg?vueComponent";
-import iconMe from "@/icon/mobile-me.svg?vueComponent";
+import iconHome from "@/icon/mobile/footer/home-filled.svg?component";
+import iconWorkspace from "@/icon/mobile-workspace.svg?component";
+import iconShop from "@/icon/mobile-shop.svg?component";
+import iconTool from "@/icon/mobile-tool.svg?component";
+import iconMe from "@/icon/mobile-me.svg?component";
 import { ref } from "vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { router } from '../../router';

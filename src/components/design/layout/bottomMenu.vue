@@ -36,10 +36,10 @@
 </template>
 <script setup>
 import {isFullScreen,currentController} from '../store'
-import iconFullscreen from '@/icon/fullscreen.svg?vueComponent'
-import iconRotate from '@/icon/rotate.svg?vueComponent'
-import iconLocate from '@/icon/locate.svg?vueComponent'
-import iconRefresh from '@/icon/refresh.svg?vueComponent'
+import iconFullscreen from '@/icon/fullscreen.svg?component'
+import iconRotate from '@/icon/rotate.svg?component'
+import iconLocate from '@/icon/locate.svg?component'
+import iconRefresh from '@/icon/refresh.svg?component'
 
 function locate(){
     currentController.value.resetPosition()

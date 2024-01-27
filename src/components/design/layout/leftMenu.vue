@@ -129,22 +129,22 @@ import {
 showDecoration
 } from "../store";
 
-import iconWorkspace from "@/icon/workspace.svg?vueComponent";
-import iconShirt from "@/icon/shirt.svg?vueComponent";
-import iconPhoto from "@/icon/photo.svg?vueComponent";
-import iconText from "@/icon/text.svg?vueComponent";
-import iconPaint from "@/icon/paint.svg?vueComponent";
-import iconBox from "@/icon/box.svg?vueComponent";
-import iconBrush from "@/icon/brush.svg?vueComponent";
-import iconRuler from "@/icon/ruler.svg?vueComponent";
-import iconEarth from "@/icon/earth.svg?vueComponent";
-import iconLight from "@/icon/light.svg?vueComponent";
-import iconEye from "@/icon/eye.svg?vueComponent";
-import iconHelp from "@/icon/help.svg?vueComponent";
+import iconWorkspace from "@/icon/workspace.svg?component";
+import iconShirt from "@/icon/shirt.svg?component";
+import iconPhoto from "@/icon/photo.svg?component";
+import iconText from "@/icon/text.svg?component";
+import iconPaint from "@/icon/paint.svg?component";
+import iconBox from "@/icon/box.svg?component";
+import iconBrush from "@/icon/brush.svg?component";
+import iconRuler from "@/icon/ruler.svg?component";
+import iconEarth from "@/icon/earth.svg?component";
+import iconLight from "@/icon/light.svg?component";
+import iconEye from "@/icon/eye.svg?component";
+import iconHelp from "@/icon/help.svg?component";
 
-import iconSetting from "@/icon/setting.svg?vueComponent";
-import iconFont from "@/icon/font.svg?vueComponent";
-import iconDecoration from '@/icon/design/decoration.svg?vueComponent';
+import iconSetting from "@/icon/setting.svg?component";
+import iconFont from "@/icon/font.svg?component";
+import iconDecoration from '@/icon/design/decoration.svg?component';
 
 </script>
 <style lang="less">

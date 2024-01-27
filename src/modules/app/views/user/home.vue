@@ -64,10 +64,10 @@ import {
 } from "@ionic/vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { settingsOutline } from "ionicons/icons";
-import iconSetting from "@/icon/mobile/setting.svg?vueComponent";
-import iconScanSearch from "@/icon/mobile/scanSearch.svg?vueComponent";
-import iconLightMode from "@/icon/mobile/lightMode.svg?vueComponent";
-import iconDarkMode from "@/icon/mobile/darkMode.svg?vueComponent";
+import iconSetting from "@/icon/mobile/setting.svg?component";
+import iconScanSearch from "@/icon/mobile/scanSearch.svg?component";
+import iconLightMode from "@/icon/mobile/lightMode.svg?component";
+import iconDarkMode from "@/icon/mobile/darkMode.svg?component";
 import { isDark, toggleDark } from "@/store/stores/app.ts";
 const router = useIonRouter();
 

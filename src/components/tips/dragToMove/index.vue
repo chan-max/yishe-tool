@@ -8,7 +8,7 @@
   </div>
 </template>
 <script setup>
-import iconFingerMove from "@/icon/mobile/fingerMove.svg?vueComponent";
+import iconFingerMove from "@/icon/mobile/fingerMove.svg?component";
 </script>
 <style lang="less" scoped>
 .drag-to-move {

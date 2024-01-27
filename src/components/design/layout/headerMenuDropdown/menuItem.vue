@@ -26,7 +26,7 @@
   </div>
 </template>
 <script setup>
-import iconRightArrow from "@/icon/rightArrow.svg?vueComponent";
+import iconRightArrow from "@/icon/rightArrow.svg?component";
 import { ref,onMounted ,inject,watch} from "vue";
 
 const showChildren = ref(false);

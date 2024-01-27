@@ -19,7 +19,7 @@
 
 <script setup>
 import { ref, onMounted, provide } from "vue";
-import iconMenu from "@/icon/menu.svg?vueComponent";
+import iconMenu from "@/icon/menu.svg?component";
 import menuMain from './main.vue'
 
 const showHeaderMenuDropdown = ref(false);

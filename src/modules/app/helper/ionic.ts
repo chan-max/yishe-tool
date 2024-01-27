@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-24 21:30:58
+ * @LastEditTime: 2024-01-27 06:09:06
  * @FilePath: /1s/src/modules/app/helper/ionic.ts
  * @Description: 
  * 
@@ -39,7 +39,10 @@ import {
     IonProgressBar,
     IonMenuToggle,
     IonRouterOutlet,
-    IonBackButton
+    IonBackButton,
+    IonDatetimeButton,
+    IonDatetime,
+    IonBadge
 } from "@ionic/vue";
 
 export function initIonicComponents(app) {
@@ -74,7 +77,10 @@ export function initIonicComponents(app) {
         IonProgressBar,
         IonMenuToggle,
         IonRouterOutlet,
-        IonBackButton
+        IonBackButton,
+        IonDatetimeButton,
+        IonDatetime,
+        IonBadge
     ]
 
     components.forEach((component) => {

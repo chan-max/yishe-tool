@@ -173,12 +173,12 @@ import {
   showDecalList,
   showModelInfo,
 } from "../../store";
-import iconLogout from "@/icon/logout.svg?vueComponent";
-import iconNew from "@/icon/new.svg?vueComponent";
-import iconView from "@/icon/view.svg?vueComponent";
-import iconUpload from "@/icon/upload-normal.svg?vueComponent";
-import iconScreenshot from "@/icon/screenshot.svg?vueComponent";
-import iconJump from "@/icon/jump.svg?vueComponent";
+import iconLogout from "@/icon/logout.svg?component";
+import iconNew from "@/icon/new.svg?component";
+import iconView from "@/icon/view.svg?component";
+import iconUpload from "@/icon/upload-normal.svg?component";
+import iconScreenshot from "@/icon/screenshot.svg?component";
+import iconJump from "@/icon/jump.svg?component";
 </script>
 
 <style></style>

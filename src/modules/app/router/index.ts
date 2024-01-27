@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-11-28 01:16:00
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-24 21:37:35
+ * @LastEditTime: 2024-01-27 06:14:29
  * @FilePath: /1s/src/modules/app/router/index.ts
  * @Description: 
  * 
@@ -46,10 +46,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/home.vue'),
     children: [
       {
-        path: '',
-        redirect: '/home/index'
-      },
-      {
         name: 'HomeIndex',
         path: 'index',
         component: () => import('../views/index/index.vue')
@@ -75,12 +71,8 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/user/index.vue'),
         children: [
           {
-            path: '',
-            redirect: '/home/user/index'
-          },
-          {
             name: 'UserIndex',
-            path: 'index',
+            path: '',
             component: () => import('../views/user/home.vue')
           },
           {

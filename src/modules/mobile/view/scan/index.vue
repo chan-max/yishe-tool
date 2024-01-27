@@ -31,8 +31,8 @@
 </template>
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed, shallowRef } from "vue";
-import iconClose from "@/icon/mobile/close.svg?vueComponent";
-import iconSwitchCamera from "@/icon/mobile/switch-camera.svg?vueComponent";
+import iconClose from "@/icon/mobile/close.svg?component";
+import iconSwitchCamera from "@/icon/mobile/switch-camera.svg?component";
 import {
   cameraUsable,
   facingModeEnvironmentOption,

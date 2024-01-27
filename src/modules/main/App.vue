@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-01 22:53:17
+ * @LastEditTime: 2024-01-27 06:42:43
  * @FilePath: /1s/src/modules/main/App.vue
  * @Description: 
  * 
@@ -22,6 +22,11 @@ import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
 import headerMenu from './view/base/header/index.vue'
 import footerMenu from './view/base/footer/index.vue'
+
+import iconTest from '@/icon/mobile/footer/user-filled.svg'
+
+console.log(iconTest)
+
 
 import { useI18n } from "vue-i18n";
 

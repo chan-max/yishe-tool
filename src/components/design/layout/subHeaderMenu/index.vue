@@ -58,8 +58,8 @@ import { ref } from "vue";
 import headerMenuDropdown from "../headerMenuDropdown/index.vue";
 import onlinePoint from "../../components/onlinePoint.vue";
 import { isDarkMode, online, isEdit, currentEditingModelInfo ,currentController} from "../../store";
-import iconPrev from "@/icon/design/prev.svg?vueComponent";
-import iconCamera from "@/icon/camera.svg?vueComponent";
+import iconPrev from "@/icon/design/prev.svg?component";
+import iconCamera from "@/icon/camera.svg?component";
 
 
 </script>

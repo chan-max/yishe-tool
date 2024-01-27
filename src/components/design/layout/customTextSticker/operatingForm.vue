@@ -114,16 +114,16 @@
 <script setup>
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import operateFormItem from "./operateFormItem.vue";
-import iconBold from "@/icon/bold.svg?vueComponent";
-import iconFontSize from "@/icon/font-size.svg?vueComponent";
-import iconFontColor from "@/icon/font-color.svg?vueComponent";
+import iconBold from "@/icon/bold.svg?component";
+import iconFontSize from "@/icon/font-size.svg?component";
+import iconFontColor from "@/icon/font-color.svg?component";
 import colorPicker from "../../components/colorPicker.vue";
-import iconLineHeight from "@/icon/line-height.svg?vueComponent";
-import iconLetterSpacing from "@/icon/letter-spacing.svg?vueComponent";
-import iconWritingMode from "@/icon/writing-mode.svg?vueComponent";
-import iconFontFamily from "@/icon/font-family.svg?vueComponent";
-import iconBackgroundColor from "@/icon/background-color.svg?vueComponent";
-import iconItalic from "@/icon/italic.svg?vueComponent";
+import iconLineHeight from "@/icon/line-height.svg?component";
+import iconLetterSpacing from "@/icon/letter-spacing.svg?component";
+import iconWritingMode from "@/icon/writing-mode.svg?component";
+import iconFontFamily from "@/icon/font-family.svg?component";
+import iconBackgroundColor from "@/icon/background-color.svg?component";
+import iconItalic from "@/icon/italic.svg?component";
 
 import { operatingTextStickerOptions, showFontList } from "../../store";
 const fontWeightOptions = reactive([

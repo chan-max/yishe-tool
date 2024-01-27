@@ -99,7 +99,7 @@ export const updateUserInfoHook = (router, sequelize, app) =>
     const { id } = ctx.request.body;
 
     const avatar = getRelativePath(ctx.request.files.avatar.filepath);
-
+    
     await sequelize.models.t_user.update(
       {
         avatar,

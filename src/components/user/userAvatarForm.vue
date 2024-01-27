@@ -44,10 +44,10 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import { doLogout } from "@/store/stores/loginAction";
 import { computed, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
-import iconLogout from '@/icon/user/logout.svg?vueComponent'
-import iconUser from '@/icon/user/user.svg?vueComponent'
-import iconAdmin from '@/icon/user/admin.svg?vueComponent'
-import iconSaved from '@/icon/user/saved.svg?vueComponent'
+import iconLogout from '@/icon/user/logout.svg?component'
+import iconUser from '@/icon/user/user.svg?component'
+import iconAdmin from '@/icon/user/admin.svg?component'
+import iconSaved from '@/icon/user/saved.svg?component'
 
 let route = useRoute();
 

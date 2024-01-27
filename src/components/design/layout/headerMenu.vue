@@ -37,7 +37,7 @@ import {Share} from '@element-plus/icons-vue'
 import userAvatar from '@/components/user/userAvatar.vue'
 import headerMenuDropdown from './headerMenuDropdown/index.vue'
 import { onShortcutTrigger } from '../shortcut/index';
-import iconHelp from '@/icon/help.svg?vueComponent'
+import iconHelp from '@/icon/help.svg?component'
 import { useLoginStatusStore } from "@/store/stores/login";
 
 

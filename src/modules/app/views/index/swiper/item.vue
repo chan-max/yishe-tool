@@ -85,10 +85,10 @@
 import { defineProps, ref, onMounted, watch, onUnmounted } from "vue";
 import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
-import heart from "@/icon/mobile/heart.svg?vueComponent";
-import comment from "@/icon/mobile/comment.svg?vueComponent";
-import share from "@/icon/mobile/share.svg?vueComponent";
-import shoppingCart from "@/icon/mobile/shoppingCart.svg?vueComponent";
+import heart from "@/icon/mobile/heart.svg?component";
+import comment from "@/icon/mobile/comment.svg?component";
+import share from "@/icon/mobile/share.svg?component";
+import shoppingCart from "@/icon/mobile/shoppingCart.svg?component";
 import { likeModel } from "@/api";
 import { timeago } from "@/common/time";
 import dragToMove from '@/components/tips/dragToMove/index.vue'

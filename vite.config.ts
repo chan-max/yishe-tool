@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-25 21:13:52
+ * @LastEditTime: 2024-01-27 06:42:50
  * @FilePath: /1s/vite.config.ts
  * @Description: 
  * 
@@ -29,6 +29,9 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 import legacy from '@vitejs/plugin-legacy';
 import AntdvResolver from 'antdv-component-resolver'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
+import svgLoader from 'vite-svg-loader'
+
+
 
 export default defineConfig((config:any) => {
   
@@ -58,9 +61,6 @@ export default defineConfig((config:any) => {
       alias(),
       // https dev
       basicSsl(),
-      svgSprites({
-        exclude: ['node_modules/**']
-      }),
       Components({
         resolvers: [VantResolver(),AntdvResolver()],
       }),
@@ -71,7 +71,8 @@ export default defineConfig((config:any) => {
       }),
       vue({
         template: { transformAssetUrls }
-      })
+      }),
+      svgLoader()
     ],
     base:'./',
     build: isApp ? appBuild : baseBuild,

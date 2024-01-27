@@ -39,7 +39,7 @@
 <script setup>
 import { defineProps } from "vue";
 import { timeago } from "@/common/time";
-import thumbup from '@/icon/mobile/thumbup.svg?vueComponent';
+import thumbup from '@/icon/mobile/thumbup.svg?component';
 import {likeModelComment} from '@/api'
 
 const props = defineProps(["commentInfo"]);

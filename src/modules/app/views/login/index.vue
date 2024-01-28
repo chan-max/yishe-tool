@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 21:36:27
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-03 20:43:40
+ * @LastEditTime: 2024-01-27 22:16:58
  * @FilePath: /1s/src/modules/app/views/login/index.vue
  * @Description: 
  * 
@@ -11,32 +11,33 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true" class="ion-padding">
-      <ion-list-header>
-        <ion-label>登录到衣设</ion-label>
-      </ion-list-header>
-      <ion-list>
-        <ion-item>
-          <ion-input
-            v-model="form.account"
-            label="账号"
-            label-placement="stacked"
-            placeholder="账号或邮箱手机号"
-          >
-          </ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-input
-            v-model="form.password"
-            type="password"
-            label="密码"
-            label-placement="stacked"
-            placeholder="密码在6到18位"
-          >
-          </ion-input>
-        </ion-item>
-      </ion-list>
-      <ion-button @click="submit" expand="block" shape="round">登 录</ion-button>
+      <div class="page">
+        <ion-list-header>
+          <ion-label>登录到衣设</ion-label>
+        </ion-list-header>
+        <ion-list lines="none">
+          <ion-item>
+            <ion-input v-model="form.account" placeholder="账号或邮箱手机号"> </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input
+              v-model="form.password"
+              type="password"
+              placeholder="密码在6到18位"
+            >
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-button
+              size="default"
+              style="width: 100%"
+              @click="submit"
+              expand="block"
+              >登 录</ion-button
+            >
+          </ion-item>
+        </ion-list>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -111,7 +112,16 @@ async function submit() {
     loading.dismiss();
   }
 }
-
 </script>
 
-<style lang="less"></style>
+<style lang="less">
+.page{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+
+
+</style>

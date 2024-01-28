@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-27 06:42:43
+ * @LastEditTime: 2024-01-27 23:41:39
  * @FilePath: /1s/src/modules/main/App.vue
  * @Description: 
  * 
@@ -13,7 +13,6 @@
       <header-menu v-if="$route.meta.header"></header-menu>
       <div class="content"><router-view></router-view>
       </div>
-
   </el-config-provider>
 </template> 
 <script setup>
@@ -23,16 +22,9 @@ import en from "element-plus/dist/locale/en.mjs";
 import headerMenu from './view/base/header/index.vue'
 import footerMenu from './view/base/footer/index.vue'
 
-import iconTest from '@/icon/mobile/footer/user-filled.svg'
-
-console.log(iconTest)
-
-
 import { useI18n } from "vue-i18n";
 
 const { t, locale, global } = useI18n();
-
-
 
 const elementLocale = computed(() => {
   if (locale.value == "en") {

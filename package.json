@@ -115,6 +115,7 @@
     "antdv-component-resolver": "^1.0.7",
     "autoprefixer": "^10.4.16",
     "dotenv-cli": "^7.3.0",
+    "html5-qrcode": "^2.3.8",
     "postcss": "^8.4.31",
     "sass": "^1.69.5",
     "sequelize-cli": "^6.6.1",

@@ -295,6 +295,9 @@ devDependencies:
   dotenv-cli:
     specifier: ^7.3.0
     version: 7.3.0
+  html5-qrcode:
+    specifier: ^2.3.8
+    version: 2.3.8
   postcss:
     specifier: ^8.4.31
     version: 8.4.32
@@ -10064,6 +10067,10 @@ packages:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
     dev: false
+
+  /html5-qrcode@2.3.8:
+    resolution: {integrity: sha512-jsr4vafJhwoLVEDW3n1KvPnCCXWaQfRng0/EEYk1vNcQGcG/htAdhJX0be8YyqMoSz7+hZvOZSTAepsabiuhiQ==}
+    dev: true
 
   /htmlparser2@3.10.1:
     resolution: {integrity: sha512-IgieNijUMbkDovyoKObU1DUhm1iwNYE/fuifEoEHfd1oZKZDaONBSkal7Y01shxsM49R4XaMdGez3WnF9UfiCQ==}

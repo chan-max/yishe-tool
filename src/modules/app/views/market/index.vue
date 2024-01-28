@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:33:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-08 21:43:39
+ * @LastEditTime: 2024-01-28 15:49:22
  * @FilePath: /1s/src/modules/app/views/market/index.vue
  * @Description: 
  * 
@@ -32,7 +32,7 @@
         </ion-buttons>
         <ion-title>逛一逛</ion-title>
       </ion-toolbar>
-      <ion-toolbar>
+      <ion-toolbar> 
         <van-tabs v-model:active="active">
           <template #nav-left> </template>
           <template #nav-right> </template>

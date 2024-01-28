@@ -107,7 +107,7 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: () => import("./view/user/login.vue"),
+    component: () => import("./view/user/login/index.vue"),
     meta: {
       header: false,
     }

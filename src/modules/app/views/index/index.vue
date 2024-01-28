@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-20 21:10:05
+ * @LastEditTime: 2024-01-28 16:16:25
  * @FilePath: /1s/src/modules/app/views/index/index.vue
  * @Description: 
  * 
@@ -68,3 +68,5 @@ import swiper from "./swiper/index.vue";
 const loginStatusStore = useLoginStatusStore();
 
 </script>
+<style lang="less" scoped>
+</style>

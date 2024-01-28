@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-13 13:25:47
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-25 21:09:23
+ * @LastEditTime: 2024-01-28 08:55:15
  * @FilePath: /1s/src/components/model/gltfViewer/index.ts
  * @Description: 
  * 
@@ -90,41 +90,41 @@ function initImportedModel(gltf) {
 
 
 
-export const useViewer = (gltfViewerRef,props,emits) => {
+export const useViewer = (gltfViewerRef, props, emits) => {
     const scene = new Scene();
 
     function startAnimate() {
         animate.value = true;
     }
-    
+
     function stopAnimate() {
         animate.value = false;
     }
-    
+
     // 是否执行动画
     const animate = ref(true);
-    
+
     const loading = ref(false);
-    
+
     var currentMesh = null;
 
     // 添加环境光
     const ambientLight = new AmbientLight(0xffffff, 0.1); // 设置颜色和强度
     scene.add(ambientLight);
-    
+
     const renderer = new WebGLRenderer({
         alpha: true, // 透明背景
     });
-    
+
     const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
-    
+
     camera.lookAt(0, 0, 0);
-    
+
     camera.position.set(0, 0, 0.7);
 
 
     const controller = new OrbitControls(camera, renderer.domElement);
-    
+
     controller.enablePan = false; // 禁止右键拖拽
     controller.minDistance = 0.5;
     controller.maxDistance = 5;
@@ -132,42 +132,42 @@ export const useViewer = (gltfViewerRef,props,emits) => {
     controller.dampingFactor = .1;
     controller.autoRotate = true
 
-    controller.addEventListener( 'start', function() { 
+    controller.addEventListener('start', function () {
         emits('dragStart')
-    }); 
+    });
 
-    function enableController(){
+    function enableController() {
         controller.enabled = true;
     }
 
-    function disableController(){
+    function disableController() {
         controller.enabled = false;
     }
 
     async function initModel() {
         emits('beforeLoad')
         const model = format1stf(props.model);
-        
+
         if (!model) {
             return;
         }
-    
+
         loading.value = true;
         var baseModelUrl = model.baseModelUrl;
-    
+
         if (!baseModelUrl && model.baseModelId) {
             baseModelUrl = ((await getBaseModelById(model.baseModelId)) as any).preview_file;
         }
-        
+
         if (props.transparent) {
             renderer.setClearColor(null, 0);
         } else {
             renderer.setClearColor(0xeeeeee, 0);
         }
-    
-        
+
+
         let gltf: any = await gltfLoader(baseModelUrl);
-    
+
         currentMesh = findMainMesh(gltf);
         function findMainMesh(gltf) {
             let mesh = null;
@@ -178,9 +178,9 @@ export const useViewer = (gltfViewerRef,props,emits) => {
             });
             return mesh;
         }
-    
+
         // 同步摄像机位置
-    
+
         if (model.camera) {
             camera.position.set(
                 model.camera.position.x,
@@ -196,13 +196,13 @@ export const useViewer = (gltfViewerRef,props,emits) => {
             camera.near = model.camera.near;
             camera.far = model.camera.far;
         }
-    
+
         let el = gltfViewerRef.value;
-    
+
         if (!el) {
             return;
         }
-    
+
         function resetCameraAspect() {
             let width = getWidth(el);
             let height = getHeight(el);
@@ -210,40 +210,40 @@ export const useViewer = (gltfViewerRef,props,emits) => {
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
         }
-    
+
         resetCameraAspect();
-    
+
 
         const resizeOb = new ResizeObserver(debounce(resetCameraAspect));
-    
-        
+
+
         el && resizeOb.observe(el);
-    
+
         renderer.setSize(getWidth(el), getHeight(el));
-    
+
         initImportedModel(gltf);
-    
+
         scene.add(gltf.scene);
-    
+
         // 添加环境光
         const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
         scene.add(ambientLight);
-    
+
         // 添加平行光
         const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
         directionalLight1.position.set(1, 1, 1); // 设置光源位置
         scene.add(directionalLight1);
-    
+
         // 添加平行光
         const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
         directionalLight2.position.set(-1, -1, -1); // 设置光源位置
         scene.add(directionalLight2);
-    
+
         // 添加点光源
         const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
         pointLight.position.set(0, 0, 2); // 设置光源位置
         scene.add(pointLight);
-    
+
         // 初始化贴纸
         if (model.decals) {
 
@@ -251,11 +251,11 @@ export const useViewer = (gltfViewerRef,props,emits) => {
                 return new Promise(async (resolve, reject) => {
 
                     var { decalId, position, rotation, size, type } = decal;
-    
+
                     if (!decalId) {
                         return;
                     }
-        
+
                     var url = null;
                     if (type == "image") {
                         const image: any = await getImageById(decalId);
@@ -264,7 +264,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
                         }
                         url = image.preview_img;
                     }
-        
+
                     if (type == "text") {
                         const text: any = await getTextStickerById(decalId);
                         if (!text) {
@@ -272,9 +272,9 @@ export const useViewer = (gltfViewerRef,props,emits) => {
                         }
                         url = text.preview_img;
                     }
-        
+
                     position = new Vector3(position.x, position.y, position.z);
-        
+
                     // 判断是否在网格上
                     var raycaster = new Raycaster();
                     raycaster.set(position, new Vector3(0, -1, 0));
@@ -286,7 +286,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
                         resolve(void 0)
                         return;
                     }
-                    
+
                     rotation = new Euler(rotation.x, rotation.y, rotation.z);
                     size = new Vector3(size.x, size.y, size.z);
                     const textureLoader = new TextureLoader();
@@ -300,7 +300,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
                         polygonOffsetFactor: -4,
                         wireframe: false,
                     });
-        
+
                     const decalGeometry = new DecalGeometry(currentMesh, position, rotation, size);
                     var decalMesh = new Mesh(decalGeometry, material);
                     scene.add(decalMesh);
@@ -308,7 +308,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
                 })
             }))
         }
-    
+
 
         function render() {
             requestAnimationFrame(render);
@@ -320,14 +320,14 @@ export const useViewer = (gltfViewerRef,props,emits) => {
             }
             renderer.render(scene, camera);
         }
-    
+
         el.appendChild(renderer.domElement);
         render();
         loading.value = false;
         emits("loaded");
     }
-    
-        
+
+
     function screenshot() {
         renderer.render(scene, camera); // 截取会出现白图片
         var img = renderer.domElement.toDataURL("image/png"); // base64
@@ -336,7 +336,7 @@ export const useViewer = (gltfViewerRef,props,emits) => {
         emits("screenshot", img);
     }
 
-    
+
     watch(
         () => props.model,
         async () => {
@@ -346,7 +346,10 @@ export const useViewer = (gltfViewerRef,props,emits) => {
         { immediate: true }
     );
 
-
+    function getScreenshot() {
+        renderer.render(scene, camera); // 截取会出现白图片
+        return renderer.domElement.toDataURL("image/png");
+    }
 
     return {
         emits,
@@ -356,5 +359,6 @@ export const useViewer = (gltfViewerRef,props,emits) => {
         stopAnimate,
         gltfViewerRef,
         controller,
+        getScreenshot
     }
 }

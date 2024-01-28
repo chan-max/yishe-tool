@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-11 20:37:37
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-14 23:18:02
+ * @LastEditTime: 2024-01-28 11:47:47
  * @FilePath: /1s/src/modules/app/views/market/model/modalContent.vue
  * @Description: 
  * 

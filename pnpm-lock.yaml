@@ -104,6 +104,9 @@ dependencies:
   dotenv:
     specifier: ^16.3.1
     version: 16.3.1
+  easyqrcodejs:
+    specifier: ^4.6.0
+    version: 4.6.0
   egg:
     specifier: ^3.15.0
     version: 3.17.5
@@ -7785,6 +7788,10 @@ packages:
     resolution: {integrity: sha512-wK2sCs4feiiJeFXn3zvY0p41mdU5VUgbgs1rNsc/y5ngFUijdWd+iIN8eoyuZHKB8xN6BL4PdWmzqFmxNg6V2w==}
     engines: {node: '>=6.0.0'}
     dev: true
+
+  /easyqrcodejs@4.6.0:
+    resolution: {integrity: sha512-bTDKgMhlBElqpYNeXlpbVa/Zs47AJX+UXn1/T0wsLByA7tri52GeNvlvljrAslnFD+Hz1YxfcqL4M7mddygpuA==}
+    dev: false
 
   /ecc-jsbn@0.1.2:
     resolution: {integrity: sha512-eh9O+hwRHNbG4BLTjEl3nw044CkGm5X6LoaCf7LPp7UU8Qrt47JYNi6nPX8xjW97TKGKm1ouctg0QSpZe9qrnw==}

@@ -191,3 +191,10 @@ export const likeModelComment = (params) => new Promise(async (resolve, reject) 
   const res = await apiInstance.post(Url.LIKE_MODEl_COMMENT,params)
   resolve(res.data)
 })
+
+/*
+  获取用于扫码登录的二维码
+*/
+export const getQRCodeLoginUrl = () => {
+  
+}

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:32:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-28 07:54:44
+ * @LastEditTime: 2024-01-28 11:28:36
  * @FilePath: /1s/src/modules/app/views/talk/index.vue
  * @Description: 
  * 
@@ -37,15 +37,15 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue
 import { LocalNotifications } from "@capacitor/local-notifications";
 
 console.log('发送通知')
-LocalNotifications.schedule({
-  notifications: [
-    {
-      title: "标题",
-      body: "具体内容",
-      id: 1,
-    },
-  ],
-});
+// LocalNotifications.schedule({
+//   notifications: [
+//     {
+//       title: "标题",
+//       body: "具体内容",
+//       id: 1,
+//     },
+//   ],
+// });
 
 // if(window.Notification && Notification.permission !== "denied") {
 //     Notification.requestPermission(function(status) {

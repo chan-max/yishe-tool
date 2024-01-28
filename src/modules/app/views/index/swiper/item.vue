@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-25 21:11:51
+ * @LastEditTime: 2024-01-28 16:32:15
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -13,12 +13,12 @@
     <Transition leave-active-class="animate__animated animate__fadeOut" :duration="200">
       <div class="image" v-if="showImage">
         <van-image
-          style="width: 100%; height: 100%"
+          style="width: 100%; height: 100%;"
           fit="cover"
           :src="modelInfo.preview_img"
         >
           <template v-slot:loading>
-            <ion-skeleton-text :animated="true"></ion-skeleton-text>
+            <ion-skeleton-text :animated="true" style="margin: 0;"></ion-skeleton-text>
           </template>
         </van-image>
       </div>
@@ -61,7 +61,7 @@
     <div class="menu-bottom"></div>
     <div class="menu-top">
       <ion-avatar style="width: 32px; height: 32px" class="avatar-border">
-        <img :src="modelInfo.t_user.preview_avatar" style="width: 32px; height: 32px" />
+        <img :src="modelInfo.t_user.preview_avatar || '/mobileDefaultAvatar.svg'" style="width: 32px; height: 32px" />
       </ion-avatar>
       <div>
         <div style="font-size: 12px; font-weight: bold; line-height: 20px">

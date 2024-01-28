@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-03 19:46:44
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-18 22:12:05
+ * @LastEditTime: 2024-01-28 08:54:22
  * @FilePath: /1s/src/components/model/gltfViewer/index.vue
  * @Description: 
  * 
@@ -59,11 +59,13 @@ const {
   loading,
   startAnimate,
   stopAnimate,
-  controller
+  controller,
+  getScreenshot
 } = useViewer(gltfViewer, props, emits);
 
 defineExpose({
-  controller
+  controller,
+  getScreenshot
 });
 </script>
 <style lang="less">

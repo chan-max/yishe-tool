@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-27 10:56:38
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-27 18:02:13
+ * @LastEditTime: 2024-01-28 20:11:35
  * @FilePath: /1s/src/hooks/device/camera.ts
  * @Description: 
  * 
@@ -93,7 +93,9 @@ export const useCamera = ({
         context.drawImage(videoRef.value, 0, 0, width, height)
         let imageData = context.getImageData(0,0,width,height)
         let qr =  jsQR(imageData.data,width,height)
-        alert('识别到二维码')
+        if(qr){
+            console.log(qr)
+        }
     }
 
     const switchCamera = () => {

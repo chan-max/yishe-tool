@@ -158,6 +158,7 @@ async function scroll() {
 
 .item {
   width: calc(50% - 2px);
+  height: 100px;
   background-color: var(--1s-image-sticker-image-background-color);
   border-radius: 4px;
   overflow: hidden;

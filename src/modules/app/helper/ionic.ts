@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-27 20:32:30
+ * @LastEditTime: 2024-01-28 16:17:53
  * @FilePath: /1s/src/modules/app/helper/ionic.ts
  * @Description: 
  * 
@@ -45,7 +45,8 @@ import {
     IonBadge,
     IonSearchbar,
     IonSegment,
-    IonSegmentButton
+    IonSegmentButton,
+    IonSpinner
 } from "@ionic/vue";
 
 export function initIonicComponents(app) {
@@ -86,7 +87,8 @@ export function initIonicComponents(app) {
         IonBadge,
         IonSearchbar,
         IonSegment,
-        IonSegmentButton
+        IonSegmentButton,
+        IonSpinner
     ]
 
     components.forEach((component) => {

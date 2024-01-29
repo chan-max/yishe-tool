@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-27 10:56:38
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-28 20:11:35
+ * @LastEditTime: 2024-01-29 21:41:50
  * @FilePath: /1s/src/hooks/device/camera.ts
  * @Description: 
  * 
@@ -119,7 +119,7 @@ export const useCamera = ({
                 alert('摄像头启动失败')
             });
     }
-
+    
     onMounted(() => {
         startCamera()
     })

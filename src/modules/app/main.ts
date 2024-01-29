@@ -3,7 +3,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-26 22:18:52
+ * @LastEditTime: 2024-01-29 20:26:28
  * @FilePath: /1s/src/modules/app/main.ts
  * @Description: 
  * 
@@ -29,8 +29,6 @@ import '@ionic/vue/css/text-alignment.css';
 import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
-import '@ionic/core/css/core.css'
-import '@ionic/core/css/ionic.bundle.css'
 
 import 'animate.css';
 

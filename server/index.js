@@ -6,7 +6,7 @@ import path from "path";
 import _static from "koa-static";
 import { koaBody } from "koa-body";
 import { fileURLToPath } from "url";
-import { initRouter ,initController} from "./router.js"
+import { initRouter, initController } from "./router.js"
 import fs from "fs";
 import http from 'http'
 import https from 'https'
@@ -60,7 +60,7 @@ initRouter(router, db.sequelize, app, redis);
 initController({
     router,
     app,
-    sequelize:db.sequelize,
+    sequelize: db.sequelize,
     redis
 })
 
@@ -113,10 +113,16 @@ export function getHost() {
     return (process.env.localhost || ip.address()) + ':' + port
 }
 
+import { createDevelopmentCert } from './script/ssl.js'
+
+const ssl = await createDevelopmentCert()
 const options = {
-    key: fs.readFileSync('./ssl/private.key'),
-    cert: fs.readFileSync('./ssl/certificate.crt'),
+    // key:  fs.readFileSync('./ssl/private.key'),
+    // cert: fs.readFileSync('./ssl/certificate.crt'),
+    key: '',
+    cert: '',
 }
+
 
 var server = process.env.protool === 'https' ? https.createServer(options, app.callback()) : http.createServer(options, app.callback())
 

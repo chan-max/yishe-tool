@@ -118,8 +118,6 @@ export const updateUserInfoHook = (router, sequelize, app) =>
   });
 
 
-import jwt from "jsonwebtoken";
-
 
 export const loginHook = (router, sequelize) => router.post('/login', async (ctx) => {
   const data = ctx.request.body
@@ -153,3 +151,5 @@ export const loginHook = (router, sequelize) => router.post('/login', async (ctx
     data: user
   }
 })
+
+

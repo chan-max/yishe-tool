@@ -5,7 +5,7 @@
 
       <video
         class="scan-video"
-        :class="facingUser && 'video-flip'"
+        :class="isFacingUser && 'video-flip'"
         ref="videoEl"
         playsinline
       ></video>
@@ -72,7 +72,7 @@ let currentStream = null;
 // 当前使用的视频选项
 const currentFacingMode = shallowRef(facingModeUserOption);
 
-const facingUser = computed(() => {
+const isFacingUser = computed(() => {
   return currentFacingMode.value === facingModeUserOption;
 });
 

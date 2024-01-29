@@ -12,25 +12,37 @@
   <div class="qrcode-login">
     <div ref="qrcode" class="qrcode"></div>
     <div class="desc">打开移动端扫码登录</div>
-    <a style="font-size: 12px" @click="loginType = LoginType.PASSWORD"> 账号登录 </a>
+    <a style="font-size: 12px" @click="loginType = LoginType.PASSWORD"> 返回账号登录 </a>
   </div>
 </template>
 
 <script setup>
-import { ref,onMounted } from "vue";
+import { ref, onMounted, onBeforeMount } from "vue";
 import { loginType, LoginType } from "./index.ts";
-import {QRCode} from 'easyqrcodejs'
-var options = {
-  text: "fuck you",
-};
+import { QRCode } from "easyqrcodejs";
+import { UAParser } from "ua-parser-js";
+import { requestQRCodeLoginInfo } from "@/api";
+import crypto from "crypto";
 
-// Create QRCode Object
+const qrcode = ref();
 
-const qrcode = ref()
+onMounted(async () => {
+  const parser = new UAParser();
+  let result = parser.getResult();
+  const info = {
+    os: result.os.name,
+    browser: result.browser.name,
+    time: new Date(),
+    location: "",
+  };
+  let res = await requestQRCodeLoginInfo(info);
 
-onMounted(() => {
-    new QRCode(qrcode.value, options);
-})
+  let options = {
+    text: JSON.stringify(res.data),
+  };
+
+  new QRCode(qrcode.value, options);
+});
 
 const status = ref("expired");
 </script>

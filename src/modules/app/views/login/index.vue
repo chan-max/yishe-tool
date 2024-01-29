@@ -12,27 +12,38 @@
   <ion-page>
     <ion-content :fullscreen="true" class="ion-padding">
       <div class="page">
-        <ion-list-header>
-          <ion-label>登录到衣设</ion-label>
+        <ion-list-header style="padding-left:calc(var(--ion-safe-area-left, 0px) + 8px);">
+          <ion-label>
+            <div style="padding:20px 0">
+              登录到衣设
+            </div>
+          </ion-label>
         </ion-list-header>
         <ion-list lines="none">
           <ion-item>
-            <ion-input v-model="form.account" placeholder="账号或邮箱手机号"> </ion-input>
-          </ion-item>
-          <ion-item>
             <ion-input
-              v-model="form.password"
-              type="password"
-              placeholder="密码在6到18位"
-            >
-            </ion-input>
+              label="账号或邮箱"
+              label-placement="floating"
+              v-model="form.account"
+              placeholder="账号或邮箱"
+              fill="outline"
+            ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-button
-              size="default"
-              style="width: 100%"
-              @click="submit"
-              expand="block"
+  
+              <ion-input
+                label="密码"
+                label-placement="floating"
+                v-model="form.password"
+                type="password"
+                placeholder="密码在6到18位"
+                fill="outline"
+              ></ion-input>
+              
+          </ion-item>
+
+          <ion-item>
+            <ion-button size="default" style="width: 100%" @click="submit" expand="block"
               >登 录</ion-button
             >
           </ion-item>
@@ -114,14 +125,12 @@ async function submit() {
 }
 </script>
 
-<style lang="less">
-.page{
+<style lang="less" scoped>
+.page {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
-  justify-content: center;
+  justify-content: start;
 }
-
-
 </style>

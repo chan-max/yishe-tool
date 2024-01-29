@@ -12,12 +12,12 @@ import jsQR from "jsqr"
 import { Ref, computed, onMounted, ref, onBeforeUnmount } from "vue"
 
 
-function getPureWidth(el){
-    return Number(window.getComputedStyle(el).width.slice(0,-2))
+function getPureWidth(el) {
+    return Number(window.getComputedStyle(el).width.slice(0, -2))
 }
 
-function getPureHeight(el){
-    return Number(window.getComputedStyle(el).height.slice(0,-2))
+function getPureHeight(el) {
+    return Number(window.getComputedStyle(el).height.slice(0, -2))
 }
 
 export enum CameraModeType {
@@ -47,7 +47,10 @@ export function nextFrame(cb) {
 }
 
 export const useCamera = ({
-    videoRef, canvasRef,
+    videoRef,
+    canvasRef,
+    onTimeUpdate,
+    onQRCodeDetected
 }) => {
     // 是否可用
     const disabled = computed(() => {
@@ -56,7 +59,7 @@ export const useCamera = ({
 
     const mode = ref(CameraModeType.ENVIROMENT)
 
-    const facingUser = computed(() => {
+    const isFacingUser = computed(() => {
         return mode.value === CameraModeType.USER
     })
 
@@ -69,7 +72,8 @@ export const useCamera = ({
         try {
             videoRef.value.play();
             videoRef.value.ontimeupdate = () => {
-                draw()
+                draw();
+                onTimeUpdate && onTimeUpdate()
             }
         } catch (e) {
             alert('自动播放失败')
@@ -91,10 +95,10 @@ export const useCamera = ({
         let height = canvasRef.value.height = getPureHeight(videoRef.value)
         const context = canvasRef.value.getContext('2d')
         context.drawImage(videoRef.value, 0, 0, width, height)
-        let imageData = context.getImageData(0,0,width,height)
-        let qr =  jsQR(imageData.data,width,height)
-        if(qr){
-            console.log(qr)
+        let imageData = context.getImageData(0, 0, width, height)
+        let qr = jsQR(imageData.data, width, height)
+        if (qr) {
+            onQRCodeDetected(qr)
         }
     }
 
@@ -108,7 +112,6 @@ export const useCamera = ({
         navigator.mediaDevices
             .getUserMedia(modeOption.value)
             .then(function (mediaStream) {
-
                 videoRef.value.srcObject = mediaStream;
                 play()
             })
@@ -139,6 +142,6 @@ export const useCamera = ({
         mode,
         disabled,
         toggleMode,
-        facingUser
+        isFacingUser,
     }
 }

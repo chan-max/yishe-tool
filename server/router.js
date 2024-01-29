@@ -44,6 +44,8 @@ import { test } from "./api/test.js";
 import {file} from './api/file.js';
 
 import { modelCommentController } from "./controller/modelComment.controller.js";
+import { loginController } from "./controller/login.controller.js";
+
 
 export const initRouter = (...params) => {
   let hooks = [
@@ -82,7 +84,8 @@ export const initRouter = (...params) => {
 
 export const initController = (...params) => {
   let controllers = [
-    modelCommentController
+    modelCommentController,
+    loginController
   ];
   controllers.forEach((controller) => controller(...params));
 }

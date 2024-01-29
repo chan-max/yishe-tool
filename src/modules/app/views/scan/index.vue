@@ -3,7 +3,7 @@
     <div class="scan">
       <video
         class="scan-video"
-        :class="facingUser && 'video-flip'"
+        :class="isFacingUser && 'video-flip'"
         ref="videoRef"
         playsinline
       ></video>
@@ -13,7 +13,7 @@
         <icon-switch-camera @click="toggleMode"></icon-switch-camera>
       </div>
     </div>
-    <canvas ref="canvasRef" style="display:none;"></canvas>
+    <canvas ref="canvasRef" style="display: none"></canvas>
   </ion-page>
 </template>
 <script setup>
@@ -33,10 +33,18 @@ const videoRef = ref();
 
 const canvasRef = ref();
 
-const { toggleMode, facingUser } = useCamera({
+const { toggleMode, isFacingUser } = useCamera({
   videoRef,
-  canvasRef
+  canvasRef,
+  onTimeUpdate() {
+    
+  },
+  onQRCodeDetected(info) { 
+    console.log(info)
+  }
 });
+
+
 
 function close() {
   router.back();

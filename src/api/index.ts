@@ -21,7 +21,7 @@ export const getBannerModel = () =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.get(Url.GET_BANNER_MODEL);
     resolve(res?.data?.data?.modelInfo);
-});
+  });
 
 // 获取可以进行编辑的内置模型
 export const getBaseModel = (params?: any) =>
@@ -52,7 +52,7 @@ export const uploadImage = (data: any) =>
 // 获取图片列表
 export const getImage = (params) =>
   new Promise(async (resolve: any, reject: any) => {
-    let res = await apiInstance.post(Url.GET_IMAGE_LIST,params);
+    let res = await apiInstance.post(Url.GET_IMAGE_LIST, params);
     resolve(res.data.data);
   });
 
@@ -163,12 +163,12 @@ export const getBasicConfig = () => new Promise(async (resolve, reject) => {
 
 export interface GetListParams {
   type: 'image' | 'textSticker' | 'model',
-  page:number
+  page: number
 }
 
 
-export const getList = (params:GetListParams) => new Promise(async (resolve, reject) => {
-  const res = await apiInstance.post(Url.GET_LIST,params)
+export const getList = (params: GetListParams) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_LIST, params)
   resolve(res.data)
 })
 
@@ -181,20 +181,21 @@ export const getList = (params:GetListParams) => new Promise(async (resolve, rej
 */
 
 export const likeModel = (params) => new Promise(async (resolve, reject) => {
-  const res = await apiInstance.post(Url.LIKE_MODEL,params)
+  const res = await apiInstance.post(Url.LIKE_MODEL, params)
   resolve(res.data)
 })
 
 
 
 export const likeModelComment = (params) => new Promise(async (resolve, reject) => {
-  const res = await apiInstance.post(Url.LIKE_MODEl_COMMENT,params)
+  const res = await apiInstance.post(Url.LIKE_MODEl_COMMENT, params)
   resolve(res.data)
 })
 
 /*
   获取用于扫码登录的二维码
 */
-export const getQRCodeLoginUrl = () => {
-  
-}
+export const requestQRCodeLoginInfo = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_QRCODE_LOGIN_URL, params)
+  resolve(res.data)
+})

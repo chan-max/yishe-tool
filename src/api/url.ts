@@ -88,5 +88,8 @@ export enum Url {
 
     LIKE_MODEL = '/likeModel',
 
-    LIKE_MODEl_COMMENT = '/likeModelComment'
+    LIKE_MODEl_COMMENT = '/likeModelComment',
+
+    // 获取用于扫码登录的地址
+    GET_QRCODE_LOGIN_URL = '/requestQRCodeLoginInfo'
 }

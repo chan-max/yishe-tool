@@ -29,6 +29,8 @@ import '@ionic/vue/css/text-alignment.css';
 import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
+import '@ionic/core/css/core.css'
+import '@ionic/core/css/ionic.bundle.css'
 
 import 'animate.css';
 
@@ -50,7 +52,6 @@ import "tailwindcss/tailwind.css"
 import { ConfigProvider } from 'vant';
 import 'vant/lib/index.css';
 
-import { IonicVue } from '@ionic/vue';
 
 
 import { createPinia } from 'pinia'

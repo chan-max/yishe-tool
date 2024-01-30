@@ -113,25 +113,26 @@ export function getHost() {
     return (process.env.localhost || ip.address()) + ':' + port
 }
 
-
 const options = {
     // key:  fs.readFileSync('./ssl/private.key'),
     // cert: fs.readFileSync('./ssl/certificate.crt'),
-    key:  fs.readFileSync('./tools/localhost+1-key.pem'),
-    cert: fs.readFileSync('./tools/localhost+1.pem'),
+    // key:  fs.readFileSync('./tools/localhost+1-key.pem'),
+    // cert: fs.readFileSync('./tools/localhost+1.pem'),
+    
+    key:  fs.readFileSync('./tools/mac-key.pem'),
+    cert: fs.readFileSync('./tools/mac.pem'),
 }
 
 
-var server = process.env.protool === 'https' ? https.createServer(options, app.callback()) : http.createServer(options, app.callback())
+var server = process.env.protool === 'https' ? https.createServer(options, app.callback()) : http.createServer({},app.callback())
 
 import { initWebsocket } from './websocket/index.js'
 
 initWebsocket(server)
 
-export function startServe() {
-    server.listen(3000, () => {
-        console.log('1s listening on *:3000');
-    });
+export async function startServe() {
+    await server.listen(3000, '0.0.0.0');
+    console.log('1s listening on *:3000');
 }
 
 

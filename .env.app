@@ -9,6 +9,7 @@
  # Copyright (c) 2024 by 1s, All Rights Reserved. 
 ### 
 
+# app 端所有服务的访问地址
 VITE_API="https://49.232.186.238:3000"
 
 

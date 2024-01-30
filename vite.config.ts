@@ -91,13 +91,13 @@ export default defineConfig((config:any) => {
     },
     server: {
       port:6699,
-      proxy: {
-        "/api": {
-          target: "http://localhost:3000",
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ""),
-        },
-      },
+      // proxy: {
+      //   "/api": {
+      //     target: "https://localhost:3000",
+      //     changeOrigin: true,
+      //     rewrite: (path) => path.replace(/^\/api/, ""),
+      //   },
+      // },
     },
     resolve: {
       alias: {

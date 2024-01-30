@@ -57,6 +57,8 @@ declare module 'vue' {
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
     VanFloatingBubble: typeof import('vant/es')['FloatingBubble']
     VanImage: typeof import('vant/es')['Image']
+    VanSwipe: typeof import('vant/es')['Swipe']
+    VanSwipeItem: typeof import('vant/es')['SwipeItem']
     VanTab: typeof import('vant/es')['Tab']
     VanTabs: typeof import('vant/es')['Tabs']
     Waterfall: typeof import('./src/components/layout/waterfall/index.vue')['default']

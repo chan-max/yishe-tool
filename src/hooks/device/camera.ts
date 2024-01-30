@@ -1,3 +1,4 @@
+
 /*
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-27 10:56:38
@@ -11,6 +12,7 @@
 import jsQR from "jsqr"
 import { Ref, computed, onMounted, ref, onBeforeUnmount } from "vue"
 
+import { useThrottleFn } from '@vueuse/core';
 
 function getPureWidth(el) {
     return Number(window.getComputedStyle(el).width.slice(0, -2))
@@ -41,21 +43,32 @@ export const facingModeEnvironmentOption = {
     }
 }
 
-export function nextFrame(cb) {
+export function requestFrame(cb) {
     cb()
-    requestAnimationFrame(() => nextFrame(cb));
+    requestAnimationFrame(() => requestFrame(cb));
 }
 
 export const useCamera = ({
     videoRef,
     canvasRef,
     onTimeUpdate,
-    onQRCodeDetected
+    onQRCodeDetected, // 检测到二维码时
+    onQRCodeNotFound, // 未检测到二维码时
 }) => {
     // 是否可用
     const disabled = computed(() => {
         return !navigator?.mediaDevices?.getUserMedia
     })
+
+    // 回调函数防抖
+    // if(onQRCodeNotFound) {
+    //     onQRCodeNotFound = useThrottleFn(onQRCodeNotFound,100)
+    // }
+    
+    // if(onQRCodeDetected) {
+    //     onQRCodeDetected = useThrottleFn(onQRCodeDetected,100)
+    // }
+
 
     const mode = ref(CameraModeType.ENVIROMENT)
 
@@ -72,9 +85,9 @@ export const useCamera = ({
         try {
             videoRef.value.play();
             videoRef.value.ontimeupdate = () => {
-                draw();
                 onTimeUpdate && onTimeUpdate()
             }
+            requestFrame(draw)
         } catch (e) {
             alert('自动播放失败')
         }
@@ -99,6 +112,9 @@ export const useCamera = ({
         let qr = jsQR(imageData.data, width, height)
         if (qr) {
             onQRCodeDetected(qr)
+        }else{
+            // 这里需要加个防抖，防止频繁触发该事件
+            onQRCodeNotFound()
         }
     }
 
@@ -119,7 +135,7 @@ export const useCamera = ({
                 alert('摄像头启动失败')
             });
     }
-    
+
     onMounted(() => {
         startCamera()
     })

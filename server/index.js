@@ -113,14 +113,12 @@ export function getHost() {
     return (process.env.localhost || ip.address()) + ':' + port
 }
 
-import { createDevelopmentCert } from './script/ssl.js'
 
-const ssl = await createDevelopmentCert()
 const options = {
     // key:  fs.readFileSync('./ssl/private.key'),
     // cert: fs.readFileSync('./ssl/certificate.crt'),
-    key: '',
-    cert: '',
+    key:  fs.readFileSync('./tools/localhost+1-key.pem'),
+    cert: fs.readFileSync('./tools/localhost+1.pem'),
 }
 
 

@@ -1,6 +1,30 @@
 <template>
   <ion-page>
     <div class="scan">
+      <div
+        v-show="showCorner"
+        ref="topLeft"
+        class="qrcode-corner"
+        :style="{ top: topLeftCornerY + 'px', left: topLeftCornerX + 'px' }"
+      ></div>
+      <div
+        v-show="showCorner"
+        ref="topRight"
+        class="qrcode-corner"
+        :style="{ top: topRightCornerY + 'px', left: topRightCornerX + 'px' }"
+      ></div>
+      <div
+        v-show="showCorner"
+        ref="bottomLeft"
+        class="qrcode-corner"
+        :style="{ top: bottomLeftCornerY + 'px', left: bottomLeftCornerX + 'px' }"
+      ></div>
+      <div
+        v-show="showCorner"
+        ref="bottomRight"
+        class="qrcode-corner"
+        :style="{ top: bottomRightCornerY + 'px', left: bottomRightCornerX + 'px' }"
+      ></div>
       <video
         class="scan-video"
         :class="isFacingUser && 'video-flip'"
@@ -33,18 +57,51 @@ const videoRef = ref();
 
 const canvasRef = ref();
 
+const topLeft = ref();
+const topRight = ref();
+const bottomLeft = ref();
+const bottomRight = ref();
+/*
+  position
+*/
+const topRightCornerX = ref(0);
+const topRightCornerY = ref(0);
+const topLeftCornerX = ref(0);
+const topLeftCornerY = ref(0);
+const bottomRightCornerX = ref(0);
+const bottomRightCornerY = ref(0);
+const bottomLeftCornerX = ref(0);
+const bottomLeftCornerY = ref(0);
+
+const showCorner = ref(false);
+
 const { toggleMode, isFacingUser } = useCamera({
   videoRef,
   canvasRef,
-  onTimeUpdate() {
-    
+  onTimeUpdate() {},
+  onQRCodeDetected(info) {
+    let { data, location } = info;
+    showCorner.value = true;
+    topRightCornerX.value = location.topRightCorner.x;
+    topRightCornerY.value = location.topRightCorner.y;
+    topLeftCornerX.value = location.topLeftCorner.x;
+    topLeftCornerY.value = location.topLeftCorner.y;
+    bottomRightCornerX.value = location.bottomRightCorner.x;
+    bottomRightCornerY.value = location.bottomRightCorner.y;
+    bottomLeftCornerX.value = location.bottomLeftCorner.x;
+    bottomLeftCornerY.value = location.bottomLeftCorner.y;
+
+    try {
+      data = JSON.parse(data);
+      console.log(data)
+    } catch (e) {
+      return
+    }
   },
-  onQRCodeDetected(info) { 
-    console.log(info)
-  }
+  onQRCodeNotFound() {
+    showCorner.value = false;
+  },
 });
-
-
 
 function close() {
   router.back();
@@ -85,8 +142,8 @@ function close() {
   flex-direction: column;
   row-gap: 16px;
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: calc(var(--ion-safe-area-top) + 20px);
+  left: calc(var(--ion-safe-area-left) + 20px);
   z-index: 1;
   svg {
     color: rgba(255, 255, 255, 1);
@@ -108,5 +165,13 @@ function close() {
     width: 36px;
     height: 36px;
   }
+}
+
+.qrcode-corner {
+  width: 5px;
+  height: 5px;
+  background-color: red;
+  position: absolute;
+  z-index: 999;
 }
 </style>

@@ -13,5 +13,3 @@
     <ion-router-outlet :animated="false"></ion-router-outlet>
   </ion-page>
 </template>
-<script setup></script>
-<style scoped></style>

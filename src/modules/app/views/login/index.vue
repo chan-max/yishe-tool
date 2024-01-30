@@ -25,7 +25,7 @@
               label="账号或邮箱"
               label-placement="floating"
               v-model="form.account"
-              placeholder="账号或邮箱"
+              placeholder=""
               fill="outline"
             ></ion-input>
           </ion-item>
@@ -36,7 +36,7 @@
                 label-placement="floating"
                 v-model="form.password"
                 type="password"
-                placeholder="密码在6到18位"
+                placeholder=""
                 fill="outline"
               ></ion-input>
               

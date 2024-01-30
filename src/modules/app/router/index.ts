@@ -34,7 +34,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/signup',
     name: 'Signup',
     component: () => import('../views/signup/index.vue')
-  },
+  }, 
   {
     path: '/modelDetail',
     name: 'ModelDetail',

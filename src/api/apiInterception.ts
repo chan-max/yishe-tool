@@ -36,6 +36,7 @@ export const formDataFormatRequestInterceptor = (request) => {
 */
 export const tokenResponseInterceptor = (response) => {
     let loginStore = useLoginStatusStore();
+
     if (response.headers.token) {
         loginStore.token = response.headers.token
     }

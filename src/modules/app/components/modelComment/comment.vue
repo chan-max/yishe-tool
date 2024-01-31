@@ -49,7 +49,7 @@ import { modelInfo,sortType,toggleSort } from "./index";
 import { addModelComment,CommentSortType } from "@/api/api/comment";
 import { chatbubbleEllipsesOutline } from "ionicons/icons";
 import { useLoginStatusStore } from "@/store/stores/login";
-import { usePaging } from "@/modules/app/helper/paging";
+import { usePaging } from "@/hooks/data/paging";
 import { getModelComment } from "@/api/api/comment";
 import commentItem from './commentItem.vue'
 
@@ -141,3 +141,4 @@ ion-avatar{
   }
 }
 </style>
+@/hooks/data/paging

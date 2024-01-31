@@ -48,7 +48,7 @@ app.use(
         credentials: true, //是否允许发送Cookie
         allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], //设置所允许的HTTP请求方法
         allowHeaders: ['*'], //设置服务器支持的所有头信息字段
-        exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'] //设置获取其他自定义字段
+        exposeHeaders: ['*'] //设置获取其他自定义字段
     })
 );
 
@@ -108,6 +108,9 @@ app.use(router.allowedMethods());
 const port = 3000
 
 
+
+
+
 // 获取当前服务运行的主机名
 export function getHost() {
     return (process.env.localhost || ip.address()) + ':' + port
@@ -116,11 +119,11 @@ export function getHost() {
 const options = {
     // key:  fs.readFileSync('./ssl/private.key'),
     // cert: fs.readFileSync('./ssl/certificate.crt'),
-    // key:  fs.readFileSync('./tools/localhost+1-key.pem'),
-    // cert: fs.readFileSync('./tools/localhost+1.pem'),
+    key:  fs.readFileSync('./tools/localhost+1-key.pem'),
+    cert: fs.readFileSync('./tools/localhost+1.pem'),
     
-    key:  fs.readFileSync('./tools/mac-key.pem'),
-    cert: fs.readFileSync('./tools/mac.pem'),
+    // key:  fs.readFileSync('./tools/mac-key.pem'),
+    // cert: fs.readFileSync('./tools/mac.pem'),
 }
 
 
@@ -129,6 +132,8 @@ var server = process.env.protool === 'https' ? https.createServer(options, app.c
 import { initWebsocket } from './websocket/index.js'
 
 initWebsocket(server)
+
+
 
 export async function startServe() {
     await server.listen(3000, '0.0.0.0');

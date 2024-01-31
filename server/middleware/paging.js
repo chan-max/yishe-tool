@@ -28,6 +28,7 @@ export const getPagingInfoFromContext = (ctx) => {
     keywords,
     startTime,
     endTime,
+
   } = ctx.request.body || {};
 
   return {
@@ -38,7 +39,9 @@ export const getPagingInfoFromContext = (ctx) => {
 
 export const mw_paging = (app) =>
   app.use(async (ctx, next) => {
+
     ctx.getPagingInfo = () => getPagingInfoFromContext(ctx);
+
     ctx.queryList = (table,queryParams) =>
       new Promise(async (resolve, reject) => {
         const { page, pageSize } = getPagingInfoFromContext(ctx);

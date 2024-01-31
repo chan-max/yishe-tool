@@ -62,7 +62,7 @@ ion-segment {
 
 ion-segment-button::part(indicator-background) {
   background-color: transparent;
-  border-bottom: 2px solid #6900ff;
+  border-bottom: 4px solid #6900ff;
   box-shadow: none;
   border-radius: 0;
 }

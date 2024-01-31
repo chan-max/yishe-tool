@@ -130,6 +130,10 @@ const routes = [
     path: "/workspace",
     name: "Workspace",
     component: () => import("./view/workspace/index.vue"),
+    meta: {
+      header: true,
+      title: '设计室'
+    }
   },
   {
     path: "/market",

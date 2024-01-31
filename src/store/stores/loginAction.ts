@@ -48,7 +48,7 @@ export const isLogin = () => {
 export const doLoginAction = (userInfo, once = false) => {
   // 保存登录时间
   const now = new Date().getTime();
-
+  
   // 同步用户信息
   const loginStatusStore = useLoginStatusStore();
   loginStatusStore.isLogin = true;

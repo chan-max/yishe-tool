@@ -36,7 +36,7 @@ export const auth = (app) =>
         return payload
       }catch(e){
         // 处理 token错误 , 过期 或者 无 token
-        debugger
+        return null
       }
     }
     

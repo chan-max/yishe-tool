@@ -37,16 +37,6 @@ onMounted(async () => {
   })).list;
 });
 
-function edit(model) {
-  return
-  router.push({
-    name: "Design",
-    query: {
-      id: model.id,
-    },
-  });
-}
-
 
 </script>
 <style>

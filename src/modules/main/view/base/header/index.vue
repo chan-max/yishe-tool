@@ -77,7 +77,9 @@ const loginStatusStore = useLoginStatusStore();
     column-gap: 5px;
     text-wrap: nowrap;
     cursor: pointer;
-
+    height: 30px;
+    font-weight: bold;
+    color: #555;
     svg {
         width: 10px;
         height: 10px;

@@ -39,7 +39,7 @@
 </template>
 <script setup>
 import { ref, onMounted, watch, watchEffect } from "vue";
-import { usePaging } from "../../../helper/paging.ts";
+import { usePaging } from "@/hooks/data/paging.ts";
 import { getModelList } from "@/api/index.ts";
 import { Virtual } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -93,3 +93,4 @@ function transitionEnd() {}
   height: 100%;
 }
 </style>
+../../../../../hooks/data/paging.js

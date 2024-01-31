@@ -76,7 +76,7 @@ import {
 } from "@ionic/vue";
 import { eye, lockClosed, person, checkmarkCircle, closeCircle } from "ionicons/icons";
 import { login } from "@/api";
-import { doLoginAction } from "../../../../store/stores/loginAction";
+import { doLoginAction } from "@/store/stores/loginAction";
 import { useRouter } from "vue-router";
 
 const router = useRouter();

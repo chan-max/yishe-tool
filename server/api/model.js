@@ -12,18 +12,40 @@
 /* 
   获取模型列表,关联上传者
 */
+
 export const getModelListHook = (router, sequelize) =>
   router.post("/getModelList", async (ctx) => {
 
-    const data = await ctx.queryList(sequelize.models.t_model, {
-      include: {
-        model: sequelize.models.t_user
-      }
-    })
 
-    data.list.forEach(item => {
+    const body = ctx.request.body;
+
+    const queryParams = {
+      include: {
+        model: sequelize.models.t_user,
+      }
+    }
+
+    if(body.onlyMyContent){
+      let payload = ctx.verifyToken()
+      if(!payload){
+        return ctx.body = {
+          message:'error auth'
+        }
+      }else{
+        queryParams.where = {
+          user_id:payload.userId
+        }
+      }
+    }
+
+    const data = await ctx.queryList(sequelize.models.t_model, queryParams);
+
+    data.list.forEach((item) => {
       item.dataValues.preview_img = ctx.relativePathToPreviewPath(item.img);
-      item.t_user?.setDataValue('preview_avatar', ctx.relativePathToPreviewPath(item.t_user.avatar))
+      item.t_user?.setDataValue(
+        "preview_avatar",
+        ctx.relativePathToPreviewPath(item.t_user.avatar)
+      );
     });
 
     ctx.body = {
@@ -31,11 +53,12 @@ export const getModelListHook = (router, sequelize) =>
     };
   });
 
-
 export const getModelById = (router, sequelize, app) =>
   router.post("/getModelById", async (ctx) => {
     const table = sequelize.models.t_model;
-    const model = await table.findOne({ where: { id: Number(ctx.request.body.id) } });
+    const model = await table.findOne({
+      where: { id: Number(ctx.request.body.id) },
+    });
 
     model.dataValues.preview_img = ctx.relativePathToPreviewPath(model.img);
 
@@ -44,68 +67,62 @@ export const getModelById = (router, sequelize, app) =>
     };
   });
 
+// 获取随机模型
+export const getRandomModel = () => {};
 
-// 获取随机模型 
-export const getRandomModel = () => {
+import { getRelativePath } from "../fileManage.js";
 
-}
+export const uploadModelHook = (router, sequelize) =>
+  router.post("/uploadModel", async (ctx) => {
+    const table = sequelize.models.t_model;
+    const { img } = ctx.request.files; // 模型文件, 图片
+    const { user_id, modelInfo } = ctx.request.body;
+    var imgPath = getRelativePath(img.filepath);
 
-import { getRelativePath } from '../fileManage.js'
+    await table.create({
+      modelInfo,
+      img: imgPath,
+      user_id,
+    });
 
-export const uploadModelHook = (router, sequelize) => router.post("/uploadModel", async (ctx) => {
-  const table = sequelize.models.t_model;
-  const { img } = ctx.request.files; // 模型文件, 图片
-  const { user_id, modelInfo } = ctx.request.body;
-  var imgPath = getRelativePath(img.filepath);
-
-  await table.create({
-    modelInfo,
-    img: imgPath,
-    user_id
+    ctx.body = {
+      message: "模型上传成功",
+      type: "success",
+    };
   });
-
-  ctx.body = {
-    message: "模型上传成功",
-    type: 'success'
-  };
-});
-
 
 /*
   给模型点赞，取消点赞
 */
-export const likeModel = (router, sequelize) => router.post("/likeModel", async (ctx) => {
-  const table = sequelize.models.t_model_like;
 
-  const payload = ctx.verifyToken()
 
-  if (ctx.request.body.isLike == 'true') {
-    // 点赞
-    await table.findOrCreate({
-      where: {
-        user_id: payload.userId,
-        model_id: ctx.request.body.modelId
-      }
-    })
-    ctx.body = {
-      type:'add'
+export const likeModel = (router, sequelize) =>
+  router.post("/likeModel", async (ctx) => {
+    const table = sequelize.models.t_model_like;
+
+    const payload = ctx.verifyToken();
+
+    if (ctx.request.body.isLike == "true") {
+      // 点赞
+      await table.findOrCreate({
+        where: {
+          user_id: payload.userId,
+          model_id: ctx.request.body.modelId,
+        },
+      });
+      ctx.body = {
+        type: "add",
+      };
+    } else {
+      //取消点赞
+      await table.destroy({
+        where: {
+          user_id: payload.userId,
+          model_id: ctx.request.body.modelId,
+        },
+      });
+      ctx.body = {
+        type: "delete",
+      };
     }
-  } else {
-    //取消点赞
-    await table.destroy({
-      where: {
-        user_id: payload.userId,
-        model_id: ctx.request.body.modelId
-      }
-    })
-    ctx.body = {
-      type:'delete'
-    }
-  }
-});
-
-
-
-
-
-
+  });

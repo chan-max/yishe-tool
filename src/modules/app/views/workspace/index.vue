@@ -10,8 +10,6 @@
 -->
 <template>
   <ion-page>
-    <button @click="logout">退出登录</button>
-    <button @click="take">拍照</button>
   </ion-page>
 </template>
 

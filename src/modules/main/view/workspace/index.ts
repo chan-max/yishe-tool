@@ -1,6 +1,6 @@
 import { computed, ref } from "vue"
-import availableModel from './contents/availableModel.vue'
-import model from './contents/model.vue'
+import availableModel from './contents/availableModel/availableModel.vue'
+import model from './contents/model/model.vue'
 
 // 工作台所有tab栏
 export const WorkspaceTabOptions  =  [{

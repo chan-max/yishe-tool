@@ -55,6 +55,7 @@ export const usePaging = (getListFn) => {
             loading.value = true
             console.log('开始加载')
             page.value++
+            
             let res = await getListFn({
                 page: page.value,
                 pageSize: 30,

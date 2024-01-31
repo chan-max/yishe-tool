@@ -15,10 +15,7 @@
 
 export const getModelListHook = (router, sequelize) =>
   router.post("/getModelList", async (ctx) => {
-
-
     const body = ctx.request.body;
-
     const queryParams = {
       include: {
         model: sequelize.models.t_user,
@@ -33,6 +30,7 @@ export const getModelListHook = (router, sequelize) =>
         }
       }else{
         queryParams.where = {
+          ...queryParams.where,
           user_id:payload.userId
         }
       }

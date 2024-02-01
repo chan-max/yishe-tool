@@ -24,6 +24,7 @@ import { WorkspaceTabOptions, activeWorkspaceTab } from "./index.ts";
   align-items: center;
   column-gap: 10px;
   background-color: #fff;
+  z-index: 1;
 }
 
 .tabs-item {
@@ -36,7 +37,6 @@ import { WorkspaceTabOptions, activeWorkspaceTab } from "./index.ts";
 }
 .tabs-item:hover {
   background-color: #ddd;
-
   cursor: pointer;
 }
 

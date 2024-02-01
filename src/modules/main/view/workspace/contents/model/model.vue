@@ -10,10 +10,15 @@
 -->
 <template>
   <div class="model-content" v-infinite-scroll="scroll" :infinite-scroll-distance="150">
-    <div v-for="item in list" class="item"></div>
+    <div v-for="item in list" class="item">
+      <el-image :src="item.preview_img" fit="cover" style="width:100%;height:100%">
+      </el-image>
+      <el-button > 发布 </el-button>
+    </div>
   </div>
 </template>
 <script setup>
+
 import { ref } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { getModelList } from "@/api";
@@ -28,8 +33,10 @@ const { page, pages, pageSize, list, getList } = usePaging((params) => {
 function scroll() {
   getList();
 }
+
+
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .model-content {
   width: 100%;
   margin: auto;
@@ -43,5 +50,8 @@ function scroll() {
   width: 300px;
   height: 160px;
   background: #eee;
+  border-radius:10px;
+  overflow:hidden;
+  position:relative;
 }
 </style>

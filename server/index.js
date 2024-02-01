@@ -19,7 +19,9 @@ import ip from 'ip'
 import dotenv from 'dotenv'
 dotenv.config()
 
+
 const app = new Koa();
+
 
 const router = new Router();
 
@@ -37,11 +39,6 @@ try {
 }
 
 
-
-
-// 注册中间件
-middlewares.forEach((mw) => mw(app))
-
 app.use(
     cors({
         origin: "*",
@@ -51,6 +48,9 @@ app.use(
         exposeHeaders: ['*'] //设置获取其他自定义字段
     })
 );
+
+// 注册中间件
+middlewares.forEach((mw) => mw(app))
 
 
 import db from './sequelize/models/index.js'
@@ -132,7 +132,6 @@ var server = process.env.protool === 'https' ? https.createServer(options, app.c
 import { initWebsocket } from './websocket/index.js'
 
 initWebsocket(server)
-
 
 
 export async function startServe() {

@@ -1,6 +1,7 @@
 import { computed, ref } from "vue"
 import availableModel from './contents/availableModel/availableModel.vue'
 import model from './contents/model/model.vue'
+import { useLocalStorage } from "@vueuse/core"
 
 // 工作台所有tab栏
 export const WorkspaceTabOptions  =  [{
@@ -29,7 +30,7 @@ export const WorkspaceTabOptions  =  [{
     key:'font'
 }]
 
-export const activeWorkspaceTab= ref('availableModel')
+export const activeWorkspaceTab= useLocalStorage('workspaceTab','availableModel')
 
 export const  activeComponent = computed(() => {
     return WorkspaceTabOptions.find((item) => item.key == activeWorkspaceTab.value).component

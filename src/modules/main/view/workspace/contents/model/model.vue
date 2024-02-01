@@ -23,6 +23,8 @@ const { page, pages, pageSize, list, getList } = usePaging((params) => {
 function scroll() {
   getList();
 }
+
+
 </script>
 <style lang="less" scoped>
 .model-content {

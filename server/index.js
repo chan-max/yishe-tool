@@ -119,11 +119,11 @@ export function getHost() {
 const options = {
     // key:  fs.readFileSync('./ssl/private.key'),
     // cert: fs.readFileSync('./ssl/certificate.crt'),
-    key:  fs.readFileSync('./tools/localhost+1-key.pem'),
-    cert: fs.readFileSync('./tools/localhost+1.pem'),
+    // key:  fs.readFileSync('./tools/localhost+1-key.pem'),
+    // cert: fs.readFileSync('./tools/localhost+1.pem'),
         
-    // key:  fs.readFileSync('./tools/mac-key.pem'),
-    // cert: fs.readFileSync('./tools/mac.pem'),
+    key:  fs.readFileSync('./tools/mac-key.pem'),
+    cert: fs.readFileSync('./tools/mac.pem'),
 }
 
 

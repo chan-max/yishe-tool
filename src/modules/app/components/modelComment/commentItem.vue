@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-19 21:34:20
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 14:42:45
+ * @LastEditTime: 2024-02-02 23:49:25
  * @FilePath: /1s/src/modules/app/components/modelComment/commentItem.vue
  * @Description: 
  * 
@@ -33,6 +33,7 @@
          {{ commentInfo.like_count || 0 }}
       </div>
     </div>
+    <div class="reply" @click="reply(commentInfo)"> 回复 </div>
     <div class="children"></div>
   </div>
 </template>
@@ -40,29 +41,35 @@
 import { defineProps } from "vue";
 import { timeago } from "@/common/time";
 import thumbup from '@/icon/mobile/thumbup.svg?component';
-import {likeModelComment} from '@/api'
+import {likeAvailableModelComment} from '@/api'
 
 const props = defineProps(["commentInfo"]);
+
+const emits = defineEmits(['reply'])
 
 // 顶评论
 async function like() {
   // 只要点过赞，就设为点赞状态
   props.commentInfo.liked = true;
+  
   (props.commentInfo.like_count)++
-  await likeModelComment({
+  await likeAvailableModelComment({
     commentId:props.commentInfo.id,
     count: 1
   })
 }
 
+function reply(info) {
+    emits('reply',info)
+}
 
 </script>
 
 <style lang="less" scoped>
 .comment-item {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
   margin: 20px 0;
 }
 
@@ -87,8 +94,8 @@ async function like() {
   column-gap: 8px;
 }
 .comment-content {
-  padding: 5px;
-  font-size: 12px;
+  padding: 8px 0;
+  font-size: 13px;
   text-align: left;
 }
 
@@ -119,5 +126,15 @@ async function like() {
 
 .liked{
   color: #6900ff;
+}
+
+.reply{
+  margin-left: 40px;
+  font-size: 12px;
+  opacity: .6;
+}
+.reply:active{
+  opacity: .8;
+  text-decoration: underline;
 }
 </style>

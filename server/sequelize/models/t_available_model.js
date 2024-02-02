@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-31 21:19:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 12:49:42
+ * @LastEditTime: 2024-02-02 17:01:34
  * @FilePath: /1s/server/sequelize/models/t_available_model.js
  * @Description: 
  * 
@@ -34,6 +34,14 @@ module.exports = (sequelize, DataTypes) => {
   t_available_model.init({
     model_id: DataTypes.INTEGER,
     user_id: DataTypes.INTEGER,
+    like_count:{
+      type: DataTypes.INTEGER,
+      defaultValue:0
+    },
+    comment_count:{
+      type: DataTypes.INTEGER,
+      defaultValue:0
+    }
   }, {
     sequelize,
     modelName: 't_available_model',

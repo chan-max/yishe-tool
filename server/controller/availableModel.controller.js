@@ -64,9 +64,10 @@ export const availableModelController = ({ router, app, sequelize, redis }) => {
       await table.findOrCreate({
         where: {
           user_id: payload.userId,
-          available_model_id: ctx.request.body.modelId,
+          available_model_id: ctx.request.body.availableModelId,
         },
       });
+      await sequelize.models.t_available_model.increment('like_count', { by: 1, where: { id: ctx.request.body.availableModelId } })
       ctx.body = {
         type: "add",
       };
@@ -75,9 +76,10 @@ export const availableModelController = ({ router, app, sequelize, redis }) => {
       await table.destroy({
         where: {
           user_id: payload.userId,
-          available_model_id: ctx.request.body.modelId,
+          available_model_id: ctx.request.body.availableModelId,
         },
       });
+      await sequelize.models.t_available_model.decrement('like_count', { by: 1, where: { id: ctx.request.body.availableModelId } })
       ctx.body = {
         type: "delete",
       };

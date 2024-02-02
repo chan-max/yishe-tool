@@ -2,97 +2,149 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-14 11:33:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 14:41:19
+ * @LastEditTime: 2024-02-03 01:52:47
  * @FilePath: /1s/src/modules/app/components/modelComment/comment.vue
  * @Description:
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-    <div class="comment">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title> 评论（99+） </ion-title>
-          <ion-buttons slot="end">
-            <ion-button @click="toggleSort"> {{ sortType == CommentSortType.HOTEST ? '按热度排序' : '按时间排序' }} </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <ion-list class="ion-padding">
-          <comment-item v-for="(item, index) in list"
-          :commentInfo="item"
-          >
-          </comment-item>
-        </ion-list>
-        <ion-infinite-scroll @ionInfinite="ionInfinite">
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
-        </ion-infinite-scroll>
-      </ion-content>
-      <ion-footer>
-        <div class="footer ion-padding">
-          <ion-avatar>
-            <img class="avatar" :src="avatar">
-          </ion-avatar>
-          <ion-input v-model="comment" placeholder="快来评论吧"></ion-input>
-          <ion-button @click="addComment" size="small" style="height:40px;">
-            评论
-            <ion-icon slot="end" :icon="chatbubbleEllipsesOutline"></ion-icon>
+  <div class="comment">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title> 评论（{{ modelInfo.comment_count }}） </ion-title>
+        <ion-buttons slot="end">
+          <ion-button @click="toggleSort">
+            {{ sortType == CommentSortType.HOTEST ? "按热度排序" : "按时间排序" }}
           </ion-button>
-        </div>
-      </ion-footer>
-    </div>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list class="ion-padding">
+        <comment-item v-for="(item, index) in list" @reply="reply" :commentInfo="item">
+        </comment-item>
+      </ion-list>
+      <ion-infinite-scroll @ionInfinite="ionInfinite">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-content>
+    <ion-footer>
+      <div class="footer ion-padding">
+        <ion-avatar style="margin-top: 4px">
+          <img class="avatar" :src="avatar" />
+        </ion-avatar>
+        <ion-textarea
+          :auto-grow="false"
+          ref="input"
+          v-model="comment"
+          :placeholder="isReplying ? '正在回复' : '快来评论吧'"
+          @ionBlur="ionBlur"
+        ></ion-textarea>
+        <ion-button @click="addComment" size="small" style="height: 40px">
+          {{ isReplying ? "回复" : "评论" }}
+          <ion-icon slot="end" :icon="chatbubbleEllipsesOutline"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-footer>
+  </div>
 </template>
 <script setup>
-import { reactive, ref, computed } from 'vue';
-import { modelInfo,sortType,toggleSort } from "./index";
-import { addAvailableModelComment,CommentSortType } from "@/api/api/comment";
+import { reactive, ref, computed, shallowRef } from "vue";
+import { modelInfo, sortType, toggleSort } from "./index";
+import { addAvailableModelComment, CommentSortType } from "@/api/api/comment";
 import { chatbubbleEllipsesOutline } from "ionicons/icons";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { usePaging } from "@/hooks/data/paging";
 import { getAvailableModelComment } from "@/api/api/comment";
-import commentItem from './commentItem.vue'
-
+import commentItem from "./commentItem.vue";
 
 const loginStore = useLoginStatusStore();
 
 const avatar = computed(() => {
-  return loginStore.userInfo?.preview_avatar || '/mobileDefaultAvatar.svg'
-})
+  return loginStore.userInfo?.preview_avatar || "/mobileDefaultAvatar.svg";
+});
 
+// 当前评论内容
 const comment = ref();
 
-const { page, pages, list, getList } = usePaging(() => {
+// 评论的id
+const parentId = ref(0);
+
+const { page, pages, list, getList } = usePaging((params) => {
   return getAvailableModelComment({
-    availableModelId:modelInfo.value.id,
-    sortType:sortType.value
-  })
+    availableModelId: modelInfo.value.id,
+    sortType: sortType.value,
+    parentId: parentId.value,
+    ...params,
+  });
 });
 
 const ionInfinite = async (ev) => {
   await getList({
-    modelId:  modelInfo.value.id,
+    modelId: modelInfo.value.id,
   });
   ev.target.complete();
 };
 
+// 评论输入框是否应该获取焦点
+const input = ref();
+
+// 是否正在回复中
+const isReplying = ref(false);
+
+// 正在回复的评论
+const replyingComment = ref();
+
+function reply(info) {
+  input.value.$el.setFocus();
+  isReplying.value = true;
+  replyingComment.value = info;
+}
+
+function ionBlur() {
+  // 输入框失去焦点, 现在逻辑为输入框为空且失去焦点时失去回复状态
+  if (!comment.value) {
+    isReplying.value = false;
+  }
+}
+
+/*
+  添加评论
+*/
+
 async function addComment() {
   if (!comment.value) {
+    // 无内容
     return;
   }
-  try {
 
-    await addAvailableModelComment({
-      availableModelId:   modelInfo.value.id,
+  try {
+    // 返回的结果用于反显界面
+    
+    const latestComment = await addAvailableModelComment({
+      availableModelId: modelInfo.value.id,
       content: comment.value,
       userId: loginStore.userInfo?.id,
-      parentId: null,
+      parentId: isReplying.value ? replyingComment.value.id : 0,
     });
+    
+    if (isReplying.value) {
+    } else {
+      // 同步评论数量
+      modelInfo.value.comment_count++;
+
+      // 同步视图
+      // 默认添加的评论作者始终是用户本人，避免再次查库直接使用本地用户信息
+      latestComment.t_user = loginStore.userInfo;
+      list.value.unshift(latestComment);
+      // 清空
+      comment.value = "";
+    }
   } catch (e) {
     alert("评论失败");
   }
 }
-
 </script>
 
 <style lang="less" scoped>
@@ -121,8 +173,7 @@ ion-list {
   background-color: transparent;
 }
 
-
-ion-avatar{
+ion-avatar {
   flex-shrink: 0;
   height: 30px;
   width: 30px;
@@ -131,7 +182,7 @@ ion-avatar{
 .footer {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
   border-top: 1px solid #eee;
   column-gap: 20px;
 }
@@ -142,4 +193,3 @@ ion-avatar{
   }
 }
 </style>
-@/hooks/data/paging

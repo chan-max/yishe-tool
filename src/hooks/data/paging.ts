@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 14:51:09
+ * @LastEditTime: 2024-02-02 22:15:52
  * @FilePath: /1s/src/hooks/data/paging.ts
  * @Description: 
  * 
@@ -22,7 +22,7 @@ export interface UsePaging {
     getList: any,
 }
 
-export const usePaging = (getListFn) => {
+export const usePaging = (getListFn:(params:any)=>Promise<any>, callback?: (item: any) => any) => {
     // 列表数据
     const list = ref([])
     // 当前页数
@@ -56,16 +56,23 @@ export const usePaging = (getListFn) => {
             loading.value = true
             page.value++
 
-            if(page.value > pages.value ){
+            if (page.value > pages.value) {
                 return
             }
-
+            
             let res = await getListFn({
                 page: page.value,
                 pageSize: 30,
                 ...params
             })
+            
             pages.value = res.pages;
+
+            // 该回调函数可用于单独处理列表的每一项
+            if(res.list && callback){
+                res.list.forEach(callback)
+            }
+
             list.value = list.value.concat(res.list);
 
             loading.value = false

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 14:22:08
+ * @LastEditTime: 2024-02-02 20:01:08
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -13,12 +13,12 @@
     <Transition leave-active-class="animate__animated animate__fadeOut" :duration="200">
       <div class="image" v-if="showImage">
         <van-image
-          style="width: 100%; height: 100%;"
+          style="width: 100%; height: 100%"
           fit="cover"
           :src="availableModelInfo.t_model.preview_img"
         >
           <template v-slot:loading>
-            <ion-skeleton-text :animated="true" style="margin: 0;"></ion-skeleton-text>
+            <ion-skeleton-text :animated="true" style="margin: 0"></ion-skeleton-text>
           </template>
         </van-image>
       </div>
@@ -39,29 +39,32 @@
       <div class="menu-item">
         <heart
           class="icon"
-          @click="isLike = !isLike"
-          :style="{ color: isLike ? '#ea3323' : '' }"
+          @click="availableModelInfo.isLike = !availableModelInfo.isLike"
+          :style="{ color: availableModelInfo.isLike ? '#ea3323' : '' }"
         ></heart>
-        <div class="text">69</div>
+        <div class="text">{{ availableModelInfo.like_count }}</div>
       </div>
       <div class="menu-item">
         <comment @click="openComment" class="icon"></comment>
-        <div class="text">69</div>
+        <div class="text">{{ availableModelInfo.comment_count }}</div>
       </div>
       <div class="menu-item">
         <share class="icon"></share>
-        <div class="text">69</div>
+        <div class="text"></div>
       </div>
       <div class="menu-item">
         <shopping-cart class="icon"></shopping-cart>
-        <div class="text">69</div>
+        <div class="text"></div>
       </div>
     </div>
 
     <div class="menu-bottom"></div>
     <div class="menu-top">
       <ion-avatar style="width: 32px; height: 32px" class="avatar-border">
-        <img :src="availableModelInfo.t_user.preview_avatar || '/mobileDefaultAvatar.svg'" style="width: 32px; height: 32px" />
+        <img
+          :src="availableModelInfo.t_user.preview_avatar || '/mobileDefaultAvatar.svg'"
+          style="width: 32px; height: 32px"
+        />
       </ion-avatar>
       <div>
         <div style="font-size: 12px; font-weight: bold; line-height: 20px">
@@ -79,7 +82,6 @@
       <ion-progress-bar type="indeterminate"></ion-progress-bar>
     </div>
   </div>
-
 </template>
 <script setup>
 import { defineProps, ref, onMounted, watch, onUnmounted } from "vue";
@@ -89,29 +91,36 @@ import heart from "@/icon/mobile/heart.svg?component";
 import comment from "@/icon/mobile/comment.svg?component";
 import share from "@/icon/mobile/share.svg?component";
 import shoppingCart from "@/icon/mobile/shoppingCart.svg?component";
-import { likeModel,likeAvailableModel } from "@/api";
+import { likeModel, likeAvailableModel } from "@/api";
 import { timeago } from "@/common/time";
-import dragToMove from '@/components/tips/dragToMove/index.vue'
-import {isOpen,openModelComment} from '../../../components/modelComment/index.ts'
-import {showMovableTip} from '@/store/stores/app.ts'
+import dragToMove from "@/components/tips/dragToMove/index.vue";
+import { isOpen, openModelComment } from "../../../components/modelComment/index.ts";
+import { showMovableTip } from "@/store/stores/app.ts";
 
-const isLike = ref(false);
-
-const props = defineProps(["availableModelInfo","index"]);
+const props = defineProps(["availableModelInfo", "index"]);
 
 // 打开评论
 function openComment() {
-    openModelComment(props.availableModelInfo)
+  openModelComment(props.availableModelInfo);
 }
 
-
 // 点赞收藏模型
-watch(isLike, async () => {
-  await likeAvailableModel({
-    modelId: props.availableModelInfo.id,
-    isLike: isLike.value,
-  });
-});
+watch(
+  () => props.availableModelInfo.isLike,
+  async () => {
+    await likeAvailableModel({
+      availableModelId: props.availableModelInfo.id,
+      isLike: props.availableModelInfo.isLike,
+    });
+    if (props.availableModelInfo.isLike) {
+      props.availableModelInfo.like_count++;
+      props.availableModelInfo.isLike = true;
+    } else {
+      props.availableModelInfo.like_count--;
+      props.availableModelInfo.isLike = false;
+    }
+  }
+);
 
 // 是否展示图片
 const showImage = ref(true);
@@ -121,9 +130,8 @@ const showViewer = ref(false);
 
 const loading = ref(true);
 
-
-function dragStart(){
-  showMovableTip.value = false
+function dragStart() {
+  showMovableTip.value = false;
 }
 
 watch(
@@ -150,7 +158,6 @@ function loaded() {
   // 移除loading
   loading.value = false;
 }
-
 </script>
 <style lang="less" scoped>
 .item {

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-18 22:05:54
+ * @LastEditTime: 2024-02-02 19:11:59
  * @FilePath: /1s/src/modules/app/views/index/swiper/index.ts
  * @Description: 
  * 
@@ -21,3 +21,5 @@ export function activeIndexChange(params) {
 
 // 预览模型实例
 export const gltfViewerRef = ref()
+
+

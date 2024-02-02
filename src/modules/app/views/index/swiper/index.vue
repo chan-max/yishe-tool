@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 14:20:38
+ * @LastEditTime: 2024-02-02 19:30:23
  * @FilePath: /1s/src/modules/app/views/index/swiper/index.vue
  * @Description: 
  * 
@@ -49,7 +49,9 @@ import swiperItem from "./item.vue";
 import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
 import slide from "./slide.vue";
 
-const { list, page, getList, loading, firstLoading } = usePaging(getAvailableModel);
+const { list, page, getList, loading, firstLoading } = usePaging(getAvailableModel,(item) => {
+  item.isLike = false
+});
 
 // 滑动到最新
 function reachEnd() {

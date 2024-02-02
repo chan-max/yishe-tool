@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-23 22:50:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 14:12:29
+ * @LastEditTime: 2024-02-02 22:02:26
  * @FilePath: /1s/src/api/api/comment.ts
  * @Description: 
  * 
@@ -51,19 +51,19 @@ export interface ApiParamsAddModelComment {
     userId: string // 用户id
 }
 
-export const addModelComment = (params) => new Promise((resolve, reject) => {
+export const addModelComment = (params) => new Promise( async(resolve, reject) => {
     try {
-        let res = apiInstance.post(Url.ADD_MODEL_COMMENT, params)
+        let res = await apiInstance.post(Url.ADD_MODEL_COMMENT, params)
         resolve(res)
     } catch (e) {
         reject(e);
     }
 })
 
-export const addAvailableModelComment = (params) => new Promise((resolve, reject) => {
+export const addAvailableModelComment = (params) => new Promise( async(resolve, reject) => {
     try {
-        let res = apiInstance.post(Url.ADD_AVAILABLE_MODEL_COMMENT, params)
-        resolve(res)
+        let res = await apiInstance.post(Url.ADD_AVAILABLE_MODEL_COMMENT, params)
+        resolve(res.data.data)
     } catch (e) {
         reject(e);
     }

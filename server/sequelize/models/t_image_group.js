@@ -1,3 +1,13 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2024-02-01 19:16:23
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-02-02 08:51:29
+ * @FilePath: /1s/server/sequelize/models/t_image_group.js
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+ */
 'use strict';
 const {
   Model
@@ -14,7 +24,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   t_image_group.init({
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    description:DataTypes.STRING,
+    imgs:DataTypes.JSON,
   }, {
     sequelize,
     modelName: 't_image_group',

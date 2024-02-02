@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-14 11:33:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-20 00:24:09
+ * @LastEditTime: 2024-02-02 14:41:19
  * @FilePath: /1s/src/modules/app/components/modelComment/comment.vue
  * @Description:
  * 
@@ -46,11 +46,11 @@
 <script setup>
 import { reactive, ref, computed } from 'vue';
 import { modelInfo,sortType,toggleSort } from "./index";
-import { addModelComment,CommentSortType } from "@/api/api/comment";
+import { addAvailableModelComment,CommentSortType } from "@/api/api/comment";
 import { chatbubbleEllipsesOutline } from "ionicons/icons";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { usePaging } from "@/hooks/data/paging";
-import { getModelComment } from "@/api/api/comment";
+import { getAvailableModelComment } from "@/api/api/comment";
 import commentItem from './commentItem.vue'
 
 
@@ -63,8 +63,8 @@ const avatar = computed(() => {
 const comment = ref();
 
 const { page, pages, list, getList } = usePaging(() => {
-  return getModelComment({
-    modelId:modelInfo.value.id,
+  return getAvailableModelComment({
+    availableModelId:modelInfo.value.id,
     sortType:sortType.value
   })
 });
@@ -81,8 +81,9 @@ async function addComment() {
     return;
   }
   try {
-    await addModelComment({
-      modelId:   modelInfo.value.id,
+
+    await addAvailableModelComment({
+      availableModelId:   modelInfo.value.id,
       content: comment.value,
       userId: loginStore.userInfo?.id,
       parentId: null,

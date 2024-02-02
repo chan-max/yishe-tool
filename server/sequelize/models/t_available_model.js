@@ -1,3 +1,13 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2024-01-31 21:19:02
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-02-02 12:49:42
+ * @FilePath: /1s/server/sequelize/models/t_available_model.js
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+ */
 'use strict';
 const {
   Model
@@ -11,10 +21,19 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.t_available_model.belongsTo(models.t_model, {
+        foreignKey:'model_id',
+        targetKey:'id',
+      });
+      models.t_available_model.belongsTo(models.t_user, {
+        foreignKey:'user_id',
+        targetKey:'id',
+      });
     }
   }
   t_available_model.init({
-    model_id: DataTypes.INTEGER
+    model_id: DataTypes.INTEGER,
+    user_id: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 't_available_model',

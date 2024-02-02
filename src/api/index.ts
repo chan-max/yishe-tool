@@ -199,3 +199,32 @@ export const requestQRCodeLoginInfo = (params) => new Promise(async (resolve, re
   const res = await apiInstance.post(Url.GET_QRCODE_LOGIN_URL, params)
   resolve(res.data)
 })
+
+
+/*
+  发布模型
+*/
+
+export const publishModel = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.PUBLISH_MODEL, params)
+  resolve(res.data)
+})
+
+
+
+export const likeAvailableModel = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.LIKE_AVAILABLE_MODEL, params)
+  resolve(res.data)
+})
+
+
+export const likeAvailableModelComment = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.LIKE_AVAILABLE_MODEl_COMMENT, params)
+  resolve(res.data)
+})
+
+
+export const getAvailableModel = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_AVAILABLE_MODEL, params)
+  resolve(res.data.data)
+})

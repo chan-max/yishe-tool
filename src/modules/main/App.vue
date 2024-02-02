@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-27 23:41:39
+ * @LastEditTime: 2024-02-02 09:53:48
  * @FilePath: /1s/src/modules/main/App.vue
  * @Description: 
  * 
@@ -45,16 +45,17 @@ body {
   overflow:hidden;
 }
 
-/* @font-face{
+@font-face{
     font-family: 'alimama';
     src : url('/public/fonts/AlimamaFangYuanTiVF-Thin.ttf');
-} */
+}
 
 #app {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  font-family: alimama;
 }
 
 #app > * {

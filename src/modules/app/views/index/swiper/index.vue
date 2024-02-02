@@ -2,15 +2,15 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-28 16:46:17
+ * @LastEditTime: 2024-02-02 14:20:38
  * @FilePath: /1s/src/modules/app/views/index/swiper/index.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-  <div v-if="firstLoading" class="flex  justify-center w-full h-full items-center">
-    <ion-spinner name="dots" style="height: 100px;"></ion-spinner>
+  <div v-if="firstLoading" class="flex justify-center w-full h-full items-center">
+    <ion-spinner name="dots" style="height: 100px"></ion-spinner>
   </div>
   <swiper
     v-else
@@ -33,14 +33,14 @@
       :key="index"
       :virtualIndex="index"
     >
-      <swiper-item :model-info="item" :index="index"></swiper-item>
+      <swiper-item :available-model-info="item"  :index="index"></swiper-item>
     </swiper-slide>
   </swiper>
 </template>
 <script setup>
 import { ref, onMounted, watch, watchEffect } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
-import { getModelList } from "@/api/index.ts";
+import { getModelList, getAvailableModel } from "@/api/index.ts";
 import { Virtual } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
@@ -49,7 +49,7 @@ import swiperItem from "./item.vue";
 import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
 import slide from "./slide.vue";
 
-const { list, page, getList, loading, firstLoading } = usePaging(getModelList);
+const { list, page, getList, loading, firstLoading } = usePaging(getAvailableModel);
 
 // 滑动到最新
 function reachEnd() {

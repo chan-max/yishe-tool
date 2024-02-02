@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-28 16:32:15
+ * @LastEditTime: 2024-02-02 14:22:08
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -15,7 +15,7 @@
         <van-image
           style="width: 100%; height: 100%;"
           fit="cover"
-          :src="modelInfo.preview_img"
+          :src="availableModelInfo.t_model.preview_img"
         >
           <template v-slot:loading>
             <ion-skeleton-text :animated="true" style="margin: 0;"></ion-skeleton-text>
@@ -31,7 +31,7 @@
         @loaded="loaded"
         @dragStart="dragStart"
         ref="gltfViewerRef"
-        :model="modelInfo.modelInfo"
+        :model="availableModelInfo.t_model.modelInfo"
       ></gltf-viewer>
     </div>
 
@@ -61,14 +61,14 @@
     <div class="menu-bottom"></div>
     <div class="menu-top">
       <ion-avatar style="width: 32px; height: 32px" class="avatar-border">
-        <img :src="modelInfo.t_user.preview_avatar || '/mobileDefaultAvatar.svg'" style="width: 32px; height: 32px" />
+        <img :src="availableModelInfo.t_user.preview_avatar || '/mobileDefaultAvatar.svg'" style="width: 32px; height: 32px" />
       </ion-avatar>
       <div>
         <div style="font-size: 12px; font-weight: bold; line-height: 20px">
-          {{ modelInfo.t_user.name || "小芳" }}
+          {{ availableModelInfo.t_user.name || "小芳" }}
         </div>
         <div style="font-size: 12px; font-weight: 300">
-          创建于 {{ timeago(modelInfo.createdAt) }}
+          创建于 {{ timeago(availableModelInfo.t_model.createdAt) }}
         </div>
       </div>
       <div style="flex: 1"></div>
@@ -89,7 +89,7 @@ import heart from "@/icon/mobile/heart.svg?component";
 import comment from "@/icon/mobile/comment.svg?component";
 import share from "@/icon/mobile/share.svg?component";
 import shoppingCart from "@/icon/mobile/shoppingCart.svg?component";
-import { likeModel } from "@/api";
+import { likeModel,likeAvailableModel } from "@/api";
 import { timeago } from "@/common/time";
 import dragToMove from '@/components/tips/dragToMove/index.vue'
 import {isOpen,openModelComment} from '../../../components/modelComment/index.ts'
@@ -97,18 +97,18 @@ import {showMovableTip} from '@/store/stores/app.ts'
 
 const isLike = ref(false);
 
-const props = defineProps(["modelInfo", "index"]);
+const props = defineProps(["availableModelInfo","index"]);
 
 // 打开评论
 function openComment() {
-    openModelComment(props.modelInfo)
+    openModelComment(props.availableModelInfo)
 }
 
 
 // 点赞收藏模型
 watch(isLike, async () => {
-  await likeModel({
-    modelId: props.modelInfo.id,
+  await likeAvailableModel({
+    modelId: props.availableModelInfo.id,
     isLike: isLike.value,
   });
 });

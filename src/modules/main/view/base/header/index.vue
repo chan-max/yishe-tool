@@ -1,3 +1,13 @@
+<!--
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2024-01-31 21:19:02
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-02-02 09:33:16
+ * @FilePath: /1s/src/modules/main/view/base/header/index.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+-->
 <template>
     <div ref="headerBar" class="header-bar flex justify-center z-10">
         <div class="header-bar-content flex justify-between items-center">
@@ -80,6 +90,7 @@ const loginStatusStore = useLoginStatusStore();
     height: 30px;
     font-weight: bold;
     color: #555;
+    border-bottom: 2px solid transparent;
     svg {
         width: 10px;
         height: 10px;

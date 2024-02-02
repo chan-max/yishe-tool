@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-19 21:34:20
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-20 00:24:20
+ * @LastEditTime: 2024-02-02 14:42:45
  * @FilePath: /1s/src/modules/app/components/modelComment/commentItem.vue
  * @Description: 
  * 
@@ -24,7 +24,7 @@
           <span class="name">{{ commentInfo.t_user.name || "未命名" }} </span>
           <span class="timeago"> {{ timeago(commentInfo.createdAt) }}</span>
         </div>
-        <div class="comment-content">w
+        <div class="comment-content">
           {{ commentInfo.content }}
         </div>
       </div>

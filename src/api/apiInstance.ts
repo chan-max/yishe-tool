@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-21 12:54:25
+ * @LastEditTime: 2024-02-02 11:21:47
  * @FilePath: /1s/src/api/apiInstance.ts
  * @Description: 
  * 
@@ -17,13 +17,16 @@ import {
     tokenResponseInterceptor
 } from "./apiInterception";
 
+
+
 // 全局设置
 axios.defaults.timeout = 100000; // 时间超时设置100s
 
 // 读取配置中的请求地址
 axios.defaults.baseURL = import.meta.env.VITE_API;
- 
-export const apiInstance: any = axios.create();
+
+export const apiInstance: any = axios.create({
+});
 
 export const source = axios.CancelToken.source();
 

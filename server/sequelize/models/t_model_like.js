@@ -2,8 +2,8 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-21 08:57:45
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-21 09:01:44
- * @FilePath: /1s/server/sequelize/models/t_model-like.js
+ * @LastEditTime: 2024-02-02 11:43:00
+ * @FilePath: /1s/server/sequelize/models/t_model_like.js
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 

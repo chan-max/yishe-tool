@@ -17,8 +17,8 @@ import { WorkspaceTabOptions, activeWorkspaceTab } from "./index.ts";
 
 <style scoped>
 .tabs {
-  width: 100%;
-  height: 100%;
+  padding:0 20px;
+  max-width: 1600px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -28,20 +28,22 @@ import { WorkspaceTabOptions, activeWorkspaceTab } from "./index.ts";
 }
 
 .tabs-item {
-  color: #555555;
+  color: #777;
   font-weight: 400;
-  padding: 10px 20px;
+  padding: 8px 16px;
   transition: all 0.2s;
-  border-radius: 15px;
+  border-radius: 12px;
   text-wrap: nowrap;
+  font-size: 14px;
 }
 .tabs-item:hover {
-  background-color: #ddd;
+  background-color: #aaa;
   cursor: pointer;
 }
 
 .tabs-item-active {
-  background-color: #ddd;
+  background-color: #aaa;
   cursor: pointer;
+  color:#fff;
 }
 </style>

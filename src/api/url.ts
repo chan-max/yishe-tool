@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-21 16:47:58
+ * @LastEditTime: 2024-02-02 13:44:54
  * @FilePath: /1s/src/api/url.ts
  * @Description: 
  * 
@@ -91,5 +91,22 @@ export enum Url {
     LIKE_MODEl_COMMENT = '/likeModelComment',
 
     // 获取用于扫码登录的地址
-    GET_QRCODE_LOGIN_URL = '/requestQRCodeLoginInfo'
+    GET_QRCODE_LOGIN_URL = '/requestQRCodeLoginInfo',
+
+
+    // 发布模型
+    PUBLISH_MODEL = '/publishAvailableModel',
+
+    // 移除发布的模型
+    REMOVE_MODEL = '/removeAvailableModel',
+
+    ADD_AVAILABLE_MODEL_COMMENT = '/addAvailableModelComment',
+
+    GET_AVAILABLE_MODEL_COMMENT = '/getAvailableModelComment',
+
+    LIKE_AVAILABLE_MODEL = '/likeAvailableModel',
+
+    LIKE_AVAILABLE_MODEl_COMMENT = '/likeAvailableModelComment',
+
+    GET_AVAILABLE_MODEL = '/getAvailableModel'
 }

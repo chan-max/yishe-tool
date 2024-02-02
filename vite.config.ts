@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-30 21:23:04
+ * @LastEditTime: 2024-02-01 20:36:53
  * @FilePath: /1s/vite.config.ts
  * @Description: 
  * 
@@ -60,7 +60,7 @@ export default defineConfig((config:any) => {
     plugins: [
       alias(),
       // https dev
-      // basicSsl(),
+      basicSsl(),
       Components({
         resolvers: [VantResolver(),AntdvResolver()],
       }),
@@ -91,13 +91,14 @@ export default defineConfig((config:any) => {
     },
     server: {
       port:6699,
-      // proxy: {
-      //   "/api": {
-      //     target: "https://localhost:3000",
-      //     changeOrigin: true,
-      //     rewrite: (path) => path.replace(/^\/api/, ""),
-      //   },
-      // },
+      proxy: {
+        "/api": {
+          target: "https://localhost:3000",
+          changeOrigin: true,
+          secure: false, // 防止证书引发的🙋
+          rewrite: (path) => path.replace(/^\/api/, ""),
+        },
+      },
     },
     resolve: {
       alias: {

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-21 12:58:35
+ * @LastEditTime: 2024-02-04 00:10:54
  * @FilePath: /1s/src/api/apiInterception.ts
  * @Description: 
  * 
@@ -36,9 +36,8 @@ export const formDataFormatRequestInterceptor = (request) => {
 */
 export const tokenResponseInterceptor = (response) => {
     let loginStore = useLoginStatusStore();
-
-    if (response.headers.token) {
-        loginStore.token = response.headers.token
+    if (response.headers.Authorization) {
+        loginStore.token = response.headers.Authorization
     }
     return response;
 }
@@ -46,7 +45,7 @@ export const tokenResponseInterceptor = (response) => {
 export const tokenRequestInterceptor = (request) => {
     let loginStore = useLoginStatusStore();
     if (loginStore.token) {
-        request.headers.token = loginStore.token;
+        request.headers.Authorization = loginStore.token;
     }
     return request
 }

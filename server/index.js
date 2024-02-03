@@ -44,7 +44,7 @@ app.use(
         origin: "*",
         credentials: true, //是否允许发送Cookie
         allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], //设置所允许的HTTP请求方法
-        allowHeaders: ['Content-Type', 'Authorization', 'Accept','Token'], //设置服务器支持的所有头信息字段
+        allowHeaders: ['Content-Type', 'Authorization', 'Accept','X-Requested-With','Origin'], //设置服务器支持的所有头信息字段
         exposeHeaders: ['*'] //设置获取其他自定义字段
     })
 );

@@ -142,13 +142,18 @@ export const loginHook = (router, sequelize) => router.post('/login', async (ctx
   user.setDataValue('preview_avatar', ctx.relativePathToPreviewPath(user.avatar))
 
 
-  ctx.set('Token', ctx.signToken({
+  // 登录成功，签发token
+
+  let token =  ctx.signToken({
     userId: user.id,
-  }))
+  })
+
+  ctx.set('Authorization',token)
   
   return ctx.body = {
     status: ResponseStatusCodeEnum.LOGIN_SUCCESS,
-    data: user
+    data: user,
+    token
   }
 })
 

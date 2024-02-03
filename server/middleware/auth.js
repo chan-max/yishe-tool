@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-18 18:49:18
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-21 19:17:44
+ * @LastEditTime: 2024-02-04 00:11:37
  * @FilePath: /1s/server/middleware/auth.js
  * @Description: 处理请求中的token
  * 
@@ -32,7 +32,7 @@ export const auth = (app) =>
     ctx.verifyToken = () => {
       var payload = null
       try{
-        payload = jwt.verify(ctx.header.token, privateKey);
+        payload = jwt.verify(ctx.header.Authorization, privateKey);
         return payload
       }catch(e){
         // 处理 token错误 , 过期 或者 无 token

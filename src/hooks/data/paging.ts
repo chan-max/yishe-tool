@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 22:15:52
+ * @LastEditTime: 2024-02-03 21:29:34
  * @FilePath: /1s/src/hooks/data/paging.ts
  * @Description: 
  * 
@@ -22,7 +22,14 @@ export interface UsePaging {
     getList: any,
 }
 
-export const usePaging = (getListFn:(params:any)=>Promise<any>, callback?: (item: any) => any) => {
+export const usePaging = (getListFn:(params:any)=>Promise<any>, options:any) => {
+
+    options = {
+        immediate:true,
+        pageSize:30,
+        ...options,
+    }
+
     // 列表数据
     const list = ref([])
     // 当前页数
@@ -30,12 +37,12 @@ export const usePaging = (getListFn:(params:any)=>Promise<any>, callback?: (item
     // 总页数
     const pages = ref(Infinity)
     // 尺寸
-    const pageSize = ref(30)
+    const pageSize = ref(options.pageSize)
     // 总数
     const count = ref(0)
-    // 是否立即触发一次
-    const immediate = ref(true)
-
+    // 是否立即触发一次, 默认为true
+    const immediate = ref(options.immediate ?? true)
+    
     // 是否正在加载
     const loading = ref(false)
 
@@ -53,13 +60,12 @@ export const usePaging = (getListFn:(params:any)=>Promise<any>, callback?: (item
         }
 
         try {
-            loading.value = true
             page.value++
-
             if (page.value > pages.value) {
                 return
             }
             
+            loading.value = true
             let res = await getListFn({
                 page: page.value,
                 pageSize: 30,
@@ -69,8 +75,8 @@ export const usePaging = (getListFn:(params:any)=>Promise<any>, callback?: (item
             pages.value = res.pages;
 
             // 该回调函数可用于单独处理列表的每一项
-            if(res.list && callback){
-                res.list.forEach(callback)
+            if(res.list && options.callback){
+                res.list.forEach(options.callback)
             }
 
             list.value = list.value.concat(res.list);

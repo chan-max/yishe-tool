@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-14 11:33:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-03 01:52:47
+ * @LastEditTime: 2024-02-03 21:16:18
  * @FilePath: /1s/src/modules/app/components/modelComment/comment.vue
  * @Description:
  * 
@@ -22,7 +22,7 @@
     </ion-header>
     <ion-content>
       <ion-list class="ion-padding">
-        <comment-item v-for="(item, index) in list" @reply="reply" :commentInfo="item">
+        <comment-item v-for="(item, index) in list" @reply="reply" :commentInfo="item" :rootCommentInfo="item">
         </comment-item>
       </ion-list>
       <ion-infinite-scroll @ionInfinite="ionInfinite">
@@ -34,13 +34,8 @@
         <ion-avatar style="margin-top: 4px">
           <img class="avatar" :src="avatar" />
         </ion-avatar>
-        <ion-textarea
-          :auto-grow="false"
-          ref="input"
-          v-model="comment"
-          :placeholder="isReplying ? '正在回复' : '快来评论吧'"
-          @ionBlur="ionBlur"
-        ></ion-textarea>
+        <ion-textarea :auto-grow="false" ref="input" v-model="comment" :placeholder="isReplying ? '正在回复' : '快来评论吧'"
+          @ionBlur="ionBlur"></ion-textarea>
         <ion-button @click="addComment" size="small" style="height: 40px">
           {{ isReplying ? "回复" : "评论" }}
           <ion-icon slot="end" :icon="chatbubbleEllipsesOutline"></ion-icon>
@@ -68,22 +63,17 @@ const avatar = computed(() => {
 // 当前评论内容
 const comment = ref();
 
-// 评论的id
-const parentId = ref(0);
-
 const { page, pages, list, getList } = usePaging((params) => {
   return getAvailableModelComment({
     availableModelId: modelInfo.value.id,
     sortType: sortType.value,
-    parentId: parentId.value,
+    parentId: 0,
     ...params,
   });
 });
 
 const ionInfinite = async (ev) => {
-  await getList({
-    modelId: modelInfo.value.id,
-  });
+  await getList();
   ev.target.complete();
 };
 
@@ -95,11 +85,14 @@ const isReplying = ref(false);
 
 // 正在回复的评论
 const replyingComment = ref();
+// 正在评论的根评论
+const replyingRootComment = ref();
 
-function reply(info) {
+function reply(current,root) {
   input.value.$el.setFocus();
   isReplying.value = true;
-  replyingComment.value = info;
+  replyingComment.value = current;
+  replyingRootComment.value = root
 }
 
 function ionBlur() {
@@ -113,34 +106,41 @@ function ionBlur() {
   添加评论
 */
 
+// 评论的父id
+const parentId = ref(0);
+
 async function addComment() {
   if (!comment.value) {
     // 无内容
     return;
   }
-
+  
   try {
     // 返回的结果用于反显界面
-    
     const latestComment = await addAvailableModelComment({
       availableModelId: modelInfo.value.id,
       content: comment.value,
       userId: loginStore.userInfo?.id,
       parentId: isReplying.value ? replyingComment.value.id : 0,
+      // 为保证 rootid 同一层级的唯一性, 使用当前时间戳
+      rootId: isReplying.value ? replyingComment.value.root_id : new Date().getTime(), 
     });
-    
+     
+
+    latestComment.t_user = loginStore.userInfo;
+    modelInfo.value.comment_count++;
+
     if (isReplying.value) {
+      replyingRootComment.value.children.unshift(latestComment);
     } else {
       // 同步评论数量
-      modelInfo.value.comment_count++;
-
       // 同步视图
       // 默认添加的评论作者始终是用户本人，避免再次查库直接使用本地用户信息
-      latestComment.t_user = loginStore.userInfo;
       list.value.unshift(latestComment);
       // 清空
-      comment.value = "";
     }
+    comment.value = "";
+    isReplying.value = false;
   } catch (e) {
     alert("评论失败");
   }

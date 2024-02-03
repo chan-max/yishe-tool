@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-19 21:34:20
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 23:49:25
+ * @LastEditTime: 2024-02-03 21:10:09
  * @FilePath: /1s/src/modules/app/components/modelComment/commentItem.vue
  * @Description: 
  * 
@@ -13,10 +13,7 @@
     <div class="main">
       <div class="avatar">
         <ion-avatar style="width: 30px; height: 30px">
-          <img
-            :alt="commentInfo.t_user.preview_avatar"
-            :src="commentInfo.t_user.preview_avatar"
-          />
+          <img :src="commentInfo.t_user.preview_avatar" />
         </ion-avatar>
       </div>
       <div class="comment-main">
@@ -28,22 +25,31 @@
           {{ commentInfo.content }}
         </div>
       </div>
-      <div class="like" @click="like" :class="{liked:commentInfo.liked}">
-         <thumbup class="thumbup" style="width: 14px; height: 14px;"></thumbup>
-         {{ commentInfo.like_count || 0 }}
+      <div class="like" @click="like" :class="{ liked: commentInfo.liked }">
+        <thumbup class="thumbup" style="width: 14px; height: 14px;"></thumbup>
+        {{ commentInfo.like_count || 0 }}
       </div>
     </div>
-    <div class="reply" @click="reply(commentInfo)"> 回复 </div>
-    <div class="children"></div>
+    <div class="reply" @click="reply(commentInfo,rootCommentInfo)"> 回复 </div>
+    <div v-if="commentInfo.children && commentInfo.parent_id == 0 && commentInfo.root_children_count" class="children">
+      <comment-item v-for="item in commentInfo.children" :root-comment-info="rootCommentInfo" :comment-info="item" @reply="reply"></comment-item>
+    </div>
+    <div v-if="commentInfo.parent_id == 0 && commentInfo.root_children_count" class="more" @click="more(commentInfo)">
+      {{ loading ? '加载中...':'查看更多回复'}}
+    </div>
   </div>
 </template>
 <script setup>
 import { defineProps } from "vue";
 import { timeago } from "@/common/time";
 import thumbup from '@/icon/mobile/thumbup.svg?component';
-import {likeAvailableModelComment} from '@/api'
+import { likeAvailableModelComment } from '@/api'
+import { getAvailableModelComment } from "@/api/api/comment";
+import commentItem from './commentItem.vue'
+import { modelInfo, sortType, toggleSort } from "./index";
+import { usePaging } from "@/hooks/data/paging";
 
-const props = defineProps(["commentInfo"]);
+const props = defineProps(["commentInfo","rootCommentInfo"]);
 
 const emits = defineEmits(['reply'])
 
@@ -51,17 +57,41 @@ const emits = defineEmits(['reply'])
 async function like() {
   // 只要点过赞，就设为点赞状态
   props.commentInfo.liked = true;
-  
   (props.commentInfo.like_count)++
   await likeAvailableModelComment({
-    commentId:props.commentInfo.id,
+    commentId: props.commentInfo.id,
     count: 1
   })
 }
 
-function reply(info) {
-    emits('reply',info)
+function reply(commentInfo, rootCommentInfo) {
+  emits('reply', commentInfo, rootCommentInfo)
 }
+
+/*
+  获取评论的子评论
+*/
+const { list, getList,loading } = usePaging((params) => {
+  return getAvailableModelComment({
+    isChildren:true,
+    availableModelId: modelInfo.value.id,
+    sortType: sortType.value,
+    rootId:props.commentInfo.root_id,
+    ...params,
+  });
+},{
+  immediate:false,
+  pageSize:10
+});
+
+// 将子评论保留在节点上
+props.commentInfo.children = list
+
+
+async function more() {
+  await getList();
+}
+
 
 </script>
 
@@ -93,6 +123,7 @@ function reply(info) {
   display: flex;
   column-gap: 8px;
 }
+
 .comment-content {
   padding: 8px 0;
   font-size: 13px;
@@ -107,11 +138,12 @@ function reply(info) {
 .name {
   font-weight: bold;
 }
+
 .timeago {
   opacity: 0.4;
 }
 
-.like{
+.like {
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -120,21 +152,57 @@ function reply(info) {
   padding: 4px;
 }
 
-.like:active{
+.like:active {
   transform: scale(.8);
 }
 
-.liked{
+.liked {
   color: #6900ff;
 }
 
-.reply{
+.reply {
   margin-left: 40px;
   font-size: 12px;
   opacity: .6;
 }
-.reply:active{
+
+.reply:active {
   opacity: .8;
   text-decoration: underline;
+}
+
+.more {
+  margin-left: 40px;
+  padding: 5px 0;
+  font-size: 12px;
+  opacity: .6;
+  display: flex;
+  align-items: center;
+}
+
+.more:active {
+  opacity: 1;
+}
+
+.more::before {
+  content: '';
+  height: 1px;
+  background: var(--ion-text-color);
+  width: 20px;
+  margin-right: 8px;
+  opacity: .4;
+}
+
+.more::after {
+  content: '';
+  height: 1px;
+  background: var(--ion-text-color);
+  width: 20px;
+  margin-left: 8px;
+  opacity: .4;
+}
+
+.children{
+  margin-left: 20px;
 }
 </style>

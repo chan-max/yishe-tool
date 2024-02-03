@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 19:30:23
+ * @LastEditTime: 2024-02-03 13:47:00
  * @FilePath: /1s/src/modules/app/views/index/swiper/index.vue
  * @Description: 
  * 
@@ -12,28 +12,11 @@
   <div v-if="firstLoading" class="flex justify-center w-full h-full items-center">
     <ion-spinner name="dots" style="height: 100px"></ion-spinner>
   </div>
-  <swiper
-    v-else
-    class="swiper"
-    direction="vertical"
-    :modules="[Virtual]"
-    :slides-per-view="1"
-    virtual
-    @reachEnd="reachEnd"
-    @activeIndexChange="activeIndexChange"
-    @touchStart="touchStart"
-    @touchEnd="touchEnd"
-    @transitionStart="transitionStart"
-    @transitionEnd="transitionEnd"
-    @sliderMove="sliderMove"
-  >
-    <swiper-slide
-      style="width: 100%; height: 100%"
-      v-for="(item, index) in list"
-      :key="index"
-      :virtualIndex="index"
-    >
-      <swiper-item :available-model-info="item"  :index="index"></swiper-item>
+  <swiper v-else class="swiper" direction="vertical" :modules="[Virtual]" :slides-per-view="1" virtual
+    @reachEnd="reachEnd" @activeIndexChange="activeIndexChange" @touchStart="touchStart" @touchEnd="touchEnd"
+    @transitionStart="transitionStart" @transitionEnd="transitionEnd" @sliderMove="sliderMove">
+    <swiper-slide style="width: 100%; height: 100%" v-for="(item, index) in list" :key="index" :virtualIndex="index">
+      <swiper-item :available-model-info="item" :index="index"></swiper-item>
     </swiper-slide>
   </swiper>
 </template>
@@ -49,8 +32,8 @@ import swiperItem from "./item.vue";
 import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
 import slide from "./slide.vue";
 
-const { list, page, getList, loading, firstLoading } = usePaging(getAvailableModel,(item) => {
-  item.isLike = false
+const { list, page, getList, loading, firstLoading } = usePaging(getAvailableModel, {
+  callback: (item) => item.isLike = false
 });
 
 // 滑动到最新
@@ -64,7 +47,7 @@ function reachEnd() {
 
 const showSwipe = ref(true);
 
-function touchStart() {}
+function touchStart() { }
 
 function sliderMove() {
   // 此事件在移动过程中持续触发，用于开始滑动的事件
@@ -79,9 +62,9 @@ function touchEnd() {
   }
 }
 
-function transitionStart() {}
+function transitionStart() { }
 
-function transitionEnd() {}
+function transitionEnd() { }
 </script>
 
 <style lang="less">

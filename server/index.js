@@ -112,11 +112,13 @@ export function getHost() {
     return (process.env.localhost || ip.address()) + ':' + port
 }
 
-const options = {
-    // key:  fs.readFileSync('./ssl/private.key'),
-    // cert: fs.readFileSync('./ssl/certificate.crt'),        
+const options = process.env.NODE_ENV === 'development' ?
+{    
     key:  fs.readFileSync('./tools/mac-key.pem'),
     cert: fs.readFileSync('./tools/mac.pem'),
+} : {
+  key:  fs.readFileSync('./ssl/private.key'),
+    cert: fs.readFileSync('./ssl/certificate.crt'),    
 }
 
 

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 13:44:54
+ * @LastEditTime: 2024-02-04 13:18:35
  * @FilePath: /1s/src/api/url.ts
  * @Description: 
  * 
@@ -101,6 +101,9 @@ export enum Url {
     REMOVE_MODEL = '/removeAvailableModel',
 
     ADD_AVAILABLE_MODEL_COMMENT = '/addAvailableModelComment',
+
+    // 删除模型评论
+    DELETE_AVAILABLE_MODEL_COMMENT = '/deleteAvailableModelComment',
 
     GET_AVAILABLE_MODEL_COMMENT = '/getAvailableModelComment',
 

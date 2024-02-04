@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 20:01:08
+ * @LastEditTime: 2024-02-04 23:51:23
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -35,30 +35,6 @@
       ></gltf-viewer>
     </div>
 
-    <div class="menu-right">
-      <div class="menu-item">
-        <heart
-          class="icon"
-          @click="availableModelInfo.isLike = !availableModelInfo.isLike"
-          :style="{ color: availableModelInfo.isLike ? '#ea3323' : '' }"
-        ></heart>
-        <div class="text">{{ availableModelInfo.like_count }}</div>
-      </div>
-      <div class="menu-item">
-        <comment @click="openComment" class="icon"></comment>
-        <div class="text">{{ availableModelInfo.comment_count }}</div>
-      </div>
-      <div class="menu-item">
-        <share class="icon"></share>
-        <div class="text"></div>
-      </div>
-      <div class="menu-item">
-        <shopping-cart class="icon"></shopping-cart>
-        <div class="text"></div>
-      </div>
-    </div>
-
-    <div class="menu-bottom"></div>
     <div class="menu-top">
       <ion-avatar style="width: 32px; height: 32px" class="avatar-border">
         <img
@@ -78,17 +54,48 @@
       <div style="font-size: 12px">查看更多细节</div>
     </div>
 
+    <div class="menu-right">
+      <div class="menu-item">
+        <heart
+          class="icon"
+          @click="availableModelInfo.isLike = !availableModelInfo.isLike"
+          :style="{ color: availableModelInfo.isLike ? '#ea3323' : '' }"
+        ></heart>
+        <div class="text">{{ availableModelInfo.like_count }}</div>
+      </div>
+      <div class="menu-item">
+        <icon-comment @click="showComment = true" class="icon"></icon-comment>
+        <div class="text">{{ availableModelInfo.comment_count }}</div>
+      </div>
+      <div class="menu-item">
+        <share class="icon"  @click="openComment"></share>
+        <div class="text"></div>
+      </div>
+      <div class="menu-item">
+        <shopping-cart class="icon"></shopping-cart>
+        <div class="text"></div>
+      </div>
+    </div>
+
+    <div class="menu-bottom"></div>
+  
+
     <div v-if="loading" class="progress">
       <ion-progress-bar type="indeterminate"></ion-progress-bar>
     </div>
+  
   </div>
+
+  <ion-modal class="model-comment" :is-open="showComment" :initial-breakpoint="1" :breakpoints="[0, 1]" @didDismiss="showComment = false">
+      <comment :available-model-info="availableModelInfo"></comment>
+  </ion-modal>
 </template>
 <script setup>
 import { defineProps, ref, onMounted, watch, onUnmounted } from "vue";
 import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import heart from "@/icon/mobile/heart.svg?component";
-import comment from "@/icon/mobile/comment.svg?component";
+import iconComment from "@/icon/mobile/comment.svg?component";
 import share from "@/icon/mobile/share.svg?component";
 import shoppingCart from "@/icon/mobile/shoppingCart.svg?component";
 import { likeModel, likeAvailableModel } from "@/api";
@@ -96,6 +103,7 @@ import { timeago } from "@/common/time";
 import dragToMove from "@/components/tips/dragToMove/index.vue";
 import { isOpen, openModelComment } from "../../../components/modelComment/index.ts";
 import { showMovableTip } from "@/store/stores/app.ts";
+import comment from '../../../components/modelComment/index.vue'
 
 const props = defineProps(["availableModelInfo", "index"]);
 
@@ -103,6 +111,10 @@ const props = defineProps(["availableModelInfo", "index"]);
 function openComment() {
   openModelComment(props.availableModelInfo);
 }
+
+const test = ref(888)
+
+const showComment = ref(false)
 
 // 点赞收藏模型
 watch(
@@ -159,7 +171,18 @@ function loaded() {
   loading.value = false;
 }
 </script>
+<style>
+/* 用于设置固定高度的评论弹层 */
+.model-comment {
+  --height: auto;
+}
+</style>
 <style lang="less" scoped>
+
+ion-modal {
+  --height: auto;
+}
+
 .item {
   width: 100%;
   height: 100%;

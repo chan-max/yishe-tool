@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-23 22:50:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 22:02:26
+ * @LastEditTime: 2024-02-04 13:19:12
  * @FilePath: /1s/src/api/api/comment.ts
  * @Description: 
  * 
@@ -63,6 +63,15 @@ export const addModelComment = (params) => new Promise( async(resolve, reject) =
 export const addAvailableModelComment = (params) => new Promise( async(resolve, reject) => {
     try {
         let res = await apiInstance.post(Url.ADD_AVAILABLE_MODEL_COMMENT, params)
+        resolve(res.data.data)
+    } catch (e) {
+        reject(e);
+    }
+})
+
+export const deleteAvailableModelComment = (params) => new Promise( async(resolve, reject) => {
+    try {
+        let res = await apiInstance.post(Url.DELETE_AVAILABLE_MODEL_COMMENT, params)
         resolve(res.data.data)
     } catch (e) {
         reject(e);

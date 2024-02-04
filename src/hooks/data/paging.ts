@@ -2,13 +2,13 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-03 21:29:34
+ * @LastEditTime: 2024-02-05 01:16:27
  * @FilePath: /1s/src/hooks/data/paging.ts
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
  */
-import { Ref, computed, ref } from 'vue'
+import { Ref, computed, isReactive, isRef, ref } from 'vue'
 
 /*
     通用分页逻辑
@@ -22,16 +22,19 @@ export interface UsePaging {
     getList: any,
 }
 
-export const usePaging = (getListFn:(params:any)=>Promise<any>, options:any) => {
+export const usePaging = (getListFn: (params: any) => Promise<any>, options: any) => {
 
     options = {
-        immediate:true,
-        pageSize:30,
+        immediate: true,
+        pageSize: 30,
+        initialList: ref([]),
+        callback:null, // 处理每个请求元素的回调
+        resListFilter:null, // 请求结果被插入列表前的过滤器，被过滤掉的不会添加到列表中
         ...options,
     }
 
-    // 列表数据
-    const list = ref([])
+    // 列表数据 , 可用外界传入的参数，也可以自身初始化
+    const list = options.initialList
     // 当前页数
     const page = ref(0)
     // 总页数
@@ -42,7 +45,6 @@ export const usePaging = (getListFn:(params:any)=>Promise<any>, options:any) => 
     const count = ref(0)
     // 是否立即触发一次, 默认为true
     const immediate = ref(options.immediate ?? true)
-    
     // 是否正在加载
     const loading = ref(false)
 
@@ -64,22 +66,39 @@ export const usePaging = (getListFn:(params:any)=>Promise<any>, options:any) => 
             if (page.value > pages.value) {
                 return
             }
-            
+
             loading.value = true
             let res = await getListFn({
                 page: page.value,
                 pageSize: 30,
                 ...params
             })
-            
+
+            // 将总页数同步
             pages.value = res.pages;
 
+
+
             // 该回调函数可用于单独处理列表的每一项
-            if(res.list && options.callback){
+            if (res.list && options.callback) {
                 res.list.forEach(options.callback)
             }
 
-            list.value = list.value.concat(res.list);
+            if(options.resListFilter){
+                res.list = res.list.filter(options.resListFilter)
+            }
+
+            if (isRef(list)) {
+                res.list.forEach((item) => {
+                    (list.value as any).push(item)
+                })
+            } else if (isReactive(list)) {
+                res.list.forEach((item) => {
+                    list.push(item)
+                })
+            } else {
+                // 未知错误
+            }
 
             loading.value = false
         } catch (e) {
@@ -91,6 +110,14 @@ export const usePaging = (getListFn:(params:any)=>Promise<any>, options:any) => 
         getList()
     }
 
+
+    // 重置分页状态
+    function reset(){
+        pages.value = Infinity
+        page.value = 0
+        list.value = []
+    }
+
     return {
         page,
         pages,
@@ -99,6 +126,7 @@ export const usePaging = (getListFn:(params:any)=>Promise<any>, options:any) => 
         getList,
         count,
         loading,
+        reset,
         firstLoading
     }
 }

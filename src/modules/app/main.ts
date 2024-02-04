@@ -3,7 +3,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-29 20:26:28
+ * @LastEditTime: 2024-02-04 23:54:28
  * @FilePath: /1s/src/modules/app/main.ts
  * @Description: 
  * 
@@ -78,7 +78,8 @@ app.use(IonicVue, {
   // animated: false, // 不设置该值会存在右滑返回时的错误动画
   swipeGesture: false,
   swipeBackEnabled: false,
-  backButtonText:''
+  backButtonText:'',
+  // scrollAssist: false,
 });
 
 import { initIonicComponents } from './helper/ionic.ts'

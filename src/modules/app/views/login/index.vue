@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 21:36:27
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-27 22:16:58
+ * @LastEditTime: 2024-02-04 10:37:32
  * @FilePath: /1s/src/modules/app/views/login/index.vue
  * @Description: 
  * 
@@ -30,7 +30,6 @@
             ></ion-input>
           </ion-item>
           <ion-item>
-  
               <ion-input
                 label="密码"
                 label-placement="floating"
@@ -39,15 +38,20 @@
                 placeholder=""
                 fill="outline"
               ></ion-input>
-              
           </ion-item>
-
+          
           <ion-item>
-            <ion-button size="default" style="width: 100%" @click="submit" expand="block"
-              >登 录</ion-button
-            >
+            <div style="width:100%;display:flex;justify-content: end;">
+              <a class="forget">忘记密码？</a>
+            </div>
+          </ion-item>
+          <ion-item >
+            <ion-button size="default" style="width: 100%" @click="submit" expand="block">
+              登 录
+            </ion-button>
           </ion-item>
         </ion-list>
+        <a class="signup" @click="signup"> 一键快速注册 </a>
       </div>
     </ion-content>
   </ion-page>
@@ -123,6 +127,19 @@ async function submit() {
     loading.dismiss();
   }
 }
+
+function forgetPassword(){
+  router.push({
+    name:"ForgetPassword"
+  })
+}
+
+function signup(){
+  router.push({
+    name:"Signup"
+  })
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -131,6 +148,32 @@ async function submit() {
   flex-direction: column;
   width: 100%;
   height: 100%;
-  justify-content: start;
+  justify-content: center;
+  position: relative;
 }
+
+
+ion-input{
+  border-bottom: 1px solid #ddd;
+}
+
+.dark{
+  ion-input{
+    border-bottom: 1px solid #222;
+  }
+}
+
+a{
+  font-size: 12px;
+}
+
+.signup{
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  width: 100%;
+  color: #6900ff;
+}
+
+
 </style>

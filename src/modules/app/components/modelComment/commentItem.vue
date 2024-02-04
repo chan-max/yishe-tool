@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-19 21:34:20
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-03 21:10:09
+ * @LastEditTime: 2024-02-04 15:41:02
  * @FilePath: /1s/src/modules/app/components/modelComment/commentItem.vue
  * @Description: 
  * 
@@ -13,13 +13,14 @@
     <div class="main">
       <div class="avatar">
         <ion-avatar style="width: 30px; height: 30px">
-          <img :src="commentInfo.t_user.preview_avatar" />
+          <img :src="commentInfo.t_user.preview_avatar || '/mobileDefaultAvatar.svg'" />
         </ion-avatar>
       </div>
       <div class="comment-main">
         <div class="comment-info">
           <span class="name">{{ commentInfo.t_user.name || "未命名" }} </span>
           <span class="timeago"> {{ timeago(commentInfo.createdAt) }}</span>
+          <div style="flex:1"></div>
         </div>
         <div class="comment-content">
           {{ commentInfo.content }}
@@ -30,12 +31,17 @@
         {{ commentInfo.like_count || 0 }}
       </div>
     </div>
-    <div class="reply" @click="reply(commentInfo,rootCommentInfo)"> 回复 </div>
+    <div class="operate">
+      <span class="reply" @click="reply(commentInfo, rootCommentInfo)"> 回复 </span>
+      <span class="delete" v-if="loginStore.userInfo?.id == commentInfo.user_id" @click="deleteComment(commentInfo,rootCommentInfo)"> 删除
+      </span>
+    </div>
     <div v-if="commentInfo.children && commentInfo.parent_id == 0 && commentInfo.root_children_count" class="children">
-      <comment-item v-for="item in commentInfo.children" :root-comment-info="rootCommentInfo" :comment-info="item" @reply="reply"></comment-item>
+      <comment-item v-for="item in commentInfo.children" :root-comment-info="rootCommentInfo" :comment-info="item"
+        @reply="reply"></comment-item>
     </div>
     <div v-if="commentInfo.parent_id == 0 && commentInfo.root_children_count" class="more" @click="more(commentInfo)">
-      {{ loading ? '加载中...':'查看更多回复'}}
+      {{ loading ? '加载中...' : '查看更多回复' }}
     </div>
   </div>
 </template>
@@ -44,14 +50,17 @@ import { defineProps } from "vue";
 import { timeago } from "@/common/time";
 import thumbup from '@/icon/mobile/thumbup.svg?component';
 import { likeAvailableModelComment } from '@/api'
-import { getAvailableModelComment } from "@/api/api/comment";
+import { getAvailableModelComment, deleteAvailableModelComment } from "@/api/api/comment";
 import commentItem from './commentItem.vue'
 import { modelInfo, sortType, toggleSort } from "./index";
 import { usePaging } from "@/hooks/data/paging";
+import { useLoginStatusStore } from "@/store/stores/login";
 
-const props = defineProps(["commentInfo","rootCommentInfo"]);
+const loginStore = useLoginStatusStore()
 
-const emits = defineEmits(['reply'])
+const props = defineProps(["commentInfo", "rootCommentInfo"]);
+
+const emits = defineEmits(['reply','delete'])
 
 // 顶评论
 async function like() {
@@ -71,17 +80,17 @@ function reply(commentInfo, rootCommentInfo) {
 /*
   获取评论的子评论
 */
-const { list, getList,loading } = usePaging((params) => {
+const { list, getList, loading } = usePaging((params) => {
   return getAvailableModelComment({
-    isChildren:true,
+    isChildren: true,
     availableModelId: modelInfo.value.id,
     sortType: sortType.value,
-    rootId:props.commentInfo.root_id,
+    rootId: props.commentInfo.root_id,
     ...params,
   });
-},{
-  immediate:false,
-  pageSize:10
+}, {
+  immediate: false,
+  pageSize: 10
 });
 
 // 将子评论保留在节点上
@@ -92,6 +101,15 @@ async function more() {
   await getList();
 }
 
+async function deleteComment(commentInfo,rootCommentInfo) {
+  await deleteAvailableModelComment({ 
+    commentId: props.commentInfo.id, 
+    rootCommentId:props.rootCommentInfo.id,
+    availableModelId: modelInfo.value.id 
+  })
+  emits('delete',commentInfo,rootCommentInfo)
+  // 处理删除反显
+}
 
 </script>
 
@@ -122,6 +140,7 @@ async function more() {
 .comment-info {
   display: flex;
   column-gap: 8px;
+  align-items: center;
 }
 
 .comment-content {
@@ -161,14 +180,12 @@ async function more() {
 }
 
 .reply {
-  margin-left: 40px;
   font-size: 12px;
   opacity: .6;
 }
 
 .reply:active {
   opacity: .8;
-  text-decoration: underline;
 }
 
 .more {
@@ -202,7 +219,24 @@ async function more() {
   opacity: .4;
 }
 
-.children{
+.children {
   margin-left: 20px;
+}
+
+.delete {
+  font-size: 12px;
+  opacity: .9;
+  color: var(--ion-color-danger);
+}
+
+.delete:active {
+  opacity: 1;
+}
+
+.operate {
+  margin-left: 40px;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 6px;
 }
 </style>

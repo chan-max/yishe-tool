@@ -44,7 +44,7 @@ app.use(
         origin: "*",
         credentials: true, //是否允许发送Cookie
         allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], //设置所允许的HTTP请求方法
-        allowHeaders: ['Content-Type', 'Authorization', 'Accept','X-Requested-With','Origin'], //设置服务器支持的所有头信息字段
+        allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With', 'Origin'], //设置服务器支持的所有头信息字段
         exposeHeaders: ['*'] //设置获取其他自定义字段
     })
 );
@@ -113,16 +113,16 @@ export function getHost() {
 }
 
 const options = process.env.NODE_ENV === 'development' ?
-{    
-    key:  fs.readFileSync('./tools/mac-key.pem'),
-    cert: fs.readFileSync('./tools/mac.pem'),
-} : {
-  key:  fs.readFileSync('./ssl/private.key'),
-    cert: fs.readFileSync('./ssl/certificate.crt'),    
-}
+    {
+        key: fs.readFileSync('./tools/mac-key.pem'),
+        cert: fs.readFileSync('./tools/mac.pem'),
+    } : {
+        key: fs.readFileSync('./ssl/private.key'),
+        cert: fs.readFileSync('./ssl/certificate.crt'),
+    }
 
 
-var server = process.env.protool === 'https' ? https.createServer(options, app.callback()) : http.createServer({},app.callback())
+var server = process.env.protool === 'https' ? https.createServer(options, app.callback()) : http.createServer({}, app.callback())
 
 import { initWebsocket } from './websocket/index.js'
 

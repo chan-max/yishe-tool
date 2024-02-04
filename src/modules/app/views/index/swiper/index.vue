@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-03 13:47:00
+ * @LastEditTime: 2024-02-04 23:58:55
  * @FilePath: /1s/src/modules/app/views/index/swiper/index.vue
  * @Description: 
  * 
@@ -30,7 +30,6 @@ import "swiper/css";
 import "@ionic/vue/css/ionic-swiper.css";
 import swiperItem from "./item.vue";
 import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
-import slide from "./slide.vue";
 
 const { list, page, getList, loading, firstLoading } = usePaging(getAvailableModel, {
   callback: (item) => item.isLike = false
@@ -68,14 +67,8 @@ function transitionEnd() { }
 </script>
 
 <style lang="less">
-/* 用于设置固定高度的评论弹层 */
-.model-comment {
-  --height: auto;
-}
-
 .swiper {
   width: 100%;
   height: 100%;
 }
 </style>
-../../../../../hooks/data/paging.js

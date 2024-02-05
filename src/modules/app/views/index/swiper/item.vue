@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-04 23:51:23
+ * @LastEditTime: 2024-02-05 12:45:16
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -55,6 +55,7 @@
     </div>
 
     <div class="menu-right">
+      <div style="flex:1"></div> 
       <div class="menu-item">
         <heart
           class="icon"
@@ -68,7 +69,7 @@
         <div class="text">{{ availableModelInfo.comment_count }}</div>
       </div>
       <div class="menu-item">
-        <share class="icon"  @click="openComment"></share>
+        <share class="icon"></share>
         <div class="text"></div>
       </div>
       <div class="menu-item">
@@ -101,18 +102,13 @@ import shoppingCart from "@/icon/mobile/shoppingCart.svg?component";
 import { likeModel, likeAvailableModel } from "@/api";
 import { timeago } from "@/common/time";
 import dragToMove from "@/components/tips/dragToMove/index.vue";
-import { isOpen, openModelComment } from "../../../components/modelComment/index.ts";
 import { showMovableTip } from "@/store/stores/app.ts";
 import comment from '../../../components/modelComment/index.vue'
+import {vibrate ,impact} from '../../../helper/device.ts';
 
 const props = defineProps(["availableModelInfo", "index"]);
 
 // 打开评论
-function openComment() {
-  openModelComment(props.availableModelInfo);
-}
-
-const test = ref(888)
 
 const showComment = ref(false)
 
@@ -120,10 +116,12 @@ const showComment = ref(false)
 watch(
   () => props.availableModelInfo.isLike,
   async () => {
+    impact()
     await likeAvailableModel({
       availableModelId: props.availableModelInfo.id,
       isLike: props.availableModelInfo.isLike,
     });
+    // 更新状态
     if (props.availableModelInfo.isLike) {
       props.availableModelInfo.like_count++;
       props.availableModelInfo.isLike = true;
@@ -248,7 +246,7 @@ ion-progress-bar {
   flex-direction: column;
   align-items: center;
   row-gap: 20px;
-  justify-content: end;
+  justify-content: space-between;
   padding: 20px 0;
   z-index: 2;
 }

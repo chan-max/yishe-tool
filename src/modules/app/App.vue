@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-06 23:30:05
+ * @LastEditTime: 2024-02-05 08:54:34
  * @FilePath: /1s/src/modules/app/App.vue
  * @Description: 
  * 
@@ -22,3 +22,17 @@
 import { IonApp, IonRouterOutlet, IonPage } from "@ionic/vue";
 import {isDark} from '@/store/stores/app.ts'
 </script>
+<style lang="less">
+
+@font-face{
+    font-family: 'alimama';
+    src : url('/public/fonts/AlimamaFangYuanTiVF-Thin.ttf');
+}
+
+// *{
+//   font-family: alimama;
+// }
+
+</style>
+
+

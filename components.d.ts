@@ -12,7 +12,6 @@ declare module 'vue' {
     BottomMenu: typeof import('./src/components/design/layout/bottomMenu.vue')['default']
     Canvas: typeof import('./src/components/design/layout/customTextSticker/canvas.vue')['default']
     ColorPicker: typeof import('./src/components/design/components/colorPicker.vue')['default']
-    Comment: typeof import('ant-design-vue/es')['Comment']
     CustomTextSticker: typeof import('./src/components/design/layout/customTextSticker/index.vue')['default']
     DecalControl: typeof import('./src/components/design/layout/decalControl/index.vue')['default']
     DecalList: typeof import('./src/components/design/layout/decalList/index.vue')['default']

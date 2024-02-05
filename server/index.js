@@ -71,7 +71,8 @@ app.use(_static(path.join(__dirname, "../static")));
 import { uploadsPath } from "./fileManage.js"
 import { formatFilePath } from "./util.js";
 
-app.use(_static(uploadsPath()));
+// 所有静态文件的路径 不在使用静态路径访问文件
+// app.use(_static(uploadsPath()));
 
 app.use(koaBody({
     multipart: true,
@@ -87,6 +88,9 @@ app.use(koaBody({
 app.use(async (ctx, next) => {
     // 将文件将对路径转换为全路径
     ctx.relativePathToPreviewPath = (path) => {
+
+        return formatFilePath(`${ctx.protocol}://${getHost()}/file?name=${path}`);
+      
         if (!path) {
             return ''
         }

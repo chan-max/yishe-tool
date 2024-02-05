@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-04 19:33:16
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 01:04:47
+ * @LastEditTime: 2024-02-05 08:27:51
  * @FilePath: /1s/src/modules/app/components/modelComment/bar.vue
  * @Description: 
  * 
@@ -30,7 +30,9 @@
             <div class="children">
                 <slot name="children"></slot>
             </div>
-            <div class="more" @click="$emit('more')" v-show="showMore"> 查看更多评论 </div>
+            <div class="more" @click="$emit('more')" v-show="showMore"> 
+                {{ loadingChildren ? '正在加载中...' : '查看更多评论' }}
+            </div>
         </div>
         <div class="like" :style="{ color: commentInfo.liked && '#6900ff' }">
             <thumbup @click="$emit('like', commentInfo)" style="width: 14px; height: 14px;margin:4px;"
@@ -49,6 +51,10 @@ const props = defineProps({
         default: false
     },
     showMore: {
+        default: false
+    },
+    // 是否正在加载子评论
+    loadingChildren:{
         default: false
     }
 });

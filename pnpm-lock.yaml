@@ -26,6 +26,9 @@ dependencies:
   '@capacitor/filesystem':
     specifier: ^5.2.0
     version: 5.2.0(@capacitor/core@5.6.0)
+  '@capacitor/haptics':
+    specifier: ^5.0.7
+    version: 5.0.7(@capacitor/core@5.6.0)
   '@capacitor/ios':
     specifier: ^5.6.0
     version: 5.6.0(@capacitor/core@5.6.0)
@@ -1795,6 +1798,14 @@ packages:
     resolution: {integrity: sha512-fyv+yWVFfglobPPveIRm4+ryMGI8vW27vjX63HDwB7K5fscSYajid+ie3qfwl2wkbPhlX8KTPes7IPij0lCmQg==}
     peerDependencies:
       '@capacitor/core': ^5.1.1
+    dependencies:
+      '@capacitor/core': 5.6.0
+    dev: false
+
+  /@capacitor/haptics@5.0.7(@capacitor/core@5.6.0):
+    resolution: {integrity: sha512-/j+7Qa4BxQA5aOU43cwXuiudfSXfoHFsAVfcehH5DkSjxLykZKWHEuE4uFJXqdkSIbAHjS37D0Sde6ENP6G/MA==}
+    peerDependencies:
+      '@capacitor/core': ^5.0.0
     dependencies:
       '@capacitor/core': 5.6.0
     dev: false

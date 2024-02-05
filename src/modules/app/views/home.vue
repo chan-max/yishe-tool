@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-11-28 01:16:00
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-28 10:56:14
+ * @LastEditTime: 2024-02-05 01:26:38
  * @FilePath: /1s/src/modules/app/views/home.vue
  * @Description: 
  * 
@@ -28,8 +28,8 @@
             <ion-label class="label">工作台</ion-label>
           </ion-tab-button>
           <ion-tab-button tab="tab4" href="/home/talk">
+            <ion-badge color="danger">44</ion-badge>
             <ion-icon class="icon" :src="iconTalkFilled"></ion-icon>
-            <ion-badge color="tertiary">44</ion-badge>
             <ion-label class="label">消息</ion-label>
           </ion-tab-button>
           <ion-tab-button tab="tab5" href="/home/user">

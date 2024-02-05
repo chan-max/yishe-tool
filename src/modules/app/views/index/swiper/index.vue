@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-04 23:58:55
+ * @LastEditTime: 2024-02-05 09:30:49
  * @FilePath: /1s/src/modules/app/views/index/swiper/index.vue
  * @Description: 
  * 
@@ -32,6 +32,7 @@ import swiperItem from "./item.vue";
 import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
 
 const { list, page, getList, loading, firstLoading } = usePaging(getAvailableModel, {
+  // 是否处于点赞状态
   callback: (item) => item.isLike = false
 });
 

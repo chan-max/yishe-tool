@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-14 11:33:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 01:17:38
+ * @LastEditTime: 2024-02-05 09:29:21
  * @FilePath: /1s/src/modules/app/components/modelComment/index.vue
  * @Description:
  * 
@@ -25,7 +25,7 @@
       <ion-list class="ion-padding" lines="none">
         <bar v-for="item in list" :commentInfo="item" @reply="reply(item, item)" @like="like"
           @delete="deleteComment(item, item)" @more="more(item)" :show-delete="loginStore.userInfo?.id == item.user_id"
-          :show-more="item.root_children_count">
+          :show-more="item.root_children_count" :loading-children="item.loading">
           <template v-if="item.children && item.children.length" #children>
             <bar v-for="itemChild in item.children" :commentInfo="itemChild" @reply="reply(itemChild, item)" @like="like"
               @delete="deleteComment(itemChild, item)" :show-delete="loginStore.userInfo?.id == itemChild.user_id"
@@ -38,14 +38,17 @@
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-content>
-    <ion-footer>
+    <ion-footer >
       <div class="footer ion-padding">
-        <ion-textarea placeholder="快来评论吧～" ref="commentInput" v-model="commentInputContent" @ionBlur="ionBlur">
-          <ion-button @click="addComment" fill="clear" slot="end" size="small">
-            <ion-icon slot="icon-only" :icon="chatbubbleEllipsesOutline" aria-hidden="true"></ion-icon>
-            {{ isReplying ? ' 回复' : '评论' }}
-          </ion-button>
+        <ion-avatar style="width: 30px;height:30px;flex-shrink:0;margin-top:4px;">
+          <img :src="loginStore.userInfo?.preview_avatar || '/mobileDefaultAvatar.svg'">
+        </ion-avatar>
+        <ion-textarea fill="outlined" placeholder="快来评论吧～" ref="commentInput" v-model="commentInputContent" @ionBlur="ionBlur">
         </ion-textarea>
+        <ion-button @click="addComment" fill="clear" size="small">
+          <ion-icon slot="icon-only" :icon="chatbubbleEllipsesOutline" aria-hidden="true"></ion-icon>
+          {{ isReplying ? ' 回复' : '评论' }}
+        </ion-button>
       </div>
     </ion-footer>
   </div>
@@ -58,19 +61,24 @@ import { usePaging } from "@/hooks/data/paging.ts";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { likeAvailableModelComment } from "@/api";
 import { chatbubbleEllipsesOutline } from "ionicons/icons";
-import { ref ,watch} from "vue";
+import { ref, watch } from "vue";
 
 const loginStore = useLoginStatusStore();
 
 const props = defineProps(["availableModelInfo"]);
 
-const { list, getList,reset } = usePaging((params) => {
+const { list, getList, reset } = usePaging((params) => {
   return getAvailableModelComment({
     availableModelId: props.availableModelInfo.id,
     sortType: sortType.value,
     parentId: 0, // 获取所有根评论
     ...params,
   });
+},{
+  resListFilter: (item) => {
+        // 过滤掉出现过的评论
+        return list.value.every((child) => child.id != item.id)
+      }
 });
 
 const ionInfinite = async (ev) => {
@@ -92,10 +100,10 @@ const replyingComment = ref();
 const replyingRootComment = ref();
 
 /* 切换排序方式 */
-watch(sortType,async () => {
- // 直接清空原有数据，并且加载一次
- reset()
- await getList()
+watch(sortType, async () => {
+  // 直接清空原有数据，并且加载一次
+  reset()
+  await getList()
 })
 
 /* 回复根评论 */
@@ -135,10 +143,8 @@ async function addComment() {
     // 
     latestComment.t_user = loginStore.userInfo;
     // 更新评论数
-    props.availableModelInfo.comment_count++;
 
     if (isReplying.value) {
-
       if (!replyingRootComment.value.children) {
         replyingRootComment.value.children = []
       }
@@ -168,13 +174,13 @@ async function deleteComment(commentInfo, rootCommentInfo) {
     availableModelId: props.availableModelInfo.id
   })
   // 删除成功
-  
-  if(commentInfo.id == rootCommentInfo.id){
+
+  if (commentInfo.id == rootCommentInfo.id) {
     // 根评论
-    list.value.splice(list.value.indexOf(commentInfo),1)
-  }else{
+    list.value.splice(list.value.indexOf(commentInfo), 1)
+  } else {
     // 子评论
-    rootCommentInfo.children.splice(rootCommentInfo.children.indexOf(commentInfo),1)
+    rootCommentInfo.children.splice(rootCommentInfo.children.indexOf(commentInfo), 1)
   }
 
   props.availableModelInfo.comment_count--
@@ -210,9 +216,9 @@ async function more(commentInfo) {
     });
 
     // 执行获取列表
-    await getList()
     commentInfo.getList = getList;
     commentInfo.loading = loading;
+    await getList()
   } else {
     // 已经初始化
     commentInfo.getList()

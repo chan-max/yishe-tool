@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-11-29 21:41:56
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-07 13:59:02
+ * @LastEditTime: 2024-02-05 12:29:23
  * @FilePath: /1s/server/sequelize/models/t_user.js
  * @Description: 
  * 
@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
+    name:DataTypes.STRING,
     email: DataTypes.STRING,
     avatar: DataTypes.STRING,
     account: DataTypes.STRING,

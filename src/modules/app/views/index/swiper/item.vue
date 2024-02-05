@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 16:13:39
+ * @LastEditTime: 2024-02-06 00:29:47
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -12,11 +12,7 @@
   <div class="item">
     <Transition leave-active-class="animate__animated animate__fadeOut" :duration="200">
       <div class="image" v-if="showImage">
-        <van-image
-          style="width: 100%; height: 100%"
-          fit="cover"
-          :src="availableModelInfo.t_model.preview_img"
-        >
+        <van-image style="width: 100%; height: 100%" fit="cover" :src="availableModelInfo.t_model.preview_img">
           <template v-slot:loading>
             <ion-skeleton-text :animated="true" style="margin: 0"></ion-skeleton-text>
           </template>
@@ -24,30 +20,23 @@
       </div>
     </Transition>
 
-    <div class="viewer" v-if="showViewer">
+    <div class="viewer" :class="isDark ? 'viewer-background-dark' : 'viewer-background'" v-if="showViewer">
       <drag-to-move v-if="showMovableTip"></drag-to-move>
-      <gltf-viewer
-        @beforeLoad="beforeLoad"
-        @loaded="loaded"
-        @dragStart="dragStart"
-        ref="gltfViewerRef"
-        :model="availableModelInfo.t_model.modelInfo"
-      ></gltf-viewer>
+      <gltf-viewer @beforeLoad="beforeLoad" @loaded="loaded" @dragStart="dragStart" ref="gltfViewerRef"
+        :model="availableModelInfo.t_model.modelInfo"></gltf-viewer>
     </div>
 
     <div class="menu-top">
       <ion-avatar style="width: 32px; height: 32px" class="avatar-border">
-        <img
-          :src="availableModelInfo.t_user.preview_avatar || '/mobileDefaultAvatar.svg'"
-          style="width: 32px; height: 32px"
-        />
+        <img :src="availableModelInfo.t_user.preview_avatar || '/mobileDefaultAvatar.svg'"
+          style="width: 32px; height: 32px" />
       </ion-avatar>
       <div>
         <div style="font-size: 12px; font-weight: bold; line-height: 20px">
           {{ availableModelInfo.t_user.name || "小芳" }}
         </div>
         <div style="font-size: 12px; font-weight: 300">
-          创建于 {{ timeago(availableModelInfo.t_model.createdAt) }}
+          发布于 {{ timeago(availableModelInfo.t_model.createdAt) }}
         </div>
       </div>
       <div style="flex: 1"></div>
@@ -55,13 +44,10 @@
     </div>
 
     <div class="menu-right">
-      <div style="flex:1"></div> 
+      <div style="flex:1"></div>
       <div class="menu-item">
-        <heart
-          class="icon"
-          @click="availableModelInfo.isLike = !availableModelInfo.isLike"
-          :style="{ color: availableModelInfo.isLike ? '#ea3323' : '' }"
-        ></heart>
+        <heart class="icon" @click="availableModelInfo.isLike = !availableModelInfo.isLike"
+          :style="{ color: availableModelInfo.isLike ? '#ea3323' : '' }"></heart>
         <div class="text">{{ availableModelInfo.like_count }}</div>
       </div>
       <div class="menu-item">
@@ -79,14 +65,19 @@
     </div>
 
     <div class="menu-bottom">
+      <!-- <ion-button expand="block">
+          购买
+      </ion-button> -->
     </div>
+
     <div v-if="loading" class="progress">
       <ion-progress-bar type="indeterminate"></ion-progress-bar>
     </div>
   </div>
 
-  <ion-modal class="model-comment" :is-open="showComment" :initial-breakpoint="1" :breakpoints="[0, 1]" @didDismiss="showComment = false">
-      <comment :available-model-info="availableModelInfo"></comment>
+  <ion-modal class="model-comment" :is-open="showComment" :initial-breakpoint="1" :breakpoints="[0, 1]"
+    @didDismiss="showComment = false">
+    <comment :available-model-info="availableModelInfo"></comment>
   </ion-modal>
 </template>
 <script setup>
@@ -102,7 +93,9 @@ import { timeago } from "@/common/time";
 import dragToMove from "@/components/tips/dragToMove/index.vue";
 import { showMovableTip } from "@/store/stores/app.ts";
 import comment from '../../../components/modelComment/index.vue'
-import {vibrate ,impact} from '../../../helper/device.ts';
+import { impact } from '../../../helper/device.ts';
+import { isDark } from "@/store/stores/app.ts";
+
 
 const props = defineProps(["availableModelInfo", "index"]);
 
@@ -175,7 +168,6 @@ function loaded() {
 }
 </style>
 <style lang="less" scoped>
-
 ion-modal {
   --height: auto;
 }
@@ -214,6 +206,14 @@ ion-modal {
   // background: #333;
 }
 
+.viewer-background {
+  background: radial-gradient(circle, rgba(233,233,233,1) 50%, rgba(255,255,255,1) 100%);
+}
+
+.viewer-background-dark {
+  background: radial-gradient(circle, rgba(20,20,20,1) 50%, rgba(0,0,0,1) 100%);
+}
+
 .menu-bottom {
   width: 100%;
   height: auto;
@@ -221,6 +221,7 @@ ion-modal {
   bottom: 0;
   z-index: 2;
   align-items: center;
+  padding: 4px;
 }
 
 .progress {
@@ -232,7 +233,7 @@ ion-modal {
 
 ion-progress-bar {
   --background: rgba(0, 0, 0, 0);
-  --progress-background: rgba(105, 0, 255, 0.99);
+  --progress-background: rgba(105, 0, 255, 0.3);
 }
 
 .menu-right {
@@ -260,6 +261,7 @@ ion-progress-bar {
   transition: all 0.3s;
   /* 为图标增加阴影效果 */
   filter: drop-shadow(0px 1px 5px rgba(0, 0, 0, 0.2));
+
   &:active {
     transform: scale(0.8);
   }
@@ -267,6 +269,7 @@ ion-progress-bar {
 
 .text {
   font-size: 12px;
+  font-weight: bold;
   text-shadow: 0px 1px 5px rgba(0, 0, 0, 0.5);
 }
 
@@ -286,7 +289,8 @@ ion-progress-bar {
 .avatar-border {
   border-radius: 50%;
   position: relative;
-  background-clip: padding-box; /*important*/
+  background-clip: padding-box;
+  /*important*/
 }
 
 .avatar-border::before {
@@ -297,8 +301,10 @@ ion-progress-bar {
   left: 0;
   bottom: 0;
   z-index: -1;
-  margin: 1px; /* 为负值时可显示边框 */
-  border-radius: inherit; /*important*/
+  margin: 1px;
+  /* 为负值时可显示边框 */
+  border-radius: inherit;
+  /*important*/
   background: linear-gradient(to right, #6900ff, purple);
 }
 </style>

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 16:25:01
+ * @LastEditTime: 2024-02-05 19:14:05
  * @FilePath: /1s/src/modules/app/views/index/swiper/index.vue
  * @Description: 
  * 
@@ -40,8 +40,6 @@ const { list, getList, loading, firstLoading } = usePaging(getAvailableModel, {
 function reachEnd() {
   getList();
 }
-
-
 
 /*
   上下滑动式禁用模型控制器，防止一起滚动的错误操作体验

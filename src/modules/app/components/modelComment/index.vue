@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-14 11:33:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 09:29:21
+ * @LastEditTime: 2024-02-05 23:10:41
  * @FilePath: /1s/src/modules/app/components/modelComment/index.vue
  * @Description:
  * 
@@ -13,12 +13,17 @@
   <div class="comment">
     <ion-header>
       <ion-toolbar>
-        <ion-title> 评论（{{ availableModelInfo.comment_count }}) </ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="toggleSort">
-            {{ sortType == CommentSortType.HOTEST ? "按热度排序" : "按时间排序" }}
-          </ion-button>
-        </ion-buttons>
+        <ion-title> 评论({{ availableModelInfo.comment_count }}) </ion-title>
+        <div class="sort" slot="end" @click="toggleSort">
+          <template v-if="sortType == CommentSortType.HOTEST">
+            <div>按热度排序</div>
+            <hot-sort></hot-sort>
+          </template>
+          <template v-else>
+            <div>按时间排序</div>
+            <time-sort></time-sort>
+          </template>
+        </div>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -38,12 +43,13 @@
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-content>
-    <ion-footer >
+    <ion-footer>
       <div class="footer ion-padding">
         <ion-avatar style="width: 30px;height:30px;flex-shrink:0;margin-top:4px;">
           <img :src="loginStore.userInfo?.preview_avatar || '/mobileDefaultAvatar.svg'">
         </ion-avatar>
-        <ion-textarea fill="outlined" placeholder="快来评论吧～" ref="commentInput" v-model="commentInputContent" @ionBlur="ionBlur">
+        <ion-textarea fill="outlined" placeholder="快来评论吧～" ref="commentInput" v-model="commentInputContent"
+          @ionBlur="ionBlur">
         </ion-textarea>
         <ion-button @click="addComment" fill="clear" size="small">
           <ion-icon slot="icon-only" :icon="chatbubbleEllipsesOutline" aria-hidden="true"></ion-icon>
@@ -62,6 +68,11 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import { likeAvailableModelComment } from "@/api";
 import { chatbubbleEllipsesOutline } from "ionicons/icons";
 import { ref, watch } from "vue";
+import { vibrate, impact } from '../../helper/device.ts';
+import timeSort from '@/icon/mobile/time-sort.svg?component';
+import hotSort from '@/icon/mobile/hot-sort.svg?component';
+
+
 
 const loginStore = useLoginStatusStore();
 
@@ -74,11 +85,11 @@ const { list, getList, reset } = usePaging((params) => {
     parentId: 0, // 获取所有根评论
     ...params,
   });
-},{
+}, {
   resListFilter: (item) => {
-        // 过滤掉出现过的评论
-        return list.value.every((child) => child.id != item.id)
-      }
+    // 过滤掉出现过的评论
+    return list.value.every((child) => child.id != item.id)
+  }
 });
 
 const ionInfinite = async (ev) => {
@@ -233,6 +244,7 @@ async function like(commentInfo) {
     commentId: commentInfo.id,
     count: 1,
   });
+  impact()
   // 反显状态
   commentInfo.liked = true;
   commentInfo.like_count++;

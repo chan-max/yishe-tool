@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-04 19:33:16
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 08:27:51
+ * @LastEditTime: 2024-02-05 23:15:20
  * @FilePath: /1s/src/modules/app/components/modelComment/bar.vue
  * @Description: 
  * 
@@ -20,7 +20,7 @@
                 <div class="name">{{ commentInfo.t_user.name || "他还没起名字" }}</div>
                 <div class="timeago">{{ timeago(commentInfo.createdAt) }}</div>
             </div>
-            <div class="content">
+            <div class="comment-content">
                 {{ commentInfo.content }}
             </div>
             <div class="footer">
@@ -34,7 +34,7 @@
                 {{ loadingChildren ? '正在加载中...' : '查看更多评论' }}
             </div>
         </div>
-        <div class="like" :style="{ color: commentInfo.liked && '#6900ff' }">
+        <div class="like" :style="{ color: commentInfo.liked && '#FF3131' }">
             <thumbup @click="$emit('like', commentInfo)" style="width: 14px; height: 14px;margin:4px;"
                 ></thumbup>
             {{ commentInfo.like_count || 0 }}
@@ -100,7 +100,7 @@ const emits = defineEmits([
     }
 }
 
-.content {
+.comment-content {
     font-size: 14px;
 }
 

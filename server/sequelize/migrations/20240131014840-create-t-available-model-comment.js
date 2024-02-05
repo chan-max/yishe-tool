@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-31 21:19:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-03 11:12:07
+ * @LastEditTime: 2024-02-05 19:43:14
  * @FilePath: /1s/server/sequelize/migrations/20240131014840-create-t-available-model-comment.js
  * @Description: 
  * 
@@ -29,7 +29,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       root_id: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER,
+        allowNull:true,
       },
       root_children_count: {
         type: Sequelize.INTEGER

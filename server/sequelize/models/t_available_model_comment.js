@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-31 21:19:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-03 11:17:23
+ * @LastEditTime: 2024-02-05 19:38:14
  * @FilePath: /1s/server/sequelize/models/t_available_model_comment.js
  * @Description: 
  * 
@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     content: DataTypes.STRING,
     parent_id: DataTypes.INTEGER,
     user_id: DataTypes.INTEGER,
-    root_id: DataTypes.STRING,
+    root_id: DataTypes.INTEGER,
     /* 特殊说明，该字段用于记录在根节点记录子评论的数量 */
     root_children_count: {
       type: DataTypes.INTEGER,

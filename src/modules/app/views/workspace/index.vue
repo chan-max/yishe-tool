@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:32:43
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 12:10:13
+ * @LastEditTime: 2024-02-05 16:38:46
  * @FilePath: /1s/src/modules/app/views/workspace/index.vue
  * @Description: 
  * 
@@ -15,15 +15,17 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-        <ion-button @click="notification(NotificationType.Success)">
-            success
-        </ion-button>
-        <ion-button @click="notification(NotificationType.Warning)">
-            warning
-        </ion-button >
-        <ion-button @click="notification(NotificationType.Error)">
-            error
-        </ion-button>
+      <ion-button @click="notification(NotificationType.Success)">
+        success
+      </ion-button>
+      <ion-button @click="notification(NotificationType.Warning)">
+        warning
+      </ion-button>
+      <ion-button @click="notification(NotificationType.Error)">
+        error
+      </ion-button>
+      <ion-button @click="play">
+      </ion-button>
     </ion-content>
   </ion-page>
 </template>
@@ -33,9 +35,15 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue
 import { ref } from "vue";
 import { doLogout } from "@/store/stores/loginAction";
 import { takePhoto } from "../../helper/camera.ts";
-import {impact,notification} from '../../helper/device.ts'
+import { impact, notification } from '../../helper/device.ts'
+import { playAudio } from '@/common/browser.ts'
 
-import {  Haptics,ImpactStyle,NotificationType } from '@capacitor/haptics';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+
+function play(params) {
+  playAudio("/audio/screenshot.mp3")
+}
+
 
 </script>
 

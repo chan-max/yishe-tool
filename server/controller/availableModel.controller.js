@@ -40,8 +40,28 @@ export const availableModelController = ({ router, app, sequelize, redis }) => {
       }]
     })
 
+    const payload = ctx.verifyToken()
+
+    // 查询点赞状态
+    await Promise.all(data.list.map((item) => {
+      return new Promise(async (resolve, reject) => {
+        let record = await sequelize.models.t_available_model_like.findOne({
+          where: {
+            user_id: payload.userId,
+            available_model_id:item.id
+          }
+        });
+
+        item.setDataValue('isLike',!!record)
+        resolve()
+      })
+    }))
+
     data.list.forEach((item) => {
+      // 模型预览图
       item.t_model.dataValues.preview_img = ctx.relativePathToPreviewPath(item.t_model.img);
+
+      // 用户头像
       item.t_user?.setDataValue(
         "preview_avatar",
         ctx.relativePathToPreviewPath(item.t_user.avatar)

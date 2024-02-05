@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 12:45:16
+ * @LastEditTime: 2024-02-05 16:13:39
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -78,13 +78,11 @@
       </div>
     </div>
 
-    <div class="menu-bottom"></div>
-  
-
+    <div class="menu-bottom">
+    </div>
     <div v-if="loading" class="progress">
       <ion-progress-bar type="indeterminate"></ion-progress-bar>
     </div>
-  
   </div>
 
   <ion-modal class="model-comment" :is-open="showComment" :initial-breakpoint="1" :breakpoints="[0, 1]" @didDismiss="showComment = false">
@@ -108,6 +106,7 @@ import {vibrate ,impact} from '../../../helper/device.ts';
 
 const props = defineProps(["availableModelInfo", "index"]);
 
+console.log(props.availableModelInfo)
 // 打开评论
 
 const showComment = ref(false)

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 09:30:49
+ * @LastEditTime: 2024-02-05 16:25:01
  * @FilePath: /1s/src/modules/app/views/index/swiper/index.vue
  * @Description: 
  * 
@@ -31,15 +31,17 @@ import "@ionic/vue/css/ionic-swiper.css";
 import swiperItem from "./item.vue";
 import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
 
-const { list, page, getList, loading, firstLoading } = usePaging(getAvailableModel, {
-  // 是否处于点赞状态
-  callback: (item) => item.isLike = false
+const { list, getList, loading, firstLoading } = usePaging(getAvailableModel, {
+  // 获取首页模型信可能会涉及很多查询，所以严格控制其数量
+  pageSize:3
 });
 
 // 滑动到最新
 function reachEnd() {
   getList();
 }
+
+
 
 /*
   上下滑动式禁用模型控制器，防止一起滚动的错误操作体验

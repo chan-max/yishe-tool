@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 01:16:27
+ * @LastEditTime: 2024-02-05 16:19:25
  * @FilePath: /1s/src/hooks/data/paging.ts
  * @Description: 
  * 
@@ -32,6 +32,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         resListFilter:null, // 请求结果被插入列表前的过滤器，被过滤掉的不会添加到列表中
         ...options,
     }
+
 
     // 列表数据 , 可用外界传入的参数，也可以自身初始化
     const list = options.initialList
@@ -70,7 +71,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
             loading.value = true
             let res = await getListFn({
                 page: page.value,
-                pageSize: 30,
+                pageSize: pageSize.value,
                 ...params
             })
 

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:32:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 22:20:31
+ * @LastEditTime: 2024-02-06 23:15:36
  * @FilePath: /1s/src/modules/app/views/talk/index.vue
  * @Description: 
  * 
@@ -39,14 +39,14 @@
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
       <ion-list lines="none">
-        <ion-item-sliding :button="true" v-for="i in 30">
-          <ion-item>
+        <ion-item-sliding :button="true" v-for="message in messageList">
+          <ion-item :button="true">
             <ion-avatar slot="start">
-              <img src="/mobileDefaultAvatar.svg" />
+              <img :src="message.avatar" />
             </ion-avatar>
             <ion-label>
-              <h1>系统消息</h1>
-              <p>这是一段最新的消息</p>
+              <h2>{{message.title}}</h2>
+              <p>{{message.label}}</p>
             </ion-label>
           </ion-item>
           <ion-item-options slot="end">
@@ -66,7 +66,6 @@ import { chevronForward, listCircle, star, trash } from "ionicons/icons";
 import { messageList } from "./index.ts";
 import add from '@/icon/mobile/add.svg?url'
 import bell from '@/icon/mobile/bell.svg?url'
-
 
 // 刷新列表
 function refresh(event) {

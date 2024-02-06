@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:32:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 23:15:36
+ * @LastEditTime: 2024-02-06 23:22:09
  * @FilePath: /1s/src/modules/app/views/talk/index.vue
  * @Description: 
  * 
@@ -12,13 +12,19 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-button slot="start" size="small">
-          <ion-icon slot="icon-only" :icon="add"></ion-icon>
-        </ion-button>
+        <ion-buttons slot="start">
+          <ion-button size="small">
+            <ion-icon slot="icon-only" :icon="add"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end">
+          <ion-button size="small">
+            <ion-icon slot="icon-only" :icon="bell"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+
         <ion-title>消息</ion-title>
-        <ion-button slot="end" size="small">
-          <ion-icon slot="icon-only" :icon="bell"></ion-icon>
-        </ion-button>
+
       </ion-toolbar>
       <ion-toolbar>
         <ion-searchbar></ion-searchbar>
@@ -45,8 +51,8 @@
               <img :src="message.avatar" />
             </ion-avatar>
             <ion-label>
-              <h2>{{message.title}}</h2>
-              <p>{{message.label}}</p>
+              <h2>{{ message.title }}</h2>
+              <p>{{ message.label }}</p>
             </ion-label>
           </ion-item>
           <ion-item-options slot="end">

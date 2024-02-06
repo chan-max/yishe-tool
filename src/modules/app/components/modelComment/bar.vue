@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-04 19:33:16
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 23:15:20
+ * @LastEditTime: 2024-02-06 08:16:51
  * @FilePath: /1s/src/modules/app/components/modelComment/bar.vue
  * @Description: 
  * 
@@ -27,7 +27,7 @@
                 <div class="reply" @click="$emit('reply')">回复</div>
                 <div v-show="showDelete"  class="delete" @click="$emit('delete')">删除</div>
             </div>
-            <div class="children">
+            <div class="children" v-if="$slots.children">
                 <slot name="children"></slot>
             </div>
             <div class="more" @click="$emit('more')" v-show="showMore"> 
@@ -108,14 +108,16 @@ const emits = defineEmits([
     display: flex;
     align-items: center;
     column-gap: 10px;
-    font-size: 12px;
+    font-size: 11px;
 
     .reply {
         opacity: .8;
+        text-decoration: underline;
     }
 
     .delete {
         opacity: .8;
+        text-decoration: underline;
         color: var(--ion-color-danger);
     }
 }
@@ -123,10 +125,14 @@ const emits = defineEmits([
 .like {
     display: flex;
     padding: 4px 0;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    height: 20px;
 }
 
 .more {
-    font-size: 12px;
+    font-size: 11px;
     opacity: .6;
     display: flex;
     align-items: center;

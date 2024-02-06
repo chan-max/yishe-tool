@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:33:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-28 15:49:22
+ * @LastEditTime: 2024-02-06 11:47:15
  * @FilePath: /1s/src/modules/app/views/market/index.vue
  * @Description: 
  * 
@@ -30,9 +30,6 @@
             ></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>逛一逛</ion-title>
-      </ion-toolbar>
-      <ion-toolbar> 
         <van-tabs v-model:active="active">
           <template #nav-left> </template>
           <template #nav-right> </template>
@@ -41,6 +38,8 @@
             <!-- 这里可以放一些具体化的分类 -->
           </van-tab>
         </van-tabs>
+      </ion-toolbar>
+      <ion-toolbar v-if="false"> 
       </ion-toolbar>
     </ion-header>
     <ion-content ref="content" :fullscreen="true">

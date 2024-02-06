@@ -52,7 +52,7 @@ export const availableModelController = ({ router, app, sequelize, redis }) => {
           }
         });
 
-        item.setDataValue('isLike',!!record)
+        item.setDataValue('liked',!!record)
         resolve()
       })
     }))
@@ -79,7 +79,7 @@ export const availableModelController = ({ router, app, sequelize, redis }) => {
 
     const payload = ctx.verifyToken();
 
-    if (ctx.request.body.isLike == "true") {
+    if (ctx.request.body.liked == "true") {
       // 点赞
       await table.findOrCreate({
         where: {

@@ -100,7 +100,7 @@ export const likeModel = (router, sequelize) =>
 
     const payload = ctx.verifyToken();
 
-    if (ctx.request.body.isLike == "true") {
+    if (ctx.request.body.liked == "true") {
       // 点赞
       await table.findOrCreate({
         where: {

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-14 11:33:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 23:10:41
+ * @LastEditTime: 2024-02-06 11:51:18
  * @FilePath: /1s/src/modules/app/components/modelComment/index.vue
  * @Description:
  * 
@@ -26,8 +26,11 @@
         </div>
       </ion-toolbar>
     </ion-header>
-    <ion-content>
-      <ion-list class="ion-padding" lines="none">
+    <ion-content class="comment-content">
+      <div v-if="firstLoading" class="w-full h-full flex justify-center items-center">
+        <ion-spinner name="dots"></ion-spinner>
+      </div>
+      <ion-list v-else-if="availableModelInfo.comment_count" class="ion-padding" lines="none">
         <bar v-for="item in list" :commentInfo="item" @reply="reply(item, item)" @like="like"
           @delete="deleteComment(item, item)" @more="more(item)" :show-delete="loginStore.userInfo?.id == item.user_id"
           :show-more="item.root_children_count" :loading-children="item.loading">
@@ -39,22 +42,22 @@
           </template>
         </bar>
       </ion-list>
+      <div v-else class="w-full h-full flex justify-center items-center flex-col opacity-10">
+        <no-comment style="width:80px;height:80px"></no-comment>
+        <span class="font-bold">暂无评论</span>
+      </div>
       <ion-infinite-scroll @ionInfinite="ionInfinite">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-content>
     <ion-footer>
       <div class="footer ion-padding">
-        <ion-avatar style="width: 30px;height:30px;flex-shrink:0;margin-top:4px;">
-          <img :src="loginStore.userInfo?.preview_avatar || '/mobileDefaultAvatar.svg'">
-        </ion-avatar>
         <ion-textarea fill="outlined" placeholder="快来评论吧～" ref="commentInput" v-model="commentInputContent"
           @ionBlur="ionBlur">
         </ion-textarea>
-        <ion-button @click="addComment" fill="clear" size="small">
-          <ion-icon slot="icon-only" :icon="chatbubbleEllipsesOutline" aria-hidden="true"></ion-icon>
+        <div @click="addComment" style="text-wrap: nowrap;">
           {{ isReplying ? ' 回复' : '评论' }}
-        </ion-button>
+        </div>
       </div>
     </ion-footer>
   </div>
@@ -71,14 +74,14 @@ import { ref, watch } from "vue";
 import { vibrate, impact } from '../../helper/device.ts';
 import timeSort from '@/icon/mobile/time-sort.svg?component';
 import hotSort from '@/icon/mobile/hot-sort.svg?component';
-
+import noComment from '@/icon/mobile/no-comment.svg?component'
 
 
 const loginStore = useLoginStatusStore();
 
 const props = defineProps(["availableModelInfo"]);
 
-const { list, getList, reset } = usePaging((params) => {
+const { list, getList, reset ,loading,firstLoading} = usePaging((params) => {
   return getAvailableModelComment({
     availableModelId: props.availableModelInfo.id,
     sortType: sortType.value,

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 00:29:47
+ * @LastEditTime: 2024-02-06 00:32:14
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -46,8 +46,8 @@
     <div class="menu-right">
       <div style="flex:1"></div>
       <div class="menu-item">
-        <heart class="icon" @click="availableModelInfo.isLike = !availableModelInfo.isLike"
-          :style="{ color: availableModelInfo.isLike ? '#ea3323' : '' }"></heart>
+        <heart class="icon" @click="availableModelInfo.liked = !availableModelInfo.liked"
+          :style="{ color: availableModelInfo.liked ? '#ea3323' : '' }"></heart>
         <div class="text">{{ availableModelInfo.like_count }}</div>
       </div>
       <div class="menu-item">
@@ -106,20 +106,20 @@ const showComment = ref(false)
 
 // 点赞收藏模型
 watch(
-  () => props.availableModelInfo.isLike,
+  () => props.availableModelInfo.liked,
   async () => {
     impact()
     await likeAvailableModel({
       availableModelId: props.availableModelInfo.id,
-      isLike: props.availableModelInfo.isLike,
+      liked: props.availableModelInfo.liked,
     });
     // 更新状态
-    if (props.availableModelInfo.isLike) {
+    if (props.availableModelInfo.liked) {
       props.availableModelInfo.like_count++;
-      props.availableModelInfo.isLike = true;
+      props.availableModelInfo.liked = true;
     } else {
       props.availableModelInfo.like_count--;
-      props.availableModelInfo.isLike = false;
+      props.availableModelInfo.liked = false;
     }
   }
 );

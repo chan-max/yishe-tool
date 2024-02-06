@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-11-28 01:16:00
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 01:26:38
+ * @LastEditTime: 2024-02-06 18:18:54
  * @FilePath: /1s/src/modules/app/views/home.vue
  * @Description: 
  * 
@@ -12,7 +12,8 @@
   <ion-page>
     <!-- <floating-button></floating-button> -->
     <ion-tabs>
-      <ion-router-outlet></ion-router-outlet>
+      <ion-router-outlet>
+      </ion-router-outlet>
       <div class="app-footer">
         <ion-tab-bar slot="bottom">
           <ion-tab-button tab="tab1" href="/home/index">

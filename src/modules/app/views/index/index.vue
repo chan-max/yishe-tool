@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-28 16:16:25
+ * @LastEditTime: 2024-02-06 20:06:23
  * @FilePath: /1s/src/modules/app/views/index/index.vue
  * @Description: 
  * 
@@ -23,7 +23,7 @@
         <ion-toolbar>
           <ion-buttons slot="start">
             <ion-menu-toggle>
-               <span style="padding:0 10px;font-weight:bold;font-style: italic;">衣设 1s</span>
+               <span style="padding:0 10px;font-weight:bold;">衣设 1s</span>
             </ion-menu-toggle>
           </ion-buttons>
           <ion-buttons slot="end">

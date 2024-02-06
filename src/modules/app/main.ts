@@ -3,7 +3,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-04 23:54:28
+ * @LastEditTime: 2024-02-06 09:04:47
  * @FilePath: /1s/src/modules/app/main.ts
  * @Description: 
  * 
@@ -12,7 +12,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
-
+import "tailwindcss/tailwind.css"
 import { IonButton, IonicVue } from '@ionic/vue';
 
 /* Core CSS required for Ionic components to work properly */

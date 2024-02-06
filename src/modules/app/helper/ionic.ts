@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-28 16:17:53
+ * @LastEditTime: 2024-02-06 22:05:06
  * @FilePath: /1s/src/modules/app/helper/ionic.ts
  * @Description: 
  * 
@@ -46,7 +46,12 @@ import {
     IonSearchbar,
     IonSegment,
     IonSegmentButton,
-    IonSpinner
+    IonSpinner,
+    IonItemOption,
+    IonItemOptions,
+    IonItemSliding,
+    IonRefresher,
+    IonRefresherContent
 } from "@ionic/vue";
 
 export function initIonicComponents(app) {
@@ -88,7 +93,12 @@ export function initIonicComponents(app) {
         IonSearchbar,
         IonSegment,
         IonSegmentButton,
-        IonSpinner
+        IonSpinner,
+        IonItemOption,
+        IonItemOptions,
+        IonItemSliding,
+        IonRefresher,
+        IonRefresherContent
     ]
 
     components.forEach((component) => {

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:32:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-28 11:28:36
+ * @LastEditTime: 2024-02-06 22:20:31
  * @FilePath: /1s/src/modules/app/views/talk/index.vue
  * @Description: 
  * 
@@ -12,58 +12,73 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
+        <ion-button slot="start" size="small">
+          <ion-icon slot="icon-only" :icon="add"></ion-icon>
+        </ion-button>
         <ion-title>消息</ion-title>
+        <ion-button slot="end" size="small">
+          <ion-icon slot="icon-only" :icon="bell"></ion-icon>
+        </ion-button>
       </ion-toolbar>
       <ion-toolbar>
         <ion-searchbar></ion-searchbar>
       </ion-toolbar>
-      <ion-toolbar>
-        <ion-segment class="segment" slot="start" value="all">
-          <ion-segment-button value="all">
+      <ion-toolbar style="padding-left: 12px">
+        <ion-segment slot="start" value="latest">
+          <ion-segment-button value="latest">
             <ion-label>最新</ion-label>
           </ion-segment-button>
-          <ion-segment-button value="favorites">
+          <ion-segment-button value="my">
             <ion-label>我的群聊</ion-label>
           </ion-segment-button>
         </ion-segment>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true"> </ion-content>
+    <ion-content :fullscreen="true">
+      <ion-refresher slot="fixed" @ionRefresh="refresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
+      <ion-list lines="none">
+        <ion-item-sliding :button="true" v-for="i in 30">
+          <ion-item>
+            <ion-avatar slot="start">
+              <img src="/mobileDefaultAvatar.svg" />
+            </ion-avatar>
+            <ion-label>
+              <h1>系统消息</h1>
+              <p>这是一段最新的消息</p>
+            </ion-label>
+          </ion-item>
+          <ion-item-options slot="end">
+            <ion-item-option color="danger" expandable="true">
+              <ion-icon slot="icon-only" :icon="trash"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+    </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue";
-import { LocalNotifications } from "@capacitor/local-notifications";
+import { chevronForward, listCircle, star, trash } from "ionicons/icons";
+import { messageList } from "./index.ts";
+import add from '@/icon/mobile/add.svg?url'
+import bell from '@/icon/mobile/bell.svg?url'
 
-console.log('发送通知')
-// LocalNotifications.schedule({
-//   notifications: [
-//     {
-//       title: "标题",
-//       body: "具体内容",
-//       id: 1,
-//     },
-//   ],
-// });
 
-// if(window.Notification && Notification.permission !== "denied") {
-//     Notification.requestPermission(function(status) {
-//         var n = new Notification('通知标题', { body: '这里是通知内容！' });
-//     });
-// }
-</script>
-
-<style lang="less">
-ion-segment {
-  background-color: transparent;
-  border-radius: 0;
+// 刷新列表
+function refresh(event) {
+  setTimeout(() => {
+    // Any calls to load data go here
+    event.target.complete();
+  }, 2000);
 }
 
-ion-segment-button::part(indicator-background) {
-  background-color: transparent;
-  border-bottom: 4px solid #6900ff;
-  box-shadow: none;
-  border-radius: 0;
+</script>
+<style lang="less" scoped>
+ion-button {
+  --background: transparent;
 }
 </style>

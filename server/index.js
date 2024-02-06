@@ -52,8 +52,23 @@ app.use(
 // 注册中间件
 middlewares.forEach((mw) => mw(app))
 
+const options = process.env.NODE_ENV === 'development' ?
+    {
+        key: fs.readFileSync('./tools/mac-key.pem'),
+        cert: fs.readFileSync('./tools/mac.pem'),
+    } : {
+        key: fs.readFileSync('./ssl/private.key'),
+        cert: fs.readFileSync('./ssl/certificate.crt'),
+    }
 
 import db from './sequelize/models/index.js'
+
+var server = process.env.protool === 'https' ? https.createServer(options, app.callback()) : http.createServer({}, app.callback())
+
+import { initWebsocket } from './websocket/index.js'
+
+const socketio =  initWebsocket(server)
+
 
 initRouter(router, db.sequelize, app, redis);
 
@@ -61,7 +76,8 @@ initController({
     router,
     app,
     sequelize: db.sequelize,
-    redis
+    redis,
+    socketio
 })
 
 // 前端打包后的代码
@@ -116,21 +132,9 @@ export function getHost() {
     return (process.env.localhost || ip.address()) + ':' + port
 }
 
-const options = process.env.NODE_ENV === 'development' ?
-    {
-        key: fs.readFileSync('./tools/mac-key.pem'),
-        cert: fs.readFileSync('./tools/mac.pem'),
-    } : {
-        key: fs.readFileSync('./ssl/private.key'),
-        cert: fs.readFileSync('./ssl/certificate.crt'),
-    }
 
 
-var server = process.env.protool === 'https' ? https.createServer(options, app.callback()) : http.createServer({}, app.callback())
 
-import { initWebsocket } from './websocket/index.js'
-
-initWebsocket(server)
 
 
 export async function startServe() {

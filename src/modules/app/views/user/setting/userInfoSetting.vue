@@ -1,3 +1,13 @@
+<!--
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2024-01-26 22:01:48
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-02-06 20:08:43
+ * @FilePath: /1s/src/modules/app/views/user/setting/userInfoSetting.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+-->
 <template>
   <ion-page>
     <ion-header>
@@ -14,7 +24,7 @@
           <ion-avatar slot="start">
             <img
               alt="Silhouette of a person's head"
-              src="https://ionicframework.com/docs/img/demos/avatar.svg"
+              src="/defaultMobileAvatar.svg"
             />
           </ion-avatar>
         </ion-item>

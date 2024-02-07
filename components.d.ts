@@ -53,7 +53,6 @@ declare module 'vue' {
     UserAvatar: typeof import('./src/components/user/userAvatar.vue')['default']
     UserAvatarForm: typeof import('./src/components/user/userAvatarForm.vue')['default']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
-    VanImage: typeof import('vant/es')['Image']
     VanTab: typeof import('vant/es')['Tab']
     VanTabs: typeof import('vant/es')['Tabs']
     Waterfall: typeof import('./src/components/layout/waterfall/index.vue')['default']

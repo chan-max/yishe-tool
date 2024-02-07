@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:32:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 23:22:09
+ * @LastEditTime: 2024-02-07 09:21:20
  * @FilePath: /1s/src/modules/app/views/talk/index.vue
  * @Description: 
  * 
@@ -45,6 +45,9 @@
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
       <ion-list lines="none">
+        <ion-list-header>
+          <ion-label>消息</ion-label>
+        </ion-list-header>
         <ion-item-sliding :button="true" v-for="message in messageList">
           <ion-item :button="true">
             <ion-avatar slot="start">
@@ -69,7 +72,7 @@
 <script setup lang="ts">
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue";
 import { chevronForward, listCircle, star, trash } from "ionicons/icons";
-import { messageList } from "./index.ts";
+import { messageList } from "./index";
 import add from '@/icon/mobile/add.svg?url'
 import bell from '@/icon/mobile/bell.svg?url'
 

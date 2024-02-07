@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 00:32:14
+ * @LastEditTime: 2024-02-07 10:24:37
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -12,18 +12,15 @@
   <div class="item">
     <Transition leave-active-class="animate__animated animate__fadeOut" :duration="200">
       <div class="image" v-if="showImage">
-        <van-image style="width: 100%; height: 100%" fit="cover" :src="availableModelInfo.t_model.preview_img">
-          <template v-slot:loading>
-            <ion-skeleton-text :animated="true" style="margin: 0"></ion-skeleton-text>
-          </template>
-        </van-image>
+        <cr-image :src="availableModelInfo.t_model.preview_img"></cr-image>
       </div>
     </Transition>
-
+    
     <div class="viewer" :class="isDark ? 'viewer-background-dark' : 'viewer-background'" v-if="showViewer">
       <drag-to-move v-if="showMovableTip"></drag-to-move>
       <gltf-viewer @beforeLoad="beforeLoad" @loaded="loaded" @dragStart="dragStart" ref="gltfViewerRef"
-        :model="availableModelInfo.t_model.modelInfo"></gltf-viewer>
+        :model="availableModelInfo.t_model.modelInfo">
+      </gltf-viewer>
     </div>
 
     <div class="menu-top">
@@ -95,6 +92,7 @@ import { showMovableTip } from "@/store/stores/app.ts";
 import comment from '../../../components/modelComment/index.vue'
 import { impact } from '../../../helper/device.ts';
 import { isDark } from "@/store/stores/app.ts";
+import crImage from '@/modules/app/components/image.vue'
 
 
 const props = defineProps(["availableModelInfo", "index"]);

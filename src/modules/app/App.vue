@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 14:09:51
+ * @LastEditTime: 2024-02-07 09:24:12
  * @FilePath: /1s/src/modules/app/App.vue
  * @Description: 
  * 
@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { IonApp, IonRouterOutlet, IonPage } from "@ionic/vue";
-import {isDark} from '@/store/stores/app.ts'
+import {isDark} from '@/store/stores/app'
 </script>
 <style lang="less">
 

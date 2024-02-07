@@ -1,5 +1,5 @@
 
-export const availableModelController = ({ router, app, sequelize, redis }) => {
+export const availableModelController = ({ router, app, sequelize, redis, socketio }) => {
 
   router.post('/publishAvailableModel', async (ctx) => {
     /*
@@ -48,11 +48,11 @@ export const availableModelController = ({ router, app, sequelize, redis }) => {
         let record = await sequelize.models.t_available_model_like.findOne({
           where: {
             user_id: payload.userId,
-            available_model_id:item.id
+            available_model_id: item.id
           }
         });
 
-        item.setDataValue('liked',!!record)
+        item.setDataValue('liked', !!record)
         resolve()
       })
     }))
@@ -105,6 +105,9 @@ export const availableModelController = ({ router, app, sequelize, redis }) => {
       };
     }
   });
+
+
+  
 };
 
 

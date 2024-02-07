@@ -1,0 +1,77 @@
+<!--
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2024-02-07 09:13:37
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-02-07 10:26:38
+ * @FilePath: /1s/src/modules/app/components/image.vue
+ * @Description:  移动端通用头像封装, 主要是加载中占位符号，和错误图的处理
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+-->
+<template>
+    <div class="image">
+        <ion-img v-if="!error" class="main" :src="src" @ionImgDidLoad="didLoad" @ionError="onError($event)">
+        </ion-img>
+        <div class="placeholder" v-if="!load && !error">
+            <ion-skeleton-text :animated="true"></ion-skeleton-text>
+        </div>
+        <div class="error" v-if="error">
+            加载失败
+        </div>
+    </div>
+</template>
+    
+<script setup lang='ts'>
+import { ref } from 'vue'
+
+const props = defineProps([
+    'src'
+])
+
+function didLoad(){
+    load.value = true
+}
+
+// 图片是否加载完成
+const load = ref(false)
+
+// 图片是否加载失败
+const error = ref(false)
+
+function onError(e) {
+    error.value = true
+    // 错误图
+    // e.target.src = '/mobileDefaultAvatar.svg'
+}
+
+</script>
+    
+<style scoped lang="less">
+.image{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.main{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+}
+.placeholder {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.error{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ion-background-color);
+}
+</style>

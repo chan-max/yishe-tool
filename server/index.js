@@ -67,7 +67,7 @@ var server = process.env.protool === 'https' ? https.createServer(options, app.c
 
 import { initWebsocket } from './websocket/index.js'
 
-const socketio =  initWebsocket(server)
+const socketio = initWebsocket(server)
 
 
 initRouter(router, db.sequelize, app, redis);
@@ -104,20 +104,17 @@ app.use(koaBody({
 app.use(async (ctx, next) => {
     // 将文件将对路径转换为全路径
     ctx.relativePathToPreviewPath = (path) => {
-
-        return formatFilePath(`${ctx.protocol}://${getHost()}/file?name=${path}`);
-      
         if (!path) {
             return ''
         }
-        return formatFilePath(`${ctx.protocol}://${getHost()}${path}`);
+        return formatFilePath(`${ctx.protocol}://${getHost()}/file?name=${path}`);
     }
 
     // 获取上传文件的相对路径
     ctx.getUploadFileRelativePath = (key = 'file') => {
         return getRelativePath(ctx.request.files[key].filepath)
     }
-
+    
     await next()
 })
 

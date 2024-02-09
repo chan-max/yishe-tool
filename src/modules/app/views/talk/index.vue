@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:32:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 09:21:20
+ * @LastEditTime: 2024-02-07 23:27:23
  * @FilePath: /1s/src/modules/app/views/talk/index.vue
  * @Description: 
  * 
@@ -13,18 +13,17 @@
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-button size="small">
+          <ion-button size="small" id="open-action-sheet">
             <ion-icon slot="icon-only" :icon="add"></ion-icon>
           </ion-button>
+          <ion-action-sheet trigger="open-action-sheet" header="聊点什么" :buttons="actionSheetButtons"></ion-action-sheet>
         </ion-buttons>
         <ion-buttons slot="end">
           <ion-button size="small">
             <ion-icon slot="icon-only" :icon="bell"></ion-icon>
           </ion-button>
         </ion-buttons>
-
-        <ion-title>消息</ion-title>
-
+        <ion-title>{{ isOnline ? '消息' : '断线' }}</ion-title>
       </ion-toolbar>
       <ion-toolbar>
         <ion-searchbar></ion-searchbar>
@@ -49,7 +48,7 @@
           <ion-label>消息</ion-label>
         </ion-list-header>
         <ion-item-sliding :button="true" v-for="message in messageList">
-          <ion-item :button="true">
+          <ion-item :button="true" @click="toChat(message)">
             <ion-avatar slot="start">
               <img :src="message.avatar" />
             </ion-avatar>
@@ -75,6 +74,36 @@ import { chevronForward, listCircle, star, trash } from "ionicons/icons";
 import { messageList } from "./index";
 import add from '@/icon/mobile/add.svg?url'
 import bell from '@/icon/mobile/bell.svg?url'
+import { isOnline } from '@/modules/app/helper/store'
+import { useIonRouter } from "@ionic/vue";
+
+const router = useIonRouter()
+// 去聊天页面
+function toChat(message) {
+  router.push({
+    name: "Chat",
+    query: message
+  })
+}
+
+const actionSheetButtons = [
+  {
+    text: '创建群聊',
+  },
+  {
+    text: '加入群聊',
+  },
+  {
+    text: '添加聊天',
+  },
+  {
+    text: '返回',
+    role: 'cancel',
+    data: {
+      action: 'cancel',
+    },
+  },
+];
 
 // 刷新列表
 function refresh(event) {
@@ -86,7 +115,7 @@ function refresh(event) {
 
 </script>
 <style lang="less" scoped>
-ion-button {
+ion-button{
   --background: transparent;
 }
 </style>

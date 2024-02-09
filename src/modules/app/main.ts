@@ -3,7 +3,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-02 19:17:55
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 09:04:47
+ * @LastEditTime: 2024-02-07 14:17:08
  * @FilePath: /1s/src/modules/app/main.ts
  * @Description: 
  * 
@@ -87,10 +87,21 @@ import { initIonicComponents } from './helper/ionic.ts'
 initIonicComponents(app)
 
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
+import { getBasicConfig } from '@/api';
+
 defineCustomElements(window);
 
-router.isReady().then(() => {
+import { useConfigStore } from '@/store/stores/config.ts';
+
+import { initWebsocket } from './helper/websocket';
+
+router.isReady().then(async () => {
+  // 将登录信息同步到本地
   syncUserInfoToLocal()
+  const configStore = useConfigStore()
+  const config =  await getBasicConfig()
+  configStore.$patch(config)
+  initWebsocket()
   app.mount('#app');
 });
 

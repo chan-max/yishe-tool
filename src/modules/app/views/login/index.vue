@@ -50,8 +50,10 @@
               登 录
             </ion-button>
           </ion-item>
+          <ion-item>
+            <a class="signup" @click="signup"> 一键快速注册 </a>
+          </ion-item>
         </ion-list>
-        <a class="signup" @click="signup"> 一键快速注册 </a>
       </div>
     </ion-content>
   </ion-page>
@@ -168,8 +170,6 @@ a{
 }
 
 .signup{
-  position: absolute;
-  bottom: 0;
   text-align: center;
   width: 100%;
   color: #6900ff;

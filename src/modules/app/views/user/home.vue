@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:31:40
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-25 21:17:33
+ * @LastEditTime: 2024-02-07 12:56:16
  * @FilePath: /1s/src/modules/app/views/user/home.vue
  * @Description: 移动端个人信息页面
  * 
@@ -42,9 +42,8 @@
           <div style="opacity: 0.7">{{ loginStore.userInfo?.account }}</div>
         </div>
         <div class="flex items-center">
-          <ion-avatar style="width: 66px; height: 66px">
-            <img :src="avatar" />
-          </ion-avatar>
+          <cr-avatar :src="avatar" style="width: 66px; height: 66px">
+          </cr-avatar>
         </div>
       </div>
     </ion-content>
@@ -53,6 +52,7 @@
 
 <script setup>
 import { onMounted, computed } from "vue";
+import crAvatar from '@/modules/app/components/avatar.vue'
 import {
   IonPage,
   IonHeader,

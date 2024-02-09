@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 11:02:52
+ * @LastEditTime: 2024-02-07 16:35:16
  * @FilePath: /1s/src/modules/app/helper/websocket.ts
  * @Description: 用于连接设计系统中的websocket，可拓展的功能主要用于与移动端同步
  * 
@@ -12,22 +12,23 @@
 import io from "socket.io-client";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { isOnline } from "./store";
+import { useConfigStore } from "@/store/stores/config";
+
+
 
 export async function initWebsocket() {
-
+  const configStore = useConfigStore()
   const loginStore = useLoginStatusStore();
-  if (!loginStore.isLogin) {
+  if (!loginStore.isLogin || !configStore) {
     return
   }
-
-  var socket = io(`ws://${location.host}`, {
+  
+  var socket = io(configStore.websocket, {
     reconnection: true, // 开启重连
     reconnectionAttempts: Infinity, // 重连尝试次数，Infinity表示无限次
     reconnectionDelay: 30000, // 重连延迟时间
     timeout: 2000 // 连接超时时间
   })
-
-  socket.connect()
 
   socket.on("connect", () => {
     isOnline.value = true;
@@ -50,4 +51,6 @@ export async function initWebsocket() {
     isOnline.value = false;
     console.log("Disconnected from server: " + reason);
   });
+
+  socket.connect()
 }

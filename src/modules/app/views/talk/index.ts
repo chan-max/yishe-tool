@@ -2,15 +2,14 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-06 20:41:35
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 23:14:48
+ * @LastEditTime: 2024-02-07 20:01:15
  * @FilePath: /1s/src/modules/app/views/talk/index.ts
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
  */
 
-import {ref} from 'vue'
-
+import { ref } from 'vue'
 
 /*
     所有消息列表
@@ -20,19 +19,26 @@ import {ref} from 'vue'
     3.服务消息
 */
 import systemMesssage from '@/icon/mobile/system-message.svg?url'
-import 	interactMessage from '@/icon/mobile/interact-message.svg?url'
+import interactMessage from '@/icon/mobile/interact-message.svg?url'
+import customerService from '@/icon/mobile/customer-service.svg?url'
 
-export const  messageList = ref([
+export const messageList = ref([
     {
-        type:'system',
-        avatar:systemMesssage,
-        title:'系统消息',
-        label:'这是最新的系统消息'
+        type: 'system',
+        avatar: systemMesssage,
+        title: '系统消息',
+        label: '这是最新的系统消息'
     },
     {
-        type:'interact',
-        avatar:interactMessage,
-        title:'互动消息',
-        label:'那谁谁喜欢你'
+        type: 'interact',
+        avatar: interactMessage,
+        title: '互动消息',
+        label: '那谁谁喜欢你'
     },
+    {
+        type: 'customerService',
+        avatar: customerService,
+        title: '客服',
+        label: '有问题找客服'
+    }
 ])

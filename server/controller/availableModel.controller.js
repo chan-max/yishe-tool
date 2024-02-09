@@ -31,7 +31,6 @@ export const availableModelController = ({ router, app, sequelize, redis, socket
 
   /* 获取所有可用于购买的模型*/
   router.post("/getAvailableModel", async (ctx) => {
-
     let data = await ctx.queryList(sequelize.models.t_available_model, {
       include: [{
         model: sequelize.models.t_model,
@@ -41,6 +40,12 @@ export const availableModelController = ({ router, app, sequelize, redis, socket
     })
 
     const payload = ctx.verifyToken()
+
+    if (!payload) {
+      return ctx.body = {
+        message: '无效的身份'
+      }
+    }
 
     // 查询点赞状态
     await Promise.all(data.list.map((item) => {
@@ -74,6 +79,7 @@ export const availableModelController = ({ router, app, sequelize, redis, socket
   });
 
 
+  // 点赞收藏
   router.post("/likeAvailableModel", async (ctx) => {
     const table = sequelize.models.t_available_model_like;
 
@@ -107,7 +113,7 @@ export const availableModelController = ({ router, app, sequelize, redis, socket
   });
 
 
-  
+
 };
 
 

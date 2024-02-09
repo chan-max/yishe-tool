@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 12:29:34
+ * @LastEditTime: 2024-02-07 13:59:37
  * @FilePath: /1s/server/router.js
  * @Description:
  *
@@ -49,6 +49,8 @@ import {availableModelController} from'./controller/availableModel.controller.js
 import { fileController } from "./controller/file.controller.js";
 import {followerController} from './controller/follower.controller.js'
 
+import {configController} from './controller/config.controller.js';
+
 export const initRouter = (...params) => {
   let hooks = [
     loginHook,
@@ -90,7 +92,8 @@ export const initController = (...params) => {
     imageGroupController,
     availableModelController,
     fileController,
-    followerController
+    followerController,
+    configController
   ]; 
   controllers.forEach((controller) => controller(...params));
 }

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 10:24:37
+ * @LastEditTime: 2024-02-07 12:31:14
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -24,10 +24,8 @@
     </div>
 
     <div class="menu-top">
-      <ion-avatar style="width: 32px; height: 32px" class="avatar-border">
-        <img :src="availableModelInfo.t_user.preview_avatar || '/mobileDefaultAvatar.svg'"
-          style="width: 32px; height: 32px" />
-      </ion-avatar>
+      <cr-avatar style="width: 32px; height: 32px" :src="availableModelInfo.t_user.preview_avatar" class="avatar-border">
+      </cr-avatar>
       <div>
         <div style="font-size: 12px; font-weight: bold; line-height: 20px">
           {{ availableModelInfo.t_user.name || "小芳" }}
@@ -93,7 +91,7 @@ import comment from '../../../components/modelComment/index.vue'
 import { impact } from '../../../helper/device.ts';
 import { isDark } from "@/store/stores/app.ts";
 import crImage from '@/modules/app/components/image.vue'
-
+import crAvatar from '@/modules/app/components/avatar.vue'
 
 const props = defineProps(["availableModelInfo", "index"]);
 

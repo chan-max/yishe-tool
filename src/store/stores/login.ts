@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-21 13:44:10
+ * @LastEditTime: 2024-02-07 14:09:46
  * @FilePath: /1s/src/store/stores/login.ts
  * @Description: 
  * 
@@ -11,7 +11,7 @@
 import { getLocalUserInfo, updateLocalUserInfo } from "@/store/stores/loginAction";
 import { defineStore } from "pinia";
 import { reactive, ref, watch, toRaw, isReactive, isRef, unref } from "vue";
-
+ 
 export const useLoginStatusStore = defineStore("login_status", () => {
   const isLogin = ref(false);
   const loginTime = ref();
@@ -40,7 +40,6 @@ export const useLoginStatusStore = defineStore("login_status", () => {
     isAdmin
   };
 });
-
 
 // 同步用户信息到本地
 export function syncUserInfoToLocal(){

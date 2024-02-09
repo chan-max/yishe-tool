@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-14 11:33:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 11:51:18
+ * @LastEditTime: 2024-02-07 18:52:13
  * @FilePath: /1s/src/modules/app/components/modelComment/index.vue
  * @Description:
  * 
@@ -52,7 +52,7 @@
     </ion-content>
     <ion-footer>
       <div class="footer ion-padding">
-        <ion-textarea fill="outlined" placeholder="快来评论吧～" ref="commentInput" v-model="commentInputContent"
+        <ion-textarea :auto-grow="true" fill="outlined" placeholder="快来评论吧～" ref="commentInput" v-model="commentInputContent"
           @ionBlur="ionBlur">
         </ion-textarea>
         <div @click="addComment" style="text-wrap: nowrap;">

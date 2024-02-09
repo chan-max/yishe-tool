@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 09:59:50
+ * @LastEditTime: 2024-02-07 22:44:51
  * @FilePath: /1s/src/modules/app/helper/ionic.ts
  * @Description: 
  * 
@@ -53,7 +53,8 @@ import {
     IonRefresher,
     IonRefresherContent,
     IonListHeader,
-    IonImg
+    IonImg,
+    IonActionSheet
 } from "@ionic/vue";
 
 export function initIonicComponents(app) {
@@ -102,7 +103,8 @@ export function initIonicComponents(app) {
         IonRefresher,
         IonRefresherContent,
         IonListHeader,
-        IonImg
+        IonImg,
+        IonActionSheet
     ]
 
     components.forEach((component) => {

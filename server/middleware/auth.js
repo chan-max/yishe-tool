@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-18 18:49:18
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 12:51:03
+ * @LastEditTime: 2024-02-07 12:48:47
  * @FilePath: /1s/server/middleware/auth.js
  * @Description: 处理请求中的token
  * 
@@ -39,6 +39,8 @@ export const auth = (app) =>
         return null
       }
     }
+
+    
     
     await next();
 })

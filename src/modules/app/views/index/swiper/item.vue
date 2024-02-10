@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 12:31:14
+ * @LastEditTime: 2024-02-10 10:25:30
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -50,7 +50,7 @@
         <div class="text">{{ availableModelInfo.comment_count }}</div>
       </div>
       <div class="menu-item">
-        <share class="icon"></share>
+        <share @click="share" class="icon"></share>
         <div class="text"></div>
       </div>
       <div class="menu-item">
@@ -74,6 +74,12 @@
     @didDismiss="showComment = false">
     <comment :available-model-info="availableModelInfo"></comment>
   </ion-modal>
+  <ion-modal :is-open="showShare" :initial-breakpoint="1" :breakpoints="[0, 1]"
+    @didDismiss="showShare = false">
+    <div> 
+       <h1>1111</h1>
+    </div>
+  </ion-modal>
 </template>
 <script setup>
 import { defineProps, ref, onMounted, watch, onUnmounted } from "vue";
@@ -95,10 +101,11 @@ import crAvatar from '@/modules/app/components/avatar.vue'
 
 const props = defineProps(["availableModelInfo", "index"]);
 
-console.log(props.availableModelInfo)
 // 打开评论
-
 const showComment = ref(false)
+
+
+const showShare = ref(false)
 
 // 点赞收藏模型
 watch(
@@ -164,10 +171,6 @@ function loaded() {
 }
 </style>
 <style lang="less" scoped>
-ion-modal {
-  --height: auto;
-}
-
 .item {
   width: 100%;
   height: 100%;

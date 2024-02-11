@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-10 10:25:30
+ * @LastEditTime: 2024-02-10 22:33:07
  * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -15,7 +15,7 @@
         <cr-image :src="availableModelInfo.t_model.preview_img"></cr-image>
       </div>
     </Transition>
-    
+
     <div class="viewer" :class="isDark ? 'viewer-background-dark' : 'viewer-background'" v-if="showViewer">
       <drag-to-move v-if="showMovableTip"></drag-to-move>
       <gltf-viewer @beforeLoad="beforeLoad" @loaded="loaded" @dragStart="dragStart" ref="gltfViewerRef"
@@ -50,7 +50,7 @@
         <div class="text">{{ availableModelInfo.comment_count }}</div>
       </div>
       <div class="menu-item">
-        <share @click="share" class="icon"></share>
+        <share @click="showShare = true" class="icon"></share>
         <div class="text"></div>
       </div>
       <div class="menu-item">
@@ -70,15 +70,13 @@
     </div>
   </div>
 
-  <ion-modal class="model-comment" :is-open="showComment" :initial-breakpoint="1" :breakpoints="[0, 1]"
+  <ion-modal class="modal-comment" :is-open="showComment" :initial-breakpoint="1" :breakpoints="[0, 1]"
     @didDismiss="showComment = false">
     <comment :available-model-info="availableModelInfo"></comment>
   </ion-modal>
-  <ion-modal :is-open="showShare" :initial-breakpoint="1" :breakpoints="[0, 1]"
+  <ion-modal class="modal-share"  :is-open="showShare" :initial-breakpoint="1" :breakpoints="[0, 1]"
     @didDismiss="showShare = false">
-    <div> 
-       <h1>1111</h1>
-    </div>
+    <share-modal :available-model-info="availableModelInfo"></share-modal>
   </ion-modal>
 </template>
 <script setup>
@@ -93,11 +91,13 @@ import { likeModel, likeAvailableModel } from "@/api";
 import { timeago } from "@/common/time";
 import dragToMove from "@/components/tips/dragToMove/index.vue";
 import { showMovableTip } from "@/store/stores/app.ts";
-import comment from '../../../components/modelComment/index.vue'
+import comment from './modelComment/index.vue'
 import { impact } from '../../../helper/device.ts';
 import { isDark } from "@/store/stores/app.ts";
 import crImage from '@/modules/app/components/image.vue'
 import crAvatar from '@/modules/app/components/avatar.vue'
+import shareModal from './share/index.vue'
+
 
 const props = defineProps(["availableModelInfo", "index"]);
 
@@ -166,9 +166,14 @@ function loaded() {
 </script>
 <style>
 /* 用于设置固定高度的评论弹层 */
-.model-comment {
+.modal-comment {
   --height: auto;
 }
+
+.modal-share {
+  --height: auto;
+}
+
 </style>
 <style lang="less" scoped>
 .item {
@@ -206,11 +211,11 @@ function loaded() {
 }
 
 .viewer-background {
-  background: radial-gradient(circle, rgba(233,233,233,1) 50%, rgba(255,255,255,1) 100%);
+  background: radial-gradient(circle, rgba(233, 233, 233, 1) 50%, rgba(255, 255, 255, 1) 100%);
 }
 
 .viewer-background-dark {
-  background: radial-gradient(circle, rgba(20,20,20,1) 50%, rgba(0,0,0,1) 100%);
+  background: radial-gradient(circle, rgba(20, 20, 20, 1) 50%, rgba(0, 0, 0, 1) 100%);
 }
 
 .menu-bottom {
@@ -307,3 +312,4 @@ ion-progress-bar {
   background: linear-gradient(to right, #6900ff, purple);
 }
 </style>
+./modelComment/index.vue

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:32:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 23:27:23
+ * @LastEditTime: 2024-02-10 20:29:34
  * @FilePath: /1s/src/modules/app/views/talk/index.vue
  * @Description: 
  * 
@@ -49,9 +49,8 @@
         </ion-list-header>
         <ion-item-sliding :button="true" v-for="message in messageList">
           <ion-item :button="true" @click="toChat(message)">
-            <ion-avatar slot="start">
-              <img :src="message.avatar" />
-            </ion-avatar>
+            <avatar slot="start" :src="message.avatar">
+            </avatar>
             <ion-label>
               <h2>{{ message.title }}</h2>
               <p>{{ message.label }}</p>
@@ -76,6 +75,7 @@ import add from '@/icon/mobile/add.svg?url'
 import bell from '@/icon/mobile/bell.svg?url'
 import { isOnline } from '@/modules/app/helper/store'
 import { useIonRouter } from "@ionic/vue";
+import avatar from '@/modules/app/components/avatar.vue'
 
 const router = useIonRouter()
 // 去聊天页面

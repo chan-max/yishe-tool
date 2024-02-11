@@ -2,8 +2,8 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-14 11:33:51
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 18:52:13
- * @FilePath: /1s/src/modules/app/components/modelComment/index.vue
+ * @LastEditTime: 2024-02-10 21:27:46
+ * @FilePath: /1s/src/modules/app/views/index/swiper/modelComment/index.vue
  * @Description:
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
@@ -71,7 +71,7 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import { likeAvailableModelComment } from "@/api";
 import { chatbubbleEllipsesOutline } from "ionicons/icons";
 import { ref, watch } from "vue";
-import { vibrate, impact } from '../../helper/device.ts';
+import { vibrate, impact } from '@/modules/app/helper/device.ts';
 import timeSort from '@/icon/mobile/time-sort.svg?component';
 import hotSort from '@/icon/mobile/hot-sort.svg?component';
 import noComment from '@/icon/mobile/no-comment.svg?component'

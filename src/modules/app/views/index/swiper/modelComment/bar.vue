@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-04 19:33:16
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 08:16:51
+ * @LastEditTime: 2024-02-10 20:36:51
  * @FilePath: /1s/src/modules/app/components/modelComment/bar.vue
  * @Description: 
  * 
@@ -11,9 +11,8 @@
 <template>
     <div class="bar">
         <div class="avatar">
-            <ion-avatar style="width: 30px; height: 30px">
-                <img :src="commentInfo.t_user.preview_avatar || '/mobileDefaultAvatar.svg'" />
-            </ion-avatar>
+            <avatar style="width: 30px; height: 30px" :src="commentInfo.t_user.preview_avatar">
+            </avatar>
         </div>
         <div class="main">
             <div class="header">
@@ -25,18 +24,17 @@
             </div>
             <div class="footer">
                 <div class="reply" @click="$emit('reply')">回复</div>
-                <div v-show="showDelete"  class="delete" @click="$emit('delete')">删除</div>
+                <div v-show="showDelete" class="delete" @click="$emit('delete')">删除</div>
             </div>
             <div class="children" v-if="$slots.children">
                 <slot name="children"></slot>
             </div>
-            <div class="more" @click="$emit('more')" v-show="showMore"> 
+            <div class="more" @click="$emit('more')" v-show="showMore">
                 {{ loadingChildren ? '正在加载中...' : '查看更多评论' }}
             </div>
         </div>
         <div class="like" :style="{ color: commentInfo.liked && '#FF3131' }">
-            <thumbup @click="$emit('like', commentInfo)" style="width: 14px; height: 14px;margin:4px;"
-                ></thumbup>
+            <thumbup @click="$emit('like', commentInfo)" style="width: 14px; height: 14px;margin:4px;"></thumbup>
             {{ commentInfo.like_count || 0 }}
         </div>
     </div>
@@ -45,6 +43,8 @@
 <script setup>
 import thumbup from "@/icon/mobile/thumbup.svg?component";
 import { timeago } from "@/common/time";
+import avatar from '@/modules/app/components/avatar.vue'
+
 const props = defineProps({
     commentInfo: {},
     showDelete: {
@@ -54,7 +54,7 @@ const props = defineProps({
         default: false
     },
     // 是否正在加载子评论
-    loadingChildren:{
+    loadingChildren: {
         default: false
     }
 });

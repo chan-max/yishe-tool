@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-06 20:41:35
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 20:01:15
+ * @LastEditTime: 2024-02-10 20:32:07
  * @FilePath: /1s/src/modules/app/views/talk/index.ts
  * @Description: 
  * 
@@ -21,6 +21,7 @@ import { ref } from 'vue'
 import systemMesssage from '@/icon/mobile/system-message.svg?url'
 import interactMessage from '@/icon/mobile/interact-message.svg?url'
 import customerService from '@/icon/mobile/customer-service.svg?url'
+import transport from '@/icon/mobile/transport.svg?url'
 
 export const messageList = ref([
     {
@@ -40,5 +41,11 @@ export const messageList = ref([
         avatar: customerService,
         title: '客服',
         label: '有问题找客服'
+    },
+    {
+        type: 'transport',
+        avatar: transport,
+        title: '物流消息',
+        label: '看看我的东西到哪了～'
     }
 ])

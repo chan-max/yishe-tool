@@ -1,30 +1,20 @@
 /*
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-06 12:17:34
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-06 13:17:57
- * @FilePath: /1s/server/controller/follower.controller.js
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-11 22:50:47
+ * @FilePath: /yishe/server/controller/follower.controller.js
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
  */
 
-
-/*
- * @Author: chan-max jackieontheway666@gmail.com
- * @Date: 2024-02-05 12:54:44
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 13:39:39
- * @FilePath: /1s/server/controller/file.controller.js
- * @Description: 处理用户之间的关注关系
- * 
- * Copyright (c) 2024 by 1s, All Rights Reserved. 
- */
-
+import { Op } from "sequelize";
 
 
 export const followerController = ({ router, app, sequelize, redis }) => {
 
+    // 关注
     router.post("/follow", async (ctx) => {
         let paylaod = ctx.verifyToken();
 
@@ -37,10 +27,11 @@ export const followerController = ({ router, app, sequelize, redis }) => {
 
         // 发送关注通知
         ctx.body = {
-            message:'操作成功'
+            message: '操作成功'
         }
     });
 
+    // 取消关注
     router.post("/unfollow", async (ctx) => {
         await sequelize.models.t_follower.destroy({
             where: {
@@ -50,7 +41,45 @@ export const followerController = ({ router, app, sequelize, redis }) => {
         })
         // 发送取关通知
         ctx.body = {
-            message:'操作成功'
+            message: '操作成功'
         }
     });
+
+
+    // 获取我的好友
+    router.post("/getMyFriend", async (ctx) => {
+
+        let payload = ctx.verifyToken()
+
+
+       
+        let data = sequelize.query
+        debugger
+
+        // 发送取关通知
+        ctx.body = {
+            data
+        }
+    });
+
+    
+    // 获取我的关注
+    router.post("/getMyFollowing", async (ctx) => {
+
+        let data = await ctx.queryList()
+        // 发送取关通知
+        ctx.body = {
+            message: '操作成功'
+        }
+    });
+
+    // 获取我的关注者
+    router.post("/getMyFollower", async (ctx) => {
+        let data = await ctx.queryList()
+        // 发送取关通知
+        ctx.body = {
+            message: '操作成功'
+        }
+    });
+
 };

@@ -1,9 +1,9 @@
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-10 22:33:07
- * @FilePath: /1s/src/modules/app/views/index/swiper/item.vue
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-12 10:15:57
+ * @FilePath: /yishe/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
@@ -34,8 +34,15 @@
           发布于 {{ timeago(availableModelInfo.t_model.createdAt) }}
         </div>
       </div>
+      <div>
+        <ion-button size="default">
+          关注
+        </ion-button>
+      </div>
       <div style="flex: 1"></div>
-      <div style="font-size: 12px">查看更多细节</div>
+      <div style="font-size: 12px">
+        <div> 更多 </div>
+      </div>
     </div>
 
     <div class="menu-right">
@@ -97,7 +104,7 @@ import { isDark } from "@/store/stores/app.ts";
 import crImage from '@/modules/app/components/image.vue'
 import crAvatar from '@/modules/app/components/avatar.vue'
 import shareModal from './share/index.vue'
-
+import { ActionSheet, ActionSheetButtonStyle } from '@capacitor/action-sheet';
 
 const props = defineProps(["availableModelInfo", "index"]);
 
@@ -163,17 +170,14 @@ function loaded() {
   // 移除loading
   loading.value = false;
 }
+
+
 </script>
 <style>
 /* 用于设置固定高度的评论弹层 */
-.modal-comment {
+ion-modal{
   --height: auto;
 }
-
-.modal-share {
-  --height: auto;
-}
-
 </style>
 <style lang="less" scoped>
 .item {
@@ -312,4 +316,3 @@ ion-progress-bar {
   background: linear-gradient(to right, #6900ff, purple);
 }
 </style>
-./modelComment/index.vue

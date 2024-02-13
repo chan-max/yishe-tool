@@ -111,6 +111,7 @@
     "yarn": "^1.22.21"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.4",
     "@quasar/vite-plugin": "^1.6.0",
     "@types/node": "^20.3.1",
     "@types/three": "^0.149.0",

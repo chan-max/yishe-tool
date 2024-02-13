@@ -1,9 +1,9 @@
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-31 21:19:02
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-02 09:33:16
- * @FilePath: /1s/src/modules/main/view/base/header/index.vue
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-13 06:50:36
+ * @FilePath: /yishe/src/modules/main/view/base/header/index.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
@@ -12,6 +12,9 @@
     <div ref="headerBar" class="header-bar flex justify-center z-10">
         <div class="header-bar-content flex justify-between items-center">
             <div class="header-bar-logo" @click="$router.push({ name: 'Home' })">衣设</div>
+
+            <!-- <div style="flex: 1"></div> -->
+
             <router-link  v-slot="{ navigate, isActive, isExactActive }" :to="{ name: 'Market' }" custom>
                 <div class="header-bar-menu-item" :class="{ 'header-bar-menu-item-active': isActive }" @click="navigate">
                     在线商场
@@ -26,6 +29,12 @@
             <router-link  v-slot="{ navigate, isActive, isExactActive }" :to="{ name: 'Workspace' }" custom>
                 <div class="header-bar-menu-item" :class="{ 'header-bar-menu-item-active': isActive }" @click="navigate">
                     我的工作台
+                </div>
+            </router-link>
+
+            <router-link  v-slot="{ navigate, isActive, isExactActive }" :to="{ name: 'Workspace' }" custom>
+                <div class="header-bar-menu-item" :class="{ 'header-bar-menu-item-active': isActive }" @click="navigate">
+                    我是商家
                 </div>
             </router-link>
 
@@ -60,7 +69,6 @@ const loginStatusStore = useLoginStatusStore();
     height: 64px;
     background: #fff;
     border-bottom: 1px solid #eee;
-
 }
 
 .header-bar-content {
@@ -88,8 +96,9 @@ const loginStatusStore = useLoginStatusStore();
     text-wrap: nowrap;
     cursor: pointer;
     height: 30px;
-    font-weight: bold;
-    color: #555;
+    font-weight: 500;
+    color: #000;
+    opacity: .9;
     border-bottom: 2px solid transparent;
     svg {
         width: 10px;

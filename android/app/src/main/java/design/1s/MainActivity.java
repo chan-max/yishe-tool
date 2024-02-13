@@ -1,4 +1,4 @@
-package design.1s;
+package design.yishe;
 
 import com.getcapacitor.BridgeActivity;
 

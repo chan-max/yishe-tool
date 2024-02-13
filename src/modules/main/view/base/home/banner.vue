@@ -2,36 +2,21 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-21 18:56:25
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2023-12-22 23:28:08
- * @FilePath: /1s/src/modules/main/view/base/home/banner.vue
+ * @LastEditTime: 2024-02-13 09:09:24
+ * @FilePath: /yishe/src/modules/main/view/base/home/banner.vue
  * @Description: 
  * 
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
-  <div class="home-banner">
+  <div class="home-banner super-ellipse">
+    <button class="button-1" @click="$router.push({ name: 'Design' })">
+      快速开始
+    </button>
+
     <div class="home-banner-main-title">
-    开放式服装设计-交易平台
-    <br>
-    <span style="font-size:.8em;font-weight: bold;">每个人都是
-    <span class="linear-gradient-text">设计师</span>
-    </span>
+      开放式服装设计-交易平台
     </div>
-    <div class="home-banner-main-subtitle">
-      共 300 人 设计了 788 件服装
-    </div>
-
-    <div>
-      <el-button
-      size="large"
-      type="primary"
-      @click="$router.push({ name: 'Design' })"
-    >
-      <span style="font-size: 18px; font-weight: bold"> 试一下</span>
-      <el-icon><TopRight /></el-icon>
-    </el-button>
-    </div>
-
     <div class="bannner-model">
       <gltf-viewer :model="modelInfo"></gltf-viewer>
     </div>
@@ -52,37 +37,58 @@ onMounted(async () => {
 </script>
 <style lang="less">
 .home-banner {
-  width: 100%;
+  width: 96%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   row-gap: 20px;
+  padding: 40px 0;
+  margin-top: 32px;
+  background: url(/image/background/bg2.jpg);
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 100px 50px rgba(0, 0, 0, 0.2) inset;
+  border-radius: 32px;
+  position: relative;
 }
+
 
 .home-banner-main-title {
   font-size: 80px;
-  color: #222;
+  color: #fff;
   font-weight: 500;
   text-align: center;
-  padding-top:80px;
+  padding-top: 120px;
   line-height: 100px;
-}
-
-.home-banner-main-subtitle{
-  font-size: 14px; color: #000; line-height: 24px
 }
 
 .bannner-model {
   height: 400px;
-  width: 800px;
+  width: 400px;
 }
 
-.linear-gradient-text{
-background: linear-gradient(to right, #4A00E0, #8E2DE2);
-color: #ffffff; // 兜底颜色，防止文字裁剪不生效
-background-clip: text;
--webkit-background-clip: text; // 背景被裁减为文字的前景色
--webkit-text-fill-color: transparent;
+.button-1 {
+  background: transparent;
+  border-radius: 8px;
+  border: 4px solid rgba(255, 255, 255, 1);
+  color: #fff;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1em;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all .5s;
+  font-size: 18px;
+  opacity: .8;
+  font-weight: bold;
+  position: absolute;
+  right: 5%;
+  top: 5%;
+}
+
+.button-1:hover {
+  opacity: 1;
+  transform: scale(1.05);
 }
 </style>

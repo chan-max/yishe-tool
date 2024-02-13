@@ -1,9 +1,9 @@
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-14 11:33:51
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-10 21:27:46
- * @FilePath: /1s/src/modules/app/views/index/swiper/modelComment/index.vue
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-11 20:58:49
+ * @FilePath: /yishe/src/modules/app/views/index/swiper/modelComment/index.vue
  * @Description:
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
@@ -26,7 +26,7 @@
         </div>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="comment-content">
+    <ion-content>
       <div v-if="firstLoading" class="w-full h-full flex justify-center items-center">
         <ion-spinner name="dots"></ion-spinner>
       </div>

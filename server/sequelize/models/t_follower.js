@@ -1,3 +1,13 @@
+/*
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2024-02-11 09:10:15
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-13 20:59:27
+ * @FilePath: /yishe/server/sequelize/models/t_follower.js
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+ */
 'use strict';
 const {
   Model
@@ -11,8 +21,21 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.t_follower.belongsTo(models.t_user, {
+        foreignKey: 'user_id',
+        targetKey: 'id',
+        as: 'user_info'
+      });
+
+      models.t_follower.belongsTo(models.t_user, {
+        foreignKey: 'follower_id',
+        targetKey: 'id',
+        as: 'follower_info'
+      });
     }
   }
+
+  
   t_follower.init({
     user_id: DataTypes.STRING,
     follower_id: DataTypes.STRING

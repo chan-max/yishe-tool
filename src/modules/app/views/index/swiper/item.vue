@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-18 19:22:11
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-12 10:15:57
+ * @LastEditTime: 2024-02-13 23:40:48
  * @FilePath: /yishe/src/modules/app/views/index/swiper/item.vue
  * @Description: 
  * 
@@ -24,24 +24,35 @@
     </div>
 
     <div class="menu-top">
-      <cr-avatar style="width: 32px; height: 32px" :src="availableModelInfo.t_user.preview_avatar" class="avatar-border">
+      <cr-avatar style="width: 36px; height: 36px;border:1.2px solid #fff;"
+        :src="availableModelInfo.t_user.preview_avatar" class="avatar-border">
       </cr-avatar>
       <div>
-        <div style="font-size: 12px; font-weight: bold; line-height: 20px">
+        <div style="font-size: 14px; font-weight: bold; line-height: 20px">
           {{ availableModelInfo.t_user.name || "小芳" }}
         </div>
         <div style="font-size: 12px; font-weight: 300">
           发布于 {{ timeago(availableModelInfo.t_model.createdAt) }}
         </div>
       </div>
-      <div>
-        <ion-button size="default">
-          关注
-        </ion-button>
-      </div>
+
       <div style="flex: 1"></div>
-      <div style="font-size: 12px">
-        <div> 更多 </div>
+      <div class="follow-button">
+        <div v-if="availableModelInfo.relationship == RelationshipType.MYSELF">
+          我自己
+        </div>
+        <div @click="execUnfollow" v-if="availableModelInfo.relationship == RelationshipType.FOLLOWING">
+          关注中，取消关注
+        </div>
+        <div @click="execFollow" v-if="availableModelInfo.relationship == RelationshipType.FOLLOWED">
+          我的粉丝，回关
+        </div>
+        <div @click="execUnfollow" v-if="availableModelInfo.relationship == RelationshipType.FRIEND">
+          我的好友
+        </div>
+        <div @click="execFollow" v-if="availableModelInfo.relationship == RelationshipType.STRANGER">
+          陌生人，点个关注
+        </div>
       </div>
     </div>
 
@@ -76,12 +87,12 @@
       <ion-progress-bar type="indeterminate"></ion-progress-bar>
     </div>
   </div>
-
+  
   <ion-modal class="modal-comment" :is-open="showComment" :initial-breakpoint="1" :breakpoints="[0, 1]"
     @didDismiss="showComment = false">
     <comment :available-model-info="availableModelInfo"></comment>
   </ion-modal>
-  <ion-modal class="modal-share"  :is-open="showShare" :initial-breakpoint="1" :breakpoints="[0, 1]"
+  <ion-modal class="modal-share" :is-open="showShare" :initial-breakpoint="1" :breakpoints="[0, 1]"
     @didDismiss="showShare = false">
     <share-modal :available-model-info="availableModelInfo"></share-modal>
   </ion-modal>
@@ -105,12 +116,15 @@ import crImage from '@/modules/app/components/image.vue'
 import crAvatar from '@/modules/app/components/avatar.vue'
 import shareModal from './share/index.vue'
 import { ActionSheet, ActionSheetButtonStyle } from '@capacitor/action-sheet';
+import { RelationshipType } from "@/types/user.ts";
+
 
 const props = defineProps(["availableModelInfo", "index"]);
 
+
+
 // 打开评论
 const showComment = ref(false)
-
 
 const showShare = ref(false)
 
@@ -172,10 +186,32 @@ function loaded() {
 }
 
 
+import { follow, unfollow } from '@/api'
+
+/*
+   关注
+*/
+async function execFollow() {
+  let relationship = await follow({
+    userId: props.availableModelInfo.t_user.id
+  })
+  props.availableModelInfo.relationship = relationship
+}
+
+/*
+   取消关注
+*/
+async function execUnfollow() {
+  let relationship = await unfollow({
+    userId: props.availableModelInfo.t_user.id
+  })
+  props.availableModelInfo.relationship = relationship
+}
+
 </script>
 <style>
 /* 用于设置固定高度的评论弹层 */
-ion-modal{
+ion-modal {
   --height: auto;
 }
 </style>
@@ -291,7 +327,7 @@ ion-progress-bar {
   align-items: center;
   column-gap: 12px;
   padding: 10px;
-  z-index: 2;
+  z-index: 3;
 }
 
 .avatar-border {
@@ -314,5 +350,13 @@ ion-progress-bar {
   border-radius: inherit;
   /*important*/
   background: linear-gradient(to right, #6900ff, purple);
+}
+
+.follow-button {
+  font-size: 14px;
+  font-weight: bold;
+  background: transparent;
+  padding: 10px;
+  border-radius: 6px;
 }
 </style>

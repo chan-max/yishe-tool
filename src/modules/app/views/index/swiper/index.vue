@@ -1,9 +1,9 @@
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 19:14:05
- * @FilePath: /1s/src/modules/app/views/index/swiper/index.vue
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-13 10:35:51
+ * @FilePath: /yishe/src/modules/app/views/index/swiper/index.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
@@ -23,7 +23,7 @@
 <script setup>
 import { ref, onMounted, watch, watchEffect } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
-import { getModelList, getAvailableModel } from "@/api/index.ts";
+import { getModelList, getIndexAvailableModel } from "@/api/index.ts";
 import { Virtual } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
@@ -31,7 +31,7 @@ import "@ionic/vue/css/ionic-swiper.css";
 import swiperItem from "./item.vue";
 import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
 
-const { list, getList, loading, firstLoading } = usePaging(getAvailableModel, {
+const { list, getList, loading, firstLoading } = usePaging(getIndexAvailableModel, {
   // 获取首页模型信可能会涉及很多查询，所以严格控制其数量
   pageSize:3
 });

@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-13 09:16:08
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-13 09:21:45
+ * @LastEditTime: 2024-02-13 13:02:05
  * @FilePath: /yishe/src/types/user.ts
  * @Description: 
  * 
@@ -12,10 +12,11 @@
 
 // 定义用户间的关系类型
 export enum RelationshipType {
-    MYSELT = 'myself', // 我自己
-    MYFOLLOWER = 'myfollower', // 我的粉丝
-    MYFOLLOWING = 'myfollowing', // 我的关注
-    MYFRIEND = 'myfriend' // 我的朋友
+    MYSELF = 'myself', // 我自己
+    FOLLOWER = 'follower', // 我的粉丝
+    FOLLOWING = 'following', // 我的关注
+    FRIEND = 'friend', // 我的朋友
+    STRANGER = 'stranger', // 陌生人
 }
 
 

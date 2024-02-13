@@ -1,9 +1,9 @@
 /*
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-23 22:50:51
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 20:02:46
- * @FilePath: /1s/server/controller/comment.controller.js
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-13 10:31:12
+ * @FilePath: /yishe/server/controller/comment.controller.js
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
@@ -81,7 +81,7 @@ export const commentController = ({ router, app, sequelize, redis }) => {
   router.post("/getAvailableModelComment", async (ctx) => {
     // 默认使用最新的排序类型
     const sortType = ctx.request.body.sortType || "latest";
-
+    
     const queryOptions = {
       /*
         判断是否为子评论节点
@@ -126,7 +126,8 @@ export const commentController = ({ router, app, sequelize, redis }) => {
 
 
   router.post("/likeAvailableModelComment", async (ctx) => {
-    var payload = ctx.verifyToken()
+    var payload = ctx.verifyToken();
+    
     await sequelize.models.t_available_model_comment.increment('like_count', { by: 1, where: { id: ctx.request.body.commentId } })
     ctx.body = {
       type: 'success'

@@ -118,7 +118,6 @@ export const updateUserInfoHook = (router, sequelize, app) =>
   });
 
 
-
 export const loginHook = (router, sequelize) => router.post('/login', async (ctx) => {
   const data = ctx.request.body
   const { account, password } = data

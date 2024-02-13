@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-21 18:56:25
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-13 09:09:24
+ * @LastEditTime: 2024-02-13 13:36:14
  * @FilePath: /yishe/src/modules/main/view/base/home/banner.vue
  * @Description: 
  * 
@@ -48,7 +48,7 @@ onMounted(async () => {
   background: url(/image/background/bg2.jpg);
   background-size: 100% 100%;
   box-shadow: 0px 0px 100px 50px rgba(0, 0, 0, 0.2) inset;
-  border-radius: 32px;
+  border-radius: 24px;
   position: relative;
 }
 
@@ -78,7 +78,7 @@ onMounted(async () => {
   font-size: 1em;
   padding: 0.5rem 1rem;
   cursor: pointer;
-  transition: all .5s;
+  transition: all .2s;
   font-size: 18px;
   opacity: .8;
   font-weight: bold;

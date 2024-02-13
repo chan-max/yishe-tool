@@ -1,9 +1,9 @@
 <!--
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:25
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-16 21:32:42
- * @FilePath: /1s/src/components/user/userAvatar.vue
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-13 18:31:14
+ * @FilePath: /yishe/src/components/user/userAvatar.vue
  * @Description: 
  * 
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
@@ -46,6 +46,8 @@ const avatar = computed(() => {
         display: flex;
         justify-content: center;
         align-items: center;
+        border:2px solid #ddd;
+        border-radius: 50%;
         .el-avatar{
             height:32px;
             width:32px;

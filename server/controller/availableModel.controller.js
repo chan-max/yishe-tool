@@ -1,3 +1,5 @@
+import { getRelationship } from '../query/user.js'
+
 
 export const availableModelController = ({ router, app, sequelize, redis, socketio }) => {
 
@@ -114,6 +116,59 @@ export const availableModelController = ({ router, app, sequelize, redis, socket
 
 
 
+  /*  获取首页推荐模型  */
+  router.post("/getIndexAvailableModel", async (ctx) => {
+    let data = await ctx.queryList(sequelize.models.t_available_model, {
+      include: [{
+        model: sequelize.models.t_model,
+      }, {
+        model: sequelize.models.t_user,
+      }]
+    })
+
+    const payload = ctx.verifyToken()
+
+    if (!payload) {
+      return ctx.body = {
+        message: '无效的身份'
+      }
+    }
+
+
+
+    // 查询点赞状态
+    await Promise.all(data.list.map((item) => {
+      return new Promise(async (resolve, reject) => {
+        let record = await sequelize.models.t_available_model_like.findOne({
+          where: {
+            user_id: payload.userId,
+            available_model_id: item.id
+          }
+        });
+        item.setDataValue('liked', !!record)
+
+        let relationship = await getRelationship(sequelize.models.t_follower, payload.userId, item.t_user.id)
+        item.setDataValue('relationship', relationship)
+        resolve()
+      })
+    }))
+    
+    data.list.forEach((item) => {
+      // 模型预览图
+      item.t_model.dataValues.preview_img = ctx.relativePathToPreviewPath(item.t_model.img);
+
+      // 用户头像
+      item.t_user?.setDataValue(
+        "preview_avatar",
+        ctx.relativePathToPreviewPath(item.t_user.avatar)
+      );
+    });
+
+
+    ctx.body = {
+      data: data,
+    };
+  });
 };
 
 

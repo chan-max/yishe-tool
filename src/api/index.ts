@@ -228,3 +228,39 @@ export const getAvailableModel = (params) => new Promise(async (resolve, reject)
   const res = await apiInstance.post(Url.GET_AVAILABLE_MODEL, params)
   resolve(res.data.data)
 })
+
+export const getIndexAvailableModel = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_INDEX_AVAILABLE_MODEL, params)
+  resolve(res.data.data)
+})
+
+export const follow  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.FOLLOW, params)
+  resolve(res.data.data)
+})
+
+
+export const unfollow  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.UNFOLLOW, params)
+  resolve(res.data.data)
+})
+
+// 获取我的好友列表
+export const getMyFriends  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_MY_FRIENDS, params)
+  resolve(res.data.data)
+})
+
+
+// 获取我的关注列表
+export const getMyFollowings  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_MY_FOLLOWINGS, params)
+  resolve(res.data.data)
+})
+
+// 获取我的关注列表
+export const getMyFollowers  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_MY_FOLLOWERS, params)
+  resolve(res.data.data)
+})
+

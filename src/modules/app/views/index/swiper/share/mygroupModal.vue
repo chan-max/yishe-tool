@@ -1,3 +1,13 @@
+<!--
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2024-02-14 09:21:55
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-14 09:37:18
+ * @FilePath: /yishe/src/modules/app/views/index/swiper/share/ mygroupModal.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+-->
 <template>
     <div style="height: 70vh">
         <div style="padding-top: 20px;">

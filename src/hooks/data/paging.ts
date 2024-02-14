@@ -1,9 +1,9 @@
 /*
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-05 16:19:25
- * @FilePath: /1s/src/hooks/data/paging.ts
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-14 22:50:03
+ * @FilePath: /yishe/src/hooks/data/paging.ts
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
@@ -30,6 +30,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         initialList: ref([]),
         callback:null, // 处理每个请求元素的回调
         resListFilter:null, // 请求结果被插入列表前的过滤器，被过滤掉的不会添加到列表中
+        itemAdapter:null, // 每个元素适配器
         ...options,
     }
 
@@ -87,6 +88,10 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
             if(options.resListFilter){
                 res.list = res.list.filter(options.resListFilter)
+            }
+
+            if(options.itemAdapter){
+                res.list = res.list.map(options.itemAdapter)
             }
 
             if (isRef(list)) {

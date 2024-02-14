@@ -1,9 +1,9 @@
 /*
  * @Author: chan-max 2651308363@qq.com
- * @Date: 2024-02-11 09:10:15
+ * @Date: 2024-02-14 11:30:36
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-14 23:00:44
- * @FilePath: /yishe/server/sequelize/models/t_follower.js
+ * @LastEditTime: 2024-02-14 22:25:04
+ * @FilePath: /yishe/server/sequelize/models/t_communication.js
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
@@ -13,7 +13,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class t_follower extends Model {
+  class t_communication extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -21,27 +21,26 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.t_follower.belongsTo(models.t_user, {
-        foreignKey: 'user_id',
+
+      models.t_communication.belongsTo(models.t_user, {
+        foreignKey: 'initiator_id',
         targetKey: 'id',
-        as: 'user_info'
+        as: 'initiator_info'
       });
 
-      models.t_follower.belongsTo(models.t_user, {
-        foreignKey: 'follower_id',
+      models.t_communication.belongsTo(models.t_user, {
+        foreignKey: 'receiver_id',
         targetKey: 'id',
-        as: 'follower_info'
+        as: 'receiver_info'
       });
     }
   }
-  
-  
-  t_follower.init({
-    user_id: DataTypes.STRING,
-    follower_id: DataTypes.STRING
+  t_communication.init({
+    initiator_id: DataTypes.INTEGER,
+    receiver_id: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 't_follower',
+    modelName: 't_communication',
   });
-  return t_follower;
+  return t_communication;
 };

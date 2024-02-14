@@ -264,3 +264,9 @@ export const getMyFollowers  = (params) => new Promise(async (resolve, reject) =
   resolve(res.data.data)
 })
 
+
+// 获取我的聊天列表
+export const getMyCommunicationList  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_MY_COMMUNICATION_LIST, params)
+  resolve(res.data.data)
+})

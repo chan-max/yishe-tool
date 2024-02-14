@@ -1,9 +1,9 @@
 /*
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-06 20:41:35
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-10 20:32:07
- * @FilePath: /1s/src/modules/app/views/talk/index.ts
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-14 23:37:03
+ * @FilePath: /yishe/src/modules/app/views/talk/index.ts
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
@@ -49,3 +49,15 @@ export const messageList = ref([
         label: '看看我的东西到哪了～'
     }
 ])
+
+
+export function createMessageItem(options) {
+    return {
+        type:'',
+        avatar:'',
+        title:'',
+        label:'',
+        communicationId:'',
+        ...options
+    }
+}

@@ -22,7 +22,6 @@ dotenv.config()
 
 const app = new Koa();
 
-
 const router = new Router();
 
 // 当前文件全名
@@ -69,7 +68,6 @@ import { initWebsocket } from './websocket/index.js'
 
 const socketio = initWebsocket(server)
 
-
 initRouter(router, db.sequelize, app, redis);
 
 initController({
@@ -78,6 +76,15 @@ initController({
     sequelize: db.sequelize,
     redis,
     socketio
+})
+
+app.use(async (ctx, next) => {
+    ctx.useRouter = () => router
+    ctx.useApp = () => app
+    ctx.useSequelize = () => db.sequelize
+    ctx.useRedis = () => redis
+    ctx.useSocketio = () => socketio
+    await next()
 })
 
 // 前端打包后的代码
@@ -114,7 +121,7 @@ app.use(async (ctx, next) => {
     ctx.getUploadFileRelativePath = (key = 'file') => {
         return getRelativePath(ctx.request.files[key].filepath)
     }
-    
+
     await next()
 })
 
@@ -129,14 +136,8 @@ export function getHost() {
     return (process.env.localhost || ip.address()) + ':' + port
 }
 
-
-
-
-
-
 export async function startServe() {
     await server.listen(3000, '0.0.0.0');
-    console.log('1s listening on *:3000');
 }
 
 

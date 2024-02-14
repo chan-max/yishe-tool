@@ -1,3 +1,13 @@
+<!--
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2024-02-11 09:10:15
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-14 17:11:17
+ * @FilePath: /yishe/src/modules/app/views/talk/chat/index.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+-->
 <template>
     <ion-page>
         <ion-header :translucent="true">
@@ -19,7 +29,7 @@
         </ion-content>
     </ion-page>
 </template>
-    
+
 <script setup lang='ts'>
 import crAvatar from '@/modules/app/components/avatar.vue'
 import { useRoute } from 'vue-router'
@@ -28,5 +38,5 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 
 </script>
-    
-<style></style>
+<style>
+</style>

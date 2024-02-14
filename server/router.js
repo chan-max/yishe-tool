@@ -1,9 +1,9 @@
 /*
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 13:59:37
- * @FilePath: /1s/server/router.js
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-14 21:37:32
+ * @FilePath: /yishe/server/router.js
  * @Description:
  *
  * Copyright (c) 2023 by 1s, All Rights Reserved.
@@ -29,7 +29,7 @@ import {
 
 import { getImageHook, getImageById, imageUploadHook } from "./api/image.js";
 
-import { getModelListHook, getModelById,uploadModelHook,likeModel  } from "./api/model.js";
+import { getModelListHook, getModelById, uploadModelHook, likeModel } from "./api/model.js";
 import { sendEmailHook } from "./api/email.js";
 import {
   uploadTextSticker,
@@ -45,11 +45,14 @@ import { test } from "./api/test.js";
 import { commentController } from "./controller/comment.controller.js";
 import { loginController } from "./controller/login.controller.js";
 import { imageGroupController } from "./controller/imageGroup.controller.js";
-import {availableModelController} from'./controller/availableModel.controller.js';
+import { availableModelController } from './controller/availableModel.controller.js';
 import { fileController } from "./controller/file.controller.js";
-import {followerController} from './controller/follower.controller.js'
+import { followerController } from './controller/follower.controller.js'
 
-import {configController} from './controller/config.controller.js';
+import { configController } from './controller/config.controller.js';
+
+import { messageController } from "./controller/message.controller.js";
+import { communicationController } from "./controller/communication.controller.js";
 
 export const initRouter = (...params) => {
   let hooks = [
@@ -85,15 +88,19 @@ export const initRouter = (...params) => {
   hooks.forEach((hook) => hook(...params));
 };
 
+
+let controllers = [
+  commentController,
+  loginController,
+  imageGroupController,
+  availableModelController,
+  fileController,
+  followerController,
+  configController,
+  messageController,
+  communicationController
+];
+
 export const initController = (...params) => {
-  let controllers = [
-    commentController,
-    loginController,
-    imageGroupController,
-    availableModelController,
-    fileController,
-    followerController,
-    configController
-  ]; 
   controllers.forEach((controller) => controller(...params));
 }

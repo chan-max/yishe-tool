@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-10 22:16:12
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-13 23:44:19
+ * @LastEditTime: 2024-02-14 10:39:06
  * @FilePath: /yishe/src/modules/app/views/index/swiper/share/index.vue
  * @Description: 
  * 
@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    <ion-modal :is-open="showFriends" :initial-breakpoint="1" :breakpoints="[0, 1]" @didDismiss="showFriends = false">
+    <ion-modal :is-open="showFriend" :initial-breakpoint="1" :breakpoints="[0, 1]" @didDismiss="showFriend = false">
         <div style="height: 70vh" class="ion-padding">
             <ion-header>
                 <div>
@@ -63,38 +63,35 @@
     </ion-modal>
 
     <ion-modal :is-open="showFollower" :initial-breakpoint="1" :breakpoints="[0, 1]" @didDismiss="showFollower = false">
-        <div style="height: 70vh" class="ion-padding">
-            <ion-header>
-                <ion-searchbar placeholder="寻找我的粉丝"></ion-searchbar>
-            </ion-header>
-            <ion-content>
-                <ion-list>
-                    <ion-item v-for="i in 20">
-                    </ion-item>
-                </ion-list>
-                <ion-infinite-scroll @ionInfinite="ionInfinite">
-                    <ion-infinite-scroll-content></ion-infinite-scroll-content>
-                </ion-infinite-scroll>
-            </ion-content>
-        </div>
+        <myfollower :availableModelInfo="availableModelInfo"></myfollower>
+    </ion-modal>
+
+    <ion-modal :is-open="showFriend" :initial-breakpoint="1" :breakpoints="[0, 1]" @didDismiss="showFriend = false">
+        <myfriend :availableModelInfo="availableModelInfo"></myfriend>
+    </ion-modal>
+
+    <ion-modal :is-open="showGroup" :initial-breakpoint="1" :breakpoints="[0, 1]" @didDismiss="showGroup = false">
+        <mygroup :availableModelInfo="availableModelInfo"></mygroup>
     </ion-modal>
 </template>
 
 <script setup>
 import { defineProps, ref } from "vue";
 import crImage from "@/modules/app/components/image.vue";
-import customerService from "@/icon/mobile/customer-service.svg?url";
-import myfriend from "@/icon/mobile/myfriend.svg?url";
-import mygroup from "@/icon/mobile/mygroup.svg?url";
+import iconcustomerService from "@/icon/mobile/customer-service.svg?url";
+import iconmyfriend from "@/icon/mobile/myfriend.svg?url";
+import iconmygroup from "@/icon/mobile/mygroup.svg?url";
 import iconmyfollowing from "@/icon/mobile/myfollowing.svg?url";
-import myfollower from "@/icon/mobile/myfollower.svg?url";
-
+import iconmyfollower from "@/icon/mobile/myfollower.svg?url";
 import myfollowing from './myfollowingModal.vue'
+import myfollower from './myfollowerModal.vue'
+import myfriend from './myfriendModal.vue'
+import mygroup from './mygroupModal.vue'
 
 const props = defineProps(["availableModelInfo"]);
 
 // 是否展示好友列表弹层
-const showFriends = ref(false);
+const showFriend = ref(false);
 
 // 是否展示群组弹层
 const showGroup = ref(false);
@@ -103,7 +100,7 @@ const showGroup = ref(false);
 const showFollower = ref(false);
 
 /* 最近的好友和群聊 */
-const latest = ref([]);
+const recent = ref([]);
 
 // 是否展示正在关注弹层
 const showFollowing = ref(false);
@@ -115,21 +112,21 @@ function ionInfinite(e) {
 /* 功能 */
 const utils = ref([
     {
-        src: myfriend,
+        src: iconmyfriend,
         label: "我的好友",
         handler() {
-            showFriends.value = true;
+            showFriend.value = true;
         },
     },
     {
-        src: mygroup,
+        src: iconmygroup,
         label: "我的群聊",
         handler() {
             showGroup.value = true;
         },
     },
     {
-        src: customerService,
+        src: iconcustomerService,
         label: "发给客服",
         handler() {
         },
@@ -142,7 +139,7 @@ const utils = ref([
         },
     },
     {
-        src: myfollower,
+        src: iconmyfollower,
         label: "我的粉丝",
         handler() {
             showFollower.value = true;

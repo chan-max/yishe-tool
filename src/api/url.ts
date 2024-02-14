@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-13 19:43:38
+ * @LastEditTime: 2024-02-14 21:31:27
  * @FilePath: /yishe/src/api/url.ts
  * @Description: 
  * 
@@ -124,4 +124,6 @@ export enum Url {
     GET_MY_FOLLOWERS = 'getMyFollowers',
 
     GET_MY_FOLLOWINGS = 'getMyFollowings',
+
+    GET_MY_COMMUNICATION_LIST = 'getMyCommunicationList',
 }

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-06 12:17:34
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-13 21:51:36
+ * @LastEditTime: 2024-02-14 20:16:00
  * @FilePath: /yishe/server/controller/follower.controller.js
  * @Description: 
  * 
@@ -13,44 +13,16 @@ import { Op } from "sequelize";
 import { getRelationship } from '../query/user.js'
 import { formatUserInfo } from '../format/user.js';
 
-export const followerController = ({ router, app, sequelize, redis }) => {
+import { sendMessage } from "../api/message.js";
+
+export const followerController = (params) => {
     // 关注
-    router.post("/follow", async (ctx) => {
-        let paylaod = ctx.verifyToken();
-        await sequelize.models.t_follower.findOrCreate({
-            where: {
-                user_id: ctx.request.body.userId,
-                follower_id: paylaod.userId
-            }
-        })
-
-        const relationship = await getRelationship(sequelize.models.t_follower, paylaod.userId, ctx.request.body.userId)
-
-        // 发送关注通知
-        ctx.body = {
-            data: relationship,
-            message: '操作成功'
-        }
-    });
+    const { router, app, sequelize, redis } = params
+    postUnfollow(params)
+    postFollow(params)
 
     // 取消关注
-    router.post("/unfollow", async (ctx) => {
-        let paylaod = ctx.verifyToken();
-        await sequelize.models.t_follower.destroy({
-            where: {
-                user_id: ctx.request.body.userId,
-                follower_id: paylaod.userId
-            }
-        })
-        // 发送取关通知
-        const relationship = await getRelationship(sequelize.models.t_follower, paylaod.userId, ctx.request.body.userId)
 
-        // 发送关注通知
-        ctx.body = {
-            data: relationship,
-            message: '操作成功'
-        }
-    });
 
 
     // 获取我的好友
@@ -82,7 +54,7 @@ export const followerController = ({ router, app, sequelize, redis }) => {
                 as: 'follower_info'
             }]
         })
- 
+
         data.list.forEach((item) => {
             formatUserInfo(ctx, item.user_info)
             formatUserInfo(ctx, item.follower_info)
@@ -102,3 +74,51 @@ export const followerController = ({ router, app, sequelize, redis }) => {
         }
     });
 };
+
+
+const postFollow = ({ router, app, sequelize, redis }) => router.post("/follow", async (ctx) => {
+    let payload = ctx.verifyToken();
+    await sequelize.models.t_follower.findOrCreate({
+        where: {
+            user_id: ctx.request.body.userId,
+            follower_id: payload.userId
+        }
+    })
+
+    const relationship = await getRelationship(sequelize.models.t_follower, payload.userId, ctx.request.body.userId)
+    /*
+        发送关注通知
+    */
+
+    // 发送关注通知
+    ctx.body = {
+        data: relationship,
+        message: '操作成功'
+    }
+});
+
+
+const postUnfollow = ({ router, app, sequelize, redis }) => router.post("/unfollow", async (ctx) => {
+    let payload = ctx.verifyToken();
+    await sequelize.models.t_follower.destroy({
+        where: {
+            user_id: ctx.request.body.userId,
+            follower_id: payload.userId
+        }
+    })
+
+    // 发送取关通知
+    const relationship = await getRelationship(sequelize.models.t_follower, payload.userId, ctx.request.body.userId)
+
+    await sendMessage(ctx, {
+        sender: payload.userId,
+        receiver: Number(ctx.request.body.userId),
+        type: 'unfollow'
+    })
+
+    // 发送关注通知
+    ctx.body = {
+        data: relationship,
+        message: '操作成功'
+    }
+});

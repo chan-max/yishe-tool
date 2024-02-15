@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-02-06 12:17:34
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-14 20:16:00
+ * @LastEditTime: 2024-02-15 10:49:09
  * @FilePath: /yishe/server/controller/follower.controller.js
  * @Description: 
  * 
@@ -89,6 +89,12 @@ const postFollow = ({ router, app, sequelize, redis }) => router.post("/follow",
     /*
         发送关注通知
     */
+
+    await sendMessage(ctx, {
+        sender: payload.userId,
+        receiver: Number(ctx.request.body.userId),
+        type: 'follow'
+    })
 
     // 发送关注通知
     ctx.body = {

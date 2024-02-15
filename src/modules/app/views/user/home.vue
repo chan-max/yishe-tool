@@ -1,9 +1,9 @@
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-01 14:31:40
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 12:56:16
- * @FilePath: /1s/src/modules/app/views/user/home.vue
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-15 10:04:12
+ * @FilePath: /yishe/src/modules/app/views/user/home.vue
  * @Description: 移动端个人信息页面
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
@@ -34,7 +34,7 @@
       <div class="flex justify-between align-middle" style="padding: 10px 5px">
         <div class="flex flex-col justify-around">
           <div v-if="loginStore.isLogin" style="font-size: 26px; font-weight: bold">
-            {{ loginStore.userInfo.name || '古三通' }}
+            {{ loginStore.userInfo.name || '' }}
           </div>
           <div v-else style="font-size: 26px; font-weight: bold">
                 登录

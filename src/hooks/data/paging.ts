@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-17 20:12:02
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-14 22:50:03
+ * @LastEditTime: 2024-02-15 23:27:53
  * @FilePath: /yishe/src/hooks/data/paging.ts
  * @Description: 
  * 
@@ -34,7 +34,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         ...options,
     }
 
-
+    
     // 列表数据 , 可用外界传入的参数，也可以自身初始化
     const list = options.initialList
     // 当前页数

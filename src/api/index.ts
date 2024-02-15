@@ -270,3 +270,12 @@ export const getMyCommunicationList  = (params) => new Promise(async (resolve, r
   const res = await apiInstance.post(Url.GET_MY_COMMUNICATION_LIST, params)
   resolve(res.data.data)
 })
+
+
+
+
+// 获取聊天信息
+export const getCommunicationMessage  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_COMMUNICATION_MESSAGE, params)
+  resolve(res.data.data)
+})

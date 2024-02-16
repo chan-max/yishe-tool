@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-11 09:10:15
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-15 23:26:44
+ * @LastEditTime: 2024-02-16 11:05:36
  * @FilePath: /yishe/src/modules/app/views/talk/chat/index.vue
  * @Description: 
  * 
@@ -27,7 +27,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content ref="messageContent" class="ion-padding">
-      <ion-infinite-scroll @ionInfinite="ionInfinite" position="top">
+      <ion-infinite-scroll @ionInfinite="ionInfinite" position="top" threshold="5%">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
       </ion-infinite-scroll>
       <div>

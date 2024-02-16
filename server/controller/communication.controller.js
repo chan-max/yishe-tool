@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-14 15:17:13
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-15 12:16:24
+ * @LastEditTime: 2024-02-16 11:09:20
  * @FilePath: /yishe/server/controller/communication.controller.js
  * @Description: 
  * 
@@ -69,8 +69,7 @@ const postGetMyCommunicationList = ({ router, app, sequelize, redis }) => router
     获取某个聊天的所有聊天记录
 */
 export const postGetCommunicationMessage = ({ router, app, sequelize, redis }) => router.post('/getCommunicationMessage', async (ctx) => {
-
-
+    
     let data = await ctx.queryList(sequelize.models.t_message,{
         where:{
             communication_id:ctx.request.body.communicationId
@@ -80,7 +79,7 @@ export const postGetCommunicationMessage = ({ router, app, sequelize, redis }) =
             'DESC'
         ]]
     })
-
+    
     ctx.body = {
         data
     }

@@ -1,15 +1,15 @@
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-29 20:40:22
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-30 14:09:01
- * @FilePath: /1s/src/components/design/layout/modelInfo/descriptionImgs.vue
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-18 07:49:09
+ * @FilePath: /yishe/src/components/design/layout/modelInfo/descriptionImgs.vue
  * @Description: 
  * 
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
-  <h5>实物图</h5>
+  <p>实物图</p>
   <div style="height: 200px; width:100%;display: flex; align-items: center; justify-content: center;flex-shrink:0;">
     <template v-if="currentOperatingBaseModelInfo?.description_imgs">
       <el-carousel style="width: 100%" :interval="4000" type="card" height="200px">

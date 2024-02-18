@@ -1,16 +1,16 @@
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-11-29 21:41:57
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-13 15:59:38
- * @FilePath: /1s/src/components/design/layout/modelInfo/index.vue
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-18 07:48:47
+ * @FilePath: /yishe/src/components/design/layout/modelInfo/index.vue
  * @Description: 
  * 
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
   <div class="designiy-model-info">
-    <h5>基础模型</h5>
+    <p>基础模型</p>
     <base-gltf-viewer
       class="png-background"
       style="width: 100%; height: 200px;flex-shrink:0;"

@@ -133,9 +133,7 @@ export const availableModelController = ({ router, app, sequelize, redis, socket
         message: '无效的身份'
       }
     }
-
-
-
+    
     // 查询点赞状态
     await Promise.all(data.list.map((item) => {
       return new Promise(async (resolve, reject) => {

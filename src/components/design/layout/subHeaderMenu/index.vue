@@ -1,9 +1,9 @@
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-14 19:04:03
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-30 11:27:32
- * @FilePath: /1s/src/components/design/layout/subHeaderMenu/index.vue
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-18 09:13:42
+ * @FilePath: /yishe/src/components/design/layout/subHeaderMenu/index.vue
  * @Description: 
  * 
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
@@ -72,7 +72,7 @@ import iconCamera from "@/icon/camera.svg?component";
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 0 20px;
   column-gap: 14px;
 }
 

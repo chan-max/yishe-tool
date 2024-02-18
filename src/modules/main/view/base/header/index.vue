@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-31 21:19:02
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-13 09:42:04
+ * @LastEditTime: 2024-02-18 13:09:39
  * @FilePath: /yishe/src/modules/main/view/base/header/index.vue
  * @Description: 
  * 
@@ -98,7 +98,7 @@ const loginStatusStore = useLoginStatusStore();
     height: 30px;
     font-weight: 500;
     color: #000;
-    opacity: .4;
+    opacity: .7 ;
     border-bottom: 2px solid transparent;
     svg {
         width: 10px;

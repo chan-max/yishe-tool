@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-21 18:56:25
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-19 21:14:01
+ * @LastEditTime: 2024-02-20 08:54:44
  * @FilePath: /yishe/src/modules/main/view/base/home/banner.vue
  * @Description: 
  * 
@@ -13,6 +13,7 @@
     <button class="button-1" @click="$router.push({ name: 'Design' })">
       快速开始
     </button>
+
 
     <div class="home-banner-main-title">
       开放式服装设计&交易平台

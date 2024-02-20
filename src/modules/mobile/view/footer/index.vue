@@ -1,3 +1,13 @@
+<!--
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2023-12-16 12:40:26
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2024-01-01 14:36:17
+ * @FilePath: /1s/src/modules/mobile/view/footer/index.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+-->
 <template>
   <div class="mobile-footer">
     <van-tabbar v-model="active" :border="false" route >
@@ -32,11 +42,11 @@
 
 <script setup>
 import { User, Lock, View, Hide } from "@element-plus/icons-vue";
-import iconHome from "@/icon/mobile/footer/home.svg?vueComponent";
-import iconWorkspace from "@/icon/mobile-workspace.svg?vueComponent";
-import iconShop from "@/icon/mobile-shop.svg?vueComponent";
-import iconTool from "@/icon/mobile-tool.svg?vueComponent";
-import iconMe from "@/icon/mobile-me.svg?vueComponent";
+import iconHome from "@/icon/mobile/footer/home-filled.svg?component";
+import iconWorkspace from "@/icon/mobile-workspace.svg?component";
+import iconShop from "@/icon/mobile-shop.svg?component";
+import iconTool from "@/icon/mobile-tool.svg?component";
+import iconMe from "@/icon/mobile-me.svg?component";
 import { ref } from "vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { router } from '../../router';

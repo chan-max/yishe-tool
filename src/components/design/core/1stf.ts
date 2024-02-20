@@ -1,17 +1,18 @@
-import { resolveFilePath, toRealPath } from "@/api/url";
 import { ModelController } from "./controller";
-import { canvasBgColor, currentOperatingModelInfo, isDarkMode,canvasBgOpacity } from '../store';
+import { canvasBgColor, currentOperatingBaseModelInfo, isDarkMode, canvasBgOpacity } from '../store';
 
 export const _1stfExporterMixin = (modelController: ModelController) => {
   modelController.exportTo1stf = () => {
-    const decals = modelController.decalControllers.map((decal: any) => decal.export());
-    
+    const decals = modelController.decalControllers.map((decal: any) => {
+      return decal.export()
+    }).filter(Boolean);
+
     return {
-      baseModelId: currentOperatingModelInfo.value.id,
+      baseModelId: currentOperatingBaseModelInfo.value.id,
       decals,
       isDarkMode: isDarkMode.value,
       canvasBgColor: canvasBgColor.value,
-      canvasBgOpacity:canvasBgOpacity.value,
+      canvasBgOpacity: canvasBgOpacity.value,
       camera: {
         position: {
           x: modelController.camera.position.x,

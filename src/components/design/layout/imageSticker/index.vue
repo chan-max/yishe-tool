@@ -10,8 +10,13 @@
         </template>
       </el-input>
     </div>
-    <div class="designiy-image-sticker-content">
-      <div class="item" title="拖动来进行贴图" v-for="i in images" draggable="false">
+    <div
+      class="designiy-image-sticker-content"
+      v-infinite-scroll="scroll"
+      :infinite-scroll-distance="150"
+      :infinite-scroll-disabled="disabled || loading"
+    >
+      <div class="item" title="拖动来进行贴图" v-for="i in list" draggable="false">
         <el-image
           @load="load($event, i)"
           :src="i.preview_img"
@@ -38,16 +43,9 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import {
-  showBaseModelSelect,
-  currentOperatingModelInfo,
-  canvasBgColor,
-  canvasBgOpacity,
   currentController,
 } from "../../store";
 import {
-  Loading,
-  CloseBold,
-  CircleCloseFilled,
   Picture,
   FolderOpened,
   Search,
@@ -55,39 +53,63 @@ import {
 } from "@element-plus/icons-vue";
 import { getImage } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
-import { showImageUplaod ,showDecalControl} from "../../store";
+import { showImageUplaod, showDecalControl } from "../../store";
+import {
+  imgToFile,
+  createImgObjectURL,
+  imgToBase64,
+} from "@/common/transform/index";
 
-const value = ref("");
+const input = ref()
 
-const options = [
-  {
-    value: "mine",
-    label: "我的上传",
-  },
-  {
-    value: "saved",
-    label: "我的收藏",
-  },
-];
-
-const images = ref([]);
+const list = ref([]);
 
 // image load success
 function load(e, info) {
-  initDraggableElement(e.target, () => {
-    currentController.value.stickToMousePosition({
-      type:'image',
-      local:false,
-      src: info.preview_img,
-      ...info
-    });
-    showDecalControl.value = true
-  });
+  const img = e.target;
+  initDraggableElement(
+    img,
+    () => {
+      const src = createImgObjectURL(img);
+      const base64 = imgToBase64(img);
+
+      currentController.value.stickToMousePosition({
+        img: img,
+        type: "image",
+        local: false,
+        src: src,
+        ...info,
+        base64: base64,
+      });
+      showDecalControl.value = true;
+    }
+  );
 }
 
-onMounted(async () => {
-  images.value = await getImage();
-});
+const page = ref(1);
+const disabled = ref(false);
+const pages = ref();
+const loading = ref(false);
+
+async function scroll() {
+  if (page.value > pages.value) {
+    return;
+  }
+
+  loading.value = true;
+  const res = await getImage({
+    page: page.value++,
+  });
+
+  if (!res.list.length) {
+    disabled.value = true;
+    return false;
+  }
+
+  pages.value = res.pages;
+  list.value = list.value.concat(res.list);
+  loading.value = false;
+}
 </script>
 <style lang="less">
 .designiy-image-sticker {
@@ -114,10 +136,13 @@ onMounted(async () => {
 
 .designiy-image-sticker-content {
   flex: 1;
+  display: flex;
+  flex-wrap: wrap;
   overflow: auto;
-  padding: 10px;
-  columns: 2;
-  column-gap: 5px;
+  justify-content: space-between;
+  padding:10px;
+  column-gap: 4px;
+  row-gap: 4px;
   .el-image {
     display: block;
   }
@@ -132,7 +157,8 @@ onMounted(async () => {
 }
 
 .item {
-  margin-bottom: 5px;
+  width: calc(50% - 2px);
+  height: 100px;
   background-color: var(--1s-image-sticker-image-background-color);
   border-radius: 4px;
   overflow: hidden;

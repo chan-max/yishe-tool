@@ -2,9 +2,7 @@
 export function base64ToFile(base64Data, tempfilename = (new Date().getTime()) + '.png', contentType = 'image/png') {
     contentType = contentType || '';
     var sliceSize = 1024;
-
     base64Data = base64Data.split(',')[1]
-
     var byteCharacters = atob(base64Data);
     var bytesLength = byteCharacters.length;
     var slicesCount = Math.ceil(bytesLength / sliceSize);

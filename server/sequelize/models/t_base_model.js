@@ -13,14 +13,17 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
+
   t_base_model.init({
     name: DataTypes.STRING,
     description: DataTypes.STRING,
     filePath: DataTypes.STRING,
-    imgPath: DataTypes.STRING
+    imgPath: DataTypes.STRING,
+    description_imgs:DataTypes.TEXT('long')
   }, {
     sequelize,
     modelName: 't_base_model',
   });
+  
   return t_base_model;
 };

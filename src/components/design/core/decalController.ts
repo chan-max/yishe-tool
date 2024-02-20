@@ -7,6 +7,7 @@ import {
   MeshPhongMaterial,
   Object3D,
   Raycaster,
+  Texture,
   TextureLoader,
   Vector2,
   Vector3,
@@ -22,12 +23,13 @@ export interface DecalControllerParams {
   id?: any,
   // 使用的图片元素
   img?: HTMLImageElement
-
   // 用来区分使用的是网络资源还是本地资源,本地资源保存时需要上传
-  local:boolean,
-
+  local: boolean,
   // 该贴纸使用的base64编码
-  base64?:string
+  base64?: string,
+
+  // 用于缓存的本地url
+  objectUrl: string,
 }
 
 export class DecalController {
@@ -41,9 +43,7 @@ export class DecalController {
 
   constructor(info: any) {
     this.info = info
-
     this.img = info.img
-
     this.initDecalClickEvent();
     currentController.value.decalControllers.push(this);
     operatingDecal.value = this
@@ -89,7 +89,7 @@ export class DecalController {
   mesh = null;
 
   // 是否是本地资源
-  get isLocal(){
+  get isLocal() {
     return this.info.local
   }
 
@@ -108,23 +108,29 @@ export class DecalController {
   cameraPosition = null
 
   // params
-
   info = null
 
   async initTexture() {
-    const textureLoader = new TextureLoader();
-    textureLoader.setWithCredentials(true)
-    textureLoader.setCrossOrigin('*')
-    const texture = await textureLoader.loadAsync(this.img?.src || this.info.src);
-    this.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
-    this.material = new MeshPhongMaterial({
-      map: texture,
+    const basicTextureOptions = {
       transparent: true,
       depthTest: true,
       depthWrite: false,
       polygonOffset: true,
       polygonOffsetFactor: -4,
       wireframe: false,
+    }
+
+    var texture = null
+
+    const textureLoader = new TextureLoader();
+    textureLoader.setWithCredentials(true)
+    textureLoader.setCrossOrigin('*')
+    texture = await textureLoader.loadAsync(this.img?.src || this.info.src);
+    
+    this.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
+    this.material = new MeshPhongMaterial({
+      map: texture,
+      ...basicTextureOptions
     });
   }
 
@@ -197,7 +203,7 @@ export class DecalController {
 
   // 移动
   move() {
-    
+
   }
 
   // 缩放
@@ -209,7 +215,7 @@ export class DecalController {
 
   private initDecalClickEvent() {
     function decalClick() {
-      if(!this.mesh){
+      if (!this.mesh) {
         return
       }
       const raycaster = new Raycaster()
@@ -226,13 +232,18 @@ export class DecalController {
   }
 
   // 导出该信息
-  export(){
+  export() {
+
+    if(!this.position){
+      return
+    }
+
     const position = {
       x: this.position.x,
       y: this.position.y,
       z: this.position.z,
     };
-    
+
     const rotation = {
       x: this.rotation.x,
       y: this.rotation.y,
@@ -244,9 +255,9 @@ export class DecalController {
       y: this.size.y,
       z: this.size.z,
     };
-    
+
     return {
-      type:this.info.type,
+      type: this.info.type,
       decalId: this.info.id,
       position,
       rotation,

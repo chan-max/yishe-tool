@@ -26,7 +26,7 @@
   </div>
 </template>
 <script setup>
-import iconRightArrow from "@/icon/rightArrow.svg?vueComponent";
+import iconRightArrow from "@/icon/rightArrow.svg?component";
 import { ref,onMounted ,inject,watch} from "vue";
 
 const showChildren = ref(false);
@@ -71,7 +71,7 @@ onMounted(() => {
 .designiy-dropdown-menu-item-children {
   position: absolute;
   top: 0;
-  left: calc(100% - 5px);
+  left: calc(100% + 5px);
 }
 
 .designiy-dropdown-menu-item-icon {

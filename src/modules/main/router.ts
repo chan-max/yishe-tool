@@ -17,6 +17,8 @@ const routes = [
     component: () => import('./view/base/home/home.vue'),
     meta:{
       header:true,
+      footer:true,
+      auth:false
     }
   },
   {
@@ -105,7 +107,7 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: () => import("./view/user/login.vue"),
+    component: () => import("./view/user/login/index.vue"),
     meta: {
       header: false,
     }
@@ -128,11 +130,18 @@ const routes = [
     path: "/workspace",
     name: "Workspace",
     component: () => import("./view/workspace/index.vue"),
+    meta: {
+      header: true,
+      title: '设计室'
+    }
   },
   {
     path: "/market",
     name: "Market",
     component: () => import("./view/market/index.vue"),
+    meta:{
+      header:true
+    }
   },
   {
     path: "/update",

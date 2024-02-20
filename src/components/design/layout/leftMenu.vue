@@ -1,5 +1,4 @@
 <template>
-  <div class="menu-bar-container">
     <div class="menu-bar">
       <el-tooltip :hide-after="0" content="选择模型" placement="right">
         <div
@@ -31,6 +30,19 @@
           <span>文字贴纸</span>
         </div>
       </el-tooltip>
+
+      <el-tooltip :hide-after="0" content="服装装饰品" placement="right">
+        <div
+          class="menu-bar-item"
+          @click="showDecoration = !showDecoration"
+        >
+          <div class="menu-bar-item-icon">
+            <icon-decoration></icon-decoration>
+          </div>
+          <span>饰品</span>
+        </div>
+      </el-tooltip>
+
 
       <el-tooltip :hide-after="0" content="几何图形" placement="right">
         <div class="menu-bar-item">
@@ -100,7 +112,6 @@
         </div>
       </el-tooltip>
     </div>
-  </div>
 </template>
 <script setup>
 import {
@@ -114,48 +125,48 @@ import {
   showTextSticker,
   showWorkspace,
   showCustomTextSticker,
-  showFontList
+  showFontList,
+showDecoration
 } from "../store";
 
-import iconWorkspace from "@/icon/workspace.svg?vueComponent";
-import iconShirt from "@/icon/shirt.svg?vueComponent";
-import iconPhoto from "@/icon/photo.svg?vueComponent";
-import iconText from "@/icon/text.svg?vueComponent";
-import iconPaint from "@/icon/paint.svg?vueComponent";
-import iconBox from "@/icon/box.svg?vueComponent";
-import iconBrush from "@/icon/brush.svg?vueComponent";
-import iconRuler from "@/icon/ruler.svg?vueComponent";
-import iconEarth from "@/icon/earth.svg?vueComponent";
-import iconLight from "@/icon/light.svg?vueComponent";
-import iconEye from "@/icon/eye.svg?vueComponent";
-import iconHelp from "@/icon/help.svg?vueComponent";
+import iconWorkspace from "@/icon/workspace.svg?component";
+import iconShirt from "@/icon/shirt.svg?component";
+import iconPhoto from "@/icon/photo.svg?component";
+import iconText from "@/icon/text.svg?component";
+import iconPaint from "@/icon/paint.svg?component";
+import iconBox from "@/icon/box.svg?component";
+import iconBrush from "@/icon/brush.svg?component";
+import iconRuler from "@/icon/ruler.svg?component";
+import iconEarth from "@/icon/earth.svg?component";
+import iconLight from "@/icon/light.svg?component";
+import iconEye from "@/icon/eye.svg?component";
+import iconHelp from "@/icon/help.svg?component";
 
-import iconSetting from "@/icon/setting.svg?vueComponent";
-import iconFont from "@/icon/font.svg?vueComponent";
+import iconSetting from "@/icon/setting.svg?component";
+import iconFont from "@/icon/font.svg?component";
+import iconDecoration from '@/icon/design/decoration.svg?component';
+
 </script>
 <style lang="less">
-.menu-bar-container {
-  width: 100%;
-  height: 100%;
-  padding: 0 2px;
-  background: var(--1s-left-menu-container-background-color);
-}
 
 .menu-bar {
-  width: 100%;
+  width: 80px;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 0;
   border-radius: 2px;
-  row-gap: 10px;
+  row-gap: 16px;
   overflow: auto;
-  background: var(--1s-left-menu-background-color);
   direction: rtl;
+  background: var(--1s-left-menu-background-color);
+  padding: 16px 0;
+  box-sizing: border-box;
 }
 
 .menu-bar-item {
+  width: 64px;
+  height: 64px;
   display: flex;
   border-radius: 12px;
   display: flex;
@@ -165,12 +176,11 @@ import iconFont from "@/icon/font.svg?vueComponent";
   cursor: pointer;
   flex-shrink: 0;
   color: var(--1s-icon-color);
-  row-gap: 3px;
-  width:60px;
-  height:60px;
+    
   .menu-bar-item-icon{
-    width: 18px;
-    height: 18px;
+    flex-shrink: 0;
+    padding:6px;
+    display:flex;
   }
   svg {
     width: 18px;

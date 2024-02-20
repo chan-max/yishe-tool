@@ -1,26 +1,63 @@
 <template>
-  <div id="designiy-canvas-container" ref="mountContainer"></div>
   <loading v-if="isLoading"></loading>
-
-  <diycontainer
-    :show="showHeader"
-    style="width: 100%; height: var(--1s-header-height); top: 0"
+  <div
+    id="layout-container"
+    style="width: 100%; height: 100%; display: flex; flex-direction: column"
   >
-    <header-menu />
-  </diycontainer>
+    <div
+      id="layout-header"
+      style="border-bottom: 2px solid #f6f6f6; height: var(--1s-header-height)"
+    >
+      <div v-if="showHeader" style="width: 100%; height: 100%; display: flex">
+        <header-menu />
+      </div>
+    </div>
+    <div
+      id="layout-sub-header"
+      style="
+        border-bottom: 2px solid #f6f6f6;
+        width: auto;
+        height: var(--1s-sub-header-height);
+      "
+    >
+      <div v-if="showSubHeader" style="width: 100%; height: 100%; flex: 1">
+        <sub-header-menu @takephoto="takephoto" />
+      </div>
+    </div>
 
-  <diycontainer
-    :show="showSubHeader"
-    style="
-      width: calc(100% - var(--1s-left-menu-width));
-      height: var(--1s-sub-header-height);
-      top: var(--1s-header-height);
-      z-index: 2;
-      left: var(--1s-left-menu-width);
-    "
-  >
-    <sub-header-menu />
-  </diycontainer>
+    <div
+      id="layout-body"
+      style="
+        display: flex;
+        flex: 1;
+        height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
+      "
+    >
+      <div id="layout-left-menu" style="height: 100%; border-right: 2px solid #f6f6f6">
+        <left-menu v-if="showLeftMenu"></left-menu>
+      </div>
+
+      <div id="layout-left" style="height: 100%; display: flex">
+        <div style="height: 100%">
+          <component :is="leftComponent"></component>
+        </div>
+      </div>
+
+      <div id="layout-canvas" style="height: 100%; flex: 1;width:0">
+        <screenshot ref="screenshotInstance"></screenshot>
+        <div id="designiy-canvas-container" ref="mountContainer"></div>
+      </div>
+
+      <div
+        id="layout-right"
+        style="display: flex;"
+      >
+        <div style="height: 100%">
+          <component :is="rightComponent"></component>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <diydialog
     title="图片上传"
@@ -37,21 +74,17 @@
     <image-upload></image-upload>
   </diydialog>
 
-  <diycontainer
-  :show="showLeftMenu" 
+  <div
+    v-if="showBottomMenu"
     style="
-      left: 0;
-      bottom: 0;
-      width: var(--1s-left-menu-width);
-      height: calc(100% - var(--1s-header-height));
+      height: var(--1s-bottom-menu-height);
+      position: absolute;
+      z-index: 9;
+      bottom: 30px;
     "
   >
-    <left-menu></left-menu>
-  </diycontainer>
-
-  <diycontainer :show="showBottomMenu" style="height: var(--1s-bottom-menu-height); bottom: 30px">
     <bottom-menu></bottom-menu>
-  </diycontainer>
+  </div>
 
   <diydialog
     :show="showBaseModelSelect"
@@ -79,23 +112,9 @@
     <font-upload></font-upload>
   </diydialog>
 
-  <diydialog
-    title="设置场景"
-    :show="showSceneControl"
-    @close="showSceneControl = false"
-  >
+  <diydialog title="设置场景" :show="showSceneControl" @close="showSceneControl = false">
     <scene-control></scene-control>
   </diydialog>
-  <diycontainer
-    :show="showImageSticker"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      left: calc(var(--1s-left-menu-width));
-    "
-  >
-    <image-sticker></image-sticker>
-  </diycontainer>
 
   <diydialog
     :show="showFontList"
@@ -120,76 +139,8 @@
       duration: 100,
     }"
   >
-  
     <save-model></save-model>
   </diydialog>
-
-
-  <diycontainer
-    :show="showCustomTextSticker"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      left: calc(var(--1s-left-menu-width));
-    "
-  >
-    <custom-text-sticker></custom-text-sticker>
-  </diycontainer>
-
-  <diycontainer
-    :show="showTextSticker"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      left: calc(var(--1s-left-menu-width));
-    "
-  >
-    <text-sticker></text-sticker>
-  </diycontainer>
-
-  <diycontainer
-    :show="showWorkspace"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      right: 0;
-    "
-  >
-    <workspace></workspace>
-  </diycontainer>
-
-  <diycontainer
-    :show="showDecalList"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      right: 0;
-    "
-  >
-    <decal-list></decal-list>
-  </diycontainer>
-
-  <diycontainer
-    :show="showModelInfo"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      right: 0;
-    "
-  >
-    <model-info></model-info>
-  </diycontainer>
-
-  <diycontainer
-    :show="showDecalControl"
-    style="
-      height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      bottom: 0;
-      right: 0;
-    "
-  >
-    <decal-control></decal-control>
-  </diycontainer>
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect, watch } from "vue";
@@ -201,7 +152,7 @@ import {
   canvasBgColor,
   canvasBgOpacity,
   showBaseModelSelect,
-  currentOperatingModelInfo,
+  currentOperatingBaseModelInfo,
   showSceneControl,
   showImageSticker,
   showTextSticker,
@@ -218,10 +169,9 @@ import {
   showSubHeader,
   showLeftMenu,
   showBottomMenu,
-  showSaveModel
+  showSaveModel,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
-import diycontainer from "../components/container.vue";
 import diydialog from "../components/dialog.vue";
 import baseModelSelect from "./baseModelSelect/index.vue";
 import sceneControl from "./sceneControl/index.vue";
@@ -237,7 +187,10 @@ import fontList from "./fontList/index.vue";
 import subHeaderMenu from "./subHeaderMenu/index.vue";
 import modelInfo from "./modelInfo/index.vue";
 import decalList from "./decalList/index.vue";
-import saveModel from './saveModel/index.vue';
+import saveModel from "./saveModel/index.vue";
+import { CubeTextureLoader } from "three";
+import decoration from "./decoration/index.vue";
+import screenshot from "../components/screenshot.vue";
 
 import {
   Mesh,
@@ -258,15 +211,38 @@ import {
   DoubleSide,
 } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
-import {initWebsocket} from '../utils/websocket.ts';
+import { initWebsocket } from "../utils/websocket.ts";
 
-initWebsocket()
-isLoading.value = true;
+initWebsocket();
 
-setTimeout(() => {
-  isLoading.value = false;
-  showWorkspace.value = true
-}, 500);
+const screenshotInstance = ref();
+
+function takephoto() {
+  const base64 = currentController.value.getScreenshotBase64();
+  screenshotInstance.value.execScreenshot(base64);
+}
+
+const leftComponent = computed(() => {
+  return showImageSticker.value
+    ? imageSticker
+    : showTextSticker.value
+    ? textSticker
+    : showCustomTextSticker.value
+    ? customTextSticker
+    : null;
+});
+
+const rightComponent = computed(() => {
+  return showWorkspace.value
+    ? workspace
+    : showModelInfo.value
+    ? modelInfo
+    : showDecalControl.value
+    ? decalControl
+    : showDecalList.value
+    ? decalList
+    : null;
+});
 
 // 挂载容器
 const mountContainer = ref();
@@ -277,9 +253,12 @@ const { scene } = modelController;
 
 currentController.value = modelController;
 
-// 模型转换
-watch(currentOperatingModelInfo, () => {
-  modelController.setMainModel(currentOperatingModelInfo.value.preview_file);
+/*
+  切换主模型
+  需要保留之前的操作
+*/
+watch(currentOperatingBaseModelInfo, () => {
+  modelController.setMainModel(currentOperatingBaseModelInfo.value.preview_file);
 });
 
 // 创建场景、相机和渲染器等...
@@ -304,14 +283,15 @@ pointLight.position.set(0, 0, 2); // 设置光源位置
 scene.add(pointLight);
 
 // scene.add(new AxesHelper(0.5))
-// scene.add(new Mesh(new BoxGeometry(0.5, 0.5, 0.5),new MeshBasicMaterial({ color: 0x6900ff,side: DoubleSide })));
 
 // 改变画布背景颜色
 watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacity.value));
 
 // 渲染动画
+
 onMounted(() => {
   modelController.render(mountContainer.value);
+  // currentController.value.setSkyballBackground()
 });
 </script>
 
@@ -321,10 +301,5 @@ onMounted(() => {
   height: 100%;
   background: #fff;
   overflow: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
 }
-
 </style>

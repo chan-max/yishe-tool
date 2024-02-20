@@ -1,21 +1,19 @@
+<!--
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2023-12-19 18:50:06
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2023-12-30 21:53:29
+ * @FilePath: /1s/src/components/design/layout/bottomMenu.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+-->
 <template>
 <div class="designiy-bottom-menu">
 
   <el-tooltip :hide-after="0" content="重置当前场景" placement="top">
       <div class="bottom-menu-item" >
         <icon-refresh></icon-refresh>
-      </div>
-    </el-tooltip>
-
-  <el-tooltip :hide-after="0" content="上一步" placement="top">
-      <div class="bottom-menu-item" >
-        <icon-prev></icon-prev>
-      </div>
-    </el-tooltip>
-
-    <el-tooltip :hide-after="0" content="下一步" placement="top">
-      <div class="bottom-menu-item">
-        <icon-next></icon-next>
       </div>
     </el-tooltip>
 
@@ -34,22 +32,14 @@
         <icon-rotate></icon-rotate>
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" content="截屏下载" placement="top">
-      <div class="bottom-menu-item" @click="downloadScreenshot">
-        <icon-camera></icon-camera>
-      </div>
-    </el-tooltip>
 </div>
 </template>
 <script setup>
 import {isFullScreen,currentController} from '../store'
-import iconFullscreen from '@/icon/fullscreen.svg?vueComponent'
-import iconRotate from '@/icon/rotate.svg?vueComponent'
-import iconLocate from '@/icon/locate.svg?vueComponent'
-import iconPrev from '@/icon/prev.svg?vueComponent'
-import iconNext from '@/icon/next.svg?vueComponent'
-import iconRefresh from '@/icon/refresh.svg?vueComponent'
-import iconCamera from '@/icon/camera.svg?vueComponent'
+import iconFullscreen from '@/icon/fullscreen.svg?component'
+import iconRotate from '@/icon/rotate.svg?component'
+import iconLocate from '@/icon/locate.svg?component'
+import iconRefresh from '@/icon/refresh.svg?component'
 
 function locate(){
     currentController.value.resetPosition()
@@ -59,9 +49,7 @@ function animate(){
     currentController.value.animate = !currentController.value.animate
 }
 
-function downloadScreenshot(){
-  currentController.value.downloadScreenshot()
-}
+
 
 </script>
 <style lang="less">
@@ -72,6 +60,7 @@ function downloadScreenshot(){
     justify-content: center;
     align-items: center;
     padding: 0 50px;
+    background-color: #fff;
     box-shadow:rgba(0, 0, 0, 0.15) 0px 2px 6px;
 }
 

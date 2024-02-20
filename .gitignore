@@ -14,6 +14,7 @@ package-lock.json
 node_modules
 dist
 www
+/app
 dist-ssr
 *.local
 
@@ -27,7 +28,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-uploads
-www
 docs/.vitepress/cache/
-.env
+
+components.d.ts

@@ -4,12 +4,15 @@ import { sendValidateCodeEmail } from "../util/email.js";
 import { mailedMap } from "./email.js";
 
 // 获取账号的使用状态
+
+
+
 export const getAccountStatusHook = (router, sequelize, app) =>
   router.post("/getAccountStatus", async (ctx, next) => {
     const account = ctx.request.body.account
 
     const user = await sequelize.models.t_user.findOne({ where: { account } });
-
+    
     if (user) {
       return ctx.body = {
         status: ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST,
@@ -96,7 +99,7 @@ export const updateUserInfoHook = (router, sequelize, app) =>
     const { id } = ctx.request.body;
 
     const avatar = getRelativePath(ctx.request.files.avatar.filepath);
-
+    
     await sequelize.models.t_user.update(
       {
         avatar,
@@ -114,8 +117,6 @@ export const updateUserInfoHook = (router, sequelize, app) =>
     };
   });
 
-
-import jwt from "jsonwebtoken";
 
 export const loginHook = (router, sequelize) => router.post('/login', async (ctx) => {
   const data = ctx.request.body
@@ -136,15 +137,23 @@ export const loginHook = (router, sequelize) => router.post('/login', async (ctx
     }
   }
 
-  // 登陆成功，签发token
 
-  const token = jwt.sign({ account, exp: Date.now() + 60 * 60 }, '1s');
+  user.setDataValue('preview_avatar', ctx.relativePathToPreviewPath(user.avatar))
 
-  ctx.set('Token', token)
 
-  user.avatar = ctx.relativePathToPreviewPath(user.avatar)
+  // 登录成功，签发token
+
+  let token =  ctx.signToken({
+    userId: user.id,
+  })
+
+  ctx.set('Authorization',token)
+  
   return ctx.body = {
     status: ResponseStatusCodeEnum.LOGIN_SUCCESS,
-    data: user
+    data: user,
+    token
   }
 })
+
+

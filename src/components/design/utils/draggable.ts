@@ -7,6 +7,7 @@ draggingImage.style.width = '100px'
 draggingImage.style.zIndex = '999999';
 draggingImage.style.cursor = 'pointer'
 draggingImage.style.objectFit = 'contain';
+// draggingImage.style.border = '1px solid red'
 draggingImage.style.cursor = 'grab';
 document.body.appendChild(draggingImage);
 
@@ -20,9 +21,6 @@ export const initDraggableElement = (el, cb, src = el.src) => {
         return
     }
 
-
-
-
     // 创建一个新的 image 元素
     el.addEventListener('dragstart', (e) => {
         e.preventDefault()
@@ -33,22 +31,18 @@ export const initDraggableElement = (el, cb, src = el.src) => {
     // 鼠标按下事件处理函数
 
     var clickX, clickY, isDown = false
-
+    
     function onMouseDown(event) {
-
         isDown = true
         clickX = event.clientX;
         clickY = event.clientY;
         // 添加鼠标移动和释放事件监听器
         document.addEventListener('mousemove', onMouseMove);
-
         draggingImage.src = el._src;
     }
 
-
     // 鼠标移动事件处理函数
     function onMouseMove(event) {
-
         var mouseX = event.clientX;
         var mouseY = event.clientY;
 
@@ -69,7 +63,7 @@ export const initDraggableElement = (el, cb, src = el.src) => {
 
     // 鼠标释放事件处理函数
     function onMouseUp(event) {
-
+        console.log('mouseUp')
         draggingImage.style.display = 'none'
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);

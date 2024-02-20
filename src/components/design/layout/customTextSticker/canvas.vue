@@ -10,23 +10,14 @@
         @paste="paste"
       ></div>
     </div>
-    <div class="designiy-custom-text-sticker-canvas-menu">
-      <div style="flex:1"></div>
-    </div>
   </div>
 </template>
 <script setup>
-import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 import {
   operatingTextStickerOptions,
-  currentController,
-  showDecalControl,
 } from "../../store";
 
-import { uploadTextSticker } from "@/api/index";
-import { useDebounceFn } from "@vueuse/core";
-import { initDraggableElement } from "../../utils/draggable";
-import { base64ToFile } from "@/common/transform/base64ToFile";
 import { vClick } from "../../composition/vClick";
 import {canvasTextEl,canvasBackgroundEl,base64,forceUpdateTextSticker} from './watch'
 
@@ -91,11 +82,6 @@ function paste(e) {
     event.preventDefault();
 }
 
-async function save() {
-  await uploadTextSticker({
-    img: base64ToFile(base64.value),
-  });
-}
 </script>
 <style lang="less">
 .designiy-custom-text-sticker-canvas {
@@ -128,18 +114,6 @@ async function save() {
   }
 }
 
-.designiy-custom-text-sticker-canvas-menu {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 5px 10px;
-  display: flex;
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-}
 
 #canvas-container {
   position: relative;

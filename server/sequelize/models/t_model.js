@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class t_model extends Model {
     /**
@@ -10,12 +11,21 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      /*  关联用户表用于查询该模型的作者 */
+      models.t_model.belongsTo(models.t_user, {
+        foreignKey:'user_id',
+        targetKey:'id',
+      });
     }
   }
+
+
   t_model.init({
     modelInfo: DataTypes.TEXT('long'),
-    img: DataTypes.STRING
+    img: DataTypes.STRING,
+    user_id: {
+      type:DataTypes.INTEGER,
+    }
   }, {
     sequelize,
     modelName: 't_model',

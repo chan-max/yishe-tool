@@ -1,39 +1,41 @@
 <template>
-  <transition v-bind="animation">
-    <Draggable
-      v-if="show"
-      class="designiy-dialog"
-      v-slot="{ x, y }"
-      :initial-value="{ x, y }"
-      :prevent-default="true"
-      :handle="handle"
-      :style="{ zIndex: 1000}"
-    >
-      <Teleport to="body">
-        <div
-          v-if="show && mask"
-          class="dialog-mask"
-          @click="$emit('close')"
-          :style="{ zIndex: 999 }"
-        ></div>
-      </Teleport>
-      <div ref="handle" v-show="header" class="designiy-dialog-header">
-        <div class="designiy-dialog-header-title">
-          <slot name="title" v-if="$slots.title"></slot>
-          <span v-else> {{ title }} </span>
+  <KeepAlive>
+    <transition v-bind="animation">
+      <Draggable
+        v-if="show"
+        class="designiy-dialog"
+        v-slot="{ x, y }"
+        :initial-value="{ x, y }"
+        :prevent-default="true"
+        :handle="handle"
+        :style="{ zIndex: 1000 }"
+      >
+        <Teleport to="body">
+          <div
+            v-if="show && mask"
+            class="dialog-mask"
+            @click="$emit('close')"
+            :style="{ zIndex: 999 }"
+          ></div>
+        </Teleport>
+        <div ref="handle" v-show="header" class="designiy-dialog-header">
+          <div class="designiy-dialog-header-title">
+            <slot name="title" v-if="$slots.title"></slot>
+            <span v-else> {{ title }} </span>
+          </div>
+          <div @click="close" class="designiy-dialog-header-close">
+            <el-icon size="16"><CloseBold /></el-icon>
+          </div>
         </div>
-        <div @click="close" class="designiy-dialog-header-close">
-          <el-icon><CloseBold /></el-icon>
+        <div class="designiy-dialog-content">
+          <slot></slot>
         </div>
-      </div>
-      <div class="designiy-dialog-content">
-        <slot></slot>
-      </div>
-    </Draggable>
-  </transition>
+      </Draggable>
+    </transition>
+  </KeepAlive>
 </template>
 <script setup>
-import { defineProps, ref, onMounted, onBeforeMount, computed, watch } from 'vue';
+import { defineProps, ref, onMounted, onBeforeMount, computed, watch } from "vue";
 import { useDraggable } from "@vueuse/core";
 import { UseDraggable as Draggable } from "@vueuse/components";
 import { CloseBold } from "@element-plus/icons-vue";
@@ -58,29 +60,29 @@ const props = defineProps({
   animation: {},
 });
 
-
-
 const emits = defineEmits(["close"]);
 
 function close() {
   emits("close");
 }
-
-
 </script>
-<style>
+<style lang="less">
 .designiy-dialog {
   background: var(--1s-container-background);
   position: absolute;
-  border-radius:6px;
+  border-radius: 6px;
+  *{
+    pointer-events: auto!important;
+  }
 }
 
 .designiy-dialog-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding:15px 20px;
+  padding: 15px 20px;
   cursor: move;
+  position: relative;
 }
 
 .designiy-dialog-header-close {
@@ -89,6 +91,14 @@ function close() {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  right: -14px;
+  top: -14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   &:hover {
     background-color: #eee;
   }

@@ -21,8 +21,8 @@
   </van-popup>
 </template>
 <script setup>
-import iconScan from "@/icon/mobile/header/scan.svg?vueComponent";
-import iconMenu from "@/icon/mobile/header/menu.svg?vueComponent";
+import iconScan from "@/icon/mobile/header/scan.svg?component";
+import iconMenu from "@/icon/mobile/header/menu.svg?component";
 import popupMenu from './popupMenu.vue'
 import {ref} from 'vue'
 

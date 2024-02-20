@@ -50,7 +50,7 @@
   </template>
   <script setup>
   import { onMounted, ref,computed } from "vue";
-  import {showBaseModelSelect,currentOperatingModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
+  import {showBaseModelSelect,currentOperatingBaseModelInfo,canvasBgColor,canvasBgOpacity} from '../../store.ts'
 
   </script>
   <style lang="less">

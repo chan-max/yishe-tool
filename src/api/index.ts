@@ -1,8 +1,6 @@
-import { resolveFilePath } from "./url";
-import{ apiInstance,source} from "./apiInstance";
+
+import { apiInstance, source } from "./apiInstance";
 import { Url } from "./url";
-import { buildURL } from "@/common/url";
-import { format1stf } from "./format";
 
 // 注册 ，账号密码手机号
 export const signup = (data: any) =>
@@ -52,9 +50,9 @@ export const uploadImage = (data: any) =>
   apiInstance.post(Url.UPLOAD_IMAGE, data);
 
 // 获取图片列表
-export const getImage = () =>
+export const getImage = (params) =>
   new Promise(async (resolve: any, reject: any) => {
-    let res = await apiInstance.post(Url.GET_IMAGE_LIST);
+    let res = await apiInstance.post(Url.GET_IMAGE_LIST, params);
     resolve(res.data.data);
   });
 
@@ -75,13 +73,13 @@ export const uploadModel = (data) => apiInstance.post(Url.UPLOAD_MODEL, data);
 export const getModelList = (data) =>
   new Promise(async (resolve, reject) => {
     const res = await apiInstance.post(Url.GET_MODEL_LIST, data);
-    const _data = res.data.data.map((item) => {
-      return {
-        img: resolveFilePath(item.img),
-        modelInfo: item.modelInfo,
-      };
-    });
-    resolve(_data);
+    resolve(res.data.data);
+  });
+
+export const getModelById = (id) =>
+  new Promise(async (resolve, reject) => {
+    const res = await apiInstance.post(Url.GET_MODEL_BY_ID, { id });
+    resolve(res.data.data);
   });
 
 // 发送邮件
@@ -115,38 +113,169 @@ export const uploadTextSticker = (params) => new Promise(async (resolve) => {
 
 // 获取文字贴纸
 export const getTextSticker = (params?: any) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_TEXT_STICKER, params)
-  resolve(data.data.data)
-}) 
+  const res = await apiInstance.post(Url.GET_TEXT_STICKER, params)
+  resolve(res.data.data)
+})
 
 
 // 获取账号的状态，，是否注册，是否已注册，是否是管理员，是否被禁用等
 export const getAccountStatus = (params) => new Promise(async (resolve, reject) => {
   const data = await apiInstance.post(Url.GET_ACCOUNT_STATUS, params)
   resolve(data.data)
-}) 
+})
 
 // 根据图片id来查询图片
-export const getImageById = (id:string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_IMAGE_BY_ID, {id})
-  resolve(data.data.data)
-}) 
-
-
-// 根据图片id来查询图片
-export const getBaseModelById = (id:string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_BASE_MODEL_BY_ID , {id})
+export const getImageById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_IMAGE_BY_ID, { id })
   resolve(data.data.data)
 })
 
 
-export const getTextStickerById = (id:string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_TEXT_STICKER_BY_ID , {id})
+// 根据图片id来查询图片
+export const getBaseModelById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_BASE_MODEL_BY_ID, { id })
   resolve(data.data.data)
 })
 
 
-export const getFontById = (id:string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_FONT_BY_ID , {id})
+export const getTextStickerById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_TEXT_STICKER_BY_ID, { id })
   resolve(data.data.data)
+})
+
+
+export const getFontById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post(Url.GET_FONT_BY_ID, { id })
+  resolve(data.data.data)
+})
+
+
+
+export const getBasicConfig = () => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_BASIC_CONFIG)
+  resolve(res.data.data)
+})
+
+
+/*
+  该接口作为获取列表资源的通用接口
+*/
+
+export interface GetListParams {
+  type: 'image' | 'textSticker' | 'model',
+  page: number
+}
+
+
+export const getList = (params: GetListParams) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_LIST, params)
+  resolve(res.data)
+})
+
+
+
+
+/*
+  点赞模型，
+  取消点赞模型
+*/
+
+export const likeModel = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.LIKE_MODEL, params)
+  resolve(res.data)
+})
+
+
+
+export const likeModelComment = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.LIKE_MODEl_COMMENT, params)
+  resolve(res.data)
+})
+
+/*
+  获取用于扫码登录的二维码
+*/
+export const requestQRCodeLoginInfo = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_QRCODE_LOGIN_URL, params)
+  resolve(res.data)
+})
+
+
+/*
+  发布模型
+*/
+
+export const publishModel = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.PUBLISH_MODEL, params)
+  resolve(res.data)
+})
+
+
+
+export const likeAvailableModel = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.LIKE_AVAILABLE_MODEL, params)
+  resolve(res.data)
+})
+
+
+export const likeAvailableModelComment = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.LIKE_AVAILABLE_MODEl_COMMENT, params)
+  resolve(res.data)
+})
+
+
+export const getAvailableModel = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_AVAILABLE_MODEL, params)
+  resolve(res.data.data)
+})
+
+export const getIndexAvailableModel = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_INDEX_AVAILABLE_MODEL, params)
+  resolve(res.data.data)
+})
+
+export const follow  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.FOLLOW, params)
+  resolve(res.data.data)
+})
+
+
+export const unfollow  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.UNFOLLOW, params)
+  resolve(res.data.data)
+})
+
+// 获取我的好友列表
+export const getMyFriends  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_MY_FRIENDS, params)
+  resolve(res.data.data)
+})
+
+
+// 获取我的关注列表
+export const getMyFollowings  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_MY_FOLLOWINGS, params)
+  resolve(res.data.data)
+})
+
+// 获取我的关注列表
+export const getMyFollowers  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_MY_FOLLOWERS, params)
+  resolve(res.data.data)
+})
+
+
+// 获取我的聊天列表
+export const getMyCommunicationList  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_MY_COMMUNICATION_LIST, params)
+  resolve(res.data.data)
+})
+
+
+
+
+// 获取聊天信息
+export const getCommunicationMessage  = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_COMMUNICATION_MESSAGE, params)
+  resolve(res.data.data)
 })

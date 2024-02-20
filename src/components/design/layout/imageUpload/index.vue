@@ -16,7 +16,13 @@
         <div>点击或拖拽文件上传</div>
       </template>
     </el-upload>
-
+    <a-divider />
+    <a-qrcode
+      style="width: 50px; height: 50px;"
+      value="http://www.antdv.com"
+      color="#6900ff"
+      bg-color="#fff"
+    />
     <div class="designiy-image-upload-form">
       <div class="designiy-image-upload-form-label">贴纸名称</div>
       <el-input></el-input>
@@ -29,11 +35,13 @@
 </template>
 
 <script setup>
-import iconUpload from "@/icon/upload.svg?vueComponent";
+import iconUpload from "@/icon/upload.svg?component";
 import { ref, reactive, watch, computed, shallowRef } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import { genFileId } from "element-plus";
 import {uploadImage} from '@/api/index'
+
+
 
 const files = ref([]);
 const upload = ref();
@@ -65,14 +73,15 @@ async function submit(){
     loading.value = false
 }
 
+
 </script>
 
 <style lang="less">
 .designiy-image-upload {
+  width: 800px;
+  height: 500px;
   padding: 20px;
-  display: flex;
-//   flex-direction:column;
-  column-gap: 20px;
+  overflow: auto;
 }
 
 .designiy-image-upload-main {

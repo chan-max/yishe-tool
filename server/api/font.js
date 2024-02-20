@@ -21,7 +21,7 @@ export const uploadFontHook = (router, sequelize) =>
 
     var file = ctx.getUploadFileRelativePath("file");
     var img = ctx.getUploadFileRelativePath("img");
-
+    
     await table.create({
       name,
       description,

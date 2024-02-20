@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": "./",
         "paths": {
-            "@/*": [
+            "@": [
                 "src/*",
             ],
         },
@@ -32,8 +32,5 @@
         "src/**/*.vue",
     ],
     "references": [
-        {
-            "path": "./tsconfig.node.json"
-        }
     ]
 }

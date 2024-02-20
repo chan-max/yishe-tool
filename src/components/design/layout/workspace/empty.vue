@@ -8,7 +8,7 @@
     </div>
 </template>
 <script setup>
-    import iconEmpty from '@/icon/image/box-empty.svg?vueComponent'
+    import iconEmpty from '@/icon/image/box-empty.svg?component'
 </script>
 <style lang="less">
 </style>

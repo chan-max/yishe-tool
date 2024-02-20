@@ -1,12 +1,24 @@
+<!--
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2023-12-27 19:20:45
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2023-12-30 10:39:20
+ * @FilePath: /1s/src/components/design/layout/headerMenu.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+-->
 <template>
   <div class="designiy-header">
     <div class="designiy-header-logo">
       <icon-logo></icon-logo>
     </div>
+    
+    <header-menu-dropdown />
 
     <div style="flex-grow: 1"></div>
 
-    <icon-help style="width: 24px; height: 24px;color:#fff;"></icon-help>
+    <icon-help style="width: 24px; height: 24px;color:#333;"></icon-help>
 
     <el-button @click="showSaveModel = true" type="primary" color="#333" round> 上 传 </el-button>
 
@@ -25,13 +37,14 @@ import {Share} from '@element-plus/icons-vue'
 import userAvatar from '@/components/user/userAvatar.vue'
 import headerMenuDropdown from './headerMenuDropdown/index.vue'
 import { onShortcutTrigger } from '../shortcut/index';
-import iconHelp from '@/icon/help.svg?vueComponent'
+import iconHelp from '@/icon/help.svg?component'
 import { useLoginStatusStore } from "@/store/stores/login";
 
 
 const loginStatusStore = useLoginStatusStore();
 
 const props = defineProps([]);
+
 
 
 
@@ -47,8 +60,6 @@ const props = defineProps([]);
   align-items: center;
   column-gap: 8px;
   padding-right: 10px;
-  border-bottom: 2px solid #f2f2f2;
-
   .el-button + .el-button{
     margin:0;
   }
@@ -71,7 +82,7 @@ const props = defineProps([]);
 }
 
 .designiy-header-logo {
-  width: 72px;
+  width: 80px;
   height: 46px;
 }
 

@@ -1,36 +1,24 @@
+<!--
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2023-12-21 18:56:25
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-19 21:14:01
+ * @FilePath: /yishe/src/modules/main/view/base/home/banner.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+-->
 <template>
-  <div class="home-banner">
-    <div class="home-banner-content">
-      <div class="home-banner-desc">
-        <div style="font-size: 46px; color: #000; font-weight: 600">
-          开放式服装设计&交易平台
-        </div>
-        <div
-          style="
-            font-size: 14px;
-            color: #000;
-            line-height: 24px;
-            padding: 20px 0;
-            width: 80%;
-          "
-        >
-          这是一个专门面向设计师和买家的全新线上平台，旨在创造一个安全、公正和透明的环境，让创新与商业交易可以无缝衔接
-        </div>
-        <div style="padding-top: 10px">
-          <el-button
-            size="large"
-            type="primary"
-            style="padding: 25px 30px"
-            @click="$router.push({ name: 'Design' })"
-          >
-            <span style="font-size: 18px; font-weight: bold"> 试一下</span>
-            <el-icon><TopRight /></el-icon>
-          </el-button>
-        </div>
-      </div>
-      <div class="bannner-model">
-        <gltf-viewer :model="modelInfo"></gltf-viewer>
-      </div>
+  <div class="home-banner super-ellipse">
+    <button class="button-1" @click="$router.push({ name: 'Design' })">
+      快速开始
+    </button>
+
+    <div class="home-banner-main-title">
+      开放式服装设计&交易平台
+    </div>
+    <div class="bannner-model">
+      <gltf-viewer :model="modelInfo"></gltf-viewer>
     </div>
   </div>
 </template>
@@ -49,33 +37,58 @@ onMounted(async () => {
 </script>
 <style lang="less">
 .home-banner {
-  width: 100%;
+  width: 96%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 700px;
+  row-gap: 20px;
+  padding: 40px 0;
+  margin-top: 32px;
+  background: url(/image/background/bg2.jpg);
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 100px 50px rgba(0, 0, 0, 0.2) inset;
+  border-radius: 24px;
+  position: relative;
 }
 
-.home-banner-content {
-  padding: 0 20px;
-  display: flex;
-  width: 1200px;
-  justify-content: space-between;
-  column-gap: 20px;
-}
 
-.home-banner-desc {
-  text-align: left;
-  height: 400px;
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-direction: column;
+.home-banner-main-title {
+  font-size: 80px;
+  color: #fff;
+  font-weight: 500;
+  text-align: center;
+  padding-top: 120px;
+  line-height: 100px;
 }
 
 .bannner-model {
   height: 400px;
-  width: 50%;
+  width: 400px;
+}
+
+.button-1 {
+  background: transparent;
+  border-radius: 8px;
+  border: 4px solid rgba(255, 255, 255, 1);
+  color: #fff;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1em;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all .2s;
+  font-size: 18px;
+  opacity: .8;
+  font-weight: bold;
+  position: absolute;
+  right: 5%;
+  top: 5%;
+}
+
+.button-1:hover {
+  opacity: 1;
+  transform: scale(1.05);
 }
 </style>

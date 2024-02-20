@@ -1,43 +1,22 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2023-12-16 12:40:25
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-15 11:37:40
+ * @FilePath: /yishe/src/api/url.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by 1s, All Rights Reserved. 
+ */
 
 function unifySlashes(input) {
     return input.replace(/(\/+|\\+)/g, '/');
 }
 
-export const resolveFilePath = (path) => {
-
-    if(!path){
-        return ''
-    }
-
-    if(path.startsWith('blob')){
-        return path
-    }
-
-    path = unifySlashes(path)
-    
-    if(import.meta.env.DEV){
-        if(!path.startsWith('/api') && !path.startsWith('api')){
-            return '/api/' +  path
-        }
-    }else{
-        if(path.startsWith('/api')){
-            return path.slice(4)
-        }
-        if(path.startsWith('api')){
-            return path.slice(3)
-        }
-    }
-
-    return path
-}
-
-
 export function toRealPath(path){
     path = unifySlashes(path)
     return path.replace('api','')
 }
-
-
 
 
 export enum Url {
@@ -95,4 +74,58 @@ export enum Url {
     GET_TEXT_STICKER_BY_ID = '/getTextStickerById',
 
     GET_FONT_BY_ID = '/getFontById',
+
+    GET_MODEL_BY_ID = '/getModelById',
+
+
+    GET_BASIC_CONFIG = '/getBasicConfig',
+
+    GET_LIST = '/getList',
+
+    ADD_MODEL_COMMENT = '/addModelComment',
+
+    GET_MODEL_COMMENT = '/getModelComment',
+
+    LIKE_MODEL = '/likeModel',
+
+    LIKE_MODEl_COMMENT = '/likeModelComment',
+
+    // 获取用于扫码登录的地址
+    GET_QRCODE_LOGIN_URL = '/requestQRCodeLoginInfo',
+
+
+    // 发布模型
+    PUBLISH_MODEL = '/publishAvailableModel',
+
+    // 移除发布的模型
+    REMOVE_MODEL = '/removeAvailableModel',
+
+    ADD_AVAILABLE_MODEL_COMMENT = '/addAvailableModelComment',
+
+    // 删除模型评论
+    DELETE_AVAILABLE_MODEL_COMMENT = '/deleteAvailableModelComment',
+
+    GET_AVAILABLE_MODEL_COMMENT = '/getAvailableModelComment',
+
+    LIKE_AVAILABLE_MODEL = '/likeAvailableModel',
+
+    LIKE_AVAILABLE_MODEl_COMMENT = '/likeAvailableModelComment',
+
+    GET_AVAILABLE_MODEL = '/getAvailableModel',
+
+    GET_INDEX_AVAILABLE_MODEL = '/getIndexAvailableModel',
+
+    FOLLOW = 'follow',
+
+    UNFOLLOW = 'unfollow',
+
+    GET_MY_FRIENDS = 'getMyFriends',
+
+    GET_MY_FOLLOWERS = 'getMyFollowers',
+
+    GET_MY_FOLLOWINGS = 'getMyFollowings',
+
+    GET_MY_COMMUNICATION_LIST = 'getMyCommunicationList',
+
+    GET_COMMUNICATION_MESSAGE = 'getCommunicationMessage'
 }

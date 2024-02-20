@@ -1,8 +1,9 @@
 import { setFullscreen } from "@/common/browser";
-import { computed, ref, shallowRef, watchEffect, watch, reactive, nextTick } from "vue"
+import { computed, ref, shallowRef, watchEffect, watch, reactive, nextTick, shallowReactive } from "vue"
 
 // 当前实例
 export const currentController = shallowRef(null);
+(window as any).controller = currentController
 
 // 是否为暗色模式
 export const isDarkMode = ref(false)
@@ -14,7 +15,6 @@ export const isLoading = shallowRef(false);
 export const isFullScreen = ref(false)
 
 watchEffect(() => setFullscreen(isFullScreen.value))
-
 
 
 // 画布背景颜色 
@@ -32,7 +32,7 @@ watchEffect(() => {
 export const showBaseModelSelect = ref(false);
 
 // 当前操作的模型信息
-export const currentOperatingModelInfo = ref()
+export const currentOperatingBaseModelInfo = ref()
 
 // 是否展示场景控制弹窗
 export const showSceneControl = ref(false)
@@ -192,7 +192,22 @@ export const showSaveModel = ref(false)
 
 
 // 系统是否成功连接 websocket
-export const online = ref(true);
+export const online = ref(false);
 watch(online,(value) => {
-
 })
+
+
+
+// 是否为编辑模式 ,  分为编辑模式和 新建模式 ， 编辑模式也会分为编辑自己的和其他人的
+export const isEdit = ref(false)
+// 当前正在编辑的模型信息, 只有为编辑模型时才会赋值
+export const currentEditingModelInfo = ref()
+
+
+// 模型装饰品
+export const showDecoration  = ref(false)
+
+
+
+// 保留用户的截图，用于后续自行下载或者上传至网络
+export const screenshots = shallowReactive([])

@@ -19,21 +19,24 @@ import {
     Euler,
     MeshPhongMaterial,
     TextureLoader,
+    CubeTextureLoader,
+    BackSide,
 } from "three";
-
+import { message } from 'ant-design-vue';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
 import { reactive, ref, shallowReactive } from "vue";
-import { reactify, useMouse } from "@vueuse/core";
+import { reactify, useDebounceFn, useMouse, useMouseInElement } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
 
 import { eventMixin } from "./event";
+import { currentOperatingBaseModelInfo } from "../store";
 
 const mixins = [
     _1stfExporterMixin,
@@ -42,9 +45,9 @@ const mixins = [
 
 export class ModelController {
     // 场景
-    public scene: Scene;
+    public scene: Scene = new Scene();
     // 渲染器
-    public renderer: WebGLRenderer;
+    public renderer: WebGLRenderer = new WebGLRenderer();
     // 摄像机
     public camera: any;
     // 当前画布容器
@@ -57,7 +60,64 @@ export class ModelController {
     private _mouse = new Vector2();
 
     // 记录原始摄像机位置
-    public defaultCameraPosition = new Vector3(0, 0, .7);
+    public defaultCameraPosition = new Vector3(0, 0, 1);
+
+    // 天空盒子背景是否随着模型移动
+    private backgroundFixed = true
+
+    private background: any = null
+
+    public initialCameraPosition = new Vector3();
+
+    public setBackground() {
+        // 这样可以保持背景固定
+        // var geometry = new BoxGeometry( 1000, 1000, 1000 );
+        // var material = new MeshBasicMaterial({
+        //     envMap: new CubeTextureLoader().setPath('/skybox/').load([
+        //     			'pos-x.jpg',
+        //     			'neg-x.jpg',
+        //     			'pos-y.jpg',
+        //     			'neg-y.jpg',
+        //     			'pos-z.jpg',
+        //     			'neg-z.jpg'
+        //     ])
+        // });
+        // material.side = BackSide// 内部显示贴图
+        // var skybox = new Mesh( geometry, material );
+        // this.scene.add( skybox );
+
+        this.scene.background = new CubeTextureLoader()
+            .setPath('/skybox/')
+            .load([
+                'pos-x.jpg',
+                'neg-x.jpg',
+                'pos-y.jpg',
+                'neg-y.jpg',
+                'pos-z.jpg',
+                'neg-z.jpg'
+            ]);
+    }
+
+    public setSkyballBackground() {
+        var loader = new TextureLoader();
+        loader.load('/skyball2.jpeg', (texture) => {
+
+            // 创建天空球的网格几何体
+            var sphereGeometry = new SphereGeometry(100);
+
+            // 创建应用全景纹理的材料材质
+            var sphereMaterial = new MeshBasicMaterial({
+                map: texture,
+                side: BackSide, // 天空球内部才是可见的，所以材料应该渲染在背面
+            });
+
+            // 使用几何体和材料创建天空球网格
+            var skybox = new Mesh(sphereGeometry, sphereMaterial);
+
+            // 将天空球添加到场景中
+            this.scene.add(skybox);
+        });
+    }
 
     public get mouse() {
         this._mouse.x = (this.x.value / this.width) * 2 - 1;
@@ -82,8 +142,6 @@ export class ModelController {
     constructor() {
         mixins.forEach((mixin) => mixin(this));
         // 初始化时暴露场景和渲染器
-        this.scene = new Scene();
-        this.renderer = new WebGLRenderer();
     }
 
     // 初始化容器
@@ -95,46 +153,65 @@ export class ModelController {
             0.1,
             1000
         );
+        this.scene.add(this.camera);
 
         this.renderer.setSize(this.width, this.height);
         this.camera.lookAt(0, 0, 0);
-        this.camera.position.copy(this.defaultCameraPosition);
 
         this.controller = new OrbitControls(this.camera, this.renderer.domElement);
         this.controller.minDistance = 0.5
         this.controller.maxDistance = 5
         this.controller.enablePan = false
+
+        this.controller.enableDamping = true
+        this.controller.dampingFactor = 0.1;
+        this.camera.position.copy(this.defaultCameraPosition);
+
         this.canvasContainer.appendChild(this.renderer.domElement);
         this.resizeObserver = new ResizeObserver(
-            debounce(() => {
+            useDebounceFn(() => {
                 this.camera.aspect = this.width / this.height;
                 this.camera.updateProjectionMatrix();
                 this.renderer.setSize(this.width, this.height);
-            }, 10)
+            }, 3)
         );
         this.resizeObserver.observe(canvasContainer);
         this.initClickEvent();
-        this.initMousePositionHandler();
+        this.initMousePositionHandler(this.canvasContainer);
+
     }
 
     // 记录已渲染的帧数
     public frameCount = 0;
 
-    private doRender() {
-        requestAnimationFrame(this.doRender.bind(this));
+    private execRender() {
+        requestAnimationFrame(this.execRender.bind(this));
+
+        // 记录渲染帧数
         this.frameCount++;
+
+        // 执行动画
         this.execAnimation();
+
+        // 处理背景相关
+        if (this.background && this.backgroundFixed) {
+            // 这样可以让背景不随着模型缩放
+            // this.background.position.copy(this.camera.position)
+        }
+
+        this.controller?.update();
+
         this.renderer.render(this.scene, this.camera);
     }
 
-    isMounted = false;
+    public isMounted = false;
 
     public render(target: any) {
         if (this.isMounted) {
             return;
         }
         this.initCanvasContainer(target);
-        this.doRender();
+        this.execRender();
         this.isMounted = true;
     }
 
@@ -154,7 +231,7 @@ export class ModelController {
     }
 
     // 主模型
-    mainModel: any = null;
+    gltf: any = null;
     // 主网格
     mesh: any = null;
 
@@ -169,33 +246,40 @@ export class ModelController {
         return mesh;
     }
 
-    gltf: any = null;
 
     baseModelUrl: any = null;
 
     public async setMainModel(url: any) {
         this.removeMainModel();
-        let gltf: any = await gltfLoader(url);
-        this.mainModel = gltf;
+        message.loading({ content: `正在加载模型...`, key: 'loadingmodel', duration: 0 });
+        try {
+            this.gltf = await gltfLoader(url);
+            message.success({ content: '模型加载成功', key: 'loadingmodel', duration: 1 });
+        } catch (e) {
+            message.error({ content: '模型加载失败!', key: 'loadingmodel', duration: 1 });
+            return
+        }
+
         this.baseModelUrl = url;
         this.initModelPosition();
-        this.scene.add(gltf.scene);
-        this.mesh = this.findMainMesh(gltf);
+        this.scene.add(this.gltf.scene);
+        this.mesh = this.findMainMesh(this.gltf);
+        this.initialCameraPosition.copy(this.camera.position);
     }
 
     // 移除主模型
     public removeMainModel() {
-        if (!this.mainModel) {
+        if (!this.gltf) {
             return;
         }
-        this.scene.remove(this.mainModel.scene);
+        this.scene.remove(this.gltf.scene);
         this.mesh = null;
-        this.mainModel = null;
+        this.gltf = null;
     }
 
     // 模型居中和调整尺寸
     private initModelPosition() {
-        let object = this.mainModel.scene;
+        let object = this.gltf.scene;
         let flag = 1
         // 先处理尺寸，再居中
         const sizeBox = new Box3().setFromObject(object);
@@ -260,20 +344,20 @@ export class ModelController {
     // 保存鼠标坐标信息
     private x = null;
     private y = null;
-    private initMousePositionHandler() {
-        const { x, y } = useMouse();
-        this.x = x;
-        this.y = y;
+    private initMousePositionHandler(target = document.body) {
+        const { x, y, elementX, elementY } = useMouseInElement(target);
+        this.x = elementX;
+        this.y = elementY;
     }
 
     decalControllers: any = shallowReactive([]);
-    
+
     // 进行贴图
     stickToMousePosition(info) {
         const decal = new DecalController(info)
         decal.stickToMousePosition()
     }
-    
+
     // 恢复模型模型位置
     resetPosition() {
         this.camera.position.copy(this.defaultCameraPosition);
@@ -285,10 +369,10 @@ export class ModelController {
     animate = false;
 
     execAnimation() {
-        if (!this.mainModel || !this.animate) {
+        if (!this.gltf || !this.animate) {
             return;
         }
-        this.mainModel.scene.rotation.y += 0.008;
+        this.controller.update();
     }
 
     // 解析 1stf 格式化信息 ， 并初始化系统
@@ -303,13 +387,13 @@ export class ModelController {
 
     // 导出 1stf 格式化信息
     exportTo1stf = null;
-    
-    getScreenshotBase64(){
+
+    getScreenshotBase64() {
         this.renderer.render(this.scene, this.camera); // 截取会出现白图片
         return this.renderer.domElement.toDataURL("image/png");
     }
 
-    downloadScreenshot(){
+    downloadScreenshot() {
         let base64 = this.getScreenshotBase64()
         let file = base64ToFile(base64)
         let a = document.createElement('a')
@@ -317,4 +401,63 @@ export class ModelController {
         a.download = file.name
         a.click()
     }
+
+
+    // 上一步
+    prevStep(step = 1) {
+
+    }
+
+    // 下一步
+    nextStep(step = 1) {
+
+    }
+
+    // 操作队列
+
+    operationQuene = shallowReactive([])
+
+
+    setCameraPosition(x, y, z) {
+        x && (this.camera.position.x = x)
+        y && (this.camera.position.y = y)
+        z && (this.camera.position.z = z)
+    }
+
+    lookFront() {
+        this.camera.position.copy(this.initialCameraPosition)
+    }
+
+    lookBack(){
+      let v = new Vector3(this.initialCameraPosition.x, this.initialCameraPosition.y, -this.initialCameraPosition.z)
+      this.camera.position.copy(v)
+    }
+
+    lookTop(){
+        
+    }
+
+    lookBottom(){
+
+    }
+    
+    lookLeft(){
+
+    }
+
+    lookRight(){
+
+    }
+
+    getFullViewImages(){
+
+    }
 }
+
+// 当前工作台的操作类型
+export const enum DesignType {
+    NEW = 'new', /// 创建全新的模型
+    EDIT = 'edit', // 编辑模型
+}
+
+

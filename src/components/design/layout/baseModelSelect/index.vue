@@ -16,7 +16,7 @@ import { getBaseModel } from "@/api";
 import { onMounted, ref } from "vue";
 import {
   showBaseModelSelect,
-  currentOperatingModelInfo,
+  currentOperatingBaseModelInfo,
   showModelInfo,
 } from "../../store.ts";
 
@@ -27,20 +27,21 @@ const container = ref();
 onMounted(async () => {
   const data = await getBaseModel();
   models.value = data;
-
+  
   // 适配鼠标滑轮横向滚动
   container.value.addEventListener("wheel", (event) => {
-    console.log(event.deltaY)
     container.value.scrollLeft += event.deltaY;
     // event.preventDefault();
   },{passive:false});
 });
 
 function selectModel(model) {
+  // 选择基础模型
   showBaseModelSelect.value = false;
-  currentOperatingModelInfo.value = model;
+  currentOperatingBaseModelInfo.value = model;
   showModelInfo.value = true;
 }
+
 </script>
 <style lang="less">
 .designiy-base-model-select {
@@ -49,13 +50,12 @@ function selectModel(model) {
   overflow: auto;
   display: flex;
   column-gap: 10px;
-  margin: 10px 30px;
+  padding: 10px 30px;
 }
 
 .designiy-base-model-select-item {
   cursor: pointer;
   border-radius: 5px;
-  border: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
   padding: 16px;

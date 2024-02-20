@@ -1,9 +1,9 @@
 <!--
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-23 11:17:00
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-13 16:02:01
- * @FilePath: /1s/src/components/user/userAvatarForm.vue
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-19 18:23:49
+ * @FilePath: /yishe/src/components/user/userAvatarForm.vue
  * @Description: 
  * 
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
@@ -13,9 +13,10 @@
         <div class="flex" style="padding:10px 0;border-bottom: 2px solid #f8f8f8;">
             <el-avatar style="flex-shrink: 0;" shape="circle" :src="avatar" />
             <div style="margin-left:10px;flex-direction:column;flex:1;" class="flex justify-around">
-                <div class="font-bold"> jackie chan </div>
+                <div class="font-bold"> {{userInfo.name}} </div>
                 <div style="overflow:hidden;font-size:12px;">
-                    jackieontheway666@gmail.com </div>
+                    {{ userInfo.email }}
+                </div>
             </div>
         </div>
         <div class="user-avatar-form-items">
@@ -38,7 +39,6 @@
         </div>
     </div>
 </template>
-    
 <script setup>
 import { useLoginStatusStore } from "@/store/stores/login";
 import { doLogout } from "@/store/stores/loginAction";
@@ -52,12 +52,17 @@ import iconSaved from '@/icon/user/saved.svg?component'
 let route = useRoute();
 
 // 顶部头像
-const loginStatusStore = useLoginStatusStore();
+const loginStore = useLoginStatusStore();
+
 const avatar = computed(() => {
-    const loginStatusStore = useLoginStatusStore();
+    const loginStore = useLoginStatusStore();
     // 默认头像
-    return loginStatusStore.userInfo?.preview_avatar || "/defaultAvatar/avatar3.png";
+    return loginStore.userInfo?.preview_avatar || "/defaultAvatar/avatar3.png";
 });
+
+const userInfo = computed(() => {
+    return loginStore.userInfo || {}
+})
 
 function logout(params) {
     doLogout()

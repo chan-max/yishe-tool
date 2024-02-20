@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-21 18:56:25
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-13 13:36:14
+ * @LastEditTime: 2024-02-19 21:14:01
  * @FilePath: /yishe/src/modules/main/view/base/home/banner.vue
  * @Description: 
  * 
@@ -15,7 +15,7 @@
     </button>
 
     <div class="home-banner-main-title">
-      开放式服装设计-交易平台
+      开放式服装设计&交易平台
     </div>
     <div class="bannner-model">
       <gltf-viewer :model="modelInfo"></gltf-viewer>

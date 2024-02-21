@@ -1,6 +1,15 @@
+/*
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2024-02-20 08:07:02
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-21 13:33:48
+ * @FilePath: /yishe/src/modules/main/main.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+ */
 
 import { createApp } from 'vue'
-import App from './App.vue'
 import 'animate.css';
 import 'default-passive-events'
 import "tailwindcss/tailwind.css"
@@ -25,6 +34,8 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import {syncUserInfoToLocal} from '@/store/stores/login.ts'
+
+import App from './App.vue'
 
 const app = createApp(App)
 

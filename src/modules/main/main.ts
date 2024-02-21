@@ -27,7 +27,7 @@ import '@/style/cover-antdesign.less'
 
 import ElementPlus from 'element-plus'
 
-import '@/style/cover-elementplus.scss'
+
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/display.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
@@ -35,10 +35,9 @@ import VueVirtualScroller from 'vue-virtual-scroller'
 import 'element-plus/dist/index.css'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import {syncUserInfoToLocal} from '@/store/stores/login.ts'
-
 import App from './App.vue'
-
 import 'element-plus/dist/index.css'
+import '@/style/cover-elementplus.scss'
 
 const app = createApp(App)
 

@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-21 14:12:20
+ * @LastEditTime: 2024-02-21 22:31:41
  * @FilePath: /yishe/vite.config.ts
  * @Description: 
  * 
@@ -33,6 +33,7 @@ import svgLoader from 'vite-svg-loader'
 export default defineConfig((config: any) => {
 
   const isApp = config.mode === 'app'
+  const isServer = config.mode === 'server'
 
   const baseBuild = {
     outDir: 'www',
@@ -52,7 +53,7 @@ export default defineConfig((config: any) => {
       input: resolve(__dirname, 'index.html'),
     }
   }
-
+  
   return {
     plugins: [
       alias(),
@@ -71,7 +72,7 @@ export default defineConfig((config: any) => {
       }),
       svgLoader()
     ],
-    base: isApp ? './' : '/',
+    base: isApp ? './' : '/', // 普通路径与app路径处理方式不同
     build: isApp ? appBuild : baseBuild,
     css: {
       postcss: {

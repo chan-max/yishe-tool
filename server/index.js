@@ -19,7 +19,6 @@ import ip from 'ip'
 import dotenv from 'dotenv'
 dotenv.config()
 
-
 const app = new Koa();
 
 const router = new Router();
@@ -28,15 +27,7 @@ const router = new Router();
 const __filename = fileURLToPath(import.meta.url);
 // 当前文件所在的路径
 const __dirname = path.dirname(__filename);
-
-var redis = null
-
-try {
-    redis = await createRedisClient()
-} catch (e) {
-    console.log('redis 链接失败')
-}
-
+console.log(__dirname)
 
 app.use(
     cors({
@@ -60,6 +51,8 @@ const options = process.env.NODE_ENV === 'development' ?
         cert: fs.readFileSync('./ssl/certificate.crt'),
     }
 
+
+
 import db from './sequelize/models/index.js'
 
 var server = process.env.protool === 'https' ? https.createServer(options, app.callback()) : http.createServer({}, app.callback())
@@ -67,6 +60,18 @@ var server = process.env.protool === 'https' ? https.createServer(options, app.c
 import { initWebsocket } from './websocket/index.js'
 
 const socketio = initWebsocket(server)
+
+var redis = null
+
+
+try {
+    // redis = await createRedisClient()
+} catch (e) {
+    console.log('redis 链接失败')
+}
+
+
+
 
 initRouter(router, db.sequelize, app, redis);
 
@@ -93,6 +98,7 @@ app.use(_static(path.join(__dirname, "../static")));
 
 import { uploadsPath } from "./fileManage.js"
 import { formatFilePath } from "./util.js";
+
 
 // 所有静态文件的路径 不在使用静态路径访问文件
 // app.use(_static(uploadsPath()));
@@ -138,6 +144,7 @@ export function getHost() {
 
 export async function startServe() {
     await server.listen(3000, '0.0.0.0');
+    console.log('已经启动服务');
 }
 
 

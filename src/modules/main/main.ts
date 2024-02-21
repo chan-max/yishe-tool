@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-20 08:07:02
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-21 14:16:34
+ * @LastEditTime: 2024-02-21 15:06:56
  * @FilePath: /yishe/src/modules/main/main.ts
  * @Description: 
  * 
@@ -16,7 +16,7 @@ import "tailwindcss/tailwind.css"
 import { createPinia } from 'pinia'
 
 import router from '../main/router'
-import i18n from '@/i18n/index'
+import i18n from '@/i18n/index.ts'
 import 'animate.css';
 import '@/style/base.less'
 import 'default-passive-events'

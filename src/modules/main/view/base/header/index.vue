@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2024-01-31 21:19:02
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-19 20:31:48
+ * @LastEditTime: 2024-02-21 18:34:27
  * @FilePath: /yishe/src/modules/main/view/base/header/index.vue
  * @Description: 
  * 
@@ -28,7 +28,7 @@
                     我的工作台
                 </div>
             </router-link>
-            <router-link v-slot="{ navigate, isActive, isExactActive }" :to="{ name: 'Workspace' }" custom>
+            <router-link v-slot="{ navigate, isActive, isExactActive }" :to="{ name: 'Seller' }" custom>
                 <div class="header-bar-menu-item" :class="{ 'header-bar-menu-item-active': isActive }" @click="navigate">
                     我是商家
                 </div>
@@ -37,21 +37,21 @@
 
             <template v-if="loginStatusStore.isLogin">
                 <div class="tools">
-                    <div  title="搜索全站">
+                    <!-- <div  title="快速上传">
+                        <icon-homepageupload></icon-homepageupload>
+                    </div>
+                    <div  title="我的商品">
+                        <icon-homepageshop></icon-homepageshop>
+                    </div> -->
+                    <!-- <div  title="搜索全站">
                         <icon-homepagesearch></icon-homepagesearch>
                     </div>
                     <div title="我的消息">
                         <icon-homepagebell></icon-homepagebell>
                     </div>
-                    <div  title="快速上传">
-                        <icon-homepageupload></icon-homepageupload>
-                    </div>
-                    <div  title="我的商品">
-                        <icon-homepageshop></icon-homepageshop>
-                    </div>
                     <div  title="联系我们">
                         <icon-homepagecontact></icon-homepagecontact>
-                    </div>
+                    </div> -->
                 </div>
                 <user-avatar />
             </template>
@@ -101,6 +101,9 @@ const loginStatusStore = useLoginStatusStore();
     align-items: center;
     justify-content: space-between;
     column-gap: 40px;
+    *{
+        flex-shrink: 0;
+    }
 }
 
 

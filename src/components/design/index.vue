@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-11 09:10:15
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-19 18:19:19
+ * @LastEditTime: 2024-02-21 20:20:55
  * @FilePath: /yishe/src/components/design/index.vue
  * @Description: 
  * 
@@ -11,7 +11,7 @@
 <template>
   <div class="designiy" :class="isDarkMode ? 'dark' : 'light'">
     <main-view></main-view>
-  </div>
+  </div> 
 </template>
 <script setup>
 import mainView from "./layout/main.vue";

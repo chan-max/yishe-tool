@@ -1,3 +1,13 @@
+<!--
+ * @Author: chan-max 2651308363@qq.com
+ * @Date: 2024-02-20 08:07:02
+ * @LastEditors: chan-max 2651308363@qq.com
+ * @LastEditTime: 2024-02-21 15:50:00
+ * @FilePath: /yishe/src/modules/main/view/workspace/tabs.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2024 by 1s, All Rights Reserved. 
+-->
 <template>
   <div class="tabs">
     <div
@@ -39,6 +49,11 @@ import { WorkspaceTabOptions, activeWorkspaceTab } from "./index.ts";
 .tabs-item:hover {
   background-color: #aaa;
   cursor: pointer;
+  color: #fff;
+}
+
+.tabs-item:active {
+  transform: scale(.9);
 }
 
 .tabs-item-active {

@@ -2,22 +2,26 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-21 18:56:25
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-20 18:54:11
+ * @LastEditTime: 2024-02-21 19:13:53
  * @FilePath: /yishe/src/modules/main/view/base/home/banner.vue
  * @Description: 
  * 
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
-  <div class="home-banner super-ellipse">
-    <button class="button-1" @click="$router.push({ name: 'Design' })">
-      快速开始
-    </button>
-
-
+  <div class="home-banner">
     <div class="home-banner-main-title">
       开放式服装设计&交易平台
     </div>
+
+    <div class="home-banner-main-desc">
+      我们提供一个交互式的市场，使消费者、设计师和制造商能够亲密无间地一起合作，无论身处何方，你都可以通过我们的平台探索创新、发现灵感、购买独特的设计作品，并与全球的时尚爱好者交流。我们相信每一个人都应该有机会打破传统，定制自己的生活方式。借助我们的线上服装设计和交易平台，在你与全球设计师的碰撞与交流中，让你的创新理念和独特范式尽情张扬。
+    </div>
+
+    <button class="button-try" @click="$router.push({ name: 'Design' })">
+      快速开始
+    </button>
+
     <div class="bannner-model">
       <gltf-viewer :model="modelInfo"></gltf-viewer>
     </div>
@@ -44,25 +48,27 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   row-gap: 20px;
-  padding: 40px 0;
-  background: url(/image/background/bg2.jpg);
+  padding: 120px 0;
+  background: transparent;
   background-size: 100% 100%;
-  box-shadow: 0px 0px 100px 50px rgba(0, 0, 0, 0.2) inset;
-  border-radius: 24px;
   position: relative;
-
   margin-top: 32px;
   margin-bottom: 32px;
 }
 
 
 .home-banner-main-title {
-  font-size: 80px;
-  color: #fff;
-  font-weight: 500;
+  font-size: 40px;
+  color: #252525;
+  font-weight: bold;
   text-align: center;
-  padding-top: 120px;
   line-height: 100px;
+}
+
+.home-banner-main-desc {
+  color: #252525;
+  width:70%;
+  text-align: center;
 }
 
 .bannner-model {
@@ -70,11 +76,11 @@ onMounted(async () => {
   width: 400px;
 }
 
-.button-1 {
+.button-try {
   background: transparent;
   border-radius: 8px;
-  border: 4px solid rgba(255, 255, 255, 1);
-  color: #fff;
+  border: 2px solid #6900ff;
+  color: #6900ff;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -85,12 +91,10 @@ onMounted(async () => {
   font-size: 18px;
   opacity: .8;
   font-weight: bold;
-  position: absolute;
-  right: 5%;
-  top: 5%;
+  margin: 40px;
 }
 
-.button-1:hover {
+.button-try:hover {
   opacity: 1;
   transform: scale(1.05);
 }

@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-21 18:56:25
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-20 08:54:44
+ * @LastEditTime: 2024-02-20 18:54:11
  * @FilePath: /yishe/src/modules/main/view/base/home/banner.vue
  * @Description: 
  * 
@@ -45,12 +45,14 @@ onMounted(async () => {
   align-items: center;
   row-gap: 20px;
   padding: 40px 0;
-  margin-top: 32px;
   background: url(/image/background/bg2.jpg);
   background-size: 100% 100%;
   box-shadow: 0px 0px 100px 50px rgba(0, 0, 0, 0.2) inset;
   border-radius: 24px;
   position: relative;
+
+  margin-top: 32px;
+  margin-bottom: 32px;
 }
 
 

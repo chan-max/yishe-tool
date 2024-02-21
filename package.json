@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "": "vite",
+    "vite": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "docs:dev": "vitepress dev docs --port 7788",
@@ -13,6 +13,8 @@
     "build:app": "vite build --mode app",
     "serve": "node server.js",
     "serve:dev": "nodemon  --inspect server.js",
+    "dev:weapp": "npx taro build --type weapp --watch",
+    "build:weapp": "taro build --type weapp",
     "dev": "concurrently \"vite --host 0.0.0.0\" \"vitepress dev docs --port 7788\"  \"nodemon  --inspect server.js\"",
     "db:init": "cd server/sequelize & npx sequelize-cli db:create & npx sequelize-cli db:migrate"
   },
@@ -36,6 +38,8 @@
     "@nestjs/cli": "^10.3.0",
     "@quasar/extras": "^1.16.9",
     "@rollup/plugin-alias": "^5.0.0",
+    "@tarojs/plugin-framework-react": "^3.6.23",
+    "@tarojs/plugin-platform-weapp": "^3.6.23",
     "@vitejs/plugin-basic-ssl": "^1.0.2",
     "@vitejs/plugin-legacy": "^5.2.0",
     "@vueuse/components": "^9.13.0",
@@ -113,6 +117,7 @@
   "devDependencies": {
     "@capacitor/assets": "^3.0.4",
     "@quasar/vite-plugin": "^1.6.0",
+    "@tarojs/cli": "^3.6.23",
     "@types/node": "^20.3.1",
     "@types/three": "^0.149.0",
     "@vant/auto-import-resolver": "^1.0.2",

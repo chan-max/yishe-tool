@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-12 19:43:18
+ * @LastEditTime: 2024-02-20 18:41:48
  * @FilePath: /yishe/src/modules/main/view/base/home/home.vue
  * @Description: 
  * 
@@ -11,12 +11,14 @@
 <template>
  <div class="home">
     <banner></banner>
-    <div style="height:3000px;"></div>
+    <site-footer></site-footer>
  </div>
 </template>
 
 <script setup>
 import banner from './banner.vue'
+import siteFooter from '../footer/index.vue'
+
 </script>
 
 <style>

@@ -9,7 +9,7 @@
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
  */
 
-import { defineConfig ,loadEnv} from "vite";
+import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import alias from "@rollup/plugin-alias";
@@ -30,13 +30,13 @@ import AntdvResolver from 'antdv-component-resolver'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import svgLoader from 'vite-svg-loader'
 
-export default defineConfig((config:any) => {
-  
+export default defineConfig((config: any) => {
+
   const isApp = config.mode === 'app'
 
-  const baseBuild =   {
-    outDir:'www',
-    assetsDir:'./',
+  const baseBuild = {
+    outDir: 'www',
+    assetsDir: './',
     rollupOptions: {
       input: {
         mobile: resolve(__dirname, 'mobile.html'),
@@ -45,11 +45,11 @@ export default defineConfig((config:any) => {
     }
   }
 
-  const appBuild =   {
-    outDir:'app',
-    assetsDir:'./',
+  const appBuild = {
+    outDir: 'app',
+    assetsDir: './',
     rollupOptions: {
-      input:resolve(__dirname, 'index.html'),
+      input: resolve(__dirname, 'index.html'),
     }
   }
 
@@ -59,7 +59,7 @@ export default defineConfig((config:any) => {
       // https dev
       basicSsl(),
       Components({
-        resolvers: [VantResolver(),AntdvResolver()],
+        resolvers: [VantResolver(), AntdvResolver()],
       }),
       qrcode(),
       legacy(),
@@ -71,7 +71,7 @@ export default defineConfig((config:any) => {
       }),
       svgLoader()
     ],
-    base:'./',
+    base: isApp ? './' : '/',
     build: isApp ? appBuild : baseBuild,
     css: {
       postcss: {
@@ -87,7 +87,7 @@ export default defineConfig((config:any) => {
       },
     },
     server: {
-      port:6699,
+      port: 6699,
       proxy: {
         "/api": {
           target: "https://localhost:3000",

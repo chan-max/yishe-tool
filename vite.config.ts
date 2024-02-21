@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-11 10:10:48
+ * @LastEditTime: 2024-02-21 14:12:20
  * @FilePath: /yishe/vite.config.ts
  * @Description: 
  * 

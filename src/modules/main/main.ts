@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-20 08:07:02
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-21 13:33:48
+ * @LastEditTime: 2024-02-21 14:16:34
  * @FilePath: /yishe/src/modules/main/main.ts
  * @Description: 
  * 
@@ -27,15 +27,18 @@ import '@/style/cover-antdesign.less'
 
 import ElementPlus from 'element-plus'
 
-import 'element-plus/dist/index.css'
 import '@/style/cover-elementplus.scss'
+import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/display.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import VueVirtualScroller from 'vue-virtual-scroller'
+import 'element-plus/dist/index.css'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import {syncUserInfoToLocal} from '@/store/stores/login.ts'
 
 import App from './App.vue'
+
+import 'element-plus/dist/index.css'
 
 const app = createApp(App)
 

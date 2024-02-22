@@ -76,6 +76,7 @@ watch(() => operatingTextStickerOptions.backgroundColor,() => {
     initDraggableTextSticker()
 })
 
+/* 根据文字内容更新可拖拽元素 */ 
 watch(() => operatingTextStickerOptions.content ,async () => {
     await initDraggableTextSticker()
 })

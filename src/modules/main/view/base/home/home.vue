@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-22 22:27:36
+ * @LastEditTime: 2024-02-24 17:36:37
  * @FilePath: /yishe/src/modules/main/view/base/home/home.vue
  * @Description: 
  * 
@@ -88,7 +88,7 @@ onMounted(async () => {
 }
 
 .home-banner-main-desc {
-    color: #444;
+    color: #888;
     width: 70%;
     text-align: center;
     font-style: italic;

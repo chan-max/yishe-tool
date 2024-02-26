@@ -57,7 +57,6 @@ watch(() => operatingTextStickerOptions.italic,() => {
 })
 
 function setLetterSpacing(){
-    
     canvasTextEl.value.style.letterSpacing = operatingTextStickerOptions.letterSpacing + "em";
 }
 

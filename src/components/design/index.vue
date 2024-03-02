@@ -25,6 +25,7 @@ import { getModelById } from "@/api";
 
 const route = useRoute();
 
+
 onBeforeMount(async () => {
   // 有 id 为编辑模式
   const id = route.query.id;

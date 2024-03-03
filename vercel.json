@@ -1,8 +1,5 @@
 {
     "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "/pc.html"
-      }
+      { "src": "/", "dest": "/pc.html" }
     ]
   }

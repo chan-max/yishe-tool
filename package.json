@@ -84,8 +84,6 @@
     "nodemailer": "^6.9.6",
     "nodemon": "^3.0.1",
     "pg-hstore": "^2.3.4",
-    "phantomjs": "^2.1.1",
-    "phantomjs-prebuilt": "^2.1.16",
     "pinia": "^2.0.35",
     "quasar": "^2.14.2",
     "redis": "^4.6.11",

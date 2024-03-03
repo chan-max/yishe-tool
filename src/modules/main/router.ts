@@ -144,6 +144,15 @@ const routes = [
     }
   },
   {
+    path: "/seller",
+    name: "Seller",
+    component: () => import("./view/workspace/index.vue"),
+    meta: {
+      header: true,
+      title: '设计室'
+    }
+  },
+  {
     path: "/update",
     name: "Update",
     component: () => import('./view/user/update/index.vue'),

@@ -143,13 +143,13 @@ async function submit() {
   } catch {
     return;
   }
-
+  
   loginLoading.value = true;
   const res = await login(form);
   if (res.status === ResponseStatusCodeEnum.LOGIN_SUCCESS) {
     doLoginAction(res.data);
     showToast({
-      message:'登陆成功',
+      message:'登录成功',
       onClose(){
         router.replace({name:'Home'})
       }

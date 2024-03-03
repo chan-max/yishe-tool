@@ -25,12 +25,14 @@
         "checkJs": false,
         "allowSyntheticDefaultImports": true,
     },
+    "ts-node": {
+        "esm": true
+      },
     "include": [
         "src/**/*.ts",
         "src/**/*.d.ts",
         "src/**/*.tsx",
         "src/**/*.vue",
     ],
-    "references": [
-    ]
+    "references": []
 }

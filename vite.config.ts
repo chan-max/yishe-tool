@@ -2,14 +2,14 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-11 10:10:48
+ * @LastEditTime: 2024-02-21 22:31:41
  * @FilePath: /yishe/vite.config.ts
  * @Description: 
  * 
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
  */
 
-import { defineConfig ,loadEnv} from "vite";
+import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import alias from "@rollup/plugin-alias";
@@ -26,17 +26,18 @@ import { qrcode } from 'vite-plugin-qrcode';
 import basicSsl from '@vitejs/plugin-basic-ssl'
 // 编译文件支持旧游览器
 import legacy from '@vitejs/plugin-legacy';
-import AntdvResolver from 'antdv-component-resolver'
+// import AntdvResolver from 'antdv-component-resolver'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import svgLoader from 'vite-svg-loader'
 
-export default defineConfig((config:any) => {
-  
-  const isApp = config.mode === 'app'
+export default defineConfig((config: any) => {
 
-  const baseBuild =   {
-    outDir:'www',
-    assetsDir:'./',
+  const isApp = config.mode === 'app'
+  const isServer = config.mode === 'server'
+
+  const baseBuild = {
+    outDir: 'www',
+    assetsDir: './',
     rollupOptions: {
       input: {
         mobile: resolve(__dirname, 'mobile.html'),
@@ -45,21 +46,21 @@ export default defineConfig((config:any) => {
     }
   }
 
-  const appBuild =   {
-    outDir:'app',
-    assetsDir:'./',
+  const appBuild = {
+    outDir: 'app',
+    assetsDir: './',
     rollupOptions: {
-      input:resolve(__dirname, 'index.html'),
+      input: resolve(__dirname, 'index.html'),
     }
   }
-
+  
   return {
     plugins: [
       alias(),
       // https dev
       basicSsl(),
       Components({
-        resolvers: [VantResolver(),AntdvResolver()],
+        resolvers: [VantResolver()],
       }),
       qrcode(),
       legacy(),
@@ -71,7 +72,7 @@ export default defineConfig((config:any) => {
       }),
       svgLoader()
     ],
-    base:'./',
+    base: isApp ? './' : '/', // 普通路径与app路径处理方式不同
     build: isApp ? appBuild : baseBuild,
     css: {
       postcss: {
@@ -87,7 +88,7 @@ export default defineConfig((config:any) => {
       },
     },
     server: {
-      port:6699,
+      port: 6699,
       proxy: {
         "/api": {
           target: "https://localhost:3000",

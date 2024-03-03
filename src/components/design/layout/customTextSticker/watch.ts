@@ -57,7 +57,6 @@ watch(() => operatingTextStickerOptions.italic,() => {
 })
 
 function setLetterSpacing(){
-    
     canvasTextEl.value.style.letterSpacing = operatingTextStickerOptions.letterSpacing + "em";
 }
 
@@ -76,6 +75,7 @@ watch(() => operatingTextStickerOptions.backgroundColor,() => {
     initDraggableTextSticker()
 })
 
+/* 根据文字内容更新可拖拽元素 */ 
 watch(() => operatingTextStickerOptions.content ,async () => {
     await initDraggableTextSticker()
 })

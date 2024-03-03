@@ -17,18 +17,21 @@ import { onMounted, ref, nextTick } from "vue";
 import {
   operatingTextStickerOptions,
 } from "../../store";
+import { useDebounceFn } from "@vueuse/core";
 
 import { vClick } from "../../composition/vClick";
 import {canvasTextEl,canvasBackgroundEl,base64,forceUpdateTextSticker} from './watch'
 
 // 输入文字内容
-function input(e) {
+const input = useDebounceFn(function input(e) {
   // 阻止tab切换焦点
   if (e.keyCode === 9) {
     e.preventDefault();
   }
+  console.log(888)
   operatingTextStickerOptions.content = canvasTextEl.value.innerText
-}
+},500)
+
 
 const editable = ref(false);
 

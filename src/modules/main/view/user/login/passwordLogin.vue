@@ -2,7 +2,10 @@
   <div class="login-form">
     <div style="padding: 20px 0px; display: flex; justify-content: space-between">
       <div style="font-size: 16px; color: #666">登录衣设账号</div>
-      <icon-qrcode @click="loginType = LoginType.QRCODE" style="height:20px;width:20px;"></icon-qrcode>
+      <icon-qrcode
+        @click="loginType = LoginType.QRCODE"
+        style="height: 20px; width: 20px"
+      ></icon-qrcode>
     </div>
     <el-form :model="loginForm" ref="form" :rules="rules" label-position="top">
       <el-form-item prop="account">
@@ -61,11 +64,11 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import { useRouter, useRoute } from "vue-router";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
-import {loginType,LoginType} from './index.ts'
+import { loginType, LoginType } from "./index.ts";
 
 import { View, Hide, User, Lock } from "@element-plus/icons-vue";
 import { doLoginAction } from "@/store/stores/loginAction";
-import iconQrcode from '@/icon/qrcode-half.svg?component'
+import iconQrcode from "@/icon/qrcode-half.svg?component";
 
 const userStore = useLoginStatusStore();
 const router = useRouter();
@@ -123,8 +126,12 @@ async function submit(form) {
   } else if (status === ResponseStatusCodeEnum.PASSWORD_ERROR) {
     message.info("密码错误");
   } else if (status === ResponseStatusCodeEnum.LOGIN_SUCCESS) {
-    message.success("登陆成功");
+    message.success("登录成功");
     doLoginAction(res.data, isOnce.value);
+
+    setTimeout(() => {
+      router.replace({ name: "Home" });
+    }, 1000);
   }
 }
 </script>

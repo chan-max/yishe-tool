@@ -11,9 +11,8 @@
 <template>
   <div class="designiy-header">
     <div class="designiy-header-logo">
-      <icon-logo></icon-logo>
+      <span style="font-size: 16px;font-weight: bold;font-style: italic;">衣设1s</span>
     </div>
-    
     <header-menu-dropdown />
 
     <div style="flex-grow: 1"></div>
@@ -84,6 +83,9 @@ const props = defineProps([]);
 .designiy-header-logo {
   width: 80px;
   height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .designiy-header-item {

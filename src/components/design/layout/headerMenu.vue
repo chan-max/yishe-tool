@@ -45,9 +45,6 @@ const loginStatusStore = useLoginStatusStore();
 const props = defineProps([]);
 
 
-
-
-
 </script>
 
 <style lang="less">

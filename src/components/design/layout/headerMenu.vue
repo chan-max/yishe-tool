@@ -39,7 +39,6 @@ import { onShortcutTrigger } from '../shortcut/index';
 import iconHelp from '@/icon/help.svg?component'
 import { useLoginStatusStore } from "@/store/stores/login";
 
-
 const loginStatusStore = useLoginStatusStore();
 
 const props = defineProps([]);

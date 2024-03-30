@@ -1,9 +1,32 @@
 
 import COS from 'cos-js-sdk-v5';
 
-// const cos = new COS({
-//     SecretId: 'your-secret-id',
-//     SecretKey: 'your-secret-key',
-//     Bucket: 'your-bucket-name',
-//     Region: 'your-bucket-region'
-// });
+var _cos
+export const getCOS = () => {
+    return _cos || (_cos = new COS({
+        SecretId: 'AKIDMdmaMD0uiNwkVH0gTJFKXaXJyV4hHmAL',
+        SecretKey: 'HPdigqyzpgTNICCQnK0ZF6zrrpkbL4un',
+        Bucket: '1s-1257307499',
+        Region: 'ap-beijing'
+    }))
+}
+
+export async function uploadToCOS({
+    file,
+    key
+}) {
+    const cos = getCOS();
+    try {
+        const res = await cos.uploadFile({
+            Key: key,
+            Body: file,
+            Bucket: cos.options.Bucket,
+            Region: cos.options.Region
+        })
+        return res.Location
+    } catch (e) {
+        throw e
+    }
+}
+
+

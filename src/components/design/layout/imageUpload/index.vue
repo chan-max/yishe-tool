@@ -1,15 +1,7 @@
 <template>
   <div class="designiy-image-upload">
-    <el-upload
-      class="designiy-image-upload-main"
-      :auto-upload="false"
-      :show-file-list="false"
-      v-model:file-list="files"
-      :limit="1"
-      :on-exceed="handleExceed"
-      ref="upload"
-      drag
-    >
+    <el-upload class="designiy-image-upload-main" :auto-upload="false" :show-file-list="false" v-model:file-list="files"
+      :limit="1" :on-exceed="handleExceed" ref="upload" drag>
       <img v-if="files[0]" :src="previewUrl" />
       <template v-else>
         <icon-upload style="width: 50px; height: 50px"></icon-upload>
@@ -17,12 +9,7 @@
       </template>
     </el-upload>
     <a-divider />
-    <a-qrcode
-      style="width: 50px; height: 50px;"
-      value="http://www.antdv.com"
-      color="#6900ff"
-      bg-color="#fff"
-    />
+    <a-qrcode style="width: 50px; height: 50px;" value="http://www.antdv.com" color="#6900ff" bg-color="#fff" />
     <div class="designiy-image-upload-form">
       <div class="designiy-image-upload-form-label">贴纸名称</div>
       <el-input></el-input>
@@ -37,10 +24,8 @@
 <script setup>
 import iconUpload from "@/icon/upload.svg?component";
 import { ref, reactive, watch, computed, shallowRef } from "vue";
-import { Plus } from "@element-plus/icons-vue";
-import { genFileId } from "element-plus";
-import {uploadImage} from '@/api/index'
-
+import { uploadImage } from '@/api/index'
+import { uploadToCOS } from '@/api/cos'
 
 
 const files = ref([]);
@@ -63,14 +48,21 @@ function handleExceed(files) {
   upload.value.handleStart(file);
 }
 
-async function submit(){
-    loading.value = true
-    await uploadImage({
-        name:'',
-        description:'',
-        file:files.value[0].raw
-    })
-    loading.value = false
+async function submit() {
+  loading.value = true
+
+  const url = await uploadToCOS({
+    file:files.value[0].raw,
+    key: files.value[0].name
+  })
+
+  debugger
+  await uploadImage({
+    name: '',
+    description: '',
+    file: files.value[0].raw
+  })
+  loading.value = false
 }
 
 
@@ -87,10 +79,12 @@ async function submit(){
 .designiy-image-upload-main {
   width: 260px;
   height: 260px;
-  .el-upload{
-    width:100%;
-    height:100%;
+
+  .el-upload {
+    width: 100%;
+    height: 100%;
   }
+
   .el-upload-dragger {
     width: 100%;
     height: 100%;
@@ -111,10 +105,10 @@ async function submit(){
 }
 
 
-.designiy-image-upload-form-label{
-    padding:5px 0;
-    font-size:12px;
-    font-weight:bold;
-    color:#666;
+.designiy-image-upload-form-label {
+  padding: 5px 0;
+  font-size: 12px;
+  font-weight: bold;
+  color: #666;
 }
 </style>

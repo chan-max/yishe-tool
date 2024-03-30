@@ -19,7 +19,6 @@
 
     <icon-help style="width: 24px; height: 24px;color:#333;"></icon-help>
 
-
     <el-button @click="showSaveModel = true" type="primary" color="#333" round> 上 传 </el-button>
 
     <user-avatar  v-if="loginStatusStore.isLogin"/>

@@ -33,17 +33,22 @@
                     我是商家
                 </div>
             </router-link>
+            <router-link v-slot="{ navigate, isActive, isExactActive }" :to="{ name: 'StickerDesign' }" custom>
+                <div class="header-bar-menu-item" :class="{ 'header-bar-menu-item-active': isActive }" @click="navigate">
+                    贴纸设计
+                </div>
+            </router-link>
             <div style="flex: 1"></div>
 
             <template v-if="loginStatusStore.isLogin">
-                <div class="tools">
-                    <!-- <div  title="快速上传">
+                <!-- <div class="tools">
+                    <div  title="快速上传">
                         <icon-homepageupload></icon-homepageupload>
                     </div>
                     <div  title="我的商品">
                         <icon-homepageshop></icon-homepageshop>
-                    </div> -->
-                    <!-- <div  title="搜索全站">
+                    </div>
+                    <div  title="搜索全站">
                         <icon-homepagesearch></icon-homepagesearch>
                     </div>
                     <div title="我的消息">
@@ -51,8 +56,8 @@
                     </div>
                     <div  title="联系我们">
                         <icon-homepagecontact></icon-homepagecontact>
-                    </div> -->
-                </div>
+                    </div>
+                </div> -->
                 <user-avatar />
             </template>
             <template v-else>

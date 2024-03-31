@@ -164,7 +164,17 @@ const routes = [
     path: '/ai',
     name: 'Ai',
     component: () => import('./view/ai/index.vue')
-  }
+  },
+  {
+    path: '/stickerDesign',
+    name: 'StickerDesign',
+    component: () => import('./view/design/sticker/index.vue')
+  },
+  {
+    path: '/1s',
+    name: '1s',
+    component: () => import('./view/design/core/index.vue')
+  },
 ];
 
 

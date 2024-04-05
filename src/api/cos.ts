@@ -8,7 +8,7 @@ export const getCOS = () => {
         SecretKey: 'HPdigqyzpgTNICCQnK0ZF6zrrpkbL4un',
         Bucket: '1s-1257307499',
         Region: 'ap-beijing'
-    }))
+    } as any))
 }
 
 export async function uploadToCOS({

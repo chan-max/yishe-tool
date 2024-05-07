@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-
+import carousel from './carousel.vue'
 import siteFooter from '../footer/index.vue'
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import carousel from './baseModelCarousel.vue'

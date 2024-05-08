@@ -42,23 +42,6 @@
             <div style="flex: 1"></div>
 
             <template v-if="loginStatusStore.isLogin">
-                <!-- <div class="tools">
-                    <div  title="快速上传">
-                        <icon-homepageupload></icon-homepageupload>
-                    </div>
-                    <div  title="我的商品">
-                        <icon-homepageshop></icon-homepageshop>
-                    </div>
-                    <div  title="搜索全站">
-                        <icon-homepagesearch></icon-homepagesearch>
-                    </div>
-                    <div title="我的消息">
-                        <icon-homepagebell></icon-homepagebell>
-                    </div>
-                    <div  title="联系我们">
-                        <icon-homepagecontact></icon-homepagecontact>
-                    </div>
-                </div> -->
                 <user-avatar />
             </template>
             <template v-else>
@@ -80,13 +63,8 @@ import top from './top.vue'
 import { Search } from "@element-plus/icons-vue";
 import userAvatar from "@/components/user/userAvatar.vue";
 import { ref, onMounted, onUnmounted } from "vue";
-import iconArrowDown from "@/icon/arrow-down.svg?component";
 import { useLoginStatusStore } from "@/store/stores/login";
-import iconHomepagebell from '@/icon/web/homepagebell.svg?component';
-import iconHomepageupload from '@/icon/web/homepageupload.svg?component';
-import iconHomepageshop from '@/icon/web/homepageshop.svg?component';
-import iconHomepagecontact from '@/icon/web/homepagecontact.svg?component';
-import iconHomepagesearch from '@/icon/web/homepagesearch.svg?component';
+
 
 
 const loginStatusStore = useLoginStatusStore();
@@ -148,26 +126,6 @@ const loginStatusStore = useLoginStatusStore();
     border-bottom: 2px solid #3665f3;
 }
 
-.tools {
-    display: flex;
-    align-items: center;
-    column-gap: 12px;
 
-    div{
-        width: 16px;
-        height: 16px;
-    }
-    svg {
-        width: 16px;
-        height: 16px;
-        color: #ccc;
-
-        &:hover {
-            transform: scale(1.1);
-            color: #aaa;
-            cursor: pointer;
-        }
-    }
-}
 </style>
   

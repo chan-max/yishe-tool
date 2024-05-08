@@ -10,8 +10,9 @@
 -->
 <template>
     <div class="home">
-
         <carousel></carousel>
+
+            <bar></bar>
 
         <div class="home-banner">
             <div class="home-banner-main-title">
@@ -32,7 +33,6 @@
         </div>
 
         <div style="font-size: 20px;color:#555;"> 丰富的内置模型 </div>
-        
         <site-footer></site-footer>
     </div>
 </template>
@@ -44,6 +44,8 @@ import gltfViewer from "@/components/model/gltfViewer/index.vue";
 // import carousel from './baseModelCarousel.vue'
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "@/api";
+import bar from  './bar.vue'
+
 
 let modelInfo = ref("");
 
@@ -58,10 +60,16 @@ onMounted(async () => {
 .home {
     width: 100%;
     height: 100%;
+    padding: 40px;
+    box-sizing: border-box;
+    row-gap: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow: auto;
+    *{
+        flex-shrink: 0;
+    }
 }
 
 .home-banner {
@@ -105,8 +113,8 @@ onMounted(async () => {
 .button-try {
     background: transparent;
     border-radius: 8px;
-    border: 2px solid #6900ff;
-    color: #6900ff;
+    border: 2px solid #3665f3;
+    color: #3665f3;
     display: inline-flex;
     justify-content: center;
     align-items: center;

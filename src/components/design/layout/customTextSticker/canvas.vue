@@ -113,7 +113,7 @@ function paste(e) {
   position: relative;
   border: 1px solid transparent;
   &:focus-within {
-    border: 1px solid #6900ff;
+    border: 1px solid #3665f3;
   }
 }
 
@@ -127,7 +127,7 @@ function paste(e) {
   white-space: pre;
   outline: none;
   min-width: 1px; // 保证在没有内容时也能显示光标
-  caret-color: #6900ff;
+  caret-color: #3665f3;
   font-family:Microsoft Yahei;
 }
 </style>

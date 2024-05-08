@@ -172,7 +172,7 @@ a{
 .signup{
   text-align: center;
   width: 100%;
-  color: #6900ff;
+  color: #3665f3;
 }
 
 

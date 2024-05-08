@@ -9,6 +9,7 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
+    <top></top>
     <div ref="headerBar" class="header-bar flex justify-center z-10">
         <div class="header-bar-content flex justify-between items-center">
             <div class="header-bar-logo" @click="$router.push({ name: 'Home' })">1s衣设</div>
@@ -75,6 +76,7 @@
 </template>
 
 <script setup>
+import top from './top.vue'
 import { Search } from "@element-plus/icons-vue";
 import userAvatar from "@/components/user/userAvatar.vue";
 import { ref, onMounted, onUnmounted } from "vue";
@@ -143,7 +145,7 @@ const loginStatusStore = useLoginStatusStore();
 
 .header-bar-menu-item-active {
     opacity: 1;
-    border-bottom: 2px solid #6900ff;
+    border-bottom: 2px solid #3665f3;
 }
 
 .tools {

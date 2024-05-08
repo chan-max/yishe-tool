@@ -55,7 +55,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  font-family: alimama;
+  /* font-family: alimama; */
 }
 
 #app > * {

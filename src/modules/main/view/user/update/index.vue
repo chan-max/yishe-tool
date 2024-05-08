@@ -86,7 +86,7 @@ async function submit() {
 .user-update-header {
   width: 100%;
   height: 60px;
-  background-color: fade(#6900ff, 6%);
+  background-color: fade(#3665f3, 6%);
   display: flex;
   justify-content: space-between;
   align-items: center;

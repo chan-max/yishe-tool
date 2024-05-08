@@ -13,7 +13,7 @@ export const getCOS = () => {
 
 export async function uploadToCOS({
     file,
-    key
+    key = new Date().getTime(),
 }) {
     const cos = getCOS();
     try {

@@ -110,7 +110,7 @@ onBeforeMount(() => {
 }
 
 #buy {
-  --background: #6900ff;
+  --background: #3665f3;
   --background-activated: rgb(125, 0, 255);
 }
 </style>

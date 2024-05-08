@@ -1,13 +1,8 @@
-<template lang="">
-<div class="header-top flex justify-center items-center ">
+<template>
+  <div class="header-top flex justify-center items-center">
     <div class="header-top-content h-full flex items-center justify-between">
-    <div @click="toggleLanguage">
-      {{ $t("language") }}
-    </div>
-    <div>
-        <span>tel</span>
-        <!-- <span class=" text-xs font-bold">18742539196</span> -->
-    </div>
+      <div></div>
+      <el-button type="text"> 上传 </el-button>
     </div>
   </div>
 </template>
@@ -22,17 +17,17 @@ function toggleLanguage() {
     locale.value = "en";
   }
 }
-
 </script>
 <style lang="less">
 .header-top {
   width: 100%;
-  height: 36px;
-  background-color: #f2f2f2;
+  height: 32px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
 }
 
 .header-top-content {
-  width: 1200px;
-  padding: 0 30px;
+  width: 100%;
+  padding: 0 60px;
 }
 </style>

@@ -10,6 +10,9 @@
 -->
 <template>
     <div class="home">
+
+        <carousel></carousel>
+
         <div class="home-banner">
             <div class="home-banner-main-title">
                 开放式服装设计&交易平台
@@ -30,8 +33,6 @@
 
         <div style="font-size: 20px;color:#555;"> 丰富的内置模型 </div>
         
-        <carousel style="width:80%;padding:40px;"></carousel>
-
         <site-footer></site-footer>
     </div>
 </template>
@@ -40,7 +41,7 @@
 import carousel from './carousel.vue'
 import siteFooter from '../footer/index.vue'
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
-import carousel from './baseModelCarousel.vue'
+// import carousel from './baseModelCarousel.vue'
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "@/api";
 

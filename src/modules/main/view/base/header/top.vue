@@ -4,9 +4,9 @@
       <div></div>
       <div>
         <div class="tools">
-          <div title="快速上传" @click="openUpload">
+          <!-- <div title="快速上传" @click="openUpload">
             <icon-homepageupload></icon-homepageupload>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

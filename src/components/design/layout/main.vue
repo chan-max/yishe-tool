@@ -213,7 +213,7 @@ import {
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { initWebsocket } from "../utils/websocket.ts";
 
-initWebsocket();
+// initWebsocket();
 
 const screenshotInstance = ref();
 

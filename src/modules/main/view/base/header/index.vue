@@ -80,7 +80,7 @@ const loginStatusStore = useLoginStatusStore();
 
 .header-bar-content {
     width: 1600px;
-    padding: 0 50px;
+    padding: 0 4%;
     column-gap: 40px;
     display: flex;
     align-items: center;

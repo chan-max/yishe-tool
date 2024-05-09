@@ -1,4 +1,5 @@
 
+import { uploadToCOS } from "./cos";
 import { apiInstance, source } from "./apiInstance";
 import { Url } from "./url";
 
@@ -234,39 +235,39 @@ export const getIndexAvailableModel = (params) => new Promise(async (resolve, re
   resolve(res.data.data)
 })
 
-export const follow  = (params) => new Promise(async (resolve, reject) => {
+export const follow = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post(Url.FOLLOW, params)
   resolve(res.data.data)
 })
 
 
-export const unfollow  = (params) => new Promise(async (resolve, reject) => {
+export const unfollow = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post(Url.UNFOLLOW, params)
   resolve(res.data.data)
 })
 
 // 获取我的好友列表
-export const getMyFriends  = (params) => new Promise(async (resolve, reject) => {
+export const getMyFriends = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post(Url.GET_MY_FRIENDS, params)
   resolve(res.data.data)
 })
 
 
 // 获取我的关注列表
-export const getMyFollowings  = (params) => new Promise(async (resolve, reject) => {
+export const getMyFollowings = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post(Url.GET_MY_FOLLOWINGS, params)
   resolve(res.data.data)
 })
 
 // 获取我的关注列表
-export const getMyFollowers  = (params) => new Promise(async (resolve, reject) => {
+export const getMyFollowers = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post(Url.GET_MY_FOLLOWERS, params)
   resolve(res.data.data)
 })
 
 
 // 获取我的聊天列表
-export const getMyCommunicationList  = (params) => new Promise(async (resolve, reject) => {
+export const getMyCommunicationList = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post(Url.GET_MY_COMMUNICATION_LIST, params)
   resolve(res.data.data)
 })
@@ -275,7 +276,27 @@ export const getMyCommunicationList  = (params) => new Promise(async (resolve, r
 
 
 // 获取聊天信息
-export const getCommunicationMessage  = (params) => new Promise(async (resolve, reject) => {
+export const getCommunicationMessage = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post(Url.GET_COMMUNICATION_MESSAGE, params)
   resolve(res.data.data)
+})
+
+
+/*
+    通用的上传文件接口,
+    先上传到cos，再存储路径到服务器
+*/
+export const uploadFile = (params) => new Promise(async (resolve, reject) => {
+  const fileList = params
+  const data = await Promise.all(fileList.map(async (file) => {
+    const url = await uploadToCOS({key:new Date().getTime(),file:file.raw})
+    return {
+      name:file.name,
+      type:file.type,
+      size:file.size,
+      url
+    }
+  }))
+  debugger
+  resolve(void 0)
 })

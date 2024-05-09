@@ -18,7 +18,7 @@ export async function uploadToCOS({
     const cos = getCOS();
     try {
         const res = await cos.uploadFile({
-            Key: key,
+            Key: String(key),
             Body: file,
             Bucket: cos.options.Bucket,
             Region: cos.options.Region

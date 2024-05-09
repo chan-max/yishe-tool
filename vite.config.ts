@@ -91,7 +91,7 @@ export default defineConfig((config: any) => {
       port: 6699,
       proxy: {
         "/api": {
-          target: "https://localhost:3000",
+          target: "https://localhost:7788",
           changeOrigin: true,
           secure: false, // 防止证书引发的🙋
           rewrite: (path) => path.replace(/^\/api/, ""),

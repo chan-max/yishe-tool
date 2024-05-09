@@ -10,10 +10,10 @@
 -->
 <template>
     <div class="home">
-        <carousel></carousel>
+        <carousel style="padding: 36px 4%;"></carousel>
 
-            <bar></bar>
-
+        <bar style="padding: 0px 4%;"></bar>
+        
         <div class="home-banner">
             <div class="home-banner-main-title">
                 开放式服装设计&交易平台
@@ -23,8 +23,6 @@
                 我们提供一个交互式的市场，使消费者、设计师和制造商能够亲密无间地一起合作，无论身处何方，你都可以通过我们的平台探索创新、发现灵感、购买独特的设计作品，并与全球的时尚爱好者交流。我们相信每一个人都应该有机会打破传统，定制自己的生活方式。借助我们的线上服装设计和交易平台，在你与全球设计师的碰撞与交流中，让你的创新理念和独特范式尽情张扬。
             </div>
 
-
-
             <div class="bannner-model">
                 <gltf-viewer :model="modelInfo"></gltf-viewer>
             </div>
@@ -33,6 +31,7 @@
         <div style="font-size: 20px;color:#555;"> 丰富的内置模型 </div>
         <site-footer></site-footer>
     </div>
+
 </template>
 
 <script setup>
@@ -58,7 +57,6 @@ onMounted(async () => {
 .home {
     width: 100%;
     height: 100%;
-    padding: 40px 6%;
     box-sizing: border-box;
     row-gap: 50px;
     display: flex;

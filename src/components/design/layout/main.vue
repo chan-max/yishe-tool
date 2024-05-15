@@ -152,6 +152,7 @@ import {
   showLeftMenu,
   showBottomMenu,
   showSaveModel,
+  showSticker
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -173,7 +174,7 @@ import saveModel from "./saveModel/index.vue";
 import { CubeTextureLoader } from "three";
 import decoration from "./decoration/index.vue";
 import screenshot from "../components/screenshot.vue";
-
+import sticker from './sticker/index.vue'
 import {
   Mesh,
   MeshBasicMaterial,
@@ -211,6 +212,8 @@ const leftComponent = computed(() => {
     ? textSticker
     : showCustomTextSticker.value
     ? customTextSticker
+    : showSticker.value
+    ? sticker
     : null;
 });
 

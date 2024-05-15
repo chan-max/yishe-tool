@@ -54,8 +54,8 @@ function selectModel(productModel) {
 </script>
 <style lang="less">
 .designiy-base-model-select {
-  width: 960px;
-  height: 500px;
+  width: 900px;
+  height: 400px;
   overflow: auto;
   display: flex;
   column-gap: 10px;

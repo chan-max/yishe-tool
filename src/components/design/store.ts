@@ -93,6 +93,8 @@ export const showFontUpload = ref(false)
 // 是否展示字体列表
 export const showFontList = ref(false)
 
+// 是否展示贴纸
+export const showSticker = ref(false)
 
 
 // 是否展示已使用的贴纸列表

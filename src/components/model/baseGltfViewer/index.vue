@@ -1,5 +1,6 @@
 <template>
   <div class="base-gltf-viewer" ref="gltfViewer">
+    <div class="loading" v-if="loading"> 加载中 </div>
   </div>
 </template>
 <script setup>
@@ -15,6 +16,7 @@ import {
   defineExpose,
 } from "vue";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { GLTFLoader, } from "three/examples/jsm/loaders/GLTFLoader";
 import {
   Box3,
   BoxGeometry,
@@ -38,8 +40,22 @@ import {
   AxesHelper,
   Vector2,
 } from "three";
-import { debounce } from "@/common/utils/debounce";
-import { gltfLoader } from "@/common/threejsHelper";
+
+
+  const loading = ref(true)
+
+ function gltfLoader(url) {
+    let loader = new GLTFLoader();
+    return new Promise(async (resolve,reject) => {
+        try{
+            let gltf = await loader.loadAsync(url)
+            resolve(gltf)
+        }catch(e){
+            reject(e)
+        }
+    })
+}
+
 
 const props = defineProps({
     src:''
@@ -51,7 +67,10 @@ const scene = new Scene();
 
 const renderer = new WebGLRenderer({
   alpha: true, // 透明背景
+  antialias: true,
 });
+
+renderer.setPixelRatio(window.devicePixelRatio)
 
 const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
 
@@ -92,7 +111,7 @@ const getHeight = (el) => {
 };
 
 function initImportedModel(gltf) {
-  let flag = 1;
+  let flag = .8;
   let object = gltf.scene;
   // 先处理尺寸，再居中
   const sizeBox = new Box3().setFromObject(object);
@@ -145,10 +164,13 @@ async function initModel() {
   const controller = new OrbitControls(camera, renderer.domElement);
 
   controller.minDistance = 0.5
-  controller.maxDistance = 5
+  controller.maxDistance = 3
   controller.enablePan = false; // 禁止右键拖拽
+  // 惯性
+  controller.enableDamping = true;
+  controller.dampingFactor = .1;
   
-  let resizeOb = new ResizeObserver(debounce(resetCameraAspect));
+  let resizeOb = new ResizeObserver(resetCameraAspect);
 
   el && resizeOb.observe(el);
 
@@ -170,12 +192,13 @@ async function initModel() {
 
   el.appendChild(renderer.domElement);
   render();
+  loading.value = false
 }
 
 watch(() => props.src,initModel,{immediate:true})
 
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .base-gltf-viewer {
   background: transparent;
   width: 100%;
@@ -186,9 +209,14 @@ watch(() => props.src,initModel,{immediate:true})
   align-items: center;
 }
 
-.base-gltf-viewer-loading {
+.loading {
   font-weight: bold;
   color: rgba(255, 255, 255, 0.7);
+  width:100%;
+  height:100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 

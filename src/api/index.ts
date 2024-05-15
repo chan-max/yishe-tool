@@ -286,17 +286,35 @@ export const getCommunicationMessage = (params) => new Promise(async (resolve, r
     通用的上传文件接口,
     先上传到cos，再存储路径到服务器
 */
+export const uploadManyFile = (params) => new Promise(async (resolve, reject) => {
+  await Promise.all(params.map(uploadFile))
+  resolve(undefined)
+})
+
+
 export const uploadFile = (params) => new Promise(async (resolve, reject) => {
-  const fileList = params
-  const data = await Promise.all(fileList.map(async (file) => {
-    const url = await uploadToCOS({key:new Date().getTime(),file:file.raw})
-    return {
-      name:file.name,
-      type:file.type,
-      size:file.size,
-      url
-    }
-  }))
-  debugger
+
+  const url = await uploadToCOS({key:new Date().getTime(),file:params.raw})
+
+  const data = {
+    name:params.name,
+    type:params.type,
+    size:params.size,
+    meta:{
+      date:''
+    },
+    url
+  }
+
+  await apiInstance.post('/api/file/create',data)
   resolve(void 0)
+})
+
+
+/* 
+  获取商品模型列表
+*/
+export const getProductModelListApi = (data) => new Promise(async (resolve, reject) => {
+  let res =  await apiInstance.post('/api/product-model/page', data )
+  resolve(res.data)
 })

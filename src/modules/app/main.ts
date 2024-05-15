@@ -99,8 +99,8 @@ router.isReady().then(async () => {
   // 将登录信息同步到本地
   syncUserInfoToLocal()
   const configStore = useConfigStore()
-  const config =  await getBasicConfig()
-  configStore.$patch(config)
+  // const config =  await getBasicConfig()
+  // configStore.$patch(config)
   initWebsocket()
   app.mount('#app');
 });

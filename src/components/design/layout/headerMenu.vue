@@ -10,19 +10,19 @@
 -->
 <template>
   <div class="designiy-header">
-    <div class="designiy-header-logo">
-      <span style="font-size: 16px;font-weight: bold;font-style: italic;">衣设1s</span>
-    </div>
-    <header-menu-dropdown />
 
+    <div class="designiy-header-menu">
+      <header-menu-dropdown />
+    </div>
+    
     <div style="flex-grow: 1"></div>
 
     <icon-help style="width: 24px; height: 24px;color:#333;"></icon-help>
 
-    <el-button @click="showSaveModel = true" type="primary" color="#333" round> 上 传 </el-button>
+    <el-button @click="showSaveModel = true" size="small" type="primary" color="#333" round> 上 传 </el-button>
 
     <user-avatar  v-if="loginStatusStore.isLogin"/>
-    <el-button @click="$router.push({name:'Login'})" v-else type="primary" round>  登 录 </el-button>
+    <el-button @click="$router.push({name:'Login'})" size="small" v-else type="primary" round>  登 录 </el-button>
   </div>
 </template>
 
@@ -76,8 +76,8 @@ const props = defineProps([]);
   margin: 0 10px;
 }
 
-.designiy-header-logo {
-  width: 80px;
+.designiy-header-menu {
+  width: 64px;
   height: 46px;
   display: flex;
   align-items: center;

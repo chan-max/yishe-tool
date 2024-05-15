@@ -17,8 +17,6 @@ import {
     tokenResponseInterceptor
 } from "./apiInterception";
 
-
-
 // 全局设置
 axios.defaults.timeout = 100000; // 时间超时设置100s
 

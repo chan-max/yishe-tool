@@ -3,7 +3,7 @@
     <div class="designiy-base-model-select-item" v-for="m in models">
       <div class="designiy-base-model-select-item-img">
         <el-image
-          :src="m.preview_img"
+          :src="m.thumbnail"
           draggable="false"
           @click="selectModel(m)"
         ></el-image>
@@ -12,7 +12,7 @@
   </div>
 </template>
 <script setup>
-import { getBaseModel } from "@/api";
+import { getProductModelListApi } from "@/api";
 import { onMounted, ref } from "vue";
 import {
   showBaseModelSelect,
@@ -25,9 +25,18 @@ const models = ref([]);
 const container = ref();
 
 onMounted(async () => {
-  const data = await getBaseModel();
-  models.value = data;
-  
+  const res = await getProductModelListApi({
+    pageIndex:1,
+    pageSize:100
+  });
+
+  models.value = res.data.list;
+
+  res.data.list.map((item) => {
+    item.url = 'http://' + item.url
+    item.thumbnail = 'http://' + item.thumbnail
+  })
+
   // 适配鼠标滑轮横向滚动
   container.value.addEventListener("wheel", (event) => {
     container.value.scrollLeft += event.deltaY;
@@ -35,10 +44,10 @@ onMounted(async () => {
   },{passive:false});
 });
 
-function selectModel(model) {
+function selectModel(productModel) {
   // 选择基础模型
   showBaseModelSelect.value = false;
-  currentOperatingBaseModelInfo.value = model;
+  currentOperatingBaseModelInfo.value = productModel;
   showModelInfo.value = true;
 }
 

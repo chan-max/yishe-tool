@@ -26,8 +26,11 @@ function ensureFormData(obj) {
     return new FormData()
 }
 
+/*
+ 暂时不需要兼容文件上传
+*/
 export const formDataFormatRequestInterceptor = (request) => {
-    request.data = ensureFormData(request.data);
+    // request.data = ensureFormData(request.data);
     return request
 }
 

@@ -47,7 +47,9 @@ export class ModelController {
     // 场景
     public scene: Scene = new Scene();
     // 渲染器
-    public renderer: WebGLRenderer = new WebGLRenderer();
+    public renderer: WebGLRenderer = new WebGLRenderer({
+        antialias: true,
+    });
     // 摄像机
     public camera: any;
     // 当前画布容器
@@ -141,6 +143,7 @@ export class ModelController {
 
     constructor() {
         mixins.forEach((mixin) => mixin(this));
+        this.renderer.setPixelRatio(window.devicePixelRatio)
         // 初始化时暴露场景和渲染器
     }
 
@@ -160,7 +163,7 @@ export class ModelController {
 
         this.controller = new OrbitControls(this.camera, this.renderer.domElement);
         this.controller.minDistance = 0.5
-        this.controller.maxDistance = 5
+        this.controller.maxDistance = 3
         this.controller.enablePan = false
 
         this.controller.enableDamping = true
@@ -169,11 +172,11 @@ export class ModelController {
 
         this.canvasContainer.appendChild(this.renderer.domElement);
         this.resizeObserver = new ResizeObserver(
-            useDebounceFn(() => {
+            () => {
                 this.camera.aspect = this.width / this.height;
                 this.camera.updateProjectionMatrix();
                 this.renderer.setSize(this.width, this.height);
-            }, 3)
+            }
         );
         this.resizeObserver.observe(canvasContainer);
         this.initClickEvent();

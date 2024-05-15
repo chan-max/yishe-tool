@@ -1,8 +1,8 @@
 <template>
-  <div  style="width:100%;box-sizing:border-box;flex-shrink: 0;">
-    <el-carousel height="300px;" style="border-radius:8px;overflow:hidden;">
+  <div style="width:100%;box-sizing:border-box;flex-shrink: 0;">
+    <el-carousel style="border-radius:8px;overflow:hidden;" >
       <el-carousel-item v-for="item in imgs" :key="item">
-        <img :src="item.url">
+        <img :src="item.url" style="object-fit: cover;background:red;width:100%;height:100%">
       </el-carousel-item>
     </el-carousel>
   </div>

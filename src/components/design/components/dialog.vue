@@ -1,14 +1,16 @@
 <template>
-  <KeepAlive>
+    <KeepAlive>
     <transition v-bind="animation">
       <Draggable
         v-if="show"
+        ref="dialogRef"
         class="designiy-dialog"
         v-slot="{ x, y }"
         :initial-value="{ x, y }"
         :prevent-default="true"
         :handle="handle"
         :style="{ zIndex: 1000 }"
+        @vnode-mounted="mounted"
       >
         <Teleport to="body">
           <div
@@ -39,11 +41,24 @@ import { defineProps, ref, onMounted, onBeforeMount, computed, watch } from "vue
 import { useDraggable } from "@vueuse/core";
 import { UseDraggable as Draggable } from "@vueuse/components";
 import { CloseBold } from "@element-plus/icons-vue";
+import { onActivated } from "vue";
 
 const handle = ref();
 const { x, y, style } = useDraggable(handle, {
   initialValue: {},
 });
+
+const dialogRef = ref();
+
+function mounted(){
+  if(!dialogRef.value){
+    return
+  }
+  // 在中间
+  let el = dialogRef.value.$el
+  el.style.top = `calc(50% - ${el.clientHeight / 2}px)`
+}
+
 
 const props = defineProps({
   title: "", // 顶部标题
@@ -69,7 +84,7 @@ function close() {
 <style lang="less">
 .designiy-dialog {
   background: var(--1s-container-background);
-  position: absolute;
+  position: fixed;
   border-radius: 6px;
   *{
     pointer-events: auto!important;
@@ -91,14 +106,10 @@ function close() {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  right: -14px;
-  top: -14px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
   background-color: #fff;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   &:hover {
     background-color: #eee;
   }

@@ -43,7 +43,6 @@
         </div>
       </el-tooltip>
 
-
       <el-tooltip :hide-after="0" content="几何图形" placement="right">
         <div class="menu-bar-item">
           <div class="menu-bar-item-icon"><icon-box></icon-box></div>
@@ -60,7 +59,6 @@
           <span>文字创作</span>
         </div>
       </el-tooltip>
-
 
       <el-tooltip :hide-after="0" content="字体" placement="right">
         <div class="menu-bar-item" @click="showFontList = true">
@@ -102,7 +100,6 @@
           <span>预览</span>
         </div>
       </el-tooltip>
-
       <div style="flex: 1"></div>
 
       <el-tooltip :hide-after="0" content="系统设置" placement="right">
@@ -150,7 +147,7 @@ import iconDecoration from '@/icon/design/decoration.svg?component';
 <style lang="less">
 
 .menu-bar {
-  width: 80px;
+  width: 64px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -158,7 +155,7 @@ import iconDecoration from '@/icon/design/decoration.svg?component';
   border-radius: 2px;
   row-gap: 16px;
   overflow: auto;
-  direction: rtl;
+  // direction: rtl;
   background: var(--1s-left-menu-background-color);
   padding: 16px 0;
   box-sizing: border-box;

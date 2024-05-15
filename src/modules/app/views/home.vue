@@ -75,13 +75,13 @@ import avatar from '@/modules/app/components/avatar.vue'
 const router = useIonRouter();
 const loginStore = useLoginStatusStore();
 
-onBeforeMount(() => {
-  if (!loginStore.isLogin) {
-    router.replace({
-      name: "Login",
-    });
-  }
-});
+// onBeforeMount(() => {
+//   if (!loginStore.isLogin) {
+//     router.replace({
+//       name: "Login",
+//     });
+//   }
+// });
 </script>
 
 <style scoped lang="less">

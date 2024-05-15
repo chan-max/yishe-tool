@@ -10,10 +10,16 @@
 -->
 <template>
     <div class="home">
+
+    
         <carousel style="padding: 36px 4%;"></carousel>
 
-        <bar style="padding: 0px 4%;"></bar>
+        <bar></bar>
         
+        <resource style="width:92%;"></resource>
+
+        <operate></operate>
+
         <div class="home-banner">
             <div class="home-banner-main-title">
                 开放式服装设计&交易平台
@@ -42,7 +48,8 @@ import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "@/api";
 import bar from  './bar.vue'
-
+import resource from './source.vue'
+import operate from './operate.vue'
 
 let modelInfo = ref("");
 

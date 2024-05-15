@@ -12,26 +12,10 @@
         <header-menu />
       </div>
     </div>
-    <div
-      id="layout-sub-header"
-      style="
-        border-bottom: 2px solid #f6f6f6;
-        width: auto;
-        height: var(--1s-sub-header-height);
-      "
-    >
-      <div v-if="showSubHeader" style="width: 100%; height: 100%; flex: 1">
-        <sub-header-menu @takephoto="takephoto" />
-      </div>
-    </div>
 
     <div
       id="layout-body"
-      style="
-        display: flex;
-        flex: 1;
-        height: calc(100% - var(--1s-header-height) - var(--1s-sub-header-height));
-      "
+      style="display: flex; height: calc(100% - var(--1s-header-height))"
     >
       <div id="layout-left-menu" style="height: 100%; border-right: 2px solid #f6f6f6">
         <left-menu v-if="showLeftMenu"></left-menu>
@@ -43,19 +27,17 @@
         </div>
       </div>
 
-      <div id="layout-canvas" style="height: 100%; flex: 1;width:0">
+      <div id="layout-canvas" >
         <screenshot ref="screenshotInstance"></screenshot>
-        <div id="designiy-canvas-container" ref="mountContainer"></div>
+        <div id="designiy-canvas-container" style="width:100%;height:100%;" ref="mountContainer"></div>
       </div>
 
-      <div
-        id="layout-right"
-        style="display: flex;"
-      >
+      <div id="layout-right" style="display: flex">
         <div style="height: 100%">
           <component :is="rightComponent"></component>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -258,7 +240,7 @@ currentController.value = modelController;
   需要保留之前的操作
 */
 watch(currentOperatingBaseModelInfo, () => {
-  modelController.setMainModel(currentOperatingBaseModelInfo.value.preview_file);
+  modelController.setMainModel(currentOperatingBaseModelInfo.value.url);
 });
 
 // 创建场景、相机和渲染器等...
@@ -297,9 +279,16 @@ onMounted(() => {
 
 <style lang="less">
 #designiy-canvas-container {
-  width: 100%;
-  height: 100%;
   background: #fff;
   overflow: hidden;
+}
+
+#layout-canvas{
+  height: 100%; 
+  flex: 1;
+  overflow:auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

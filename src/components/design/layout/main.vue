@@ -27,9 +27,21 @@
         </div>
       </div>
 
-      <div id="layout-canvas" >
+      <div id="layout-canvas">
         <screenshot ref="screenshotInstance"></screenshot>
-        <div id="designiy-canvas-container" style="width:100%;height:100%;" ref="mountContainer"></div>
+        <div
+          v-show="des.showThreeCanvas"
+          id="threejs-canvas"
+          style="width: 100%; height: 100%"
+          ref="mountContainer"
+        ></div>
+
+        <div
+          v-show="des.showBasicCanvas"
+          id="basic-canvas"
+          style="width: 100%; height: 100%"
+          ref="basicCanvasRef"
+        ></div>
       </div>
 
       <div id="layout-right" style="display: flex">
@@ -37,7 +49,6 @@
           <component :is="rightComponent"></component>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -47,11 +58,7 @@
     mask="true"
     :show="showImageUplaod"
     @close="showImageUplaod = false"
-    :animation="{
-      'enter-active-class': 'animate__animated animate__bounceIn',
-      'leave-active-class': 'animate__animated animate__bounceOut',
-      duration: 100,
-    }"
+    :animation="basicContainerAnimation"
   >
     <image-upload></image-upload>
   </diydialog>
@@ -71,11 +78,7 @@
   <diydialog
     :show="showBaseModelSelect"
     @close="showBaseModelSelect = false"
-    :animation="{
-      'enter-active-class': 'animate__animated animate__bounceIn',
-      'leave-active-class': 'animate__animated animate__bounceOut',
-      duration: 100,
-    }"
+    :animation="basicContainerAnimation"
   >
     <template #title> 选择基础模型</template>
     <base-model-select></base-model-select>
@@ -84,11 +87,7 @@
   <diydialog
     :show="showFontUpload"
     @close="showFontUpload = false"
-    :animation="{
-      'enter-active-class': 'animate__animated animate__bounceIn',
-      'leave-active-class': 'animate__animated animate__bounceOut',
-      duration: 100,
-    }"
+    :animation="basicContainerAnimation"
   >
     <template #title> 字体上传 </template>
     <font-upload></font-upload>
@@ -102,11 +101,7 @@
     :show="showFontList"
     title="字体"
     @close="showFontList = false"
-    :animation="{
-      'enter-active-class': 'animate__animated animate__bounceIn',
-      'leave-active-class': 'animate__animated animate__bounceOut',
-      duration: 100,
-    }"
+    :animation="basicContainerAnimation"
   >
     <font-list></font-list>
   </diydialog>
@@ -115,11 +110,7 @@
     :show="showSaveModel"
     title="保存该模型"
     @close="showSaveModel = false"
-    :animation="{
-      'enter-active-class': 'animate__animated animate__bounceIn',
-      'leave-active-class': 'animate__animated animate__bounceOut',
-      duration: 100,
-    }"
+    :animation="basicContainerAnimation"
   >
     <save-model></save-model>
   </diydialog>
@@ -152,7 +143,10 @@ import {
   showLeftMenu,
   showBottomMenu,
   showSaveModel,
-  showSticker
+  showSticker,
+  showThreeCanvas,
+  showBasicCanvas,
+  useDesignStore,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -171,32 +165,24 @@ import subHeaderMenu from "./subHeaderMenu/index.vue";
 import modelInfo from "./modelInfo/index.vue";
 import decalList from "./decalList/index.vue";
 import saveModel from "./saveModel/index.vue";
-import { CubeTextureLoader } from "three";
 import decoration from "./decoration/index.vue";
 import screenshot from "../components/screenshot.vue";
-import sticker from './sticker/index.vue'
-import {
-  Mesh,
-  MeshBasicMaterial,
-  Object3D,
-  Raycaster,
-  Texture,
-  TextureLoader,
-  Vector3,
-  BoxGeometry,
-  Euler,
-  DirectionalLight,
-  AmbientLight,
-  PointLight,
-  AxesHelper,
-  GridHelper,
-  MeshPhongMaterial,
-  DoubleSide,
-} from "three";
+import sticker from "./sticker/index.vue";
+import { DirectionalLight, AmbientLight, PointLight } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { initWebsocket } from "../utils/websocket.ts";
 
 // initWebsocket();
+
+const des = useDesignStore();
+
+window.des = des;
+
+const basicContainerAnimation = ref({
+  "enter-active-class": "animate__animated animate__bounceIn",
+  "leave-active-class": "animate__animated animate__bounceOut",
+  duration: 100,
+});
 
 const screenshotInstance = ref();
 
@@ -204,6 +190,8 @@ function takephoto() {
   const base64 = currentController.value.getScreenshotBase64();
   screenshotInstance.value.execScreenshot(base64);
 }
+
+const basicCanvasRef = ref();
 
 const leftComponent = computed(() => {
   return showImageSticker.value
@@ -281,17 +269,28 @@ onMounted(() => {
 </script>
 
 <style lang="less">
-#designiy-canvas-container {
+#threejs-canvas {
   background: #fff;
   overflow: hidden;
 }
 
-#layout-canvas{
-  height: 100%; 
+#layout-canvas {
+  height: 100%;
   flex: 1;
-  overflow:auto;
+  position: relative;
+  overflow: auto;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#threejs-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#basics-canvas {
+  position: absolute;
 }
 </style>

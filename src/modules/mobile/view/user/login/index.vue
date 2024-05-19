@@ -22,7 +22,7 @@
                 <el-icon><User /></el-icon>
               </template>
               <template #suffix>
-                  <el-icon
+                <el-icon
                   v-if="accountStatus == ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST"
                   color="green"
                   ><CircleCheck
@@ -104,9 +104,9 @@ import { useDebounceFn } from "@vueuse/core";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { doLoginAction } from "@/store/stores/loginAction";
 import { useRouter } from "vue-router";
-import { showToast } from 'vant';
+import { showToast } from "vant";
 
-const router  = useRouter()
+const router = useRouter();
 
 const rules = reactive({
   account: [{ required: true, message: "请输入账号", trigger: "blur" }],
@@ -133,7 +133,7 @@ const checkAccountStatus = useDebounceFn(async () => {
   var res = await getAccountStatus({
     account: form.account,
   });
-  
+
   accountStatus.value = res.status;
 }, 2000);
 
@@ -143,26 +143,26 @@ async function submit() {
   } catch {
     return;
   }
-  
+
   loginLoading.value = true;
   const res = await login(form);
   if (res.status === ResponseStatusCodeEnum.LOGIN_SUCCESS) {
     doLoginAction(res.data);
     showToast({
-      message:'登录成功',
-      onClose(){
-        router.replace({name:'Home'})
-      }
-    })
+      message: "登录成功",
+      onClose() {
+        router.replace({ name: "Home" });
+      },
+    });
   } else if (res.status === ResponseStatusCodeEnum.PASSWORD_ERROR) {
     alert("账号密码错误");
   }
   loginLoading.value = false;
 }
-
 </script>
-<style lang="less">
-.mobile-login {width: 100%;
+<style lang="less" scoped>
+.mobile-login {
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;

@@ -3,80 +3,93 @@ import { currentController, operatingTextStickerOptions, showDecalControl } from
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
 import { getFontById } from "@/api";
+import { useDebounceFn } from "@vueuse/core";
 
+
+/*
+
+*/
 export const canvasBackgroundEl = ref();
 export const canvasTextEl = ref();
 
 function setFontSize(){
-    canvasTextEl.value.style.fontSize = operatingTextStickerOptions.fontSize + "px"
+    canvasTextEl.value.style.fontSize = operatingTextStickerOptions.value.fontSize + "px"
 }
 
-watch(() => operatingTextStickerOptions.fontSize,() => {
+watch(() => 
+     operatingTextStickerOptions.value.fontSize
+,() => {
     setFontSize()
     initDraggableTextSticker()
 })
 
 function setFontWeight(){
     
-    canvasTextEl.value.style.fontWeight = operatingTextStickerOptions.fontWeight
+    canvasTextEl.value.style.fontWeight = operatingTextStickerOptions.value.fontWeight
 }
 
-watch(() => operatingTextStickerOptions.fontWeight,() => {
+watch(() => operatingTextStickerOptions.value.fontWeight,() => {
     setFontWeight()
     initDraggableTextSticker()
 })
 
 function setFontColor(){
-    
-    canvasTextEl.value.style.color = operatingTextStickerOptions.fontColor;
+    canvasTextEl.value.style.color = operatingTextStickerOptions.value.fontColor;
 }
 
-watch(() => operatingTextStickerOptions.fontColor,() => {
+watch(() => operatingTextStickerOptions.value.fontColor,() => {
     setFontColor()
     initDraggableTextSticker()
 })
 
 function setLineHeight(){
-    
-    canvasTextEl.value.style.lineHeight = operatingTextStickerOptions.lineHeight;
+    canvasTextEl.value.style.lineHeight = operatingTextStickerOptions.value.lineHeight;
 }
 
-watch(() => operatingTextStickerOptions.lineHeight,() => {
+watch(() => operatingTextStickerOptions.value.lineHeight,() => {
     setLineHeight()
     initDraggableTextSticker()
 })
 
 function setItalic(){
-    
-    canvasTextEl.value.style.fontStyle = operatingTextStickerOptions.italic ? "italic" : "";
+    canvasTextEl.value.style.fontStyle = operatingTextStickerOptions.value.italic ? "italic" : "";
 }
 
-watch(() => operatingTextStickerOptions.italic,() => {
+watch(() => operatingTextStickerOptions.value.italic,useDebounceFn(() => {
     setItalic()
     initDraggableTextSticker()
-})
+}))
 
 function setLetterSpacing(){
-    canvasTextEl.value.style.letterSpacing = operatingTextStickerOptions.letterSpacing + "em";
+    canvasTextEl.value.style.letterSpacing = operatingTextStickerOptions.value.letterSpacing + "em";
 }
 
-watch(() => operatingTextStickerOptions.letterSpacing,() => {
+watch(() => operatingTextStickerOptions.value.letterSpacing,() => {
     setLetterSpacing()
     initDraggableTextSticker()
 })
 
 function setBackgroundColor(){
-    
-    canvasBackgroundEl.value.style.background = operatingTextStickerOptions.backgroundColor;
+    canvasBackgroundEl.value.style.backgroundColor = operatingTextStickerOptions.value.backgroundColor;
 }
 
-watch(() => operatingTextStickerOptions.backgroundColor,() => {
+watch(() => operatingTextStickerOptions.value.backgroundColor,() => {
     setBackgroundColor()
     initDraggableTextSticker()
 })
 
+function setGradientBackgroundColor(){
+    canvasBackgroundEl.value.style.background = operatingTextStickerOptions.value.gradientBackgroundColor;
+}
+
+watch(() => operatingTextStickerOptions.value.gradientBackgroundColor,() => {
+    setGradientBackgroundColor()
+    initDraggableTextSticker()
+})
+
+
 /* 根据文字内容更新可拖拽元素 */ 
-watch(() => operatingTextStickerOptions.content ,async () => {
+watch(() => operatingTextStickerOptions.value.content ,async () => {
     await initDraggableTextSticker()
 })
 
@@ -94,7 +107,7 @@ const fontFamilyCache = {}
 
 async function setFontFamliy(){
     // 如果有字体信息则不需要再去请求
-    let fontFamilyInfo:any = operatingTextStickerOptions.fontFamilyInfo || await getFontById(operatingTextStickerOptions.fontFamilyId)
+    let fontFamilyInfo:any = operatingTextStickerOptions.value.fontFamilyInfo || await getFontById(operatingTextStickerOptions.value.fontFamilyId)
     
     let { name, preview_file , id } = fontFamilyInfo;
 
@@ -112,8 +125,39 @@ async function setFontFamliy(){
     canvasTextEl.value.style.fontFamily = `font_${id}` 
 }
 
-watch(() => operatingTextStickerOptions.fontFamilyId,async () => {
+watch(() => operatingTextStickerOptions.value.fontFamilyId,async () => {
     setFontFamliy()
+    initDraggableTextSticker()
+})
+
+function setBorderWidth(){
+    canvasBackgroundEl.value.style.borderWidth = operatingTextStickerOptions.value.borderWidth + 'em';
+}
+
+watch(() => operatingTextStickerOptions.value.borderWidth,async () => {
+    setBorderWidth()
+    initDraggableTextSticker()
+})
+
+
+function setBorderColor(){
+    canvasBackgroundEl.value.style.borderColor = operatingTextStickerOptions.value.borderColor;
+}
+
+watch(() => operatingTextStickerOptions.value.borderColor,async () => {
+    setBorderColor()
+    initDraggableTextSticker()
+})
+
+
+
+function setBorderStyle(){
+    canvasBackgroundEl.value.style.borderStyle = operatingTextStickerOptions.value.borderStyle;
+}
+
+
+watch(() => operatingTextStickerOptions.value.borderStyle,async () => {
+    setBorderStyle()
     initDraggableTextSticker()
 })
 
@@ -145,5 +189,8 @@ export function forceUpdateTextSticker(){
     setLetterSpacing()
     setLetterSpacing()
     setItalic()
+    setBorderColor()
+    setBorderWidth()
+    setBorderStyle()
     initDraggableTextSticker()
 }   

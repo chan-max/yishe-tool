@@ -45,10 +45,6 @@ const props = defineProps({
   },
 });
 
-
-
-
-
 function getItemByColAndRow(col,row){
     col = col -1 
     row = row -1

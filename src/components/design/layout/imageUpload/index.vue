@@ -9,7 +9,7 @@
       </template>
     </el-upload>
     <a-divider />
-    <a-qrcode style="width: 50px; height: 50px;" value="http://www.antdv.com" color="#3665f3" bg-color="#fff" />
+    <a-qrcode style="width: 50px; height: 50px;" value="http://www.antdv.com" color="#0099ff" bg-color="#fff" />
     <div class="designiy-image-upload-form">
       <div class="designiy-image-upload-form-label">贴纸名称</div>
       <el-input></el-input>

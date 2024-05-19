@@ -14,13 +14,7 @@ import { Ref, computed, isReactive, isRef, ref } from 'vue'
     通用分页逻辑
 */
 
-export interface UsePaging {
-    page: Ref,
-    pages: Ref,
-    pageSize: Ref,
-    list: Ref,
-    getList: any,
-}
+
 
 export const usePaging = (getListFn: (params: any) => Promise<any>, options: any) => {
 
@@ -38,13 +32,13 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
     // 列表数据 , 可用外界传入的参数，也可以自身初始化
     const list = options.initialList
     // 当前页数
-    const page = ref(0)
+    const currentPage = ref(0)
     // 总页数
-    const pages = ref(Infinity)
+    const totalPage = ref(Infinity)
     // 尺寸
     const pageSize = ref(options.pageSize)
     // 总数
-    const count = ref(0)
+    const total = ref(0)
     // 是否立即触发一次, 默认为true
     const immediate = ref(options.immediate ?? true)
     // 是否正在加载
@@ -52,7 +46,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
     // 首次加载
     const firstLoading = computed(() => {
-        return loading.value && page.value == 1
+        return loading.value && currentPage.value == 1
     })
 
     // 滚动触发器， 当需要加载时触发该方法即可
@@ -64,22 +58,21 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         }
 
         try {
-            page.value++
-            if (page.value > pages.value) {
+            currentPage.value++
+            if (currentPage.value > totalPage.value) {
                 return
             }
 
             loading.value = true
             let res = await getListFn({
-                page: page.value,
+                currentPage: currentPage.value,
                 pageSize: pageSize.value,
                 ...params
             })
 
             // 将总页数同步
-            pages.value = res.pages;
-
-
+            totalPage.value = res.totalPage;
+            total.value = res.total
 
             // 该回调函数可用于单独处理列表的每一项
             if (res.list && options.callback) {
@@ -119,18 +112,18 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
     // 重置分页状态
     function reset(){
-        pages.value = Infinity
-        page.value = 0
+        totalPage.value = Infinity
+        currentPage.value = 0
         list.value = []
     }
 
     return {
-        page,
-        pages,
+        currentPage,
+        totalPage,
         pageSize,
         list,
         getList,
-        count,
+        total,
         loading,
         reset,
         firstLoading

@@ -31,10 +31,10 @@ import resource from "./resource.vue";
 import { ref } from "vue";
 import { Search, Operation, FolderOpened } from "@element-plus/icons-vue";
 const input = ref("");
-const value = ref()
-const options = ref([])
+const value = ref();
+const options = ref([]);
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .designiy-text-sticker {
   display: flex;
   flex-direction: column;
@@ -43,7 +43,6 @@ const options = ref([])
   height: 100%;
   justify-content: space-between;
 }
-
 
 .designiy-text-sticker-header {
   padding: 10px;
@@ -58,8 +57,7 @@ const options = ref([])
 }
 
 .designiy-text-sticker-body {
-  flex:1;
+  flex: 1;
   overflow: auto;
 }
-
 </style>

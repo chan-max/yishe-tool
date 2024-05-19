@@ -16,7 +16,7 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 import { getFonts } from "@/api";
-import {operatingTextStickerOptions,showFontList} from '../../store.ts'
+import { operatingTextStickerOptions, showFontList } from "../../store.ts";
 const data = ref();
 
 onBeforeMount(async () => {
@@ -24,11 +24,10 @@ onBeforeMount(async () => {
 });
 
 function selectFont(font) {
-  operatingTextStickerOptions.fontFamilyInfo = font;
-  operatingTextStickerOptions.fontFamilyId = font.id;
-  showFontList.value = false
+  operatingTextStickerOptions.value.fontFamilyInfo = font;
+  operatingTextStickerOptions.value.fontFamilyId = font.id;
+  showFontList.value = false;
 }
-
 </script>
 <style lang="less">
 .designiy-font-list {
@@ -55,6 +54,4 @@ function selectFont(font) {
   border-radius: 12px;
   flex-shrink: 0;
 }
-
-
 </style>

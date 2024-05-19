@@ -123,7 +123,7 @@ const loginStatusStore = useLoginStatusStore();
 
 .header-bar-menu-item-active {
     opacity: 1;
-    border-bottom: 2px solid #3665f3;
+    border-bottom: 2px solid #0099ff;
 }
 </style>
   

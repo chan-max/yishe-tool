@@ -15,6 +15,7 @@
     </div>
     <div class="operate-form-item-title">
       <slot name="name"></slot>
+      <!-- <el-icon><Warning /></el-icon> -->
     </div>
     <div style="flex: 1"></div>
     <div class="operate-form-item-content">
@@ -23,13 +24,16 @@
   </div>
 </template>
 <script setup>
+import { Warning } from "@element-plus/icons-vue";
 const props = defineProps(["name"]);
 </script>
 <style lang="less">
 .operate-form-item {
   display: flex;
   align-items: center;
-  padding: 10px 15px;
+  justify-content: space-between;
+  column-gap: 6px;
+  padding: 10px 0;
 }
 
 .operate-form-item-icon {
@@ -46,8 +50,10 @@ const props = defineProps(["name"]);
 }
 
 .operate-form-item-title {
-  padding: 0 10px;
-  font-size: 12px;
+  font-size: 10px;
   line-height: normal;
+  text-wrap: nowrap;
+  display: flex;
+  align-items: center;
 }
 </style>

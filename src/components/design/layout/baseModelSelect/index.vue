@@ -26,7 +26,7 @@ const container = ref();
 
 onMounted(async () => {
   const res = await getProductModelListApi({
-    pageIndex:1,
+    currentPage:1,
     pageSize:100
   });
 

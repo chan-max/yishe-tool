@@ -14,15 +14,15 @@
     <div class="designiy-header-menu">
       <header-menu-dropdown />
     </div>
-    
+
     <div style="flex-grow: 1"></div>
 
     <icon-help style="width: 24px; height: 24px;color:#333;"></icon-help>
 
-    <el-button @click="showSaveModel = true" size="small" type="primary" color="#333" round> 上 传 </el-button>
+    <el-button @click="showSaveModel = true" size="small" type="primary" color="#333" > 上 传 </el-button>
 
     <user-avatar  v-if="loginStatusStore.isLogin"/>
-    <el-button @click="$router.push({name:'Login'})" size="small" v-else type="primary" round>  登 录 </el-button>
+    <el-button @click="$router.push({name:'Login'})" size="small" v-else type="primary" >  登 录 </el-button>
   </div>
 </template>
 

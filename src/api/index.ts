@@ -318,3 +318,17 @@ export const getProductModelListApi = (data) => new Promise(async (resolve, reje
   let res =  await apiInstance.post('/api/product-model/page', data )
   resolve(res.data)
 })
+
+
+/*
+ 获取贴纸列表
+*/
+
+export interface StickerListParams {
+  type :'image' | 'text' | 'composition'
+}
+
+export const getStickerListApi = (data) => new Promise(async (resolve, reject) => {
+  let res =  await apiInstance.post('/api/sticker/page', data )
+  resolve(res.data.data)
+})

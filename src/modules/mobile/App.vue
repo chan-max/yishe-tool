@@ -45,7 +45,7 @@ document.addEventListener('gesturestart', function (event) {
 }
 
 :root{
-  --van-primary-color:#3665f3!important;
+  --van-primary-color:#0099ff!important;
 }
 
 .van-theme-dark body {

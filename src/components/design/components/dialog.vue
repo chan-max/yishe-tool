@@ -1,5 +1,5 @@
 <template>
-    <KeepAlive>
+  <KeepAlive>
     <transition v-bind="animation">
       <Draggable
         v-if="show"
@@ -50,15 +50,14 @@ const { x, y, style } = useDraggable(handle, {
 
 const dialogRef = ref();
 
-function mounted(){
-  if(!dialogRef.value){
-    return
+function mounted() {
+  if (!dialogRef.value) {
+    return;
   }
   // 在中间
-  let el = dialogRef.value.$el
-  el.style.top = `calc(50% - ${el.clientHeight / 2}px)`
+  let el = dialogRef.value.$el;
+  el.style.top = `calc(50% - ${el.clientHeight / 2}px)`;
 }
-
 
 const props = defineProps({
   title: "", // 顶部标题
@@ -86,8 +85,8 @@ function close() {
   background: var(--1s-container-background);
   position: fixed;
   border-radius: 6px;
-  *{
-    pointer-events: auto!important;
+  * {
+    pointer-events: auto !important;
   }
 }
 

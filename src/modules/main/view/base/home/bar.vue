@@ -1,37 +1,39 @@
 <template>
   <div class="bar-container">
     <div class="bar">
-    <div></div>
-    <div>
-      <el-button class="button" plain @click="$router.push({ name: 'Design' })">
-        快速开始
-      </el-button>
+      <div></div>
+      <div>
+        <el-button class="button" plain @click="$router.push({ name: 'Design' })">
+          快速开始
+        </el-button>
+      </div>
     </div>
-  </div>
 
-  <div class="bar">
-    <div></div>
-    <div>
-      <el-button class="button" plain @click="dialogVisible = true"> 上传资源 </el-button>
+    <div class="bar">
+      <div></div>
+      <div>
+        <el-button class="button" plain @click="dialogVisible = true">
+          上传资源
+        </el-button>
+      </div>
     </div>
-  </div>
 
-  <div class="bar">
-    <div></div>
-    <div>
-      <el-button class="button" plain @click="dialogVisible = true">
-        制作文字贴纸
-      </el-button>
+    <div class="bar">
+      <div></div>
+      <div>
+        <el-button class="button" plain @click="dialogVisible = true">
+          制作文字贴纸
+        </el-button>
+      </div>
     </div>
-  </div>
-  <div class="bar">
-    <div></div>
-    <div>
-      <el-button class="button" plain @click="dialogVisible = true">
-        制作图片贴纸
-      </el-button>
+    <div class="bar">
+      <div></div>
+      <div>
+        <el-button class="button" plain @click="dialogVisible = true">
+          制作图片贴纸
+        </el-button>
+      </div>
     </div>
-  </div>
   </div>
 
   <el-dialog v-model="dialogVisible" title="资源上传" width="680" @close="close">
@@ -165,15 +167,16 @@ async function doUpload() {
 <style lang="less" scoped>
 .bar {
   width: 100%;
-  height: 100px;
-  background: #fbcd25;
+  height: 300px;
+  background: #f8f8f8;
   border-radius: 8px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   padding: 0 5%;
   justify-content: space-between;
-  animation: gradient 20s infinite;
+  box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+  // animation: gradient 20s infinite;
 }
 
 @keyframes gradient {
@@ -194,8 +197,8 @@ async function doUpload() {
 .button {
   background: transparent;
   border-radius: 8px;
-  border: 2px solid rgba(255, 255, 255, 0.9);
-  color: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(0, 0, 2505, 0.9);
+  color: rgba(0, 0, 0, 0.9);
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -254,7 +257,7 @@ async function doUpload() {
   justify-content: space-between;
 }
 
-.bar-container{
+.bar-container {
   width: 92%;
   display: flex;
   flex-direction: column;

@@ -9,12 +9,24 @@
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
-  <p>实物图</p>
-  <div style="height: 200px; width:100%;display: flex; align-items: center; justify-content: center;flex-shrink:0;">
+  <div
+    style="
+      height: 200px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    "
+  >
     <template v-if="currentOperatingBaseModelInfo?.description_imgs">
       <el-carousel style="width: 100%" :interval="4000" type="card" height="200px">
         <el-carousel-item v-for="item in imgs" :key="item">
-          <el-image :src="item" style="background-color: #dfe4eb;width:100%;height:100%;" fit="cover"></el-image>
+          <el-image
+            :src="item"
+            style="background-color: #dfe4eb; width: 100%; height: 100%"
+            fit="cover"
+          ></el-image>
         </el-carousel-item>
       </el-carousel>
     </template>
@@ -23,11 +35,13 @@
 </template>
 <script setup>
 import { currentOperatingBaseModelInfo } from "../../store";
-import {computed} from 'vue'
+import { computed } from "vue";
 
 const imgs = computed(() => {
-  return currentOperatingBaseModelInfo.value.preview_description_imgs && currentOperatingBaseModelInfo.value.preview_description_imgs
-})
-
+  return (
+    currentOperatingBaseModelInfo.value.preview_description_imgs &&
+    currentOperatingBaseModelInfo.value.preview_description_imgs
+  );
+});
 </script>
 <style></style>

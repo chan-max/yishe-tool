@@ -51,7 +51,7 @@
 
           <el-form-item prop="repassword">
             <el-input v-model="form.repassword" type="password" placeholder="确认密码">
-              <template #prefix> 
+              <template #prefix>
                 <el-icon><Lock /></el-icon>
               </template>
             </el-input>
@@ -127,22 +127,22 @@ const rules = reactive({
     {
       required: true,
       trigger: ["blur"],
-        async asyncValidator(rule, val, callback) {
-          if (!val) {
-            rule.message = "请输入账号";
-            return callback(new Error());
-          }
+      async asyncValidator(rule, val, callback) {
+        if (!val) {
+          rule.message = "请输入账号";
+          return callback(new Error());
+        }
 
-          var res = await getAccountStatus({
-            account: form.account,
-          });
-          accountStatus.value = res.status;
+        var res = await getAccountStatus({
+          account: form.account,
+        });
+        accountStatus.value = res.status;
 
-          if (res.status == ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST) {
-            rule.message = " 账号已存在";
-            return callback(new Error());
-          }
-        },
+        if (res.status == ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST) {
+          rule.message = " 账号已存在";
+          return callback(new Error());
+        }
+      },
     },
   ],
   email: [
@@ -169,7 +169,7 @@ const rules = reactive({
           rule.message = "两次密码输入不一致";
           return false;
         }
-        return true
+        return true;
       },
       trigger: ["blur"],
     },
@@ -208,17 +208,17 @@ var form = reactive({
 
 async function submit() {
   try {
-     await formRef.value.validate();
+    await formRef.value.validate();
   } catch (e) {
     return;
   }
 
   signupLoading.value = true;
   const res = await signup(form);
-  if(res.status == ResponseStatusCodeEnum.SIGNUP_SUCCESS){
-    alert('Signup successful')
-  }else{
-    alert('Signup failed')
+  if (res.status == ResponseStatusCodeEnum.SIGNUP_SUCCESS) {
+    alert("Signup successful");
+  } else {
+    alert("Signup failed");
   }
 
   signupLoading.value = false;
@@ -230,7 +230,7 @@ async function send() {
   }
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .signup {
   width: 100%;
   height: 100%;

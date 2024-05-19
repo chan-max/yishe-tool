@@ -1,5 +1,7 @@
 import { setFullscreen } from "@/common/browser";
-import { computed, ref, shallowRef, watchEffect, watch, reactive, nextTick, shallowReactive } from "vue"
+import { useLocalStorage } from "@vueuse/core";
+import { computed, ref, shallowRef, watchEffect, watch, nextTick } from "vue"
+import { defineStore } from "pinia";
 
 // 当前实例
 export const currentController = shallowRef(null);
@@ -15,7 +17,6 @@ export const isLoading = shallowRef(false);
 export const isFullScreen = ref(false)
 
 watchEffect(() => setFullscreen(isFullScreen.value))
-
 
 // 画布背景颜色 
 export const canvasBgColor = ref('')
@@ -85,7 +86,6 @@ export const operatingDecal = shallowRef()
 // 是否展示图片上传弹窗
 export const showImageUplaod = ref(false)
 
-
 // 是否展示字体上传弹窗
 export const showFontUpload = ref(false)
 
@@ -95,7 +95,6 @@ export const showFontList = ref(false)
 
 // 是否展示贴纸
 export const showSticker = ref(false)
-
 
 // 是否展示已使用的贴纸列表
 export const showDecalList = ref(false)
@@ -149,15 +148,14 @@ export function clearLayout() {
 
 
 // 记录当前正在操作的贴纸信息
-export const operatingTextStickerOptions = reactive({
+export const operatingTextStickerOptions = ref({
     // 贴纸内容
-    content: `breaking
-        bad`,
+    content: `天下第一`,
     // text color
     fontColor: '#333',
     fontGradientColor: '#333',
     // font-weight
-    fontWeight: 500,
+    fontWeight: "500",
     // font-size
     fontSize: 30,
     // line-height rem
@@ -173,9 +171,16 @@ export const operatingTextStickerOptions = reactive({
     
     // 背景颜色
     backgroundColor: 'rgba(0,0,0,0)',
-    backgroundGradientColor:'#3665f3',
+    gradientBackgroundColor:'#0099ff',
     backgroundBorderRadius: '5px',
     backgroundPadding: '',
+
+    // 边框 
+    borderColor:'#000',
+    borderWidth:0,
+    borderStyle:'solid'
+
+    // 阴影效果暂时不考虑
 })
 
 export const operatingTextStickerWritingMode = ref('initial')
@@ -212,4 +217,35 @@ export const showDecoration  = ref(false)
 
 
 // 保留用户的截图，用于后续自行下载或者上传至网络
-export const screenshots = shallowReactive([])
+export const screenshots = ref([])
+
+
+
+/*
+ 是否展示基础画布
+*/
+export const showBasicCanvas = ref(false)
+
+/*
+ 是否展示3d画布
+*/
+export const showThreeCanvas = ref(true)
+
+
+
+
+/*
+    所有状态统一使用store管理
+*/
+
+export const useDesignStore = defineStore('_1s_design',() => {
+    return {
+        showBasicCanvas,
+        showThreeCanvas,
+        showSticker
+    }
+})
+
+const des = useDesignStore()
+
+

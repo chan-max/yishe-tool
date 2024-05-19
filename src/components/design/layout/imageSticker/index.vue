@@ -111,7 +111,7 @@ async function scroll() {
   loading.value = false;
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .designiy-image-sticker {
   width: 300px;
   height: 100%;

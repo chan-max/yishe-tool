@@ -21,7 +21,7 @@ const showImage = ref(true)
 
 onBeforeMount(async () => {
   const res = await getProductModelListApi({
-    pageIndex: 1,
+    currentPage: 1,
     pageSize: 100,
   });
   list.value = res.data.list;

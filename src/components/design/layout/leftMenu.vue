@@ -10,7 +10,7 @@
         <span>工作台</span>
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" content="选择模型" placement="right">
+    <el-tooltip :hide-after="0" content="许多贴纸哦～" placement="right">
       <div
         class="menu-bar-item"
         :class="{ 'menu-bar-item-focus': showSticker }"

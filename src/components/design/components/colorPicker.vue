@@ -1,25 +1,27 @@
 <template>
   <div class="color-picker">
-    <color-picker v-bind="attrs" useType="both" />
+    <color-picker v-bind="attrs" useType="both">
+      <template #extra> sdfdafsfa </template>
+    </color-picker>
   </div>
 </template>
 <script setup>
 import { ColorPicker } from "vue3-colorpicker";
 import "vue3-colorpicker/style.css";
 
+console.log(ColorPicker);
+
 import { useAttrs } from "vue";
 
 let attrs = useAttrs();
-
 </script>
 <style lang="less">
 .color-picker {
   width: 24px;
   height: 24px;
-  border-radius: 5px;
+  border-radius: 4px;
   overflow: hidden;
   display: flex;
-  border:1px solid #ddd;
 }
 .vc-color-wrap {
   margin-right: 0px !important;

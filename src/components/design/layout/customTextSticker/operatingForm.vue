@@ -1,131 +1,216 @@
 <template>
-  <div class="designiy-custom-text-sticker-content">
-    <operate-form-item>
-      <template #icon> <icon-font-size></icon-font-size> </template>
-      <template #name> 显示大小 </template>
-      <template #content> 
-        <el-input
-          style="width:60px;"
-          type="number"
-          v-model="operatingTextStickerOptions.fontSize"
-          size="small"
-        ></el-input>
-      </template>
-    </operate-form-item>
-    <operate-form-item>
-      <template #icon> <icon-bold></icon-bold> </template>
-      <template #name> 厚度 </template>
-      <template #content>
-        <el-select
-          style="width:60px;"
-          v-model="operatingTextStickerOptions.fontWeight"
-          size="small"
-        >
-          <el-option
-            v-for="item in fontWeightOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </template>
-    </operate-form-item>
-    <operate-form-item>
-      <template #icon> <icon-font-color></icon-font-color> </template>
-      <template #name> 字体颜色</template>
-      <template #content>
-        <color-picker
-          v-model:pureColor="operatingTextStickerOptions.fontColor"
-          v-model:gradientColor="operatingTextStickerOptions.fontGradientColor"
-        ></color-picker>
-      </template>
-    </operate-form-item>
-    <operate-form-item>
-      <template #icon> <icon-line-height></icon-line-height> </template>
-      <template #name> 行高 </template>
-      <template #content>
-        <el-input
-          type="number"
-          v-model="operatingTextStickerOptions.lineHeight"
-          size="small"
-          min="0"
-          max="5"
-          step=".1"
-        ></el-input>
-      </template>
-    </operate-form-item>
-    <operate-form-item>
-      <template #icon> <icon-letter-spacing></icon-letter-spacing> </template>
-      <template #name> 间距 </template>
-      <template #content>
-        <el-input
-          type="number"
-          v-model="operatingTextStickerOptions.letterSpacing"
-          size="small"
-          min="-1"
-          max="1"
-          step=".1"
-        ></el-input>
-      </template>
-    </operate-form-item>
-    <operate-form-item>
-      <template #icon> <icon-writing-mode></icon-writing-mode> </template>
-      <template #name> 排列方式 </template>
-      <template #content> </template>
-    </operate-form-item>
-    <operate-form-item>
-      <template #icon> <icon-font-family></icon-font-family> </template>
-      <template #name> 个性字体 </template>
-      <template #content>
-        <div @click="showFontList = true">无</div>
-      </template>
-    </operate-form-item>
-    <operate-form-item>
-      <template #icon> <icon-italic></icon-italic> </template>
-      <template #name> 斜体 </template>
-      <template #content>
-        <div
-          @click="
-            operatingTextStickerOptions.italic = !operatingTextStickerOptions.italic
-          "
-        >
-          {{ operatingTextStickerOptions.italic ? "是" : "否" }}
-        </div>
-      </template>
-    </operate-form-item>
-    <operate-form-item>
-      <template #icon> <icon-background-color></icon-background-color> </template>
-      <template #name> 背景色 </template>
-      <template #content>
-        <color-picker
-          v-model:pureColor="operatingTextStickerOptions.backgroundColor"
-          v-model:gradientColor="operatingTextStickerOptions.backgroundGradientColor"
-        ></color-picker>
-      </template>
-    </operate-form-item>
-    <operate-form-item>
-      <template #icon> </template>
-      <template #name> 文字边框 </template>
-      <template #content> </template>
-    </operate-form-item>
-  </div>
+  <main>
+    <el-collapse v-model="actives">
+      <el-collapse-item name="1">
+        <template #title>
+          <div class="title">文字属性</div>
+        </template>
+        <el-row :gutter="24" align="middle">
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon> <icon-font-size></icon-font-size> </template>
+              <template #name> 显示大小 </template>
+              <template #content>
+                <el-input
+                  type="number"
+                  v-model="operatingTextStickerOptions.fontSize"
+                  size="small"
+                ></el-input>
+              </template>
+            </operate-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon> <icon-bold></icon-bold> </template>
+              <template #name> 厚度 </template>
+              <template #content>
+                <el-select v-model="operatingTextStickerOptions.fontWeight" size="small">
+                  <el-option
+                    v-for="item in fontWeightOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                    <span :style="{ fontWeight: item.value }"> {{ item.label }} </span>
+                  </el-option>
+                </el-select>
+              </template>
+            </operate-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon> <icon-italic></icon-italic> </template>
+              <template #name> 斜体 </template>
+              <template #content>
+                <el-switch v-model="operatingTextStickerOptions.italic" />
+              </template>
+            </operate-form-item>
+          </el-col>
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon> <icon-font-color></icon-font-color> </template>
+              <template #name> 字体颜色</template>
+              <template #content>
+                <color-picker
+                  v-model:pureColor="operatingTextStickerOptions.fontColor"
+                  v-model:gradientColor="operatingTextStickerOptions.fontGradientColor"
+                ></color-picker>
+              </template>
+            </operate-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon> <icon-font-family></icon-font-family> </template>
+              <template #name> 个性字体 </template>
+              <template #content>
+                <div @click="showFontList = true">无</div>
+              </template>
+            </operate-form-item>
+          </el-col>
+        </el-row>
+      </el-collapse-item>
+      <el-collapse-item name="2">
+        <template #title>
+          <div class="title">布局相关</div>
+        </template>
+        <el-row :gutter="24" align="middle">
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon> <icon-line-height></icon-line-height> </template>
+              <template #name> 行高 </template>
+              <template #content>
+                <el-input
+                  type="number"
+                  v-model="operatingTextStickerOptions.lineHeight"
+                  size="small"
+                  min="0"
+                  max="5"
+                  step=".1"
+                ></el-input>
+              </template>
+            </operate-form-item>
+          </el-col>
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon> <icon-letter-spacing></icon-letter-spacing> </template>
+              <template #name> 间距 </template>
+              <template #content>
+                <el-input
+                  type="number"
+                  v-model="operatingTextStickerOptions.letterSpacing"
+                  size="small"
+                  min="-1"
+                  max="1"
+                  step=".1"
+                ></el-input>
+              </template>
+            </operate-form-item>
+          </el-col>
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon> <icon-writing-mode></icon-writing-mode> </template>
+              <template #name> 排列方式 </template>
+              <template #content> </template>
+            </operate-form-item>
+          </el-col>
+        </el-row>
+      </el-collapse-item>
+      <el-collapse-item name="3">
+        <template #title>
+          <div class="title">边框</div>
+        </template>
+        <el-row :gutter="24" align="middle">
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon><icon-border-color></icon-border-color> </template>
+              <template #name> 边框颜色 </template>
+              <template #content>
+                <color-picker
+                  v-model:pureColor="operatingTextStickerOptions.borderColor"
+                ></color-picker>
+              </template>
+            </operate-form-item>
+          </el-col>
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon><icon-border-style></icon-border-style> </template>
+              <template #name> 边框样式 </template>
+              <template #content> </template>
+            </operate-form-item>
+          </el-col>
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon><icon-border-width></icon-border-width> </template>
+              <template #name> 边框宽度 </template>
+              <template #content>
+                <el-input
+                  type="number"
+                  v-model="operatingTextStickerOptions.borderWidth"
+                  min="0"
+                  max="5"
+                  step=".1"
+                  size="small"
+                ></el-input>
+              </template>
+            </operate-form-item>
+          </el-col>
+        </el-row>
+      </el-collapse-item>
+      <el-collapse-item name="4">
+        <template #title>
+          <div class="title">背景</div>
+        </template>
+        <el-row :gutter="24" align="middle">
+          <el-col :span="12">
+            <operate-form-item>
+              <template #icon> <icon-background-color></icon-background-color> </template>
+              <template #name> 背景色 </template>
+              <template #content>
+                <color-picker
+                  v-model:pureColor="operatingTextStickerOptions.backgroundColor"
+                  v-model:gradientColor="
+                    operatingTextStickerOptions.gradientBackgroundColor
+                  "
+                ></color-picker>
+              </template>
+            </operate-form-item>
+          </el-col>
+        </el-row>
+      </el-collapse-item>
+      <el-collapse-item name="5">
+        <template #title>
+          <div class="title">特殊效果</div>
+        </template>
+      </el-collapse-item>
+    </el-collapse>
+  </main>
 </template>
 
 <script setup>
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import operateFormItem from "./operateFormItem.vue";
-import iconBold from "@/icon/bold.svg?component";
-import iconFontSize from "@/icon/font-size.svg?component";
-import iconFontColor from "@/icon/font-color.svg?component";
 import colorPicker from "../../components/colorPicker.vue";
-import iconLineHeight from "@/icon/line-height.svg?component";
-import iconLetterSpacing from "@/icon/letter-spacing.svg?component";
-import iconWritingMode from "@/icon/writing-mode.svg?component";
-import iconFontFamily from "@/icon/font-family.svg?component";
-import iconBackgroundColor from "@/icon/background-color.svg?component";
-import iconItalic from "@/icon/italic.svg?component";
+
+import iconBold from "@/components/design/assets/icon/bold.svg?component";
+import iconFontSize from "@/components/design/assets/icon/font-size.svg?component";
+import iconFontColor from "@/components/design/assets/icon/font-color.svg?component";
+import iconLineHeight from "@/components/design/assets/icon/line-height.svg?component";
+import iconLetterSpacing from "@/components/design/assets/icon/letter-spacing.svg?component";
+import iconWritingMode from "@/components/design/assets/icon/writing-mode.svg?component";
+import iconFontFamily from "@/components/design/assets/icon/font-family.svg?component";
+import iconBackgroundColor from "@/components/design/assets/icon/background-color.svg?component";
+import iconItalic from "@/components/design/assets/icon/italic.svg?component";
+import iconBorderWidth from "@/components/design/assets/icon/border-width.svg?component";
+import iconBorderStyle from "@/components/design/assets/icon/border-style.svg?component";
+import iconBorderColor from "@/components/design/assets/icon/border-color.svg?component";
 
 import { operatingTextStickerOptions, showFontList } from "../../store";
+
+const actives = ref(["1", "2", "3", "4"]);
+
 const fontWeightOptions = reactive([
   {
     value: "100",
@@ -166,12 +251,20 @@ const fontWeightOptions = reactive([
 ]);
 </script>
 
-<style>
-.designiy-custom-text-sticker-content {
+<style scoped lang="less">
+main {
   height: 100%;
   width: 100%;
-  padding: 10px 0;
-  margin: 10px 0;
   overflow: auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 10px;
+  font-weight: bold;
+  // height: 12px;
+  // line-height: 12px;
+  // padding-left: 0.5em;
+  // border-left: 3px solid var(--el-color-primary);
 }
 </style>

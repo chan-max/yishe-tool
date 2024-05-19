@@ -349,7 +349,7 @@ ion-progress-bar {
   /* 为负值时可显示边框 */
   border-radius: inherit;
   /*important*/
-  background: linear-gradient(to right, #3665f3, purple);
+  background: linear-gradient(to right, #0099ff, purple);
 }
 
 .follow-button {

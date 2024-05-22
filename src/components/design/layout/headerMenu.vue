@@ -10,40 +10,51 @@
 -->
 <template>
   <div class="designiy-header">
-
     <div class="designiy-header-menu">
       <header-menu-dropdown />
     </div>
-
+    <div class="designiy-header-logo">
+      <img src="logo.png" style="height: 24px" object-fit="contain" />
+    </div>
     <div style="flex-grow: 1"></div>
 
-    <icon-help style="width: 24px; height: 24px;color:#333;"></icon-help>
+    <icon-help style="width: 24px; height: 24px; color: #333"></icon-help>
 
-    <el-button @click="showSaveModel = true" size="small" type="primary" color="#333" > 上 传 </el-button>
+    <el-button @click="showSaveModel = true" size="small"> 上 传 </el-button>
 
-    <user-avatar  v-if="loginStatusStore.isLogin"/>
-    <el-button @click="$router.push({name:'Login'})" size="small" v-else type="primary" >  登 录 </el-button>
+    <user-avatar v-if="loginStatusStore.isLogin" />
+    <el-button
+      @click="$router.push({ name: 'Login' })"
+      size="small"
+      v-else
+      type="primary"
+    >
+      登 录
+    </el-button>
   </div>
 </template>
 
 <script setup>
 import { getBaseModel, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
-import { canvasBgColor, canvasBgOpacity, isDarkMode, currentController, showSaveModel } from "../store";
+import {
+  canvasBgColor,
+  canvasBgOpacity,
+  isDarkMode,
+  currentController,
+  showSaveModel,
+} from "../store";
 
-
-import {Share} from '@element-plus/icons-vue'
-import userAvatar from '@/components/user/userAvatar.vue'
-import headerMenuDropdown from './headerMenuDropdown/index.vue'
-import { onShortcutTrigger } from '../shortcut/index';
-import iconHelp from '@/icon/help.svg?component'
+import { Share } from "@element-plus/icons-vue";
+import userAvatar from "@/components/user/userAvatar.vue";
+import headerMenuDropdown from "./headerMenuDropdown/index.vue";
+import { onShortcutTrigger } from "../shortcut/index";
+import iconHelp from "@/icon/help.svg?component";
 import { useLoginStatusStore } from "@/store/stores/login";
 
 const loginStatusStore = useLoginStatusStore();
 
 const props = defineProps([]);
-
-
 </script>
 
 <style lang="less">
@@ -55,8 +66,8 @@ const props = defineProps([]);
   align-items: center;
   column-gap: 8px;
   padding-right: 10px;
-  .el-button + .el-button{
-    margin:0;
+  .el-button + .el-button {
+    margin: 0;
   }
 }
 

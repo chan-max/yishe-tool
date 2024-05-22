@@ -12,13 +12,14 @@ import {
   Vector2,
   Vector3,
 } from "three";
+import { message } from 'ant-design-vue'
 
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { currentController, operatingDecal, showDecalControl } from '../store';
 
 export interface DecalControllerParams {
   // 定义贴纸的类型
-  type: 'image' | 'text',
+  type: 'image' | 'text' | 'composition',
   // 贴纸的资源id,如果不是上传的文件则不需要
   id?: any,
   // 使用的图片元素
@@ -27,7 +28,6 @@ export interface DecalControllerParams {
   local: boolean,
   // 该贴纸使用的base64编码
   base64?: string,
-
   // 用于缓存的本地url
   objectUrl: string,
 }
@@ -40,7 +40,6 @@ export class DecalController {
   // 更新时间
   updatedAt = new Date()
 
-
   constructor(info: any) {
     this.info = info
     this.img = info.img
@@ -52,7 +51,6 @@ export class DecalController {
   // 核心控制器
   // 当前贴花使用的图片
   private img = null;
-
 
   // 宽高比
   imgAspectRatio = 1;
@@ -149,6 +147,8 @@ export class DecalController {
   //  销毁该贴纸
   destroy() {
     this.remove()
+
+    // 从贴纸中移除
     currentController.value.decalControllers.splice(currentController.value.decalControllers.indexOf(this), 1)
     operatingDecal.value = null
   }
@@ -158,9 +158,11 @@ export class DecalController {
   async stickToMousePosition() {
 
     if (!this.parentMesh) {
-      return
+      message.info('请先选择一个商品模型')
+      return 
     }
 
+    // 初始化材质
     if (!this.material) {
       await this.initTexture()
     }
@@ -171,7 +173,8 @@ export class DecalController {
 
     if (intersects.length == 0) {
       // 未选中
-      return;
+      message.info('要将贴纸放在模型上')
+      return ;
     }
 
     const position = intersects[0].point;
@@ -205,6 +208,8 @@ export class DecalController {
   move() {
 
   }
+
+
 
   // 缩放
   scale(ratio) {

@@ -13,7 +13,7 @@
     <div style="font-size: 12px; line-height: 12px; color: #555">
       {{ isEdit ? "编辑" : "新建" }}
     </div>
-    
+
     <div style="display: flex">
       <div class="designiy-sub-header-button">
         <icon-prev class="designiy-sub-header-icon"></icon-prev>
@@ -32,14 +32,14 @@
 
     <div style="flex: 1"></div>
 
-    <el-tooltip content="截屏"> 
+    <el-tooltip content="截屏">
       <icon-camera
         @click="$emit('takephoto')"
-        style="width: 16px; height: 16px;"
+        style="width: 16px; height: 16px"
       ></icon-camera>
     </el-tooltip>
-    
-    <el-divider direction="vertical"/>
+
+    <el-divider direction="vertical" />
 
     <online-point :online="online"></online-point>
     <el-switch
@@ -50,18 +50,21 @@
       inactive-text="白天"
     />
   </div>
-
 </template>
 
 <script setup>
 import { ref } from "vue";
 import headerMenuDropdown from "../headerMenuDropdown/index.vue";
 import onlinePoint from "../../components/onlinePoint.vue";
-import { isDarkMode, online, isEdit, currentEditingModelInfo ,currentController} from "../../store";
+import {
+  isDarkMode,
+  online,
+  isEdit,
+  currentEditingModelInfo,
+  currentController,
+} from "../../store";
 import iconPrev from "@/icon/design/prev.svg?component";
 import iconCamera from "@/icon/camera.svg?component";
-
-
 </script>
 
 <style>

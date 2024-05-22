@@ -15,12 +15,7 @@
       </el-form-item>
       <el-form-item prop="sizes">
         <el-select v-model="form.sizes" placeholder="尺寸" multiple style="width: 240px">
-          <el-option
-            v-for="size in sizes"
-            :key="size"
-            :label="size"
-            :value="size"
-          />
+          <el-option v-for="size in sizes" :key="size" :label="size" :value="size" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -50,14 +45,14 @@
     ></gltf-viewer>
 
     <el-upload
-    v-model:file-list="imgs"
-    list-type="picture"
-    multiple
-    :auto-upload="false"
-    accept=".jpg, .png, .gif, .jpeg,"
-  >
-    <el-button type="primary">上传实物图</el-button>
-  </el-upload>
+      v-model:file-list="imgs"
+      list-type="picture"
+      multiple
+      :auto-upload="false"
+      accept=".jpg, .png, .gif, .jpeg,"
+    >
+      <el-button type="primary">上传实物图</el-button>
+    </el-upload>
 
     <el-button @click="submit" size="large" type="primary" style="width: 100%">
       上传
@@ -70,20 +65,20 @@
 <script setup>
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
-import { reactive, ref, computed ,shallowReactive,shallowRef} from "vue";
+import { reactive, ref, computed, shallowReactive, shallowRef } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import { base64ToFile } from "@/common/transform/base64ToFile";
-import {uploadBaseModel} from '@/api'
+import { uploadBaseModel } from "@/api";
 
 const upload = ref();
 
 const file = ref([]);
 
 // 实物图支持多个图片
-const imgs = shallowRef([])
+const imgs = shallowRef([]);
 
-const sizes = ref(['S','M','L','XL','XXL','XXXL','XXXXL'])
+const sizes = ref(["S", "M", "L", "XL", "XXL", "XXXL", "XXXXL"]);
 
 const gltfViewerRef = ref();
 
@@ -92,8 +87,6 @@ const prerviewModel = computed(() => {
     baseModelUrl: file.value[0] && URL.createObjectURL(file.value[0].raw),
   };
 });
-
-
 
 const rules = reactive({
   name: [{ required: true, message: "请输入模型名称", trigger: "blur" }],
@@ -104,8 +97,8 @@ const form = shallowReactive({
   name: "",
   description: "",
   img: "",
-  file:'',
-  sizes:[]
+  file: "",
+  sizes: [],
 });
 
 function remove() {
@@ -122,22 +115,20 @@ async function submit() {
     return;
   }
 
-  let _file = file.value[0].raw
+  let _file = file.value[0].raw;
   let img = base64ToFile(gltfViewerRef.value.getScreenshot());
 
-  let formData = new FormData()
+  let formData = new FormData();
 
-  formData.append('file', _file)
-  formData.append('img', img)
-  
+  formData.append("file", _file);
+  formData.append("img", img);
+
   imgs.value.forEach((item) => {
-      formData.append('description_imgs',item.raw)
-  })
+    formData.append("description_imgs", item.raw);
+  });
 
-  await uploadBaseModel(formData)
+  await uploadBaseModel(formData);
 }
-
-
 </script>
 
 <style>

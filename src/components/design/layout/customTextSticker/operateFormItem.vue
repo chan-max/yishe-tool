@@ -10,12 +10,14 @@
 -->
 <template>
   <div class="operate-form-item">
-    <div class="operate-form-item-icon">
-      <slot name="icon"></slot>
-    </div>
-    <div class="operate-form-item-title">
-      <slot name="name"></slot>
-      <!-- <el-icon><Warning /></el-icon> -->
+    <div style="display: flex; column-gap: 4px" class="items-center">
+      <div class="operate-form-item-icon">
+        <slot name="icon"></slot>
+      </div>
+      <div class="operate-form-item-title">
+        <slot name="name"></slot>
+        <!-- <el-icon><Warning /></el-icon> -->
+      </div>
     </div>
     <div style="flex: 1"></div>
     <div class="operate-form-item-content">
@@ -32,8 +34,8 @@ const props = defineProps(["name"]);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  column-gap: 6px;
-  padding: 10px 0;
+  column-gap: 8px;
+  height: 40px;
 }
 
 .operate-form-item-icon {
@@ -53,6 +55,10 @@ const props = defineProps(["name"]);
   font-size: 10px;
   line-height: normal;
   text-wrap: nowrap;
+  display: flex;
+  align-items: center;
+}
+.operate-form-item-content {
   display: flex;
   align-items: center;
 }

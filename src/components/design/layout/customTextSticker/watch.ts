@@ -4,7 +4,7 @@ import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
 import { getFontById } from "@/api";
 import { useDebounceFn } from "@vueuse/core";
-
+import { base64ToFile } from "@/common/transform/base64ToFile";
 
 /*
 
@@ -13,6 +13,9 @@ export const canvasBackgroundEl = ref();
 export const canvasTextEl = ref();
 
 function setFontSize(){
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     canvasTextEl.value.style.fontSize = operatingTextStickerOptions.value.fontSize + "px"
 }
 
@@ -24,7 +27,9 @@ watch(() =>
 })
 
 function setFontWeight(){
-    
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     canvasTextEl.value.style.fontWeight = operatingTextStickerOptions.value.fontWeight
 }
 
@@ -34,7 +39,10 @@ watch(() => operatingTextStickerOptions.value.fontWeight,() => {
 })
 
 function setFontColor(){
-    canvasTextEl.value.style.color = operatingTextStickerOptions.value.fontColor;
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
+    canvasTextEl.value && (canvasTextEl.value.style.color = operatingTextStickerOptions.value.fontColor);
 }
 
 watch(() => operatingTextStickerOptions.value.fontColor,() => {
@@ -43,6 +51,9 @@ watch(() => operatingTextStickerOptions.value.fontColor,() => {
 })
 
 function setLineHeight(){
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     canvasTextEl.value.style.lineHeight = operatingTextStickerOptions.value.lineHeight;
 }
 
@@ -52,6 +63,9 @@ watch(() => operatingTextStickerOptions.value.lineHeight,() => {
 })
 
 function setItalic(){
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     canvasTextEl.value.style.fontStyle = operatingTextStickerOptions.value.italic ? "italic" : "";
 }
 
@@ -61,6 +75,9 @@ watch(() => operatingTextStickerOptions.value.italic,useDebounceFn(() => {
 }))
 
 function setLetterSpacing(){
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     canvasTextEl.value.style.letterSpacing = operatingTextStickerOptions.value.letterSpacing + "em";
 }
 
@@ -70,6 +87,9 @@ watch(() => operatingTextStickerOptions.value.letterSpacing,() => {
 })
 
 function setBackgroundColor(){
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     canvasBackgroundEl.value.style.backgroundColor = operatingTextStickerOptions.value.backgroundColor;
 }
 
@@ -79,6 +99,9 @@ watch(() => operatingTextStickerOptions.value.backgroundColor,() => {
 })
 
 function setGradientBackgroundColor(){
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     canvasBackgroundEl.value.style.background = operatingTextStickerOptions.value.gradientBackgroundColor;
 }
 
@@ -106,31 +129,46 @@ export const getPreviewFontFamily = () => {
 const fontFamilyCache = {}
 
 async function setFontFamliy(){
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     // 如果有字体信息则不需要再去请求
-    let fontFamilyInfo:any = operatingTextStickerOptions.value.fontFamilyInfo || await getFontById(operatingTextStickerOptions.value.fontFamilyId)
+    let fontFamilyInfo:any = operatingTextStickerOptions.value.fontFamilyInfo
     
-    let { name, preview_file , id } = fontFamilyInfo;
+    if(!fontFamilyInfo){
+        return
+    }
+
+    let { name, thumbnail ,url,  id } = fontFamilyInfo;
+
+    url = 'http://' + url
 
     if(!fontFamilyCache[id]){
-          const fontStyles = document.createElement("style");
-          fontStyles.innerHTML = `
+          const fontStyle = document.createElement("style");
+          const fontId = `font_${id}`
+          fontStyle.innerHTML = `
                 @font-face {
-                    font-family: font_${id};
-                    src: url(${preview_file}); 
+                    font-family: ${fontId};
+                    src: url(${url}); 
                 }
               `;
-          document.head.appendChild(fontStyles);
-          fontFamilyCache[id] = fontStyles;
+        
+          document.head.appendChild(fontStyle);
+          fontStyle.setAttribute('font_id',fontId)
+          fontFamilyCache[id] = fontStyle;
     }
     canvasTextEl.value.style.fontFamily = `font_${id}` 
 }
 
-watch(() => operatingTextStickerOptions.value.fontFamilyId,async () => {
+watch(() => operatingTextStickerOptions.value.fontFamilyInfo,async () => {
     setFontFamliy()
     initDraggableTextSticker()
 })
 
 function setBorderWidth(){
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     canvasBackgroundEl.value.style.borderWidth = operatingTextStickerOptions.value.borderWidth + 'em';
 }
 
@@ -141,6 +179,9 @@ watch(() => operatingTextStickerOptions.value.borderWidth,async () => {
 
 
 function setBorderColor(){
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     canvasBackgroundEl.value.style.borderColor = operatingTextStickerOptions.value.borderColor;
 }
 
@@ -152,6 +193,9 @@ watch(() => operatingTextStickerOptions.value.borderColor,async () => {
 
 
 function setBorderStyle(){
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
     canvasBackgroundEl.value.style.borderStyle = operatingTextStickerOptions.value.borderStyle;
 }
 
@@ -163,8 +207,13 @@ watch(() => operatingTextStickerOptions.value.borderStyle,async () => {
 
 export const base64 = ref("");
 
-// 创建可拖拽的文字贴纸 
+// 创建可拖拽的文字贴纸
 export async function initDraggableTextSticker(){
+
+    if(!canvasTextEl.value || !canvasBackgroundEl.value){
+        return
+    }
+
   base64.value = await toPng(canvasBackgroundEl.value);
   initDraggableElement(
     canvasBackgroundEl.value,
@@ -181,6 +230,24 @@ export async function initDraggableTextSticker(){
   );
 }
 
+export async function exportTextStickerPng(){
+    const b6 =  await toPng(canvasBackgroundEl.value);
+    let file = base64ToFile(b6)
+    let a = document.createElement('a')
+    a.href = URL.createObjectURL(file)
+    a.download = file.name
+    a.click()
+}
+
+export async function exportTextStickerSvg(){
+    const b6 = await toSvg(canvasBackgroundEl.value);
+    let file = base64ToFile(b6,new Date().getTime() + '.svg','image/svg')
+    let a = document.createElement('a')
+    a.href = URL.createObjectURL(file)
+    a.download = file.name
+    a.click()
+}
+
 export function forceUpdateTextSticker(){
     setFontSize()
     setBackgroundColor()
@@ -193,4 +260,5 @@ export function forceUpdateTextSticker(){
     setBorderWidth()
     setBorderStyle()
     initDraggableTextSticker()
+    setFontFamliy()
 }   

@@ -10,7 +10,7 @@
         :prevent-default="true"
         :handle="handle"
         :style="{ zIndex: 1000 }"
-        @vnode-mounted="mounted"
+        @vue:mounted="mounted"
       >
         <Teleport to="body">
           <div

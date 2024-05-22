@@ -12,8 +12,7 @@
   <ion-page>
     <!-- <floating-button></floating-button> -->
     <ion-tabs>
-      <ion-router-outlet>
-      </ion-router-outlet>
+      <ion-router-outlet> </ion-router-outlet>
       <div class="app-footer">
         <ion-tab-bar slot="bottom">
           <ion-tab-button tab="tab1" href="/home/index">
@@ -34,11 +33,10 @@
             <ion-label class="label">消息</ion-label>
           </ion-tab-button>
           <ion-tab-button tab="tab5" href="/home/user">
-            
             <avatar
               v-if="loginStore.isLogin && loginStore.userInfo.preview_avatar"
               class="avatar"
-              :src="loginStore.userInfo?.preview_avatar" 
+              :src="loginStore.userInfo?.preview_avatar"
               style="border: 1px solid rgba(105, 0, 255, 1)"
             >
             </avatar>
@@ -70,7 +68,7 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import { onBeforeMount } from "vue";
 import { useIonRouter } from "@ionic/vue";
 
-import avatar from '@/modules/app/components/avatar.vue'
+import avatar from "@/modules/app/components/avatar.vue";
 
 const router = useIonRouter();
 const loginStore = useLoginStatusStore();

@@ -332,3 +332,20 @@ export const getStickerListApi = (data) => new Promise(async (resolve, reject) =
   let res =  await apiInstance.post('/api/sticker/page', data )
   resolve(res.data.data)
 })
+
+
+
+export const getFileListApi = (params) => new Promise(async (resolve,reject) => {
+  const res = await apiInstance.post('/api/file/page')
+  resolve(res.data.data)
+})
+
+
+/* 获取字体列表 */
+export const getFontListApi = (params) => new Promise(async (resolve,reject) => {
+  const res = await apiInstance.post('/api/file/page',{
+    ...params,
+    type:'ttf,woff,otf'
+  })
+  resolve(res.data.data)
+})

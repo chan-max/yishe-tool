@@ -1,11 +1,10 @@
 import { setFullscreen } from "@/common/browser";
 import { useLocalStorage } from "@vueuse/core";
-import { computed, ref, shallowRef, watchEffect, watch, nextTick } from "vue"
+import { computed, ref, shallowRef, watchEffect, watch, nextTick, reactive } from "vue"
 import { defineStore } from "pinia";
 
 // 当前实例
 export const currentController = shallowRef(null);
-(window as any).controller = currentController
 
 // 是否为暗色模式
 export const isDarkMode = ref(false)
@@ -32,8 +31,8 @@ watchEffect(() => {
 // 是否展示基础模型选择菜单
 export const showBaseModelSelect = ref(false);
 
-// 当前操作的模型信息
-export const currentOperatingBaseModelInfo = ref()
+// 当前操作的模型信息 , 如果不提供默认值 ， 会出现 【object】的问题
+export const currentOperatingBaseModelInfo = ref({})
 
 // 是否展示场景控制弹窗
 export const showSceneControl = ref(false)
@@ -43,13 +42,11 @@ export const showImageSticker = ref(false)
 
 watch(showImageSticker, (value) => {
     if (value) {
-
     }
 })
 
 // 是否展示艺术字弹窗
 export const showTextSticker = ref(false)
-
 
 // 是否展示工作台窗口
 export const showWorkspace = ref(false)
@@ -80,7 +77,7 @@ watch(showCustomTextSticker, (value) => {
 })
 
 
-// 当前正在操作的贴花
+// 当前正在操作的贴花实例
 export const operatingDecal = shallowRef()
 
 // 是否展示图片上传弹窗
@@ -124,8 +121,6 @@ export const showLeftMenu = ref(true)
 
 export const showBottomMenu = ref(true)
 
-
-
 // 清空左侧布局
 export function clearLeftLayout() {
     showImageSticker.value = false
@@ -145,7 +140,6 @@ export function clearRightLayout() {
 // 清空所有布局元素
 export function clearLayout() {
 }
-
 
 // 记录当前正在操作的贴纸信息
 export const operatingTextStickerOptions = ref({
@@ -231,21 +225,30 @@ export const showBasicCanvas = ref(false)
 */
 export const showThreeCanvas = ref(true)
 
-
-
-
 /*
     所有状态统一使用store管理
 */
 
 export const useDesignStore = defineStore('_1s_design',() => {
+
+
+    
+    // 同步到缓存
+
     return {
-        showBasicCanvas,
-        showThreeCanvas,
-        showSticker
+        operatingTextStickerOptions:useLocalStorage('_1s_operatingTextStickerOptions',operatingTextStickerOptions),
+        showBaseModelSelect:useLocalStorage('_1s_showBaseModelSelect',showBaseModelSelect),
+        showBasicCanvas:useLocalStorage('_1s_showBasicCanvas',showBasicCanvas),
+        showThreeCanvas:useLocalStorage('_1s_showThreeCanvas',showThreeCanvas),
+        showSticker:useLocalStorage('_1s_showSticker',showSticker),
+        currentOperatingBaseModelInfo:useLocalStorage('_1s_currentOperatingBaseModelInfo',currentOperatingBaseModelInfo),
     }
 })
 
-const des = useDesignStore()
+
+
+
+
+
 
 

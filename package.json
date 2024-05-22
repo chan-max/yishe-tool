@@ -14,7 +14,7 @@
     "build:app": "vite build --mode app",
     "serve": "node serverbundle.js",
     "serve:dev": "node --watch server --ext [ts,json,js] --exec nodemon ./server.js",
-    "dev": "concurrently \"vite --host 0.0.0.0\" \"vitepress dev docs --port 7788\"",
+    "dev": "concurrently \"vite --host 0.0.0.0\"",
     "db:init": "cd server/sequelize & npx sequelize-cli db:create & npx sequelize-cli db:migrate"
   },
   "dependencies": {

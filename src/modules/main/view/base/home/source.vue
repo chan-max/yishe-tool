@@ -3,8 +3,12 @@
     <h3>基础模型</h3>
     <div class="container">
       <div v-for="item in list" class="card">
-        <model-card-viewer class="viewer" :model-url="'http://' + item.url" :thumbnail-url="'http://' + item.thumbnail"></model-card-viewer>
-        <div> 这是模型描述 </div>
+        <model-card-viewer
+          class="viewer"
+          :model-url="'http://' + item.url"
+          :thumbnail-url="'http://' + item.thumbnail"
+        ></model-card-viewer>
+        <div>这是模型描述</div>
       </div>
     </div>
   </div>
@@ -13,11 +17,11 @@
 <script setup lang="ts">
 import { ref, onBeforeMount } from "vue";
 import { getProductModelListApi } from "@/api";
-import modelCardViewer from '@/components/model/modelCardViewer/index.vue';
+import modelCardViewer from "@/components/model/modelCardViewer/index.vue";
 
 const list = ref([]);
 
-const showImage = ref(true)
+const showImage = ref(true);
 
 onBeforeMount(async () => {
   const res = await getProductModelListApi({
@@ -39,7 +43,7 @@ onBeforeMount(async () => {
   font-weight: bold;
   font-size: 14px;
   color: #333;
-  &:hover{
+  &:hover {
     border-bottom: 2px solid black;
     cursor: pointer;
   }
@@ -48,10 +52,7 @@ onBeforeMount(async () => {
 .viewer {
   width: 140px;
   height: 140px;
-  border-radius: 50%;
-  overflow:hidden;
-  background: #efefef;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+  overflow: hidden;
 }
 
 .container {

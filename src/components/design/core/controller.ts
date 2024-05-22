@@ -36,7 +36,7 @@ import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
 
 import { eventMixin } from "./event";
-import { currentOperatingBaseModelInfo } from "../store";
+
 
 const mixins = [
     _1stfExporterMixin,
@@ -253,7 +253,13 @@ export class ModelController {
     baseModelUrl: any = null;
 
     public async setMainModel(url: any) {
+
+        if(this.gltf){
+            return message.info('当前控制台中存在模型，请先清理')
+        }
+
         this.removeMainModel();
+        
         message.loading({ content: `正在加载模型...`, key: 'loadingmodel', duration: 0 });
         try {
             this.gltf = await gltfLoader(url);

@@ -2,11 +2,7 @@
   <div ref="container" class="designiy-base-model-select">
     <div class="designiy-base-model-select-item" v-for="m in models">
       <div class="designiy-base-model-select-item-img">
-        <el-image
-          :src="m.thumbnail"
-          draggable="false"
-          @click="selectModel(m)"
-        ></el-image>
+        <el-image :src="m.thumbnail" draggable="false" @click="selectModel(m)"></el-image>
       </div>
     </div>
   </div>
@@ -26,22 +22,26 @@ const container = ref();
 
 onMounted(async () => {
   const res = await getProductModelListApi({
-    currentPage:1,
-    pageSize:100
+    currentPage: 1,
+    pageSize: 100,
   });
 
   models.value = res.data.list;
 
   res.data.list.map((item) => {
-    item.url = 'http://' + item.url
-    item.thumbnail = 'http://' + item.thumbnail
-  })
+    item.url = "http://" + item.url;
+    item.thumbnail = "http://" + item.thumbnail;
+  });
 
   // 适配鼠标滑轮横向滚动
-  container.value.addEventListener("wheel", (event) => {
-    container.value.scrollLeft += event.deltaY;
-    // event.preventDefault();
-  },{passive:false});
+  container.value.addEventListener(
+    "wheel",
+    (event) => {
+      container.value.scrollLeft += event.deltaY;
+      // event.preventDefault();
+    },
+    { passive: false }
+  );
 });
 
 function selectModel(productModel) {
@@ -50,7 +50,6 @@ function selectModel(productModel) {
   currentOperatingBaseModelInfo.value = productModel;
   showModelInfo.value = true;
 }
-
 </script>
 <style lang="less">
 .designiy-base-model-select {
@@ -69,7 +68,7 @@ function selectModel(productModel) {
   justify-content: space-between;
   padding: 16px;
   flex-shrink: 0;
-  width:300px;
+  width: 300px;
 }
 
 .designiy-base-model-select-item-img {

@@ -25,7 +25,11 @@
               <template #icon> <icon-bold></icon-bold> </template>
               <template #name> 厚度 </template>
               <template #content>
-                <el-select v-model="operatingTextStickerOptions.fontWeight" size="small">
+                <el-select
+                  v-model="operatingTextStickerOptions.fontWeight"
+                  size="small"
+                  style="width: 72px"
+                >
                   <el-option
                     v-for="item in fontWeightOptions"
                     :key="item.value"
@@ -44,7 +48,7 @@
               <template #icon> <icon-italic></icon-italic> </template>
               <template #name> 斜体 </template>
               <template #content>
-                <el-switch v-model="operatingTextStickerOptions.italic" />
+                <el-switch v-model="operatingTextStickerOptions.italic" size="small" />
               </template>
             </operate-form-item>
           </el-col>
@@ -61,12 +65,22 @@
             </operate-form-item>
           </el-col>
 
-          <el-col :span="12">
+          <el-col :span="24">
             <operate-form-item>
               <template #icon> <icon-font-family></icon-font-family> </template>
               <template #name> 个性字体 </template>
               <template #content>
-                <div @click="showFontList = true">无</div>
+                <template v-if="operatingTextStickerOptions.fontFamilyInfo">
+                  <el-image
+                    @click="showFontList = true"
+                    style="background: #f3f4f6; border-radius: 0.2em; height: 2.4em"
+                    fit="contain"
+                    :src="
+                      'http://' + operatingTextStickerOptions.fontFamilyInfo.thumbnail
+                    "
+                  ></el-image>
+                </template>
+                <div v-else @click="showFontList = true">暂未选择</div>
               </template>
             </operate-form-item>
           </el-col>

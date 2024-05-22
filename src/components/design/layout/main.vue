@@ -116,7 +116,7 @@
   </diydialog>
 </template>
 <script setup>
-import { computed, onMounted, ref, watchEffect, watch } from "vue";
+import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
 import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
@@ -230,9 +230,20 @@ currentController.value = modelController;
   切换主模型
   需要保留之前的操作
 */
-watch(currentOperatingBaseModelInfo, () => {
-  modelController.setMainModel(currentOperatingBaseModelInfo.value.url);
-});
+
+watch(
+  currentOperatingBaseModelInfo,
+  async () => {
+    if (!currentOperatingBaseModelInfo.value.url) {
+      return;
+    }
+    await nextTick();
+    modelController.setMainModel(currentOperatingBaseModelInfo.value.url);
+  },
+  {
+    immediate: true,
+  }
+);
 
 // 创建场景、相机和渲染器等...
 
@@ -288,9 +299,13 @@ onMounted(() => {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
 }
 
 #basics-canvas {
   position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
 }
 </style>

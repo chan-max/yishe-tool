@@ -8,18 +8,13 @@
         <div style="flex: 1"></div>
       </div>
       <div class="search">
-        <el-input
-          v-model="input1"
-          placeholder="寻找更多贴纸～"
-          :prefix-icon="Search"
-          style="font-size: 12px"
-        />
+        <el-input v-model="input1" placeholder="寻找更多贴纸～" style="font-size: 12px" />
       </div>
     </div>
     <div class="list" v-infinite-scroll="getList" :infinite-scroll-distance="150">
       <div class="item" v-for="item in list">
         <desiamge :src="'http://' + item.thumbnail" class="image"></desiamge>
-        <el-popover :visible="visible" placement="auto" trigger="click" width="auto">
+        <el-popover placement="auto" trigger="click" width="auto">
           <template #reference>
             <div class="bar">
               <div class="title text-ellipsis">真丝一个图片真丝一个图片真丝一个图片</div>
@@ -48,8 +43,11 @@ const { list, getList } = usePaging((params) =>
 );
 </script>
 <style lang="less" scoped>
+@gap: 8px;
+@item-width: 120px;
+@width: @item-width * 2 + @gap * 3;
 .designiy-sticker {
-  width: 280px;
+  width: @width;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -71,6 +69,7 @@ const { list, getList } = usePaging((params) =>
   width: 100%;
   flex: 1;
   overflow: auto;
+
   display: grid;
   grid-template-columns: repeat(auto-fit, 120px);
   justify-items: center;
@@ -81,12 +80,15 @@ const { list, getList } = usePaging((params) =>
 }
 
 .image {
-  width: 120px;
-  height: 120px;
+  width: @item-width;
+  height: @item-width;
 }
 
+.title {
+  width: 100%;
+}
 .item {
-  width: 120px;
+  width: @item-width;
   height: auto;
   display: flex;
   flex-direction: column;

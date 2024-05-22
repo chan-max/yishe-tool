@@ -10,7 +10,10 @@
 -->
 <template>
   <div class="designiy-header-menu-dropdown">
-    <icon-menu  style="width: 16px; height: 16px;color:#555;   cursor: pointer;" @click.stop="toggle"></icon-menu>
+    <icon-menu
+      style="width: 16px; height: 16px; color: #555; cursor: pointer"
+      @click.stop="toggle"
+    ></icon-menu>
     <div v-if="showHeaderMenuDropdown" class="designiy-header-menu-dropdown-content">
       <menu-main></menu-main>
     </div>
@@ -20,7 +23,7 @@
 <script setup>
 import { ref, onMounted, provide } from "vue";
 import iconMenu from "@/icon/menu.svg?component";
-import menuMain from './main.vue'
+import menuMain from "./main.vue";
 
 const showHeaderMenuDropdown = ref(false);
 
@@ -37,8 +40,6 @@ onMounted(() => {
     showHeaderMenuDropdown.value = false;
   });
 });
-
-
 </script>
 
 <style lang="less">
@@ -59,6 +60,6 @@ onMounted(() => {
   position: absolute;
   top: 30px;
   left: 0;
-  z-index: 1;
+  z-index: 9;
 }
 </style>

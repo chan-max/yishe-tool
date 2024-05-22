@@ -1,6 +1,6 @@
 <template>
   <div class="base-gltf-viewer" ref="gltfViewer">
-    <div class="loading" v-if="loading"> 加载中 </div>
+    <div class="loading" v-if="loading">加载中</div>
   </div>
 </template>
 <script setup>
@@ -16,7 +16,7 @@ import {
   defineExpose,
 } from "vue";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { GLTFLoader, } from "three/examples/jsm/loaders/GLTFLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import {
   Box3,
   BoxGeometry,
@@ -41,24 +41,22 @@ import {
   Vector2,
 } from "three";
 
+const loading = ref(true);
 
-  const loading = ref(true)
-
- function gltfLoader(url) {
-    let loader = new GLTFLoader();
-    return new Promise(async (resolve,reject) => {
-        try{
-            let gltf = await loader.loadAsync(url)
-            resolve(gltf)
-        }catch(e){
-            reject(e)
-        }
-    })
+function gltfLoader(url) {
+  let loader = new GLTFLoader();
+  return new Promise(async (resolve, reject) => {
+    try {
+      let gltf = await loader.loadAsync(url);
+      resolve(gltf);
+    } catch (e) {
+      reject(e);
+    }
+  });
 }
 
-
 const props = defineProps({
-    src:''
+  src: "",
 });
 
 const gltfViewer = ref();
@@ -70,7 +68,7 @@ const renderer = new WebGLRenderer({
   antialias: true,
 });
 
-renderer.setPixelRatio(window.devicePixelRatio)
+renderer.setPixelRatio(window.devicePixelRatio);
 
 const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
 
@@ -78,24 +76,24 @@ camera.lookAt(0, 0, 0);
 
 camera.position.set(0, 0, 0.7);
 
-  // 添加环境光
-  const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
-  scene.add(ambientLight);
+// 添加环境光
+const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
+scene.add(ambientLight);
 
-  // 添加平行光
-  const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
-  directionalLight1.position.set(1, 1, 1); // 设置光源位置
-  scene.add(directionalLight1);
+// 添加平行光
+const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+directionalLight1.position.set(1, 1, 1); // 设置光源位置
+scene.add(directionalLight1);
 
-  // 添加平行光
-  const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
-  directionalLight2.position.set(-1, -1, -1); // 设置光源位置
-  scene.add(directionalLight2);
+// 添加平行光
+const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+directionalLight2.position.set(-1, -1, -1); // 设置光源位置
+scene.add(directionalLight2);
 
-  // 添加点光源
-  const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
-  pointLight.position.set(0, 0, 2); // 设置光源位置
-  scene.add(pointLight);
+// 添加点光源
+const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
+pointLight.position.set(0, 0, 2); // 设置光源位置
+scene.add(pointLight);
 
 const getWidth = (el) => {
   if (!el) {
@@ -111,7 +109,7 @@ const getHeight = (el) => {
 };
 
 function initImportedModel(gltf) {
-  let flag = .8;
+  let flag = 0.8;
   let object = gltf.scene;
   // 先处理尺寸，再居中
   const sizeBox = new Box3().setFromObject(object);
@@ -126,10 +124,9 @@ function initImportedModel(gltf) {
   object.position.z += object.position.z - center.z;
 }
 
-var currentGltf = null
+var currentGltf = null;
 
 async function initModel() {
-
   var currentMesh = null;
 
   let gltf = await gltfLoader(props.src);
@@ -163,13 +160,13 @@ async function initModel() {
 
   const controller = new OrbitControls(camera, renderer.domElement);
 
-  controller.minDistance = 0.5
-  controller.maxDistance = 3
+  controller.minDistance = 0.5;
+  controller.maxDistance = 3;
   controller.enablePan = false; // 禁止右键拖拽
   // 惯性
   controller.enableDamping = true;
-  controller.dampingFactor = .1;
-  
+  controller.dampingFactor = 0.1;
+
   let resizeOb = new ResizeObserver(resetCameraAspect);
 
   el && resizeOb.observe(el);
@@ -178,12 +175,12 @@ async function initModel() {
 
   initImportedModel(gltf);
 
-  if(currentGltf){
+  if (currentGltf) {
     scene.remove(currentGltf.scene);
   }
 
   scene.add(gltf.scene);
-  currentGltf = gltf
+  currentGltf = gltf;
 
   function render() {
     requestAnimationFrame(render);
@@ -192,11 +189,10 @@ async function initModel() {
 
   el.appendChild(renderer.domElement);
   render();
-  loading.value = false
+  loading.value = false;
 }
 
-watch(() => props.src,initModel,{immediate:true})
-
+watch(() => props.src, initModel, { immediate: true });
 </script>
 <style lang="less" scoped>
 .base-gltf-viewer {
@@ -212,12 +208,10 @@ watch(() => props.src,initModel,{immediate:true})
 .loading {
   font-weight: bold;
   color: rgba(255, 255, 255, 0.7);
-  width:100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
-
 </style>

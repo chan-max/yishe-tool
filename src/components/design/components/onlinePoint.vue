@@ -15,7 +15,7 @@
       class="online-point"
       :class="online ? 'online-point-online' : 'online-point-offonline'"
     >
-      <div @animationend="animationend" :class="{'online-point-effect':effect}"></div>
+      <div @animationend="animationend" :class="{ 'online-point-effect': effect }"></div>
     </div>
   </el-tooltip>
 </template>
@@ -25,18 +25,17 @@ import { ref, defineProps } from "vue";
 
 const props = defineProps(["online"]);
 
-const effect = ref(true)
+const effect = ref(true);
 
-function animationend(){
-  effect.value = false
+function animationend() {
+  effect.value = false;
 }
 
 function ping() {
-  effect.value = true
+  effect.value = true;
 }
 
-
-window.ping = ping
+window.ping = ping;
 </script>
 
 <style lang="less">

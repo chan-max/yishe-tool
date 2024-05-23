@@ -18,7 +18,7 @@
         ></div>
       </template>
       <template #error>
-        <div class="error" style="background: red; width: 100%; height: 100%"></div>
+        <div class="error" style="width: 100%; height: 100%"></div>
       </template>
     </el-image>
     <div v-else class="display-content model">

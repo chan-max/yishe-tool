@@ -18,95 +18,15 @@
         style="width: 100px; object-fit: contain; margin-right: 2em"
         @click="$router.push({ name: 'Design' })"
       />
-
-      <router-link
-        v-slot="{ navigate, isActive, isExactActive }"
-        :to="{ name: 'Home' }"
-        custom
-      >
-        <div
-          class="header-bar-menu-item"
-          :class="{ 'header-bar-menu-item-active': isActive }"
-          @click="navigate"
-        >
-          首页
-        </div>
-      </router-link>
-      <router-link
-        v-slot="{ navigate, isActive, isExactActive }"
-        :to="{ name: 'Market' }"
-        custom
-      >
-        <div
-          class="header-bar-menu-item"
-          :class="{ 'header-bar-menu-item-active': isActive }"
-          @click="navigate"
-        >
-          在线商场
-        </div>
-      </router-link>
-      <router-link
-        v-slot="{ navigate, isActive, isExactActive }"
-        :to="{ name: 'Ai' }"
-        custom
-      >
-        <div
-          class="header-bar-menu-item"
-          :class="{ 'header-bar-menu-item-active': isActive }"
-          @click="navigate"
-        >
-          AI
-        </div>
-      </router-link>
-      <router-link
-        v-slot="{ navigate, isActive, isExactActive }"
-        :to="{ name: 'Workspace' }"
-        custom
-      >
-        <div
-          class="header-bar-menu-item"
-          :class="{ 'header-bar-menu-item-active': isActive }"
-          @click="navigate"
-        >
-          我的工作台
-        </div>
-      </router-link>
-      <router-link
-        v-slot="{ navigate, isActive, isExactActive }"
-        :to="{ name: 'Seller' }"
-        custom
-      >
-        <div
-          class="header-bar-menu-item"
-          :class="{ 'header-bar-menu-item-active': isActive }"
-          @click="navigate"
-        >
-          我是商家
-        </div>
-      </router-link>
-      <router-link
-        v-slot="{ navigate, isActive, isExactActive }"
-        :to="{ name: 'StickerDesign' }"
-        custom
-      >
-        <div
-          class="header-bar-menu-item"
-          :class="{ 'header-bar-menu-item-active': isActive }"
-          @click="navigate"
-        >
-          贴纸设计
-        </div>
-      </router-link>
     </div>
-    <div style="flex: 1"></div>
-    <div class="middle flex justify-center" style="column-gap: 2em"></div>
+    <des-menu></des-menu>
     <div style="flex: 1"></div>
     <div class="right flex justify-end">
       <template v-if="loginStatusStore.isLogin">
         <user-avatar />
       </template>
       <template v-else>
-        <el-button plain @click="$router.push({ name: 'Login' })" round>
+        <el-button plain @click="$router.push({ name: 'Login' })" round size="small">
           登 录
         </el-button>
       </template>
@@ -120,44 +40,27 @@ import { Search } from "@element-plus/icons-vue";
 import userAvatar from "@/components/user/userAvatar.vue";
 import { ref, onMounted, onUnmounted } from "vue";
 import { useLoginStatusStore } from "@/store/stores/login";
+import desMenu from "./menu.vue";
 
 const loginStatusStore = useLoginStatusStore();
+
+const menuOptions = [{}];
 </script>
 
 <style lang="less" scoped>
 .header-bar {
   width: 100%;
-  height: 64px;
+  height: var(--1s-header-menu-height);
   background: #fff;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  // box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   padding: 0 4%;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   & > * {
     flex-shrink: 0;
   }
-}
-
-.header-bar-menu-item {
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  column-gap: 5px;
-  text-wrap: nowrap;
-  cursor: pointer;
-  color: #222;
-  font-weight: 400;
-  border-bottom: 2px solid transparent;
-  padding: 0.5em 1em;
-  &:hover {
-    color: #555;
-  }
-}
-
-.middle {
-  font-weight: bold;
-  align-items: center;
-  padding: 1em;
 }
 
 .logo {
@@ -180,8 +83,8 @@ const loginStatusStore = useLoginStatusStore();
   position: fixed;
 }
 
-.header-bar-menu-item-active {
-  background: #f8f7f4;
-  border-radius: 99999999px;
-}
+// .header-bar-menu-item-active {
+//   background: #f8f7f4;
+//   border-radius: 99999999px;
+// }
 </style>

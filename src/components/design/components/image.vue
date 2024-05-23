@@ -20,7 +20,7 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, nextTick } from "vue";
 import { Picture, FolderOpened, Search, Operation } from "@element-plus/icons-vue";
 import {
   currentController,
@@ -37,7 +37,7 @@ import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/i
 
 function load(e, info) {
   const img = e.target;
-  initDraggableElement(img, () => {
+  initDraggableElement(img, async () => {
     const src = createImgObjectURL(img);
     const base64 = imgToBase64(img);
 
@@ -49,6 +49,8 @@ function load(e, info) {
       ...info,
       base64: base64,
     });
+
+    await nextTick();
     showDecalControl.value = true;
   });
 }

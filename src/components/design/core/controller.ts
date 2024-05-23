@@ -28,7 +28,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
-import { reactive, ref, shallowReactive } from "vue";
+import { reactive, ref, shallowReactive,nextTick } from "vue";
 import { reactify, useDebounceFn, useMouse, useMouseInElement } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
@@ -362,9 +362,10 @@ export class ModelController {
     decalControllers: any = shallowReactive([]);
 
     // 进行贴图
-    stickToMousePosition(info) {
+    async  stickToMousePosition(info,cb) {
         const decal = new DecalController(info)
-        decal.stickToMousePosition()
+        await decal.stickToMousePosition()
+        await nextTick()
     }
 
     // 恢复模型模型位置

@@ -10,7 +10,7 @@
 -->
 <template>
   <div class="home">
-    <carousel style="padding: 36px 4%"></carousel>
+    <carousel style="padding: 36px 6vw"></carousel>
 
     <resource style="width: 92%"></resource>
 

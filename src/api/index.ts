@@ -328,12 +328,22 @@ export interface StickerListParams {
   type :'image' | 'text' | 'composition'
 }
 
+
+/*
+    获取所有贴纸
+*/
 export const getStickerListApi = (data) => new Promise(async (resolve, reject) => {
   let res =  await apiInstance.post('/api/sticker/page', data )
   resolve(res.data.data)
 })
 
-
+/*
+ 创建贴纸
+*/
+export const createStickerApi = (data) => new Promise(async (resolve, reject) => {
+  let res =  await apiInstance.post('/api/sticker/create', data )
+  resolve(res.data.data)
+})
 
 export const getFileListApi = (params) => new Promise(async (resolve,reject) => {
   const res = await apiInstance.post('/api/file/page')

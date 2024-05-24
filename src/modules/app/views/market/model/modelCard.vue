@@ -18,7 +18,10 @@
     <ion-card-content>
       <div class="footer">
         <ion-thumbnail slot="start" style="width: 20px; height: 20px">
-          <img alt="avatar" :src="item.t_user?.preview_avatar || '/mobileDefaultAvatar.svg'" />
+          <img
+            alt="avatar"
+            :src="item.t_user?.preview_avatar || '/mobileDefaultAvatar.svg'"
+          />
         </ion-thumbnail>
         {{ item.t_user?.name || "未命名" }}
         <div style="flex: 1"></div>
@@ -30,15 +33,13 @@
 
 <script setup>
 import { isOpen, modalInfo } from "./index.ts";
-import {timeago} from '@/common/time'
+import { timeago } from "@/common/time";
 const props = defineProps(["item"]);
 
 function go(item) {
   modalInfo.value = item;
   isOpen.value = true;
 }
-
-
 </script>
 
 <style scoped>
@@ -48,7 +49,7 @@ function go(item) {
   column-gap: 6px;
 }
 
-ion-thumbnail{
-  --border-radius:50%;
+ion-thumbnail {
+  --border-radius: 50%;
 }
 </style>

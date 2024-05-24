@@ -67,6 +67,13 @@
       </div>
     </el-tooltip>
 
+    <el-tooltip :hide-after="0" content="定制专属二维码" placement="right">
+      <div class="menu-bar-item" @click="showQrcode = !showQrcode">
+        <div class="menu-bar-item-icon"><icon-qrcode></icon-qrcode></div>
+        <span>二维码</span>
+      </div>
+    </el-tooltip>
+
     <el-tooltip :hide-after="0" content="自定义文字" placement="right">
       <div class="menu-bar-item" @click="showCustomTextSticker = !showCustomTextSticker">
         <div class="menu-bar-item-icon"><icon-paint></icon-paint></div>
@@ -136,6 +143,7 @@ import {
   showFontList,
   showDecoration,
   showSticker,
+  showQrcode,
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?component";
@@ -151,6 +159,7 @@ import iconEarth from "@/icon/earth.svg?component";
 import iconLight from "@/icon/light.svg?component";
 import iconEye from "@/icon/eye.svg?component";
 import iconHelp from "@/icon/help.svg?component";
+import iconQrcode from "@/components/design/assets/icon/qrcode.svg?component";
 
 import iconSetting from "@/icon/setting.svg?component";
 import iconFont from "@/icon/font.svg?component";

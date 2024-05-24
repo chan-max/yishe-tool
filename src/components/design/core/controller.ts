@@ -359,13 +359,13 @@ export class ModelController {
         this.y = elementY;
     }
 
+    // 保存所有的贴纸
     decalControllers: any = shallowReactive([]);
-
+    
     // 进行贴图
-    async  stickToMousePosition(info,cb) {
+    async stickToMousePosition(info,cb) {
         const decal = new DecalController(info)
-        await decal.stickToMousePosition()
-        await nextTick()
+        await decal.stickToMousePosition(cb)
     }
 
     // 恢复模型模型位置

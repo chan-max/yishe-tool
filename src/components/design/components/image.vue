@@ -41,17 +41,19 @@ function load(e, info) {
     const src = createImgObjectURL(img);
     const base64 = imgToBase64(img);
 
-    currentController.value.stickToMousePosition({
-      img: img,
-      type: "image",
-      local: false,
-      src: src,
-      ...info,
-      base64: base64,
-    });
-
-    await nextTick();
-    showDecalControl.value = true;
+    currentController.value.stickToMousePosition(
+      {
+        img: img,
+        type: "image",
+        local: false,
+        src: src,
+        ...info,
+        base64: base64,
+      },
+      () => {
+        showDecalControl.value = true;
+      }
+    );
   });
 }
 </script>

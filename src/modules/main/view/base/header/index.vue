@@ -53,7 +53,7 @@ const menuOptions = [{}];
   height: var(--1s-header-menu-height);
   background: #fff;
   // box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  padding: 0 4%;
+  padding: 0 6vw;
   box-sizing: border-box;
   display: flex;
   align-items: center;

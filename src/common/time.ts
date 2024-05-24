@@ -16,3 +16,12 @@ import { format, render, cancel, register } from 'timeago.js';
 export function timeago(time){
     return format(time, 'zh_CN');
 }
+
+
+export  function timeout(ms = 0){
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(ms)
+        }, ms);
+    })
+}   

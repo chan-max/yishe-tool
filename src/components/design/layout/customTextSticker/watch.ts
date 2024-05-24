@@ -12,6 +12,9 @@ import { base64ToFile } from "@/common/transform/base64ToFile";
 export const canvasBackgroundEl = ref();
 export const canvasTextEl = ref();
 
+// 当前贴纸的编码
+export const base64 = ref("");
+
 function setFontSize(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
@@ -205,7 +208,6 @@ watch(() => operatingTextStickerOptions.value.borderStyle,async () => {
     initDraggableTextSticker()
 })
 
-export const base64 = ref("");
 
 // 创建可拖拽的文字贴纸
 export async function initDraggableTextSticker(){
@@ -217,8 +219,8 @@ export async function initDraggableTextSticker(){
   base64.value = await toPng(canvasBackgroundEl.value);
   initDraggableElement(
     canvasBackgroundEl.value,
-    (img) => {
-      currentController.value.stickToMousePosition({
+    async (img) => {
+      await currentController.value.stickToMousePosition({
         base64: base64.value,
         local: true,
         type: "text",

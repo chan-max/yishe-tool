@@ -155,7 +155,7 @@ export class DecalController {
 
 
   // 在当前鼠标位置进行贴图
-  async stickToMousePosition() {
+  async stickToMousePosition(cb?) {
 
     if (!this.parentMesh) {
       message.info('请先选择一个商品模型')
@@ -189,6 +189,10 @@ export class DecalController {
     let rotation = helper.rotation;
     this._rotation = rotation;
     this.create()
+
+    if(cb){
+      cb()
+    }
   }
 
 
@@ -233,6 +237,8 @@ export class DecalController {
       operatingDecal.value = this
       showDecalControl.value = true
     }
+
+    // 绑定点击事件
     currentController.value.onClick(decalClick.bind(this))
   }
 

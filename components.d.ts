@@ -45,6 +45,7 @@ declare module 'vue' {
     OperateFormItem: typeof import('./src/components/design/layout/customTextSticker/operateFormItem.vue')['default']
     OperatingForm: typeof import('./src/components/design/layout/customTextSticker/operatingForm.vue')['default']
     Padding: typeof import('./src/components/design/layout/customTextSticker/items/padding.vue')['default']
+    Qrcode: typeof import('./src/components/design/layout/qrcode/index.vue')['default']
     Resource: typeof import('./src/components/design/layout/textSticker/resource.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

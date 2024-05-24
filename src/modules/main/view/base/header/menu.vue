@@ -4,6 +4,9 @@
       <div class="menu-mask" :class="{ show: showMask }" v-if="showMask">
         <div class="menu-mask-content" @mouseenter="menuEnter" @mouseleave="menuLeave">
           <template v-if="currentKey == 'group'"> 分类 </template>
+          <template v-if="currentKey == 'start'">
+            <menu-start></menu-start>
+          </template>
         </div>
       </div>
     </Transition>
@@ -21,7 +24,7 @@
           <div
             class="menu-item"
             :class="{
-              'menu-item-active': isActive,
+              'menu-item-route-active': item.RouteName && isActive,
               'menu-active': item.key && currentKey == item.key,
             }"
             @click="navigate"
@@ -36,7 +39,7 @@
 
 <script setup lang="ts">
 import { ref, nextTick } from "vue";
-
+import menuStart from "./start.vue";
 const showMask = ref(false);
 
 const currentKey = ref();
@@ -87,6 +90,10 @@ const menuOptions = ref([
     label: "商品模型分类",
     key: "group",
   },
+  {
+    label: "快速开始",
+    key: "start",
+  },
 ]);
 </script>
 
@@ -127,12 +134,13 @@ const menuOptions = ref([
 
 .menu-mask-content {
   width: 100vw;
-  padding: 4vh 4vw;
+  padding: 4vh 6vw;
   box-sizing: border-box;
   background-color: #fff;
   box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
   border-bottom-left-radius: 4%;
   border-bottom-right-radius: 4%;
+  display: flex;
 }
 
 .menu-item-container {
@@ -156,6 +164,11 @@ const menuOptions = ref([
 }
 
 .menu-active {
+  color: #000;
+  border-bottom: 1px solid #333;
+}
+
+.menu-item-route-active {
   color: #000;
   border-bottom: 1px solid #333;
 }

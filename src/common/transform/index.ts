@@ -27,3 +27,6 @@ export const createImgObjectURL = (img) => {
 }
 
 
+export const canvasToBase64 = (canvas) => canvas.toDataURL("image/png")
+
+

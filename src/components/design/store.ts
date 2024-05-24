@@ -76,6 +76,8 @@ watch(showCustomTextSticker, (value) => {
     }
 })
 
+// 是否展示二维码
+export const showQrcode = ref(false)
 
 // 当前正在操作的贴花实例
 export const operatingDecal = shallowRef()
@@ -86,6 +88,26 @@ export const showImageUplaod = ref(false)
 // 是否展示字体上传弹窗
 export const showFontUpload = ref(false)
 
+/*
+  二维码
+*/
+
+
+export const qrCodeOptions = ref({
+    text: "1s.design",
+    width: 0,
+    height: 0,
+    colorDark: "#000000",
+    colorLight: "rgba(0,0,0,0)",
+    correctLevel: 2, // L, M, Q, H
+})
+
+/*
+ 条形码
+*/
+export const barCodeOptions = ref({
+
+})
 
 // 是否展示字体列表
 export const showFontList = ref(false)

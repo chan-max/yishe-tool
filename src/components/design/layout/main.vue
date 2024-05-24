@@ -147,6 +147,7 @@ import {
   showThreeCanvas,
   showBasicCanvas,
   useDesignStore,
+  showQrcode,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -168,6 +169,7 @@ import saveModel from "./saveModel/index.vue";
 import decoration from "./decoration/index.vue";
 import screenshot from "../components/screenshot.vue";
 import sticker from "./sticker/index.vue";
+import qrcode from "./qrcode/index.vue";
 import { DirectionalLight, AmbientLight, PointLight } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { initWebsocket } from "../utils/websocket.ts";
@@ -202,6 +204,8 @@ const leftComponent = computed(() => {
     ? customTextSticker
     : showSticker.value
     ? sticker
+    : showQrcode.value
+    ? qrcode
     : null;
 });
 

@@ -60,6 +60,13 @@
       </div>
     </el-tooltip>
 
+    <el-tooltip :hide-after="0" content="制作多种印章" placement="right">
+      <div class="menu-bar-item">
+        <div class="menu-bar-item-icon"><icon-badge></icon-badge></div>
+        <span>印章</span>
+      </div>
+    </el-tooltip>
+
     <el-tooltip :hide-after="0" content="几何图形" placement="right">
       <div class="menu-bar-item">
         <div class="menu-bar-item-icon"><icon-box></icon-box></div>
@@ -160,7 +167,7 @@ import iconLight from "@/icon/light.svg?component";
 import iconEye from "@/icon/eye.svg?component";
 import iconHelp from "@/icon/help.svg?component";
 import iconQrcode from "@/components/design/assets/icon/qrcode.svg?component";
-
+import iconBadge from "@/components/design/assets/icon/badge.svg?component";
 import iconSetting from "@/icon/setting.svg?component";
 import iconFont from "@/icon/font.svg?component";
 import iconDecoration from "@/icon/design/decoration.svg?component";

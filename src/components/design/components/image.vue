@@ -51,7 +51,7 @@ function load(e, info) {
         base64: base64,
       },
       () => {
-        showDecalControl.value = true;
+        // showDecalControl.value = true;
       }
     );
   });

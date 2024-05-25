@@ -15,7 +15,7 @@
       <img
         class="logo"
         src="logo.png"
-        style="width: 100px; object-fit: contain; margin-right: 2em"
+        style="width: 100px; object-fit: contain; margin-right: 4em"
         @click="$router.push({ name: 'Design' })"
       />
     </div>
@@ -26,8 +26,9 @@
         <user-avatar />
       </template>
       <template v-else>
-        <el-button plain @click="$router.push({ name: 'Login' })" round size="small">
-          登 录
+        <el-button link @click="$router.push({ name: 'Login' })" round size="small">
+          <el-icon><UserFilled /></el-icon>
+          登录
         </el-button>
       </template>
     </div>
@@ -36,7 +37,7 @@
 
 <script setup>
 import top from "./top.vue";
-import { Search } from "@element-plus/icons-vue";
+import { Search, UserFilled } from "@element-plus/icons-vue";
 import userAvatar from "@/components/user/userAvatar.vue";
 import { ref, onMounted, onUnmounted } from "vue";
 import { useLoginStatusStore } from "@/store/stores/login";
@@ -51,13 +52,20 @@ const menuOptions = [{}];
 .header-bar {
   width: 100%;
   height: var(--1s-header-menu-height);
-  background: #fff;
+  background: rgba(245, 245, 247, 0.96);
   // box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   padding: 0 6vw;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: fixed;
+  top: 0;
+  transition: all 0.5s;
+  &:hover {
+    background-color: #fff;
+  }
+  z-index: 999;
   & > * {
     flex-shrink: 0;
   }

@@ -254,9 +254,9 @@ export class ModelController {
 
     public async setMainModel(url: any) {
 
-        if(this.gltf){
-            return message.info('当前控制台中存在模型，请先清理')
-        }
+        // if(this.gltf){
+        //     return message.info('当前控制台中存在模型，请先清理')
+        // }
 
         this.removeMainModel();
         

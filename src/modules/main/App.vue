@@ -10,18 +10,18 @@
 -->
 <template>
   <el-config-provider :locale="elementLocale">
-      <header-menu v-if="$route.meta.header"></header-menu>
-      <div class="content">
-        <router-view></router-view>
-      </div>
+    <header-menu v-if="$route.meta.header"></header-menu>
+    <div class="content">
+      <router-view></router-view>
+    </div>
   </el-config-provider>
-</template> 
+</template>
 <script setup>
 import { computed, ref } from "vue";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
-import headerMenu from './view/base/header/index.vue'
-import footerMenu from './view/base/footer/index.vue'
+import headerMenu from "./view/base/header/index.vue";
+import footerMenu from "./view/base/footer/index.vue";
 
 import { useI18n } from "vue-i18n";
 
@@ -34,7 +34,6 @@ const elementLocale = computed(() => {
     return zhCn;
   }
 });
-
 </script>
 <style>
 html,
@@ -42,12 +41,17 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow:hidden;
+  overflow: hidden;
 }
 
-@font-face{
-    font-family: 'alimama';
-    src : url('/public/fonts/AlimamaFangYuanTiVF-Thin.ttf');
+@font-face {
+  font-family: "alimama";
+  src: url("/public/fonts/AlimamaFangYuanTiVF-Thin.ttf");
+}
+
+@font-face {
+  font-family: "ins";
+  src: url("/public/fonts/ins.otf");
 }
 
 #app {
@@ -62,17 +66,15 @@ body {
   flex-shrink: 0;
 }
 
-.content{
+.content {
   width: 100%;
-  flex:1;
-  overflow:auto;
+  flex: 1;
+  overflow: auto;
   display: flex;
   align-items: center;
   flex-direction: column;
-  &>*{
+  & > * {
     flex-shrink: 0;
   }
 }
-
-
 </style>

@@ -30,7 +30,7 @@ export enum Url {
     SINGUP = '/signup',
 
     // 登录
-    LOGIN = '/login',
+    LOGIN = '/api/auth/login',
 
     // 获取首页模型信息
     GET_BANNER_MODEL = '/getBannerModel',

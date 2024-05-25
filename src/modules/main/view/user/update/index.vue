@@ -15,7 +15,7 @@
             <el-input />
           </el-form-item>
           <el-form-item label="手机号">
-            <el-input  />
+            <el-input />
           </el-form-item>
           <el-form-item label="收货地址">
             <el-input />
@@ -86,7 +86,7 @@ async function submit() {
 .user-update-header {
   width: 100%;
   height: 60px;
-  background-color: fade(#0099ff, 6%);
+  background-color: fade(var(--el-color-primary), 6%);
   display: flex;
   justify-content: space-between;
   align-items: center;

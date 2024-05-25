@@ -49,7 +49,7 @@ watch(showImageSticker, (value) => {
 export const showTextSticker = ref(false)
 
 // 是否展示工作台窗口
-export const showWorkspace = ref(false)
+export const showWorkspace = ref(true)
 watch(showWorkspace, (value) => {
     if (value) {
         showDecalControl.value = false

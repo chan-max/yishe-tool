@@ -12,11 +12,9 @@
   <ion-page>
     <ion-content :fullscreen="true" class="ion-padding">
       <div class="page">
-        <ion-list-header style="padding-left:calc(var(--ion-safe-area-left, 0px) + 8px);">
+        <ion-list-header style="padding-left: calc(var(--ion-safe-area-left, 0px) + 8px)">
           <ion-label>
-            <div style="padding:20px 0">
-              登录到衣设
-            </div>
+            <div style="padding: 20px 0">登录到衣设</div>
           </ion-label>
         </ion-list-header>
         <ion-list lines="none">
@@ -30,22 +28,22 @@
             ></ion-input>
           </ion-item>
           <ion-item>
-              <ion-input
-                label="密码"
-                label-placement="floating"
-                v-model="form.password"
-                type="password"
-                placeholder=""
-                fill="outline"
-              ></ion-input>
+            <ion-input
+              label="密码"
+              label-placement="floating"
+              v-model="form.password"
+              type="password"
+              placeholder=""
+              fill="outline"
+            ></ion-input>
           </ion-item>
-          
+
           <ion-item>
-            <div style="width:100%;display:flex;justify-content: end;">
+            <div style="width: 100%; display: flex; justify-content: end">
               <a class="forget">忘记密码？</a>
             </div>
           </ion-item>
-          <ion-item >
+          <ion-item>
             <ion-button size="default" style="width: 100%" @click="submit" expand="block">
               登 录
             </ion-button>
@@ -99,6 +97,7 @@ async function submit() {
     message: "正在登录...",
     duration: 0,
   });
+
   loading.present();
   try {
     const res = await login(form);
@@ -130,18 +129,17 @@ async function submit() {
   }
 }
 
-function forgetPassword(){
+function forgetPassword() {
   router.push({
-    name:"ForgetPassword"
-  })
+    name: "ForgetPassword",
+  });
 }
 
-function signup(){
+function signup() {
   router.push({
-    name:"Signup"
-  })
+    name: "Signup",
+  });
 }
-
 </script>
 
 <style lang="less" scoped>
@@ -154,26 +152,23 @@ function signup(){
   position: relative;
 }
 
-
-ion-input{
+ion-input {
   border-bottom: 1px solid #ddd;
 }
 
-.dark{
-  ion-input{
+.dark {
+  ion-input {
     border-bottom: 1px solid #222;
   }
 }
 
-a{
+a {
   font-size: 12px;
 }
 
-.signup{
+.signup {
   text-align: center;
   width: 100%;
-  color: #0099ff;
+  color: var(--el-color-primary);
 }
-
-
 </style>

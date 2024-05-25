@@ -55,7 +55,12 @@ function itemLeave() {}
 
 function itemEnter(key) {
   currentKey.value = key;
-  showMask.value = true;
+
+  if (menuOptions.value.find((item) => item.key == key).noslot) {
+    showMask.value = false;
+  } else {
+    showMask.value = true;
+  }
 }
 
 const animation = ref({
@@ -70,6 +75,7 @@ const menuOptions = ref([
     label: "首页",
     RouteName: "Home",
     key: "home",
+    noslot: true,
   },
   {
     label: "商场",
@@ -104,7 +110,7 @@ const menuOptions = ref([
   position: relative;
   display: flex;
   align-items: center;
-  column-gap: 2em;
+  column-gap: 2.5em;
   height: 100%;
 }
 
@@ -116,8 +122,8 @@ const menuOptions = ref([
   width: 100vw;
   top: calc(var(--1s-header-menu-height) - 4px);
   transition: all 0.2s;
-  background-color: rgba(232, 232, 232, 0.4);
-  backdrop-filter: blur(16px);
+  background-color: rgba(100, 100, 100, 0.4);
+  backdrop-filter: blur(16px) !important;
   opacity: 1;
 }
 
@@ -138,8 +144,8 @@ const menuOptions = ref([
   box-sizing: border-box;
   background-color: #fff;
   box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
-  border-bottom-left-radius: 4%;
-  border-bottom-right-radius: 4%;
+  border-bottom-left-radius: 0.5vw;
+  border-bottom-right-radius: 0.5vw;
   display: flex;
 }
 

@@ -117,7 +117,7 @@ main {
   white-space: pre;
   outline: none;
   min-width: 1px; // 保证在没有内容时也能显示光标
-  caret-color: #0099ff;
+  caret-color: var(--el-color-primary);
   font-family: Microsoft Yahei;
 }
 </style>

@@ -1,7 +1,15 @@
 <template>
   <div class="designiy-image-upload">
-    <el-upload class="designiy-image-upload-main" :auto-upload="false" :show-file-list="false" v-model:file-list="files"
-      :limit="1" :on-exceed="handleExceed" ref="upload" drag>
+    <el-upload
+      class="designiy-image-upload-main"
+      :auto-upload="false"
+      :show-file-list="false"
+      v-model:file-list="files"
+      :limit="1"
+      :on-exceed="handleExceed"
+      ref="upload"
+      drag
+    >
       <img v-if="files[0]" :src="previewUrl" />
       <template v-else>
         <icon-upload style="width: 50px; height: 50px"></icon-upload>
@@ -9,14 +17,21 @@
       </template>
     </el-upload>
     <a-divider />
-    <a-qrcode style="width: 50px; height: 50px;" value="http://www.antdv.com" color="#0099ff" bg-color="#fff" />
+    <a-qrcode
+      style="width: 50px; height: 50px"
+      value="http://www.antdv.com"
+      color="var(--el-color-primary)"
+      bg-color="#fff"
+    />
     <div class="designiy-image-upload-form">
       <div class="designiy-image-upload-form-label">贴纸名称</div>
       <el-input></el-input>
       <div class="designiy-image-upload-form-label">描述</div>
       <el-input type="textarea"></el-input>
-      <div style="flex:1;"></div>
-      <el-button :loading="loading" @click="submit" :disabled="!previewUrl"> 上传该图片 </el-button>
+      <div style="flex: 1"></div>
+      <el-button :loading="loading" @click="submit" :disabled="!previewUrl">
+        上传该图片
+      </el-button>
     </div>
   </div>
 </template>
@@ -24,15 +39,14 @@
 <script setup>
 import iconUpload from "@/icon/upload.svg?component";
 import { ref, reactive, watch, computed, shallowRef } from "vue";
-import { uploadImage } from '@/api/index'
-import { uploadToCOS } from '@/api/cos'
-
+import { uploadImage } from "@/api/index";
+import { uploadToCOS } from "@/api/cos";
 
 const files = ref([]);
 const upload = ref();
-const loading = ref(false)
-const name = ref('')
-const desc = ref('')
+const loading = ref(false);
+const name = ref("");
+const desc = ref("");
 
 const previewUrl = computed(() => {
   let file = files.value[0];
@@ -49,23 +63,21 @@ function handleExceed(files) {
 }
 
 async function submit() {
-  loading.value = true
+  loading.value = true;
 
   const url = await uploadToCOS({
-    file:files.value[0].raw,
-    key: files.value[0].name
-  })
+    file: files.value[0].raw,
+    key: files.value[0].name,
+  });
 
-  debugger
+  debugger;
   await uploadImage({
-    name: '',
-    description: '',
-    file: files.value[0].raw
-  })
-  loading.value = false
+    name: "",
+    description: "",
+    file: files.value[0].raw,
+  });
+  loading.value = false;
 }
-
-
 </script>
 
 <style lang="less">
@@ -103,7 +115,6 @@ async function submit() {
   flex-direction: column;
   justify-content: space-between;
 }
-
 
 .designiy-image-upload-form-label {
   padding: 5px 0;

@@ -226,7 +226,7 @@ export async function initDraggableTextSticker(){
         type: "text",
         img: img,
       });
-      showDecalControl.value = true;
+    //   showDecalControl.value = true;
     },
     base64.value
   );

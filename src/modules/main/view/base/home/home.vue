@@ -10,6 +10,10 @@
 -->
 <template>
   <div class="home">
+    <banner></banner>
+
+    <product></product>
+
     <carousel style="padding: 36px 6vw"></carousel>
 
     <resource style="width: 92%"></resource>
@@ -32,6 +36,8 @@ import { getBannerModel } from "@/api";
 import bar from "./bar.vue";
 import resource from "./source.vue";
 import operate from "./operate.vue";
+import banner from "./banner.vue";
+import product from "./product/index.vue";
 
 let modelInfo = ref("");
 
@@ -50,7 +56,8 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   * {
     flex-shrink: 0;
   }

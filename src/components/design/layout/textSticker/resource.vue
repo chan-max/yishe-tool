@@ -31,7 +31,7 @@ const disabled = ref(false);
 const data: any = ref([]);
 
 // 当前页
-const currentPage = ref(1)
+const currentPage = ref(1);
 
 function load(e, info) {
   var el = e.target;
@@ -41,14 +41,14 @@ function load(e, info) {
       src: info.preview_img,
       ...info,
     });
-    showDecalControl.value = true;
+    // showDecalControl.value = true;
   });
 }
 
 async function scroll() {
-  const res: any = await getTextSticker({ 
-    page:currentPage.value++
-   });
+  const res: any = await getTextSticker({
+    page: currentPage.value++,
+  });
 
   if (!res.list || !res.list.length) {
     disabled.value = true;
@@ -56,7 +56,6 @@ async function scroll() {
   }
   data.value = data.value.concat(res.list);
 }
-
 </script>
 <style>
 .designiy-text-sticker-items {
@@ -66,7 +65,7 @@ async function scroll() {
 
 .designiy-text-sticker-item {
   height: 120px;
-  width:100%;
+  width: 100%;
   flex-shrink: 0;
   margin-bottom: 6px;
   background-color: #fafafa;

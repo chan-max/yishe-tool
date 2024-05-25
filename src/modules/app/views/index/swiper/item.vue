@@ -16,16 +16,28 @@
       </div>
     </Transition>
 
-    <div class="viewer" :class="isDark ? 'viewer-background-dark' : 'viewer-background'" v-if="showViewer">
+    <div
+      class="viewer"
+      :class="isDark ? 'viewer-background-dark' : 'viewer-background'"
+      v-if="showViewer"
+    >
       <drag-to-move v-if="showMovableTip"></drag-to-move>
-      <gltf-viewer @beforeLoad="beforeLoad" @loaded="loaded" @dragStart="dragStart" ref="gltfViewerRef"
-        :model="availableModelInfo.t_model.modelInfo">
+      <gltf-viewer
+        @beforeLoad="beforeLoad"
+        @loaded="loaded"
+        @dragStart="dragStart"
+        ref="gltfViewerRef"
+        :model="availableModelInfo.t_model.modelInfo"
+      >
       </gltf-viewer>
     </div>
 
     <div class="menu-top">
-      <cr-avatar style="width: 36px; height: 36px;border:1.2px solid #fff;"
-        :src="availableModelInfo.t_user.preview_avatar" class="avatar-border">
+      <cr-avatar
+        style="width: 36px; height: 36px; border: 1.2px solid #fff"
+        :src="availableModelInfo.t_user.preview_avatar"
+        class="avatar-border"
+      >
       </cr-avatar>
       <div>
         <div style="font-size: 14px; font-weight: bold; line-height: 20px">
@@ -41,26 +53,41 @@
         <div v-if="availableModelInfo.relationship == RelationshipType.MYSELF">
           我自己
         </div>
-        <div @click="execUnfollow" v-if="availableModelInfo.relationship == RelationshipType.FOLLOWING">
+        <div
+          @click="execUnfollow"
+          v-if="availableModelInfo.relationship == RelationshipType.FOLLOWING"
+        >
           关注中，取消关注
         </div>
-        <div @click="execFollow" v-if="availableModelInfo.relationship == RelationshipType.FOLLOWED">
+        <div
+          @click="execFollow"
+          v-if="availableModelInfo.relationship == RelationshipType.FOLLOWED"
+        >
           我的粉丝，回关
         </div>
-        <div @click="execUnfollow" v-if="availableModelInfo.relationship == RelationshipType.FRIEND">
+        <div
+          @click="execUnfollow"
+          v-if="availableModelInfo.relationship == RelationshipType.FRIEND"
+        >
           我的好友
         </div>
-        <div @click="execFollow" v-if="availableModelInfo.relationship == RelationshipType.STRANGER">
+        <div
+          @click="execFollow"
+          v-if="availableModelInfo.relationship == RelationshipType.STRANGER"
+        >
           陌生人，点个关注
         </div>
       </div>
     </div>
 
     <div class="menu-right">
-      <div style="flex:1"></div>
+      <div style="flex: 1"></div>
       <div class="menu-item">
-        <heart class="icon" @click="availableModelInfo.liked = !availableModelInfo.liked"
-          :style="{ color: availableModelInfo.liked ? '#ea3323' : '' }"></heart>
+        <heart
+          class="icon"
+          @click="availableModelInfo.liked = !availableModelInfo.liked"
+          :style="{ color: availableModelInfo.liked ? '#ea3323' : '' }"
+        ></heart>
         <div class="text">{{ availableModelInfo.like_count }}</div>
       </div>
       <div class="menu-item">
@@ -87,13 +114,23 @@
       <ion-progress-bar type="indeterminate"></ion-progress-bar>
     </div>
   </div>
-  
-  <ion-modal class="modal-comment" :is-open="showComment" :initial-breakpoint="1" :breakpoints="[0, 1]"
-    @didDismiss="showComment = false">
+
+  <ion-modal
+    class="modal-comment"
+    :is-open="showComment"
+    :initial-breakpoint="1"
+    :breakpoints="[0, 1]"
+    @didDismiss="showComment = false"
+  >
     <comment :available-model-info="availableModelInfo"></comment>
   </ion-modal>
-  <ion-modal class="modal-share" :is-open="showShare" :initial-breakpoint="1" :breakpoints="[0, 1]"
-    @didDismiss="showShare = false">
+  <ion-modal
+    class="modal-share"
+    :is-open="showShare"
+    :initial-breakpoint="1"
+    :breakpoints="[0, 1]"
+    @didDismiss="showShare = false"
+  >
     <share-modal :available-model-info="availableModelInfo"></share-modal>
   </ion-modal>
 </template>
@@ -109,30 +146,27 @@ import { likeModel, likeAvailableModel } from "@/api";
 import { timeago } from "@/common/time";
 import dragToMove from "@/components/tips/dragToMove/index.vue";
 import { showMovableTip } from "@/store/stores/app.ts";
-import comment from './modelComment/index.vue'
-import { impact } from '../../../helper/device.ts';
+import comment from "./modelComment/index.vue";
+import { impact } from "../../../helper/device.ts";
 import { isDark } from "@/store/stores/app.ts";
-import crImage from '@/modules/app/components/image.vue'
-import crAvatar from '@/modules/app/components/avatar.vue'
-import shareModal from './share/index.vue'
-import { ActionSheet, ActionSheetButtonStyle } from '@capacitor/action-sheet';
+import crImage from "@/modules/app/components/image.vue";
+import crAvatar from "@/modules/app/components/avatar.vue";
+import shareModal from "./share/index.vue";
+import { ActionSheet, ActionSheetButtonStyle } from "@capacitor/action-sheet";
 import { RelationshipType } from "@/types/user.ts";
-
 
 const props = defineProps(["availableModelInfo", "index"]);
 
-
-
 // 打开评论
-const showComment = ref(false)
+const showComment = ref(false);
 
-const showShare = ref(false)
+const showShare = ref(false);
 
 // 点赞收藏模型
 watch(
   () => props.availableModelInfo.liked,
   async () => {
-    impact()
+    impact();
     await likeAvailableModel({
       availableModelId: props.availableModelInfo.id,
       liked: props.availableModelInfo.liked,
@@ -185,17 +219,16 @@ function loaded() {
   loading.value = false;
 }
 
-
-import { follow, unfollow } from '@/api'
+import { follow, unfollow } from "@/api";
 
 /*
    关注
 */
 async function execFollow() {
   let relationship = await follow({
-    userId: props.availableModelInfo.t_user.id
-  })
-  props.availableModelInfo.relationship = relationship
+    userId: props.availableModelInfo.t_user.id,
+  });
+  props.availableModelInfo.relationship = relationship;
 }
 
 /*
@@ -203,11 +236,10 @@ async function execFollow() {
 */
 async function execUnfollow() {
   let relationship = await unfollow({
-    userId: props.availableModelInfo.t_user.id
-  })
-  props.availableModelInfo.relationship = relationship
+    userId: props.availableModelInfo.t_user.id,
+  });
+  props.availableModelInfo.relationship = relationship;
 }
-
 </script>
 <style>
 /* 用于设置固定高度的评论弹层 */
@@ -251,7 +283,11 @@ ion-modal {
 }
 
 .viewer-background {
-  background: radial-gradient(circle, rgba(233, 233, 233, 1) 50%, rgba(255, 255, 255, 1) 100%);
+  background: radial-gradient(
+    circle,
+    rgba(233, 233, 233, 1) 50%,
+    rgba(255, 255, 255, 1) 100%
+  );
 }
 
 .viewer-background-dark {
@@ -349,7 +385,7 @@ ion-progress-bar {
   /* 为负值时可显示边框 */
   border-radius: inherit;
   /*important*/
-  background: linear-gradient(to right, #0099ff, purple);
+  background: linear-gradient(to right, var(--el-color-primary), purple);
 }
 
 .follow-button {

@@ -5,6 +5,7 @@
       <div class="item">T恤</div>
       <div class="item">马克杯</div>
       <div class="item">毛巾</div>
+      <div class="item">锦旗</div>
     </div>
     <div>
       <div class="title">创建一个贴纸</div>

@@ -82,3 +82,5 @@ usePreventScreenResize();
   }
 }
 </style>
+
+<style scoped></style>

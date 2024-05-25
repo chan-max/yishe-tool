@@ -42,48 +42,34 @@
 </template>
 <script setup>
 import { onMounted, ref, computed } from "vue";
-import {
-  currentController,
-} from "../../store";
-import {
-  Picture,
-  FolderOpened,
-  Search,
-  Operation,
-} from "@element-plus/icons-vue";
+import { currentController } from "../../store";
+import { Picture, FolderOpened, Search, Operation } from "@element-plus/icons-vue";
 import { getImage } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
 import { showImageUplaod, showDecalControl } from "../../store";
-import {
-  imgToFile,
-  createImgObjectURL,
-  imgToBase64,
-} from "@/common/transform/index";
+import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 
-const input = ref()
+const input = ref();
 
 const list = ref([]);
 
 // image load success
 function load(e, info) {
   const img = e.target;
-  initDraggableElement(
-    img,
-    () => {
-      const src = createImgObjectURL(img);
-      const base64 = imgToBase64(img);
+  initDraggableElement(img, () => {
+    const src = createImgObjectURL(img);
+    const base64 = imgToBase64(img);
 
-      currentController.value.stickToMousePosition({
-        img: img,
-        type: "image",
-        local: false,
-        src: src,
-        ...info,
-        base64: base64,
-      });
-      showDecalControl.value = true;
-    }
-  );
+    currentController.value.stickToMousePosition({
+      img: img,
+      type: "image",
+      local: false,
+      src: src,
+      ...info,
+      base64: base64,
+    });
+    // showDecalControl.value = true;
+  });
 }
 
 const page = ref(1);
@@ -140,7 +126,7 @@ async function scroll() {
   flex-wrap: wrap;
   overflow: auto;
   justify-content: space-between;
-  padding:10px;
+  padding: 10px;
   column-gap: 4px;
   row-gap: 4px;
   .el-image {

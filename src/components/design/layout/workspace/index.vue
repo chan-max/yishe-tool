@@ -1,82 +1,150 @@
 <template>
   <div class="container">
     <div class="info">
-      <base-gltf-viewer
-        style="width: 100%; height: 200px; flex-shrink: 0; background: #eee"
-        :src="currentOperatingBaseModelInfo?.url"
-      ></base-gltf-viewer>
+      <div class="preview">
+        <base-gltf-viewer
+          style="flex-shrink: 0; background: #eee"
+          :src="currentOperatingBaseModelInfo?.url"
+        ></base-gltf-viewer>
+      </div>
     </div>
     <div class="decal">
-      <div class="decal-content">
-        <template v-for="decal in stickers">
-          <div class="decal-item">
+      <div class="decal-content" v-if="currentController.decalControllers.length">
+        <template
+          v-for="(decal, index) in currentController.decalControllers"
+          :key="index"
+        >
+          <div class="decal-item" :class="{ active: isActive(decal) }">
             <el-image
-              class="decal-item-image"
-              :src="decal.src || decal.base64"
+              :src="decal.info.src"
               fit="contain"
-            >
-            </el-image>
+              class="decal-item-image"
+            ></el-image>
             <div class="decal-item-content">
-              <div class="decal-item-content-title">这是一张贴纸</div>
-              <div class="decal-item-content-desc">树正不怕月影斜</div>
+              <div class="decal-item-content-title text-ellipsis">名称</div>
+              <div class="decal-item-content-desc text-ellipsis">
+                添加于 {{ formatDate(decal.createdAt) }}
+              </div>
+            </div>
+            <div style="flex: 1"></div>
+            <div class="decal-item-bar">
+              <el-button-group>
+                <el-button link size="small" round>
+                  <el-icon>
+                    <icon-more></icon-more>
+                  </el-icon>
+                </el-button>
+                <el-button link size="small" round @click="setting(decal)">
+                  <el-icon>
+                    <icon-setting></icon-setting>
+                  </el-icon>
+                </el-button>
+                <el-button
+                  @click="removeDecal(decal)"
+                  link
+                  size="small"
+                  round
+                  type="danger"
+                >
+                  <el-icon>
+                    <icon-delete></icon-delete>
+                  </el-icon>
+                </el-button>
+              </el-button-group>
             </div>
           </div>
         </template>
       </div>
+      <template v-else>
+        <div class="w-full h-full flex items-center justify-center">暂无贴纸</div>
+      </template>
     </div>
 
     <div class="bottom">
       <el-button round>
-        <span style="font-size: 11px; font-weight: 400"> 上传 </span>
+        <span> 上传 </span>
       </el-button>
       <el-button
+        :disabled="!currentController.decalControllers.length"
+        @click="showSaveModel = true"
         type="primary"
         round
-        style="
-          flex: 1;
-          background: linear-gradient(
-            90deg,
-            rgba(105, 0, 255, 1) 0%,
-            rgba(105, 0, 255, 0.9) 100%
-          );
-        "
+        style="flex: 1"
       >
-        <span style="font-size: 11px; font-weight: 400"> 共 4 张贴纸 ， 保存该模型 </span>
+        <span>
+          共 {{ currentController.decalControllers.length }} 张贴纸 ， 保存该模型
+        </span>
       </el-button>
     </div>
   </div>
 </template>
 <script setup>
-import { currentOperatingBaseModelInfo, currentController } from "../../store";
+import {
+  currentOperatingBaseModelInfo,
+  currentController,
+  showSaveModel,
+  operatingDecal,
+  showDecalControl,
+} from "../../store";
 import { computed } from "vue";
 import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
+import { useNow, useDateFormat } from "@vueuse/core";
+import { MoreFilled, CloseBold, Edit, EditPen } from "@element-plus/icons-vue";
+import iconSetting from "./setting.svg";
+import iconDelete from "./remove.svg";
+import iconMore from "./more.svg";
 
-const stickers = computed(() => {
-  return currentController.value.decalControllers.map((decal) => {
-    return decal.info;
-  });
-});
+function formatDate(date) {
+  const d = useDateFormat(date, "YYYY-MM-DD HH:mm:ss");
+  return d.value;
+}
+
+function isActive(decal) {
+  return decal.mouseover.value;
+}
+
+function setting(decal) {
+  operatingDecal.value = decal;
+  showDecalControl.value = true;
+}
+
+function removeDecal(decal) {
+  decal.remove();
+}
 </script>
 <style lang="less" scoped>
 .container {
-  width: 320px;
+  width: 360px;
   height: 100%;
   overflow: auto;
   display: flex;
   flex-direction: column;
 }
+
+.info {
+  padding: 1em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.preview {
+  position: relative;
+  width: 160px;
+  height: 160px;
+}
+
 .decal {
+  flex: 1;
+  overflow: auto;
+}
+.decal-content {
   flex: 1;
   overflow: auto;
   display: flex;
   flex-direction: column;
-}
-
-.decal-content {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  padding: 20px 0;
+  align-items: center;
+  padding: 1em;
+  row-gap: 0.5em;
 }
 
 .decal-item {
@@ -84,11 +152,19 @@ const stickers = computed(() => {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  column-gap: 14px;
-  padding: 10px 20px;
+  background-color: #f9f9f9;
+  column-gap: 1em;
+  padding: 1em;
+  border-radius: 1em;
+  transition: all 0.3s;
   &:hover {
-    background: #f6f6f6;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+    cursor: pointer;
   }
+}
+
+.active {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
 }
 
 .decal-item-image {
@@ -98,7 +174,6 @@ const stickers = computed(() => {
 }
 
 .decal-item-content {
-  height: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -108,15 +183,24 @@ const stickers = computed(() => {
   overflow: hidden; //超出的文本隐藏
   text-overflow: ellipsis; //溢出用省略号显示
   white-space: nowrap; //溢出不换行
-  font-size: 1.5em;
-  color: #999;
+  font-size: 1em;
+  color: #555;
 }
 
 .decal-item-content-desc {
   overflow: hidden; //超出的文本隐藏
   text-overflow: ellipsis; //溢出用省略号显示
-  font-size: 1em;
+  font-size: 0.9em;
   color: #aaa;
+}
+
+.decal-item-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  :deep(.el-button) {
+    padding: 0 0.5em;
+  }
 }
 
 .bottom {

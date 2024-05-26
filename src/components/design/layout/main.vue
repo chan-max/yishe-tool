@@ -108,7 +108,7 @@
 
   <diydialog
     :show="showSaveModel"
-    title="保存该模型"
+    title="保存模型"
     @close="showSaveModel = false"
     :animation="basicContainerAnimation"
   >

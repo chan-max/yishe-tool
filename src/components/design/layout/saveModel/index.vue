@@ -29,7 +29,7 @@ async function save() {
   let localDecals = currentController.value.decalControllers.filter(
     (decal) => decal.isLocal
   );
-  
+
   if (localDecals.length) {
     await Promise.all(
       localDecals.map((localDecal) => {

@@ -212,8 +212,6 @@ export const operatingTextStickerTextOrientation = ref('upright')
 // 是否展示模型上传弹窗
 export const showSaveModel = ref(false)
 
-
-
 // 系统是否成功连接 websocket
 export const online = ref(false);
 watch(online,(value) => {

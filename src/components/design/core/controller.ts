@@ -28,7 +28,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
-import { reactive, ref, shallowReactive,nextTick } from "vue";
+import { reactive, ref, shallowReactive, nextTick } from "vue";
 import { reactify, useDebounceFn, useMouse, useMouseInElement } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
@@ -180,8 +180,8 @@ export class ModelController {
         );
         this.resizeObserver.observe(canvasContainer);
         this.initClickEvent();
+        this.initMousemoveEvent();
         this.initMousePositionHandler(this.canvasContainer);
-
     }
 
     // 记录已渲染的帧数
@@ -259,7 +259,7 @@ export class ModelController {
         // }
 
         this.removeMainModel();
-        
+
         message.loading({ content: `正在加载模型...`, key: 'loadingmodel', duration: 0 });
         try {
             this.gltf = await gltfLoader(url);
@@ -326,6 +326,32 @@ export class ModelController {
         this._onClickCbs.add(cb);
     }
 
+    // 鼠标移动
+    private _onMousemove = new Set();
+    public onMousemove(cb: any) {
+        this._onMousemove.add(cb);
+    }
+
+    private initMousemoveEvent(){
+
+
+        var latest = new Date().getTime();
+
+        this.canvasContainer.addEventListener("mousemove", (event: any) => {
+                // 确定 点击
+                let now = new Date().getTime()
+
+                // 简易版节流
+                if((now - latest) < 99){
+                    return
+                }
+
+                latest = now
+                console.log('canvas mousemove')
+                this._onMousemove.forEach((cb: any) => cb.call(this, this));
+        });
+    }
+
     private initClickEvent() {
         // 禁止滑动触发点击事件
         let mousedownX = null;
@@ -361,9 +387,9 @@ export class ModelController {
 
     // 保存所有的贴纸
     decalControllers: any = shallowReactive([]);
-    
+
     // 进行贴图
-    async stickToMousePosition(info,cb) {
+    async stickToMousePosition(info, cb) {
         const decal = new DecalController(info)
         await decal.stickToMousePosition(cb)
     }
@@ -438,28 +464,28 @@ export class ModelController {
         this.camera.position.copy(this.initialCameraPosition)
     }
 
-    lookBack(){
-      let v = new Vector3(this.initialCameraPosition.x, this.initialCameraPosition.y, -this.initialCameraPosition.z)
-      this.camera.position.copy(v)
+    lookBack() {
+        let v = new Vector3(this.initialCameraPosition.x, this.initialCameraPosition.y, -this.initialCameraPosition.z)
+        this.camera.position.copy(v)
     }
 
-    lookTop(){
-        
-    }
-
-    lookBottom(){
-
-    }
-    
-    lookLeft(){
+    lookTop() {
 
     }
 
-    lookRight(){
+    lookBottom() {
 
     }
 
-    getFullViewImages(){
+    lookLeft() {
+
+    }
+
+    lookRight() {
+
+    }
+
+    getFullViewImages() {
 
     }
 }

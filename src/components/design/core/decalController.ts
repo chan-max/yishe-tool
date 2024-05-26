@@ -13,6 +13,7 @@ import {
   Vector3,
 } from "three";
 import { message } from 'ant-design-vue'
+import {ref} from 'vue'
 
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { currentController, operatingDecal, showDecalControl } from '../store';
@@ -34,6 +35,8 @@ export interface DecalControllerParams {
 
 export class DecalController {
 
+  context = null
+
   // 该贴纸的创建时间
   createdAt = new Date()
 
@@ -41,9 +44,16 @@ export class DecalController {
   updatedAt = new Date()
 
   constructor(info: any) {
+    this.context = this
     this.info = info
     this.img = info.img
+
+  }
+
+  // 确认添加该贴纸到场景
+  ensureAdd(){
     this.initDecalClickEvent();
+    this.initMousemoveEvent();
     currentController.value.decalControllers.push(this);
     operatingDecal.value = this
   }
@@ -145,8 +155,8 @@ export class DecalController {
   }
 
   //  销毁该贴纸
-  destroy() {
-    this.remove()
+  remove() {
+    this.removeMesh()
 
     // 从贴纸中移除
     currentController.value.decalControllers.splice(currentController.value.decalControllers.indexOf(this), 1)
@@ -174,7 +184,7 @@ export class DecalController {
     if (intersects.length == 0) {
       // 未选中
       message.info('要将贴纸放在模型上')
-      return ;
+      return Promise.reject();
     }
 
     const position = intersects[0].point;
@@ -190,6 +200,7 @@ export class DecalController {
     this._rotation = rotation;
     this.create()
 
+    this.ensureAdd()
     if(cb){
       cb()
     }
@@ -197,7 +208,7 @@ export class DecalController {
 
 
   // 移除当前贴纸
-  remove() {
+  private removeMesh() { 
     currentController.value.scene.remove(this.mesh);
   }
 
@@ -241,6 +252,33 @@ export class DecalController {
     // 绑定点击事件
     currentController.value.onClick(decalClick.bind(this))
   }
+
+
+  // 鼠标是否覆盖在元素上
+  mouseover = ref(false)
+
+  private initMousemoveEvent() {
+    function decalHover() {
+      if (!this.mesh) {
+        return
+      }
+      const raycaster = new Raycaster()
+      raycaster.setFromCamera(currentController.value.mouse, currentController.value.camera)
+
+      const intersects = raycaster.intersectObject(this.mesh, true)
+      const intersect = intersects[0]
+      if (!intersect) {
+        return this.mouseover.value = false
+      }
+      this.mouseover.value = true
+    }
+
+    // 绑定点击事件
+    currentController.value.onMousemove(decalHover.bind(this))
+  }
+
+
+
 
   // 导出该信息
   export() {

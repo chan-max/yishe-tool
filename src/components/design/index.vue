@@ -57,30 +57,6 @@ usePreventScreenResize();
 .designiy {
   font-size: 12px; /* 默认 size */
 }
-
-@media only screen and (min-width: 1960px) {
-  .designiy {
-    font-size: 12px; /* 若 div 宽度在 800px 以下，调整字体大小 */
-  }
-}
-
-@media only screen and (max-width: 1960px) {
-  .designiy {
-    font-size: 12px; /* 若 div 宽度在 800px 以下，调整字体大小 */
-  }
-}
-
-@media only screen and (max-width: 1280px) {
-  .designiy {
-    font-size: 10px; /* 若 div 宽度在 600px 以下，调整字体大小 */
-  }
-}
-
-@media only screen and (max-width: 1280px) {
-  .designiy {
-    font-size: 10px; /* 若 div 宽度在 800px 以下，调整字体大小 */
-  }
-}
 </style>
 
 <style scoped></style>

@@ -20,13 +20,14 @@
 
     <icon-help style="width: 24px; height: 24px; color: #333"></icon-help>
 
-    <el-button @click="showSaveModel = true" size="small"> 上 传 </el-button>
+    <el-button @click="showSaveModel = true" size="small" round> 上 传 </el-button>
 
     <user-avatar v-if="loginStatusStore.isLogin" />
     <el-button
       @click="$router.push({ name: 'Login' })"
       size="small"
       v-else
+      round
       type="primary"
     >
       登 录

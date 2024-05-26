@@ -38,22 +38,15 @@ import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/i
 function load(e, info) {
   const img = e.target;
   initDraggableElement(img, async () => {
-    const src = createImgObjectURL(img);
     const base64 = imgToBase64(img);
-
-    currentController.value.stickToMousePosition(
-      {
-        img: img,
-        type: "image",
-        local: false,
-        src: src,
-        ...info,
-        base64: base64,
-      },
-      () => {
-        // showDecalControl.value = true;
-      }
-    );
+    currentController.value.stickToMousePosition({
+      img: img,
+      type: "image",
+      local: false,
+      src: img.src,
+      ...info,
+      base64: base64,
+    });
   });
 }
 </script>

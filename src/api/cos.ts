@@ -23,7 +23,10 @@ export async function uploadToCOS({
             Bucket: cos.options.Bucket,
             Region: cos.options.Region
         })
-        return res.Location
+        return {
+            url:res.Location,
+            key
+        }
     } catch (e) {
         throw e
     }

@@ -60,6 +60,7 @@ declare module 'vue' {
     TextDesign: typeof import('./src/components/design/components/textDesign/index.vue')['default']
     TextDesigner: typeof import('./src/components/design/components/textDesigner/index.vue')['default']
     TextSticker: typeof import('./src/components/design/layout/textSticker/index.vue')['default']
+    Upload: typeof import('./src/components/design/layout/upload/index.vue')['default']
     UserAvatar: typeof import('./src/components/user/userAvatar.vue')['default']
     UserAvatarForm: typeof import('./src/components/user/userAvatarForm.vue')['default']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']

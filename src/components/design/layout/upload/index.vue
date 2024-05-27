@@ -1,42 +1,7 @@
+import { createStickerApi } from '@'; import { uploadFile } from '@'; import { uploadFile
+} from '@'; import { showImageUplaod } from '@'; import { createStickerApi } from '@';
 <template>
-  <div class="bar-container">
-    <div class="bar">
-      <div></div>
-      <div>
-        <el-button class="button" plain @click="$router.push({ name: 'Design' })">
-          快速开始
-        </el-button>
-      </div>
-    </div>
-
-    <div class="bar">
-      <div></div>
-      <div>
-        <el-button class="button" plain @click="dialogVisible = true">
-          资源上传
-        </el-button>
-      </div>
-    </div>
-
-    <div class="bar">
-      <div></div>
-      <div>
-        <el-button class="button" plain @click="dialogVisible = true">
-          制作文字贴纸
-        </el-button>
-      </div>
-    </div>
-    <div class="bar">
-      <div></div>
-      <div>
-        <el-button class="button" plain @click="dialogVisible = true">
-          制作图片贴纸
-        </el-button>
-      </div>
-    </div>
-  </div>
-
-  <el-dialog v-model="dialogVisible" title="资源上传" width="680" @close="close">
+  <div class="container">
     <el-upload
       style="padding: 0"
       v-model:file-list="fileList"
@@ -44,7 +9,7 @@
       :auto-upload="false"
       multiple
       v-bind="$attrs"
-      accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff ,.glb"
+      accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff"
     >
       <div class="placeholder">
         <icon-file-upload></icon-file-upload>
@@ -56,14 +21,14 @@
       </div>
       <template #tip>
         <div class="tip">
-          <div>支持 jpg，png，svg等图片格式 ， ttf，woff等字体格式，glb模型文件</div>
-          <div>最大尺寸 5 MB</div>
+          支持 jpg，png，svg等图片格式 ，图片格式会自动添加到贴纸中,
+          ttf，woff等字体格式,字体可以在我的字体中查看
         </div>
       </template>
       <template #file="{ file }">
         <div class="file-bar">
           <div>
-            <el-icon size="24"
+            <el-icon size="32"
               ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
             ></el-icon>
           </div>
@@ -80,24 +45,22 @@
         </div>
       </template>
     </el-upload>
-    <template #footer>
-      <div class="dialog-footer">
-        <div style="flex: 1"></div>
-        <el-button link size="small" :icon="QuestionFilled">了解更多 </el-button>
-        <el-button size="default" @click="dialogVisible = false">取消</el-button>
-        <el-button size="default" @click="doUpload" :loading="loading">
-          {{ loading ? "上传中" : "上传" }}
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
+    <footer>
+      <div style="flex: 1"></div>
+      <el-button type="primary" round @click="doUpload" :loading="loading">
+        上传
+      </el-button>
+    </footer>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import fileUpload from "./fileUpload/index.vue";
 import { message } from "ant-design-vue";
-import { uploadManyFile } from "@/api";
+import { uploadManyFile, createStickerApi, uploadFile } from "@/api";
+import { uploadToCOS } from "@/api/cos";
+import { showUpload } from "@/components/design/store.ts";
 import {
   UploadFilled,
   CircleCloseFilled,
@@ -126,8 +89,6 @@ function close() {
   loading.value = false;
 }
 
-const dialogVisible = ref(false);
-
 const fileList = ref([]);
 
 function removeFile(file) {
@@ -143,54 +104,56 @@ async function doUpload() {
     return;
   }
 
+  /*
+   上传时区分 图片和字体等其他文件
+   图片直接上传到 贴纸
+   其他上传到文件
+ */
+
   loading.value = true;
-  const params = fileList.value.map((item: any) => {
-    return {
-      raw: item.raw,
-      name: item.raw.name,
-      size: item.size,
-      type: getFileSuffix(item.name),
-    };
-  });
-  uploadManyFile(params).catch(() => {
+
+  try {
+    await Promise.all(
+      fileList.value.map(async (file) => {
+        const type = getFileSuffix(file.name);
+        if (["jpg", "png", "svg"].includes(type)) {
+          const { url } = await uploadToCOS({ file: file.raw });
+          const params = {
+            name: file.raw.name,
+            size: file.size,
+            url,
+            type: "image", // 默认为图片贴纸,
+            thumbnail: url,
+          };
+          await createStickerApi(params);
+        } else {
+          /* 需要生成缩略图 */
+          const params = {
+            raw: file.raw,
+            name: file.raw.name,
+            size: file.size,
+          };
+          await uploadFile(params);
+        }
+        return;
+      })
+    );
+
+    message.success("上传成功!");
+    showUpload.value = false;
+    loading.value = false;
+    fileList.value = [];
+  } catch (e) {
     message.success("上传失败!");
     loading.value = false;
-  });
-  message.success("上传成功!");
-  loading.value = false;
-  dialogVisible.value = false;
-  fileList.value = [];
+  }
 }
 </script>
 
 <style lang="less" scoped>
-.bar {
-  width: 100%;
-  height: 300px;
-  background: #f8f8f8;
-  border-radius: 8px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  padding: 0 5%;
-  justify-content: space-between;
-  box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
-  // animation: gradient 20s infinite;
-}
-
-@keyframes gradient {
-  0% {
-    background: red;
-  }
-  33% {
-    background: green;
-  }
-  66% {
-    background: blue;
-  }
-  100% {
-    background: red;
-  }
+.container {
+  padding: 1em;
+  width: 600px;
 }
 
 .button {
@@ -233,8 +196,8 @@ async function doUpload() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
-  font-size: 12px;
+  padding: 1em;
+  font-size: 1em;
   font-weight: bold;
   color: #ccc;
 }
@@ -251,15 +214,9 @@ async function doUpload() {
   font-size: 12px;
 }
 
-.dialog-footer {
+footer {
   display: flex;
-  justify-content: space-between;
-}
-
-.bar-container {
-  width: 92%;
-  display: flex;
-  flex-direction: column;
-  row-gap: 30px;
+  align-items: center;
+  padding: 1em;
 }
 </style>

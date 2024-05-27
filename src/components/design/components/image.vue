@@ -31,12 +31,21 @@ import { initDraggableElement } from "@/components/design/utils/draggable";
 
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 
+const props = defineProps({
+  draggable: {
+    default: true,
+  },
+});
+
 /*
  初始化可拖拽
 */
 
 function load(e, info) {
   const img = e.target;
+  if (!props.draggable) {
+    return;
+  }
   initDraggableElement(img, async () => {
     const base64 = imgToBase64(img);
     currentController.value.stickToMousePosition({

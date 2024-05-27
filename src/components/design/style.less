@@ -4,12 +4,14 @@ h3,
 h4,
 h5,
 h6 {
+  padding: 0;
+  margin: 0;
 }
 
 h6{
-  font-size: 10px;
+  font-size: 1em;
   color:#222;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 * {
@@ -52,7 +54,11 @@ h6{
 @media only screen and (min-width: 1960px) {
   .designiy {
     font-size: 12px; 
-      --el-font-size-base:12px!important ;
+    --el-font-size-base:12px!important ;
+
+    .el-button--small{
+      font-size: 12px; 
+    }
   }
 }
 
@@ -60,6 +66,9 @@ h6{
   .designiy {
     font-size: 11px; 
       --el-font-size-base:11px!important;
+      .el-button--small{
+        font-size: 11px; 
+      }
   }
 }
 
@@ -67,6 +76,9 @@ h6{
   font-size: 10px; 
   .designiy {
       --el-font-size-base:10px!important;
+      .el-button--small{
+        font-size: 10px; 
+      }
   }
 }
 
@@ -74,5 +86,8 @@ h6{
   .designiy {
     font-size: 9px; 
     --el-font-size-base:9px!important;
+    .el-button--small{
+      font-size: 9px; 
+    }
   }
 }

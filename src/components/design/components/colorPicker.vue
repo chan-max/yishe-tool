@@ -9,8 +9,6 @@
 import { ColorPicker } from "vue3-colorpicker";
 import "vue3-colorpicker/style.css";
 
-console.log(ColorPicker);
-
 import { useAttrs } from "vue";
 
 let attrs = useAttrs();

@@ -107,6 +107,15 @@
   </diydialog>
 
   <diydialog
+    :show="showUpload"
+    title="资源上传"
+    @close="showUpload = false"
+    :animation="basicContainerAnimation"
+  >
+    <upload></upload>
+  </diydialog>
+
+  <diydialog
     :show="showSaveModel"
     title="保存模型"
     @close="showSaveModel = false"
@@ -148,6 +157,7 @@ import {
   showBasicCanvas,
   useDesignStore,
   showQrcode,
+  showUpload,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -173,7 +183,7 @@ import qrcode from "./qrcode/index.vue";
 import { DirectionalLight, AmbientLight, PointLight } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { initWebsocket } from "../utils/websocket.ts";
-
+import upload from "./upload/index.vue";
 // initWebsocket();
 
 const des = useDesignStore();

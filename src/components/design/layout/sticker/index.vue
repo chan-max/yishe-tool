@@ -17,7 +17,7 @@
         <el-popover placement="auto" trigger="click" width="auto">
           <template #reference>
             <div class="bar">
-              <div class="title text-ellipsis">真丝一个图片真丝一个图片真丝一个图片</div>
+              <div class="title text-ellipsis">{{ item.name || "......" }}</div>
               <el-icon><ArrowRightBold /></el-icon>
             </div>
           </template>
@@ -69,13 +69,12 @@ const { list, getList } = usePaging((params) =>
   width: 100%;
   flex: 1;
   overflow: auto;
-
   display: grid;
-  grid-template-columns: repeat(auto-fit, 120px);
+  grid-template-columns: repeat(auto-fit, @item-width);
   justify-items: center;
-  column-gap: 8px;
-  row-gap: 16px;
-  padding-bottom: 12px;
+  column-gap: 0.5em;
+  row-gap: 1em;
+  padding-bottom: 1em;
   justify-content: center;
 }
 
@@ -93,7 +92,7 @@ const { list, getList } = usePaging((params) =>
   display: flex;
   flex-direction: column;
   align-items: center;
-  row-gap: 8px;
+  row-gap: 0.5em;
 }
 
 .bar {
@@ -102,7 +101,7 @@ const { list, getList } = usePaging((params) =>
   color: #555;
   display: flex;
   justify-content: space-between;
-  column-gap: 8px;
+  column-gap: 1em;
   &:hover {
     color: #000;
     cursor: pointer;

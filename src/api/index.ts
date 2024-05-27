@@ -68,7 +68,6 @@ export const getFonts = () =>
     resolve(res.data.data);
   });
 
-export const uploadModel = (data) => apiInstance.post(Url.UPLOAD_MODEL, data);
 
 // 获取模型列表
 export const getModelList = (data) =>
@@ -107,7 +106,7 @@ export const updateUserInfo = (params) => apiInstance.post(Url.UPDATE_USER_INFO,
 
 // 上传文字贴纸
 export const uploadTextSticker = (params) => new Promise(async (resolve) => {
-  const res = await apiInstance.post(Url.UPLOAD_TEXT_STICKER, params)
+  const res = await apiInstance.post(Url.CREATE_TEXT_STICKER, params)
   resolve(res.data.data);
 })
 
@@ -294,7 +293,8 @@ export const uploadManyFile = (params) => new Promise(async (resolve, reject) =>
 
 export const uploadFile = (params) => new Promise(async (resolve, reject) => {
 
-  const url = await uploadToCOS({key:new Date().getTime(),file:params.raw})
+  const cos = await uploadToCOS({key:new Date().getTime(),file:params.raw})
+  const url = cos.url
 
   const data = {
     name:params.name,
@@ -359,3 +359,9 @@ export const getFontListApi = (params) => new Promise(async (resolve,reject) => 
   })
   resolve(res.data.data)
 })
+
+
+/*
+ 上传自定义的模型
+*/
+export const createCustomModelApi = (data) => apiInstance.post(Url.UPLOAD_CUSTOM_MODEL, data);

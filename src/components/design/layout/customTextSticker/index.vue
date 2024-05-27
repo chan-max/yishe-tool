@@ -4,8 +4,8 @@
     <sticker-canvas class="canvas"></sticker-canvas>
     <operating-form></operating-form>
     <footer>
-      <el-button-group size="small" link>
-        <el-button :loading="loading" @click="exportPng"> 导出 png </el-button>
+      <el-button-group link style="width: 100%">
+        <el-button :loading="loading" @click="exportPng" round> 导出 png </el-button>
         <!-- <el-button @click="exportTextStickerSvg" type="primary"> 导出svg </el-button> -->
 
         <el-popconfirm
@@ -14,12 +14,12 @@
           title="确认要上传该贴纸吗"
         >
           <template #reference>
-            <el-button> 上传 </el-button>
+            <el-button round> 上传 </el-button>
           </template>
         </el-popconfirm>
 
-        <el-button> 暂存到工作台 </el-button>
-        <el-button> 分享 </el-button>
+        <el-button round> 暂存到工作台 </el-button>
+        <el-button round> 分享 </el-button>
       </el-button-group>
     </footer>
   </div>
@@ -68,5 +68,11 @@ header {
 footer {
   padding: 1em;
   width: 100%;
+  .el-button-group {
+    display: flex;
+    .el-button {
+      flex: 1;
+    }
+  }
 }
 </style>

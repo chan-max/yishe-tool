@@ -18,7 +18,7 @@
     </div>
     <div style="flex-grow: 1"></div>
 
-    <icon-help style="width: 24px; height: 24px; color: #333"></icon-help>
+    <el-button @click="showUpload = true" size="small" round> 资源上传 </el-button>
 
     <el-button @click="showSaveModel = true" size="small" round> 上 传 </el-button>
 
@@ -44,6 +44,7 @@ import {
   isDarkMode,
   currentController,
   showSaveModel,
+  showUpload,
 } from "../store";
 
 import { Share } from "@element-plus/icons-vue";

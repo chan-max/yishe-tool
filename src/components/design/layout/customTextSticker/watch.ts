@@ -180,7 +180,6 @@ watch(() => operatingTextStickerOptions.value.borderWidth,async () => {
     initDraggableTextSticker()
 })
 
-
 function setBorderColor(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
@@ -192,7 +191,6 @@ watch(() => operatingTextStickerOptions.value.borderColor,async () => {
     setBorderColor()
     initDraggableTextSticker()
 })
-
 
 
 function setBorderStyle(){
@@ -225,7 +223,9 @@ export async function initDraggableTextSticker(){
         local: true,
         type: "text",
         img: img,
-        src:img.src
+        src:img.src,
+        meta:{
+        }
       });
     //   showDecalControl.value = true;
     },
@@ -235,7 +235,9 @@ export async function initDraggableTextSticker(){
 
 export async function exportTextStickerPng(){
     const b6 =  await toPng(canvasBackgroundEl.value);
+
     let file = base64ToFile(b6)
+
     let a = document.createElement('a')
     a.href = URL.createObjectURL(file)
     a.download = file.name

@@ -1,6 +1,6 @@
 <template>
-  <div class="designiy-decal-control-content">
-    <div class="designiy-decal-control-title">旋转角度</div>
+  <div class="container">
+    <h6>旋转角度</h6>
     <el-slider
       :min="0"
       :max="100"
@@ -9,7 +9,7 @@
       size="small"
       @input="onRotationInput"
     />
-    <div class="designiy-decal-control-title">贴纸尺寸</div>
+    <h6>贴纸尺寸</h6>
     <el-slider
       :min="0"
       :max="100"
@@ -18,8 +18,7 @@
       size="small"
       @input="onSizeInput"
     />
-    <div class="designiy-decal-control-title">固定位置</div>
-
+    <h6>固定位置</h6>
     <el-button @click="remove" type="primary" round>移除该贴纸</el-button>
   </div>
 </template>
@@ -54,8 +53,8 @@ function remove() {
 }
 </script>
 
-<style>
-.designiy-decal-control-content {
+<style scoped lang="less">
+.container {
   width: 100%;
   height: 100%;
   display: flex;
@@ -67,7 +66,7 @@ function remove() {
   }
 }
 
-.designiy-decal-control-title {
+.label {
   font-size: 12px;
   font-weight: bold;
   color: #555;

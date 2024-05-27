@@ -124,6 +124,9 @@ watch(showDecalList, async (value) => {
     }
 })
 
+/* 是否展示上传 */
+export const showUpload = ref(false)
+
 // 是否展示模型信息
 export const showModelInfo = ref(false)
 watch(showModelInfo, async (value) => {

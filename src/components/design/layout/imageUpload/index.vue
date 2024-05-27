@@ -65,12 +65,11 @@ function handleExceed(files) {
 async function submit() {
   loading.value = true;
 
-  const url = await uploadToCOS({
+  const { url } = await uploadToCOS({
     file: files.value[0].raw,
     key: files.value[0].name,
   });
 
-  debugger;
   await uploadImage({
     name: "",
     description: "",

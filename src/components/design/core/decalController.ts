@@ -20,7 +20,7 @@ import { currentController, operatingDecal, showDecalControl } from '../store';
 
 export interface DecalControllerParams {
   // 定义贴纸的类型
-  type: 'image' | 'text' | 'composition',
+  type: 'image' | 'text' | 'composition'| 'qrcode'|'barcode',
   // 贴纸的资源id,如果不是上传的文件则不需要
   id?: any,
   // 使用的图片元素
@@ -47,7 +47,6 @@ export class DecalController {
     this.context = this
     this.info = info
     this.img = info.img
-
   }
 
   // 确认添加该贴纸到场景

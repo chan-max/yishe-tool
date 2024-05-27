@@ -47,7 +47,7 @@ export enum Url {
     GET_FONTS = '/getFonts',
 
     // 上传模型
-    UPLOAD_MODEL = '/uploadModel',
+    UPLOAD_CUSTOM_MODEL = '/api/custom-model/create',
 
     // 获取模型列表
     GET_MODEL_LIST = '/getModelList',
@@ -60,7 +60,7 @@ export enum Url {
     // 更新用户信息
     UPDATE_USER_INFO = '/updateUserInfo',
 
-    UPLOAD_TEXT_STICKER = '/uploadTextSticker',
+    CREATE_TEXT_STICKER = '/uploadTextSticker',
 
     // 获取所有文字贴纸
     GET_TEXT_STICKER = '/getTextSticker',

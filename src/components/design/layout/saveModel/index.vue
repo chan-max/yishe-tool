@@ -16,7 +16,7 @@
 </template>
 <script setup>
 import { onShortcutTrigger } from "../../shortcut/index";
-import { uploadModel, uploadTextSticker } from "@/api";
+import { createCustomModelApi, uploadTextSticker } from "@/api";
 import { ElMessageBox } from "element-plus";
 import { currentController } from "../../store";
 import { base64ToFile } from "@/common/transform/base64ToFile";
@@ -25,11 +25,12 @@ import { useLoginStatusStore } from "@/store/stores/login";
 const loginStore = useLoginStatusStore();
 
 async function save() {
-  // 上传本地贴纸
+  // 上传本地贴纸 , 过滤出本地的贴纸
   let localDecals = currentController.value.decalControllers.filter(
     (decal) => decal.isLocal
   );
 
+  // 只负责把贴纸上传即可
   if (localDecals.length) {
     await Promise.all(
       localDecals.map((localDecal) => {
@@ -48,7 +49,7 @@ async function save() {
     );
   }
 
-  await uploadModel({
+  await createCustomModelApi({
     img: currentController.value.getScreenShotFile(),
     modelInfo: JSON.stringify(currentController.value.exportTo1stf()),
     user_id: loginStore.userInfo.id,

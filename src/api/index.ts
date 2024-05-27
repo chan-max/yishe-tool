@@ -291,6 +291,7 @@ export const uploadManyFile = (params) => new Promise(async (resolve, reject) =>
 })
 
 
+
 export const uploadFile = (params) => new Promise(async (resolve, reject) => {
 
   const cos = await uploadToCOS({key:new Date().getTime(),file:params.raw})
@@ -298,11 +299,9 @@ export const uploadFile = (params) => new Promise(async (resolve, reject) => {
 
   const data = {
     name:params.name,
-    type:params.type,
+    type:params.name.split(".").pop(),
     size:params.size,
-    meta:{
-      date:''
-    },
+    meta:params.meta || {},
     url
   }
 

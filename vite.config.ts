@@ -29,6 +29,7 @@ import legacy from '@vitejs/plugin-legacy';
 // import AntdvResolver from 'antdv-component-resolver'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import svgLoader from 'vite-svg-loader'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 
 export default defineConfig((config: any) => {
 
@@ -70,7 +71,9 @@ export default defineConfig((config: any) => {
       vue({
         template: { transformAssetUrls }
       }),
-      svgLoader()
+      svgLoader(),
+      vueJsx({
+      }),
     ],
     base: isApp ? './' : '/', // 普通路径与app路径处理方式不同
     build: isApp ? appBuild : baseBuild,

@@ -36,7 +36,12 @@
       <div class="login-error">{{ errMsg }}</div>
 
       <el-form-item>
-        <el-button style="width: 100%" type="primary" @click="submit(form)">
+        <el-button
+          style="width: 100%"
+          type="primary"
+          @click="submit(form)"
+          :loading="loading"
+        >
           登 录
         </el-button>
       </el-form-item>
@@ -57,7 +62,7 @@
 </template>
 
 <script setup>
-import { reactive, toRaw, ref, computed, onMounted } from "vue";
+import { reactive, toRaw, ref, computed, onMounted, nextTick } from "vue";
 import { login } from "@/api/index";
 import { ResponseStatusCodeEnum } from "@common/statusCode.js";
 import { useLoginStatusStore } from "@/store/stores/login";
@@ -77,6 +82,8 @@ const route = useRoute();
 
 // 有来源的话成功后会跳回去
 const from = route.query.form;
+
+const loading = ref(false);
 
 const showPassword = ref(false);
 
@@ -119,20 +126,15 @@ async function submit(form) {
     return;
   }
 
-  let res = await login(toRaw(loginForm));
-  let status = res.status;
-  if (status === ResponseStatusCodeEnum.ACCOUNT_NOT_EXIST) {
-    message.info("账号不存在");
-  } else if (status === ResponseStatusCodeEnum.PASSWORD_ERROR) {
-    message.info("密码错误");
-  } else if (status === ResponseStatusCodeEnum.LOGIN_SUCCESS) {
-    message.success("登录成功");
-    doLoginAction(res.data, isOnce.value);
+  loading.value = true;
 
-    setTimeout(() => {
-      router.replace({ name: "Home" });
-    }, 1000);
-  }
+  let res = await login(toRaw(loginForm));
+
+  doLoginAction(res.data, isOnce.value);
+  message.success("登录成功!");
+  await nextTick();
+  loading.value = false;
+  router.replace({ name: "Home" });
 }
 </script>
 

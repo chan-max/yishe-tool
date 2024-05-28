@@ -4,7 +4,7 @@ import { apiInstance, source } from "./apiInstance";
 import { Url } from "./url";
 
 // 注册 ，账号密码手机号
-export const signup = (data: any) =>
+export const register = (data: any) =>
   new Promise(async (resolve, reject) => {
     let res = await apiInstance.post(Url.SINGUP, data);
     resolve(res.data);
@@ -14,7 +14,7 @@ export const signup = (data: any) =>
 export const login = (data) =>
   new Promise(async (resolve, reject) => {
     let res = await apiInstance.post(Url.LOGIN, data);
-    resolve(res.data);
+    resolve(res);
   });
 
 // 获取首页展示栏模型

@@ -6,7 +6,8 @@
       fit="contain"
       lazy
       @load="load($event, i)"
-      style="width: 100%; height: 100%; padding: 12px"
+      style="width: 100%; height: 100%"
+      :style="{ padding }"
     >
       <template #placeholder>
         <div class="image_loading"></div>
@@ -32,8 +33,12 @@ import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 
 const props = defineProps({
+  // 是否可拖拽
   draggable: {
     default: true,
+  },
+  padding: {
+    default: "1em",
   },
 });
 

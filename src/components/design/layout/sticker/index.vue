@@ -12,18 +12,22 @@
       </div>
     </div>
     <div class="list" v-infinite-scroll="getList" :infinite-scroll-distance="150">
-      <div class="item" v-for="item in list">
-        <desiamge :src="'http://' + item.thumbnail" class="image"></desiamge>
-        <el-popover placement="auto" trigger="click" width="auto">
-          <template #reference>
-            <div class="bar">
-              <div class="title text-ellipsis">{{ item.name || "......" }}</div>
-              <el-icon><ArrowRightBold /></el-icon>
-            </div>
-          </template>
-          <sticker-popover></sticker-popover>
-        </el-popover>
-      </div>
+      <el-row :gutter="8" style="row-gap: 1em">
+        <el-col :span="24 / column" v-for="item in list" align="center">
+          <div class="item">
+            <desiamge :src="'http://' + item.thumbnail" class="image"></desiamge>
+            <el-popover placement="auto" trigger="click" width="auto">
+              <template #reference>
+                <div class="bar">
+                  <div class="title text-ellipsis">{{ item.name || "......" }}</div>
+                  <el-icon><ArrowRightBold /></el-icon>
+                </div>
+              </template>
+              <sticker-popover></sticker-popover>
+            </el-popover>
+          </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -41,13 +45,17 @@ const { list, getList } = usePaging((params) =>
     pageSize: 10,
   })
 );
+
+// 列表展示几列
+const column = ref(2);
+
+// const imgHeight = ref(3);
+// const imgWidth = ref(3);
 </script>
 <style lang="less" scoped>
-@gap: 8px;
-@item-width: 120px;
-@width: @item-width * 2 + @gap * 3;
+@item-width: 40px;
 .designiy-sticker {
-  width: @width;
+  width: 260px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -55,10 +63,10 @@ const { list, getList } = usePaging((params) =>
 }
 
 .menu {
-  height: 60px;
-  width: 250px;
+  width: 100%;
   display: flex;
   align-items: center;
+  padding: 1em;
 }
 
 .search {
@@ -69,25 +77,11 @@ const { list, getList } = usePaging((params) =>
   width: 100%;
   flex: 1;
   overflow: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, @item-width);
-  justify-items: center;
-  column-gap: 0.5em;
-  row-gap: 1em;
-  padding-bottom: 1em;
-  justify-content: center;
+  padding: 1em;
 }
 
-.image {
-  width: @item-width;
-  height: @item-width;
-}
-
-.title {
-  width: 100%;
-}
 .item {
-  width: @item-width;
+  width: auto;
   height: auto;
   display: flex;
   flex-direction: column;
@@ -95,12 +89,23 @@ const { list, getList } = usePaging((params) =>
   row-gap: 0.5em;
 }
 
+.image {
+  width: 100%;
+  height: 10em;
+}
+
+.title {
+  width: 100%;
+  text-align: left;
+}
+
 .bar {
   width: 100%;
-  font-size: 10px;
+  font-size: 1em;
   color: #555;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   column-gap: 1em;
   &:hover {
     color: #000;
@@ -108,8 +113,8 @@ const { list, getList } = usePaging((params) =>
   }
 
   .el-icon {
-    height: 14px;
-    line-height: 14px;
+    height: 1em;
+    line-height: 1em;
   }
 }
 </style>

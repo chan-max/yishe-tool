@@ -9,26 +9,21 @@
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
-    <div class="user-avatar">
-        <el-popover
-        placement="bottom-start"
-        trigger="click"
-        width="auto"
-        >
-        <template #reference>
-            <el-avatar shape="circle" :src="avatar" />
-        </template>
-        <user-avatar-form></user-avatar-form>
-        </el-popover>
-    </div>
+  <div class="user-avatar">
+    <el-popover placement="bottom-start" trigger="click" width="auto">
+      <template #reference>
+        <el-avatar shape="circle" :src="avatar" />
+      </template>
+      <user-avatar-form></user-avatar-form>
+    </el-popover>
+  </div>
 </template>
 <script setup>
-
 import { useLoginStatusStore } from "@/store/stores/login";
 import { doLogout } from "@/store/stores/loginAction";
 import { computed, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
-import userAvatarForm from './userAvatarForm.vue'
+import userAvatarForm from "./userAvatarForm.vue";
 
 let route = useRoute();
 
@@ -39,18 +34,16 @@ const avatar = computed(() => {
   // 默认头像
   return loginStatusStore.userInfo?.preview_avatar || "/defaultAvatar/avatar3.png";
 });
-
 </script>
-<style lang="less">
-    .user-avatar{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border:2px solid #ddd;
-        border-radius: 50%;
-        .el-avatar{
-            height:32px;
-            width:32px;
-        }
-    }
+<style lang="less" scoped>
+.user-avatar {
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  height: 36px;
+  width: 36px;
+  .el-avatar {
+    height: 100%;
+    width: 100%;
+  }
+}
 </style>

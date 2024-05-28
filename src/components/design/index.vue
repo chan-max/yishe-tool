@@ -53,10 +53,6 @@ usePreventScreenResize();
     -webkit-user-drag: none;
   }
 }
-
-.designiy {
-  font-size: 12px; /* 默认 size */
-}
 </style>
 
 <style scoped></style>

@@ -27,7 +27,7 @@ export enum Url {
     UPLOAD_BASE_MODEL = '/uploadBaseModel',
 
     // 注册
-    SINGUP = '/signup',
+    SINGUP = '/api/user/register',
 
     // 登录
     LOGIN = '/api/auth/login',

@@ -47,7 +47,13 @@ import { createStickerApi } from '@'; import { uploadFile } from '@'; import { u
     </el-upload>
     <footer>
       <div style="flex: 1"></div>
-      <el-button type="primary" round @click="doUpload" :loading="loading">
+      <el-button
+        type="primary"
+        round
+        @click="doUpload"
+        :loading="loading"
+        :icon="UploadFilled"
+      >
         上传
       </el-button>
     </footer>
@@ -144,7 +150,7 @@ async function doUpload() {
     loading.value = false;
     fileList.value = [];
   } catch (e) {
-    message.success("上传失败!");
+    message.error("上传失败!");
     loading.value = false;
   }
 }

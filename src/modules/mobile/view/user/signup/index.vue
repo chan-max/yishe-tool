@@ -118,7 +118,7 @@ import {
   Warning,
   Message,
 } from "@element-plus/icons-vue";
-import { signup, getAccountStatus } from "@/api";
+import { register, getAccountStatus } from "@/api";
 import { ResponseStatusCodeEnum } from "@common/statusCode.js";
 import { useDebounceFn } from "@vueuse/core";
 

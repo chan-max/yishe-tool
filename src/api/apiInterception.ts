@@ -10,6 +10,7 @@
  */
 import { useLoginStatusStore } from "@/store/stores/login";
 import { ElMessage } from 'element-plus'
+import { message } from 'ant-design-vue'
 
 function ensureFormData(obj) {
     if (obj instanceof FormData) {
@@ -57,11 +58,17 @@ export const tokenRequestInterceptor = (request) => {
     建议处理接口定义的消息提示
 */
 export const messageResponseInterceptor = (response) => {
-    if (response.data.message && response.data.type) {
-        ElMessage({
-            message: response.data.message,
-            type: response.data.type,
-        })
-    }
     return response
+}
+
+
+export const defaultResponseInterceptors = (response) => {
+    if (response?.data?.code === 401) {
+        // logout
+    } else if (response.data.code == 0) {
+        return response.data
+    } else {
+        message.error(response?.data?.message)
+        throw new Error(response)
+    }
 }

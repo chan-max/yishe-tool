@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Badge: typeof import('./src/components/design/components/badge.vue')['default']
     BaseGltfViewer: typeof import('./src/components/model/baseGltfViewer/index.vue')['default']
     BaseModelSelect: typeof import('./src/components/design/layout/baseModelSelect/index.vue')['default']
     BottomMenu: typeof import('./src/components/design/layout/bottomMenu.vue')['default']
@@ -25,6 +26,7 @@ declare module 'vue' {
     FontList: typeof import('./src/components/design/layout/fontList/index.vue')['default']
     FontUpload: typeof import('./src/components/design/layout/fontUpload/index.vue')['default']
     GltfViewer: typeof import('./src/components/model/gltfViewer/index.vue')['default']
+    Grid: typeof import('./src/components/design/components/grid.vue')['default']
     HeaderMenu: typeof import('./src/components/design/layout/headerMenu.vue')['default']
     HeaderMenuDropdown: typeof import('./src/components/design/layout/headerMenuDropdown/index.vue')['default']
     Image: typeof import('./src/components/design/components/image.vue')['default']

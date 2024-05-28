@@ -18,18 +18,10 @@
     </div>
     <div style="flex-grow: 1"></div>
 
-    <el-button @click="showUpload = true" size="small" round> 资源上传 </el-button>
-
-    <el-button @click="showSaveModel = true" size="small" round> 上 传 </el-button>
+    <el-button @click="showUpload = true" round> 资源上传 </el-button>
 
     <user-avatar v-if="loginStatusStore.isLogin" />
-    <el-button
-      @click="$router.push({ name: 'Login' })"
-      size="small"
-      v-else
-      round
-      type="primary"
-    >
+    <el-button @click="$router.push({ name: 'Login' })" v-else round type="primary">
       登 录
     </el-button>
   </div>

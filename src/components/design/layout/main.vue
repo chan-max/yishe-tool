@@ -4,10 +4,7 @@
     id="layout-container"
     style="width: 100%; height: 100%; display: flex; flex-direction: column"
   >
-    <div
-      id="layout-header"
-      style="border-bottom: 2px solid #f6f6f6; height: var(--1s-header-height)"
-    >
+    <div id="layout-header" style="height: var(--1s-header-height)">
       <div v-if="showHeader" style="width: 100%; height: 100%; display: flex">
         <header-menu />
       </div>
@@ -307,6 +304,11 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#layout-header {
+  border-bottom: 2px solid #f6f6f6;
+  border-top: 2px solid #f6f6f6;
 }
 
 #threejs-canvas {

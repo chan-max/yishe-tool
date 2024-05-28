@@ -14,7 +14,8 @@ import {
     formDataFormatRequestInterceptor,
     messageResponseInterceptor,
     tokenRequestInterceptor,
-    tokenResponseInterceptor
+    tokenResponseInterceptor,
+    defaultResponseInterceptors
 } from "./apiInterception";
 
 // 全局设置
@@ -32,4 +33,5 @@ apiInstance.interceptors.request.use(tokenRequestInterceptor);
 apiInstance.interceptors.request.use(formDataFormatRequestInterceptor)
 apiInstance.interceptors.response.use(tokenResponseInterceptor);
 apiInstance.interceptors.response.use(messageResponseInterceptor);
+apiInstance.interceptors.response.use(defaultResponseInterceptors);
 

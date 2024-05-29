@@ -1,5 +1,3 @@
-import { createStickerApi } from '@'; import { uploadFile } from '@'; import { uploadFile
-} from '@'; import { showImageUplaod } from '@'; import { createStickerApi } from '@';
 <template>
   <div class="container">
     <el-upload
@@ -21,31 +19,43 @@ import { createStickerApi } from '@'; import { uploadFile } from '@'; import { u
       </div>
       <template #tip>
         <div class="tip">
-          支持 jpg，png，svg等图片格式 ，图片格式会自动添加到贴纸中,
-          ttf，woff等字体格式,字体可以在我的字体中查看
+          <div>
+            支持 jpg，png，svg等图片格式 ，图片格式会自动添加到贴纸中,
+            ttf，woff等字体格式,字体可以在我的字体中查看
+          </div>
         </div>
       </template>
       <template #file="{ file, url }">
         <div class="file-bar">
-          <el-image
-            v-if="isImg(file.name)"
-            :src="getPreviewUrl(file.raw)"
-            style="height: 2em"
-          ></el-image>
+          <template v-if="isImg(file.name)">
+            <el-image :src="getPreviewUrl(file.raw)" style="height: 2em"></el-image>
+            <div>
+              {{ file.name }}
+            </div>
+            <div style="flex: 1"></div>
+            <el-tooltip content="图片会自动上传到贴纸" placement="top">
+              <el-icon size="1.2rem"><Warning /></el-icon>
+            </el-tooltip>
 
-          <el-icon v-else size="2em"
-            ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
-          ></el-icon>
-
-          <div class="file-name">{{ file.name }}</div>
-          <div style="flex: 1"></div>
-
-          <!-- <el-button @click="previewFile(file)" type="info" link size="small">
-            预览
-          </el-button> -->
-          <el-button @click="removeFile(file)" type="danger" link
-            ><el-icon size="20"><CircleCloseFilled /></el-icon
-          ></el-button>
+            <el-button @click="removeFile(file)" type="danger" link
+              ><el-icon size="2rem"><CircleCloseFilled /></el-icon
+            ></el-button>
+          </template>
+          <template v-else-if="isFont(file.name)">
+            <el-icon size="2em"
+              ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
+            ></el-icon>
+            <div style="font-size: 1.6em" @vue:mounted="initFontFamily(file, $event)">
+              {{ file.name }}
+            </div>
+            <div style="flex: 1"></div>
+            <el-tooltip content="左侧的文字会自动生成缩略图" placement="top">
+              <el-icon size="1.2rem"><Warning /></el-icon>
+            </el-tooltip>
+            <el-button @click="removeFile(file)" type="danger" link
+              ><el-icon size="2rem"><CircleCloseFilled /></el-icon
+            ></el-button>
+          </template>
         </div>
       </template>
     </el-upload>
@@ -76,6 +86,7 @@ import {
   CircleCloseFilled,
   QuestionFilled,
   View,
+  Warning,
 } from "@element-plus/icons-vue";
 import iconFileUpload from "@/icon/file-upload.svg";
 import iconImg from "@/icon/fileType/img.svg";
@@ -99,8 +110,39 @@ function isImg(name) {
   return ["png", "svg", "jpeg", "jpg"].includes(name.split(".").pop());
 }
 
+function isFont(name) {
+  return ["otf", "ttf", "woff"].includes(name.split(".").pop());
+}
+
 function close() {
   loading.value = false;
+}
+
+/*
+ 如果上传的是字体的话，直接生成缩略图
+*/
+var id = 999;
+function initFontFamily(file, e) {
+  if (!isFont(file.name)) {
+    return;
+  }
+
+  const el = e.el;
+  const fontId = `font_${id++}`;
+  const style = document.createElement("style");
+
+  style.innerHTML = `
+                @font-face {
+                    font-family: ${fontId};
+                    src: url(${URL.createObjectURL(file.raw)});
+                }
+              `;
+
+  document.head.appendChild(style);
+
+  el.style.fontFamily = fontId;
+  // 在文件列表中保存当前元素，用于获取缩略图
+  file.el = el;
 }
 
 const fileList = ref([]);
@@ -224,11 +266,11 @@ async function doUpload() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  column-gap: 12px;
+  column-gap: 1em;
   background: #f3f5f7;
   border-radius: 4px;
   display: flex;
-  padding: 8px 12px;
+  padding: 0.5em 1em;
   font-size: 12px;
 }
 

@@ -126,15 +126,16 @@ async function submit(form) {
     return;
   }
 
-  loading.value = true;
+  // loading.value = true;
 
-  let res = await login(toRaw(loginForm));
-
-  doLoginAction(res.data, isOnce.value);
-  message.success("登录成功!");
-  await nextTick();
-  loading.value = false;
-  router.replace({ name: "Home" });
+  try {
+    let res = await login(toRaw(loginForm));
+    doLoginAction(res.data, isOnce.value);
+    message.success("登录成功!");
+    await nextTick();
+    loading.value = false;
+    router.replace({ name: "Home" });
+  } catch (e) {}
 }
 </script>
 

@@ -25,23 +25,27 @@ import { createStickerApi } from '@'; import { uploadFile } from '@'; import { u
           ttf，woff等字体格式,字体可以在我的字体中查看
         </div>
       </template>
-      <template #file="{ file }">
+      <template #file="{ file, url }">
         <div class="file-bar">
-          <div>
-            <el-icon size="32"
-              ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
-            ></el-icon>
-          </div>
+          <el-image
+            v-if="isImg(file.name)"
+            :src="getPreviewUrl(file.raw)"
+            style="height: 2em"
+          ></el-image>
+
+          <el-icon v-else size="2em"
+            ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
+          ></el-icon>
+
           <div class="file-name">{{ file.name }}</div>
           <div style="flex: 1"></div>
-          <div>
-            <el-button @click="previewFile(file)" type="info" link size="small">
-              预览
-            </el-button>
-            <el-button @click="removeFile(file)" type="danger" link
-              ><el-icon size="20"><CircleCloseFilled /></el-icon
-            ></el-button>
-          </div>
+
+          <!-- <el-button @click="previewFile(file)" type="info" link size="small">
+            预览
+          </el-button> -->
+          <el-button @click="removeFile(file)" type="danger" link
+            ><el-icon size="20"><CircleCloseFilled /></el-icon
+          ></el-button>
         </div>
       </template>
     </el-upload>
@@ -91,6 +95,10 @@ const fileTypeIcons = {
   glb: iconGlb,
 };
 
+function isImg(name) {
+  return ["png", "svg", "jpeg", "jpg"].includes(name.split(".").pop());
+}
+
 function close() {
   loading.value = false;
 }
@@ -99,6 +107,10 @@ const fileList = ref([]);
 
 function removeFile(file) {
   fileList.value.splice(fileList.value.indexOf(file), 1);
+}
+
+function getPreviewUrl(file) {
+  return URL.createObjectURL(file);
 }
 
 function previewFile(file) {}

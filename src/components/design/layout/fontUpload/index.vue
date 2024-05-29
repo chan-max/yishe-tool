@@ -18,7 +18,7 @@
         class="designiy-font-upload-preview"
         contenteditable="true"
         v-model="name"
-      >
+      />
 
       <div v-else class="designiy-font-upload-placeholder">
         <icon-upload style="width: 20px; height: 20px"></icon-upload>
@@ -30,7 +30,11 @@
         >支持类型 ttf woff</span
       >
     </el-divider>
-    <el-input v-model="name" placeholder="定义字体名称" style="font-size: 10px"></el-input>
+    <el-input
+      v-model="name"
+      placeholder="定义字体名称"
+      style="font-size: 10px"
+    ></el-input>
     <el-input
       type="textarea"
       placeholder="定义字体描述"
@@ -48,7 +52,7 @@ import { Plus } from "@element-plus/icons-vue";
 import { genFileId } from "element-plus";
 import iconUpload from "@/icon/upload-normal.svg?component";
 
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 
 import { uploadFont } from "@/api";
 import { base64ToFile } from "../../../../common/transform/base64ToFile";
@@ -56,7 +60,7 @@ import { base64ToFile } from "../../../../common/transform/base64ToFile";
 const files = ref([]);
 const upload = ref();
 const previewEl = ref();
-const name = ref()
+const name = ref();
 
 var id = 0;
 
@@ -65,7 +69,6 @@ watch(files, async (files) => {
   await nextTick();
   const file = files[0];
   name.value = file.name;
-  debugger
   previewEl.value.innerHTML = file.name;
   let fontId = id++;
   const fontStyles = document.createElement("style");
@@ -94,7 +97,7 @@ async function submit() {
   await uploadFont({
     file: files.value[0].raw,
     img: base64ToFile(base64),
-    name:name.value,
+    name: name.value,
   });
 }
 </script>

@@ -21,7 +21,7 @@
 <style scoped lang="less">
 .banner {
   width: 100vw;
-  height: 900px;
+  height: 100vh;
   background-color: #161616;
 }
 

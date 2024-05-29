@@ -65,8 +65,9 @@ export const messageResponseInterceptor = (response) => {
 export const defaultResponseInterceptors = (response) => {
     if (response?.data?.code === 401) {
         // logout
+        throw new Error()
     } else if (response.data.code == 0) {
-        return response.data
+        return response
     } else {
         message.error(response?.data?.message)
         throw new Error(response)

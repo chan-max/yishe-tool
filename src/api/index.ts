@@ -14,7 +14,7 @@ export const register = (data: any) =>
 export const login = (data) =>
   new Promise(async (resolve, reject) => {
     let res = await apiInstance.post(Url.LOGIN, data);
-    resolve(res);
+    resolve(res.data);
   });
 
 // 获取首页展示栏模型

@@ -13,12 +13,12 @@
     <div class="flex" style="padding: 10px 0; border-bottom: 2px solid #f8f8f8">
       <el-avatar style="flex-shrink: 0" shape="circle" :src="avatar" />
       <div
-        style="margin-left: 10px; flex-direction: column; flex: 1"
+        style="margin-left: 1em; flex-direction: column; flex: 1"
         class="flex justify-around"
       >
-        <div class="font-bold">{{ userInfo.name }}</div>
-        <div style="overflow: hidden; font-size: 12px">
-          {{ userInfo.email }}
+        <div class="font-bold">{{ userInfo.name || "没名字" }}</div>
+        <div style="overflow: hidden; font-size: 1em">
+          {{ userInfo.email || "没邮箱" }}
         </div>
       </div>
     </div>

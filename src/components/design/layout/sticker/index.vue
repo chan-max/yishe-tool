@@ -39,12 +39,12 @@ import { usePaging } from "@/hooks/data/paging.ts";
 import desiamge from "@/components/design/components/image.vue";
 import stickerPopover from "./stickerPopover.vue";
 
-const { list, getList } = usePaging((params) =>
-  getStickerListApi({
+const { list, getList } = usePaging((params) => {
+  return getStickerListApi({
     ...params,
     pageSize: 10,
-  })
-);
+  });
+});
 
 // 列表展示几列
 const column = ref(2);

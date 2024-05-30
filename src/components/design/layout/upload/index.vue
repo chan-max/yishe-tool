@@ -61,6 +61,7 @@
     </el-upload>
     <footer>
       <div style="flex: 1"></div>
+      <el-button round @click="doUpload" :icon="Iphone"> APP 扫码上传 </el-button>
       <el-button
         type="primary"
         round
@@ -87,6 +88,7 @@ import {
   QuestionFilled,
   View,
   Warning,
+  Iphone,
 } from "@element-plus/icons-vue";
 import iconFileUpload from "@/icon/file-upload.svg";
 import iconImg from "@/icon/fileType/img.svg";

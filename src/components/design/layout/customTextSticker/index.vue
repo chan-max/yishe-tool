@@ -11,10 +11,11 @@
         <el-popconfirm
           confirm-button-text="确认"
           cancel-button-text="暂不"
+          @confirm="upload"
           title="确认要上传该贴纸吗"
         >
           <template #reference>
-            <el-button round> 上传 </el-button>
+            <el-button> 上传 </el-button>
           </template>
         </el-popconfirm>
 
@@ -28,23 +29,32 @@
 import { ref } from "vue";
 import stickerCanvas from "./canvas.vue";
 import operatingForm from "./operatingForm.vue";
-import { uploadTextSticker, createStickerApi } from "@/api";
+import { uploadTextSticker, createStickerApi, uploadToCOS } from "@/api";
 import { base64 } from "./watch";
 import { base64ToFile } from "@/common/transform/base64ToFile";
-import { exportTextStickerSvg, exportTextStickerPng } from "./watch";
+import { exportTextStickerFile, exportTextStickerPng } from "./watch";
+import { message } from "ant-design-vue";
 
 const loading = ref(false);
 
+/*
+ 导出本地png格式
+*/
 function exportPng() {
   loading.value = true;
   exportTextStickerPng();
   loading.value = false;
 }
 
-async function save() {
-  await uploadTextSticker({
-    img: base64ToFile(base64.value),
+async function upload() {
+  let file = await exportTextStickerFile();
+  let { url } = await uploadToCOS({ file: file });
+  await createStickerApi({
+    url,
+    thumbnail: url,
+    type: "text",
   });
+  message.success("上传成功");
 }
 </script>
 <style lang="less" scoped>

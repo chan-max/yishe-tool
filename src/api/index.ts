@@ -3,6 +3,9 @@ import { uploadToCOS } from "./cos";
 import { apiInstance, source } from "./apiInstance";
 import { Url } from "./url";
 
+
+export {uploadToCOS}  from './cos'
+
 // 注册 ，账号密码手机号
 export const register = (data: any) =>
   new Promise(async (resolve, reject) => {

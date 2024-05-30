@@ -252,6 +252,11 @@ export class ModelController {
 
     baseModelUrl: any = null;
 
+
+    removeDecals(){
+        this.decalControllers.forEach((decal) => { decal.remove() })
+    }
+
     public async setMainModel(url: any) {
 
         // if(this.gltf){

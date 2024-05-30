@@ -237,21 +237,18 @@ export async function exportTextStickerPng(){
     const b6 =  await toPng(canvasBackgroundEl.value);
 
     let file = base64ToFile(b6)
-
     let a = document.createElement('a')
     a.href = URL.createObjectURL(file)
     a.download = file.name
     a.click()
 }
 
-export async function exportTextStickerSvg(){
-    const b6 = await toSvg(canvasBackgroundEl.value);
-    let file = base64ToFile(b6,new Date().getTime() + '.svg','image/svg')
-    let a = document.createElement('a')
-    a.href = URL.createObjectURL(file)
-    a.download = file.name
-    a.click()
+
+export async function exportTextStickerFile(){
+    const b6 =  await toPng(canvasBackgroundEl.value);
+    return base64ToFile(b6)
 }
+
 
 export function forceUpdateTextSticker(){
     setFontSize()

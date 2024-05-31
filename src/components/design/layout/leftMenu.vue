@@ -61,7 +61,7 @@
     </el-tooltip>
 
     <el-tooltip :hide-after="0" content="制作多种印章" placement="right">
-      <div class="menu-bar-item">
+      <div class="menu-bar-item" @click="showStamp = !showStamp">
         <div class="menu-bar-item-icon"><icon-badge></icon-badge></div>
         <span>印章</span>
       </div>
@@ -151,6 +151,7 @@ import {
   showDecoration,
   showSticker,
   showQrcode,
+  showStamp,
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?component";

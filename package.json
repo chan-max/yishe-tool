@@ -47,6 +47,7 @@
     "ant-design-vue": "4.x",
     "axios": "^1.4.0",
     "bootstrap-icons": "^1.10.3",
+    "canvg": "^4.0.2",
     "color": "^4.2.3",
     "concurrently": "^8.2.1",
     "config": "^3.3.9",

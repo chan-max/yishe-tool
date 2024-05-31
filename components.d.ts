@@ -55,6 +55,7 @@ declare module 'vue' {
     SceneControl: typeof import('./src/components/design/layout/sceneControl/index.vue')['default']
     Screenshot: typeof import('./src/components/design/components/screenshot.vue')['default']
     Setting: typeof import('./src/components/design/layout/setting/index.vue')['default']
+    Stamp: typeof import('./src/components/design/layout/stamp/index.vue')['default']
     Sticker: typeof import('./src/components/design/layout/sticker/index.vue')['default']
     StickerPopover: typeof import('./src/components/design/layout/sticker/stickerPopover.vue')['default']
     SubHeaderMenu: typeof import('./src/components/design/layout/subHeaderMenu/index.vue')['default']

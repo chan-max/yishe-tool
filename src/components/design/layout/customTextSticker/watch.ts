@@ -7,7 +7,6 @@ import { useDebounceFn } from "@vueuse/core";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 
 /*
-
 */
 export const canvasBackgroundEl = ref();
 export const canvasTextEl = ref();
@@ -241,6 +240,11 @@ export async function exportTextStickerPng(){
     a.href = URL.createObjectURL(file)
     a.download = file.name
     a.click()
+}
+
+export async function exportTextStickerSvg(){
+    const b6 =  await toSvg(canvasBackgroundEl.value);
+    console.log(b6)
 }
 
 

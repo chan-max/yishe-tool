@@ -5,9 +5,10 @@
     <operating-form></operating-form>
     <footer>
       <el-button-group link style="width: 100%">
-        <el-button :loading="loading" @click="exportPng" round> 导出 png </el-button>
+        <el-button :loading="loading" @click="exportPng"> 导出 png </el-button>
         <!-- <el-button @click="exportTextStickerSvg" type="primary"> 导出svg </el-button> -->
-
+        <el-button @click="exportTextStickerSvg"> 导出svg </el-button>
+        <el-button> 分享 </el-button>
         <el-popconfirm
           confirm-button-text="确认"
           cancel-button-text="暂不"
@@ -18,9 +19,6 @@
             <el-button> 上传 </el-button>
           </template>
         </el-popconfirm>
-
-        <el-button round> 暂存到工作台 </el-button>
-        <el-button round> 分享 </el-button>
       </el-button-group>
     </footer>
   </div>
@@ -32,7 +30,11 @@ import operatingForm from "./operatingForm.vue";
 import { uploadTextSticker, createStickerApi, uploadToCOS } from "@/api";
 import { base64 } from "./watch";
 import { base64ToFile } from "@/common/transform/base64ToFile";
-import { exportTextStickerFile, exportTextStickerPng } from "./watch";
+import {
+  exportTextStickerFile,
+  exportTextStickerPng,
+  exportTextStickerSvg,
+} from "./watch";
 import { message } from "ant-design-vue";
 
 const loading = ref(false);

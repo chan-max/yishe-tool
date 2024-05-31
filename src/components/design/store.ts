@@ -124,6 +124,9 @@ watch(showDecalList, async (value) => {
     }
 })
 
+// 展示徽章
+export const showStamp = ref(false)
+
 /* 是否展示上传 */
 export const showUpload = ref(false)
 
@@ -231,12 +234,8 @@ export const currentEditingModelInfo = ref()
 // 模型装饰品
 export const showDecoration  = ref(false)
 
-
-
 // 保留用户的截图，用于后续自行下载或者上传至网络
 export const screenshots = ref([])
-
-
 
 /*
  是否展示基础画布
@@ -251,6 +250,8 @@ export const showThreeCanvas = ref(true)
 /*
     所有状态统一使用store管理
 */
+
+
 
 export const useDesignStore = defineStore('_1s_design',() => {
 

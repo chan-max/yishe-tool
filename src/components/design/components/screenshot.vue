@@ -20,7 +20,7 @@
   >
     <div v-if="show" class="screenshot" @mouseenter="mouseenter" @mouseleave="mouseleave">
       <img :src="src" style="width: 100%; height: 100%; object-fit: contain" />
-    </div>z
+    </div>
   </Transition>
 </template>
 

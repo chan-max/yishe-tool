@@ -3,6 +3,32 @@ import { useLocalStorage } from "@vueuse/core";
 import { computed, ref, shallowRef, watchEffect, watch, nextTick, reactive } from "vue"
 import { defineStore } from "pinia";
 
+
+
+// 截屏组件实例
+export const screenshotInstance = ref();
+
+// 所有截屏
+export const screenshots = ref([])
+
+export const lastestScreenshot = computed(() => {
+    return screenshots.value[screenshots.value.length - 1]
+})
+
+export function saveScreenshot() {
+  const base64 = currentController.value.getScreenshotBase64();
+  screenshotInstance.value.execScreenshot(base64);
+
+  if(screenshots.value.length >= 10){
+    screenshots.value.shift()
+  }
+
+  screenshots.value.push({
+    base64:base64,
+    createdTime:new Date().getTime()
+  })
+}
+
 // 当前实例
 export const currentController = shallowRef(null);
 
@@ -66,6 +92,9 @@ watch(showDecalControl, (value) => {
     }
 })
 
+
+// 展示自定义模型
+export const showCustomModel = ref(false)
 
 // 是否展示自定义文字贴纸
 export const showCustomTextSticker = ref(false)
@@ -234,8 +263,6 @@ export const currentEditingModelInfo = ref()
 // 模型装饰品
 export const showDecoration  = ref(false)
 
-// 保留用户的截图，用于后续自行下载或者上传至网络
-export const screenshots = ref([])
 
 /*
  是否展示基础画布

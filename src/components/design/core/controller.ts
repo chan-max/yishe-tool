@@ -58,8 +58,6 @@ export class ModelController {
     public controller: any;
     // 尺寸侦听器
     public resizeObserver: any;
-    // 保存当前鼠标坐标
-    private _mouse = new Vector2();
 
     // 记录原始摄像机位置
     public defaultCameraPosition = new Vector3(0, 0, 1);
@@ -120,6 +118,10 @@ export class ModelController {
             this.scene.add(skybox);
         });
     }
+
+
+        // 保存当前鼠标坐标
+    private _mouse = new Vector2();
 
     public get mouse() {
         this._mouse.x = (this.x.value / this.width) * 2 - 1;

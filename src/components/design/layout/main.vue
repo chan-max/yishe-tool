@@ -36,7 +36,7 @@
         <div
           v-show="des.showBasicCanvas"
           id="basic-canvas"
-          style="width: 100%; height: 100%"
+          style="width: 100%; height: 100%; z-index: 1"
           ref="basicCanvasRef"
         ></div>
       </div>
@@ -156,6 +156,8 @@ import {
   showQrcode,
   showUpload,
   showStamp,
+  screenshotInstance,
+  showCustomModel,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -178,6 +180,7 @@ import decoration from "./decoration/index.vue";
 import screenshot from "../components/screenshot.vue";
 import sticker from "./sticker/index.vue";
 import qrcode from "./qrcode/index.vue";
+import customModel from "./customModel/index.vue";
 import { DirectionalLight, AmbientLight, PointLight } from "three";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { initWebsocket } from "../utils/websocket.ts";
@@ -196,13 +199,6 @@ const basicContainerAnimation = ref({
   duration: 100,
 });
 
-const screenshotInstance = ref();
-
-function takephoto() {
-  const base64 = currentController.value.getScreenshotBase64();
-  screenshotInstance.value.execScreenshot(base64);
-}
-
 const basicCanvasRef = ref();
 
 const leftComponent = computed(() => {
@@ -218,6 +214,8 @@ const leftComponent = computed(() => {
     ? qrcode
     : showStamp.value
     ? stamp
+    : showCustomModel.value
+    ? customModel
     : null;
 });
 

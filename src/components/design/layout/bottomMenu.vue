@@ -9,10 +9,15 @@
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
-<div class="designiy-bottom-menu">
+  <div class="designiy-bottom-menu">
+    <el-tooltip :hide-after="0" content="保存当前截图" placement="top">
+      <div class="bottom-menu-item" @click="takeshot">
+        <icon-screenshot></icon-screenshot>
+      </div>
+    </el-tooltip>
 
-  <el-tooltip :hide-after="0" content="重置当前场景" placement="top">
-      <div class="bottom-menu-item" >
+    <el-tooltip :hide-after="0" content="重置当前场景" placement="top">
+      <div class="bottom-menu-item">
         <icon-refresh></icon-refresh>
       </div>
     </el-tooltip>
@@ -22,7 +27,11 @@
         <icon-locate></icon-locate>
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" :content="isFullScreen ? '退出全屏' : '进入全屏'" placement="top">
+    <el-tooltip
+      :hide-after="0"
+      :content="isFullScreen ? '退出全屏' : '进入全屏'"
+      placement="top"
+    >
       <div class="bottom-menu-item" @click="isFullScreen = !isFullScreen">
         <icon-fullscreen></icon-fullscreen>
       </div>
@@ -32,49 +41,51 @@
         <icon-rotate></icon-rotate>
       </div>
     </el-tooltip>
-</div>
+  </div>
 </template>
 <script setup>
-import {isFullScreen,currentController} from '../store'
-import iconFullscreen from '@/icon/fullscreen.svg?component'
-import iconRotate from '@/icon/rotate.svg?component'
-import iconLocate from '@/icon/locate.svg?component'
-import iconRefresh from '@/icon/refresh.svg?component'
+import { isFullScreen, currentController, saveScreenshot } from "../store";
+import iconFullscreen from "@/icon/fullscreen.svg?component";
+import iconRotate from "@/icon/rotate.svg?component";
+import iconLocate from "@/icon/locate.svg?component";
+import iconRefresh from "@/icon/refresh.svg?component";
+import iconScreenshot from "@/icon/screenshot.svg?component";
 
-function locate(){
-    currentController.value.resetPosition()
+function takeshot() {
+  saveScreenshot();
 }
 
-function animate(){
-    currentController.value.animate = !currentController.value.animate
+function locate() {
+  currentController.value.resetPosition();
 }
 
-
-
+function animate() {
+  currentController.value.animate = !currentController.value.animate;
+}
 </script>
 <style lang="less">
-.designiy-bottom-menu{
-    height:100%;
-    width: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0 50px;
-    background-color: #fff;
-    box-shadow:rgba(0, 0, 0, 0.15) 0px 2px 6px;
+.designiy-bottom-menu {
+  height: 100%;
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 50px;
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 6px;
 }
 
-.bottom-menu-item{
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color:var(--1s-icon-color);
-    svg{
-      width: 14px;
-      height: 14px;
-    }
+.bottom-menu-item {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--1s-icon-color);
+  svg {
+    width: 14px;
+    height: 14px;
+  }
 }
 </style>

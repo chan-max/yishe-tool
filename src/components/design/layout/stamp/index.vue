@@ -4,11 +4,11 @@
       <svg viewBox="0 0 100 100" ref="svgRef">
         <path d="M 0,50 a 50,50 0 1,1 0,1 z" id="circle" fill="none" />
         <text>
-          <textPath xlink:href="#circle">circular reasoning 中文也可以的</textPath>
+          <textPath xlink:href="#circle">{{ text }}</textPath>
         </text>
       </svg>
     </div>
-    <img :src="src" />
+    <input v-model="text" />
   </div>
 </template>
 
@@ -22,19 +22,14 @@ import {
   svgToPngFile,
 } from "@/common/transform/index";
 
-console.log(Canvg);
+const text = ref();
 
 const svgRef = ref();
 
 const canvasRef = ref();
 
-const src = ref();
-
 onMounted(() => {
-  src.value = svgToBase64(svgRef.value);
-  const bbox = svgRef.value.getBBox();
-  debugger;
-  downloadByFile(svgToPngFile(svgRef.value));
+  // downloadByFile(svgToPngFile(svgRef.value));
 });
 </script>
 

@@ -11,6 +11,7 @@
 import { gltfLoader } from "@/common/threejsHelper";
 import { format1stf } from "@/api/format";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
+import {formatUrl} from '@/common'
 import {
     Box3,
     BoxGeometry,
@@ -48,10 +49,8 @@ import {
 } from "vue";
 
 import {
-    getBaseModel,
-    getImage,
-    getImageById,
-    getBaseModelById,
+    getStickerByIdApi,
+    getProductModelById,
     getTextStickerById,
 } from "@/api";
 
@@ -116,6 +115,8 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         alpha: true, // 透明背景
     });
 
+    renderer.setPixelRatio(window.devicePixelRatio)
+
     const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
 
     camera.lookAt(0, 0, 0);
@@ -153,20 +154,15 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         }
 
         loading.value = true;
-        var baseModelUrl = model.baseModelUrl;
-
-        if (!baseModelUrl && model.baseModelId) {
-            baseModelUrl = ((await getBaseModelById(model.baseModelId)) as any).preview_file;
-        }
-
+        var baseModel = await getProductModelById(model.baseModelId)
+        
         if (props.transparent) {
             renderer.setClearColor(null, 0);
         } else {
             renderer.setClearColor(0xeeeeee, 0);
         }
 
-
-        let gltf: any = await gltfLoader(baseModelUrl);
+        let gltf: any = await gltfLoader(formatUrl(baseModel.url));
 
         currentMesh = findMainMesh(gltf);
         function findMainMesh(gltf) {
@@ -216,7 +212,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
         const resizeOb = new ResizeObserver(debounce(resetCameraAspect));
 
-
         el && resizeOb.observe(el);
 
         renderer.setSize(getWidth(el), getHeight(el));
@@ -250,28 +245,18 @@ export const useViewer = (gltfViewerRef, props, emits) => {
             await Promise.all(model.decals.map((decal) => {
                 return new Promise(async (resolve, reject) => {
 
-                    var { decalId, position, rotation, size, type } = decal;
+                    var { id, position, rotation, size, type } = decal;
 
-                    if (!decalId) {
-                        return;
+                    
+                    if (!id) {
+                        return resolve();
                     }
 
-                    var url = null;
-                    if (type == "image") {
-                        const image: any = await getImageById(decalId);
-                        if (!image) {
-                            return;
-                        }
-                        url = image.preview_img;
-                    }
+                    const sticker = await await getStickerByIdApi(id)
 
-                    if (type == "text") {
-                        const text: any = await getTextStickerById(decalId);
-                        if (!text) {
-                            return;
-                        }
-                        url = text.preview_img;
-                    }
+                    var {thumbnail} = sticker
+
+
 
                     position = new Vector3(position.x, position.y, position.z);
 
@@ -290,7 +275,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     rotation = new Euler(rotation.x, rotation.y, rotation.z);
                     size = new Vector3(size.x, size.y, size.z);
                     const textureLoader = new TextureLoader();
-                    const texture = await textureLoader.loadAsync(url);
+                    const texture = await textureLoader.loadAsync(formatUrl(thumbnail));
                     const material = new MeshPhongMaterial({
                         map: texture,
                         transparent: true,
@@ -307,6 +292,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     resolve(void 0)
                 })
             }))
+
         }
 
 

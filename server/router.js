@@ -13,7 +13,7 @@
 import { getBannerModelHook } from "./api/common/getBannerModel.js";
 import {
   injectBaseModelRoute,
-  getBaseModelById,
+  getProductModelById,
   uploadBaseModelHook,
 } from "./api/baseModel.js";
 import { getBaseSkyboxHook } from "./api/common/getSkybox.js";
@@ -75,7 +75,7 @@ export const initRouter = (...params) => {
     getTextSticker,
     getAccountStatusHook,
     getImageById,
-    getBaseModelById,
+    getProductModelById,
     getTextStickerById,
     getFontById,
     getModelById,

@@ -69,7 +69,7 @@ export enum Url {
 
     GET_IMAGE_BY_ID = '/getImageById',
 
-    GET_BASE_MODEL_BY_ID = '/getBaseModelById',
+    GET_BASE_MODEL_BY_ID = '/getProductModelById',
 
     GET_TEXT_STICKER_BY_ID = '/getTextStickerById',
 

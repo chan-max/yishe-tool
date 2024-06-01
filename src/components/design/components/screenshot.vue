@@ -13,16 +13,20 @@
   <audio ref="audio">
     <source src="/audio/screenshot.mp3" type="audio/mp3" />
   </audio>
-  <Transition name="screenshot" @before-enter="transitioning = true" @after-enter="transitioning = false">
+  <Transition
+    name="screenshot"
+    @before-enter="transitioning = true"
+    @after-enter="transitioning = false"
+  >
     <div v-if="show" class="screenshot" @mouseenter="mouseenter" @mouseleave="mouseleave">
       <img :src="src" style="width: 100%; height: 100%; object-fit: contain" />
-    </div>
+    </div>z
   </Transition>
 </template>
 
 <script setup lang="ts">
 import { ref, defineExpose, nextTick } from "vue";
-import { message } from 'ant-design-vue'
+import { message } from "ant-design-vue";
 
 // 组件一旦展示就会进入动画流程
 const show = ref(false);
@@ -34,24 +38,24 @@ const src = ref();
 const audio = ref();
 
 // 清除截图缩略图的定时器
-var timer = null
+var timer = null;
 
 // 动画是否在运行中
-const transitioning = ref(false)
+const transitioning = ref(false);
 
-function mouseenter(){
-  if(transitioning.value) return
+function mouseenter() {
+  if (transitioning.value) return;
   clearTimeout(timer);
 }
 
-function mouseleave(){
-  clear()
+function mouseleave() {
+  clear();
 }
 
-function clear(){
-  clearTimeout(timer)
+function clear() {
+  clearTimeout(timer);
   timer = setTimeout(() => {
-    show.value = false
+    show.value = false;
   }, 3000);
 }
 
@@ -65,60 +69,56 @@ async function execScreenshot(base64) {
   show.value = true;
 
   message.success({
-    duration:1,
-    content:'截图成功'
-  })
-  clear()
+    duration: 1,
+    content: "截图成功",
+  });
+  clear();
 }
 
 defineExpose({
   execScreenshot,
 });
-
-
 </script>
 <style>
 .screenshot {
   position: absolute;
   z-index: 9;
   z-index: 9;
-  width: 200px;
-  height: auto;
-  right: 30px;
-  bottom: 30px;
+  width: 16em;
+  height: 16em;
+  right: 3em;
+  bottom: 3em;
   border: 5px solid #fff;
   box-shadow: 0px 10px 15px 0px rgba(0, 0, 0, 0.3);
-  border-radius: 5px;
+  border-radius: 1em;
   background-color: #fff;
   z-index: 10;
 }
 
-
-.screenshot-enter-from{
+.screenshot-enter-from {
   width: 100%;
   height: 100%;
   right: 0;
   bottom: 0;
 }
 
-.screenshot-enter-active{
-  transition: all .2s ease-out;
+.screenshot-enter-active {
+  transition: all 0.2s ease-out;
 }
 
-.screenshot-enter-to{
+.screenshot-enter-to {
   width: 200px;
   height: auto;
   right: 30px;
   bottom: 30px;
 }
 
-
-.screenshot-leave-to{
+.screenshot-leave-to {
   right: -1000px;
   bottom: 30px;
 }
 
-.screenshot-leave-active{
+.screenshot-leave-active {
   transition: all 1s;
 }
 </style>

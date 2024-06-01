@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="img-container">
     <el-image
-      class="image"
+      class="img"
       v-bind="$attrs"
       fit="contain"
       lazy
-      @load="load($event, i)"
+      @load="load($event, info)"
       style="width: 100%; height: 100%"
       :style="{ padding }"
     >
@@ -23,49 +23,35 @@
 <script setup>
 import { onMounted, ref, computed, nextTick } from "vue";
 import { Picture, FolderOpened, Search, Operation } from "@element-plus/icons-vue";
-import {
-  currentController,
-  showImageUplaod,
-  showDecalControl,
-} from "@/components/design/store";
-import { initDraggableElement } from "@/components/design/utils/draggable";
 
-import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
+
+const emits = defineEmits(['load'])
 
 const props = defineProps({
   // 是否可拖拽
-  draggable: {
-    default: true,
-  },
   padding: {
     default: "1em",
   },
+  info:{
+    default:{}
+  }
 });
 
 /*
  初始化可拖拽
 */
 
-function load(e, info) {
-  const img = e.target;
-  if (!props.draggable) {
-    return;
-  }
-  initDraggableElement(img, async () => {
-    const base64 = imgToBase64(img);
-    currentController.value.stickToMousePosition({
-      img: img,
-      type: "image",
-      local: false,
-      src: img.src,
-      ...info,
-      base64: base64,
-    });
-  });
+function load(e) {
+  emits('load',e.target)
 }
 </script>
 <style lang="less" scoped>
-.image {
+
+.img-container{
+  width: 100%;
+  height:100%;
+}
+.img {
   background-color: #efefef;
   border-radius: 4px;
   overflow: hidden;

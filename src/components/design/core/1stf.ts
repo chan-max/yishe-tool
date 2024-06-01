@@ -6,7 +6,7 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
     const decals = modelController.decalControllers.map((decal: any) => {
       return decal.export()
     }).filter(Boolean);
-
+     
     return {
       baseModelId: currentOperatingBaseModelInfo.value.id,
       decals,

@@ -7,7 +7,6 @@
       <el-button-group link style="width: 100%">
         <el-button :loading="loading" @click="exportPng"> 导出 png </el-button>
         <!-- <el-button @click="exportTextStickerSvg" type="primary"> 导出svg </el-button> -->
-        <el-button @click="exportTextStickerSvg"> 导出svg </el-button>
         <el-button> 分享 </el-button>
         <el-popconfirm
           confirm-button-text="确认"

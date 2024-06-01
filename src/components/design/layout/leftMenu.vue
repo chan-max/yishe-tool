@@ -10,6 +10,18 @@
         <span>工作台</span>
       </div>
     </el-tooltip>
+    <el-tooltip :hide-after="0" content="丰富的社区模型" placement="right">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showCustomModel }"
+        @click="showCustomModel = !showCustomModel"
+      >
+        <div class="menu-bar-item-icon">
+          <icon-custom-model></icon-custom-model>
+        </div>
+        <span>社区模型</span>
+      </div>
+    </el-tooltip>
     <el-tooltip :hide-after="0" content="许多贴纸哦～" placement="right">
       <div
         class="menu-bar-item"
@@ -152,6 +164,7 @@ import {
   showSticker,
   showQrcode,
   showStamp,
+  showCustomModel
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?component";
@@ -172,6 +185,8 @@ import iconBadge from "@/components/design/assets/icon/badge.svg?component";
 import iconSetting from "@/icon/setting.svg?component";
 import iconFont from "@/icon/font.svg?component";
 import iconDecoration from "@/icon/design/decoration.svg?component";
+import iconCustomModel from '@/components/design/assets/icon/custom-model.svg?component'
+
 </script>
 <style lang="less">
 .menu-bar {

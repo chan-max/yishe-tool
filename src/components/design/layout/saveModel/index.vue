@@ -10,21 +10,34 @@
 -->
 <template>
   <div class="designiy-save-model">
+    <el-input v-model="name"></el-input>
+    <img :src="previewSrc" style="wdith: 200px; height: 200px" />
     显示基础模型，创建后的模型缩略图 用了哪些贴纸，什么类型，是否上传了
     <el-button @click="save" type="primary"> 上传模型 </el-button>
   </div>
 </template>
 <script setup>
-import { onShortcutTrigger } from "../../shortcut/index";
-import { createCustomModelApi, uploadTextSticker } from "@/api";
+import { ref, onBeforeMount, computed } from "vue";
+import { createCustomModelApi, uploadToCOS } from "@/api";
 import { ElMessageBox } from "element-plus";
-import { currentController } from "../../store";
-import { base64ToFile } from "@/common/transform/base64ToFile";
+import { currentController, lastestScreenshot } from "../../store";
+import { base64ToFile, base64ToPngFile } from "@/common/transform/base64ToFile";
 import { useLoginStatusStore } from "@/store/stores/login";
+import { message } from "ant-design-vue";
+
+const name = ref();
 
 const loginStore = useLoginStatusStore();
 
+const previewSrc = computed(() => {
+  return lastestScreenshot.value?.base64;
+});
+
 async function save() {
+  if (!previewSrc.value) {
+    return message.info("需要选择一张缩略图");
+  }
+
   // 上传本地贴纸 , 过滤出本地的贴纸
   let localDecals = currentController.value.decalControllers.filter(
     (decal) => decal.isLocal
@@ -32,33 +45,29 @@ async function save() {
 
   // 只负责把贴纸上传即可
   if (localDecals.length) {
-    await Promise.all(
-      localDecals.map((localDecal) => {
-        return new Promise(async (resolve) => {
-          const data = await uploadTextSticker({
-            name: "",
-            description: "",
-            data: "",
-            img: base64ToFile(localDecal.info.base64),
-          });
-          // 保存该贴纸的id
-          localDecal.info.id = data.id;
-          resolve();
-        });
-      })
-    );
   }
 
-  await createCustomModelApi({
-    img: currentController.value.getScreenShotFile(),
-    modelInfo: JSON.stringify(currentController.value.exportTo1stf()),
-    user_id: loginStore.userInfo.id,
-  });
+  const thumbnail = base64ToPngFile(previewSrc.value);
+
+  const { url } = await uploadToCOS({ file: thumbnail });
+
+  const params = {
+    name: name.value,
+    thumbnail: url,
+    meta: {
+      modelInfo: currentController.value.exportTo1stf(),
+    },
+    uploader_id: loginStore.userInfo.id,
+  };
+
+  await createCustomModelApi(params);
+  message.success("上传成功");
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .designiy-save-model {
   width: 800px;
   height: 400px;
+  padding: 1rem;
 }
 </style>

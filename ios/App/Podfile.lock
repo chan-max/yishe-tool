@@ -1,11 +1,11 @@
 PODS:
-  - Capacitor (5.7.0):
+  - Capacitor (5.7.5):
     - CapacitorCordova
   - CapacitorActionSheet (5.0.7):
     - Capacitor
   - CapacitorCamera (5.0.9):
     - Capacitor
-  - CapacitorCordova (5.7.0)
+  - CapacitorCordova (5.7.5)
   - CapacitorFilesystem (5.2.1):
     - Capacitor
   - CapacitorHaptics (5.0.7):
@@ -44,10 +44,10 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/preferences"
 
 SPEC CHECKSUMS:
-  Capacitor: fc155ee2ee45a2093d716f13cf5aa5a865e2d85a
+  Capacitor: 7d42085cb786b2d3ea9ac8a17ebd7e3305be7b72
   CapacitorActionSheet: 8096e5cb8a3dfa89b03a40a62ea4836111263cb4
   CapacitorCamera: 4892c5c392f60039d853dde78bc50ba19fbd113e
-  CapacitorCordova: e825fce1a2e14e4b5730641c7e098dccf74397b7
+  CapacitorCordova: c946a6052b547e1e185fc46862003f7b9130ead1
   CapacitorFilesystem: 9f3e3c7fea2fff12f46dd5b07a2914f2103e4cfc
   CapacitorHaptics: 7c7c206f0c96a628fed073830c96d28c4b2e772e
   CapacitorLocalNotifications: c58afadd159f6bc540ef9b3cbdbc82510a2bf112

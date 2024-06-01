@@ -18,6 +18,8 @@
     </div>
     <div style="flex-grow: 1"></div>
 
+    <el-button @click="showSaveModel = true" round> 保存该模型 </el-button>
+
     <el-button @click="showUpload = true" round> 资源上传 </el-button>
 
     <user-avatar v-if="loginStatusStore.isLogin" />

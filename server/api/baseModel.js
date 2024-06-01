@@ -40,7 +40,7 @@ export const injectBaseModelRoute = (router, sequelize, app, redis) => {
 }
  
 
-export const getBaseModelById = (router, sequelize) => router.post('/getBaseModelById', async (ctx) => {
+export const getProductModelById = (router, sequelize) => router.post('/getProductModelById', async (ctx) => {
   const table = sequelize.models.t_base_model;
   const baseModel = await table.findOne({ where: { id: ctx.request.body.id } });
   baseModel.dataValues.preview_file = ctx.relativePathToPreviewPath(baseModel.filePath);

@@ -134,17 +134,7 @@ export const getImageById = (id: string) => new Promise(async (resolve, reject) 
 })
 
 
-// 根据图片id来查询图片
-export const getBaseModelById = (id: string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_BASE_MODEL_BY_ID, { id })
-  resolve(data.data.data)
-})
 
-
-export const getTextStickerById = (id: string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.post(Url.GET_TEXT_STICKER_BY_ID, { id })
-  resolve(data.data.data)
-})
 
 
 export const getFontById = (id: string) => new Promise(async (resolve, reject) => {
@@ -367,3 +357,21 @@ export const getFontListApi = (params) => new Promise(async (resolve,reject) => 
  上传自定义的模型
 */
 export const createCustomModelApi = (data) => apiInstance.post(Url.UPLOAD_CUSTOM_MODEL, data);
+
+
+export const getCustomModelListApi = (params) => new Promise(async (resolve,reject) => {
+  const res = await apiInstance.post('/api/custom-model/page',params)
+  resolve(res.data.data)
+})
+
+
+// 根据图片id来查询图片
+export const getProductModelById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.get('/api/product-model', { params:{id} })
+  resolve(data.data.data)
+})
+
+export const getStickerByIdApi = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.get('/api/sticker',  { params:{id} })
+  resolve(data.data.data)
+})

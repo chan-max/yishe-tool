@@ -118,6 +118,9 @@ export class DecalController {
   info = null
 
   async initTexture() {
+
+    // 初始化材质
+
     const basicTextureOptions = {
       transparent: true,
       depthTest: true,
@@ -132,8 +135,11 @@ export class DecalController {
     const textureLoader = new TextureLoader();
     textureLoader.setWithCredentials(true)
     textureLoader.setCrossOrigin('*')
+
+    // 记载图片比较费时间
+
     texture = await textureLoader.loadAsync(this.img?.src || this.info.src);
-    
+
     this.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
     this.material = new MeshPhongMaterial({
       map: texture,
@@ -163,28 +169,36 @@ export class DecalController {
   }
 
 
+  // 当前的鼠标位置 ， 需要提前记录
+  currentMousePosition = null
+
   // 在当前鼠标位置进行贴图
   async stickToMousePosition(cb?) {
-
     if (!this.parentMesh) {
       message.info('请先选择一个商品模型')
       return 
     }
 
-    // 初始化材质
-    if (!this.material) {
-      await this.initTexture()
-    }
+    message.loading({type:'info',content:'正在渲染贴纸',key:'sticking',duration:0})
+
+
+    this.currentMousePosition = currentController.value.mouse.clone()
 
     const raycaster = new Raycaster();
-    raycaster.setFromCamera(currentController.value.mouse, currentController.value.camera);
+    raycaster.setFromCamera(this.currentMousePosition, currentController.value.camera);
+
     const intersects = raycaster.intersectObject(this.parentMesh, true);
 
     if (intersects.length == 0) {
       // 未选中
-      message.info('要将贴纸放在模型上')
+      message.info({content:'要将贴纸放在模型上',key:'sticking'})
       return Promise.reject();
     }
+
+        // 初始化材质
+        if (!this.material) {
+          await this.initTexture()
+        }
 
     const position = intersects[0].point;
 
@@ -200,9 +214,13 @@ export class DecalController {
     this.create()
 
     this.ensureAdd()
+
     if(cb){
       cb()
     }
+
+    this.currentMousePosition = null
+    message.success({content:'贴纸加载成功',key:'sticking'})
   }
 
 
@@ -304,9 +322,10 @@ export class DecalController {
       z: this.size.z,
     };
 
+
     return {
       type: this.info.type,
-      decalId: this.info.id,
+      id: this.info.id,
       position,
       rotation,
       size,

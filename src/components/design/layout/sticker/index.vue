@@ -15,11 +15,12 @@
       <el-row :gutter="8" style="row-gap: 1em">
         <el-col :span="24 / column" v-for="item in list" align="center">
           <div class="item">
-            <desiamge :src="'http://' + item.thumbnail" class="image"></desiamge>
+            <desimage :src="'http://' + item.thumbnail" class="image" @load="imgLoad($event,item)"></desimage>
             <el-popover placement="auto" trigger="click" width="auto">
               <template #reference>
                 <div class="bar">
                   <div class="title text-ellipsis">{{ item.name || "......" }}</div>
+                  <badge :type="item.type"></badge>
                   <el-icon><ArrowRightBold /></el-icon>
                 </div>
               </template>
@@ -31,13 +32,61 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
 import { Search, ArrowRightBold } from "@element-plus/icons-vue";
 import { getStickerListApi } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
-import desiamge from "@/components/design/components/image.vue";
+import desimage from "@/components/design/components/image.vue";
 import stickerPopover from "./stickerPopover.vue";
+import {
+  currentController,
+  showImageUplaod,
+  showDecalControl,
+} from "@/components/design/store";
+import { initDraggableElement } from "@/components/design/utils/draggable";
+
+import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
+
+
+/*
+ 徽章类型
+*/
+const badge = (props) => {
+  return (
+    <div style={{ textWrap: "nowrap" }}>
+      {props.type == "image"
+        ? "图片"
+        : props.type == "text"
+        ? "艺术字"
+        : props.type == "qrcode"
+        ? "二维码"
+        : props.type == "barcode"
+        ? "条形码"
+        : props.type == "badge"
+        ? "徽章"
+        : props.type == "stamp"
+        ? "印章"
+        : "未知类型"}
+    </div>
+  );
+};
+
+function imgLoad(el,info){
+  const img = el;
+  initDraggableElement(img, async () => {
+    const base64 = imgToBase64(img);
+    currentController.value.stickToMousePosition({
+      img: img,
+      type: "image",
+      local: false,
+      src: img.src,
+      base64: base64,
+      id:info.id,
+      info: info
+    });
+  });
+}
 
 const { list, getList } = usePaging((params) => {
   return getStickerListApi({
@@ -48,9 +97,6 @@ const { list, getList } = usePaging((params) => {
 
 // 列表展示几列
 const column = ref(2);
-
-// const imgHeight = ref(3);
-// const imgWidth = ref(3);
 </script>
 <style lang="less" scoped>
 @item-width: 40px;

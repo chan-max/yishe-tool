@@ -82,17 +82,13 @@ import { eye, lockClosed, person, checkmarkCircle, closeCircle } from "ionicons/
 import { login } from "@/api";
 import { doLoginAction } from "@/store/stores/loginAction";
 import { useRouter } from "vue-router";
+import {message} from '@/modules/app/components/message'
 
 const router = useRouter();
 
 const form = reactive({ account: "", password: "" });
 
 async function submit() {
-  const toast = await toastController.create({
-    duration: 1000,
-    position: "bottom",
-  });
-
   const loading = await loadingController.create({
     message: "正在登录...",
     duration: 0,
@@ -102,28 +98,12 @@ async function submit() {
   try {
     const res = await login(form);
     await loading.dismiss();
-    switch (res.status) {
-      case ResponseStatusCodeEnum.LOGIN_SUCCESS:
-        toast.message = "登录成功";
-        toast.icon = checkmarkCircle;
-        toast.style = "color:var(--ion-color-success)";
-        doLoginAction(res.data);
-        await toast.present();
-        setTimeout(() => {
-          router.push({ path: "/" });
-        }, 1000);
-        break;
-      case ResponseStatusCodeEnum.PASSWORD_ERROR:
-        toast.message = "密码错误";
-        await toast.present();
-        break;
-      case ResponseStatusCodeEnum.ACCOUNT_NOT_EXIST:
-        toast.icon = closeCircle;
-        toast.style = "color:var(--ion-color-danger)";
-        toast.message = "账号不存在";
-        await toast.present();
-        break;
-    }
+    doLoginAction(res.data)
+    message.success('登录成功')
+    router.replace({
+      name: "HomeIndex",
+    });
+    loading.dismiss();
   } catch (e) {
     loading.dismiss();
   }

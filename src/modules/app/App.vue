@@ -19,10 +19,27 @@
 </template>
 
 <script setup lang="ts">
-import { IonApp, IonRouterOutlet, IonPage } from "@ionic/vue";
+import { IonApp, IonRouterOutlet, IonPage,useIonRouter } from "@ionic/vue";
 import {isDark} from '@/store/stores/app'
+import { useLoginStatusStore } from "@/store/stores/login";
+import { onBeforeMount } from "vue";
+
+
+const router = useIonRouter();
+const loginStore = useLoginStatusStore();
+
+onBeforeMount(() => {
+  if (!loginStore.isLogin) {
+    router.replace({
+      name: "Login",
+    });
+  }
+});
+
 </script>
 <style lang="less">
+
+
 
 @font-face{
     font-family: 'alimama';

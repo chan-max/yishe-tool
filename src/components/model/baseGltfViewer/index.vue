@@ -129,6 +129,10 @@ var currentGltf = null;
 async function initModel() {
   var currentMesh = null;
 
+  if(!props.src){
+    return
+  }
+
   let gltf = await gltfLoader(props.src);
 
   currentMesh = findMainMesh(gltf);

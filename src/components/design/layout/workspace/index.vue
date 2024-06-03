@@ -129,7 +129,7 @@ function removeDecal(decal) {
 
 .preview {
   position: relative;
-  width: 160px;
+  width: 100%;
   height: 160px;
 }
 

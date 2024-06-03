@@ -10,7 +10,7 @@ declare module 'vue' {
     BaseGltfViewer: typeof import('./src/components/model/baseGltfViewer/index.vue')['default']
     BaseModelSelect: typeof import('./src/components/design/layout/baseModelSelect/index.vue')['default']
     BottomMenu: typeof import('./src/components/design/layout/bottomMenu.vue')['default']
-    Canvas: typeof import('./src/components/design/layout/customTextSticker/canvas.vue')['default']
+    Canvas: typeof import('./src/components/design/layout/canvas/index.vue')['default']
     ColorPicker: typeof import('./src/components/design/components/colorPicker.vue')['default']
     CustomModel: typeof import('./src/components/design/layout/customModel/index.vue')['default']
     CustomTextSticker: typeof import('./src/components/design/layout/customTextSticker/index.vue')['default']

@@ -14,7 +14,7 @@ import App from './App.vue'
 import router from './router';
 import "tailwindcss/tailwind.css"
 import { IonButton, IonicVue } from '@ionic/vue';
-
+import { apiInstance } from "@/api/apiInstance";
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
 /* Basic CSS for apps built with Ionic */
@@ -49,17 +49,36 @@ import "tailwindcss/tailwind.css"
 
 import { ConfigProvider } from 'vant';
 import 'vant/lib/index.css';
-
-
+import {toastController} from "@ionic/vue";
 
 import { createPinia } from 'pinia'
 
 import { syncUserInfoToLocal } from '@/store/stores/login.ts'
 
-
 if (true || import.meta.env.DEV) {
   const vConsole = new VConsole({ theme: 'dark' });
 }
+
+export const defaultResponseInterceptors = async (response) => {
+  if (response?.data?.code === 401) {
+      // logout
+      throw new Error()
+  } else if (response.data.code == 0) {
+      return response
+  } else {
+    const toast = await toastController.create({
+      duration: 1000,
+      position: "bottom",
+    });
+    toast.message = response?.data?.message
+    toast.style = "color:var(--ion-color-danger)";
+    toast.present();
+    return Promise.reject()
+  }
+}
+
+
+apiInstance.interceptors.response.use(defaultResponseInterceptors);
 
 const app = createApp(App)
 

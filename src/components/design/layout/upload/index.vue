@@ -69,7 +69,7 @@
         :loading="loading"
         :icon="UploadFilled"
       >
-        上传
+        本地上传
       </el-button>
     </footer>
   </div>

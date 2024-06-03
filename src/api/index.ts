@@ -16,9 +16,13 @@ export const register = (data: any) =>
 // 登录
 export const login = (data) =>
   new Promise(async (resolve, reject) => {
-    let res = await apiInstance.post(Url.LOGIN, data);
-    resolve(res.data);
-  });
+    try{
+      let res = await apiInstance.post(Url.LOGIN, data);
+      resolve(res.data);
+    }catch(e){
+        reject()
+    }
+});
 
 // 获取首页展示栏模型
 export const getBannerModel = () =>

@@ -194,6 +194,8 @@ export function clearRightLayout() {
 }
 
 
+export const showCanvas = ref(false);
+
 // 清空所有布局元素
 export function clearLayout() {
 }
@@ -262,6 +264,8 @@ export const currentEditingModelInfo = ref()
 
 // 模型装饰品
 export const showDecoration  = ref(false)
+
+
 
 
 /*

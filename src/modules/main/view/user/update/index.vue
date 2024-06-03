@@ -1,7 +1,7 @@
 <template>
   <div class="user-update">
     <div class="user-update-header">
-      <div style="font-size: 14px; font-weight: bold; color: #444">更新个人信息</div>
+      <div style="font-size: 1.2rem; font-weight: bold; color: #444">更新个人信息</div>
     </div>
 
     <div class="user-update-content">
@@ -59,7 +59,7 @@ async function submit() {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .user-update {
   .el-form-item__label {
     position: relative;
@@ -86,7 +86,7 @@ async function submit() {
 .user-update-header {
   width: 100%;
   height: 60px;
-  background-color: fade(var(--el-color-primary), 6%);
+  // background-color: fade(var(--el-color-primary), 6%);
   display: flex;
   justify-content: space-between;
   align-items: center;

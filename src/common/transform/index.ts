@@ -15,7 +15,6 @@ export const imgToFile = (img) => {
     return base64ToFile(imgToBase64(img))
 }
 
-
 export const createImgObjectURL = (img) => {
     return URL.createObjectURL(imgToFile(img))
 }

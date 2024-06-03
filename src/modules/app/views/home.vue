@@ -57,29 +57,21 @@ import {
   IonIcon,
   IonPage,
   IonRouterOutlet,
+  useIonRouter
 } from "@ionic/vue";
 import iconHomeFilled from "@/icon/mobile/footer/home-filled.svg?url";
 import iconMarketFilled from "@/icon/mobile/footer/market-filled.svg?url";
 import iconWorkspaceFilled from "@/icon/mobile/footer/workspace-filled.svg?url";
 import iconTalkFilled from "@/icon/mobile/footer/talk-filled.svg?url";
 import iconUserFilled from "@/icon/mobile/footer/user-filled.svg?url";
-
+import avatar from "@/modules/app/components/avatar.vue";
+import {isDark} from '@/store/stores/app'
 import { useLoginStatusStore } from "@/store/stores/login";
 import { onBeforeMount } from "vue";
-import { useIonRouter } from "@ionic/vue";
 
-import avatar from "@/modules/app/components/avatar.vue";
 
 const router = useIonRouter();
 const loginStore = useLoginStatusStore();
-
-// onBeforeMount(() => {
-//   if (!loginStore.isLogin) {
-//     router.replace({
-//       name: "Login",
-//     });
-//   }
-// });
 </script>
 
 <style scoped lang="less">

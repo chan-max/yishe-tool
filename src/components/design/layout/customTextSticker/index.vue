@@ -42,9 +42,7 @@ const loading = ref(false);
  导出本地png格式
 */
 function exportPng() {
-  loading.value = true;
   exportTextStickerPng();
-  loading.value = false;
 }
 
 async function upload() {

@@ -115,7 +115,7 @@ function close() {
 }
 
 .designiy-dialog-header-title {
-  color: var(--1s-container-header-text-color);
+  color: #333;
   font-size: 12px;
 }
 

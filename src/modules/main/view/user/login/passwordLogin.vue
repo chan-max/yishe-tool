@@ -131,7 +131,7 @@ async function submit(form) {
   try {
     let res = await login(toRaw(loginForm));
     doLoginAction(res.data, isOnce.value);
-    message.success("登录成功!");
+    // message.success("登录成功!");
     await nextTick();
     loading.value = false;
     router.replace({ name: "Home" });

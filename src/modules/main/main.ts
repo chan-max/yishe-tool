@@ -38,6 +38,22 @@ import {syncUserInfoToLocal} from '@/store/stores/login.ts'
 import App from './App.vue'
 import 'element-plus/dist/index.css'
 import '@/style/cover-elementplus.scss'
+import { apiInstance } from "@/api/apiInstance";
+import {message} from 'ant-design-vue'
+
+export const defaultResponseInterceptors = async (response) => {
+    if (response?.data?.code === 401) {
+        // logout
+        throw new Error()
+    } else if (response.data.code == 0) {
+        return response
+    } else {
+        message.error(response?.data?.message)
+        throw new Error(response)
+        }
+  }
+  
+apiInstance.interceptors.response.use(defaultResponseInterceptors);
 
 const app = createApp(App)
 
@@ -58,6 +74,8 @@ app.use(router)
 app.use(ElementPlus)
 
 app.config.globalProperties.__DEV__ = import.meta.env.DEV
+
+
 
 app.mount('#app')
 

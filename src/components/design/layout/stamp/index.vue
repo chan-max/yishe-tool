@@ -1,13 +1,5 @@
 <template>
   <div class="container flex flex-col items-center">
-    <div class="circular">
-      <svg viewBox="0 0 100 100" ref="svgRef">
-        <path d="M 0,50 a 50,50 0 1,1 0,1 z" id="circle" fill="none" />
-        <text>
-          <textPath xlink:href="#circle">{{ text }}</textPath>
-        </text>
-      </svg>
-    </div>
     <input v-model="text" />
   </div>
 </template>
@@ -39,18 +31,5 @@ onMounted(() => {
   height: 100%;
 }
 
-.circular {
-  margin: 0 auto;
-  width: 10em;
-  height: 10em;
-}
 
-.circular path {
-  fill: none;
-}
-
-.circular svg {
-  display: block;
-  overflow: visible;
-}
 </style>

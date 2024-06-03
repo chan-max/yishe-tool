@@ -8,7 +8,6 @@
                 <gltf-viewer :model="item.meta.modelInfo"></gltf-viewer>
                 <!-- <desiamge :src="'http://' + item.thumbnail" :draggable="false"></desiamge> -->
             </div>
-
             <el-popover placement="auto" trigger="click" width="auto">
               <template #reference>
                 <div class="bar">

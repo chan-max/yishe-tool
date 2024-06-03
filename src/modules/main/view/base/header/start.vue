@@ -16,6 +16,11 @@
       <div class="item">矢量图形</div>
       <div class="item">矢量图形</div>
     </div>
+    <div>
+      <div class="title">上传资源</div>
+      <div class="item">图片</div>
+      <div class="item">字体</div>
+    </div>
   </div>
 </template>
 
@@ -35,9 +40,10 @@
 
 .item {
   color: #333336;
-  font-size: 0.9em;
+  font-size: 1em;
   font-weight: 300;
   padding: 0.4em 0;
+  margin-left: .5em;
   font-weight: 500;
   &:hover {
     color: #000;

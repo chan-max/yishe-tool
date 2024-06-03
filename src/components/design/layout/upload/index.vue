@@ -1,77 +1,99 @@
 <template>
   <div class="container">
-    <el-upload
-      style="padding: 0"
-      v-model:file-list="fileList"
-      drag
-      :auto-upload="false"
-      multiple
-      v-bind="$attrs"
-      accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff"
-    >
-      <div class="placeholder">
-        <icon-file-upload></icon-file-upload>
-        <div style="font-size: 12px">点击或拖拽上传</div>
-        <!-- <div> 
-          <el-button size="small"> 扫码上传 </el-button>
-          <el-button size="small">  扫码上传 </el-button>
-        </div> -->
-      </div>
-      <template #tip>
-        <div class="tip">
-          <div>
-            支持 jpg，png，svg等图片格式 ，图片格式会自动添加到贴纸中,
-            ttf，woff等字体格式,字体可以在我的字体中查看
-          </div>
-        </div>
-      </template>
-      <template #file="{ file, url }">
-        <div class="file-bar">
-          <template v-if="isImg(file.name)">
-            <el-image :src="getPreviewUrl(file.raw)" style="height: 2em"></el-image>
-            <div>
-              {{ file.name }}
-            </div>
-            <div style="flex: 1"></div>
-            <el-tooltip content="图片会自动上传到贴纸" placement="top">
-              <el-icon size="1.2rem"><Warning /></el-icon>
-            </el-tooltip>
-
-            <el-button @click="removeFile(file)" type="danger" link
-              ><el-icon size="2rem"><CircleCloseFilled /></el-icon
-            ></el-button>
-          </template>
-          <template v-else-if="isFont(file.name)">
-            <el-icon size="2em"
-              ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
-            ></el-icon>
-            <div style="font-size: 1.6em" @vue:mounted="initFontFamily(file, $event)">
-              {{ file.name }}
-            </div>
-            <div style="flex: 1"></div>
-            <el-tooltip content="左侧的文字会自动生成缩略图" placement="top">
-              <el-icon size="1.2rem"><Warning /></el-icon>
-            </el-tooltip>
-            <el-button @click="removeFile(file)" type="danger" link
-              ><el-icon size="2rem"><CircleCloseFilled /></el-icon
-            ></el-button>
-          </template>
-        </div>
-      </template>
-    </el-upload>
-    <footer>
-      <div style="flex: 1"></div>
-      <el-button round @click="doUpload" :icon="Iphone"> APP 扫码上传 </el-button>
-      <el-button
-        type="primary"
-        round
-        @click="doUpload"
-        :loading="loading"
-        :icon="UploadFilled"
+  <!-- <div style="padding:1em 0;">
+    <el-radio-group v-model="uploadTabType">
+      <el-radio-button label="本地上传" value="local" />
+      <el-radio-button label="扫码上传" value="scan"/>
+    </el-radio-group>
+  </div> -->
+    <div v-if="uploadTabType == 'local'">
+      <el-upload
+        style="padding: 0"
+        v-model:file-list="fileList"
+        drag
+        :auto-upload="false"
+        multiple
+        v-bind="$attrs"
+        accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff"
       >
-        本地上传
-      </el-button>
-    </footer>
+        <div class="placeholder">
+          <icon-file-upload></icon-file-upload>
+          <div style="font-size: 12px">点击或拖拽上传</div>
+          <!-- <div> 
+            <el-button size="small"> 扫码上传 </el-button>
+            <el-button size="small">  扫码上传 </el-button>
+          </div> -->
+        </div>
+        <template #tip>
+          <div class="tip">
+            <div>
+              支持 jpg，png，svg等图片格式 ，图片格式会自动添加到贴纸中,
+              ttf，woff等字体格式,字体可以在我的字体中查看
+            </div>
+          </div>
+        </template>
+        <template #file="{ file, url }">
+          <div class="file-bar">
+            <template v-if="isImg(file.name)">
+              <el-image :src="getPreviewUrl(file.raw)" style="height: 2em"></el-image>
+              <div>
+                {{ file.name }}
+              </div>
+              <div style="flex: 1"></div>
+              <el-tooltip content="图片会自动上传到贴纸" placement="top">
+                <el-icon size="1.2rem"><Warning /></el-icon>
+              </el-tooltip>
+
+              <el-button @click="removeFile(file)" type="danger" link
+                ><el-icon size="2rem"><CircleCloseFilled /></el-icon
+              ></el-button>
+            </template>
+            <template v-else-if="isFont(file.name)">
+              <el-icon size="2em"
+                ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
+              ></el-icon>
+              <div style="font-size: 1.6em" @vue:mounted="initFontFamily(file, $event)">
+                {{ file.name }}
+              </div>
+              <div style="flex: 1"></div>
+              <el-tooltip content="左侧的文字会自动生成缩略图" placement="top">
+                <el-icon size="1.2rem"><Warning /></el-icon>
+              </el-tooltip>
+              <el-button @click="removeFile(file)" type="danger" link
+                ><el-icon size="2rem"><CircleCloseFilled /></el-icon
+              ></el-button>
+            </template>
+          </div>
+        </template>
+      </el-upload>
+
+    </div>
+    <div v-if="uploadTabType == 'scan'" class="flex flex-col justify-center items-center">
+      <div class="qrcode" style="width:10rem;height:10rem;">
+        
+      </div>
+      <div class="tip">
+        打开app扫码上传
+      </div>
+    </div> 
+    <footer>
+        <div style="flex: 1"></div>
+        <template v-if="uploadTabType == 'local'">
+          <el-button round @click="uploadTabType = 'scan'"  :icon="Iphone"> APP 扫码上传 </el-button>
+        <el-button
+          type="primary"
+          round
+          @click="doUpload"
+          :loading="loading"
+          :icon="UploadFilled"
+        >
+          本地上传
+        </el-button>
+        </template>
+        <template  v-if="uploadTabType == 'scan'">
+          <el-button round @click="uploadTabType = 'local'" > 返回本地上传 </el-button>
+        </template>
+      </footer>
   </div>
 </template>
 
@@ -94,6 +116,12 @@ import iconFileUpload from "@/icon/file-upload.svg";
 import iconImg from "@/icon/fileType/img.svg";
 import iconFont from "@/icon/fileType/font.svg";
 import iconGlb from "@/icon/fileType/glb.svg";
+
+/*
+  scan 
+  local
+*/
+const uploadTabType = ref('local')
 
 /* 获取文件后缀 */
 function getFileSuffix(filename) {
@@ -261,6 +289,7 @@ async function doUpload() {
   padding: 1em;
   font-size: 1em;
   font-weight: bold;
+  width: 100%;
   color: #ccc;
 }
 
@@ -281,4 +310,5 @@ footer {
   align-items: center;
   padding: 1em;
 }
+
 </style>

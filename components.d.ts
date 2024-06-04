@@ -60,6 +60,7 @@ declare module 'vue' {
     SubHeaderMenu: typeof import('./src/components/design/layout/subHeaderMenu/index.vue')['default']
     SvgIcon: typeof import('./src/components/svgIcon.vue')['default']
     Tags: typeof import('./src/components/design/components/tags.vue')['default']
+    TagsInput: typeof import('./src/components/design/components/tagsInput.vue')['default']
     TextDesigner: typeof import('./src/components/design/components/textDesigner/index.vue')['default']
     TextSticker: typeof import('./src/components/design/layout/textSticker/index.vue')['default']
     Upload: typeof import('./src/components/design/layout/upload/index.vue')['default']

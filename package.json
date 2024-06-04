@@ -112,6 +112,7 @@
     "vue-waterfall-plugin-next": "^2.3.1",
     "vue3-colorpicker": "2.3.0",
     "vue3-danmaku": "^1.6.0",
+    "vue3-tags-input": "^1.0.12",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1",
     "yarn": "^1.22.21"

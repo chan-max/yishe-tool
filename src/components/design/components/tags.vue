@@ -17,7 +17,9 @@
     trigger="click"
   >
     <template #reference>
-        <el-tag @click="add" effect="light" size="small" round></el-tag>
+        <el-tag @click="add" effect="light" size="small" round>
+          添加标签
+        </el-tag>
     </template>
     <div>
       tags

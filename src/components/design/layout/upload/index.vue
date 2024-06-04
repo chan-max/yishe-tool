@@ -14,6 +14,7 @@
         :auto-upload="false"
         multiple
         v-bind="$attrs"
+        :on-change="fileListChange"
         accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff"
       >
         <div class="placeholder">
@@ -32,13 +33,15 @@
             </div>
           </div>
         </template>
+
         <template #file="{ file, url }">
           <template v-if="isImg(file.name)">
             <div>
               <div class="file-bar">
                 <div class="file-bar-header">
                   <el-image
-                    :src="getPreviewUrl(file.raw)"
+                    @focus="null"
+                    :src="file.url"
                     style="height: 2em; width: 2em"
                     fit="contain"
                   ></el-image>
@@ -56,13 +59,14 @@
                   ></el-button>
                 </div>
                 <div class="file-bar-tags">
-                  <tags v-model="file.keywords"></tags>
+                  <tags-input v-model="file.tags"></tags-input>
                 </div>
               </div>
             </div>
           </template>
           <template v-else-if="isFont(file.name)">
             <div>
+              <div class="file-bar">
               <div class="file-bar-header">
                 <el-icon size="2em"
                   ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
@@ -79,7 +83,8 @@
                 ></el-button>
               </div>
               <div class="file-bar-tags">
-                <tags></tags>
+                <tags-input v-model="file.tags"></tags-input>
+              </div>
               </div>
             </div>
           </template>
@@ -133,12 +138,17 @@ import iconImg from "@/icon/fileType/img.svg";
 import iconFont from "@/icon/fileType/font.svg";
 import iconGlb from "@/icon/fileType/glb.svg";
 import tags from "@/components/design/components/tags.vue";
+import tagsInput from "@/components/design/components/tagsInput.vue";
 
 /*
   scan 
   local
 */
 const uploadTabType = ref("local");
+
+function fileListChange(file){
+  file.url = URL.createObjectURL(file.raw)
+}
 
 /* 获取文件后缀 */
 function getFileSuffix(filename) {
@@ -192,6 +202,8 @@ function initFontFamily(file, e) {
   file.el = el;
 }
 
+
+
 // 文件列表
 const fileList = ref([]);
 
@@ -204,6 +216,36 @@ function getPreviewUrl(file) {
 }
 
 const loading = ref(false);
+
+
+async function uploadSingleFile(file){
+  const type = getFileSuffix(file.name);
+        const keywords = file.tags && file.tags.join(',')
+
+        if (isImg(file.name)) {
+          const { url } = await uploadToCOS({ file: file.raw });
+          const params = {
+            name: file.raw.name,
+            size: file.size,
+            url,
+            keywords,
+            type: "image", // 默认为图片贴纸,
+            thumbnail: url,
+          };
+          await createStickerApi(params);
+        } 
+        
+        if(isFont(file.name)){
+          /* 需要生成缩略图 */
+          const params = {
+            raw: file.raw,
+            name: file.raw.name,
+            size: file.size,
+          };
+          await uploadFile(params);
+        }
+} 
+
 
 async function doUpload() {
   if (!fileList.value.length) {
@@ -220,33 +262,11 @@ async function doUpload() {
 
   try {
     await Promise.all(
-      fileList.value.map(async (file) => {
-        const type = getFileSuffix(file.name);
-        if (["jpg", "png", "svg"].includes(type)) {
-          const { url } = await uploadToCOS({ file: file.raw });
-          const params = {
-            name: file.raw.name,
-            size: file.size,
-            url,
-            type: "image", // 默认为图片贴纸,
-            thumbnail: url,
-          };
-          await createStickerApi(params);
-        } else {
-          /* 需要生成缩略图 */
-          const params = {
-            raw: file.raw,
-            name: file.raw.name,
-            size: file.size,
-          };
-          await uploadFile(params);
-        }
-        return;
-      })
+      fileList.value.map(uploadSingleFile)
     );
-
+    
     message.success("上传成功!");
-    showUpload.value = false;
+    // showUpload.value = false;
     loading.value = false;
     fileList.value = [];
   } catch (e) {
@@ -310,9 +330,9 @@ async function doUpload() {
 }
 
 .file-bar {
-  background: #f3f5f7;
   border-radius: 4px;
   padding: 0.5em 1em;
+  border: 1px solid #eee;
 }
 
 .file-bar-header {
@@ -333,6 +353,12 @@ async function doUpload() {
 footer {
   display: flex;
   align-items: center;
+  padding: 1em;
+}
+
+:deep(.el-upload-list){
+  max-height: 300px;
+  overflow: auto;
   padding: 1em;
 }
 </style>

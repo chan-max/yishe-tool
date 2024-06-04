@@ -6,7 +6,7 @@
   "scripts": {
     "vite": "vite",
     "web:dev": "vite",
-    "build": "concurrently  \"vite build\" \"npm run build:app\"",
+    "build": "vite build",
     "preview": "vite preview",
     "docs:dev": "vitepress dev docs --port 7788",
     "docs:build": "vitepress build docs",

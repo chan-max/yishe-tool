@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-  <!-- <div style="padding:1em 0;">
+    <!-- <div style="padding:1em 0;">
     <el-radio-group v-model="uploadTabType">
       <el-radio-button label="本地上传" value="local" />
       <el-radio-button label="扫码上传" value="scan"/>
@@ -27,59 +27,75 @@
         <template #tip>
           <div class="tip">
             <div>
-              支持 jpg，png，svg等图片格式 ，图片格式会自动添加到贴纸中,
-              ttf，woff等字体格式,字体可以在我的字体中查看
+              支持 jpg,png,svg等图片格式 ，图片格式会自动添加到贴纸中,
+              ttf,woff等字体格式,字体可以在我的字体中查看
             </div>
           </div>
         </template>
         <template #file="{ file, url }">
-          <div class="file-bar">
-            <template v-if="isImg(file.name)">
-              <el-image :src="getPreviewUrl(file.raw)" style="height: 2em"></el-image>
-              <div>
-                {{ file.name }}
+          <template v-if="isImg(file.name)">
+            <div>
+              <div class="file-bar">
+                <div class="file-bar-header">
+                  <el-image
+                    :src="getPreviewUrl(file.raw)"
+                    style="height: 2em; width: 2em"
+                    fit="contain"
+                  ></el-image>
+                  <div>{{ file.name }}</div>
+                  <div style="flex: 1"></div>
+                  <el-tooltip content="图片会自动上传到贴纸" placement="top">
+                    <el-icon style="height: 2em" size="1.2rem"><Warning /></el-icon>
+                  </el-tooltip>
+                  <el-button
+                    @click="removeFile(file)"
+                    type="danger"
+                    link
+                    style="height: 2em"
+                    ><el-icon size="2rem"><CircleCloseFilled /></el-icon
+                  ></el-button>
+                </div>
+                <div class="file-bar-tags">
+                  <tags v-model="file.keywords"></tags>
+                </div>
               </div>
-              <div style="flex: 1"></div>
-              <el-tooltip content="图片会自动上传到贴纸" placement="top">
-                <el-icon size="1.2rem"><Warning /></el-icon>
-              </el-tooltip>
-
-              <el-button @click="removeFile(file)" type="danger" link
-                ><el-icon size="2rem"><CircleCloseFilled /></el-icon
-              ></el-button>
-            </template>
-            <template v-else-if="isFont(file.name)">
-              <el-icon size="2em"
-                ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
-              ></el-icon>
-              <div style="font-size: 1.6em" @vue:mounted="initFontFamily(file, $event)">
-                {{ file.name }}
+            </div>
+          </template>
+          <template v-else-if="isFont(file.name)">
+            <div>
+              <div class="file-bar-header">
+                <el-icon size="2em"
+                  ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
+                ></el-icon>
+                <div style="font-size: 1.6em" @vue:mounted="initFontFamily(file, $event)">
+                  {{ file.name }}
+                </div>
+                <div style="flex: 1"></div>
+                <el-tooltip content="左侧的文字会自动生成缩略图" placement="top">
+                  <el-icon size="1.2rem"><Warning /></el-icon>
+                </el-tooltip>
+                <el-button @click="removeFile(file)" type="danger" link
+                  ><el-icon size="2rem"><CircleCloseFilled /></el-icon
+                ></el-button>
               </div>
-              <div style="flex: 1"></div>
-              <el-tooltip content="左侧的文字会自动生成缩略图" placement="top">
-                <el-icon size="1.2rem"><Warning /></el-icon>
-              </el-tooltip>
-              <el-button @click="removeFile(file)" type="danger" link
-                ><el-icon size="2rem"><CircleCloseFilled /></el-icon
-              ></el-button>
-            </template>
-          </div>
+              <div class="file-bar-tags">
+                <tags></tags>
+              </div>
+            </div>
+          </template>
         </template>
       </el-upload>
-
     </div>
     <div v-if="uploadTabType == 'scan'" class="flex flex-col justify-center items-center">
-      <div class="qrcode" style="width:10rem;height:10rem;">
-        
-      </div>
-      <div class="tip">
-        打开app扫码上传
-      </div>
-    </div> 
+      <div class="qrcode" style="width: 10rem; height: 10rem"></div>
+      <div class="tip">打开app扫码上传</div>
+    </div>
     <footer>
-        <div style="flex: 1"></div>
-        <template v-if="uploadTabType == 'local'">
-          <el-button round @click="uploadTabType = 'scan'"  :icon="Iphone"> APP 扫码上传 </el-button>
+      <div style="flex: 1"></div>
+      <template v-if="uploadTabType == 'local'">
+        <el-button round @click="uploadTabType = 'scan'" :icon="Iphone">
+          APP 扫码上传
+        </el-button>
         <el-button
           type="primary"
           round
@@ -89,11 +105,11 @@
         >
           本地上传
         </el-button>
-        </template>
-        <template  v-if="uploadTabType == 'scan'">
-          <el-button round @click="uploadTabType = 'local'" > 返回本地上传 </el-button>
-        </template>
-      </footer>
+      </template>
+      <template v-if="uploadTabType == 'scan'">
+        <el-button round @click="uploadTabType = 'local'"> 返回本地上传 </el-button>
+      </template>
+    </footer>
   </div>
 </template>
 
@@ -116,12 +132,13 @@ import iconFileUpload from "@/icon/file-upload.svg";
 import iconImg from "@/icon/fileType/img.svg";
 import iconFont from "@/icon/fileType/font.svg";
 import iconGlb from "@/icon/fileType/glb.svg";
+import tags from "@/components/design/components/tags.vue";
 
 /*
   scan 
   local
 */
-const uploadTabType = ref('local')
+const uploadTabType = ref("local");
 
 /* 获取文件后缀 */
 function getFileSuffix(filename) {
@@ -175,6 +192,7 @@ function initFontFamily(file, e) {
   file.el = el;
 }
 
+// 文件列表
 const fileList = ref([]);
 
 function removeFile(file) {
@@ -184,8 +202,6 @@ function removeFile(file) {
 function getPreviewUrl(file) {
   return URL.createObjectURL(file);
 }
-
-function previewFile(file) {}
 
 const loading = ref(false);
 
@@ -294,15 +310,24 @@ async function doUpload() {
 }
 
 .file-bar {
+  background: #f3f5f7;
+  border-radius: 4px;
+  padding: 0.5em 1em;
+}
+
+.file-bar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   column-gap: 1em;
-  background: #f3f5f7;
-  border-radius: 4px;
   display: flex;
-  padding: 0.5em 1em;
   font-size: 12px;
+}
+
+.file-bar-tags {
+  margin: 1em 2.4em;
+  display: flex;
+  gap: 0.5em;
 }
 
 footer {
@@ -310,5 +335,4 @@ footer {
   align-items: center;
   padding: 1em;
 }
-
 </style>

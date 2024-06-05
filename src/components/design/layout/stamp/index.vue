@@ -1,11 +1,13 @@
 <template>
   <div class="container flex flex-col items-center">
-    <input v-model="text" />
+    <svg :width="svgWidth" :height="svgHeight">
+      <circle :cx="circleCenterX" :cy="circleCenterY" :r="circleRadius" :stroke="circleStroke" :stroke-width="circleStrokeWidth" fill="none" />
+    </svg>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref,computed } from "vue";
 import { Canvg } from "canvg";
 import {
   svgToBase64,
@@ -14,15 +16,27 @@ import {
   svgToPngFile,
 } from "@/common/transform/index";
 
-const text = ref();
 
-const svgRef = ref();
 
-const canvasRef = ref();
 
-onMounted(() => {
-  // downloadByFile(svgToPngFile(svgRef.value));
-});
+// 可定义
+const svgWidth = ref(200)
+const svgHeight = ref(200)
+const circleStrokeWidth = ref(30)
+const circleStroke = ref('red')
+
+// 
+const circleCenterX = computed(() => {
+  return svgWidth.value / 2
+})
+const circleCenterY = computed(() => {
+  return svgHeight.value / 2
+})
+const circleRadius = computed(() => {
+  return svgWidth.value / 2 - circleStrokeWidth.value / 2
+})
+
+
 </script>
 
 <style lang="less" scoped>

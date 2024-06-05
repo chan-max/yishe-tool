@@ -370,5 +370,10 @@ footer {
   max-height: 300px;
   overflow-y: auto;
   overflow-x: hidden;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
 }
 </style>

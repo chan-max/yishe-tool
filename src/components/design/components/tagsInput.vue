@@ -30,6 +30,7 @@ function customValidate(value) {
 <style>
 .v3ti {
   min-height: 0!important;
+  background-color: transparent !important;
 }
 .v3ti-new-tag {
   font-size: 1rem;

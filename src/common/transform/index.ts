@@ -1,4 +1,6 @@
 import { base64ToFile } from "./base64ToFile";
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
+
 
 export function imgToBase64(img) {
     img.setAttribute('crossorigin', 'anonymous');
@@ -67,4 +69,13 @@ export  function svgToPngFile(svg){
     let img = document.createElement('img')
     img.src = svgBase64
     return imgToFile(img)
+}
+
+
+/*
+ 元素转png文件
+*/
+export async function htmlToPngFile(html){
+    const b6 = await toPng(html)
+    return base64ToPngFile(b6)
 }

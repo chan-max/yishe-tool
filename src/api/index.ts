@@ -291,15 +291,13 @@ export const uploadManyFile = (params) => new Promise(async (resolve, reject) =>
 
 export const uploadFile = (params) => new Promise(async (resolve, reject) => {
 
-  const cos = await uploadToCOS({key:new Date().getTime(),file:params.raw})
-  const url = cos.url
-
   const data = {
+    ...params,
+    thumbnail: params.thumbnail,
     name:params.name,
     type:params.name.split(".").pop(),
     size:params.size,
     meta:params.meta || {},
-    url
   }
 
   await apiInstance.post('/api/file/create',data)

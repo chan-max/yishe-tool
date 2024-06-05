@@ -45,11 +45,11 @@
                     style="height: 2em; width: 2em"
                     fit="contain"
                   ></el-image>
-                  <div>{{ file.name }}</div>
-                  <div style="flex: 1"></div>
+                  <div style="font-size: 1.2rem">{{ file.name }}</div>
                   <el-tooltip content="图片会自动上传到贴纸" placement="top">
                     <el-icon style="height: 2em" size="1.2rem"><Warning /></el-icon>
                   </el-tooltip>
+                  <div style="flex: 1"></div>
                   <el-button
                     @click="removeFile(file)"
                     type="danger"
@@ -67,24 +67,27 @@
           <template v-else-if="isFont(file.name)">
             <div>
               <div class="file-bar">
-              <div class="file-bar-header">
-                <el-icon size="2em"
-                  ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
-                ></el-icon>
-                <div style="font-size: 1.6em" @vue:mounted="initFontFamily(file, $event)">
-                  {{ file.name }}
+                <div class="file-bar-header">
+                  <el-icon size="2em"
+                    ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
+                  ></el-icon>
+                  <div
+                    style="font-size: 1.6em;"
+                    @vue:mounted="initFontFamily(file, $event)"
+                  >
+                    {{ file.name }}
+                  </div>
+                  <el-tooltip content="左侧的文字会自动生成缩略图" placement="top">
+                    <el-icon size="1.2rem"><Warning /></el-icon>
+                  </el-tooltip>
+                  <div style="flex: 1"></div>
+                  <el-button @click="removeFile(file)" type="danger" link
+                    ><el-icon size="2rem"><CircleCloseFilled /></el-icon
+                  ></el-button>
                 </div>
-                <div style="flex: 1"></div>
-                <el-tooltip content="左侧的文字会自动生成缩略图" placement="top">
-                  <el-icon size="1.2rem"><Warning /></el-icon>
-                </el-tooltip>
-                <el-button @click="removeFile(file)" type="danger" link
-                  ><el-icon size="2rem"><CircleCloseFilled /></el-icon
-                ></el-button>
-              </div>
-              <div class="file-bar-tags">
-                <tags-input v-model="file.tags"></tags-input>
-              </div>
+                <div class="file-bar-tags">
+                  <tags-input v-model="file.tags"></tags-input>
+                </div>
               </div>
             </div>
           </template>
@@ -107,8 +110,9 @@
           @click="doUpload"
           :loading="loading"
           :icon="UploadFilled"
+          :disabled="fileList.length == 0"
         >
-          本地上传
+          {{ fileList.length ? `上传该 ${fileList.length} 个文件` : "选择文件"  }}
         </el-button>
       </template>
       <template v-if="uploadTabType == 'scan'">
@@ -119,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref ,toRaw} from "vue";
 import fileUpload from "./fileUpload/index.vue";
 import { message } from "ant-design-vue";
 import { uploadManyFile, createStickerApi, uploadFile } from "@/api";
@@ -139,15 +143,15 @@ import iconFont from "@/icon/fileType/font.svg";
 import iconGlb from "@/icon/fileType/glb.svg";
 import tags from "@/components/design/components/tags.vue";
 import tagsInput from "@/components/design/components/tagsInput.vue";
-
+import {htmlToPngFile} from '@/common/transform'
 /*
   scan 
   local
 */
 const uploadTabType = ref("local");
 
-function fileListChange(file){
-  file.url = URL.createObjectURL(file.raw)
+function fileListChange(file) {
+  file.url = URL.createObjectURL(file.raw);
 }
 
 /* 获取文件后缀 */
@@ -202,8 +206,6 @@ function initFontFamily(file, e) {
   file.el = el;
 }
 
-
-
 // 文件列表
 const fileList = ref([]);
 
@@ -217,35 +219,44 @@ function getPreviewUrl(file) {
 
 const loading = ref(false);
 
+async function uploadSingleFile(file) {
 
-async function uploadSingleFile(file){
-  const type = getFileSuffix(file.name);
-        const keywords = file.tags && file.tags.join(',')
+  file = toRaw(file)
 
-        if (isImg(file.name)) {
-          const { url } = await uploadToCOS({ file: file.raw });
-          const params = {
-            name: file.raw.name,
-            size: file.size,
-            url,
-            keywords,
-            type: "image", // 默认为图片贴纸,
-            thumbnail: url,
-          };
-          await createStickerApi(params);
-        } 
-        
-        if(isFont(file.name)){
-          /* 需要生成缩略图 */
-          const params = {
-            raw: file.raw,
-            name: file.raw.name,
-            size: file.size,
-          };
-          await uploadFile(params);
-        }
-} 
+  const keywords = file.tags && file.tags.join(",");
+  if (isImg(file.name)) {
+    const { url } = await uploadToCOS({ file: file.raw });
+    const params = {
+      name: file.raw.name,
+      size: file.size,
+      url,
+      keywords,
+      type: "image", // 默认为图片贴纸,
+      thumbnail: url,
+    };
+    await createStickerApi(params);
+  }
 
+  if (isFont(file.name)) {
+    /* 需要生成缩略图 */
+    const png = await htmlToPngFile(file.el)
+
+    const {url:thumbnailUrl} = await uploadToCOS({
+      file:png
+    })
+
+    const {url:fileUrl} = await uploadToCOS({key:new Date().getTime(),file:file.raw})
+
+    const params = {
+      url:fileUrl,
+      name: file.raw.name,
+      size: file.size,
+      thumbnail:thumbnailUrl
+    };
+
+    await uploadFile(params);
+  }
+}
 
 async function doUpload() {
   if (!fileList.value.length) {
@@ -261,10 +272,7 @@ async function doUpload() {
   loading.value = true;
 
   try {
-    await Promise.all(
-      fileList.value.map(uploadSingleFile)
-    );
-    
+    await Promise.all(fileList.value.map(uploadSingleFile));
     message.success("上传成功!");
     // showUpload.value = false;
     loading.value = false;
@@ -333,6 +341,8 @@ async function doUpload() {
   border-radius: 4px;
   padding: 0.5em 1em;
   border: 1px solid #eee;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .file-bar-header {
@@ -345,7 +355,7 @@ async function doUpload() {
 }
 
 .file-bar-tags {
-  margin: 1em 2.4em;
+  margin-top: 1em;
   display: flex;
   gap: 0.5em;
 }
@@ -356,9 +366,9 @@ footer {
   padding: 1em;
 }
 
-:deep(.el-upload-list){
+:deep(.el-upload-list) {
   max-height: 300px;
-  overflow: auto;
-  padding: 1em;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>

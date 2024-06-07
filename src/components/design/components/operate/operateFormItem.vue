@@ -19,7 +19,7 @@
         <!-- <el-icon><Warning /></el-icon> -->
       </div>
     </div>
-    <div style="flex: 1"></div>
+    <!-- <div style="flex: 1"></div> -->
     <div class="operate-form-item-content">
       <slot name="content"> </slot>
     </div>

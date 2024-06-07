@@ -3,8 +3,11 @@ import { currentController, operatingTextStickerOptions, showDecalControl } from
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
 import { getFontById } from "@/api";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn,watchDebounced } from "@vueuse/core";
 import { base64ToFile } from "@/common/transform/base64ToFile";
+
+
+
 
 
 /*
@@ -21,6 +24,10 @@ function setFontSize(){
     }
     canvasTextEl.value.style.fontSize = operatingTextStickerOptions.fontSize + "px"
 }
+
+
+watch(operatingTextStickerOptions,(key,value,e) => {
+})
 
 watch(() => 
      operatingTextStickerOptions.fontSize
@@ -72,10 +79,10 @@ function setItalic(){
     canvasTextEl.value.style.fontStyle = operatingTextStickerOptions.italic ? "italic" : "";
 }
 
-watch(() => operatingTextStickerOptions.italic,useDebounceFn(() => {
+watch(() => operatingTextStickerOptions.italic,() => {
     setItalic()
     initDraggableTextSticker()
-}))
+})
 
 function setLetterSpacing(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
@@ -207,7 +214,7 @@ watch(() => operatingTextStickerOptions.borderStyle,async () => {
 
 
 // 创建可拖拽的文字贴纸
-export async function initDraggableTextSticker(){
+export async function _initDraggableTextSticker(){
 
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
@@ -231,6 +238,8 @@ export async function initDraggableTextSticker(){
     base64.value
   );
 }
+
+const  initDraggableTextSticker = useDebounceFn(_initDraggableTextSticker,200)
 
 export async function exportTextStickerPng(){
     const b6 =  await toPng(canvasBackgroundEl.value);
@@ -265,6 +274,6 @@ export function forceUpdateTextSticker(){
     setBorderColor()
     setBorderWidth()
     setBorderStyle()
-    initDraggableTextSticker()
     setFontFamliy()
+    initDraggableTextSticker()
 }   

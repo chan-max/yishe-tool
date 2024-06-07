@@ -27,7 +27,7 @@
                 <el-select
                   v-model="operatingTextStickerOptions.fontWeight"
                   size="small"
-                  style="width: 72px"
+                  style="min-width: 72px"
                 >
                   <el-option
                     v-for="item in fontWeightOptions"
@@ -222,7 +222,7 @@ import iconBorderColor from "@/components/design/assets/icon/border-color.svg?co
 
 import { operatingTextStickerOptions, showFontList } from "../../store";
 
-const r = ref()
+const r = ref();
 
 const actives = ref(["1", "2", "3", "4"]);
 
@@ -271,11 +271,11 @@ main {
   height: 100%;
   width: 100%;
   overflow: auto;
-  padding: 20px;
+  padding: 2em;
 }
 
 .title {
-  font-size: 10px;
+  font-size: 1rem;
   font-weight: bold;
   // height: 12px;
   // line-height: 12px;

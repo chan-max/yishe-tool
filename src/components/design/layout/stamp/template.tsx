@@ -136,6 +136,9 @@ const Rect = (props) => {
 /*
     印章根组件
 */
+
+
+
 export const Stamp = (props) => {
     const width = props.width
     const height = props.height
@@ -144,7 +147,8 @@ export const Stamp = (props) => {
         {/* <Pentagram containerSize={{ width, height }} size="200"></Pentagram> */}
         {/* <Circle containerSize={{ width, height }}></Circle> */}
         {/* <Ellipse></Ellipse> */}
-        <Rect containerSize={{width,height}} borderWidth={4} borderRadius={4}></Rect>
+        <Rect containerSize={{width,height}} borderWidth={10} borderRadius={20}></Rect>
+        <Pentagram containerSize={{width,height}}></Pentagram>
         </svg>
 }
 

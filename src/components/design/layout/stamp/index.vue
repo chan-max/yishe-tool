@@ -1,21 +1,18 @@
 <template>
   <div class="container flex flex-col items-center">
-    <stamp width="200" height="200"></stamp>
-    <!-- <svg :width="svgWidth" :height="svgHeight">
-      <polygon
-        fill="black"
-        points="25,0 31,18 50,18 35,29 40,50 25,38 10,50 15,29 0,18 20,18"
-      />
-
-      <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-size="24" writing-mode="tb" glyph-orientation-vertical="0">Hello, World!</text>
-      <circle :cx="circleCenterX" :cy="circleCenterY" :r="circleRadius" :stroke="circleStroke" :stroke-width="circleStrokeWidth" fill="none" />
-    </svg> -->
+      <div class="stamp png-background">
+        <stamp width="240" height="240"></stamp>
+      </div>
+      <div class="operate">
+        <operate></operate>
+      </div>
   </div>
 </template>
 
 <script setup lang="tsx">
 import { onMounted, ref, computed } from "vue";
 import { Canvg } from "canvg";
+import operate from './operate.vue'
 import {
   svgToBase64,
   downloadByFile,
@@ -23,8 +20,6 @@ import {
   svgToPngFile,
 } from "@/common/transform/index";
 import {Stamp} from './template'
-
-console.log(Stamp)
 
 const circle = () => {
   return <div></div>;
@@ -54,7 +49,22 @@ const circleRadius = computed(() => {
 
 <style lang="less" scoped>
 .container {
-  width: 300px;
+  width: 320px;
   height: 100%;
+}
+
+.stamp{
+  width: 300px;
+  height: 300px;
+  display: flex;
+  margin: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.operate{
+  flex: 1;
+  width: 100%;
+  overflow: auto;
 }
 </style>

@@ -15,8 +15,8 @@ let attrs = useAttrs();
 </script>
 <style lang="less">
 .color-picker {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: 4px;
   overflow: hidden;
   display: flex;

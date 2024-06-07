@@ -36,6 +36,13 @@ const props = defineProps(["name"]);
   justify-content: space-between;
   column-gap: 8px;
   height: 40px;
+  .el-select__wrapper{
+    min-height: 20px;
+    height: 20px!important;
+  }
+  .el-input__wrapper{
+    height: 20px!important;
+  }
 }
 
 .operate-form-item-icon {

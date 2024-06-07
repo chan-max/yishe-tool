@@ -24,12 +24,25 @@ export async function uploadToCOS({
             Region: cos.options.Region
         })
         return {
-            url:res.Location,
+            url: res.Location,
             key
         }
     } catch (e) {
         throw e
     }
+}
+
+
+// 删除
+export async function deleteCOSFile(filename) {
+    const cos = getCOS();
+    // 调用删除文件的方法
+    const res =  await cos.deleteObject({
+        Bucket: cos.options.Bucket,
+        Region: cos.options.Region,
+        Key: filename
+    });
+    return res
 }
 
 

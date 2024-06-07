@@ -223,6 +223,8 @@ import iconBorderColor from "@/components/design/assets/icon/border-color.svg?co
 
 import { operatingTextStickerOptions, showFontList } from "../../store";
 
+const r = ref()
+
 const actives = ref(["1", "2", "3", "4"]);
 
 const fontWeightOptions = reactive([

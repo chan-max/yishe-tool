@@ -31,7 +31,7 @@ const input = useDebounceFn(function input(e) {
   if (e.keyCode === 9) {
     e.preventDefault();
   }
-  operatingTextStickerOptions.value.content = canvasTextEl.value.innerText;
+  operatingTextStickerOptions.content = canvasTextEl.value.innerText;
 }, 500);
 
 const editable = ref(false);
@@ -71,7 +71,7 @@ async function click() {
 }
 
 onMounted(async () => {
-  canvasTextEl.value.innerText = operatingTextStickerOptions.value.content;
+  canvasTextEl.value.innerText = operatingTextStickerOptions.content;
   forceUpdateTextSticker();
 });
 

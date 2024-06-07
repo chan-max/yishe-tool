@@ -10,10 +10,10 @@
       :style="{ padding }"
     >
       <template #placeholder>
-        <div class="image_loading"></div>
+        <div class="img_loading"></div>
       </template>
       <template #error>
-        <div class="image_error">
+        <div class="img_error">
           <el-icon style="color: #888"><Picture /></el-icon>
         </div>
       </template>
@@ -24,13 +24,12 @@
 import { onMounted, ref, computed, nextTick } from "vue";
 import { Picture, FolderOpened, Search, Operation } from "@element-plus/icons-vue";
 
-
 const emits = defineEmits(['load'])
 
 const props = defineProps({
   // 是否可拖拽
   padding: {
-    default: "1em",
+    default: "0",
   },
   info:{
     default:{}
@@ -60,9 +59,9 @@ function load(e) {
   height: 100%;
   transition: all 0.3s;
 
-  &:hover {
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  }
+  // &:hover {
+  //   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  // }
 
   &_loading {
     width: 100%;

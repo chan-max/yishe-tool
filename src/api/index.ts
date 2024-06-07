@@ -2,9 +2,24 @@
 import { uploadToCOS } from "./cos";
 import { apiInstance, source } from "./apiInstance";
 import { Url } from "./url";
-
-
 export {uploadToCOS}  from './cos'
+
+
+
+async function fetchFile(url,filename = String(new Date().getTime())) {
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+      throw new Error("文件请求失败");
+  }
+
+  // 这将会返回一个 Blob 对象，其实就是 File 的父类。
+  const blob = await response.blob(); 
+
+  // 你可以将 blob 直接返回，或者转换为 File 对象。如果需要转换为 File，必须提供文件名。
+  const file = new File([blob], filename);
+  return file;
+}
 
 // 注册 ，账号密码手机号
 export const register = (data: any) =>

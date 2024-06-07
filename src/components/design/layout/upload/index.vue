@@ -39,15 +39,15 @@
             <div>
               <div class="file-bar">
                 <div class="file-bar-header">
-                  <el-image
+                  <desimage
                     @focus="null"
                     :src="file.url"
-                    style="height: 2em; width: 2em"
+                    style="height: 3.2em; width: 3.2em"
                     fit="contain"
-                  ></el-image>
+                  ></desimage>
                   <div style="font-size: 1.2rem">{{ file.name }}</div>
                   <el-tooltip content="图片会自动上传到贴纸" placement="top">
-                    <el-icon style="height: 2em" size="1.2rem"><Warning /></el-icon>
+                    <el-icon style="height: 2em" size="1.5rem"><Warning /></el-icon>
                   </el-tooltip>
                   <div style="flex: 1"></div>
                   <el-button
@@ -68,7 +68,7 @@
             <div>
               <div class="file-bar">
                 <div class="file-bar-header">
-                  <el-icon size="2em"
+                  <el-icon size="3.2em"
                     ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
                   ></el-icon>
                   <div
@@ -78,7 +78,7 @@
                     {{ file.name }}
                   </div>
                   <el-tooltip content="左侧的文字会自动生成缩略图" placement="top">
-                    <el-icon size="1.2rem"><Warning /></el-icon>
+                    <el-icon size="1.5rem"><Warning /></el-icon>
                   </el-tooltip>
                   <div style="flex: 1"></div>
                   <el-button @click="removeFile(file)" type="danger" link
@@ -144,6 +144,12 @@ import iconGlb from "@/icon/fileType/glb.svg";
 import tags from "@/components/design/components/tags.vue";
 import tagsInput from "@/components/design/components/tagsInput.vue";
 import {htmlToPngFile} from '@/common/transform'
+import desimage from '@/components/design/components/image.vue';
+
+import {createFontThumbnail} from '@/components/design/utils/utils/'
+import { toPng } from "html-to-image";
+
+
 /*
   scan 
   local
@@ -239,7 +245,11 @@ async function uploadSingleFile(file) {
 
   if (isFont(file.name)) {
     /* 需要生成缩略图 */
-    const png = await htmlToPngFile(file.el)
+
+    const png = await createFontThumbnail({
+      file:file.raw,
+    })
+
 
     const {url:thumbnailUrl} = await uploadToCOS({
       file:png
@@ -339,7 +349,7 @@ async function doUpload() {
 
 .file-bar {
   border-radius: 4px;
-  padding: 0.5em 1em;
+  padding: 1em 1em;
   border: 1px solid #eee;
   width: 100%;
   box-sizing: border-box;

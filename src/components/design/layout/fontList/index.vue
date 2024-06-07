@@ -26,8 +26,8 @@ const { list, getList } = usePaging((params) => {
 });
 
 function selectFont(info) {
-  operatingTextStickerOptions.value.fontFamilyInfo = info;
-  operatingTextStickerOptions.value.fontFamilyId = info.id;
+  operatingTextStickerOptions.fontFamilyInfo = info;
+  operatingTextStickerOptions.fontFamilyId = info.id;
   showFontList.value = false;
 }
 </script>

@@ -6,6 +6,7 @@ import { getFontById } from "@/api";
 import { useDebounceFn } from "@vueuse/core";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 
+
 /*
 */
 export const canvasBackgroundEl = ref();
@@ -18,11 +19,11 @@ function setFontSize(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasTextEl.value.style.fontSize = operatingTextStickerOptions.value.fontSize + "px"
+    canvasTextEl.value.style.fontSize = operatingTextStickerOptions.fontSize + "px"
 }
 
 watch(() => 
-     operatingTextStickerOptions.value.fontSize
+     operatingTextStickerOptions.fontSize
 ,() => {
     setFontSize()
     initDraggableTextSticker()
@@ -32,10 +33,10 @@ function setFontWeight(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasTextEl.value.style.fontWeight = operatingTextStickerOptions.value.fontWeight
+    canvasTextEl.value.style.fontWeight = operatingTextStickerOptions.fontWeight
 }
 
-watch(() => operatingTextStickerOptions.value.fontWeight,() => {
+watch(() => operatingTextStickerOptions.fontWeight,() => {
     setFontWeight()
     initDraggableTextSticker()
 })
@@ -44,10 +45,10 @@ function setFontColor(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasTextEl.value && (canvasTextEl.value.style.color = operatingTextStickerOptions.value.fontColor);
+    canvasTextEl.value && (canvasTextEl.value.style.color = operatingTextStickerOptions.fontColor);
 }
 
-watch(() => operatingTextStickerOptions.value.fontColor,() => {
+watch(() => operatingTextStickerOptions.fontColor,() => {
     setFontColor()
     initDraggableTextSticker()
 })
@@ -56,10 +57,10 @@ function setLineHeight(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasTextEl.value.style.lineHeight = operatingTextStickerOptions.value.lineHeight;
+    canvasTextEl.value.style.lineHeight = operatingTextStickerOptions.lineHeight;
 }
 
-watch(() => operatingTextStickerOptions.value.lineHeight,() => {
+watch(() => operatingTextStickerOptions.lineHeight,() => {
     setLineHeight()
     initDraggableTextSticker()
 })
@@ -68,10 +69,10 @@ function setItalic(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasTextEl.value.style.fontStyle = operatingTextStickerOptions.value.italic ? "italic" : "";
+    canvasTextEl.value.style.fontStyle = operatingTextStickerOptions.italic ? "italic" : "";
 }
 
-watch(() => operatingTextStickerOptions.value.italic,useDebounceFn(() => {
+watch(() => operatingTextStickerOptions.italic,useDebounceFn(() => {
     setItalic()
     initDraggableTextSticker()
 }))
@@ -80,10 +81,10 @@ function setLetterSpacing(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasTextEl.value.style.letterSpacing = operatingTextStickerOptions.value.letterSpacing + "em";
+    canvasTextEl.value.style.letterSpacing = operatingTextStickerOptions.letterSpacing + "em";
 }
 
-watch(() => operatingTextStickerOptions.value.letterSpacing,() => {
+watch(() => operatingTextStickerOptions.letterSpacing,() => {
     setLetterSpacing()
     initDraggableTextSticker()
 })
@@ -92,10 +93,10 @@ function setBackgroundColor(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasBackgroundEl.value.style.backgroundColor = operatingTextStickerOptions.value.backgroundColor;
+    canvasBackgroundEl.value.style.backgroundColor = operatingTextStickerOptions.backgroundColor;
 }
 
-watch(() => operatingTextStickerOptions.value.backgroundColor,() => {
+watch(() => operatingTextStickerOptions.backgroundColor,() => {
     setBackgroundColor()
     initDraggableTextSticker()
 })
@@ -104,17 +105,17 @@ function setGradientBackgroundColor(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasBackgroundEl.value.style.background = operatingTextStickerOptions.value.gradientBackgroundColor;
+    canvasBackgroundEl.value.style.background = operatingTextStickerOptions.gradientBackgroundColor;
 }
 
-watch(() => operatingTextStickerOptions.value.gradientBackgroundColor,() => {
+watch(() => operatingTextStickerOptions.gradientBackgroundColor,() => {
     setGradientBackgroundColor()
     initDraggableTextSticker()
 })
 
 
 /* 根据文字内容更新可拖拽元素 */ 
-watch(() => operatingTextStickerOptions.value.content ,async () => {
+watch(() => operatingTextStickerOptions.content ,async () => {
     await initDraggableTextSticker()
 })
 
@@ -135,7 +136,7 @@ async function setFontFamliy(){
         return
     }
     // 如果有字体信息则不需要再去请求
-    let fontFamilyInfo:any = operatingTextStickerOptions.value.fontFamilyInfo
+    let fontFamilyInfo:any = operatingTextStickerOptions.fontFamilyInfo
     
     if(!fontFamilyInfo){
         return
@@ -154,7 +155,6 @@ async function setFontFamliy(){
                     src: url(${url}); 
                 }
               `;
-        
           document.head.appendChild(fontStyle);
           fontStyle.setAttribute('font_id',fontId)
           fontFamilyCache[id] = fontStyle;
@@ -162,7 +162,7 @@ async function setFontFamliy(){
     canvasTextEl.value.style.fontFamily = `font_${id}` 
 }
 
-watch(() => operatingTextStickerOptions.value.fontFamilyInfo,async () => {
+watch(() => operatingTextStickerOptions.fontFamilyInfo,async () => {
     setFontFamliy()
     initDraggableTextSticker()
 })
@@ -171,22 +171,22 @@ function setBorderWidth(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasBackgroundEl.value.style.borderWidth = operatingTextStickerOptions.value.borderWidth + 'em';
+    canvasBackgroundEl.value.style.borderWidth = operatingTextStickerOptions.borderWidth + 'em';
 }
 
-watch(() => operatingTextStickerOptions.value.borderWidth,async () => {
+watch(() => operatingTextStickerOptions.borderWidth,useDebounceFn(() => {
     setBorderWidth()
     initDraggableTextSticker()
-})
+},33))
 
 function setBorderColor(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasBackgroundEl.value.style.borderColor = operatingTextStickerOptions.value.borderColor;
+    canvasBackgroundEl.value.style.borderColor = operatingTextStickerOptions.borderColor;
 }
 
-watch(() => operatingTextStickerOptions.value.borderColor,async () => {
+watch(() => operatingTextStickerOptions.borderColor,async () => {
     setBorderColor()
     initDraggableTextSticker()
 })
@@ -196,11 +196,11 @@ function setBorderStyle(){
     if(!canvasTextEl.value || !canvasBackgroundEl.value){
         return
     }
-    canvasBackgroundEl.value.style.borderStyle = operatingTextStickerOptions.value.borderStyle;
+    canvasBackgroundEl.value.style.borderStyle = operatingTextStickerOptions.borderStyle;
 }
 
 
-watch(() => operatingTextStickerOptions.value.borderStyle,async () => {
+watch(() => operatingTextStickerOptions.borderStyle,async () => {
     setBorderStyle()
     initDraggableTextSticker()
 })

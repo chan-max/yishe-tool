@@ -11,7 +11,7 @@
       >
         在线工具
       </el-button>
-      <el-button size="large" plain round> 逛一逛 </el-button>
+      <el-button size="large" plain round  @click="$router.push({ name: 'Market' })"> 逛一逛 </el-button>
     </div>
   </div>
 </template>

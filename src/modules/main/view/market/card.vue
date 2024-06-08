@@ -9,88 +9,117 @@
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
-    <div class="market-card">
-        <div  class="market-card-main"  @mouseenter="mouseenter" @mouseleave="mouseleave">
-            <div class="market-card-main-img">
-            <el-image v-if="showImg" fit="cover" :src="props.model.preview_img" draggable="false">
-                <template #placeholder>
-                </template>
-                <template #error>
-                    <span style="font-weight: bold;color:#ddd;">加载失败</span>
-                </template>
-            </el-image>
-            </div>
-            <div class="market-card-main-viewer">
-                <gltf-viewer v-if="showViewer" :model="props.model.modelInfo" @load="load"></gltf-viewer>
-            </div>
-        </div>
+  <div class="market-card">
+    <div class="market-card-main" @mouseenter="mouseenter" @mouseleave="mouseleave">
+      <div class="market-card-main-img" v-if="showImg">
+        <desimage fit="cover" :src="'http://' + model.thumbnail"> </desimage>
+      </div>
+      <div class="market-card-main-viewer" v-if="showViewer">
+        <gltf-viewer :model="model.meta.modelInfo" @load="load"></gltf-viewer>
+      </div>
     </div>
+    <div class="bar">
+      <div class="avatar">
+        <desimage :src="getAvatar(model)"></desimage>
+      </div>
+      <div class="name">{{ model.uploader.name || model.uploader.account }}</div>
+      <div style="flex: 1"></div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { defineProps,ref } from 'vue';
-import gltfViewer from '@/components/model/gltfViewer/index.vue';
-const props = defineProps(['model'])
+import { defineProps, ref } from "vue";
+import gltfViewer from "@/components/model/gltfViewer/index.vue";
+import desimage from "@/components/design/components/image.vue";
 
-const showImg = ref(true)
+function getAvatar(model) {
+  return model.uploader.avatar
+    ? "http://" + model.uploader.avatar
+    : "defaultAvatar/avatar3.png";
+}
 
-const showViewer = ref(false)
+const props = defineProps(["model"]);
+
+const showImg = ref(true);
+
+const showViewer = ref(false);
 
 function mouseenter() {
-    showViewer.value = true
+  setTimeout(() => {
+    showViewer.value = true;
+    showImg.value = false;
+  }, 1000);
 }
 
-function mouseleave(){
-    showViewer.value = false
-    showImg.value = true
+function mouseleave() {
+  showViewer.value = false;
+  showImg.value = true;
 }
 
-function load(){
-    showImg.value = false
+function load() {
+  showImg.value = false;
 }
-
 </script>
-<style>
-.market-card{
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
-    border-radius: 5px;
-    overflow: hidden;
-    border: 1px solid #eee;
-    /* box-shadow: 0 1px 8px rgba(0,0,0,.08); */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
+<style scoped lang="less">
+.market-card {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  border-radius: 5px;
+  overflow: hidden;
+  /* box-shadow: 0 1px 8px rgba(0,0,0,.08); */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
-.market-card-main{
+.market-card-main {
+  width: 100%;
+  height: 100%;
+  height: 240px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  .el-image {
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    position: relative;
-    .el-image{
-        width: 100%;
-        height: 100%;
-    }
+  }
 }
 
-.market-card-main-img{
-    position: absolute;
-    width: 100%;
-    height: 100%;
+.market-card-main-img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
-.market-card-main-viewer{
-    position: absolute;
-    width: 100%;
-    height: 100%;
+.market-card-main-viewer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #eee;
 }
 
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1em;
+  width: 100%;
+  column-gap: 1em;
+}
 
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.name {
+  font-size: 1.4em;
+}
 </style>

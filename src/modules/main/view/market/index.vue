@@ -9,16 +9,21 @@
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
+  <el-backtop :right="100" :bottom="100" />
   <div class="market-container">
-    <div class="market-title"></div>
-    <div class="market-content">
-      <card
-        class="market-item"
-        v-for="model in modelList"
-        @click="edit(model)"
-        :model="model"
-      ></card>
+    <div class="market-title">
     </div>
+    <div class="market-content">
+      <el-row :gutter="24">
+        <el-col v-for="model in list" :xs="24" :sm="12" :md="8" :lg="6" :xl="4" style="margin-bottom: 24px;">
+          <card class="market-item" @click="edit(model)" :model="model"></card>
+        </el-col>
+      </el-row>
+
+    </div>
+    <div class="more">
+        <el-button type="info" round @click="getList"> 加载更多 </el-button>
+      </div>
   </div>
 </template>
 <script setup>
@@ -26,45 +31,42 @@ import { getModelList } from "@/api/index";
 import { onMounted, ref } from "vue";
 import card from "./card.vue";
 import { useRouter } from "vue-router";
+import { getCustomModelListApi } from "@/api";
+import { usePaging } from "@/hooks/data/paging.ts";
 
 const router = useRouter();
 
-const modelList = ref();
-
-onMounted(async () => {
-  modelList.value = (await getModelList({
-    pageSize:9999
-  })).list;
+const { list, getList } = usePaging((params) => {
+  return getCustomModelListApi({
+    ...params,
+    pageSize: 20,
+  });
 });
-
-
 </script>
-<style>
+<style lang="less" scoped>
 .market-container {
   width: 100%;
   height: 100%;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .market-title {
-  font-size: 40px;
-  font-weight: 500;
-  color: #444;
-  height: 60px;
-  background-color: #fff;
+  height: 120px;
+  flex-shrink: 0;
 }
 
-.market-item {
-  width: 280px;
-  height: 160px;
-}
 
 .market-content {
-  max-width: 1520px;
-  margin: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-auto-rows: 180px;
-  justify-items: center;
+  width: 94%;
+}
+
+
+.more{
+  display: flex;
+  justify-content: center;
+  padding: 4em;
 }
 </style>

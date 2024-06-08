@@ -28,13 +28,13 @@ import { onBeforeMount } from "vue";
 const router = useIonRouter();
 const loginStore = useLoginStatusStore();
 
-onBeforeMount(() => {
-  if (!loginStore.isLogin) {
-    router.replace({
-      name: "Login",
-    });
-  }
-});
+// onBeforeMount(() => {
+//   if (!loginStore.isLogin) {
+//     router.replace({
+//       name: "Login",
+//     });
+//   }
+// });
 
 </script>
 <style lang="less">

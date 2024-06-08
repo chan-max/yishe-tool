@@ -10,29 +10,36 @@
 -->
 <template>
   <ion-page>
-    <ion-menu content-id="main-content" type="push">
+    <!-- <ion-menu content-id="main-content" type="push">
       <ion-content
         class="ion-padding"
         style="--padding-top: calc(var(--ion-safe-area-top) + 20px)"
       >
         <index-side-menu></index-side-menu>
       </ion-content>
-    </ion-menu>
+    </ion-menu> -->
     <ion-page id="main-content">
-      <ion-header>
+      <ion-header :translucent="false" class="ion-no-border">
+        <div class="header">
         <ion-toolbar>
-          <ion-buttons slot="start">
+          <!-- <ion-buttons slot="start">
             <ion-menu-toggle>
                <span style="padding:0 10px;font-weight:bold;">衣设 1s</span>
             </ion-menu-toggle>
-          </ion-buttons>
-          <ion-buttons slot="end">
+          </ion-buttons> -->
+          <!-- <ion-buttons slot="end">
             <index-header-dropdown></index-header-dropdown>
-          </ion-buttons>
+          </ion-buttons> -->
+          
         </ion-toolbar>
+
+        <ion-toolbar>
+        </ion-toolbar>
+      </div>
       </ion-header>
       <ion-content :fullscreen="true">
-        <swiper></swiper>
+        <!-- <swiper></swiper> -->
+        <div style="height:1000px;"></div>
       </ion-content>
     </ion-page>
   </ion-page>
@@ -69,4 +76,16 @@ const loginStatusStore = useLoginStatusStore();
 
 </script>
 <style lang="less" scoped>
+  // ion-toolbar {
+  //   --opacity: 0.5;
+  // }
+
+  .header{
+    background: rgb(253,38,41);
+    background: linear-gradient(177deg, rgba(253,38,41,1) 0%, rgba(253,38,41,.5)100%);
+  }
+
+  ion-toolbar{
+    --background: transparent;
+  }
 </style>

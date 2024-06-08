@@ -26,6 +26,5 @@ const avatar = computed(() => {
   return loginStatusStore.userInfo?.preview_avatar || "/defaultAvatar/avatar3.png";
 });
 
-
 </script>
 <style lang=""></style>

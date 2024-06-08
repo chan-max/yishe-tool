@@ -3,7 +3,7 @@
     <el-image
       class="img"
       v-bind="$attrs"
-      fit="contain"
+      :fit="fit || 'contain'"
       lazy
       @load="load($event, info)"
       style="width: 100%; height: 100%"
@@ -14,7 +14,7 @@
       </template>
       <template #error>
         <div class="img_error">
-          <el-icon style="color: #888"><Picture /></el-icon>
+          <el-icon style="color: #aaa"><Picture /></el-icon>
         </div>
       </template>
     </el-image>
@@ -33,6 +33,9 @@ const props = defineProps({
   },
   info:{
     default:{}
+  },
+  fit:{
+    default:'contain'
   }
 });
 

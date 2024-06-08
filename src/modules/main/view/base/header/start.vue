@@ -32,7 +32,7 @@
   column-gap: 6em;
 }
 .title {
-  color: #6e6e73;
+  color: #333;
   font-size: 1.1em;
   font-weight: 300;
   padding: 1em 0;
@@ -43,7 +43,6 @@
   font-size: 1em;
   font-weight: 300;
   padding: 0.4em 0;
-  margin-left: .5em;
   font-weight: 500;
   &:hover {
     color: #000;

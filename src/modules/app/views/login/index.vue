@@ -82,7 +82,7 @@ import { eye, lockClosed, person, checkmarkCircle, closeCircle } from "ionicons/
 import { login } from "@/api";
 import { doLoginAction } from "@/store/stores/loginAction";
 import { useRouter } from "vue-router";
-import {message} from '@/modules/app/components/message'
+import { message } from "@/modules/app/components/message";
 
 const router = useRouter();
 
@@ -98,12 +98,14 @@ async function submit() {
   try {
     const res = await login(form);
     await loading.dismiss();
-    doLoginAction(res.data)
-    message.success('登录成功')
-    router.replace({
-      name: "HomeIndex",
-    });
-    loading.dismiss();
+    doLoginAction(res.data);
+    setTimeout(() => {
+      message.success("登录成功");
+      router.replace({
+        name: "HomeIndex",
+      });
+      loading.dismiss();
+    }, 1000);
   } catch (e) {
     loading.dismiss();
   }

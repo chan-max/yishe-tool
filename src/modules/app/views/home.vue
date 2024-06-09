@@ -75,6 +75,13 @@ const loginStore = useLoginStatusStore();
 </script>
 
 <style scoped lang="less">
+
+ion-tab-bar{
+  background-color: rgba(255,255,255,.7);
+}
+ion-tab-button{
+  background-color: transparent;
+}
 .avatar {
   width: 24px;
   height: 24px;

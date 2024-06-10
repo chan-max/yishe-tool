@@ -8,8 +8,13 @@
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
+
 <template>
   <ion-page>
     <ion-router-outlet :animated="false"></ion-router-outlet>
   </ion-page>
 </template>
+
+<script lang="ts">
+
+</script>

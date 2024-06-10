@@ -19,6 +19,7 @@
       </ion-content>
     </ion-menu>
     <ion-page id="main-content">
+    
       <div class="index-tab" v-if="show">
         <van-tabs ref="tabRef" v-model:active="active" swipeable>
           <template #nav-left>
@@ -111,6 +112,7 @@ const tabs = ref([
   {
     label: "首页",
     value: "index",
+    dot: false,
   },
   {
     label: "推荐",
@@ -120,6 +122,7 @@ const tabs = ref([
   {
     label: "商城",
     value: "market",
+    dot: false,
   },
 ]);
 </script>
@@ -131,24 +134,15 @@ const tabs = ref([
 @safe-top:calc(var(--ion-safe-area-top));
 @tab-total-height: calc(@tab-height + @tab-padding-bottom + @safe-top);
 
-.index-tab {
-  // background: linear-gradient(
-  //   177deg,
-  //   rgba(253, 38, 41, 1) 0%,
-  //   rgba(253, 38, 41, 0.2) 20%
-  // );
-}
 
-:root:root {
+
+.index-tab {
   --van-tab-active-text-color: #fff;
   --van-tabs-bottom-bar-color: #fff;
   --van-tab-text-color: #fff;
   --van-tabs-nav-background: transparent;
   --van-tabs-line-height: @tab-total-height;
   --van-tabs-bottom-bar-width: 20px;
-}
-
-.index-tab {
   width: 100vw;
   .van-tab {
     font-weight: bold;
@@ -159,7 +153,7 @@ const tabs = ref([
   .van-tabs__wrap {
     padding-top: @safe-top;
     padding-bottom: @tab-padding-bottom;
-    background-color: red;
+    background-color: #000;
   }
 
   .van-tab--active {
@@ -190,7 +184,7 @@ const tabs = ref([
   .tab-content {
     width: 100%;
     height: calc(100vh - @tab-total-height);
-    background-color: #fff;
+    background-color: transparent;
   }
 }
 </style>

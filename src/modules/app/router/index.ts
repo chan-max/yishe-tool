@@ -94,6 +94,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Chat',
     component: () => import('../views/talk/chat/index.vue')
   },
+  {
+    path: '/design',
+    name: 'Design',
+    component: () => import('@/modules/app/views/design/index.vue')
+  },
 ]
 
 const router = createRouter({

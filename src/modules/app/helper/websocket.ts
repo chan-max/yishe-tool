@@ -17,6 +17,7 @@ import { useConfigStore } from "@/store/stores/config";
 
 
 export async function initWebsocket() {
+  return
   const configStore = useConfigStore()
   const loginStore = useLoginStatusStore();
   if (!loginStore.isLogin || !configStore) {

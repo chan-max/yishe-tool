@@ -99,8 +99,8 @@ async function submit() {
     const res = await login(form);
     await loading.dismiss();
     doLoginAction(res.data);
+    message.success("登录成功");
     setTimeout(() => {
-      message.success("登录成功");
       router.replace({
         name: "HomeIndex",
       });
@@ -130,7 +130,6 @@ function signup() {
   flex-direction: column;
   width: 100%;
   height: 100%;
-  justify-content: center;
   position: relative;
 }
 

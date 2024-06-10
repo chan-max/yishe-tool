@@ -12,6 +12,7 @@ export const isDark = useDark({
     valueLight: "",
 });
 
+// isDark.value = true
 
 const _toggleDark = useToggle(isDark);
 

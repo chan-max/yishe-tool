@@ -2,9 +2,8 @@
   <div>
     <div class="search">
       <van-search
-        v-model="value"
         shape="round"
-        background="red"
+        background="transparent"
         placeholder="请输入搜索关键词"
       >
         <template #label> 筛选 </template>

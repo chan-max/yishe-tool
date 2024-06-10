@@ -9,10 +9,10 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-<ion-page>
-  <ion-header collapse="fade" translucent="true">
+  <ion-page>
+    <ion-header collapse="fade" translucent="true">
       <ion-toolbar collapse="fade">
-        <ion-buttons slot="start" style="padding: 10px 20px"> </ion-buttons>
+        <ion-buttons slot="start"> </ion-buttons>
         <ion-buttons slot="end">
           <ion-button @click="isDark = !isDark">
             <icon-dark-mode
@@ -30,29 +30,22 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true" class="ion-padding">
-      <div class="flex justify-between align-middle" style="padding: 10px 5px">
-        <div class="flex flex-col justify-around">
-          <div v-if="loginStore.isLogin" style="font-size: 26px; font-weight: bold">
-            {{ loginStore.userInfo.name || '' }}
-          </div>
-          <div v-else style="font-size: 26px; font-weight: bold">
-                登录
-          </div>
-          <div style="opacity: 0.7">{{ loginStore.userInfo?.account }}</div>
-        </div>
-        <div class="flex items-center">
-          <cr-avatar :src="avatar" style="width: 66px; height: 66px">
-          </cr-avatar>
-        </div>
+    <ion-content :fullscreen="true">
+      <user-bar></user-bar>
+      <div>
+        <van-tabs v-model:active="active" swipeable ref="tabRef" offset-top="48">
+          <van-tab v-for="tab in tabs" :title="tab.label" :name="tab.value">
+            <div style="height: 1000px">内容</div>
+          </van-tab>
+        </van-tabs>
       </div>
     </ion-content>
-</ion-page>
+  </ion-page>
 </template>
 
 <script setup>
-import { onMounted, computed } from "vue";
-import crAvatar from '@/modules/app/components/avatar.vue'
+import { onMounted, computed, ref } from "vue";
+import crAvatar from "@/modules/app/components/avatar.vue";
 import {
   IonPage,
   IonHeader,
@@ -70,11 +63,39 @@ import iconLightMode from "@/icon/mobile/lightMode.svg?component";
 import iconDarkMode from "@/icon/mobile/darkMode.svg?component";
 import { isDark, toggleDark } from "@/store/stores/app.ts";
 const router = useIonRouter();
+import userBar from './components/userBar.vue'
 
-const loginStore = useLoginStatusStore();
+const tabRef = ref();
 
-const avatar = computed(() => {
-  return loginStore.userInfo?.preview_avatar || "/mobileDefaultAvatar.svg";
+const active = ref();
+
+const tabs = ref([
+  {
+    label: "上传",
+    value: "",
+  },
+  {
+    label: "作品",
+    value: "",
+  },
+  {
+    label: "已发布",
+    value: "",
+  },
+  {
+    label: "收藏",
+    value: "",
+  },
+  {
+    label: "点赞",
+    value: "",
+  },
+]);
+
+onMounted(() => {
+  setTimeout(() => {
+    tabRef.value.resize();
+  }, 33);
 });
 
 // (baseEl, opts) => {
@@ -89,7 +110,6 @@ const avatar = computed(() => {
 function goSetting() {
   router.push({ name: "UserSetting" });
 }
-
 </script>
 
 <style scoped>

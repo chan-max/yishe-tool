@@ -12,39 +12,67 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button size="small" id="open-action-sheet">
+            <ion-icon slot="icon-only" :icon="addCircleOutline"></ion-icon>
+          </ion-button>
+          <ion-action-sheet
+            trigger="open-action-sheet"
+            header="上传"
+            :buttons="actionSheetButtons"
+          ></ion-action-sheet>
+        </ion-buttons>
+        <ion-buttons slot="end">
+          <ion-button size="small">
+            <ion-icon slot="icon-only" :icon="cloudUploadOutline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        <ion-title></ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <ion-button @click="notification(NotificationType.Success)">
-        success
-      </ion-button>
-      <ion-button @click="notification(NotificationType.Warning)">
-        warning
-      </ion-button>
-      <ion-button @click="notification(NotificationType.Error)">
-        error
-      </ion-button>
-      <ion-button @click="play">
-      </ion-button>
+        <ion-button @click="quickStart"> 快速开始 </ion-button>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup>
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue";
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent,useIonRouter } from "@ionic/vue";
 import { ref } from "vue";
 import { doLogout } from "@/store/stores/loginAction";
 import { takePhoto } from "../../helper/camera.ts";
-import { impact, notification } from '../../helper/device.ts'
-import { playAudio } from '@/common/browser.ts'
+import { impact, notification } from "../../helper/device.ts";
+import { playAudio } from "@/common/browser.ts";
+import { logoIonic ,addCircleOutline ,cloudUploadOutline} from 'ionicons/icons';
+import add from "@/icon/mobile/add.svg?url";
+import bell from "@/icon/mobile/bell.svg?url";
+const router = useIonRouter();
+import { Haptics, ImpactStyle, NotificationType } from "@capacitor/haptics";
 
-import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+const actionSheetButtons = [
+  {
+    text: "创建群聊",
+  },
+  {
+    text: "加入群聊",
+  },
+  {
+    text: "添加聊天",
+  },
+  {
+    text: "返回",
+    role: "cancel",
+    data: {
+      action: "cancel",
+    },
+  },
+];
 
-function play(params) {
-  playAudio("/audio/screenshot.mp3")
+function quickStart(params) {
+  router.push({
+    name:'Design'
+  })
 }
-
-
 </script>
 
 <style></style>

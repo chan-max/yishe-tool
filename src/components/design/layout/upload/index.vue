@@ -146,7 +146,7 @@ import tagsInput from "@/components/design/components/tagsInput.vue";
 import {htmlToPngFile} from '@/common/transform'
 import desimage from '@/components/design/components/image.vue';
 
-import {createFontThumbnail} from '@/components/design/utils/utils/'
+import {createFontThumbnail} from '@/components/design/utils/utils'
 import { toPng } from "html-to-image";
 
 

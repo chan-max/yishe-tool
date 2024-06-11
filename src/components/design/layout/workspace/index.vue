@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="decal">
-      <div class="decal-content" v-if="currentController.decalControllers.length">
+      <div class="decal-content" v-if="currentController?.decalControllers.length">
         <template
           v-for="(decal, index) in currentController.decalControllers"
           :key="index"
@@ -65,14 +65,14 @@
         <span> 上传 </span>
       </el-button>
       <el-button
-        :disabled="!currentController.decalControllers.length"
+        :disabled="!currentController?.decalControllers.length"
         @click="showSaveModel = true"
         type="primary"
         round
         style="flex: 1"
       >
         <span>
-          共 {{ currentController.decalControllers.length }} 张贴纸 ， 保存该模型
+          共 {{ currentController?.decalControllers.length }} 张贴纸 ， 保存该模型
         </span>
       </el-button>
     </div>

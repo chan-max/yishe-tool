@@ -26,9 +26,8 @@ onMounted(async () => {
     pageSize: 100,
   });
 
-  models.value = res.data.list;
-
-  res.data.list.map((item) => {
+  models.value = res.list;
+  res.list.map((item) => {
     item.url = "http://" + item.url;
     item.thumbnail = "http://" + item.thumbnail;
   });

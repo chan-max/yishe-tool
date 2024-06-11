@@ -325,7 +325,7 @@ export const uploadFile = (params) => new Promise(async (resolve, reject) => {
 */
 export const getProductModelListApi = (data) => new Promise(async (resolve, reject) => {
   let res =  await apiInstance.post('/api/product-model/page', data )
-  resolve(res.data)
+  resolve(res.data.data)
 })
 
 

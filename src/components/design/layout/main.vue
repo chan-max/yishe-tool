@@ -234,62 +234,11 @@ const rightComponent = computed(() => {
 // 挂载容器
 const mountContainer = ref();
 
-const modelController = new ModelController();
-
-const { scene } = modelController;
-
-currentController.value = modelController;
-
-/*
-  切换主模型
-  需要保留之前的操作
-*/
-
-watch(
-  currentOperatingBaseModelInfo,
-  async () => {
-    if (!currentOperatingBaseModelInfo.value.url) {
-      return;
-    }
-    await nextTick();
-    modelController.setMainModel(currentOperatingBaseModelInfo.value.url);
-  },
-  {
-    immediate: true,
-  }
-);
-
-// 创建场景、相机和渲染器等...
-
-// 添加环境光
-const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
-scene.add(ambientLight);
-
-// 添加平行光
-const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
-directionalLight1.position.set(1, 1, 1); // 设置光源位置
-scene.add(directionalLight1);
-
-// 添加平行光
-const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
-directionalLight2.position.set(-1, -1, -1); // 设置光源位置
-scene.add(directionalLight2);
-
-// 添加点光源
-const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
-pointLight.position.set(0, 0, 2); // 设置光源位置
-scene.add(pointLight);
-
-// scene.add(new AxesHelper(0.5))
-
-// 改变画布背景颜色
-watchEffect(() => modelController.setBgColor(canvasBgColor.value, canvasBgOpacity.value));
-
 // 渲染动画
 
 onMounted(() => {
+  const modelController = new ModelController();
   modelController.render(mountContainer.value);
-  // currentController.value.setSkyballBackground()
 });
 </script>
 

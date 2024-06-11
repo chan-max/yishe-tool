@@ -4,6 +4,8 @@ import { computed, ref, shallowRef, watchEffect, watch, nextTick, reactive } fro
 import { defineStore } from "pinia";
 
 
+// 当前实例
+export const currentController = shallowRef(null);
 
 // 截屏组件实例
 export const screenshotInstance = ref();
@@ -29,8 +31,8 @@ export function saveScreenshot() {
   })
 }
 
-// 当前实例
-export const currentController = shallowRef(null);
+
+
 
 // 是否为暗色模式
 export const isDarkMode = ref(false)
@@ -47,7 +49,7 @@ watchEffect(() => setFullscreen(isFullScreen.value))
 export const canvasBgColor = ref('')
 
 // 画布背景透明度
-export const canvasBgOpacity = ref('1')
+export const canvasBgOpacity = ref('0')
 
 // 画布颜色随着暗色模式的变化而变化
 watchEffect(() => {
@@ -58,7 +60,7 @@ watchEffect(() => {
 export const showBaseModelSelect = ref(false);
 
 // 当前操作的模型信息 , 如果不提供默认值 ， 会出现 【object】的问题
-export const currentOperatingBaseModelInfo = ref({})
+export const currentOperatingBaseModelInfo = ref({} as any)
 
 // 是否展示场景控制弹窗
 export const showSceneControl = ref(false)
@@ -117,9 +119,42 @@ export const showImageUplaod = ref(false)
 // 是否展示字体上传弹窗
 export const showFontUpload = ref(false)
 
+
+/*
+  切换主模型
+  需要保留之前的操作
+*/
+
+watch(
+    currentOperatingBaseModelInfo,
+    async () => {
+      if (!currentOperatingBaseModelInfo.value?.url) {
+        return;
+      }
+      await nextTick();
+      currentController.value.setMainModel(currentOperatingBaseModelInfo.value?.url);
+    },
+    {
+      immediate: true,
+    }
+  );
+  
+  
+  // 改变画布背景颜色
+  watchEffect(() => {
+
+    if(!currentController.value){
+        return
+    }
+
+    currentController.value.setBgColor(canvasBgColor.value, canvasBgOpacity.value)
+  });
+  
 /*
   二维码
 */
+
+
 
 
 export const qrCodeOptions = ref({

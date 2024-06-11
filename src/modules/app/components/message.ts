@@ -5,6 +5,7 @@ function createMessageFn(type){
         const toast = await toastController.create({
             duration: 1000,
             position: "bottom",
+            ...data
           });
 
           const message = typeof data == 'string' ? data : data.content

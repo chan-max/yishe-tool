@@ -54,7 +54,10 @@ import {
     IonRefresherContent,
     IonListHeader,
     IonImg,
-    IonActionSheet
+    IonActionSheet,
+    IonGrid,
+    IonCol,
+    IonRow
 } from "@ionic/vue";
 
 export function initIonicComponents(app) {
@@ -104,7 +107,10 @@ export function initIonicComponents(app) {
         IonRefresherContent,
         IonListHeader,
         IonImg,
-        IonActionSheet
+        IonActionSheet,
+        IonGrid,
+        IonCol,
+        IonRow
     ]
 
     components.forEach((component) => {

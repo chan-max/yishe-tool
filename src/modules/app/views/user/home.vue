@@ -32,7 +32,7 @@
     </ion-header>
     <ion-content :fullscreen="true">
       <user-bar></user-bar>
-      <div>
+      <div class="user-tab">
         <van-tabs v-model:active="active" swipeable ref="tabRef" offset-top="48">
           <van-tab v-for="tab in tabs" :title="tab.label" :name="tab.value">
             <div style="height: 1000px">内容</div>
@@ -63,7 +63,7 @@ import iconLightMode from "@/icon/mobile/lightMode.svg?component";
 import iconDarkMode from "@/icon/mobile/darkMode.svg?component";
 import { isDark, toggleDark } from "@/store/stores/app.ts";
 const router = useIonRouter();
-import userBar from './components/userBar.vue'
+import userBar from "./components/userBar.vue";
 
 const tabRef = ref();
 
@@ -111,7 +111,11 @@ function goSetting() {
   router.push({ name: "UserSetting" });
 }
 </script>
-
+<style>
+.user-tab {
+  --van-tabs-nav-background:transparent;
+}
+</style>
 <style scoped>
 ion-button {
   --background: transparent;

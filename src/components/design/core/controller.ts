@@ -21,6 +21,7 @@ import {
     TextureLoader,
     CubeTextureLoader,
     BackSide,
+    PointLight
 } from "three";
 import { message } from 'ant-design-vue';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -34,9 +35,9 @@ import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
-
+import {currentController} from '@/components/design/store'
 import { eventMixin } from "./event";
-
+import {meta}from '../meta'
 
 const mixins = [
     _1stfExporterMixin,
@@ -44,6 +45,14 @@ const mixins = [
 ];
 
 export class ModelController {
+
+    // 模式
+    mode = 'pc' // pc 或 mb
+
+    // 元数据
+
+    meta:any = meta
+
     // 场景
     public scene: Scene = new Scene();
     // 渲染器
@@ -58,7 +67,7 @@ export class ModelController {
     public controller: any;
     // 尺寸侦听器
     public resizeObserver: any;
-
+    
     // 记录原始摄像机位置
     public defaultCameraPosition = new Vector3(0, 0, 1);
 
@@ -120,7 +129,7 @@ export class ModelController {
     }
 
 
-        // 保存当前鼠标坐标
+    // 保存当前鼠标坐标
     private _mouse = new Vector2();
 
     public get mouse() {
@@ -147,6 +156,7 @@ export class ModelController {
         mixins.forEach((mixin) => mixin(this));
         this.renderer.setPixelRatio(window.devicePixelRatio)
         // 初始化时暴露场景和渲染器
+        currentController.value = this;
     }
 
     // 初始化容器
@@ -211,11 +221,38 @@ export class ModelController {
 
     public isMounted = false;
 
+
+    // 初始化基本灯光
+    initBasicLight() {
+        // 创建场景、相机和渲染器等...
+
+        // 添加环境光
+        const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
+        this.scene.add(ambientLight);
+
+        // 添加平行光
+        const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+        directionalLight1.position.set(1, 1, 1); // 设置光源位置
+        this.scene.add(directionalLight1);
+
+        // 添加平行光
+        const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+        directionalLight2.position.set(-1, -1, -1); // 设置光源位置
+        this.scene.add(directionalLight2);
+
+        // 添加点光源
+        const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
+        pointLight.position.set(0, 0, 2); // 设置光源位置
+        this.scene.add(pointLight);
+    }
+
+    // 正式执行渲染
     public render(target: any) {
         if (this.isMounted) {
             return;
         }
         this.initCanvasContainer(target);
+        this.initBasicLight()
         this.execRender();
         this.isMounted = true;
     }
@@ -255,24 +292,30 @@ export class ModelController {
     baseModelUrl: any = null;
 
 
-    removeDecals(){
+    removeDecals() {
         this.decalControllers.forEach((decal) => { decal.remove() })
     }
 
-    public async setMainModel(url: any) {
+    // 调用钩子函数
+    callHook(hook){
+        if(hook && typeof hook == 'function'){
+            hook.call(this)
+        }
+    }
 
+    public async setMainModel(url: any) {
         // if(this.gltf){
         //     return message.info('当前控制台中存在模型，请先清理')
         // }
-
         this.removeMainModel();
 
-        message.loading({ content: `正在加载模型...`, key: 'loadingmodel', duration: 0 });
+        this.callHook(this.meta.onMainModelLoading)
+
         try {
             this.gltf = await gltfLoader(url);
-            message.success({ content: '模型加载成功', key: 'loadingmodel', duration: 1 });
+            this.callHook(this.meta.onMainModelLoaded)
         } catch (e) {
-            message.error({ content: '模型加载失败!', key: 'loadingmodel', duration: 1 });
+            this.callHook(this.meta.onMainModelLoadedError)
             return
         }
 
@@ -339,23 +382,23 @@ export class ModelController {
         this._onMousemove.add(cb);
     }
 
-    private initMousemoveEvent(){
+    private initMousemoveEvent() {
 
 
         var latest = new Date().getTime();
 
         this.canvasContainer.addEventListener("mousemove", (event: any) => {
-                // 确定 点击
-                let now = new Date().getTime()
+            // 确定 点击
+            let now = new Date().getTime()
 
-                // 简易版节流
-                if((now - latest) < 99){
-                    return
-                }
+            // 简易版节流
+            if ((now - latest) < 99) {
+                return
+            }
 
-                latest = now
-                console.log('canvas mousemove')
-                this._onMousemove.forEach((cb: any) => cb.call(this, this));
+            latest = now
+            console.log('canvas mousemove')
+            this._onMousemove.forEach((cb: any) => cb.call(this, this));
         });
     }
 

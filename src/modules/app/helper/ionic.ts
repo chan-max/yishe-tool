@@ -57,7 +57,8 @@ import {
     IonActionSheet,
     IonGrid,
     IonCol,
-    IonRow
+    IonRow,
+    IonChip
 } from "@ionic/vue";
 
 export function initIonicComponents(app) {
@@ -110,7 +111,8 @@ export function initIonicComponents(app) {
         IonActionSheet,
         IonGrid,
         IonCol,
-        IonRow
+        IonRow,
+        IonChip
     ]
 
     components.forEach((component) => {

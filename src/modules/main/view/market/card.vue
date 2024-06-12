@@ -12,7 +12,7 @@
   <div class="market-card">
     <div class="market-card-main" @mouseenter="mouseenter" @mouseleave="mouseleave">
       <div class="market-card-main-img" v-if="showImg">
-        <desimage fit="cover" :src="'http://' + model.thumbnail"> </desimage>
+        <desimage fit="cover" :src="'https://' + model.thumbnail"> </desimage>
       </div>
       <div class="market-card-main-viewer" v-if="showViewer">
         <gltf-viewer :model="model.meta.modelInfo" @load="load"></gltf-viewer>
@@ -35,7 +35,7 @@ import desimage from "@/components/design/components/image.vue";
 
 function getAvatar(model) {
   return model.uploader.avatar
-    ? "http://" + model.uploader.avatar
+    ? 'https://' + model.uploader.avatar
     : "defaultAvatar/avatar3.png";
 }
 

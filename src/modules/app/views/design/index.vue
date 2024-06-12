@@ -29,14 +29,40 @@
     </ion-content>
     <ion-footer>
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-button size="small" @click="showSelectModel = true">
-            <ion-icon slot="icon-only" :icon="iconCloth"></ion-icon>
+        <div class="toolbar">
+          <ion-button fill="clear" size="small" @click="showSelectModel = true">
+            <van-badge>
+              <ion-icon slot="icon-only" :icon="iconCloth"></ion-icon>
+              <template #content>
+                {{ currentOperatingBaseModelInfo ? "已选择" : "未选择" }}
+              </template>
+            </van-badge>
           </ion-button>
-        </ion-buttons>
+
+          <ion-button fill="clear" size="small" @click="showSticker = true">
+            <ion-icon slot="icon-only" :icon="iconSticker"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small" @click="showWorkspace = true">
+            <ion-icon slot="icon-only" :icon="iconPaper"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small" >
+            <ion-icon slot="icon-only" :icon="iconText"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small">
+            <ion-icon slot="icon-only" :icon="iconHistory"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small">
+            <ion-icon slot="icon-only" :icon="iconSetting"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small">
+            <ion-icon slot="icon-only" :icon="iconShare"></ion-icon>
+          </ion-button>
+        </div>
       </ion-toolbar>
     </ion-footer>
     <select-model></select-model>
+    <sticker></sticker>
+    <workspace></workspace>
   </ion-page>
 </template>
 
@@ -50,23 +76,32 @@ import {
   loadingController,
 } from "@ionic/vue";
 import { ref, onBeforeMount, onMounted } from "vue";
-import { doLogout } from "@/store/stores/loginAction";
-import { playAudio } from "@/common/browser.ts";
 import { logOutOutline } from "ionicons/icons";
-import iconQuit from "@/modules/app/assets/icon/quit.svg?url";
-import iconCloth from "@/modules/app/assets/icon/cloth.svg?url";
 import selectModel from "./layout/selectModel/index.vue";
-import { showSelectModel } from "./store";
+import sticker from "./layout/sticker/index.vue";
+import workspace from './layout/workspace/index.vue';
+import { showSelectModel, showSticker,showWorkspace } from "./store";
 import { ModelController } from "@/components/design/core/controller";
 import { meta } from "./meta";
+import { useDesignStore, currentOperatingBaseModelInfo } from "@/components/design/store";
 import { useIonRouter } from "@ionic/vue";
+import iconCloth from "@/modules/app/assets/icon/cloth.svg?url";
+import iconSticker from "@/modules/app/assets/icon/sticker.svg?url";
+import iconText from "@/modules/app/assets/icon/text.svg?url";
+import iconHistory from "@/modules/app/assets/icon/history.svg?url";
+import iconPaper from "@/modules/app/assets/icon/paper.svg?url";
+import iconSetting from "@/modules/app/assets/icon/setting.svg?url";
+import iconShare from "@/modules/app/assets/icon/share.svg?url";
+
+
+const designStore = useDesignStore();
 
 const router = useIonRouter();
 
 function quit() {
   router.push({
-    name:'Workspace'
-  })
+    name: "Workspace",
+  });
 }
 
 const threeCanvasRef = ref();
@@ -78,12 +113,26 @@ onMounted(() => {
   modelController.render(threeCanvasRef.value);
 });
 
-onBeforeMount(async () => {
-});
+onBeforeMount(async () => {});
 </script>
 
-<style>
-*{
+<style scoped>
+* {
   user-select: none;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  --van-badge-font-size: 10px;
+
+  ion-button {
+    --overflow: none;
+  }
+  ion-icon {
+    font-size: 20px;
+  }
 }
 </style>

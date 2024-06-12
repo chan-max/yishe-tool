@@ -15,7 +15,7 @@
       <el-row :gutter="8" style="row-gap: 1em">
         <el-col :span="24 / column" v-for="item in list" align="center">
           <div class="item">
-            <desimage padding="10%" :src="'http://' + item.thumbnail" class="image" @load="imgLoad($event,item)"></desimage>
+            <desimage padding="10%" :src="'https://' + item.thumbnail" class="image" @load="imgLoad($event,item)"></desimage>
             <el-popover placement="auto" trigger="click" width="auto">
               <template #reference>
                 <div class="bar">
@@ -137,7 +137,7 @@ const column = ref(2);
 
 .image {
   width: 100%;
-  height: 10em;
+  height: 10em!important;
 }
 
 .title {

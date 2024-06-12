@@ -4,7 +4,7 @@
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-button size="small" @click="showSelectModel = false">
-            <ion-icon slot="icon-only" :icon="closeOutline"></ion-icon>
+            <ion-icon slot="icon-only" :icon="close"></ion-icon>
           </ion-button>
         </ion-buttons>
         <ion-title>选取一个模型</ion-title>
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { showSelectModel } from "@/modules/app/views/design/store";
-import { closeOutline, checkmarkDoneOutline ,helpCircleOutline} from "ionicons/icons";
+import { close, checkmarkDoneOutline ,helpCircleOutline} from "ionicons/icons";
 import { getProductModelListApi } from "@/api";
 import { onBeforeMount } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
@@ -63,8 +63,8 @@ const { list } = usePaging(
   },
   {
     forEach: (item) => {
-      item.thumbnail = "http://" + item.thumbnail;
-      item.url = "http://" + item.url;
+      item.thumbnail = 'https://' + item.thumbnail;
+      item.url = 'https://' + item.url;
       return;
     },
   }
@@ -79,7 +79,7 @@ function select(item) {
 <style lang="less" scoped>
 .van-image {
   width: 100%;
-  min-height: 10em;
+  min-height: 12em;
 }
 
 :deep(ion-card) {

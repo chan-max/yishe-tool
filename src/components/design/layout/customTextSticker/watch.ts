@@ -151,7 +151,7 @@ async function setFontFamliy(){
 
     let { name, thumbnail ,url,  id } = fontFamilyInfo;
 
-    url = 'http://' + url
+    url = 'https://' + url
 
     if(!fontFamilyCache[id]){
           const fontStyle = document.createElement("style");

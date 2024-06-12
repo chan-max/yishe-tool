@@ -6,7 +6,7 @@
           <div class="item">
             <div class="preview">
                 <gltf-viewer :model="item.meta.modelInfo"></gltf-viewer>
-                <!-- <desimage :src="'http://' + item.thumbnail" :draggable="false"></desimage> -->
+                <!-- <desimage :src="'https://' + item.thumbnail" :draggable="false"></desimage> -->
             </div>
             <el-popover placement="auto" trigger="click" width="auto">
               <template #reference>

@@ -69,6 +69,7 @@ function load(e) {
   &_loading {
     width: 100%;
     height: 100%;
+    padding: 2em;
     list-style: none;
     background-image: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
     background-size: 400% 100%;

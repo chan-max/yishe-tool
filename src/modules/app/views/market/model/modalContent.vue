@@ -13,11 +13,11 @@
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="end">
-        <ion-button @click="close" style="--background: transparent">
+        <ion-button @click="closeModal" style="--background: transparent">
           <ion-icon
             style="color: var(--ion-text-color)"
             slot="icon-only"
-            :icon="closeOutline"
+            :icon="close"
           ></ion-icon>
         </ion-button>
       </ion-buttons>
@@ -70,7 +70,7 @@ import {
   IonIcon,
   IonText,
 } from "@ionic/vue";
-import { closeOutline, star } from "ionicons/icons";
+import { close, star } from "ionicons/icons";
 
 const model = ref();
 
@@ -84,7 +84,7 @@ function beforeLoad() {
   loading.value = true;
 }
 
-function close() {
+function closeModal() {
   isOpen.value = false;
 }
 

@@ -29,7 +29,7 @@
         <div
           v-show="des.showThreeCanvas"
           id="threejs-canvas"
-          style="width: 100%; height: 100%"
+          style="width: 100%; height: 100%;"
           ref="mountContainer"
         ></div>
 
@@ -244,7 +244,7 @@ onMounted(() => {
 
 <style lang="less">
 #threejs-canvas {
-  background: #fff;
+  background: #eee;
   overflow: hidden;
 }
 

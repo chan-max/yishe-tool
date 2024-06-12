@@ -4,7 +4,7 @@
       <el-col v-for="item in list" :span="8">
         <el-image
           @click="selectFont(item)"
-          :src="'http://' + item.thumbnail"
+          :src="'https://' + item.thumbnail"
           class="w-full h-full"
           fit="contain"
         >

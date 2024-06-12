@@ -137,7 +137,7 @@ watch(
     {
       immediate: true,
     }
-  );
+);
   
   
   // 改变画布背景颜色

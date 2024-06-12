@@ -12,7 +12,7 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "build:app": "vite build --mode app",
-    "serve": "node serverbundle.js", 
+    "serve": "node serverbundle.js",
     "serve:dev": "node --watch server --ext [ts,json,js] --exec nodemon ./server.js",
     "dev": "concurrently \"vite --host 0.0.0.0\"",
     "db:init": "cd server/sequelize & npx sequelize-cli db:create & npx sequelize-cli db:migrate"
@@ -64,6 +64,7 @@
     "fs": "^0.0.1-security",
     "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
+    "http-proxy-middleware": "^3.0.0",
     "https": "^1.0.0",
     "ionicons": "^7.2.2",
     "ip": "^1.1.8",

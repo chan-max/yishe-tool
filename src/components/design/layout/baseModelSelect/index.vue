@@ -28,8 +28,8 @@ onMounted(async () => {
 
   models.value = res.list;
   res.list.map((item) => {
-    item.url = "http://" + item.url;
-    item.thumbnail = "http://" + item.thumbnail;
+    item.url = 'https://' + item.url;
+    item.thumbnail = 'https://' + item.thumbnail;
   });
 
   // 适配鼠标滑轮横向滚动

@@ -75,7 +75,7 @@
                     style="background: #f3f4f6; border-radius: 0.2em; height: 2.4em"
                     fit="contain"
                     :src="
-                      'http://' + operatingTextStickerOptions.fontFamilyInfo.thumbnail
+                      'https://' + operatingTextStickerOptions.fontFamilyInfo.thumbnail
                     "
                   ></el-image>
                 </template>

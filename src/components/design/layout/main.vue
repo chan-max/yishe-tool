@@ -191,8 +191,6 @@ import stamp from "./stamp/index.vue";
 
 const des = useDesignStore();
 
-window.des = des;
-
 const basicContainerAnimation = ref({
   "enter-active-class": "animate__animated animate__bounceIn",
   "leave-active-class": "animate__animated animate__bounceOut",

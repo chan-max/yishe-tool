@@ -13,14 +13,14 @@ import {
   Vector3,
 } from "three";
 import { message } from 'ant-design-vue'
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { currentController, operatingDecal, showDecalControl } from '../store';
 
 export interface DecalControllerParams {
   // 定义贴纸的类型
-  type: 'image' | 'text' | 'composition'| 'qrcode'|'barcode',
+  type: 'image' | 'text' | 'composition' | 'qrcode' | 'barcode' | 'stamp',
   // 贴纸的资源id,如果不是上传的文件则不需要
   id?: any,
   // 使用的图片元素
@@ -31,6 +31,8 @@ export interface DecalControllerParams {
   base64?: string,
   // 用于缓存的本地url
   objectUrl: string,
+  // 该贴纸的宽高比
+  aspectRatio:number
 }
 
 export class DecalController {
@@ -46,11 +48,12 @@ export class DecalController {
   constructor(info: any) {
     this.context = this
     this.info = info
+
     this.img = info.img
   }
 
   // 确认添加该贴纸到场景
-  ensureAdd(){
+  ensureAdd() {
     this.initDecalClickEvent();
     this.initMousemoveEvent();
     currentController.value.decalControllers.push(this);
@@ -138,9 +141,10 @@ export class DecalController {
 
     // 记载图片比较费时间
 
-    texture = await textureLoader.loadAsync(this.img?.src || this.info.src);
+    texture = await textureLoader.loadAsync(this.img?.src || this.info.src || this.info.thumbnail);
 
     this.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
+
     this.material = new MeshPhongMaterial({
       map: texture,
       ...basicTextureOptions
@@ -176,10 +180,10 @@ export class DecalController {
   async stickToMousePosition(cb?) {
     if (!this.parentMesh) {
       message.info('请先选择一个商品模型')
-      return 
+      return
     }
 
-    message.loading({type:'info',content:'正在渲染贴纸',key:'sticking',duration:0})
+    message.loading({ type: 'info', content: '正在渲染贴纸', key: 'sticking', duration: 0 })
 
 
     this.currentMousePosition = currentController.value.mouse.clone()
@@ -191,41 +195,57 @@ export class DecalController {
 
     if (intersects.length == 0) {
       // 未选中
-      message.info({content:'要将贴纸放在模型上',key:'sticking'})
+      message.info({ content: '要将贴纸放在模型上', key: 'sticking' })
       return Promise.reject();
     }
 
-        // 初始化材质
-        if (!this.material) {
-          await this.initTexture()
-        }
+    // 初始化材质
+    if (!this.material) {
+      await this.initTexture()
+    }
 
     const position = intersects[0].point;
 
     this._position = position;
+
     const copy = intersects[0].face.normal.clone();
     copy.transformDirection(this.parentMesh.matrixWorld);
     copy.add(position);
+
+
     const helper = new Object3D();
     helper.position.copy(position);
     helper.lookAt(copy);
     let rotation = helper.rotation;
     this._rotation = rotation;
+
     this.create()
 
     this.ensureAdd()
 
-    if(cb){
+    if (cb) {
       cb()
     }
 
     this.currentMousePosition = null
-    message.success({content:'贴纸加载成功',key:'sticking'})
+    message.success({ content: '贴纸加载成功', key: 'sticking' })
+  }
+
+  // 在随机位置贴图
+  async stickToRandomPosition() {
+    let { position, rotation } = currentController.value.getRandomPosition();
+    this._position = position
+    this._rotation = rotation
+    if (!this.material) {
+      await this.initTexture()
+    }
+    this.create()
+    this.ensureAdd()
   }
 
 
   // 移除当前贴纸
-  private removeMesh() { 
+  private removeMesh() {
     currentController.value.scene.remove(this.mesh);
   }
 
@@ -300,7 +320,7 @@ export class DecalController {
   // 导出该信息
   export() {
 
-    if(!this.position){
+    if (!this.position) {
       return
     }
 

@@ -21,11 +21,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <div
-        style="width: 100%; height: 100%"
-        class="three-canvas"
-        ref="threeCanvasRef"
-      ></div>
+      <div style="width: 100%; height: 100%" class="three-canvas" ref="threeCanvasRef"></div>
     </ion-content>
     <ion-footer>
       <ion-toolbar>
@@ -43,9 +39,14 @@
             <ion-icon slot="icon-only" :icon="iconSticker"></ion-icon>
           </ion-button>
           <ion-button fill="clear" size="small" @click="showWorkspace = true">
-            <ion-icon slot="icon-only" :icon="iconPaper"></ion-icon>
+            <van-badge>
+              <ion-icon slot="icon-only" :icon="iconPaper"></ion-icon>
+              <template #content>
+                {{ currentController?.decalControllers.length }}
+              </template>
+            </van-badge>
           </ion-button>
-          <ion-button fill="clear" size="small" >
+          <ion-button fill="clear" size="small">
             <ion-icon slot="icon-only" :icon="iconText"></ion-icon>
           </ion-button>
           <ion-button fill="clear" size="small">
@@ -80,10 +81,10 @@ import { logOutOutline } from "ionicons/icons";
 import selectModel from "./layout/selectModel/index.vue";
 import sticker from "./layout/sticker/index.vue";
 import workspace from './layout/workspace/index.vue';
-import { showSelectModel, showSticker,showWorkspace } from "./store";
+import { showSelectModel, showSticker, showWorkspace } from "./store";
 import { ModelController } from "@/components/design/core/controller";
 import { meta } from "./meta";
-import { useDesignStore, currentOperatingBaseModelInfo } from "@/components/design/store";
+import { useDesignStore, currentOperatingBaseModelInfo, currentController } from "@/components/design/store";
 import { useIonRouter } from "@ionic/vue";
 import iconCloth from "@/modules/app/assets/icon/cloth.svg?url";
 import iconSticker from "@/modules/app/assets/icon/sticker.svg?url";
@@ -113,7 +114,7 @@ onMounted(() => {
   modelController.render(threeCanvasRef.value);
 });
 
-onBeforeMount(async () => {});
+onBeforeMount(async () => { });
 </script>
 
 <style scoped>
@@ -131,6 +132,7 @@ onBeforeMount(async () => {});
   ion-button {
     --overflow: none;
   }
+
   ion-icon {
     font-size: 20px;
   }

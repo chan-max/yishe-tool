@@ -15,7 +15,7 @@
       <el-row :gutter="8" style="row-gap: 1em">
         <el-col :span="24 / column" v-for="item in list" align="center">
           <div class="item">
-            <desimage padding="10%" :src="'https://' + item.thumbnail" class="image" @load="imgLoad($event,item)"></desimage>
+            <desimage padding="10%" :src="item.thumbnail" class="image" @load="imgLoad($event,item)"></desimage>
             <el-popover placement="auto" trigger="click" width="auto">
               <template #reference>
                 <div class="bar">
@@ -24,7 +24,7 @@
                   <el-icon><ArrowRightBold /></el-icon>
                 </div>
               </template>
-              <sticker-popover></sticker-popover>
+              <sticker-popover :data="item"></sticker-popover>
             </el-popover>
           </div>
         </el-col>
@@ -93,6 +93,10 @@ const { list, getList } = usePaging((params) => {
     ...params,
     pageSize: 10,
   });
+},{
+  forEach(item){
+    item.thumbnail = 'https://' + item.thumbnail
+  }
 });
 
 // 列表展示几列

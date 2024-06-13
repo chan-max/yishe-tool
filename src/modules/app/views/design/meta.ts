@@ -21,5 +21,20 @@ export const meta = {
     onMainModelLoadedError:function(){
         meta.mainModelLoading.dismiss()
         message.error({ content: '模型加载失败!',position:'top'});
-    }
+    },
+
+
+    // 贴纸渲染
+    stickerRenderLoading:null,
+    onStickerBeforeCreate:async function(){
+        meta.stickerRenderLoading = await loadingController.create({
+            message: "正在渲染贴纸...",
+            duration: 0,
+            showBackdrop: true,
+          });
+          meta.stickerRenderLoading.present();
+    },
+    onStickerCreated:function(){
+        meta.stickerRenderLoading.dismiss()
+    },
 }

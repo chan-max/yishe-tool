@@ -70,7 +70,7 @@ const chips = ref([
 ion-chip {
   font-size: 10px;
   min-height: 0;
-  transition: all .3s;
+  transition: all .2s;
 }
 
 .checked {

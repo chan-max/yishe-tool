@@ -21,8 +21,11 @@ import {
     TextureLoader,
     CubeTextureLoader,
     BackSide,
-    PointLight
+    PointLight,
+    MathUtils
 } from "three";
+
+
 import { message } from 'ant-design-vue';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -35,9 +38,9 @@ import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
-import {currentController} from '@/components/design/store'
+import { currentController } from '@/components/design/store'
 import { eventMixin } from "./event";
-import {meta}from '../meta'
+import { meta } from '../meta'
 
 const mixins = [
     _1stfExporterMixin,
@@ -51,7 +54,7 @@ export class ModelController {
 
     // 元数据
 
-    meta:any = meta
+    meta: any = meta
 
     // 场景
     public scene: Scene = new Scene();
@@ -67,7 +70,7 @@ export class ModelController {
     public controller: any;
     // 尺寸侦听器
     public resizeObserver: any;
-    
+
     // 记录原始摄像机位置
     public defaultCameraPosition = new Vector3(0, 0, 1);
 
@@ -157,6 +160,7 @@ export class ModelController {
         this.renderer.setPixelRatio(window.devicePixelRatio)
         // 初始化时暴露场景和渲染器
         currentController.value = this;
+        window.mc = this
     }
 
     // 初始化容器
@@ -293,12 +297,14 @@ export class ModelController {
 
 
     removeDecals() {
-        this.decalControllers.forEach((decal) => { decal.remove() })
+        this.decalControllers.forEach((decal) => { 
+            decal.remove()
+         })
     }
 
     // 调用钩子函数
-    callHook(hook){
-        if(hook && typeof hook == 'function'){
+    callHook(hook) {
+        if (hook && typeof hook == 'function') {
             hook.call(this)
         }
     }
@@ -307,7 +313,9 @@ export class ModelController {
         // if(this.gltf){
         //     return message.info('当前控制台中存在模型，请先清理')
         // }
+
         this.removeMainModel();
+        this.removeDecals()
 
         this.callHook(this.meta.onMainModelLoading)
 
@@ -444,6 +452,15 @@ export class ModelController {
         await decal.stickToMousePosition(cb)
     }
 
+
+    // 添加贴纸
+    async addSticker(stickerInfo) {
+        this.callHook(this.meta.onStickerBeforeCreate)
+        const decal = new DecalController(stickerInfo)
+        await decal.stickToRandomPosition()
+        this.callHook(this.meta.onStickerCreated)
+    }
+
     // 恢复模型模型位置
     resetPosition() {
         this.camera.position.copy(this.defaultCameraPosition);
@@ -537,6 +554,23 @@ export class ModelController {
 
     getFullViewImages() {
 
+    }
+
+
+    getRandomPosition() {
+        // 随机选取一个面
+        let geometry = this.mesh.geometry;
+        let position = geometry.attributes.position;
+        let randomIndex = Math.floor(Math.random() * position.count);
+        let randomPoint = new Vector3();
+        randomPoint.fromBufferAttribute(position, randomIndex);
+        this.mesh.updateMatrixWorld();  // 更新模型的世界矩阵
+        randomPoint.applyMatrix4(this.mesh.matrixWorld);
+
+        return {
+            position:randomPoint,
+            rotation: new Vector3(0,0,0)
+        }
     }
 }
 

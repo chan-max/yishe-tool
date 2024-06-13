@@ -45,8 +45,6 @@ import waterfall from "@/components/layout/waterfall/index.vue";
 
 const columns = ref(3);
 
-window.columns = columns;
-
 const list = ref([]);
 
 const ionInfinite = async (ev) => {

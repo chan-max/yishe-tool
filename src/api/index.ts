@@ -6,7 +6,7 @@ export {uploadToCOS}  from './cos'
 
 
 
-async function fetchFile(url,filename = String(new Date().getTime())) {
+export async function fetchFile(url,filename = String(new Date().getTime())) {
   const response = await fetch(url);
   
   if (!response.ok) {

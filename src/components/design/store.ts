@@ -301,8 +301,6 @@ export const currentEditingModelInfo = ref()
 export const showDecoration  = ref(false)
 
 
-
-
 /*
  是否展示基础画布
 */
@@ -312,6 +310,28 @@ export const showBasicCanvas = ref(false)
  是否展示3d画布
 */
 export const showThreeCanvas = ref(true)
+
+
+/*
+    延迟点击贴纸
+*/
+
+export const isUsingClickDelaySticker = ref(false)
+
+export const clickDelaySticker = ref()
+
+
+export const cacheFontFamily  = ref({})
+
+
+/*
+    svg 画布
+*/ 
+export const showSvgCanvas = ref(false)
+
+
+export const svgCanvasChildren = ref([])
+
 
 /*
     所有状态统一使用store管理
@@ -328,7 +348,9 @@ export const useDesignStore = defineStore('_1s_design',() => {
         showThreeCanvas:useLocalStorage('_1s_showThreeCanvas',showThreeCanvas),
         showSticker:useLocalStorage('_1s_showSticker',showSticker),
         currentOperatingBaseModelInfo:useLocalStorage('_1s_currentOperatingBaseModelInfo',currentOperatingBaseModelInfo),
-    }
+        showSvgCanvas:useLocalStorage('_1s_showSvgCanvas',showSvgCanvas),
+        svgCanvasChildren:useLocalStorage('_1s_svgCanvasChildren',svgCanvasChildren),
+    } 
 })
 
 

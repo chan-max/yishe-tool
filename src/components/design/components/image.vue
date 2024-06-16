@@ -54,7 +54,6 @@ function load(e) {
   height:100%;
 }
 .img {
-  background-color: #efefef;
   border-radius: 4px;
   overflow: hidden;
   cursor: pointer;

@@ -15,11 +15,11 @@
           :key="index"
         >
           <div class="decal-item" :class="{ active: isActive(decal) }">
-            <el-image
+            <desimage
               :src="decal.info.src"
               fit="contain"
               class="decal-item-image"
-            ></el-image>
+            ></desimage>
             <div class="decal-item-content">
               <div class="decal-item-content-title text-ellipsis">名称</div>
               <div class="decal-item-content-desc text-ellipsis">
@@ -93,6 +93,8 @@ import { MoreFilled, CloseBold, Edit, EditPen } from "@element-plus/icons-vue";
 import iconSetting from "./setting.svg";
 import iconDelete from "./remove.svg";
 import iconMore from "./more.svg";
+import desimage from '@/components/design/components/image.vue'
+
 
 function formatDate(date) {
   const d = useDateFormat(date, "YYYY-MM-DD HH:mm:ss");

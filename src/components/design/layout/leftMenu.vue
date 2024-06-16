@@ -42,6 +42,21 @@
         <span>选择模型</span>
       </div>
     </el-tooltip>
+
+
+    <el-tooltip :hide-after="0" content="制作矢量图贴纸" placement="right">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showSvgCanvas }"
+        @click="showSvgCanvas = !showSvgCanvas"
+      >
+        <div class="menu-bar-item-icon">
+          <icon-svg-canvas></icon-svg-canvas>
+        </div>
+        <span>复杂贴纸</span>
+      </div>
+    </el-tooltip>
+
     <el-tooltip :hide-after="0" content="图片贴图" placement="right">
       <div
         class="menu-bar-item"
@@ -52,6 +67,9 @@
         <span>图片贴纸</span>
       </div>
     </el-tooltip>
+
+
+
     <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
       <div
         class="menu-bar-item"
@@ -164,7 +182,8 @@ import {
   showSticker,
   showQrcode,
   showStamp,
-  showCustomModel
+  showCustomModel,
+showSvgCanvas
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?component";
@@ -186,6 +205,7 @@ import iconSetting from "@/icon/setting.svg?component";
 import iconFont from "@/icon/font.svg?component";
 import iconDecoration from "@/icon/design/decoration.svg?component";
 import iconCustomModel from '@/components/design/assets/icon/custom-model.svg?component'
+import iconSvgCanvas from '@/components/design/assets/icon/svg-canvas.svg?component'
 
 </script>
 <style lang="less">

@@ -1,7 +1,7 @@
 <template>
   <div class="color-picker">
     <color-picker v-bind="attrs" useType="both">
-      <template #extra> sdfdafsfa </template>
+      <template #extra><slot/></template>
     </color-picker>
   </div>
 </template>

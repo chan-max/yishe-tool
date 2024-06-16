@@ -9,8 +9,8 @@
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
-  <div class="operate-form-item">
-    <div style="display: flex; column-gap: 4px" class="items-center">
+  <div class="operate-form-item" :style="style">
+    <div style="display: flex; column-gap: 4px;align-items: center;min-height: 24px;">
       <div class="operate-form-item-icon">
         <slot name="icon"></slot>
       </div>
@@ -27,21 +27,26 @@
 </template>
 <script setup>
 import { Warning } from "@element-plus/icons-vue";
-const props = defineProps(["name"]);
+const props = defineProps({
+  name:{
+    default:''
+  },
+  style:{}
+});
 </script>
 <style lang="less">
 .operate-form-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  column-gap: 8px;
-  height: 40px;
+  column-gap: 16px;
+  min-height: 40px;
+  padding: .5em 0;
   .el-select__wrapper{
-    min-height: 20px;
-    height: 20px!important;
+    min-height: 24px;
   }
   .el-input__wrapper{
-    height: 20px!important;
+    height: 24px!important;
   }
 }
 
@@ -68,5 +73,7 @@ const props = defineProps(["name"]);
 .operate-form-item-content {
   display: flex;
   align-items: center;
+  justify-content: end;
+  flex: 1;
 }
 </style>

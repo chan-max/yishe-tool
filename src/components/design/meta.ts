@@ -20,4 +20,10 @@ export const meta = {
     onStickerCreated: function () {
         message.success({ content: '贴纸渲染成功', key: 'renderSticker', duration: 1 });
     },
+
+
+    // 当点击延迟贴纸创建完成
+    onClickDelayStickerCreate:function (){
+        message.success({ content: '贴纸选择成功,点击模型来创建', duration: 1 });
+    }
 }

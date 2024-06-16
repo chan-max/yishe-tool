@@ -9,7 +9,7 @@
           <el-col :span="12">
             <operate-form-item>
               <template #icon> <icon-font-size></icon-font-size> </template>
-              <template #name> 显示大小 </template>
+              <template #name> 文字大小 </template>
               <template #content>
                 <el-input
                   type="number"

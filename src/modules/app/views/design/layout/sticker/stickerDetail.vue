@@ -47,7 +47,9 @@ function didDismiss() {
     添加贴纸
 */
 function add(){
-    currentController.value.addSticker(currentPreviewSticker.value)
+    currentController.value.addClickDelaySticker({
+      ...currentPreviewSticker.value
+    })
     showStickerDetail.value = false;
     showSticker.value = false
 }

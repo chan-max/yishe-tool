@@ -12,7 +12,7 @@ export function imgToBase64(img) {
     var base64 = canvas.toDataURL('image/png')
     return base64 ;
 }
-
+ 
 export const imgToFile = (img) => {
     return base64ToFile(imgToBase64(img))
 }
@@ -59,16 +59,23 @@ export function svgToFile(svg){
 }
 
 
-
 /* svg元素或字符串转png文件 */
-export  function svgToPngFile(svg){
+export async function svgToPngFile(svg){
     /*
         svg线渲染到img上，在添加到canvas，然后导出png文件
     */
     const svgBase64 = svgToBase64(svg)  
     let img = document.createElement('img')
+    img.style.display = 'none'
+    document.body.appendChild(img)
     img.src = svgBase64
-    return imgToFile(img)
+
+    return new Promise((resolve) => {
+        img.onload = () => {
+            document.body.removeChild(img)
+            return resolve(imgToFile(img))
+        }
+    })
 }
 
 

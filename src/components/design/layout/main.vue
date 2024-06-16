@@ -1,19 +1,13 @@
 <template>
   <loading v-if="isLoading"></loading>
-  <div
-    id="layout-container"
-    style="width: 100%; height: 100%; display: flex; flex-direction: column"
-  >
+  <div id="layout-container" style="width: 100%; height: 100%; display: flex; flex-direction: column">
     <div id="layout-header" style="height: var(--1s-header-height)">
       <div v-if="showHeader" style="width: 100%; height: 100%; display: flex">
         <header-menu />
       </div>
     </div>
 
-    <div
-      id="layout-body"
-      style="display: flex; height: calc(100% - var(--1s-header-height))"
-    >
+    <div id="layout-body" style="display: flex; height: calc(100% - var(--1s-header-height))">
       <div id="layout-left-menu" style="height: 100%; border-right: 2px solid #f6f6f6">
         <left-menu v-if="showLeftMenu"></left-menu>
       </div>
@@ -26,19 +20,11 @@
 
       <div id="layout-canvas">
         <screenshot ref="screenshotInstance"></screenshot>
-        <div
-          v-show="des.showThreeCanvas"
-          id="threejs-canvas"
-          style="width: 100%; height: 100%;"
-          ref="mountContainer"
-        ></div>
+        <div v-show="des.showThreeCanvas" id="threejs-canvas" style="width: 100%; height: 100%;" ref="mountContainer">
+        </div>
 
-        <div
-          v-show="des.showBasicCanvas"
-          id="basic-canvas"
-          style="width: 100%; height: 100%; z-index: 1"
-          ref="basicCanvasRef"
-        ></div>
+        <div v-show="des.showBasicCanvas" id="basic-canvas" style="width: 100%; height: 100%; z-index: 1"
+          ref="basicCanvasRef"></div>
       </div>
 
       <div id="layout-right" style="display: flex">
@@ -49,43 +35,26 @@
     </div>
   </div>
 
-  <diydialog
-    title="图片上传"
-    :header="true"
-    mask="true"
-    :show="showImageUplaod"
-    @close="showImageUplaod = false"
-    :animation="basicContainerAnimation"
-  >
+  <diydialog title="图片上传" :header="true" mask="true" :show="showImageUplaod" @close="showImageUplaod = false"
+    :animation="basicContainerAnimation">
     <image-upload></image-upload>
   </diydialog>
 
-  <div
-    v-if="showBottomMenu"
-    style="
+  <div v-if="showBottomMenu" style="
       height: var(--1s-bottom-menu-height);
       position: absolute;
       z-index: 9;
       bottom: 30px;
-    "
-  >
+    ">
     <bottom-menu></bottom-menu>
   </div>
 
-  <diydialog
-    :show="showBaseModelSelect"
-    @close="showBaseModelSelect = false"
-    :animation="basicContainerAnimation"
-  >
+  <diydialog :show="showBaseModelSelect" @close="showBaseModelSelect = false" :animation="basicContainerAnimation">
     <template #title> 选择基础模型</template>
     <base-model-select></base-model-select>
   </diydialog>
 
-  <diydialog
-    :show="showFontUpload"
-    @close="showFontUpload = false"
-    :animation="basicContainerAnimation"
-  >
+  <diydialog :show="showFontUpload" @close="showFontUpload = false" :animation="basicContainerAnimation">
     <template #title> 字体上传 </template>
     <font-upload></font-upload>
   </diydialog>
@@ -94,30 +63,15 @@
     <scene-control></scene-control>
   </diydialog>
 
-  <diydialog
-    :show="showFontList"
-    title="字体"
-    @close="showFontList = false"
-    :animation="basicContainerAnimation"
-  >
+  <diydialog :show="showFontList" title="字体" @close="showFontList = false" :animation="basicContainerAnimation">
     <font-list></font-list>
   </diydialog>
 
-  <diydialog
-    :show="showUpload"
-    title="资源上传"
-    @close="showUpload = false"
-    :animation="basicContainerAnimation"
-  >
+  <diydialog :show="showUpload" title="资源上传" @close="showUpload = false" :animation="basicContainerAnimation">
     <upload></upload>
   </diydialog>
 
-  <diydialog
-    :show="showSaveModel"
-    title="保存模型"
-    @close="showSaveModel = false"
-    :animation="basicContainerAnimation"
-  >
+  <diydialog :show="showSaveModel" title="保存模型" @close="showSaveModel = false" :animation="basicContainerAnimation">
     <save-model></save-model>
   </diydialog>
 </template>
@@ -158,6 +112,7 @@ import {
   showStamp,
   screenshotInstance,
   showCustomModel,
+  showSvgCanvas,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -186,6 +141,7 @@ import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { initWebsocket } from "../utils/websocket.ts";
 import upload from "./upload/index.vue";
 import stamp from "./stamp/index.vue";
+import svgCanvas from './svgCanvas/index.vue';
 
 // initWebsocket();
 
@@ -203,30 +159,32 @@ const leftComponent = computed(() => {
   return showImageSticker.value
     ? imageSticker
     : showTextSticker.value
-    ? textSticker
-    : showCustomTextSticker.value
-    ? customTextSticker
-    : showSticker.value
-    ? sticker
-    : showQrcode.value
-    ? qrcode
-    : showStamp.value
-    ? stamp
-    : showCustomModel.value
-    ? customModel
-    : null;
+      ? textSticker
+      : showCustomTextSticker.value
+        ? customTextSticker
+        : showSticker.value
+          ? sticker
+          : showQrcode.value
+            ? qrcode
+            : showStamp.value
+              ? stamp
+              : showCustomModel.value
+                ? customModel
+                : showSvgCanvas.value
+                  ? svgCanvas
+                  : null;
 });
 
 const rightComponent = computed(() => {
   return showWorkspace.value
     ? workspace
     : showModelInfo.value
-    ? modelInfo
-    : showDecalControl.value
-    ? decalControl
-    : showDecalList.value
-    ? decalList
-    : null;
+      ? modelInfo
+      : showDecalControl.value
+        ? decalControl
+        : showDecalList.value
+          ? decalList
+          : null;
 });
 
 // 挂载容器

@@ -32,7 +32,7 @@ export interface DecalControllerParams {
   // 用于缓存的本地url
   objectUrl: string,
   // 该贴纸的宽高比
-  aspectRatio:number
+  aspectRatio: number
 }
 
 export class DecalController {
@@ -48,7 +48,9 @@ export class DecalController {
   constructor(info: any) {
     this.context = this
     this.info = info
-
+    if (!this.info.src) {
+      this.info.src = this.info.thumbnail
+    }
     this.img = info.img
   }
 
@@ -166,7 +168,6 @@ export class DecalController {
   //  销毁该贴纸
   remove() {
     this.removeMesh()
-
     // 从贴纸中移除
     currentController.value.decalControllers.splice(currentController.value.decalControllers.indexOf(this), 1)
     operatingDecal.value = null
@@ -184,7 +185,6 @@ export class DecalController {
     }
 
     message.loading({ type: 'info', content: '正在渲染贴纸', key: 'sticking', duration: 0 })
-
 
     this.currentMousePosition = currentController.value.mouse.clone()
 
@@ -209,9 +209,9 @@ export class DecalController {
     this._position = position;
 
     const copy = intersects[0].face.normal.clone();
+
     copy.transformDirection(this.parentMesh.matrixWorld);
     copy.add(position);
-
 
     const helper = new Object3D();
     helper.position.copy(position);

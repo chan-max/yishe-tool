@@ -1,15 +1,17 @@
 <template>
   <div class="designiy-sticker">
     <div class="menu">
-      <div
-        class="flex justify-between items-center"
-        style="border-bottom: 1px solid #e6e6e6"
-      >
-        <div style="flex: 1"></div>
-      </div>
       <div class="search">
-        <el-input v-model="input1" placeholder="寻找更多贴纸～" style="font-size: 12px" />
+        <el-input v-model="input" placeholder="寻找文字贴纸">
+        <template #prefix>
+          <el-icon><Search /></el-icon>
+        </template>
+        <template #suffix>
+          <el-icon><Operation /></el-icon>
+        </template>
+      </el-input>
       </div>
+      <tags></tags>
     </div>
     <div class="list" v-infinite-scroll="getList" :infinite-scroll-distance="150">
       <el-row :gutter="8" style="row-gap: 1em">
@@ -24,7 +26,7 @@
                   <el-icon><ArrowRightBold /></el-icon>
                 </div>
               </template>
-              <sticker-popover :data="item"></sticker-popover>
+              <sticker-popover :stickerInfo="item"></sticker-popover>
             </el-popover>
           </div>
         </el-col>
@@ -34,7 +36,7 @@
 </template>
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
-import { Search, ArrowRightBold } from "@element-plus/icons-vue";
+import { Search, ArrowRightBold,Operation } from "@element-plus/icons-vue";
 import { getStickerListApi } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/design/components/image.vue";
@@ -45,9 +47,8 @@ import {
   showDecalControl,
 } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
-
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
-
+import tags from './tags.vue'
 
 /*
  徽章类型
@@ -115,8 +116,10 @@ const column = ref(2);
 .menu {
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 1em;
+  padding: 1em;  
+  row-gap: 1em;
 }
 
 .search {
@@ -141,6 +144,8 @@ const column = ref(2);
 
 .image {
   width: 100%;
+  background-color: #efefef;
+  border-radius: .2em;
   height: 10em!important;
 }
 

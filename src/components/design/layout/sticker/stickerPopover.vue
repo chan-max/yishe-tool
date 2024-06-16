@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <el-button @click="add" type="primary"> 添加该贴纸 </el-button>
+    <el-button-group  class="w-full" style="display:flex;">
+      <el-button @click="add" type="primary"> 添加该贴纸 </el-button>
+      <el-button style="flex:1;" @click="use" type="primary"> 使用该贴纸 </el-button>
+    </el-button-group>
   </div>
 </template>
 
@@ -8,14 +11,21 @@
 import { currentController } from "@/components/design/store";
 
 const props = defineProps({
-  data: {
-    default:{}
+  stickerInfo: {
+    default: {}
   },
 });
 
 function add() {
+  return
   currentController.value.addSticker({
-    ...props.data,
+    ...props.stickerInfo,
+  });
+}
+
+function use(){
+  currentController.value.addClickDelaySticker({
+    ...props.stickerInfo,
   });
 }
 </script>

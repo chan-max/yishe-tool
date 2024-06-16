@@ -1,6 +1,6 @@
 <template>
   <div class="chips">
-    <template v-for="item in chips">
+    <template v-for="item in tags">
         <ion-chip :class="{checked:item.checked}" @click="item.checked = !item.checked"> {{ item.label }} </ion-chip>
     </template>
     <div style="flex: 1"></div>
@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 
-const chips = ref([
+const tags = ref([
     {
         label:'最近更新',
         checked:false,

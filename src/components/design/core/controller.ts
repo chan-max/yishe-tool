@@ -38,16 +38,18 @@ import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
-import { currentController } from '@/components/design/store'
+import { currentController, isUsingClickDelaySticker, clickDelaySticker } from '@/components/design/store'
 import { eventMixin } from "./event";
 import { meta } from '../meta'
+import { Base } from './base'
+
 
 const mixins = [
     _1stfExporterMixin,
     eventMixin
 ];
 
-export class ModelController {
+export class ModelController extends Base {
 
     // 模式
     mode = 'pc' // pc 或 mb
@@ -80,6 +82,22 @@ export class ModelController {
     private background: any = null
 
     public initialCameraPosition = new Vector3();
+
+
+    // 是否在模型上点击, 用于在点击事件中判断
+    public get isMeshClicked() {
+        return !!this.getClickIntersects().length
+    }
+
+    // 获取点击焦点
+    public getClickIntersects() {
+        const raycaster = new Raycaster();
+        raycaster.setFromCamera(this.mouse.clone(), this.camera);
+        const intersects = raycaster.intersectObject(this.mesh, true);
+        return intersects
+    }
+
+
 
     public setBackground() {
         // 这样可以保持背景固定
@@ -156,6 +174,7 @@ export class ModelController {
     }
 
     constructor() {
+        super()
         mixins.forEach((mixin) => mixin(this));
         this.renderer.setPixelRatio(window.devicePixelRatio)
         // 初始化时暴露场景和渲染器
@@ -297,9 +316,9 @@ export class ModelController {
 
 
     removeDecals() {
-        this.decalControllers.forEach((decal) => { 
+        this.decalControllers.forEach((decal) => {
             decal.remove()
-         })
+        })
     }
 
     // 调用钩子函数
@@ -381,8 +400,12 @@ export class ModelController {
     // click 事件只会在渲染后触发
     private _onClickCbs = new Set();
     public onClick(cb: any) {
+        const _this = this
         this._onClickCbs.add(cb);
+        return () => _this._onClickCbs.delete(cb)
     }
+
+
 
     // 鼠标移动
     private _onMousemove = new Set();
@@ -391,10 +414,7 @@ export class ModelController {
     }
 
     private initMousemoveEvent() {
-
-
         var latest = new Date().getTime();
-
         this.canvasContainer.addEventListener("mousemove", (event: any) => {
             // 确定 点击
             let now = new Date().getTime()
@@ -405,7 +425,6 @@ export class ModelController {
             }
 
             latest = now
-            console.log('canvas mousemove')
             this._onMousemove.forEach((cb: any) => cb.call(this, this));
         });
     }
@@ -456,9 +475,36 @@ export class ModelController {
     // 添加贴纸
     async addSticker(stickerInfo) {
         this.callHook(this.meta.onStickerBeforeCreate)
-        const decal = new DecalController(stickerInfo)
+        const decal = new DecalController({
+            ...stickerInfo,
+            src: stickerInfo.thumbnail
+        })
         await decal.stickToRandomPosition()
         this.callHook(this.meta.onStickerCreated)
+    }
+
+    // 添加延迟点击贴纸
+    addClickDelaySticker(stickerInfo) {
+        isUsingClickDelaySticker.value = true
+        clickDelaySticker.value = stickerInfo
+
+        const remove = this.onClick(async () => {
+            if(this.isMeshClicked){
+                const decal = new DecalController({
+                    ...stickerInfo
+                })
+               await decal.stickToMousePosition()
+               isUsingClickDelaySticker.value = false
+               clickDelaySticker.value = null
+               remove()
+            }else{
+                // 给点提示
+                return
+            }
+        })
+
+        this.callHook(this.meta.onClickDelayStickerCreate)
+        document.body.click()
     }
 
     // 恢复模型模型位置
@@ -466,6 +512,7 @@ export class ModelController {
         this.camera.position.copy(this.defaultCameraPosition);
         this.controller.update();
     }
+
 
     // 执行动画
 
@@ -567,9 +614,20 @@ export class ModelController {
         this.mesh.updateMatrixWorld();  // 更新模型的世界矩阵
         randomPoint.applyMatrix4(this.mesh.matrixWorld);
 
+
+        // const copy = intersects[0].face.normal.clone();
+        // copy.transformDirection(this.parentMesh.matrixWorld);
+        // copy.add(position);
+
+
+        // const helper = new Object3D();
+        // helper.position.copy(position);
+        // helper.lookAt(copy);
+        // let rotation = helper.rotation;
+
         return {
-            position:randomPoint,
-            rotation: new Vector3(0,0,0)
+            position: randomPoint,
+            rotation: new Vector3(0, 0, 0)
         }
     }
 }

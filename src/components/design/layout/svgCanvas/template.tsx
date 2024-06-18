@@ -5,16 +5,7 @@ import {svgCanvasChildren} from '@/components/design/store'
 /*
  方形 
  圆形
-
 */
-
-interface StampOptions {
-    shape: 'round' | '',
-    svg: {
-        width: 100,
-        height: 100
-    }
-}
 
 
 /*
@@ -145,9 +136,9 @@ const Text = (props) => {
     印章根组件
 */
 
-export const operatingSvgWidth = ref(240)
+export const operatingSvgWidth = ref(300)
 
-export const operatingSvgHeight = ref(240)
+export const operatingSvgHeight = ref(300)
 
 
 export enum SvgChildType {
@@ -216,10 +207,7 @@ function createText(options) {
 
             let defId = id++
 
-            
             const gradient = cssGradient2SVG(options.fontColor ,{id:defId})
-
-            console.log(gradient)
 
             svgDefs.value.push(
                 gradient
@@ -245,9 +233,9 @@ function createText(options) {
         放弃html形式，改为svg形式
     */
 
-    return <text x="0" y="0" style={style}>
+    return <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" style={style}>
         { options.textContent.map((item) => {
-            return <tspan x="0" dy="1em"> {item} </tspan>
+            return <tspan x="50%" dy="1em"> {item} </tspan>
         })}
     </text>
 

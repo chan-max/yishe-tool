@@ -3,7 +3,7 @@
         <template #icon> <icon-font-family></icon-font-family> </template>
         <template #name> 个性字体</template>
         <template #content>
-            <el-select v-model="model" size="small" filterable :filter-method="filter">
+            <el-select v-model="model" size="small" filterable clearable :filter-method="filter">
                 <el-option-group label="网络字体">
                     <template v-for="item in list" :key="item.id">
                         <el-option v-if="!item.hide" :label="item.name" :value="item">
@@ -60,12 +60,14 @@ watch(model, async () => {
     `;
     document.head.appendChild(fontStyle);
     fontStyle.setAttribute("font_id", fontId);
-    cacheFontFamily[id] = fontStyle;
+    cacheFontFamily.value[id] = fontStyle;
 
     message.success({
         content: `字体加载成功`,
         key: "loadfont",
     });
+},{
+    immediate:true
 });
 
 const { list, getList } = usePaging(

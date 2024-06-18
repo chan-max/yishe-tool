@@ -16,6 +16,7 @@
             </el-button>
           </template>
         </el-popover>
+        <el-button @click="exportToSvg"> 导出 svg </el-button>
         <el-button @click="exportToPng"> 导出 png </el-button>
       </el-button-group>
     </div>
@@ -167,6 +168,12 @@ async function exportToPng() {
   let png = await svgToPngFile(svgCanvasRef.value);
   downloadByFile(png);
 }
+
+async function exportToSvg(){
+  let svg =  svgToFile(svgCanvasRef.value);
+  downloadByFile(svg);
+}
+
 </script>
 
 <style lang="less" scoped>

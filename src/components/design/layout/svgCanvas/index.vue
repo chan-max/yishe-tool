@@ -1,11 +1,12 @@
 <template>
   <div class="container flex flex-col items-center">
-    <div class="svg-canvas png-background">
-      <svg-canvas ref="svgCanvasRef" :width="operatingSvgWidth" :height="operatingSvgHeight"></svg-canvas>
+    <div class="svg-canvas ">
+      <svg-canvas class="png-background" ref="svgCanvasRef" :width="svgCanvasWidth"
+        :height="svgCanvasHeight"></svg-canvas>
     </div>
     <div class="header">
-      <el-button-group link style="width: 100%; display: flex">
-        <el-popover :width="240" trigger="click">
+      <el-button-group link style="width: 100%; display: flex;overflow:auto;">
+        <el-popover trigger="click">
           <div class="tags">
             <el-tag @click="add" round> 文字类 </el-tag>
             <div style="flex:1;"></div>
@@ -16,8 +17,23 @@
             </el-button>
           </template>
         </el-popover>
-        <el-button @click="exportToSvg"> 导出 svg </el-button>
-        <el-button @click="exportToPng"> 导出 png </el-button>
+        <el-popover trigger="click">
+          <layout></layout>
+          <template #reference>
+            <el-button>
+              调整画布
+            </el-button>
+          </template>
+        </el-popover>
+
+        <el-popover trigger="click">
+          <el-button @click="exportToSvg" link> 导出 svg </el-button>
+          <el-button @click="exportToPng" link> 导出 png </el-button>
+          <template #reference>
+            <el-button> 导出 </el-button>
+          </template>
+        </el-popover>
+
       </el-button-group>
     </div>
     <div class="operate">
@@ -45,7 +61,7 @@
                 <el-col :span="12">
                   <operateItemFontColor v-model="item.fontColor"></operateItemFontColor>
                 </el-col>
-                
+
                 <el-col :span="24">
                   <operateItemFontFamily v-model="item.fontFamilyInfo"></operateItemFontFamily>
                 </el-col>
@@ -64,11 +80,11 @@
                 </el-col>
               </el-row>
             </el-collapse-item>
-          <el-collapse-item name="2">
-            <template #title>
-              <div class="title">文字位置</div>
-            </template>
-          </el-collapse-item>
+            <el-collapse-item name="2">
+              <template #title>
+                <div class="title">文字位置</div>
+              </template>
+            </el-collapse-item>
             <!-- <el-collapse-item name="3">
               <template #title>
                 <div class="title">背景和边框</div>
@@ -123,11 +139,10 @@ import {
 } from "@/common/transform/index";
 import {
   SvgCanvas,
-  operatingSvgWidth,
-  operatingSvgHeight,
   addSvgCanvasChild,
 } from "./template";
-import {  svgCanvasChildren,} from '@/components/design/store'
+import { svgCanvasChildren,  svgCanvasWidth,
+  svgCanvasHeight, } from '@/components/design/store'
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import operateFormItem from "@/components/design/components/operate/operateFormItem.vue";
 import colorPicker from "../../components/colorPicker.vue";
@@ -147,7 +162,7 @@ import operateItemFontFamily from '@/components/design/components/operate/fontFa
 import operateItemLineHeight from '@/components/design/components/operate/lineHeight.vue'
 import operateItemLetterSpacing from '@/components/design/components/operate/letterSpacing.vue'
 import operateItemBackground from '@/components/design/components/operate/background.vue'
-
+import layout from './layout.vue'
 
 
 const r = ref();
@@ -169,8 +184,8 @@ async function exportToPng() {
   downloadByFile(png);
 }
 
-async function exportToSvg(){
-  let svg =  svgToFile(svgCanvasRef.value);
+async function exportToSvg() {
+  let svg = svgToFile(svgCanvasRef.value);
   downloadByFile(svg);
 }
 
@@ -185,10 +200,15 @@ async function exportToSvg(){
 .svg-canvas {
   width: 300px;
   height: 300px;
+  overflow:hidden;
   display: flex;
   margin: 10px;
   align-items: center;
   justify-content: center;
+
+  svg {
+    flex-shrink: 0;
+  }
 }
 
 .operate {

@@ -329,9 +329,13 @@ export const cacheFontFamily  = ref({})
 */ 
 export const showSvgCanvas = ref(false)
 
-
 export const svgCanvasChildren = ref([])
 
+// 当前操作画布的宽和高
+export const svgCanvasWidth = ref(100)
+export const svgCanvasHeight = ref(100)
+// 是否展示主画布
+export const svgCanvasSyncMainCanvas = ref(false)
 
 /*
     所有状态统一使用store管理

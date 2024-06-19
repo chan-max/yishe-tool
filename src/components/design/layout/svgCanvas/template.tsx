@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import cssGradient2SVG from '@/common/transform/svg'
-import {svgCanvasChildren} from '@/components/design/store'
+import {svgCanvasChildren ,svgCanvasWidth,svgCanvasHeight} from '@/components/design/store'
 
 /*
  方形 
@@ -132,13 +132,7 @@ const Text = (props) => {
         {props.content} </text>
 }
 
-/*
-    印章根组件
-*/
 
-export const operatingSvgWidth = ref(300)
-
-export const operatingSvgHeight = ref(300)
 
 
 export enum SvgChildType {
@@ -177,7 +171,7 @@ function isGradientColor(val) {
 
 
 const basicTextOptions = {
-    fontSize: 24,
+    fontSize: .1, // 字体大小相对于宽度
     textContent: 'hello world',
     fontWeight: '500',
     lineHeight: 1,
@@ -191,7 +185,7 @@ function createText(options) {
     }
 
     const style: any = {
-        fontSize: options.fontSize + 'px',
+        fontSize: options.fontSize * svgCanvasWidth.value + 'px',
         fontWeight: options.fontWeight,
         fontStyle: options.italic ? 'italic' : 'normal',
         whiteSpace: 'pre-line', // 用于显示换行
@@ -210,10 +204,8 @@ function createText(options) {
             const gradient = cssGradient2SVG(options.fontColor ,{id:defId})
 
             svgDefs.value.push(
-                gradient
-            )
+                gradient)
 
-            console.log(options.fontColor)
             style.fill = ` url(#${defId})`
 
         } else {
@@ -233,21 +225,27 @@ function createText(options) {
         放弃html形式，改为svg形式
     */
 
-    return <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" style={style}>
+    const dominantBaseline = 'middle'
+    const textAnchor = 'middle'
+
+    return <text x="0" y="0" 
+    // dominant-baseline={dominantBaseline} 
+    // text-anchor={textAnchor} 
+    style={style}>
         { options.textContent.map((item) => {
-            return <tspan x="50%" dy="1em"> {item} </tspan>
+            return <tspan x="0" dy={style.lineHeight}> {item} </tspan>
         })}
     </text>
 
-    return <foreignObject width="100%" height="100%">
-        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;">
-            <div title="文字背景">
-                <span style={style} title="文字元素">
-                    {options.textContent}
-                </span>
-            </div>
-        </div>
-    </foreignObject>
+    // return <foreignObject width="100%" height="100%">
+    //     <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;">
+    //         <div title="文字背景">
+    //             <span style={style} title="文字元素">
+    //                 {options.textContent}
+    //             </span>
+    //         </div>
+    //     </div>
+    // </foreignObject>
 }
 
 let id = 1
@@ -264,6 +262,10 @@ export function addSvgCanvasChild(type = SvgChildType.Text, opts = {
     }
 }
 
+
+// 小画布允许显示的最大尺寸
+let displayMaxSize = 300
+
 export const SvgCanvas = (props) => {
 
     svgDefs.value = []
@@ -271,11 +273,17 @@ export const SvgCanvas = (props) => {
     const width = props.width
     const height = props.height
 
+
+    const scale = 300 / Math.max(width, height)
+    const transform = `scale(${scale},${scale})`
+
     let defs = <defs>
         {svgDefs.value}
     </defs>
 
-    const svg = <svg width={width} height={height} style="font-size:20px;">
+
+
+    const svg = <svg  width={width} height={height} style={{transform}}>
         {defs}
         {svgCanvasChildren.value.map(createSvgChild)}
     </svg>

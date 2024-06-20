@@ -1,6 +1,6 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import cssGradient2SVG from '@/common/transform/svg'
-import {svgCanvasChildren ,svgCanvasWidth,svgCanvasHeight} from '@/components/design/store'
+import { svgCanvasChildren, svgCanvasWidth, svgCanvasHeight } from '@/components/design/store'
 
 /*
  方形 
@@ -189,10 +189,26 @@ function createText(options) {
         fontWeight: options.fontWeight,
         fontStyle: options.italic ? 'italic' : 'normal',
         whiteSpace: 'pre-line', // 用于显示换行
-        lineHeight: options.lineHeight + 'em',
+        // lineHeight: options.lineHeight + 'em',
         letterSpacing: options.letterSpacing + 'em',
         fontFamily: options.fontFamilyInfo ? `font_${options.fontFamilyInfo.id}` : null
     }
+
+    if (options.fontFamilyInfo) {
+
+    //     let inner = `
+    //             @font-face {
+    //                 font-family: ${fontId};
+    //                 src: url(${URL.createObjectURL(file)}); 
+    //             }
+    // `;
+
+    //     const el = <style>
+    //         {inner}
+    //     </style>
+    //     svgDefs.value.push(el)
+    }
+
 
     if (options.fontColor) {
         if (isGradientColor(options.fontColor)) {
@@ -201,10 +217,9 @@ function createText(options) {
 
             let defId = id++
 
-            const gradient = cssGradient2SVG(options.fontColor ,{id:defId})
+            const gradient = cssGradient2SVG(options.fontColor, { id: defId })
 
-            svgDefs.value.push(
-                gradient)
+            svgDefs.value.push(gradient)
 
             style.fill = ` url(#${defId})`
 
@@ -217,7 +232,7 @@ function createText(options) {
 
     if (options.textContent) {
         options.textContent = String(options.textContent).split('\n')
-    }else{
+    } else {
         options.textContent = []
     }
 
@@ -228,12 +243,12 @@ function createText(options) {
     const dominantBaseline = 'middle'
     const textAnchor = 'middle'
 
-    return <text x="0" y="0" 
-    // dominant-baseline={dominantBaseline} 
-    // text-anchor={textAnchor} 
-    style={style}>
-        { options.textContent.map((item) => {
-            return <tspan x="0" dy={style.lineHeight}> {item} </tspan>
+    return <text x="0" y="0"
+        // dominant-baseline={dominantBaseline} 
+        // text-anchor={textAnchor} 
+        style={style} font-family={style.fontFamily}>
+        {options.textContent.map((item) => {
+            return <tspan x="0" dy={options.lineHeight + 'em'}> {item} </tspan>
         })}
     </text>
 
@@ -273,17 +288,13 @@ export const SvgCanvas = (props) => {
     const width = props.width
     const height = props.height
 
-
-    const scale = 300 / Math.max(width, height)
-    const transform = `scale(${scale},${scale})`
-
     let defs = <defs>
         {svgDefs.value}
     </defs>
 
 
 
-    const svg = <svg  width={width} height={height} style={{transform}}>
+    const svg = <svg width={width} height={height}>
         {defs}
         {svgCanvasChildren.value.map(createSvgChild)}
     </svg>

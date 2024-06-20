@@ -1,8 +1,10 @@
 <template>
   <div class="container flex flex-col items-center">
-    <div class="svg-canvas ">
-      <svg-canvas class="png-background" ref="svgCanvasRef" :width="svgCanvasWidth"
+    <div class="svg-canvas">
+      <div :style="{transform:svgCanvasFitTransform}">
+        <svg-canvas class="png-background" ref="svgCanvasRef" :width="svgCanvasWidth"
         :height="svgCanvasHeight"></svg-canvas>
+      </div>
     </div>
     <div class="header">
       <el-button-group link style="width: 100%; display: flex;overflow:auto;">
@@ -21,19 +23,12 @@
           <layout></layout>
           <template #reference>
             <el-button>
-              调整画布
+              调整画布 {{ svgCanvasWidth }} ✖️ {{ svgCanvasHeight }}
             </el-button>
           </template>
         </el-popover>
 
-        <el-popover trigger="click">
-          <el-button @click="exportToSvg" link> 导出 svg </el-button>
-          <el-button @click="exportToPng" link> 导出 png </el-button>
-          <template #reference>
-            <el-button> 导出 </el-button>
-          </template>
-        </el-popover>
-
+        <el-button @click="exportToPng"> 导出 png </el-button>
       </el-button-group>
     </div>
     <div class="operate">
@@ -50,7 +45,7 @@
                   <operateItemTextContent v-model="item.textContent"></operateItemTextContent>
                 </el-col>
                 <el-col :span="12">
-                  <operateItemFontSize v-model="item.fontSize"></operateItemFontSize>
+                  <operateItemFontSize tooltip="文字大小是相对于画布的宽度，0.1即0.1个画布宽度" v-model="item.fontSize"></operateItemFontSize>
                 </el-col>
                 <el-col :span="12">
                   <operateItemFontWeight v-model="item.fontWeight"></operateItemFontWeight>
@@ -169,6 +164,11 @@ const r = ref();
 
 const actives = ref(["1", "2", "3", "4"]);
 
+const svgCanvasFitTransform = computed(() => {
+    const scale = 300 / Math.max(svgCanvasWidth.value, svgCanvasHeight.value)
+    const transform = `scale(${scale},${scale})`
+    return transform
+})
 
 
 

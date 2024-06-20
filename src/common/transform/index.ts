@@ -1,7 +1,6 @@
 import { base64ToFile } from "./base64ToFile";
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 
-
 export function imgToBase64(img) {
     img.setAttribute('crossorigin', 'anonymous');
     var canvas = document.createElement('canvas');
@@ -66,7 +65,7 @@ export async function svgToPngFile(svg){
     */
     const svgBase64 = svgToBase64(svg)  
     let img = document.createElement('img')
-    img.style.display = 'none'
+    // img.style.display = 'none'
     document.body.appendChild(img)
     img.src = svgBase64
 

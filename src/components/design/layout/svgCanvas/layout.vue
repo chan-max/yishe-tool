@@ -1,29 +1,39 @@
 <template>
-    <el-row align="center" justify="center" :gutter="12">
-        <el-col :span="8">
-            <div class="label">宽</div>
+    <el-row  :gutter="16">
+        <el-col :span="10">
+            <div class="label">宽度</div>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="14">
             <el-input size="small" v-model="svgCanvasWidth"  type="number" min="100" step="10"></el-input>
         </el-col>
     </el-row>
-    <el-row :gutter="12">
-        <el-col :span="8">
+    <el-row :gutter="16">
+        <el-col :span="10">
             <div class="label">
-                高
+                高度
             </div>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="14">
             <el-input v-model="svgCanvasHeight" size="small" type="number" min="100" step="10"></el-input>
         </el-col>
     </el-row>
-    <el-row :gutter="12">
-        <el-col :span="8">
+    <el-row :gutter="16">
+        <el-col :span="10">
+            <div class="label">
+                宽高比 
+            </div>
+        </el-col>
+        <el-col :span="14">
+            <div>{{ svgCanvasWidth / svgCanvasHeight }}</div>
+        </el-col>
+    </el-row>
+    <el-row :gutter="16" justify="end">
+        <el-col :span="10">
             <div class="label">
                 主画布
             </div>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="14">
             <el-switch v-model="svgCanvasSyncMainCanvas" size="small" inline-prompt  />
         </el-col>
     </el-row>
@@ -35,7 +45,7 @@ import { svgCanvasChildren, svgCanvasWidth,svgCanvasHeight,svgCanvasSyncMainCanv
     
 <style lang="less" scoped>
 .el-row{
-    margin-bottom: 6px;
+    margin: 6px;
 }
 
 .label{

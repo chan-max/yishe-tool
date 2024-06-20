@@ -1,55 +1,48 @@
 <template>
   <div class="menu-bar">
     <el-tooltip :hide-after="0" content="选择模型" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showWorkspace }"
-        @click="showWorkspace = !showWorkspace"
-      >
+      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showWorkspace }"
+        @click="showWorkspace = !showWorkspace">
         <div class="menu-bar-item-icon"><icon-workspace></icon-workspace></div>
         <span>工作台</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="丰富的社区模型" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showCustomModel }"
-        @click="showCustomModel = !showCustomModel"
-      >
+      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showCustomModel }"
+        @click="showCustomModel = !showCustomModel">
         <div class="menu-bar-item-icon">
           <icon-custom-model></icon-custom-model>
         </div>
-        <span>社区模型</span>
+        <span>选择模型</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="许多贴纸哦～" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showSticker }"
-        @click="showSticker = !showSticker"
-      >
+      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showSticker }" @click="showSticker = !showSticker">
         <div class="menu-bar-item-icon"><icon-sticker></icon-sticker></div>
         <span> 贴纸资源 </span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="选择模型" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
-        @click="showBaseModelSelect = !showBaseModelSelect"
-      >
+      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
+        @click="showBaseModelSelect = !showBaseModelSelect">
         <div class="menu-bar-item-icon"><icon-shirt></icon-shirt></div>
         <span>选择模型</span>
       </div>
     </el-tooltip>
 
+    <el-tooltip :hide-after="0" content="贴纸画布" placement="right">
+      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showCanvasLayout }"
+        @click="showCanvasLayout = !showCanvasLayout">
+        <div class="menu-bar-item-icon">
+          <icon-canvas></icon-canvas>
+        </div>
+        <span>贴纸画布</span>
+      </div>
+    </el-tooltip>
 
     <el-tooltip :hide-after="0" content="制作矢量图贴纸" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showSvgCanvas }"
-        @click="showSvgCanvas = !showSvgCanvas"
-      >
+      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showSvgCanvas }"
+        @click="showSvgCanvas = !showSvgCanvas">
         <div class="menu-bar-item-icon">
           <icon-svg-canvas></icon-svg-canvas>
         </div>
@@ -58,11 +51,8 @@
     </el-tooltip>
 
     <el-tooltip :hide-after="0" content="图片贴图" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showImageSticker }"
-        @click="showImageSticker = !showImageSticker"
-      >
+      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showImageSticker }"
+        @click="showImageSticker = !showImageSticker">
         <div class="menu-bar-item-icon"><icon-photo></icon-photo></div>
         <span>图片贴纸</span>
       </div>
@@ -71,11 +61,8 @@
 
 
     <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showTextSticker }"
-        @click="showTextSticker = !showTextSticker"
-      >
+      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showTextSticker }"
+        @click="showTextSticker = !showTextSticker">
         <div class="menu-bar-item-icon"><icon-text></icon-text></div>
         <span>文字贴纸</span>
       </div>
@@ -183,7 +170,8 @@ import {
   showQrcode,
   showStamp,
   showCustomModel,
-showSvgCanvas
+  showSvgCanvas,
+  showCanvasLayout
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?component";
@@ -206,6 +194,7 @@ import iconFont from "@/icon/font.svg?component";
 import iconDecoration from "@/icon/design/decoration.svg?component";
 import iconCustomModel from '@/components/design/assets/icon/custom-model.svg?component'
 import iconSvgCanvas from '@/components/design/assets/icon/svg-canvas.svg?component'
+import iconCanvas from '@/components/design/assets/icon/canvas.svg?component'
 
 </script>
 <style lang="less">
@@ -242,10 +231,12 @@ import iconSvgCanvas from '@/components/design/assets/icon/svg-canvas.svg?compon
     padding: 6px;
     display: flex;
   }
+
   svg {
     width: 18px;
     height: 18px;
   }
+
   span {
     font-size: 10px;
     text-overflow: ellipsis;

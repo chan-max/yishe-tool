@@ -218,6 +218,8 @@ export function clearLeftLayout() {
     showImageSticker.value = false
     showCustomTextSticker.value = false
     showTextSticker.value = false
+    showSvgCanvas.value = false
+    showCanvasLayout.value = false
 }
 
 // 清空右侧布局
@@ -229,7 +231,18 @@ export function clearRightLayout() {
 }
 
 
-export const showCanvas = ref(false);
+// 展示自定义画布布局
+export const showCanvasLayout = ref(false);
+watch(showCanvasLayout, (value) => {
+    if (value) {
+        clearLeftLayout()
+        showCanvasLayout.value = true
+        showBasicCanvas.value = true
+    }else{
+        showBasicCanvas.value = false
+    }
+})
+
 
 // 清空所有布局元素
 export function clearLayout() {
@@ -346,6 +359,7 @@ export const useDesignStore = defineStore('_1s_design',() => {
     // 同步到缓存 , 性能较差
 
     return {
+        showWorkspace:useLocalStorage('_1s_showWorkspace',showWorkspace),
         operatingTextStickerOptions:useLocalStorage('_1s_operatingTextStickerOptions',operatingTextStickerOptions),
         showBaseModelSelect:useLocalStorage('_1s_showBaseModelSelect',showBaseModelSelect),
         showBasicCanvas:useLocalStorage('_1s_showBasicCanvas',showBasicCanvas),
@@ -354,6 +368,7 @@ export const useDesignStore = defineStore('_1s_design',() => {
         currentOperatingBaseModelInfo:useLocalStorage('_1s_currentOperatingBaseModelInfo',currentOperatingBaseModelInfo),
         showSvgCanvas:useLocalStorage('_1s_showSvgCanvas',showSvgCanvas),
         svgCanvasChildren:useLocalStorage('_1s_svgCanvasChildren',svgCanvasChildren),
+        showCanvasLayout:useLocalStorage('_1s_showCanvasLayout',showCanvasLayout),
     } 
 })
 

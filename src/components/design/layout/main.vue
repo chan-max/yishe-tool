@@ -20,11 +20,9 @@
 
       <div id="layout-canvas">
         <screenshot ref="screenshotInstance"></screenshot>
-        <div v-show="des.showThreeCanvas" id="threejs-canvas" style="width: 100%; height: 100%;" ref="mountContainer">
+        <div v-show="des.showThreeCanvas" id="threejs-canvas" style="width: 100%; height: 100%" ref="mountContainer">
         </div>
-
-        <div v-show="des.showBasicCanvas" id="basic-canvas" style="width: 100%; height: 100%; z-index: 1"
-          ref="basicCanvasRef"></div>
+        <basic-canvas v-show="showBasicCanvas" style="width: 100%; height: 100%; z-index: 1" ref="basicCanvasRef"></basic-canvas>
       </div>
 
       <div id="layout-right" style="display: flex">
@@ -113,6 +111,7 @@ import {
   screenshotInstance,
   showCustomModel,
   showSvgCanvas,
+  showCanvasLayout,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -141,7 +140,10 @@ import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { initWebsocket } from "../utils/websocket.ts";
 import upload from "./upload/index.vue";
 import stamp from "./stamp/index.vue";
-import svgCanvas from './svgCanvas/index.vue';
+import svgCanvas from "./svgCanvas/index.vue";
+import canvasLayout from "./canvas/index.vue";
+import basicCanvas from './basic-canvas/index.vue'
+
 
 // initWebsocket();
 
@@ -172,7 +174,9 @@ const leftComponent = computed(() => {
                 ? customModel
                 : showSvgCanvas.value
                   ? svgCanvas
-                  : null;
+                  : showCanvasLayout.value
+                    ? canvasLayout
+                    : null;
 });
 
 const rightComponent = computed(() => {

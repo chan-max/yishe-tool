@@ -11,7 +11,7 @@
 <template>
   <el-config-provider :locale="elementLocale">
     <header-menu v-if="$route.meta.header"></header-menu>
-    <div class="content">
+    <div class="app-content">
       <router-view></router-view>
     </div>
   </el-config-provider>
@@ -66,7 +66,7 @@ body {
   flex-shrink: 0;
 }
 
-.content {
+.app-content {
   width: 100%;
   flex: 1;
   overflow: auto;

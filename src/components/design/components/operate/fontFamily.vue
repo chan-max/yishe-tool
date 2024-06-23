@@ -27,6 +27,8 @@ import { message } from "ant-design-vue";
 
 const model = defineModel({});
 
+const emits = defineEmits(['font-load'])
+
 function filter(key) {
     list.value?.forEach((item) => {
         item.hide = !item.name.includes(key)
@@ -66,6 +68,8 @@ watch(model, async () => {
         content: `字体加载成功`,
         key: "loadfont",
     });
+
+    emits('font-load')
 },{
     immediate:true
 });

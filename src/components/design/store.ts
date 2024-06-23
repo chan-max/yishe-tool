@@ -237,9 +237,9 @@ watch(showCanvasLayout, (value) => {
     if (value) {
         clearLeftLayout()
         showCanvasLayout.value = true
-        showBasicCanvas.value = true
+        // showBasicCanvas.value = true
     }else{
-        showBasicCanvas.value = false
+        // showBasicCanvas.value = false
     }
 })
 
@@ -354,6 +354,11 @@ export const svgCanvasSyncMainCanvas = ref(false)
     所有状态统一使用store管理
 */
 
+import {canvasOptions,} from '@/components/design/layout/canvas/index.tsx'
+
+
+
+
 export const useDesignStore = defineStore('_1s_design',() => {
 
     // 同步到缓存 , 性能较差
@@ -369,6 +374,7 @@ export const useDesignStore = defineStore('_1s_design',() => {
         showSvgCanvas:useLocalStorage('_1s_showSvgCanvas',showSvgCanvas),
         svgCanvasChildren:useLocalStorage('_1s_svgCanvasChildren',svgCanvasChildren),
         showCanvasLayout:useLocalStorage('_1s_showCanvasLayout',showCanvasLayout),
+        canvasOptions:useLocalStorage('_1s_canvasOptions',canvasOptions),
     } 
 })
 

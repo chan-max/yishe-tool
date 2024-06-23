@@ -42,7 +42,7 @@
       height: var(--1s-bottom-menu-height);
       position: absolute;
       z-index: 9;
-      bottom: 30px;
+      bottom: 0px;
     ">
     <bottom-menu></bottom-menu>
   </div>

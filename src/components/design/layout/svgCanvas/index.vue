@@ -23,7 +23,7 @@
           <layout></layout>
           <template #reference>
             <el-button>
-              调整画布 {{ svgCanvasWidth }} ✖️ {{ svgCanvasHeight }}
+              画布 {{ svgCanvasWidth }} : {{ svgCanvasHeight }}
             </el-button>
           </template>
         </el-popover>
@@ -80,42 +80,6 @@
                 <div class="title">文字位置</div>
               </template>
             </el-collapse-item>
-            <!-- <el-collapse-item name="3">
-              <template #title>
-                <div class="title">背景和边框</div>
-              </template>
-              <el-row :gutter="24" align="middle">
-                <el-col :span="12">
-                  <operateItemBackground v-model="item.background"></operateItemBackground>
-                </el-col> 
-                <el-col :span="12">
-                  <operate-form-item>
-                    <template #icon><icon-border-color></icon-border-color> </template>
-                    <template #name> 边框颜色 </template>
-                    <template #content>
-                      <color-picker v-model:pureColor="operatingTextStickerOptions.borderColor"></color-picker>
-                    </template>
-                  </operate-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <operate-form-item>
-                    <template #icon><icon-border-style></icon-border-style> </template>
-                    <template #name> 边框样式 </template>
-                    <template #content> </template>
-                  </operate-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <operate-form-item>
-                    <template #icon><icon-border-width></icon-border-width> </template>
-                    <template #name> 边框宽度 </template>
-                    <template #content>
-                      <el-input type="number" v-model="operatingTextStickerOptions.borderWidth" min="0" max="5" step=".1"
-                        size="small"></el-input>
-                    </template>
-                  </operate-form-item>
-                </el-col>
-              </el-row>
-            </el-collapse-item> -->
           </el-collapse>
         </el-tab-pane>
       </el-tabs>

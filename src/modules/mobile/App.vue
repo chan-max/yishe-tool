@@ -1,7 +1,7 @@
 <template>
   <van-config-provider :theme="isDark ? 'dark' : 'light'">
     <m-header v-if="$route.meta.header"></m-header>
-    <div class="content">
+    <div class="content" style="flex:1">
       <router-view></router-view>
     </div>
     <m-footer v-if="$route.meta.footer"></m-footer>
@@ -33,9 +33,6 @@ document.addEventListener('gesturestart', function (event) {
   flex-direction: column;
 }
 
-.content {
-  flex: 1;
-}
 
 .van-config-provider{
   width: 100%;

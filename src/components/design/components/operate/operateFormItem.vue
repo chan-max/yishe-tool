@@ -74,6 +74,7 @@ const props = defineProps({
   display: flex;
   align-items: center;
   justify-content: end;
+  height: 100%;
   flex: 1;
 }
 </style>

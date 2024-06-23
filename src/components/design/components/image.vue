@@ -10,7 +10,7 @@
       :style="{ padding }"
     >
       <template #placeholder>
-        <div class="img_loading"></div>
+        <div  class="img_loading"></div>
       </template>
       <template #error>
         <div class="img_error">
@@ -36,6 +36,9 @@ const props = defineProps({
   },
   fit:{
     default:'contain'
+  },
+  hideloading:{
+    default:false
   }
 });
 

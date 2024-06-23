@@ -68,14 +68,13 @@ const Circle = (props) => {
     return <circle cx={x} cy={y} r="circleRadius" stroke={color} stroke-width={circleWidth} />
 }
 
-
 const Ellipse = (props) => {
     /*
         <ellipse
         cx="x-coordinate"      <!-- 椭圆中心点的 x 坐标 -->
         cy="y-coordinate"      <!-- 椭圆中心点的 y 坐标 -->
-        rx="x-radius"          <!-- 椭圆水平轴的半径 -->
-        ry="y-radius"          <!-- 椭圆垂直轴的半径 -->
+        rx="x-radius"          <!-- 椭圆水平的半径 -->
+        ry="y-radius"          <!-- 椭圆垂直的半径 -->
         fill="fill-color"      <!-- 椭圆的填充颜色 -->
         stroke="stroke-color"  <!-- 椭圆的描边颜色 -->
         stroke-width="width"   <!-- 椭圆的描边宽度 -->

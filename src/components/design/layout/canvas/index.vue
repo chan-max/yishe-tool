@@ -47,9 +47,9 @@ import {
 } from "./index.tsx";
 
 import operate from './operate.vue';
-import { useLoadingOptions } from "@/components/loading/index.ts";
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 
+import { useLoadingOptions } from "@/components/loading/index.ts";
 
 const loadingOptions = useLoadingOptions();
 

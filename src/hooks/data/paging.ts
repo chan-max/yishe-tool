@@ -50,6 +50,10 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         return loading.value && currentPage.value == 1
     })
 
+    const subsequentLoading = computed(() => {
+        return loading.value && currentPage.value != 1
+    })
+
     // 滚动触发器， 当需要加载时触发该方法即可
     async function getList(params = {}) {
         // 已经请求完所有数据
@@ -123,14 +127,15 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
     }
 
     return {
-        currentPage,
-        totalPage,
-        pageSize,
-        list,
-        getList,
-        total,
-        loading,
-        reset,
-        firstLoading
+        currentPage, // 当前页数
+        totalPage, // 总页数
+        pageSize, // 每夜数量
+        list, // 数据列表
+        getList, // 获取数据的方法
+        total, // 总数量
+        loading, // 是否正在加载
+        reset, // 重置列表
+        firstLoading, // 首次加载
+        subsequentLoading // 非首次加载
     }
 }

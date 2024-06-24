@@ -7,10 +7,10 @@
         <template #content>
             <el-tooltip content="用于调整元素倾斜角度">
                 <div>
-                    <span style="margin:0 .5em">x</span>
+                    <span style="margin:0 .3em">x</span>
                     <el-input style="width:54px" size="small" v-model="x" step="1" min="0" max="360" type="number"
                         ></el-input>
-                    <span style="margin:0 .5em">y</span>
+                    <span style="margin:0 .3em">y</span>
                     <el-input style="width:54px" size="small" v-model="y" step="1" min="0" max="360" type="number"
                         ></el-input>
                 </div>

@@ -10,7 +10,7 @@
       <el-button-group link style="width: 100%; display: flex;overflow:auto;">
         <el-popover trigger="click">
           <div class="tags">
-            <el-tag @click="add" round> 文字类 </el-tag>
+            <el-tag @click="add" round> 文字 </el-tag>
             <div style="flex:1;"></div>
           </div>
           <template #reference>
@@ -120,7 +120,7 @@ import operateItemFontColor from '@/components/design/components/operate/fontCol
 import operateItemFontFamily from '@/components/design/components/operate/fontFamily.vue'
 import operateItemLineHeight from '@/components/design/components/operate/lineHeight.vue'
 import operateItemLetterSpacing from '@/components/design/components/operate/letterSpacing.vue'
-import operateItemBackground from '@/components/design/components/operate/background.vue'
+
 import layout from './layout.vue'
 
 

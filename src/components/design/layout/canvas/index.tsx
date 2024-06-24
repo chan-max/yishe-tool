@@ -4,6 +4,8 @@ import { htmlToPngFile, downloadByFile } from '@/common/transform'
 import { useDebounceFn } from '@vueuse/core'
 import { waitImage } from '@/common'
 import { createCanvasChildText } from './children/text.tsx'
+import { createCanvasChildBackground } from './children/background.tsx'
+
 
 export const canvasOptions = ref({
     width: 1000,
@@ -15,20 +17,32 @@ export const canvasOptions = ref({
 })
 
 // 保留两位小数
-function toFixed2(val): any {
-    return parseFloat(val).toFixed(2);
+function toFixed3(val): any {
+    return parseFloat(val).toFixed(3);
 }
 
-watch(() => canvasOptions.value.width, updateAspectRatio)
+watch(() => canvasOptions.value.width, () => {
+    if (canvasOptions.value.width < 100) {
+        canvasOptions.value.width = 100
+        return
+    }
+    updateAspectRatio()
+})
 
-watch(() => canvasOptions.value.height, updateAspectRatio)
+watch(() => canvasOptions.value.height, () => {
+    if (canvasOptions.value.height < 100) {
+        canvasOptions.value.height = 100
+        return
+    }
+    updateAspectRatio()
+})
 
 watch(() => canvasOptions.value.aspectRatio, () => {
-    canvasOptions.value.height = toFixed2(canvasOptions.value.width / canvasOptions.value.aspectRatio)
+    canvasOptions.value.height = toFixed3(canvasOptions.value.width / canvasOptions.value.aspectRatio)
 })
 
 function updateAspectRatio() {
-    canvasOptions.value.aspectRatio = toFixed2(canvasOptions.value.width / canvasOptions.value.height)
+    canvasOptions.value.aspectRatio = toFixed3(canvasOptions.value.width / canvasOptions.value.height)
 }
 
 
@@ -42,7 +56,7 @@ export enum CanvasChildType {
 export function getCanvasChildLabel(val) {
     switch (val) {
         case 'text':
-            return '文字类'
+            return '文字'
         case 'image':
             return '图片'
         case 'svg':
@@ -55,6 +69,8 @@ export function getCanvasChildLabel(val) {
             return '条形码 '
         case 'canvas':
             return '画布'
+        case 'border':
+            return '边框'
     }
 }
 
@@ -81,8 +97,11 @@ function createCanvasChild(options) {
     if (options.type == CanvasChildType.TEXT) {
         return createCanvasChildText(options)
     }
-}
 
+    if (options.type == CanvasChildType.BACKGROUHND) {
+        return createCanvasChildBackground(options)
+    }
+}
 
 export function addCanvasChild(options) {
 
@@ -92,10 +111,10 @@ export function addCanvasChild(options) {
             center: true,
             verticalCenter: true,
             horizontalCenter: true,
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0
+            top: null,
+            left: null,
+            bottom: null,
+            right: null
         },
         scaleX: 1,
         scaleY: 1,
@@ -103,8 +122,8 @@ export function addCanvasChild(options) {
         rotateX: 0,
         rotateY: 0,
         rotateZ: 0,
-        skewX:0,
-        skewY:0,
+        skewX: 0,
+        skewY: 0,
         ...options
     }
 
@@ -134,12 +153,12 @@ function calcCanvasDisplayTransformScale(max) {
     return `scale(${max / m}, ${max / m}`
 }
 
-const canvasControllerInstance = shallowRef(null)
+export const currentCanvasControllerInstance = shallowRef(null)
 
 export class CanvasController {
     target = null
     constructor() {
-        canvasControllerInstance.value = this
+        currentCanvasControllerInstance.value = this
         this.updateCanvas = useDebounceFn(this.updateCanvas, 666).bind(this)
     }
 
@@ -179,17 +198,24 @@ export class CanvasController {
     }
 
     get ctx() {
+        if(!this.canvasEl){
+            return null
+        }
         return this.canvasEl.getContext('2d')
     }
 
     renderParams = null
-
 
     getBase64() {
         return this.canvasEl.toDataURL('image/png')
     }
 
     drawImage(img) {
+
+        if(!this.ctx){
+            return
+        }
+
         img.setAttribute('crossorigin', 'anonymous');
         this.ctx.drawImage(img, 0, 0, img.width, img.height);
     }
@@ -197,10 +223,11 @@ export class CanvasController {
     updating = false
 
     async updateCanvas() {
-
         if (this.updating) {
             return
         }
+
+        this.loading.value = true
 
         this.updating = true
         this.clearCanvas()
@@ -213,13 +240,17 @@ export class CanvasController {
         await waitImage(img)
         this.drawImage(img)
         await nextTick()
+        document.body.removeChild(img)
         this.loading.value = false
         this.updating = false
     }
 
 
     clearCanvas() {
-        this.canvasEl.width = this.canvasEl.width
+        if (!this.canvasEl) {
+            return
+        }
+        this.canvasEl.width = this.canvasEl?.width
     }
 
     getRender(params) {
@@ -256,8 +287,8 @@ export class CanvasController {
                 position: "absolute",
                 top: 0,
                 left: 0,
-                background: 'red',
-                zIndex: 1
+                zIndex: 99,
+                // display:'none'
             }
 
             let children = canvasOptions.value.children.map((opts) => {
@@ -266,7 +297,7 @@ export class CanvasController {
 
             return <div style={containerStyle}>
                 {/* 真是转换的元素 */}
-                <div style={style} ref={this.getEl.bind(this)}>
+                <div id={'canvas-id'} style={style} ref={this.getEl.bind(this)}>
                     {children}
                 </div>
                 {/* 真实的画布 */}
@@ -275,9 +306,4 @@ export class CanvasController {
         }
     }
 }
-
-// htmlToImage.toCanvas(document.getElementById('my-node'))
-//   .then(function (canvas) {
-//     document.body.appendChild(canvas);
-//   });
 

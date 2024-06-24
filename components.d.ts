@@ -9,6 +9,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     AspectRatio: typeof import('./src/components/design/components/operate/aspectRatio.vue')['default']
     Background: typeof import('./src/components/design/components/operate/background.vue')['default']
+    BackgroundColor: typeof import('./src/components/design/components/operate/backgroundColor.vue')['default']
+    BackgroundImageSelect: typeof import('./src/components/design/components/operate/backgroundImageSelect.vue')['default']
     BaseGltfViewer: typeof import('./src/components/model/baseGltfViewer/index.vue')['default']
     BaseModelSelect: typeof import('./src/components/design/layout/baseModelSelect/index.vue')['default']
     BasicCanvas: typeof import('./src/components/design/layout/basic-canvas/index.vue')['default']
@@ -52,6 +54,7 @@ declare module 'vue' {
     ModelCardViewer: typeof import('./src/components/model/modelCardViewer/index.vue')['default']
     ModelInfo: typeof import('./src/components/design/layout/modelInfo/index.vue')['default']
     OnlinePoint: typeof import('./src/components/design/components/onlinePoint.vue')['default']
+    Operate: typeof import('./src/components/design/layout/canvas/operate.vue')['default']
     OperateFormItem: typeof import('./src/components/design/components/operate/operateFormItem.vue')['default']
     OperatingForm: typeof import('./src/components/design/layout/customTextSticker/operatingForm.vue')['default']
     Padding: typeof import('./src/components/design/layout/customTextSticker/items/padding.vue')['default']
@@ -80,6 +83,7 @@ declare module 'vue' {
     TextContent: typeof import('./src/components/design/components/operate/textContent.vue')['default']
     TextDesigner: typeof import('./src/components/design/components/textDesigner/index.vue')['default']
     TextSticker: typeof import('./src/components/design/layout/textSticker/index.vue')['default']
+    Unit: typeof import('./src/components/design/components/operate/unit.vue')['default']
     Upload: typeof import('./src/components/design/layout/upload/index.vue')['default']
     UserAvatar: typeof import('./src/components/user/userAvatar.vue')['default']
     UserAvatarForm: typeof import('./src/components/user/userAvatarForm.vue')['default']
@@ -91,5 +95,6 @@ declare module 'vue' {
     Waterfall: typeof import('./src/components/layout/waterfall/index.vue')['default']
     Workspace: typeof import('./src/components/design/layout/workspace/index.vue')['default']
     WritingMode: typeof import('./src/components/design/components/operate/writingMode.vue')['default']
+    ZIndex: typeof import('./src/components/design/components/operate/zIndex.vue')['default']
   }
 }

@@ -2,41 +2,50 @@
   <div class="designiy-sticker">
     <div class="menu">
       <div class="search">
-        <el-input v-model="input" placeholder="寻找文字贴纸">
-        <template #prefix>
-          <el-icon><Search /></el-icon>
-        </template>
-        <template #suffix>
-          <el-icon><Operation /></el-icon>
-        </template>
-      </el-input>
+        <el-input v-model="input" placeholder="寻找贴纸">
+          <template #prefix>
+            <el-icon>
+              <Search />
+            </el-icon>
+          </template>
+          <template #suffix>
+            <el-icon>
+              <Operation />
+            </el-icon>
+          </template>
+        </el-input>
       </div>
       <tags></tags>
     </div>
-    <div class="list" v-infinite-scroll="getList" :infinite-scroll-distance="150">
-      <el-row :gutter="8" style="row-gap: 1em">
-        <el-col :span="24 / column" v-for="item in list" align="center">
-          <div class="item">
-            <desimage padding="10%" :src="item.thumbnail" class="image" @load="imgLoad($event,item)"></desimage>
-            <el-popover placement="auto" trigger="click" width="auto">
-              <template #reference>
-                <div class="bar">
-                  <div class="title text-ellipsis">{{ item.name || "......" }}</div>
-                  <badge :type="item.type"></badge>
-                  <el-icon><ArrowRightBold /></el-icon>
-                </div>
-              </template>
-              <sticker-popover :stickerInfo="item"></sticker-popover>
-            </el-popover>
-          </div>
-        </el-col>
-      </el-row>
-    </div>
+    <el-scrollbar>
+      <div style="width: 100%;flex: 1;padding: 1em;" v-infinite-scroll="getList"
+        :infinite-scroll-distance="150">
+        <el-row :gutter="8" style="row-gap: 1em">
+          <el-col :span="24 / column" v-for="item in list" align="center">
+            <div class="item">
+              <desimage padding="10%" :src="item.thumbnail" class="image" @load="imgLoad($event, item)"></desimage>
+              <el-popover placement="auto" trigger="click" width="auto">
+                <template #reference>
+                  <div class="bar">
+                    <div class="title text-ellipsis">{{ item.name || "......" }}</div>
+                    <badge :type="item.type"></badge>
+                    <el-icon>
+                      <ArrowRightBold />
+                    </el-icon>
+                  </div>
+                </template>
+                <sticker-popover :stickerInfo="item"></sticker-popover>
+              </el-popover>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-scrollbar>
   </div>
 </template>
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
-import { Search, ArrowRightBold,Operation } from "@element-plus/icons-vue";
+import { Search, ArrowRightBold, Operation } from "@element-plus/icons-vue";
 import { getStickerListApi } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/design/components/image.vue";
@@ -59,21 +68,21 @@ const badge = (props) => {
       {props.type == "image"
         ? "图片"
         : props.type == "text"
-        ? "艺术字"
-        : props.type == "qrcode"
-        ? "二维码"
-        : props.type == "barcode"
-        ? "条形码"
-        : props.type == "badge"
-        ? "徽章"
-        : props.type == "stamp"
-        ? "印章"
-        : "未知类型"}
+          ? "艺术字"
+          : props.type == "qrcode"
+            ? "二维码"
+            : props.type == "barcode"
+              ? "条形码"
+              : props.type == "badge"
+                ? "徽章"
+                : props.type == "stamp"
+                  ? "印章"
+                  : "未知类型"}
     </div>
   );
 };
 
-function imgLoad(el,info){
+function imgLoad(el, info) {
   const img = el;
   initDraggableElement(img, async () => {
     const base64 = imgToBase64(img);
@@ -83,7 +92,7 @@ function imgLoad(el,info){
       local: false,
       src: img.src,
       base64: base64,
-      id:info.id,
+      id: info.id,
       info: info
     });
   });
@@ -94,8 +103,8 @@ const { list, getList } = usePaging((params) => {
     ...params,
     pageSize: 10,
   });
-},{
-  forEach(item){
+}, {
+  forEach(item) {
     item.thumbnail = 'https://' + item.thumbnail
   }
 });
@@ -105,8 +114,9 @@ const column = ref(2);
 </script>
 <style lang="less" scoped>
 @item-width: 40px;
+
 .designiy-sticker {
-  width: 260px;
+  width: 280px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -118,7 +128,7 @@ const column = ref(2);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1em;  
+  padding: 1em;
   row-gap: 1em;
 }
 
@@ -126,12 +136,6 @@ const column = ref(2);
   width: 100%;
 }
 
-.list {
-  width: 100%;
-  flex: 1;
-  overflow: auto;
-  padding: 1em;
-}
 
 .item {
   width: auto;
@@ -146,7 +150,7 @@ const column = ref(2);
   width: 100%;
   background-color: #efefef;
   border-radius: .2em;
-  height: 10em!important;
+  height: 10em !important;
 }
 
 .title {
@@ -162,6 +166,7 @@ const column = ref(2);
   justify-content: space-between;
   align-items: center;
   column-gap: 1em;
+
   &:hover {
     color: #000;
     cursor: pointer;

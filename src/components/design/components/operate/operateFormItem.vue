@@ -10,7 +10,7 @@
 -->
 <template>
   <div class="operate-form-item" :style="style">
-    <div style="display: flex; column-gap: 4px;align-items: center;min-height: 24px;">
+    <div style="display: flex; column-gap: 6px;align-items: center;min-height: 24px;">
       <div class="operate-form-item-icon">
         <slot name="icon"></slot>
       </div>

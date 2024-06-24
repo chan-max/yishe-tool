@@ -1,10 +1,12 @@
 import { canvasOptions } from "../index.tsx"
-
+import { getPositionInfoFromOptions } from '../helper.tsx'
 
 export interface TextCanvasChildOptions {
     center: boolean | null | undefined
 }
 
+
+const isNumber = (val) => typeof val === "number"
 
 enum WritingMode {
     HTB = 'horizontal-tb',
@@ -25,17 +27,23 @@ export function createCanvasChildText(options) {
     options.textContent ||= ''
     options.writingMode ||= 'htb'
 
+
+    const {
+        containerStyle: _containerStyle,
+        style: _style
+    } = getPositionInfoFromOptions(options.position)
+
     var containerStyle: any = {
         width: '100%',
         height: '100%',
-        display: 'flex',
-        position: 'relative'
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: options.zIndex,
+        ..._containerStyle
     }
 
     var style: any = {
-        position: 'absolute',
-        top: null,
-        left: null,
         fontSize: options.fontSize * canvasOptions.value.width + 'px', // 字体尺寸相对于画布宽度
         fontWeight: options.fontWeight,
         fontStyle: options.italic ? 'italic' : 'normal',
@@ -44,7 +52,8 @@ export function createCanvasChildText(options) {
         letterSpacing: options.letterSpacing + 'em',
         fontFamily: options.fontFamilyInfo ? `font_${options.fontFamilyInfo.id}` : null,
         writingMode: options.writingMode == 'htb' ? WritingMode.HTB : options.writingMode == 'vlr' ? WritingMode.VLR : options.writingMode == 'vrl' ? WritingMode.VRL : null,
-        transform: `scale3d(${options.scaleX}, ${options.scaleY}, ${options.scaleZ}) rotateX(${options.rotateX}deg) rotateY(${options.rotateY}deg) rotateZ(${options.rotateZ}deg) skew(${options.skewX}deg, ${options.skewY}deg)`
+        transform: `scale3d(${options.scaleX ?? 1}, ${options.scaleY ?? 1}, ${options.scaleZ ?? 1}) rotateX(${options.rotateX ?? 0}deg) rotateY(${options.rotateY ?? 0}deg) rotateZ(${options.rotateZ ?? 0}deg) skew(${options.skewX ?? 0}deg, ${options.skewY ?? 0}deg)`,
+        ..._style
     }
 
     if (options.fontColor) {
@@ -57,37 +66,11 @@ export function createCanvasChildText(options) {
         }
     }
 
-    // 居中优先级最高 , 其次为水平垂直居中
-    if (options.position.center) {
-        containerStyle.alignItems = 'center'
-        containerStyle.justifyContent = 'center'
-    } else if (options.position.verticalCenter && options.position.horizontalCenter) {
-        containerStyle.alignItems = 'center'
-        containerStyle.justifyContent = 'center'
-    } else if (!options.position.verticalCenter && options.position.horizontalCenter) {
-        containerStyle.justifyContent = 'center'
-    } else if (options.position.verticalCenter && !options.position.horizontalCenter) {
-        containerStyle.alignItems = 'center'
-    } else {
-        // 自定义位置
-        if (options.position.top) {
-            style.top = options.position.top + '%'
-        } else if (options.position.bottom) {
-            style.bottom = options.position.bottom + '%'
-        }
-
-        if (options.position.left) {
-            style.left = options.position.left + '%'
-        } else if (options.position.right) {
-            style.right = options.position.right + '%'
-        }
-    }
-
 
 
     return <div style={containerStyle}>
-        <div style={style}>
+        <span style={style}>
             {options.textContent}
-        </div>
+        </span>
     </div>
 }

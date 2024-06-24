@@ -11,7 +11,7 @@
 <template>
   <div class="designiy-text-sticker">
     <div class="designiy-text-sticker-header">
-      <el-input v-model="input" placeholder="寻找文字贴纸">
+      <el-input v-model="input" placeholder="">
         <template #prefix>
           <el-icon><Search /></el-icon>
         </template>

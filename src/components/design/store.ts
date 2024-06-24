@@ -178,6 +178,13 @@ export const showFontList = ref(false)
 
 // 是否展示贴纸
 export const showSticker = ref(false)
+watch(showSticker, async (value) => {
+    if (value) {
+        clearLeftLayout()
+        showSticker.value = true
+    }
+})
+
 
 // 是否展示已使用的贴纸列表
 export const showDecalList = ref(false)
@@ -220,6 +227,7 @@ export function clearLeftLayout() {
     showTextSticker.value = false
     showSvgCanvas.value = false
     showCanvasLayout.value = false
+    showSticker.value = false
 }
 
 // 清空右侧布局

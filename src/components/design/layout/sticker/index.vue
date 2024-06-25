@@ -17,8 +17,8 @@
       </div>
       <tags></tags>
     </div>
-    <el-scrollbar>
-      <div v-loading="firstLoading" v-bind="loadingOptions" class="list" v-infinite-scroll="getList"
+    <scrollbar id="sticker-list">
+      <div class="list" v-infinite-scroll="getList"
         :infinite-scroll-distance="150">
         <el-row :gutter="8" style="row-gap: 1em">
           <el-col :span="24 / column" v-for="item in list" align="center">
@@ -39,9 +39,9 @@
             </div>
           </el-col>
         </el-row>
-        <div v-if="subsequentLoading" v-loading="subsequentLoading" v-bind="loadingOptions"  style="height:45px;"></div>
+        <div v-if="loading" v-loading="loading" v-bind="loadingOptions"  style="height:45px;"></div>
       </div>
-    </el-scrollbar>
+    </scrollbar>
   </div>
 </template>
 <script setup lang="tsx">
@@ -60,8 +60,11 @@ import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 import tags from './tags.vue'
 import { useLoadingOptions } from "@/components/loading/index.ts";
+import scrollbar from '@/components/scrollbar/index.vue';
+
 
 const loadingOptions = useLoadingOptions();
+
 
 
 /*
@@ -103,7 +106,10 @@ function imgLoad(el, info) {
   });
 }
 
-const { list, getList,firstLoading,subsequentLoading } = usePaging((params) => {
+
+
+
+const { list, getList,loading,firstLoading,subsequentLoading } = usePaging((params) => {
   return getStickerListApi({
     ...params,
     pageSize: 10,
@@ -155,7 +161,7 @@ const column = ref(2);
   width: 100%;
   background-color: #efefef;
   border-radius: .2em;
-  height: 10em !important;
+  height: 12em !important;
 }
 
 .title {

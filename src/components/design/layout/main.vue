@@ -11,10 +11,12 @@
       <div id="layout-left-menu" style="height: 100%; border-right: 2px solid #f6f6f6">
         <left-menu v-if="showLeftMenu"></left-menu>
       </div>
-
+      
       <div id="layout-left" style="height: 100%; display: flex">
         <div style="height: 100%">
-          <component :is="leftComponent"></component>
+          <keep-alive>
+            <component :is="leftComponent"></component>
+          </keep-alive>
         </div>
       </div>
 

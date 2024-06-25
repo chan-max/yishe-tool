@@ -12,10 +12,10 @@ draggingImage.style.cursor = 'grab';
 document.body.appendChild(draggingImage);
 
 
-export const initDraggableElement = (el, cb, src = el.src) => {
+export const initDraggableElement = (el, cb, sourceOrGetter = el.src) => {
 
-    el._src = src
-
+    el._src = typeof sourceOrGetter === 'function' ? sourceOrGetter() : sourceOrGetter
+     
     // 保证同一元素只初始化一次,需要保证src能够更新
     if (el._isDraggable) {
         return

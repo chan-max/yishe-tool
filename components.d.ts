@@ -69,6 +69,7 @@ declare module 'vue' {
     Scale: typeof import('./src/components/design/components/operate/scale.vue')['default']
     SceneControl: typeof import('./src/components/design/layout/sceneControl/index.vue')['default']
     Screenshot: typeof import('./src/components/design/components/screenshot.vue')['default']
+    Scrollbar: typeof import('./src/components/scrollbar/index.vue')['default']
     Setting: typeof import('./src/components/design/layout/setting/index.vue')['default']
     Size: typeof import('./src/components/design/components/operate/size.vue')['default']
     Skew: typeof import('./src/components/design/components/operate/skew.vue')['default']

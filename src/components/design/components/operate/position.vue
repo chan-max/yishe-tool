@@ -86,8 +86,6 @@ import { ref ,computed} from 'vue'
 import iconPosition from "@/components/design/assets/icon/position.svg?component";
 import {getPositionInfoFromOptions} from '@/components/design/layout/canvas/helper.tsx'
 
-const isNumber = (val) => typeof val == "number"
-
 const model = defineModel({
     default: {
         center: true,

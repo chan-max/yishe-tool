@@ -1,7 +1,7 @@
 <template>
     <div class="tags">
-        <template v-for="item in tags">
-            <el-check-tag class="tag" :checked="item.checked" type="primary" @change="(value) => item.checked = value">
+        <template v-for="item in stickerQueryTags">
+            <el-check-tag class="tag" :checked="item.checked" type="primary" @change="tagChange($event, item)">
                 {{ item.label }}
             </el-check-tag>
         </template>
@@ -11,52 +11,14 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-const tags = ref([
-    {
-        label: "最近更新",
-        checked: false,
-    },
-    {
-        label: "热门",
-        checked: false,
-    },
-    {
-        label: "艺术字",
-        checked: false,
-    },
-    {
-        label: "图片",
-        checked: false,
-    },
-    {
-        label: "印章",
-        checked: false,
-    },
-    {
-        label: "艺术字",
-        checked: false,
-    },
-    {
-        label: "矢量图",
-        checked: false,
-    },
-    {
-        label: "码",
-        checked: false,
-    },
-    {
-        label: "我的收藏",
-        checked: false,
-    },
-    {
-        label: "我的点赞",
-        checked: false,
-    },
-    {
-        label: "我上传的",
-        checked: false,
-    },
-]);
+import {stickerQueryTags} from './index.ts'
+const emits = defineEmits(['change'])
+
+function tagChange(value, item) {
+    item.checked = value
+    emits('change', stickerQueryTags.value)
+}
+
 </script>
 
 <style scoped lang="less">
@@ -68,8 +30,8 @@ const tags = ref([
     gap: .8em .4em;
 }
 
-.tag{
-    padding:6px 10px;
+.tag {
+    padding: 6px 10px;
     border-radius: 12px;
     font-weight: 700;
     font-size: .8rem;

@@ -11,6 +11,10 @@
 import { useLoginStatusStore } from "@/store/stores/login";
 import { ElMessage } from 'element-plus'
 import { message } from 'ant-design-vue'
+import { doLogout } from "@/store/stores/loginAction";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 
 function ensureFormData(obj) {
     if (obj instanceof FormData) {
@@ -49,7 +53,7 @@ export const tokenResponseInterceptor = (response) => {
 export const tokenRequestInterceptor = (request) => {
     let loginStore = useLoginStatusStore();
     if (loginStore.token) {
-        request.headers.authorization = loginStore.token;
+        request.headers.authorization = `Bearer ${loginStore.token}`;
     }
     return request
 }
@@ -70,10 +74,12 @@ function isMobile() {
 }
 
 
-
 export const defaultResponseInterceptors = async (response) => {
     if (response?.data?.code === 401) {
-        // logout
+
+        doLogout()
+        message.error('登录状态失效，请重新登录')
+        
         throw new Error()
     } else if (response.data.code == 0) {
         return response

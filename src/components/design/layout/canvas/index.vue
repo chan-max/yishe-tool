@@ -28,6 +28,9 @@
                     </el-button>
                 </template>
             </el-popover>
+            <el-button type="primary" plain>
+                上传
+            </el-button>
             <el-button @click="exportPng" type="primary" plain> 导出 png </el-button>
         </el-button-group>
         <div class="operate">

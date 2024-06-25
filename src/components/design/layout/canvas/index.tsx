@@ -5,7 +5,7 @@ import { useDebounceFn } from '@vueuse/core'
 import { waitImage } from '@/common'
 import { createCanvasChildText } from './children/text.tsx'
 import { createCanvasChildBackground } from './children/background.tsx'
-
+import { initDraggableElement } from "@/components/design/utils/draggable";
 
 export const canvasOptions = ref({
     width: 1000,
@@ -87,12 +87,6 @@ interface CanvasOptions {
 }
 
 
-
-
-
-
-
-
 function createCanvasChild(options) {
     if (options.type == CanvasChildType.TEXT) {
         return createCanvasChildText(options)
@@ -168,16 +162,6 @@ export class CanvasController {
 
     el = null
 
-
-    render(h) {
-
-    }
-
-
-    getContainerRender() {
-
-    }
-
     async exportPng() {
         const file = await htmlToPngFile(this.el)
         return file
@@ -195,6 +179,9 @@ export class CanvasController {
 
     getCanvasEl(e) {
         this.canvasEl = e
+        initDraggableElement(this.canvasEl,() => {
+
+        },)
     }
 
     get ctx() {
@@ -226,25 +213,30 @@ export class CanvasController {
         if (this.updating) {
             return
         }
-
         this.loading.value = true
-
         this.updating = true
         this.clearCanvas()
-        let elBase64 = await toPng(this.el) // 会有页面卡顿的问题
+        let base64 = await toPng(this.el) // 会有页面卡顿的问题
         let img = document.createElement('img')
         img.width = canvasOptions.value.width
         img.height = canvasOptions.value.height
         document.body.appendChild(img)
-        img.src = elBase64
+        img.src = base64
         await waitImage(img)
         this.drawImage(img)
         await nextTick()
         document.body.removeChild(img)
+  
+        this.initDraggable(base64)
         this.loading.value = false
         this.updating = false
     }
 
+    initDraggable(base64){
+        initDraggableElement(this.canvasEl,() => {
+            debugger
+        },() => base64)
+    }
 
     clearCanvas() {
         if (!this.canvasEl) {

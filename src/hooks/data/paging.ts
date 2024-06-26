@@ -23,8 +23,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         pageSize: 30,
         initialList: ref([]),
         callback:null, // 处理每个请求元素的回调
-        resListFilter:null, // 请求结果被插入列表前的过滤器，被过滤掉的不会添加到列表中
-        itemAdapter:null, // 每个元素适配器
+        filter:null, // 请求结果被插入列表前的过滤器，被过滤掉的不会添加到列表中
         forEach:null,
         ...options,
     }
@@ -84,12 +83,8 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
                 res.list.forEach(options.callback)
             }
 
-            if(options.resListFilter){
-                res.list = res.list.filter(options.resListFilter)
-            }
-
-            if(options.itemAdapter){
-                res.list = res.list.map(options.itemAdapter)
+            if(options.filter){
+                res.list = res.list.filter(options.filter)
             }
 
             if(options.forEach){

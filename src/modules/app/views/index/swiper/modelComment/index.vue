@@ -89,10 +89,10 @@ const { list, getList, reset ,loading,firstLoading} = usePaging((params) => {
     ...params,
   });
 }, {
-  resListFilter: (item) => {
-    // 过滤掉出现过的评论
-    return list.value.every((child) => child.id != item.id)
-  }
+  // resListFilter: (item) => {
+  //   // 过滤掉出现过的评论
+  //   return list.value.every((child) => child.id != item.id)
+  // }
 });
 
 const ionInfinite = async (ev) => {
@@ -223,10 +223,10 @@ async function more(commentInfo) {
       immediate: false,
       pageSize: 10,
       // 这里使用过滤是因为可能会出现用户新增评论，然后再加载评论，导致重复的问题
-      resListFilter: (item) => {
-        // 过滤掉出现过的评论
-        return commentInfo.children.every((child) => child.id != item.id)
-      }
+      // resListFilter: (item) => {
+      //   // 过滤掉出现过的评论
+      //   return commentInfo.children.every((child) => child.id != item.id)
+      // }
     });
 
     // 执行获取列表

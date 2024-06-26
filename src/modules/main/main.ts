@@ -31,39 +31,34 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/display.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
-import VueVirtualScroller from 'vue-virtual-scroller'
 import 'element-plus/dist/index.css'
+import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import {syncUserInfoToLocal} from '@/store/stores/login.ts'
+import { syncUserInfoToLocal } from '@/store/stores/login.ts'
 import App from './App.vue'
 import 'element-plus/dist/index.css'
 import '@/style/cover-elementplus.scss'
 import { apiInstance } from "@/api/apiInstance";
-import {message} from 'ant-design-vue'
+import {defaultResponseInterceptors} from '@/api/apiInterception'
+import { RecycleScroller } from 'vue-virtual-scroller'
+import InfiniteLoading from "v3-infinite-loading";
+import "v3-infinite-loading/lib/style.css"; //required if you're not going to override default slots
 
-export const defaultResponseInterceptors = async (response) => {
-    if (response?.data?.code === 401) {
-        // logout
-        throw new Error()
-    } else if (response.data.code == 0) {
-        return response
-    } else {
-        message.error(response?.data?.message)
-        throw new Error(response)
-        }
-  }
-  
+// pc 端专有的拦截器
 apiInstance.interceptors.response.use(defaultResponseInterceptors);
 
 const app = createApp(App)
 
- const pinia = createPinia()
+app.component("InfiniteLoading", InfiniteLoading);
+
+const pinia = createPinia()
 
 app.use(pinia)
 
 syncUserInfoToLocal()
 
 app.use(VueVirtualScroller)
+app.component('RecycleScroller', RecycleScroller)
 
 app.use(Antd)
 
@@ -74,8 +69,6 @@ app.use(router)
 app.use(ElementPlus)
 
 app.config.globalProperties.__DEV__ = import.meta.env.DEV
-
-
 
 app.mount('#app')
 

@@ -14,7 +14,6 @@ import { message } from 'ant-design-vue'
 import { doLogout } from "@/store/stores/loginAction";
 import { useRouter } from "vue-router";
 
-const router = useRouter()
 
 function ensureFormData(obj) {
     if (obj instanceof FormData) {
@@ -66,25 +65,38 @@ export const messageResponseInterceptor = (response) => {
 }
 
 
-
 function isMobile() {
     const mobile = ['iphone', 'ipad', 'android', 'blackberry', 'nokia', 'opera mini', 'windows mobile'];
     for (var i in mobile) if (navigator.userAgent.toLowerCase().indexOf(mobile[i]) > 0) return true;
     return false;
 }
 
+import router from '@/modules/main/router'
 
-export const defaultResponseInterceptors = async (response) => {
-    if (response?.data?.code === 401) {
 
+export const defaultResponseInterceptors = (response) => {
+
+    if (response?.data?.code === 400) {
+        // 登录失效
         doLogout()
-        message.error('登录状态失效，请重新登录')
-        
-        throw new Error()
-    } else if (response.data.code == 0) {
-        return response
-    } else {
+        router.push({ name: 'Login' })
         message.error(response?.data?.message)
-        throw new Error(response)
+        throw new Error()
     }
+
+    if (response?.data?.code === 401) {
+        doLogout()
+        router.push({ name: 'Login' })
+        message.error(response?.data?.message)
+        throw new Error()
+    }
+
+    if (response.data.code == 0) {
+        return response
+    }
+
+    message.error(response?.data?.message)
+    throw new Error(response)
 }
+
+

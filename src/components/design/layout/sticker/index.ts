@@ -1,6 +1,5 @@
 import { ref, computed } from 'vue'
 
-
 export const stickerQueryTags = ref([
     {
         label: "最近更新",
@@ -13,7 +12,7 @@ export const stickerQueryTags = ref([
         key: 'hot'
     },
     {
-        label: "艺术字",
+        label: "文字",
         checked: false,
         key: 'text'
     },
@@ -31,7 +30,7 @@ export const stickerQueryTags = ref([
         checked: false,
     },
     {
-        label: "矢量图",
+        label: "组合类",
         checked: false,
     },
     {
@@ -65,12 +64,30 @@ export const stickerQueryParams = computed(() => {
         if (!tag.checked) {
             return
         }
-
         if (tag.key == 'mine') {
             params.myUploads = true
         }
 
     })
-
     return params
 })
+
+
+export function getStickerTypeLabel(type){
+    switch (type) {
+        case 'text':
+            return '文字'
+        case 'image':
+            return '图片'
+        case 'canvas':
+            return '画布'
+        case 'qrcode':
+            return '二维码'
+        case 'barcode':
+            return '条形码 '
+            case 'composition':
+                return '组合 '
+        default: 
+            return '未知'
+    }
+}

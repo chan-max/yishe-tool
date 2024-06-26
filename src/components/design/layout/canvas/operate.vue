@@ -4,7 +4,7 @@
             <div v-if="!canvasOptions.children.length" style="padding: 4em; text-align: center">
                 暂无元素
             </div>
-            <el-tabs v-else tab-position="top" v-model="childrenTabActive" closable @tab-remove="remove">
+            <el-tabs v-else tab-position="top" v-model="currentOperatingCanvasChildIndex" closable @tab-remove="remove">
                 <el-tab-pane v-for="(item, index) in canvasOptions.children" :name="index">
                     <template #label>
                         <div>
@@ -154,7 +154,7 @@ import {
     addCanvasChild,
     removeCavnasChild,
     getCanvasChildLabel,
-    childrenTabActive,
+    currentOperatingCanvasChildIndex,
     currentCanvasControllerInstance
 } from "./index.tsx";
 

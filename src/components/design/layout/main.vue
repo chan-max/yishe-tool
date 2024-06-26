@@ -14,9 +14,9 @@
       
       <div id="layout-left" style="height: 100%; display: flex">
         <div style="height: 100%">
-          <keep-alive>
+          <!-- <keep-alive> -->
             <component :is="leftComponent"></component>
-          </keep-alive>
+          <!-- </keep-alive> -->
         </div>
       </div>
 

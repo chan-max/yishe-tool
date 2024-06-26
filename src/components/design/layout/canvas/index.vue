@@ -46,13 +46,13 @@ import {
     addCanvasChild,
     removeCavnasChild,
     getCanvasChildLabel,
-    childrenTabActive
+    currentOperatingCanvasChildIndex
 } from "./index.tsx";
 
 import operate from './operate.vue';
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 
-import { useLoadingOptions } from "@/components/loading/index.ts";
+import { useLoadingOptions } from "@/components/loading/index.tsx";
 
 const loadingOptions = useLoadingOptions();
 
@@ -69,7 +69,7 @@ const loading = computed(() => {
 });
 
 function add(type) {
-    childrenTabActive.value = addCanvasChild({
+    currentOperatingCanvasChildIndex.value = addCanvasChild({
         type: type,
     });
     document.body.click();

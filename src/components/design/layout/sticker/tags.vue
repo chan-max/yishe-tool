@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import {stickerQueryTags} from './index.ts'
+import {stickerQueryTags,stickerQueryParams} from './index.ts'
 const emits = defineEmits(['change'])
 
 function tagChange(value, item) {

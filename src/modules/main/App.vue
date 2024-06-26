@@ -10,7 +10,7 @@
 -->
 <template>
   <el-config-provider :locale="elementLocale">
-    <header-menu v-if="$route.meta.header"></header-menu>
+    <header-menu v-if="$route?.meta?.header"></header-menu>
     <div class="app-content">
       <router-view></router-view>
     </div>

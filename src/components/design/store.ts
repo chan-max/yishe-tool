@@ -362,10 +362,10 @@ export const svgCanvasSyncMainCanvas = ref(false)
     所有状态统一使用store管理
 */
 
-import {canvasOptions,} from '@/components/design/layout/canvas/index.tsx'
+import {canvasOptions,currentOperatingCanvasChildIndex} from '@/components/design/layout/canvas/index.tsx'
 
 
-
+import { stickerQueryTags,stickerQueryParams } from "@/components/design/layout/sticker/index.ts";
 
 export const useDesignStore = defineStore('_1s_design',() => {
 
@@ -383,6 +383,8 @@ export const useDesignStore = defineStore('_1s_design',() => {
         svgCanvasChildren:useLocalStorage('_1s_svgCanvasChildren',svgCanvasChildren),
         showCanvasLayout:useLocalStorage('_1s_showCanvasLayout',showCanvasLayout),
         canvasOptions:useLocalStorage('_1s_canvasOptions',canvasOptions),
+        stickerQueryTags:useLocalStorage('_1s_stickerQueryTags',stickerQueryTags),
+        currentOperatingCanvasChildIndex:useLocalStorage('_1s_currentOperatingCanvasChildIndex',currentOperatingCanvasChildIndex)
     } 
 })
 

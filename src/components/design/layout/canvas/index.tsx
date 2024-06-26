@@ -128,7 +128,8 @@ export function addCanvasChild(options) {
 }
 
 
-export const childrenTabActive = ref(0)
+// 当前正在操作的元素
+export const currentOperatingCanvasChildIndex = ref(0)
 
 
 
@@ -139,7 +140,7 @@ export function removeCavnasChild(index) {
     }
 
     canvasOptions.value.children.splice(index, 1)
-    childrenTabActive.value = index - 1
+    currentOperatingCanvasChildIndex.value = index - 1
 }
 
 function calcCanvasDisplayTransformScale(max) {
@@ -234,7 +235,6 @@ export class CanvasController {
 
     initDraggable(base64){
         initDraggableElement(this.canvasEl,() => {
-            debugger
         },() => base64)
     }
 

@@ -1,5 +1,5 @@
 <template>
-    <el-scrollbar v-bind="$attrs" ref="elScrollbarRef" @scroll="scroll">
+    <el-scrollbar v-bind="$attrs" ref="elScrollbarRef" @scroll="scroll" style="width:100%;height:100%;">
         <slot></slot>
     </el-scrollbar>
 </template>
@@ -8,8 +8,6 @@
 
 import { useLocalStorage } from '@vueuse/core';
 import { onActivated, onDeactivated, onMounted, onUnmounted, ref } from 'vue'
-
-
 
 const props = defineProps({
     id:{

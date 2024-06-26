@@ -15,16 +15,36 @@
           </template>
         </el-input>
       </div>
-      <tags></tags>
+      <tags @change="tagChange"></tags>
     </div>
-    <scrollbar id="sticker-list">
-      <div class="list" v-infinite-scroll="getList"
-        :infinite-scroll-distance="150">
+
+    <RecycleScroller class="scroll-list" v-if="list.length" :items="list" @scroll-end="scrollEnd" 
+    :item-size="itemSize"
+      :gridItems="2" item-class="scroll-list-item" key-field="id" v-slot="{ item, index }">
+      <div class="item">
+        <desimage padding="10%" :src="item.thumbnail" class="image" @load="imgLoad($event, item)"></desimage>
+        <el-popover placement="auto" width="auto" trigger="click">
+          <template #reference>
+            <div class="bar">
+              <div class="title text-ellipsis">{{ item.name || "......" }}</div>
+              <badge :type="item.type"></badge>
+              <el-icon>
+                <ArrowRightBold />
+              </el-icon>
+            </div>
+          </template>
+          <sticker-popover :stickerInfo="item"></sticker-popover>
+        </el-popover>
+      </div>
+    </RecycleScroller>
+
+    <!-- <scrollbar id="sticker-list">
+      <div class="list" v-infinite-scroll="getList" :infinite-scroll-distance="150">
         <el-row :gutter="8" style="row-gap: 1em">
-          <el-col :span="24 / column" v-for="item in list" align="center">
+          <el-col :span="24 / column" v-for="item in  list" align="center">
             <div class="item">
               <desimage padding="10%" :src="item.thumbnail" class="image" @load="imgLoad($event, item)"></desimage>
-              <el-popover placement="auto" trigger="click" width="auto">
+              <el-popover placement="auto" width="auto" trigger="click">
                 <template #reference>
                   <div class="bar">
                     <div class="title text-ellipsis">{{ item.name || "......" }}</div>
@@ -39,9 +59,9 @@
             </div>
           </el-col>
         </el-row>
-        <div v-if="loading" v-loading="loading" v-bind="loadingOptions"  style="height:45px;"></div>
+        <loadingBottom v-if="loading"></loadingBottom>
       </div>
-    </scrollbar>
+    </scrollbar> -->
   </div>
 </template>
 <script setup lang="tsx">
@@ -58,14 +78,23 @@ import {
 } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
-import tags from './tags.vue'
-import { useLoadingOptions } from "@/components/loading/index.ts";
-import scrollbar from '@/components/scrollbar/index.vue';
+import tags from "./tags.vue";
+import { useLoadingOptions } from "@/components/loading/index.tsx";
+import scrollbar from "@/components/scrollbar/index.vue";
+import { stickerQueryParams } from "./index";
+import { loadingBottom } from "@/components/loading/index.tsx";
 
+// 列表展示几列
+const column = ref(2);
 
-const loadingOptions = useLoadingOptions();
+const loadingOptions = useLoadingOptions({});
 
+function tagChange() {
+  reset();
+  getList();
+}
 
+const itemSize = ref(130)
 
 /*
  徽章类型
@@ -101,27 +130,31 @@ function imgLoad(el, info) {
       src: img.src,
       base64: base64,
       id: info.id,
-      info: info
+      info: info,
     });
   });
 }
 
 
+function scrollEnd() {
+  getList()
+}
 
-
-const { list, getList,loading,firstLoading,subsequentLoading } = usePaging((params) => {
-  return getStickerListApi({
-    ...params,
-    pageSize: 10,
-  });
-}, {
-  forEach(item) {
-    item.thumbnail = 'https://' + item.thumbnail
+const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePaging(
+  (params) => {
+    return getStickerListApi({
+      ...params,
+      pageSize: 20,
+      ...stickerQueryParams.value,
+    });
+  },
+  {
+    forEach(item) {
+      item.thumbnail = "https://" + item.thumbnail;
+    },
   }
-});
+);
 
-// 列表展示几列
-const column = ref(2);
 </script>
 <style lang="less" scoped>
 @item-width: 40px;
@@ -139,8 +172,8 @@ const column = ref(2);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1em;
-  row-gap: 1em;
+  padding: 10px;
+  row-gap: 10px;
 }
 
 .search {
@@ -148,34 +181,47 @@ const column = ref(2);
 }
 
 
+
+.scroll-list {
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+}
 .item {
   width: auto;
   height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  row-gap: 0.5em;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 2px;
+  row-gap:5px;
 }
 
 .image {
   width: 100%;
   background-color: #efefef;
-  border-radius: .2em;
-  height: 12em !important;
+  border-radius: 0.2em;
+  height: 100px;
 }
+
 
 .title {
   width: 100%;
   text-align: left;
 }
 
-.list{
-  width: 100%;flex: 1;padding: 1em;
-
+.list {
+  width: 100%;
+  flex: 1;
+  padding: 1em;
   // 用于显示loading
-  min-height: 240px;
-  min-width: 100px;
+  // min-height: 240px;
+  // min-width: 100px;
 }
+
 
 .bar {
   width: 100%;

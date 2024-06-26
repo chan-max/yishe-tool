@@ -1,7 +1,31 @@
 <template>
   <div class="container">
+    <el-descriptions
+    :column="2"
+    size="small"
+  >
+  <template #title>
+    贴纸信息
+    </template>
+    <template #extra>
+    </template>
+    <el-descriptions-item label="名称" width="120">{{ stickerInfo.name || '未命名' }}</el-descriptions-item>
+    <el-descriptions-item label="类型">
+      {{ getStickerTypeLabel(stickerInfo.type) || '无'}}
+    </el-descriptions-item>
+    <el-descriptions-item label="上传者">{{ stickerInfo.uploader?.account  || '未知'}}</el-descriptions-item>
+    <el-descriptions-item label=""></el-descriptions-item>
+    <el-descriptions-item label="上传时间" :span="2">
+      {{ stickerInfo.createTime}}
+    </el-descriptions-item>
+    <el-descriptions-item label="描述" :span="2">
+      {{ stickerInfo.description || '无'}}
+    </el-descriptions-item>
+    <el-descriptions-item label="关键字" :span="2">
+      {{ stickerInfo.keywords || '无' }}
+    </el-descriptions-item>
+  </el-descriptions>
     <el-button-group  class="w-full" style="display:flex;">
-      <el-button @click="add" type="primary"> 添加该贴纸 </el-button>
       <el-button style="flex:1;" @click="use" type="primary"> 使用该贴纸 </el-button>
     </el-button-group>
   </div>
@@ -9,19 +33,16 @@
 
 <script setup lang="ts">
 import { currentController } from "@/components/design/store";
+import {getStickerTypeLabel} from './index'
+
 
 const props = defineProps({
   stickerInfo: {
-    default: {}
+    default: {} as any
   },
 });
 
-function add() {
-  return
-  currentController.value.addSticker({
-    ...props.stickerInfo,
-  });
-}
+
 
 function use(){
   currentController.value.addClickDelaySticker({
@@ -33,6 +54,10 @@ function use(){
 <style scoped lang="less">
 .container {
   width: 300px;
-  height: 200px;
+  height: auto;
+}
+
+:deep(.el-descriptions__content){
+  // text-wrap: nowrap;
 }
 </style>

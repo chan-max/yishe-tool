@@ -17,26 +17,20 @@
       </div>
       <tags @change="tagChange"></tags>
     </div>
-
-    <RecycleScroller class="scroll-list" v-if="list.length" :items="list" @scroll-end="scrollEnd" 
-    :item-size="itemSize"
-      :gridItems="2" item-class="scroll-list-item" key-field="id" v-slot="{ item, index }">
+    <RecycleScroller class="scroll-list" v-if="list.length" :items="list" @scroll-end="scrollEnd" :item-size="150"
+      :itemSecondarySize="130" :gridItems="2" item-class="scroll-list-item" key-field="id" v-slot="{ item, index }">
       <div class="item">
         <desimage padding="10%" :src="item.thumbnail" class="image" @load="imgLoad($event, item)"></desimage>
-        <el-popover placement="auto" width="auto" trigger="click">
-          <template #reference>
-            <div class="bar">
-              <div class="title text-ellipsis">{{ item.name || "......" }}</div>
-              <badge :type="item.type"></badge>
-              <el-icon>
-                <ArrowRightBold />
-              </el-icon>
-            </div>
-          </template>
-          <sticker-popover :stickerInfo="item"></sticker-popover>
-        </el-popover>
+        <sticker-popover :stickerInfo="item">
+          <div class="bar">
+            <div class="title text-ellipsis">{{ item.name || "......" }}</div>
+            <badge :type="item.type"></badge>
+            <el-icon><ArrowRight /></el-icon>
+          </div>
+        </sticker-popover>
       </div>
     </RecycleScroller>
+    <loadingBottom v-if="loading"></loadingBottom>
 
     <!-- <scrollbar id="sticker-list">
       <div class="list" v-infinite-scroll="getList" :infinite-scroll-distance="150">
@@ -66,7 +60,7 @@
 </template>
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
-import { Search, ArrowRightBold, Operation } from "@element-plus/icons-vue";
+import { Search, ArrowRightBold, Operation,ArrowRight } from "@element-plus/icons-vue";
 import { getStickerListApi } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/design/components/image.vue";
@@ -93,8 +87,6 @@ function tagChange() {
   reset();
   getList();
 }
-
-const itemSize = ref(130)
 
 /*
  徽章类型
@@ -187,6 +179,7 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   width: 100%;
   padding: 10px;
 }
+
 .item {
   width: auto;
   height: auto;
@@ -196,15 +189,15 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   justify-content: center;
   height: 100%;
   width: 100%;
-  padding: 2px;
-  row-gap:5px;
+  padding: 3px;
+  row-gap: 6px;
 }
 
 .image {
   width: 100%;
   background-color: #efefef;
   border-radius: 0.2em;
-  height: 100px;
+  height: 120px;
 }
 
 
@@ -228,6 +221,7 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   font-size: 1em;
   color: #555;
   display: flex;
+  padding: 0 2px;
   justify-content: space-between;
   align-items: center;
   column-gap: 1em;
@@ -243,3 +237,9 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   }
 }
 </style>
+<style>
+.vue-recycle-scroller.direction-vertical:not(.page-mode) {
+  overflow-y: overlay;
+}
+</style>
+

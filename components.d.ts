@@ -14,6 +14,7 @@ declare module 'vue' {
     BaseGltfViewer: typeof import('./src/components/model/baseGltfViewer/index.vue')['default']
     BaseModelSelect: typeof import('./src/components/design/layout/baseModelSelect/index.vue')['default']
     BasicCanvas: typeof import('./src/components/design/layout/basic-canvas/index.vue')['default']
+    BasicSwitch: typeof import('./src/components/design/components/operate/basicSwitch.vue')['default']
     BottomMenu: typeof import('./src/components/design/layout/bottomMenu.vue')['default']
     Canvas: typeof import('./src/components/design/layout/canvas/canvas.vue')['default']
     ColorPicker: typeof import('./src/components/design/components/colorPicker.vue')['default']

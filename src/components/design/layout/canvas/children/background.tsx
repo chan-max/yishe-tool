@@ -24,6 +24,7 @@ export function createCanvasChildBackground(options) {
         ..._style
     }
 
+
     return <div style={containerStyle}>
         <div style={style}></div>
     </div>

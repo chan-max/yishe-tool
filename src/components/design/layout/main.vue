@@ -11,20 +11,25 @@
       <div id="layout-left-menu" style="height: 100%; border-right: 2px solid #f6f6f6">
         <left-menu v-if="showLeftMenu"></left-menu>
       </div>
-      
+
+     
       <div id="layout-left" style="height: 100%; display: flex">
         <div style="height: 100%">
+          <Transition v-bind="leftContainerAnimation">
           <!-- <keep-alive> -->
-            <component :is="leftComponent"></component>
+          <component :is="leftComponent"></component>
           <!-- </keep-alive> -->
+        </Transition>
         </div>
       </div>
+
 
       <div id="layout-canvas">
         <screenshot ref="screenshotInstance"></screenshot>
         <div v-show="des.showThreeCanvas" id="threejs-canvas" style="width: 100%; height: 100%" ref="mountContainer">
         </div>
-        <basic-canvas v-show="showBasicCanvas" style="width: 100%; height: 100%; z-index: 1" ref="basicCanvasRef"></basic-canvas>
+        <basic-canvas v-show="showBasicCanvas" style="width: 100%; height: 100%; z-index: 1"
+          ref="basicCanvasRef"></basic-canvas>
       </div>
 
       <div id="layout-right" style="display: flex">
@@ -150,6 +155,16 @@ import basicCanvas from './basic-canvas/index.vue'
 // initWebsocket();
 
 const des = useDesignStore();
+
+
+const leftContainerAnimation = ref({
+  "enter-active-class": "animate__animated animate__bounceIn",
+  // "leave-active-class": "animate__animated animate__bounceOut",
+  duration: {
+    enter: 33,
+    leave: 0
+  },
+});
 
 const basicContainerAnimation = ref({
   "enter-active-class": "animate__animated animate__bounceIn",

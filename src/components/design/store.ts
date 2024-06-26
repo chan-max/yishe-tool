@@ -18,17 +18,17 @@ export const lastestScreenshot = computed(() => {
 })
 
 export function saveScreenshot() {
-  const base64 = currentController.value.getScreenshotBase64();
-  screenshotInstance.value.execScreenshot(base64);
+    const base64 = currentController.value.getScreenshotBase64();
+    screenshotInstance.value.execScreenshot(base64);
 
-  if(screenshots.value.length >= 10){
-    screenshots.value.shift()
-  }
+    if (screenshots.value.length >= 10) {
+        screenshots.value.shift()
+    }
 
-  screenshots.value.push({
-    base64:base64,
-    createdTime:new Date().getTime()
-  })
+    screenshots.value.push({
+        base64: base64,
+        createdTime: new Date().getTime()
+    })
 }
 
 
@@ -128,28 +128,28 @@ export const showFontUpload = ref(false)
 watch(
     currentOperatingBaseModelInfo,
     async () => {
-      if (!currentOperatingBaseModelInfo.value?.url) {
-        return;
-      }
-      await nextTick();
-      currentController.value.setMainModel(currentOperatingBaseModelInfo.value?.url);
+        if (!currentOperatingBaseModelInfo.value?.url) {
+            return;
+        }
+        await nextTick();
+        currentController.value.setMainModel(currentOperatingBaseModelInfo.value?.url);
     },
     {
-      immediate: true,
+        immediate: true,
     }
 );
-  
-  
-  // 改变画布背景颜色
-  watchEffect(() => {
 
-    if(!currentController.value){
+
+// 改变画布背景颜色
+watchEffect(() => {
+
+    if (!currentController.value) {
         return
     }
 
     currentController.value.setBgColor(canvasBgColor.value, canvasBgOpacity.value)
-  });
-  
+});
+
 /*
   二维码
 */
@@ -246,7 +246,7 @@ watch(showCanvasLayout, (value) => {
         clearLeftLayout()
         showCanvasLayout.value = true
         // showBasicCanvas.value = true
-    }else{
+    } else {
         // showBasicCanvas.value = false
     }
 })
@@ -276,18 +276,18 @@ export const operatingTextStickerOptions = reactive({
 
     // 记录当前引用的字体信息 
     fontFamilyInfo: '',
-    fontFamilyId:'',
-    
+    fontFamilyId: '',
+
     // 背景颜色
     backgroundColor: 'rgba(0,0,0,0)',
-    gradientBackgroundColor:'#0099ff',
+    gradientBackgroundColor: '#0099ff',
     backgroundBorderRadius: '5px',
     backgroundPadding: '',
 
     // 边框 
-    borderColor:'#000',
-    borderWidth:0,
-    borderStyle:'solid'
+    borderColor: '#000',
+    borderWidth: 0,
+    borderStyle: 'solid'
 
     // 阴影效果暂时不考虑
 })
@@ -307,7 +307,7 @@ export const showSaveModel = ref(false)
 
 // 系统是否成功连接 websocket
 export const online = ref(false);
-watch(online,(value) => {
+watch(online, (value) => {
 })
 
 
@@ -319,13 +319,15 @@ export const currentEditingModelInfo = ref()
 
 
 // 模型装饰品
-export const showDecoration  = ref(false)
+export const showDecoration = ref(false)
 
 
 /*
  是否展示基础画布
 */
-export const showBasicCanvas = ref(false)
+export const showBasicCanvas = computed(() => {
+    return showMainCanvas.value
+})
 
 /*
  是否展示3d画布
@@ -342,12 +344,12 @@ export const isUsingClickDelaySticker = ref(false)
 export const clickDelaySticker = ref()
 
 
-export const cacheFontFamily  = ref({})
+export const cacheFontFamily = ref({})
 
 
 /*
     svg 画布
-*/ 
+*/
 export const showSvgCanvas = ref(false)
 
 export const svgCanvasChildren = ref([])
@@ -362,30 +364,32 @@ export const svgCanvasSyncMainCanvas = ref(false)
     所有状态统一使用store管理
 */
 
-import {canvasOptions,currentOperatingCanvasChildIndex} from '@/components/design/layout/canvas/index.tsx'
+import { canvasOptions, currentOperatingCanvasChildIndex } from '@/components/design/layout/canvas/index.tsx'
 
 
-import { stickerQueryTags,stickerQueryParams } from "@/components/design/layout/sticker/index.ts";
+import { stickerQueryTags, stickerQueryParams } from "@/components/design/layout/sticker/index.ts";
+import { showMainCanvas } from "@/components/design/layout/canvas/index.tsx";
 
-export const useDesignStore = defineStore('_1s_design',() => {
+export const useDesignStore = defineStore('_1s_design', () => {
 
     // 同步到缓存 , 性能较差
 
     return {
-        showWorkspace:useLocalStorage('_1s_showWorkspace',showWorkspace),
-        operatingTextStickerOptions:useLocalStorage('_1s_operatingTextStickerOptions',operatingTextStickerOptions),
-        showBaseModelSelect:useLocalStorage('_1s_showBaseModelSelect',showBaseModelSelect),
-        showBasicCanvas:useLocalStorage('_1s_showBasicCanvas',showBasicCanvas),
-        showThreeCanvas:useLocalStorage('_1s_showThreeCanvas',showThreeCanvas),
-        showSticker:useLocalStorage('_1s_showSticker',showSticker),
-        currentOperatingBaseModelInfo:useLocalStorage('_1s_currentOperatingBaseModelInfo',currentOperatingBaseModelInfo),
-        showSvgCanvas:useLocalStorage('_1s_showSvgCanvas',showSvgCanvas),
-        svgCanvasChildren:useLocalStorage('_1s_svgCanvasChildren',svgCanvasChildren),
-        showCanvasLayout:useLocalStorage('_1s_showCanvasLayout',showCanvasLayout),
-        canvasOptions:useLocalStorage('_1s_canvasOptions',canvasOptions),
-        stickerQueryTags:useLocalStorage('_1s_stickerQueryTags',stickerQueryTags),
-        currentOperatingCanvasChildIndex:useLocalStorage('_1s_currentOperatingCanvasChildIndex',currentOperatingCanvasChildIndex)
-    } 
+        showWorkspace: useLocalStorage('_1s_showWorkspace', showWorkspace),
+        operatingTextStickerOptions: useLocalStorage('_1s_operatingTextStickerOptions', operatingTextStickerOptions),
+        showBaseModelSelect: useLocalStorage('_1s_showBaseModelSelect', showBaseModelSelect),
+        showBasicCanvas: useLocalStorage('_1s_showBasicCanvas', showBasicCanvas),
+        showThreeCanvas: useLocalStorage('_1s_showThreeCanvas', showThreeCanvas),
+        showSticker: useLocalStorage('_1s_showSticker', showSticker),
+        currentOperatingBaseModelInfo: useLocalStorage('_1s_currentOperatingBaseModelInfo', currentOperatingBaseModelInfo),
+        showSvgCanvas: useLocalStorage('_1s_showSvgCanvas', showSvgCanvas),
+        svgCanvasChildren: useLocalStorage('_1s_svgCanvasChildren', svgCanvasChildren),
+        showCanvasLayout: useLocalStorage('_1s_showCanvasLayout', showCanvasLayout),
+        canvasOptions: useLocalStorage('_1s_canvasOptions', canvasOptions),
+        stickerQueryTags: useLocalStorage('_1s_stickerQueryTags', stickerQueryTags),
+        currentOperatingCanvasChildIndex: useLocalStorage('_1s_currentOperatingCanvasChildIndex', currentOperatingCanvasChildIndex),
+        showMainCanvas: useLocalStorage('_1s_showMainCanvas', showMainCanvas)
+    }
 })
 
 

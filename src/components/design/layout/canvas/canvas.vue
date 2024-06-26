@@ -1,9 +1,14 @@
 <template>
+    <component :is="render"></component>
 </template>
     
 <script setup lang='tsx'>
-import { ref, onMounted } from 'vue'
-import { CanvasController } from './index.tsx';
+import { ref, onMounted, computed } from 'vue'
+import { currentCanvasControllerInstance } from './index'
+
+const render = computed(() => {
+    return currentCanvasControllerInstance.value ? currentCanvasControllerInstance.value.getCloneCanvasRender() : <div>error</div>
+})
 
 </script>
     

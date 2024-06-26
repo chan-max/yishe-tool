@@ -10,29 +10,31 @@
       ">
             <canvass></canvass>
         </div>
-        <el-button-group link style="width: 100%; padding: 0 1em; display: flex; overflow: auto">
-            <el-popover trigger="click" width="260">
-                <div class="addchild">
-                    <el-button size="small" @click="add('text')" round> 文字 </el-button>
-                    <el-button size="small" @click="add('image')" round> 图片 </el-button>
-                    <el-button size="small" @click="add('qrcode')" round> 二维码 </el-button>
-                    <el-button size="small" @click="add('barcode')" round> 条形码 </el-button>
-                    <el-button size="small" @click="add('stamp')" round> 印章 </el-button>
-                    <el-button size="small" @click="add('background')" round> 背景 </el-button>
-                    <el-button size="small" @click="add('border')" round> 边框 </el-button>
-                    <div style="flex: 1"></div>
-                </div>
-                <template #reference>
-                    <el-button type="primary" style="flex: 1" plain>
-                        添加元素 {{ canvasOptions.children.length }}
-                    </el-button>
-                </template>
-            </el-popover>
-            <el-button type="primary" plain>
-                上传
-            </el-button>
-            <el-button @click="exportPng" type="primary" plain> 导出 png </el-button>
-        </el-button-group>
+        <div style="width:100%;padding:1em;">
+            <el-button-group link style="width: 100%; display: flex; overflow: auto">
+                <el-popover trigger="click" width="260">
+                    <div class="addchild">
+                        <el-button size="small" @click="add('text')" round> 文字 </el-button>
+                        <el-button size="small" @click="add('image')" round> 图片 </el-button>
+                        <el-button size="small" @click="add('qrcode')" round> 二维码 </el-button>
+                        <el-button size="small" @click="add('barcode')" round> 条形码 </el-button>
+                        <el-button size="small" @click="add('stamp')" round> 印章 </el-button>
+                        <el-button size="small" @click="add('background')" round> 背景 </el-button>
+                        <el-button size="small" @click="add('border')" round> 边框 </el-button>
+                        <div style="flex: 1"></div>
+                    </div>
+                    <template #reference>
+                        <el-button type="primary" style="flex: 1" plain>
+                            添加元素 {{ canvasOptions.children.length }}
+                        </el-button>
+                    </template>
+                </el-popover>
+                <el-button type="primary" plain>
+                    上传
+                </el-button>
+                <el-button @click="exportPng" type="primary" plain> 导出 png </el-button>
+            </el-button-group>
+        </div>
         <div class="operate">
             <operate></operate>
         </div>
@@ -46,13 +48,16 @@ import {
     addCanvasChild,
     removeCavnasChild,
     getCanvasChildLabel,
-    currentOperatingCanvasChildIndex
+    currentOperatingCanvasChildIndex,
+    showMainCanvas
 } from "./index.tsx";
 
 import operate from './operate.vue';
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
-
 import { useLoadingOptions } from "@/components/loading/index.tsx";
+
+
+
 
 const loadingOptions = useLoadingOptions();
 
@@ -102,7 +107,7 @@ function add(type) {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    gap:.6em 0.4em;
+    gap: .8em 0.4em;
 
     :deep(.el-button + .el-button) {
         margin-left: 0;

@@ -7,7 +7,7 @@
         <span>工作台</span>
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" content="丰富的社区模型" placement="right">
+    <!-- <el-tooltip :hide-after="0" content="丰富的社区模型" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showCustomModel }"
         @click="showCustomModel = !showCustomModel">
         <div class="menu-bar-item-icon">
@@ -15,7 +15,7 @@
         </div>
         <span>选择模型</span>
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
     <el-tooltip :hide-after="0" content="许多贴纸哦～" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showSticker }" @click="showSticker = !showSticker">
         <div class="menu-bar-item-icon"><icon-sticker></icon-sticker></div>

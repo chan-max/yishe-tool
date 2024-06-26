@@ -83,8 +83,14 @@ interface CanvasOptions {
     width: number | string,
     height: number | string,
     children: CanvasChild[],
-    showMainCanvas: boolean // 编辑时是否展示主画布
 }
+
+
+import { showBasicCanvas } from '@/components/design/store';
+/*
+    是否展示主画布
+*/
+export const showMainCanvas = ref(true)
 
 
 function createCanvasChild(options) {
@@ -97,32 +103,62 @@ function createCanvasChild(options) {
     }
 }
 
+
+// 添加画布子元素
 export function addCanvasChild(options) {
 
-    options = {
-        type: 'text',
-        position: {
-            center: true,
-            verticalCenter: true,
-            horizontalCenter: true,
-            top: null,
-            left: null,
-            bottom: null,
-            right: null
-        },
-        scaleX: 1,
-        scaleY: 1,
-        scaleZ: 1,
-        rotateX: 0,
-        rotateY: 0,
-        rotateZ: 0,
-        skewX: 0,
-        skewY: 0,
-        ...options
+    if (options.type == 'text') {
+        options = {
+            type: 'text',
+            position: {
+                center: true,
+                verticalCenter: true,
+                horizontalCenter: true,
+                top: null,
+                left: null,
+                bottom: null,
+                right: null
+            },
+            scaleX: 1,
+            scaleY: 1,
+            scaleZ: 1,
+            rotateX: 0,
+            rotateY: 0,
+            rotateZ: 0,
+            skewX: 0,
+            skewY: 0,
+            ...options
+        }
+    }
+
+    if (options.type == 'background') {
+        options = {
+            type: 'background',
+            position: {
+                center: true,
+                verticalCenter: true,
+                horizontalCenter: true,
+                top: null,
+                left: null,
+                bottom: null,
+                right: null
+            },
+            scaleX: 1,
+            scaleY: 1,
+            scaleZ: 1,
+            rotateX: 0,
+            rotateY: 0,
+            rotateZ: 0,
+            skewX: 0,
+            skewY: 0,
+            width: 100,
+            height: 100,
+            backgroundColor: '#000',
+            ...options
+        }
     }
 
     canvasOptions.value.children.push(options)
-
     // 返回最新的索引
     return canvasOptions.value.children.length - 1
 }
@@ -179,14 +215,18 @@ export class CanvasController {
     canvasEl = null
 
     getCanvasEl(e) {
+        if (!e) {
+            return
+        }
+
         this.canvasEl = e
-        initDraggableElement(this.canvasEl,() => {
+        initDraggableElement(this.canvasEl, () => {
 
         },)
     }
 
     get ctx() {
-        if(!this.canvasEl){
+        if (!this.canvasEl) {
             return null
         }
         return this.canvasEl.getContext('2d')
@@ -199,11 +239,9 @@ export class CanvasController {
     }
 
     drawImage(img) {
-
-        if(!this.ctx){
+        if (!this.ctx) {
             return
         }
-
         img.setAttribute('crossorigin', 'anonymous');
         this.ctx.drawImage(img, 0, 0, img.width, img.height);
     }
@@ -214,6 +252,11 @@ export class CanvasController {
         if (this.updating) {
             return
         }
+
+        if (!this.el) {
+            return
+        }
+
         this.loading.value = true
         this.updating = true
         this.clearCanvas()
@@ -227,15 +270,16 @@ export class CanvasController {
         this.drawImage(img)
         await nextTick()
         document.body.removeChild(img)
-  
+
+        this.syncCloneCanvas()
         this.initDraggable(base64)
         this.loading.value = false
         this.updating = false
     }
 
-    initDraggable(base64){
-        initDraggableElement(this.canvasEl,() => {
-        },() => base64)
+    initDraggable(base64) {
+        initDraggableElement(this.canvasEl, () => {
+        }, () => base64)
     }
 
     clearCanvas() {
@@ -245,10 +289,53 @@ export class CanvasController {
         this.canvasEl.width = this.canvasEl?.width
     }
 
+    cloneCanvasEl = null
+
+
+    async syncCloneCanvas() {
+        await nextTick()
+        let cloneCtx = this.cloneCanvasEl?.getContext("2d")
+
+        if (!cloneCtx) {
+            return
+        }
+
+        cloneCtx.drawImage(this.canvasEl, 0, 0);
+    }
+
+    getCloneCanvasEl(e) {
+        this.cloneCanvasEl = e
+    }
+
+    getCloneCanvasRender() {
+        return (props) => {
+
+            const containerStyle: any = {
+                width: '100%',
+                height: '100%',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+            }
+
+            const canvasStyle = {
+                transform: calcCanvasDisplayTransformScale(400),
+            }
+
+            this.syncCloneCanvas()
+
+            return <div style={containerStyle}>
+                <canvas class="png-background" ref={this.getCloneCanvasEl.bind(this)} style={canvasStyle} width={canvasOptions.value.width} height={canvasOptions.value.height}></canvas>
+            </div>
+        }
+    }
+
     getRender(params) {
         this.renderParams = params
         return (props) => {
             // 画布的最大尺寸
+
             this.loading.value = true
             this.shouldUpdate = false
             this.updateCanvas.call(this)
@@ -275,7 +362,7 @@ export class CanvasController {
                 zIndex: 0
             }
 
-            const canvasStyle = {
+            const canvasStyle: any = {
                 position: "absolute",
                 top: 0,
                 left: 0,

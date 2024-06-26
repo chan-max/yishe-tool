@@ -18,6 +18,9 @@
                                     v-model:height="canvasOptions.height" v-model:aspectRatio="item.aspectRatio">
                                 </operateItemSize>
                             </el-col>
+                            <el-col :span="24">
+                                <operateItemSwitch label="主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
+                            </el-col>
                         </el-row>
                     </template>
                     <template v-if="item.type == 'text'" #default>
@@ -147,6 +150,9 @@ import operateItemSkew from "@/components/design/components/operate/skew.vue";
 import operateItemZindex from "@/components/design/components/operate/zIndex.vue";
 import operateItemBackgroundColor from '@/components/design/components/operate/backgroundColor.vue'
 import operateItemBackgroundImageSelect from '@/components/design/components/operate/backgroundImageSelect.vue'
+import operateItemSwitch from '@/components/design/components/operate/basicSwitch.vue'
+
+
 
 import {
     CanvasController,
@@ -155,7 +161,8 @@ import {
     removeCavnasChild,
     getCanvasChildLabel,
     currentOperatingCanvasChildIndex,
-    currentCanvasControllerInstance
+    currentCanvasControllerInstance,
+    showMainCanvas
 } from "./index.tsx";
 
 const textCollapseActives = ref(["1", "2", "3", "4"]);

@@ -12,7 +12,9 @@ draggingImage.style.cursor = 'grab';
 document.body.appendChild(draggingImage);
 
 
-export const initDraggableElement = (el, cb, sourceOrGetter = el.src) => {
+export const initDraggableElement = (el, cb, sourceOrGetter) => {
+
+    sourceOrGetter ||= el.src
 
     el._src = typeof sourceOrGetter === 'function' ? sourceOrGetter() : sourceOrGetter
      

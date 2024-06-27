@@ -127,7 +127,6 @@ function imgLoad(el, info) {
   });
 }
 
-
 function scrollEnd() {
   getList()
 }
@@ -143,6 +142,7 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   {
     forEach(item) {
       item.thumbnail = "https://" + item.thumbnail;
+      item.url = "https://" + item.url;
     },
   }
 );

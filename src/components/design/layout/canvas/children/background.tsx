@@ -1,7 +1,7 @@
 import { getPositionInfoFromOptions } from '../helper.tsx'
 
 export function createCanvasChildBackground(options) {
-
+    // 处理布局
     const {
         containerStyle: _containerStyle,
         style: _style
@@ -22,6 +22,10 @@ export function createCanvasChildBackground(options) {
         height: options.height + '%',
         background: options.backgroundColor,
         ..._style
+    }
+
+    if(options.backgroundImage){
+        style.backgroundImage = `url(${options.backgroundImage.url})`
     }
 
 

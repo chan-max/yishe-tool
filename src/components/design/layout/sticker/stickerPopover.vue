@@ -26,7 +26,9 @@
           {{ stickerInfo.keywords || '无' }}
         </el-descriptions-item>
         <el-descriptions-item label="操作" :span="2">
-          <el-button size="small" round link type="primary"> 添加画布元素背景<el-icon><TopRight /></el-icon> </el-button>
+          <el-button size="small" round link type="primary" @click="addCanvasBackground"> 添加画布元素背景<el-icon>
+              <TopRight />
+            </el-icon> </el-button>
         </el-descriptions-item>
       </el-descriptions>
       <el-button-group class="w-full" style="display:flex;">
@@ -36,9 +38,11 @@
   </el-popover>
 </template>
 <script setup lang="ts">
-import { currentController } from "@/components/design/store";
+import { currentController,showCanvasLayout } from "@/components/design/store";
 import { getStickerTypeLabel } from './index'
-import {TopRight} from '@element-plus/icons-vue'
+import { TopRight } from '@element-plus/icons-vue'
+import { addCanvasChild, currentOperatingCanvasChildIndex, canvasOptions } from '@/components/design/layout/canvas/index.tsx'
+
 
 const props = defineProps({
   stickerInfo: {
@@ -47,7 +51,19 @@ const props = defineProps({
 });
 
 
-
+// 添加背景元素
+function addCanvasBackground() {
+  let child = canvasOptions.value.children[currentOperatingCanvasChildIndex.value]
+  if (child.type = 'background') {
+    child.backgroundImage = props.stickerInfo
+  } else {
+    addCanvasChild({
+      type: 'background',
+      backgroundImage: props.stickerInfo
+    })
+  }
+  showCanvasLayout.value = true
+}
 
 function use() {
   currentController.value.addClickDelaySticker({
@@ -62,7 +78,7 @@ function use() {
   height: auto;
 }
 
-:deep(.el-descriptions__label){
+:deep(.el-descriptions__label) {
   // font-weight: bold;
 }
 </style>

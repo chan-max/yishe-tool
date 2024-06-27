@@ -366,7 +366,6 @@ export const svgCanvasSyncMainCanvas = ref(false)
 
 import { canvasOptions, currentOperatingCanvasChildIndex } from '@/components/design/layout/canvas/index.tsx'
 
-
 import { stickerQueryTags, stickerQueryParams } from "@/components/design/layout/sticker/index.ts";
 import { showMainCanvas } from "@/components/design/layout/canvas/index.tsx";
 

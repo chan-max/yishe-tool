@@ -8,7 +8,7 @@
         justify-content: center;
         margin: 10px;
       ">
-            <canvass></canvass>
+            <canvass max="320"></canvass>
         </div>
         <div style="width:100%;padding:1em;">
             <el-button-group link style="width: 100%; display: flex; overflow: auto">
@@ -67,7 +67,7 @@ function exportPng() {
     cc.downloadPng();
 }
 
-let canvass = cc.getRender({ max: 320 });
+let canvass = cc.getRender();
 
 const loading = computed(() => {
     return cc.loading.value;

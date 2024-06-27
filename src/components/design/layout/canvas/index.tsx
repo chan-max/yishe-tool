@@ -87,6 +87,8 @@ interface CanvasOptions {
 
 
 import { showBasicCanvas } from '@/components/design/store';
+
+
 /*
     是否展示主画布
 */
@@ -163,11 +165,8 @@ export function addCanvasChild(options) {
     return canvasOptions.value.children.length - 1
 }
 
-
 // 当前正在操作的元素
 export const currentOperatingCanvasChildIndex = ref(0)
-
-
 
 export function removeCavnasChild(index) {
 
@@ -193,7 +192,6 @@ export class CanvasController {
         this.updateCanvas = useDebounceFn(this.updateCanvas, 666).bind(this)
     }
 
-    shouldUpdate = true
 
     loading = ref(false)
 
@@ -232,8 +230,6 @@ export class CanvasController {
         return this.canvasEl.getContext('2d')
     }
 
-    renderParams = null
-
     getBase64() {
         return this.canvasEl.toDataURL('image/png')
     }
@@ -256,7 +252,6 @@ export class CanvasController {
         if (!this.el) {
             return
         }
-
         this.loading.value = true
         this.updating = true
         this.clearCanvas()
@@ -331,15 +326,16 @@ export class CanvasController {
         }
     }
 
+    // 画布元素是否在加载中
+    pending = ref(false)
+
     getRender(params) {
-        this.renderParams = params
+
         return (props) => {
-            // 画布的最大尺寸
-
+            // 加载状态
             this.loading.value = true
-            this.shouldUpdate = false
             this.updateCanvas.call(this)
-
+            
             const containerStyle: any = {
                 width: canvasOptions.value.width + 'px',
                 height: canvasOptions.value.height + 'px',
@@ -347,12 +343,12 @@ export class CanvasController {
                 alignItems: "center",
                 justifyContent: "center",
                 overflow: "hidden",
-                transform: calcCanvasDisplayTransformScale(params.max),
+                transform: calcCanvasDisplayTransformScale(props.max),
                 flexShrink: 0,
                 position: "relative",
             }
 
-            let style = {
+            let style:any = {
                 flexShrink: 0,
                 width: canvasOptions.value.width + 'px',
                 height: canvasOptions.value.height + 'px',
@@ -367,7 +363,7 @@ export class CanvasController {
                 top: 0,
                 left: 0,
                 zIndex: 99,
-                // display:'none'
+                display:'none'
             }
 
             let children = canvasOptions.value.children.map((opts) => {

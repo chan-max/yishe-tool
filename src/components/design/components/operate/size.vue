@@ -5,51 +5,128 @@
         </template>
         <template #name> {{ label }} </template>
         <template #content>
-            <el-popover :show-arrow="false" trigger="hover">
-                <template #reference>
-                    <div v-if="mode == 'number'">
-                        <el-input style="width: 72px" size="small" v-model="width" step="10" min="100" type="number"
-                            placeholder="宽"></el-input>
-                        <span style="margin: 0 1em">x</span>
-                        <el-input style="width: 72px" size="small" v-model="height" step="10" min="100" type="number"
-                            placeholder="高"></el-input>
+            <div class="flex justify-between w-full">
+                <el-input style="width: 88px" size="small" v-model="width" step="10" type="number" placeholder="宽">
+                    <template #suffix>
+                        <div style="font-size:1rem;">{{ unitLabel }}</div>
+                    </template>
+                </el-input>
+                <span style="flex:1;" class="flex items-center justify-center">x</span>
+                <el-input style="width: 88px" size="small" v-model="height" step="10" type="number" placeholder="高">
+                    <template #suffix>
+                        <div style="font-size:1rem;">{{ unitLabel }}</div>
+                    </template>
+                </el-input>
+                <el-popover trigger="hover" width="200">
+                    <template #reference>
+                        <el-button size="small" link style="margin-left:4px;">
+                            <el-icon size="16">
+                                <Setting></Setting>
+                            </el-icon>
+                        </el-button>
+                    </template>
+                    <div>
+                        <el-row align="middle" justify="end" v-if="units.length > 1" style="margin-bottom:.5em">
+                            <el-col :span="24">
+                                <el-radio-group v-model="unitBind" size="small">
+                                    <el-radio v-for="u, index in unitOptions" :value="u.value" :key="index">
+                                        <span style="font-size: 1rem;">{{ u.label }}</span>
+                                    </el-radio>
+                                </el-radio-group>
+                            </el-col>
+                        </el-row>
+                        <el-row style="padding:.5em 0">
+                            <el-col :span="24">
+                                <div class="flex flex-wrap " style="gap:1em;">
+                                    <el-tag size="small" style="cursor:pointer;" effect="plain"
+                                        v-for="item in aspectRatioOptions" @click="selectAsepctRatio(item.value)">
+                                        <div style="font-size: 1rem;">
+                                            {{
+                                                item.label }}
+                                        </div>
+                                    </el-tag>
+                                    <div style="flex: 1"></div>
+                                </div>
+                            </el-col>
+                        </el-row>
                     </div>
-                    <div v-if="mode == 'percent'">
-                        <el-input style="width: 72px" size="small" v-model="width" step="1" min="0" max="100" type="number"
-                            placeholder="宽"></el-input>
-                        <span style="margin: 0 0.4em">%</span>
-                        <span style="margin: 0 0.4em"></span>
-                        <el-input style="width: 72px" size="small" v-model="height" step="1" min="0" max="100" type="number"
-                            placeholder="高"></el-input>
-                        <span style="margin: 0 0.4em">%</span>
-                    </div>
-                </template>
-                <div style="display: flex; gap: 1em; flex-wrap: wrap">
-                    <el-tag style="cursor: pointer" v-for="item in aspectRatioOptions" @click="selectAsepctRatio(item.value)">{{
-                        item.label }}</el-tag>
-                    <div style="flex: 1"></div>
-                </div>
-            </el-popover>
+                </el-popover>
+            </div>
         </template>
     </operate-form-item>
 </template>
 
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/size.svg?component";
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
+import { Setting } from "@element-plus/icons-vue";
 
 const props = defineProps({
     label: {
         default: "尺寸",
     },
+    unit: {
+        default: 'px'
+    },
     mode: {
-        default: "number", // number | percent 数字模式和百分比模式
+        default: "number",  // number | % | all  数字模式和百分比模式
+    },
+    units: {
+        default: ['px', '%']
     },
 });
 
-const width = defineModel("width", { default: 1000 });
-const height = defineModel("height", { default: 1000 });
-const aspectRatio = defineModel("aspectRatio", { default: 1 });
+const unitLabel = computed(() => {
+    return getUnitLabel(props.unit)
+})
+
+const unitOptions = computed(() => {
+    return props.units.map((u) => {
+        if (u == 'px') {
+            return {
+                label: '像素值',
+                value: 'px',
+            }
+        }
+
+        if (u == '%') {
+            return {
+                label: '相对于主画布的百分比',
+                value: '%',
+            }
+        }
+    })
+})
+
+const getUnitLabel = (unit) => {
+    return unit == 'px' ? 'px' : unit == '%' ? '%' : null
+}
+
+const width = defineModel("width", {});
+const height = defineModel("height", {});
+
+
+
+// 存在绑定 bug
+const unitBind = ref()
+
+watch(unitBind, (val) => [
+    unit.value = val
+])
+
+const unit = defineModel("unit", {
+    default:'px'
+});
+
+watch(unit, (val) => [
+    unitBind.value = val
+],{
+    immediate:true
+})
+
+const aspectRatio = defineModel("aspectRatio", {});
+
+
 
 // 保留两位小数
 function toFixed0(val): any {
@@ -101,4 +178,4 @@ const aspectRatioOptions = ref([
 ]);
 </script>
 
-<style></style>
+<style scoped lang="less"></style>

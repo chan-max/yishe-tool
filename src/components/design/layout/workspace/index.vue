@@ -2,24 +2,15 @@
   <div class="container">
     <div class="info">
       <div class="preview">
-        <base-gltf-viewer
-          style="flex-shrink: 0; background: #eee"
-          :src="currentOperatingBaseModelInfo?.url"
-        ></base-gltf-viewer>
+        <base-gltf-viewer style="flex-shrink: 0; background: #eee"
+          :src="currentOperatingBaseModelInfo?.url"></base-gltf-viewer>
       </div>
     </div>
     <div class="decal">
       <div class="decal-content" v-if="currentController?.decalControllers.length">
-        <template
-          v-for="(decal, index) in currentController.decalControllers"
-          :key="index"
-        >
+        <template v-for="(decal, index) in currentController.decalControllers" :key="index">
           <div class="decal-item" :class="{ active: isActive(decal) }">
-            <desimage
-              :src="decal.info.src"
-              fit="contain"
-              class="decal-item-image"
-            ></desimage>
+            <desimage :src="decal.info.src" fit="contain" class="decal-item-image"></desimage>
             <div class="decal-item-content">
               <div class="decal-item-content-title text-ellipsis">名称</div>
               <div class="decal-item-content-desc text-ellipsis">
@@ -39,13 +30,7 @@
                     <icon-setting></icon-setting>
                   </el-icon>
                 </el-button>
-                <el-button
-                  @click="removeDecal(decal)"
-                  link
-                  size="small"
-                  round
-                  type="danger"
-                >
+                <el-button @click="removeDecal(decal)" link size="small" round type="danger">
                   <el-icon>
                     <icon-delete></icon-delete>
                   </el-icon>
@@ -64,13 +49,8 @@
       <el-button round>
         <span> 上传 </span>
       </el-button>
-      <el-button
-        :disabled="!currentController?.decalControllers.length"
-        @click="showSaveModel = true"
-        type="primary"
-        round
-        style="flex: 1"
-      >
+      <el-button :disabled="!currentController?.decalControllers.length" @click="showSaveModel = true" type="primary"
+        round style="flex: 1">
         <span>
           共 {{ currentController?.decalControllers.length }} 张贴纸 ， 保存该模型
         </span>
@@ -86,7 +66,7 @@ import {
   operatingDecal,
   showDecalControl,
 } from "../../store";
-import { computed } from "vue";
+import { computed ,ref} from "vue";
 import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
 import { useNow, useDateFormat } from "@vueuse/core";
 import { MoreFilled, CloseBold, Edit, EditPen } from "@element-plus/icons-vue";
@@ -139,6 +119,7 @@ function removeDecal(decal) {
   flex: 1;
   overflow: auto;
 }
+
 .decal-content {
   flex: 1;
   overflow: auto;
@@ -159,6 +140,7 @@ function removeDecal(decal) {
   padding: 1em;
   border-radius: 1em;
   transition: all 0.3s;
+
   &:hover {
     box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
     cursor: pointer;
@@ -200,6 +182,7 @@ function removeDecal(decal) {
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
+
   :deep(.el-button) {
     padding: 0 0.5em;
   }

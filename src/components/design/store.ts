@@ -377,7 +377,7 @@ export const useDesignStore = defineStore('_1s_design', () => {
         showWorkspace: useLocalStorage('_1s_showWorkspace', showWorkspace),
         operatingTextStickerOptions: useLocalStorage('_1s_operatingTextStickerOptions', operatingTextStickerOptions),
         showBaseModelSelect: useLocalStorage('_1s_showBaseModelSelect', showBaseModelSelect),
-        showBasicCanvas: useLocalStorage('_1s_showBasicCanvas', showBasicCanvas),
+        // showBasicCanvas: useLocalStorage('_1s_showBasicCanvas', showBasicCanvas),
         showThreeCanvas: useLocalStorage('_1s_showThreeCanvas', showThreeCanvas),
         showSticker: useLocalStorage('_1s_showSticker', showSticker),
         currentOperatingBaseModelInfo: useLocalStorage('_1s_currentOperatingBaseModelInfo', currentOperatingBaseModelInfo),

@@ -10,7 +10,7 @@
 -->
 <template>
   <div class="operate-form-item" :style="style">
-    <div style="display: flex; column-gap: 6px;align-items: center;min-height: 24px;">
+    <div style="display: flex; column-gap: 2px;align-items: center;min-height: 24px;">
       <div class="operate-form-item-icon">
         <slot name="icon"></slot>
       </div>
@@ -57,6 +57,7 @@ const props = defineProps({
   align-items: center;
   justify-content: center;
   color: #555;
+  margin: 0 4px;
   svg {
     width: 14px;
     height: 14px;

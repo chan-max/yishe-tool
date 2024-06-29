@@ -59,7 +59,7 @@
     "dotenv": "^16.3.1",
     "easyqrcodejs": "^4.6.1",
     "egg": "^3.15.0",
-    "element-plus": "^2.2.32",
+    "element-plus": "^2.7.6",
     "esbuild": "^0.20.1",
     "fast-glob": "^3.3.2",
     "fontfaceobserver": "^2.3.0",

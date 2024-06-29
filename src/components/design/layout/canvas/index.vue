@@ -8,10 +8,33 @@
         justify-content: center;
         margin: 10px;
       ">
-            <canvass max="320"></canvass>
+            <canvass></canvass>
         </div>
         <div style="width:100%;padding:1em;">
-            <el-button-group link style="width: 100%; display: flex; overflow: auto">
+            <!-- <el-button-group   style="width: 100%; display: flex; overflow: auto"> -->
+                <el-button plain link>
+                    上传
+                </el-button>
+                <el-button  link @click="exportPng" plain> 导出 png </el-button>
+            <!-- </el-button-group> -->
+            <div style="display:flex;margin-top: 1em;column-gap:10px">
+                <el-select v-model="currentOperatingCanvasChildIndex" >
+                    <template #label="{ label }">
+                        <div style="font-size:1rem;"> {{ getCanvasChildLabel(currentOperatingCanvasChild.type) }} </div>
+                    </template>
+                    <el-option class="canvas-child-select-option"  v-for="(item, index) in canvasOptions.children" :value="index"
+                        :label="getCanvasChildLabel(item.type)">
+                        <div style="display:flex;align-items: center;font-size:1rem">
+                            {{ getCanvasChildLabel(item.type) }}
+                            <div style="flex:1"></div>
+                            <el-button v-if="index != 0" link type="danger" @click="remove(index)">
+                                <el-icon size="14">
+                                    <CircleCloseFilled></CircleCloseFilled>
+                                </el-icon>
+                            </el-button>
+                        </div>
+                    </el-option>
+                </el-select>
                 <el-popover trigger="click" width="260">
                     <div class="addchild">
                         <el-button size="small" @click="add('text')" round> 文字 </el-button>
@@ -24,16 +47,11 @@
                         <div style="flex: 1"></div>
                     </div>
                     <template #reference>
-                        <el-button type="primary" style="flex: 1" plain>
-                            添加元素 {{ canvasOptions.children.length }}
+                        <el-button :icon="Plus">
                         </el-button>
                     </template>
                 </el-popover>
-                <el-button type="primary" plain>
-                    上传
-                </el-button>
-                <el-button @click="exportPng" type="primary" plain> 导出 png </el-button>
-            </el-button-group>
+            </div>
         </div>
         <div class="operate">
             <operate></operate>
@@ -49,19 +67,21 @@ import {
     removeCavnasChild,
     getCanvasChildLabel,
     currentOperatingCanvasChildIndex,
+    currentOperatingCanvasChild,
     showMainCanvas
 } from "./index.tsx";
 
 import operate from './operate.vue';
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
+import { Delete, Plus,DeleteFilled,CircleCloseFilled } from '@element-plus/icons-vue'
 
+const loadingOptions = useLoadingOptions({
+});
 
-
-
-const loadingOptions = useLoadingOptions();
-
-let cc = new CanvasController();
+let cc = new CanvasController({
+    max:320
+});
 
 function exportPng() {
     cc.downloadPng();
@@ -72,6 +92,10 @@ let canvass = cc.getRender();
 const loading = computed(() => {
     return cc.loading.value;
 });
+
+function remove(index) {
+    removeCavnasChild(index)
+}
 
 function add(type) {
     currentOperatingCanvasChildIndex.value = addCanvasChild({
@@ -113,4 +137,7 @@ function add(type) {
         margin-left: 0;
     }
 }
+</style>
+<style lang="less">
+
 </style>

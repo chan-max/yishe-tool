@@ -8,7 +8,7 @@
       <el-input
         v-model="qrCodeOptions.text"
         type="textarea"
-        placeholder="二维码内容"
+        placeholder=""
         size="small"
       ></el-input>
     </div>
@@ -33,6 +33,8 @@ import {
   imgToBase64,
   canvasToBase64,
 } from "@/common/transform/index";
+
+window.qrcode = QRCode
 
 // 二维码容器
 const qrCodeRef = ref();

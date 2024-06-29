@@ -1,16 +1,18 @@
-import { ref, computed, shallowRef, nextTick, watch } from 'vue'
+import { ref, computed, shallowRef, nextTick, watch, defineAsyncComponent, defineComponent } from 'vue'
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { htmlToPngFile, downloadByFile } from '@/common/transform'
 import { useDebounceFn } from '@vueuse/core'
 import { waitImage } from '@/common'
-import { createCanvasChildText } from './children/text.tsx'
-import { createCanvasChildBackground } from './children/background.tsx'
+import { createCanvasChildText, defaultCanvasChildTextOptions } from './children/text.tsx'
+import { createCanvasChildBackground, defaultCanvasChildBackgroundOptions } from './children/background.tsx'
+import { defaultCanvasChildQrcodeOptions, createCanvasChildQrcode, qrcode } from './children/qrcode.tsx'
 import { initDraggableElement } from "@/components/design/utils/draggable";
+
+import { Canvas as Canvas } from './children/canvas.tsx'
 
 export const canvasOptions = ref({
     width: 1000,
     height: 1000,
-    aspectRatio: 1,
     children: [{
         type: 'canvas'
     }],
@@ -26,7 +28,6 @@ watch(() => canvasOptions.value.width, () => {
         canvasOptions.value.width = 100
         return
     }
-    updateAspectRatio()
 })
 
 watch(() => canvasOptions.value.height, () => {
@@ -34,16 +35,10 @@ watch(() => canvasOptions.value.height, () => {
         canvasOptions.value.height = 100
         return
     }
-    updateAspectRatio()
 })
 
-watch(() => canvasOptions.value.aspectRatio, () => {
-    canvasOptions.value.height = toFixed3(canvasOptions.value.width / canvasOptions.value.aspectRatio)
-})
 
-function updateAspectRatio() {
-    canvasOptions.value.aspectRatio = toFixed3(canvasOptions.value.width / canvasOptions.value.height)
-}
+
 
 
 export enum CanvasChildType {
@@ -94,79 +89,79 @@ import { showBasicCanvas } from '@/components/design/store';
 */
 export const showMainCanvas = ref(true)
 
-
-function createCanvasChild(options) {
+function createCanvasChild(options, controller) {
     if (options.type == CanvasChildType.TEXT) {
-        return createCanvasChildText(options)
+        return createCanvasChildText(options, controller)
     }
 
     if (options.type == CanvasChildType.BACKGROUHND) {
-        return createCanvasChildBackground(options)
+        return createCanvasChildBackground(options, controller)
+    }
+
+    if (options.type == 'qrcode') {
+        return createCanvasChildQrcode(options, controller)
     }
 }
 
+
+
+
+const isPromise = (val) => {
+    return val.catch && val.then;
+};
+
+function createAsyncComponent(loader) {
+    return defineAsyncComponent({
+        // 加载异步组件时使用的组件
+        loader,
+        loadingComponent: () => null,
+        // 展示加载组件前的延迟时间，默认为 200ms
+        delay: 200,
+
+        // 加载失败后展示的组件
+        errorComponent: () => null,
+        // 如果提供了一个 timeout 时间限制，并超时了
+        // 也会显示这里配置的报错组件，默认值是：Infinity
+        timeout: 3000
+    })
+}
 
 // 添加画布子元素
 export function addCanvasChild(options) {
 
-    if (options.type == 'text') {
-        options = {
-            type: 'text',
-            position: {
-                center: true,
-                verticalCenter: true,
-                horizontalCenter: true,
-                top: null,
-                left: null,
-                bottom: null,
-                right: null
-            },
-            scaleX: 1,
-            scaleY: 1,
-            scaleZ: 1,
-            rotateX: 0,
-            rotateY: 0,
-            rotateZ: 0,
-            skewX: 0,
-            skewY: 0,
-            ...options
-        }
-    }
+    let index = canvasOptions.value.children.length
 
-    if (options.type == 'background') {
-        options = {
-            type: 'background',
-            position: {
-                center: true,
-                verticalCenter: true,
-                horizontalCenter: true,
-                top: null,
-                left: null,
-                bottom: null,
-                right: null
-            },
-            scaleX: 1,
-            scaleY: 1,
-            scaleZ: 1,
-            rotateX: 0,
-            rotateY: 0,
-            rotateZ: 0,
-            skewX: 0,
-            skewY: 0,
-            width: 100,
-            height: 100,
-            backgroundColor: '#000',
-            ...options
-        }
+    options = {
+        ...(
+            options.type == 'text'
+                ? defaultCanvasChildTextOptions
+                : options.type == 'background'
+                    ? defaultCanvasChildBackgroundOptions
+                    : options.type == 'qrcode' ?
+                        defaultCanvasChildQrcodeOptions : null
+        ),
+        ...options,
+        index: canvasOptions.value.children.length
     }
 
     canvasOptions.value.children.push(options)
     // 返回最新的索引
-    return canvasOptions.value.children.length - 1
+    return index
 }
 
 // 当前正在操作的元素
 export const currentOperatingCanvasChildIndex = ref(0)
+
+export const currentOperatingCanvasChild = computed(() => {
+    let child = canvasOptions.value.children[currentOperatingCanvasChildIndex.value]
+
+    if (!child) {
+        currentOperatingCanvasChildIndex.value = 0
+        return canvasOptions.value.children[0]
+    }
+
+    return child
+})
 
 export function removeCavnasChild(index) {
 
@@ -178,24 +173,30 @@ export function removeCavnasChild(index) {
     currentOperatingCanvasChildIndex.value = index - 1
 }
 
-function calcCanvasDisplayTransformScale(max) {
+export function calcCanvasDisplayTransformScale(max) {
     let m = Math.max(canvasOptions.value.width, canvasOptions.value.height)
     return `scale(${max / m}, ${max / m}`
 }
 
 export const currentCanvasControllerInstance = shallowRef(null)
 
+
+export function updateCanvas() {
+    currentCanvasControllerInstance.value.updateCanvas()
+}
+
+
 export class CanvasController {
     target = null
-    constructor() {
+    constructor(params) {
         currentCanvasControllerInstance.value = this
-        this.updateCanvas = useDebounceFn(this.updateCanvas, 666).bind(this)
+        // this.updateCanvas = useDebounceFn(this.updateCanvas, 666).bind(this)
+        this.maxDisplaySize = params.max
     }
 
+    maxDisplaySize = null
 
     loading = ref(false)
-
-    el = null
 
     async exportPng() {
         const file = await htmlToPngFile(this.el)
@@ -206,22 +207,15 @@ export class CanvasController {
         downloadByFile(await this.exportPng())
     }
 
-    getEl(e) {
-        this.el = e
+    get el() {
+        return document.querySelector('#canvas-raw-el') as any
     }
 
-    canvasEl = null
 
-    getCanvasEl(e) {
-        if (!e) {
-            return
-        }
-
-        this.canvasEl = e
-        initDraggableElement(this.canvasEl, () => {
-
-        },)
+    get canvasEl() {
+        return document.querySelector('#canvas-display-el') as any
     }
+
 
     get ctx() {
         if (!this.canvasEl) {
@@ -242,19 +236,41 @@ export class CanvasController {
         this.ctx.drawImage(img, 0, 0, img.width, img.height);
     }
 
-    updating = false
-
+    // 需要组件渲染后再更新
     async updateCanvas() {
-        if (this.updating) {
-            return
-        }
+        this.loading.value = true
+        clearTimeout(this.updateWorker);
+        this.updateWorker = setTimeout(() => {
+            this.addTask(this.updateCanvasJob);
+        }, this.updateWorkDelay);
+    }
 
+    addTask(task) {
+        this.updateQueue.push(task);
+        this.run();
+    }
+
+    run() {
+        if (!this.isUpdating && this.updateQueue.length) {
+            this.isUpdating = true;
+            const task = this.updateQueue.shift();
+            task.call(this).then(() => {
+                this.isUpdating = false;
+                this.run();
+            });
+        }
+    }
+
+
+    updateQueue = []; // 画布更新队列
+    isUpdating = false; // 是否正在更新
+    updateWorker = null; // 更新任务
+    updateWorkDelay = 500; // 更新延迟
+
+    async updateCanvasJob() {
         if (!this.el) {
             return
         }
-        this.loading.value = true
-        this.updating = true
-        this.clearCanvas()
         let base64 = await toPng(this.el) // 会有页面卡顿的问题
         let img = document.createElement('img')
         img.width = canvasOptions.value.width
@@ -262,15 +278,15 @@ export class CanvasController {
         document.body.appendChild(img)
         img.src = base64
         await waitImage(img)
+        this.clearCanvas()
         this.drawImage(img)
         await nextTick()
         document.body.removeChild(img)
-
         this.syncCloneCanvas()
         this.initDraggable(base64)
         this.loading.value = false
-        this.updating = false
     }
+
 
     initDraggable(base64) {
         initDraggableElement(this.canvasEl, () => {
@@ -284,23 +300,21 @@ export class CanvasController {
         this.canvasEl.width = this.canvasEl?.width
     }
 
-    cloneCanvasEl = null
-
+    get cloneCanvasEl() {
+        return document.querySelector('#canvas-cloned-el') as any
+    }
 
     async syncCloneCanvas() {
         await nextTick()
         let cloneCtx = this.cloneCanvasEl?.getContext("2d")
 
-        if (!cloneCtx) {
+        if (!cloneCtx || !this.canvasEl) {
             return
         }
-
+        this.cloneCanvasEl.width = this.cloneCanvasEl.width;
         cloneCtx.drawImage(this.canvasEl, 0, 0);
     }
 
-    getCloneCanvasEl(e) {
-        this.cloneCanvasEl = e
-    }
 
     getCloneCanvasRender() {
         return (props) => {
@@ -321,7 +335,7 @@ export class CanvasController {
             this.syncCloneCanvas()
 
             return <div style={containerStyle}>
-                <canvas class="png-background" ref={this.getCloneCanvasEl.bind(this)} style={canvasStyle} width={canvasOptions.value.width} height={canvasOptions.value.height}></canvas>
+                <canvas class="png-background" id={'canvas-cloned-el'} style={canvasStyle} width={canvasOptions.value.width} height={canvasOptions.value.height}></canvas>
             </div>
         }
     }
@@ -331,54 +345,21 @@ export class CanvasController {
 
     getRender(params) {
 
-        return (props) => {
-            // 加载状态
-            this.loading.value = true
-            this.updateCanvas.call(this)
-            
-            const containerStyle: any = {
-                width: canvasOptions.value.width + 'px',
-                height: canvasOptions.value.height + 'px',
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
-                transform: calcCanvasDisplayTransformScale(props.max),
-                flexShrink: 0,
-                position: "relative",
-            }
+        // 改为异步组件
+        function render() {
 
-            let style:any = {
-                flexShrink: 0,
-                width: canvasOptions.value.width + 'px',
-                height: canvasOptions.value.height + 'px',
-                position: "absolute",
-                top: 0,
-                left: 0,
-                zIndex: 0
-            }
-
-            const canvasStyle: any = {
-                position: "absolute",
-                top: 0,
-                left: 0,
-                zIndex: 99,
-                display:'none'
-            }
-
-            let children = canvasOptions.value.children.map((opts) => {
-                return createCanvasChild(opts)
+            const children = canvasOptions.value.children.map((childOptions) => {
+                return createCanvasChild(childOptions, this)
             })
 
-            return <div style={containerStyle}>
-                {/* 真是转换的元素 */}
-                <div id={'canvas-id'} style={style} ref={this.getEl.bind(this)}>
-                    {children}
-                </div>
-                {/* 真实的画布 */}
-                <canvas class="png-background" ref={this.getCanvasEl.bind(this)} style={canvasStyle} width={canvasOptions.value.width} height={canvasOptions.value.height}></canvas>
-            </div>
+            this.updateCanvas()
+
+            return <Canvas>
+                {children}
+            </Canvas>
         }
+
+        return render.bind(this)
     }
 }
 

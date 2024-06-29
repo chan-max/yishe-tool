@@ -11,7 +11,6 @@
       <div id="layout-left-menu" style="height: 100%; border-right: 2px solid #f6f6f6">
         <left-menu v-if="showLeftMenu"></left-menu>
       </div>
-
      
       <div id="layout-left" style="height: 100%; display: flex">
         <div style="height: 100%">
@@ -26,7 +25,7 @@
 
       <div id="layout-canvas">
         <screenshot ref="screenshotInstance"></screenshot>
-        <div v-show="des.showThreeCanvas" id="threejs-canvas" style="width: 100%; height: 100%" ref="mountContainer">
+        <div v-show="showThreeCanvas" id="threejs-canvas" style="width: 100%; height: 100%" ref="mountContainer">
         </div>
         <basic-canvas v-show="showBasicCanvas" style="width: 100%; height: 100%; z-index: 1"
           ref="basicCanvasRef"></basic-canvas>
@@ -72,13 +71,13 @@
     <font-list></font-list>
   </diydialog>
 
-  <diydialog :show="showUpload" title="资源上传" @close="showUpload = false" :animation="basicContainerAnimation">
+  <!-- <diydialog :show="showUpload" title="资源上传" @close="showUpload = false" :animation="basicContainerAnimation">
     <upload></upload>
-  </diydialog>
+  </diydialog> -->
 
-  <diydialog :show="showSaveModel" title="保存模型" @close="showSaveModel = false" :animation="basicContainerAnimation">
+  <!-- <diydialog :show="showSaveModel" title="保存模型" @close="showSaveModel = false" :animation="basicContainerAnimation">
     <save-model></save-model>
-  </diydialog>
+  </diydialog> -->
 </template>
 <script setup>
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -151,7 +150,7 @@ import svgCanvas from "./svgCanvas/index.vue";
 import canvasLayout from "./canvas/index.vue";
 import basicCanvas from './basic-canvas/index.vue'
 
-
+const radio1 = ref()
 // initWebsocket();
 
 const des = useDesignStore();
@@ -217,6 +216,8 @@ onMounted(() => {
   const modelController = new ModelController();
   modelController.render(mountContainer.value);
 });
+
+
 </script>
 
 <style lang="less">

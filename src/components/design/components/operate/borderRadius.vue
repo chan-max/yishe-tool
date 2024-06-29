@@ -3,9 +3,9 @@
         <template #icon>
             <icon></icon>
         </template>
-        <template #name> 内间距 </template>
+        <template #name> 边框圆角 </template>
         <template #content>
-            <el-popover width="160" trigger="click" :visible="parentPopoverVisible">
+            <el-popover width="180" trigger="click" :visible="parentPopoverVisible"> 
                 <template #reference>
                     <el-button @click="click" size="small" link>
                         <el-tooltip :content="borderRadiusLabel">
@@ -18,18 +18,15 @@
                 <div>
                     <el-row align="middle" justify="center" @mouseleave="parentLeave">
                         <el-col :span="24">
-                            <div style="font-weight: bold; padding: 1em 0">间距设置</div>
+                            <div style="font-weight: bold; padding: 1em 0">圆角设置</div>
                         </el-col>
-
-
-
-                        <template v-for="item in paddingOptions">
+                        <template v-for="item in borderRadiusOptions">
                             <el-col :span="8">
                                 <div>{{ item.label }}</div>
                             </el-col>
                             <el-col :span="16">
                                 <div class="input-item">
-                                    <el-popover placement="right" width="180" trigger="click" @show="childShow"
+                                    <el-popover placement="right" width="200" trigger="click" @show="childShow"
                                         @hide="childHide">
                                         <template #reference>
                                             <el-input size="small" type="number" min="0" step="1"
@@ -58,7 +55,7 @@
                         <el-col :span="24">
                             <div class="input-item">
                                 <el-button size="small" style="width:100%;" @click="reset">
-                                    重置间距
+                                    重置
                                 </el-button>
                             </div>
                         </el-col>
@@ -70,10 +67,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick } from "vue";
-import icon from "@/components/design/assets/icon/padding.svg?component";
-import { getPaddingDispalyLabel } from "@/components/design/layout/canvas/helper.tsx";
-
+import { ref, computed, nextTick,onMounted } from "vue";
+import icon from "@/components/design/assets/icon/border-radius.svg?component";
+import { getBroderRadiusDispalyLabel } from "@/components/design/layout/canvas/helper.tsx";
 
 /*
  padding 存在五种单位
@@ -85,11 +81,11 @@ import { getPaddingDispalyLabel } from "@/components/design/layout/canvas/helper
 */
 
 
+const parentPopoverVisible = ref(false)
+
 function click() {
     parentPopoverVisible.value = !parentPopoverVisible.value
 }
-
-const parentPopoverVisible = ref(false)
 
 const childVisible = ref(false)
 
@@ -109,34 +105,35 @@ function childHide() {
     childVisible.value = false
 }
 
+
 const model = defineModel({});
 
 function reset() {
     let val = { value: 0, unit: 'px' }
     model.value = {
-        top: val,
-        right: val,
-        bottom: val,
-        left: val,
+        leftTop: val,
+        rightTop: val,
+        rightBottom: val,
+        leftBottom: val,
     }
 }
 
-const paddingOptions = ref([
+const borderRadiusOptions = ref([
     {
-        type: "top",
-        label: "上间距",
+        type: "leftTop",
+        label: "左上角",
     },
     {
-        type: "right",
-        label: "右间距",
+        type: "rightTop",
+        label: "右上角",
     },
     {
-        type: "bottom",
-        label: "下间距",
+        type: "rightBottom",
+        label: "右下角",
     },
     {
-        type: "left",
-        label: "左间距",
+        type: "leftBottom",
+        label: "左下角",
     },
 ]);
 
@@ -179,7 +176,7 @@ function getLabel(val) {
 
 
 const borderRadiusLabel = computed(() => {
-    return getPaddingDispalyLabel(model.value);
+    return getBroderRadiusDispalyLabel(model.value);
 });
 
 </script>

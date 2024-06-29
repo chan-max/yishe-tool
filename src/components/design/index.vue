@@ -18,11 +18,11 @@ import mainView from "./layout/main.vue";
 import { isDarkMode, isEdit, currentEditingModelInfo } from "./store";
 import { usePreventScreenResize } from "./composition/preventScreenResize";
 import { useRoute } from "vue-router";
-import { onBeforeMount, onMounted } from "vue";
+import { onBeforeMount, onMounted,ref } from "vue";
 import { getModelById } from "@/api";
 
 // 阻止缩放屏幕影响使用体验
-
+const radio1 = ref('')
 const route = useRoute();
 
 onBeforeMount(async () => {

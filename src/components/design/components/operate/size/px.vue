@@ -8,13 +8,13 @@
             <div class="flex justify-between w-full">
                 <el-input style="width: 88px" size="small" v-model="width" step="10" type="number" placeholder="宽">
                     <template #suffix>
-                        <div style="font-size:1rem;">{{ unitLabel }}</div>
+                        <div style="font-size:1rem;">px</div>
                     </template>
                 </el-input>
                 <span style="flex:1;" class="flex items-center justify-center">x</span>
                 <el-input style="width: 88px" size="small" v-model="height" step="10" type="number" placeholder="高">
                     <template #suffix>
-                        <div style="font-size:1rem;">{{ unitLabel }}</div>
+                        <div style="font-size:1rem;">px</div>
                     </template>
                 </el-input>
                 <el-popover trigger="hover" width="200">
@@ -26,15 +26,6 @@
                         </el-button>
                     </template>
                     <div>
-                        <el-row align="middle" justify="end" v-if="units.length > 1" style="margin-bottom:.5em">
-                            <el-col :span="24">
-                                <el-radio-group v-model="unitBind" size="small">
-                                    <el-radio v-for="u, index in unitOptions" :value="u.value" :key="index">
-                                        <span style="font-size: 1rem;">{{ u.label }}</span>
-                                    </el-radio>
-                                </el-radio-group>
-                            </el-col>
-                        </el-row>
                         <el-row style="padding:.5em 0">
                             <el-col :span="24">
                                 <div class="flex flex-wrap " style="gap:1em;">
@@ -64,48 +55,11 @@ import { Setting } from "@element-plus/icons-vue";
 const props = defineProps({
     label: {
         default: "尺寸",
-    },
-    unit: {
-        default: 'px'
-    },
-    mode: {
-        default: "number",  // number | % | all  数字模式和百分比模式
-    },
-    units: {
-        default: ['px', '%']
-    },
+    }
 });
-
-const unitLabel = computed(() => {
-    return getUnitLabel(props.unit)
-})
-
-const unitOptions = computed(() => {
-    return props.units.map((u) => {
-        if (u == 'px') {
-            return {
-                label: '像素值',
-                value: 'px',
-            }
-        }
-
-        if (u == '%') {
-            return {
-                label: '相对于主画布的百分比',
-                value: '%',
-            }
-        }
-    })
-})
-
-const getUnitLabel = (unit) => {
-    return unit == 'px' ? 'px' : unit == '%' ? '%' : null
-}
 
 const width = defineModel("width", {});
 const height = defineModel("height", {});
-
-
 
 // 存在绑定 bug
 const unitBind = ref()
@@ -115,13 +69,13 @@ watch(unitBind, (val) => [
 ])
 
 const unit = defineModel("unit", {
-    default:'px'
+    default: 'px'
 });
 
 watch(unit, (val) => [
     unitBind.value = val
-],{
-    immediate:true
+], {
+    immediate: true
 })
 
 const aspectRatio = defineModel("aspectRatio", {});

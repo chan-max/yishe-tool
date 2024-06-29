@@ -24,17 +24,11 @@ function toFixed3(val): any {
 }
 
 watch(() => canvasOptions.value.width, () => {
-    if (canvasOptions.value.width < 100) {
-        canvasOptions.value.width = 100
-        return
-    }
+
 })
 
 watch(() => canvasOptions.value.height, () => {
-    if (canvasOptions.value.height < 100) {
-        canvasOptions.value.height = 100
-        return
-    }
+
 })
 
 

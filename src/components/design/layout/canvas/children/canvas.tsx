@@ -11,6 +11,8 @@ export const Canvas = defineComponent({
     },
     setup(props, ctx) {
 
+        
+
         return () => {
             const containerStyle: any = {
                 width: canvasOptions.value.width + 'px',

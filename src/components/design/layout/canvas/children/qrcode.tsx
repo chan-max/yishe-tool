@@ -1,21 +1,9 @@
-import QRCodeStyling, {
-    DrawType,
-    TypeNumber,
-    Mode,
-    ErrorCorrectionLevel,
-    DotType,
-    CornerSquareType,
-    CornerDotType,
-    ExtensionFunction
-} from 'qr-code-styling';
+import QRCodeStyling from 'qr-code-styling';
 import { ref, watchEffect } from 'vue'
 import { updateCanvas } from '../index.tsx'
 
-
-import { getPositionInfoFromOptions } from '../helper.tsx'
+import { getPositionInfoFromOptions, getRelativeRealPixelSize, getRelativeRealPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
-
-
 
 /*
     
@@ -26,10 +14,40 @@ export const defaultCanvasChildQrcodeOptions = {
         center: true,
         verticalCenter: true,
         horizontalCenter: true,
-        top: null,
-        left: null,
-        bottom: null,
-        right: null
+        top: {
+            value: 0,
+            unit: 'px'
+        },
+        left: {
+            value: 0,
+            unit: 'px'
+        },
+        bottom: {
+            value: 0,
+            unit: 'px'
+        },
+        right: {
+            value: 0,
+            unit: 'px'
+        }
+    },
+    padding: {
+        top: {
+            value: 0,
+            unit: 'px'
+        },
+        left: {
+            value: 0,
+            unit: 'px'
+        },
+        bottom: {
+            value: 0,
+            unit: 'px'
+        },
+        right: {
+            value: 0,
+            unit: 'px'
+        }
     },
     scaleX: 1,
     scaleY: 1,
@@ -39,18 +57,42 @@ export const defaultCanvasChildQrcodeOptions = {
     rotateZ: 0,
     skewX: 0,
     skewY: 0,
-    width: 100,
-    height: 100,
+    width: {
+        value: 100,
+        unit: 'px'
+    },
+    height: {
+        value: 100,
+        unit: 'px'
+    },
     backgroundColor: '#000',
     backgroundUnit: 'px',
-    qrcodeContent: '1s.design'
+    qrcodeContent: '1s.design',
+    borderRadius: {
+        leftTop: {
+            value: 0,
+            unit: 'px',
+        },
+        rightTop: {
+            value: 0,
+            unit: 'px',
+        },
+        rightBottom: {
+            value: 0,
+            unit: 'px',
+        },
+        leftBottom: {
+            value: 0,
+            unit: 'px',
+        }
+    }
 }
 
 
 async function createQrcodeUrl(options) {
     const qrCode = new QRCodeStyling({
-        width: options.width,
-        height: options.height,
+        width: getRelativeRealPixelValue(options.width),
+        height: getRelativeRealPixelValue(options.height),
         type: "svg",
         data: options.qrcodeContent,
         image: "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
@@ -104,13 +146,29 @@ export const Qrcode = defineComponent({
                 ..._containerStyle
             }
 
-            const backgroundUnit = props.options.backgroundUnit
+            let width = getRelativeRealPixelSize(props.options.width)
+            let height = getRelativeRealPixelSize(props.options.height)
+
+            let realWidthValue = getRelativeRealPixelValue(props.options.width)
+            let realHeightValue = getRelativeRealPixelValue(props.options.height)
+
+            let padding = getPaddingRealPixel(props.options.padding, {
+                width: realWidthValue,
+                height: realHeightValue,
+            })
+
+            const borderRadius = getBorderRadiusRealPixel(props.options.borderRadius,{
+                width: realWidthValue,
+                height: realHeightValue
+            })
 
             const style = {
-                width: props.options.width + backgroundUnit,
-                height: props.options.height + backgroundUnit,
-                flexShrink:0,
-                background:props.options.backgroundColor,
+                width,
+                height,
+                flexShrink: 0,
+                background: props.options.backgroundColor,
+                padding,
+                borderRadius,
                 ..._style,
             }
 

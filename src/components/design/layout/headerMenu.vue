@@ -17,7 +17,6 @@
       <img src="logo.png" style="height: 24px" object-fit="contain" />
     </div>
     <div style="flex-grow: 1"></div>
-
     <el-button @click="showSaveModel = true" round> 保存该模型 </el-button>
 
     <el-button @click="showUpload = true" round> 资源上传 </el-button>
@@ -48,6 +47,8 @@ import { onShortcutTrigger } from "../shortcut/index";
 import iconHelp from "@/icon/help.svg?component";
 import { useLoginStatusStore } from "@/store/stores/login";
 
+
+const radio1 = ref('1')
 const loginStatusStore = useLoginStatusStore();
 
 const props = defineProps([]);

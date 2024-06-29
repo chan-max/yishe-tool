@@ -5,7 +5,7 @@
     <template #content>
       <el-popover width="160" trigger="click">
         <template #reference>
-          <el-button size="small">{{ positionLabel }}</el-button>
+          <el-button size="small" link>{{ positionLabel }}</el-button>
         </template>
         <div>
           <el-row align="middle" justify="center">
@@ -46,6 +46,7 @@
                     <template #reference>
                       <div class="content">
                         <el-input
+                            style="width:60px"
                           size="small"
                           type="number"
                           min="0"
@@ -54,14 +55,12 @@
                         ></el-input>
                       </div>
                     </template>
-                    <el-row align="middle" justify="end" style="height: 200px">
+                    <el-row align="middle" justify="end">
                       <el-col :span="24">
                         <el-radio-group v-model="model[item.type].unit" size="small">
                           <el-radio
                             v-for="(u, index) in unitOptions"
                             :value="u.value"
-                            :key="index"
-                            :label="u.label"
                           >
                             <span style="font-size: 1rem">{{ u.label }}</span>
                           </el-radio>
@@ -90,16 +89,7 @@ const visible = ref(true);
 const disabled = ref(false);
 
 
-const model = ref({
-  left: {},
-  right: {},
-  top: {},
-  bottom: {},
-});
-
-onMounted(() => {
-  document.body.onclick = () => (visible.value = false);
-});
+const model = defineModel({})
 
 const positionLabel = computed(() => {
   return getPositionInfoFromOptions(model.value).label;
@@ -158,4 +148,5 @@ const positionOptions = ref([
     height: 20px;
   }
 }
+
 </style>

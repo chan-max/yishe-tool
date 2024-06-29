@@ -1,6 +1,5 @@
-import { getPositionInfoFromOptions, updateCanvas } from '../helper.tsx'
+import { getPositionInfoFromOptions,getRelativeRealPixelSize } from '../helper.tsx'
 import { defineComponent, ref } from 'vue'
-
 
 /*
 */
@@ -13,10 +12,22 @@ export const defaultCanvasChildBackgroundOptions = {
         center: true,
         verticalCenter: true,
         horizontalCenter: true,
-        top: null,
-        left: null,
-        bottom: null,
-        right: null
+        top: {
+            value: 0,
+            unit: 'px'
+        },
+        left: {
+            value: 0,
+            unit: 'px'
+        },
+        bottom: {
+            value: 0,
+            unit: 'px'
+        },
+        right: {
+            value: 0,
+            unit: 'px'
+        }
     },
     scaleX: 1,
     scaleY: 1,
@@ -26,8 +37,14 @@ export const defaultCanvasChildBackgroundOptions = {
     rotateZ: 0,
     skewX: 0,
     skewY: 0,
-    width: 100,
-    height: 100,
+    width: {
+        value:100,
+        unit:'px'
+    },
+    height: {
+        value:100,
+        unit:'px'
+    },
     backgroundColor: '#000',
     mode: 'number'
 }
@@ -59,9 +76,11 @@ export const Background = defineComponent({
                 ..._containerStyle
             }
 
+
+
             const style = {
-                width: props.options.width + props.options.backgroundUnit,
-                height: props.options.height + props.options.backgroundUnit,
+                width: getRelativeRealPixelSize(props.options.width),
+                height: getRelativeRealPixelSize(props.options.height),
                 background: props.options.backgroundColor,
                 flexShrink:0,
                 ..._style

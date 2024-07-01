@@ -132,8 +132,6 @@ const Text = (props) => {
 }
 
 
-
-
 export enum SvgChildType {
     ForeignObject,
     Text = 'text',

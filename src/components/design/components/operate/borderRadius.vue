@@ -5,9 +5,9 @@
         </template>
         <template #name> 边框圆角 </template>
         <template #content>
-            <el-popover width="180" trigger="click" :visible="parentPopoverVisible"> 
+            <el-popover width="180" trigger="click"> 
                 <template #reference>
-                    <el-button @click="click" size="small" link>
+                    <el-button size="small" link>
                         <el-tooltip :content="borderRadiusLabel">
                             <div class="text-ellipsis" style="max-width:200px;">
                                 {{ borderRadiusLabel }}
@@ -16,7 +16,7 @@
                     </el-button>
                 </template>
                 <div>
-                    <el-row align="middle" justify="center" @mouseleave="parentLeave">
+                    <el-row align="middle" justify="center">
                         <el-col :span="24">
                             <div style="font-weight: bold; padding: 1em 0">圆角设置</div>
                         </el-col>
@@ -26,8 +26,7 @@
                             </el-col>
                             <el-col :span="16">
                                 <div class="input-item">
-                                    <el-popover placement="right" width="200" trigger="click" @show="childShow"
-                                        @hide="childHide">
+                                    <el-popover placement="right" width="200" trigger="click"  :teleported="false">
                                         <template #reference>
                                             <el-input size="small" type="number" min="0" step="1"
                                                 style="width:88px;height:24px;" v-model.number="model[item.type].value">
@@ -81,29 +80,29 @@ import { getBroderRadiusDispalyLabel } from "@/components/design/layout/canvas/h
 */
 
 
-const parentPopoverVisible = ref(false)
+// const parentPopoverVisible = ref(false)
 
-function click() {
-    parentPopoverVisible.value = !parentPopoverVisible.value
-}
+// function click() {
+//     parentPopoverVisible.value = !parentPopoverVisible.value
+// }
 
-const childVisible = ref(false)
+// const childVisible = ref(false)
 
-async function parentLeave() {
-    setTimeout(() => {
-        if (!childVisible.value) {
-            parentPopoverVisible.value = false
-        }
-    }, (333));
-}
+// async function parentLeave() {
+//     setTimeout(() => {
+//         if (!childVisible.value) {
+//             parentPopoverVisible.value = false
+//         }
+//     }, (333));
+// }
 
-function childShow() {
-    childVisible.value = true
-}
+// function childShow() {
+//     childVisible.value = true
+// }
 
-function childHide() {
-    childVisible.value = false
-}
+// function childHide() {
+//     childVisible.value = false
+// }
 
 
 const model = defineModel({});

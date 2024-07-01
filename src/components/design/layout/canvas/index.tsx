@@ -3,12 +3,15 @@ import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { htmlToPngFile, downloadByFile } from '@/common/transform'
 import { useDebounceFn } from '@vueuse/core'
 import { waitImage } from '@/common'
+import { createCanvasChildSvg } from './children/svg/svg.tsx'
+import { initDraggableElement } from "@/components/design/utils/draggable";
 import { createCanvasChildText, defaultCanvasChildTextOptions } from './children/text.tsx'
 import { createCanvasChildBackground, defaultCanvasChildBackgroundOptions } from './children/background.tsx'
-import { defaultCanvasChildQrcodeOptions, createCanvasChildQrcode, qrcode } from './children/qrcode.tsx'
-import { initDraggableElement } from "@/components/design/utils/draggable";
+import { defaultCanvasChildQrcodeOptions, createCanvasChildQrcode, } from './children/qrcode.tsx'
+import {defaultCanvasChildSvgRectOptions,createCanvasChildRect} from './children/svg/svg.tsx'
 
-import { Canvas as Canvas } from './children/canvas.tsx'
+
+import { Canvas } from './children/canvas.tsx'
 
 export const canvasOptions = ref({
     width: 1000,
@@ -40,27 +43,18 @@ export enum CanvasChildType {
     TEXT = 'text',
     BACKGROUHND = 'background',
     IMAGE = 'image',
+    QRCODE = 'qrcode',
+    RECT_BORDER = 'rect'
 }
 
-export function getCanvasChildLabel(val) {
-    switch (val) {
-        case 'text':
-            return '文字'
-        case 'image':
-            return '图片'
-        case 'svg':
-            return '矢量图'
-        case 'background':
-            return '背景'
-        case 'qrcode':
-            return '二维码'
-        case 'barcode':
-            return '条形码 '
-        case 'canvas':
-            return '画布'
-        case 'border':
-            return '边框'
-    }
+
+export const canvasChildLabelMap = {
+    [CanvasChildType.CANVAS] :'画布',
+    [CanvasChildType.TEXT] :'文字',
+    [CanvasChildType.BACKGROUHND] :'背景',
+    [CanvasChildType.IMAGE] :'图片',
+    [CanvasChildType.QRCODE] :'二维码',
+    [CanvasChildType.RECT_BORDER] :'矩形',
 }
 
 
@@ -82,22 +76,6 @@ import { showBasicCanvas } from '@/components/design/store';
     是否展示主画布
 */
 export const showMainCanvas = ref(true)
-
-function createCanvasChild(options, controller) {
-    if (options.type == CanvasChildType.TEXT) {
-        return createCanvasChildText(options, controller)
-    }
-
-    if (options.type == CanvasChildType.BACKGROUHND) {
-        return createCanvasChildBackground(options, controller)
-    }
-
-    if (options.type == 'qrcode') {
-        return createCanvasChildQrcode(options, controller)
-    }
-}
-
-
 
 
 const isPromise = (val) => {
@@ -121,21 +99,26 @@ function createAsyncComponent(loader) {
 }
 
 // 添加画布子元素
-export function addCanvasChild(options) {
 
+var canvas_child_id = 0
+
+export function addCanvasChild(options) {
     let index = canvasOptions.value.children.length
 
+    let defaultOptions =
+        options.type == 'text'
+            ? defaultCanvasChildTextOptions
+            : options.type == 'background'
+                ? defaultCanvasChildBackgroundOptions
+                : options.type == 'qrcode'
+                    ?defaultCanvasChildQrcodeOptions
+                    : options.type == 'rect'
+                    ? defaultCanvasChildSvgRectOptions : null
     options = {
-        ...(
-            options.type == 'text'
-                ? defaultCanvasChildTextOptions
-                : options.type == 'background'
-                    ? defaultCanvasChildBackgroundOptions
-                    : options.type == 'qrcode' ?
-                        defaultCanvasChildQrcodeOptions : null
-        ),
+        ...defaultOptions,
         ...options,
-        index: canvasOptions.value.children.length
+        index: canvasOptions.value.children.length,
+        id: canvas_child_id++,
     }
 
     canvasOptions.value.children.push(options)
@@ -158,7 +141,6 @@ export const currentOperatingCanvasChild = computed(() => {
 })
 
 export function removeCavnasChild(index) {
-
     if (index == 0) {
         return
     }
@@ -168,17 +150,40 @@ export function removeCavnasChild(index) {
 }
 
 export function calcCanvasDisplayTransformScale(max) {
-    let m = Math.max(canvasOptions.value.width, canvasOptions.value.height)
-    return `scale(${max / m}, ${max / m}`
+    let s = calcCanvasDisplayTransformScaleValue(max)
+    return `scale(${s}, ${s}`
 }
+
+export function calcCanvasDisplayTransformScaleValue(max) {
+    return max / Math.max(canvasOptions.value.width, canvasOptions.value.height)
+}
+
 
 export const currentCanvasControllerInstance = shallowRef(null)
 
 
 export function updateCanvas() {
-    currentCanvasControllerInstance.value.updateCanvas()
+    currentCanvasControllerInstance.value?.updateCanvas()
 }
 
+
+function createCanvasChild(options, controller) {
+    if (options.type == CanvasChildType.TEXT) {
+        return createCanvasChildText(options, controller)
+    }
+
+    if (options.type == CanvasChildType.BACKGROUHND) {
+        return createCanvasChildBackground(options, controller)
+    }
+
+    if (options.type == CanvasChildType.QRCODE) {
+        return createCanvasChildQrcode(options, controller)
+    }
+
+    if (options.type == CanvasChildType.RECT_BORDER) {
+        return createCanvasChildRect(options)
+    }
+}
 
 export class CanvasController {
     target = null

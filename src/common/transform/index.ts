@@ -35,12 +35,19 @@ export async function downloadByFile(file){
 }
 
 export function svgToBase64(svg) {
+
+
+
     if(typeof svg == 'string'){
         svg = svg
     }
 
     if(svg instanceof SVGElement){
         svg = new XMLSerializer().serializeToString(svg)
+    }
+
+    if(svg.__v_isVNode){
+        
     }
 
     var base64 = btoa(unescape(encodeURIComponent(svg)));

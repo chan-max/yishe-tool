@@ -237,8 +237,7 @@ onMounted(() => {
 }
 
 #layout-header {
-  border-bottom: 2px solid #f6f6f6;
-  border-top: 2px solid #f6f6f6;
+  border-bottom: 1px solid #f6f6f6;
 }
 
 #threejs-canvas {
@@ -253,5 +252,9 @@ onMounted(() => {
   top: 0;
   left: 0;
   z-index: 2;
+}
+
+#layout-left{
+  box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.1);
 }
 </style>

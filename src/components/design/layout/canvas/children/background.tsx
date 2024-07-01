@@ -4,7 +4,6 @@ import { defineComponent, ref } from 'vue'
 /*
 */
 
-
 export const defaultCanvasChildBackgroundOptions = {
     type: 'background',
     backgroundUnit:'px',

@@ -1,31 +1,42 @@
 <template>
     <div class="container flex flex-col items-center">
-        <div v-loading="loading" v-bind="loadingOptions" style="
-        width: 320px;
-        height: 320px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 10px;
-      ">
+        <div v-if="!showMainCanvas" v-loading="loading" v-bind="loadingOptions" class="canvas-container">
             <canvass></canvass>
+            <div class="canvas-container-bottom-menu">
+                <div style="flex:1"></div>
+                <el-button  @click="showMainCanvas = true" :icon="FullScreen" type="info" text bg round size="small">
+                    <span >大画布显示</span>
+                </el-button>
+            </div>
         </div>
-        <div style="width:100%;padding:1em;">
-            <!-- <el-button-group   style="width: 100%; display: flex; overflow: auto"> -->
+        <div style="width:100%;padding:2em 1em;">
+            <div class="flex">
+                <addPopover>
+                    <el-button type="primary" link>
+                        <span>添加元素</span>
+                    </el-button>
+                </addPopover>
+
+                <div style="flex:1;"></div>
                 <el-button plain link>
+                    <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
                     上传
                 </el-button>
-                <el-button  link @click="exportPng" plain> 导出 png </el-button>
-            <!-- </el-button-group> -->
+                <el-button link @click="exportPng" plain>
+                    <LinkOutlined style="font-size:1.2em;margin-right:4px;" />
+                    导出 PNG
+                </el-button>
+            </div>
             <div style="display:flex;margin-top: 1em;column-gap:10px">
-                <el-select v-model="currentOperatingCanvasChildIndex" >
+
+                <el-select v-model="currentOperatingCanvasChildIndex">
                     <template #label="{ label }">
-                        <div style="font-size:1rem;"> {{ getCanvasChildLabel(currentOperatingCanvasChild.type) }} </div>
+                        <div style="font-size:1rem;"> {{ canvasChildLabelMap[currentOperatingCanvasChild.type] }} </div>
                     </template>
-                    <el-option class="canvas-child-select-option"  v-for="(item, index) in canvasOptions.children" :value="index"
-                        :label="getCanvasChildLabel(item.type)">
-                        <div style="display:flex;align-items: center;font-size:1rem">
-                            {{ getCanvasChildLabel(item.type) }}
+                    <el-option class="canvas-child-select-option" v-for="(item, index) in canvasOptions.children"
+                        :value="index" :label="canvasChildLabelMap[item.type]">
+                        <div style="display:flex;align-items: center;font-size:1rem;height:100%;">
+                            {{ canvasChildLabelMap[item.type] }}
                             <div style="flex:1"></div>
                             <el-button v-if="index != 0" link type="danger" @click="remove(index)">
                                 <el-icon size="14">
@@ -35,22 +46,6 @@
                         </div>
                     </el-option>
                 </el-select>
-                <el-popover trigger="click" width="260">
-                    <div class="addchild">
-                        <el-button size="small" @click="add('text')" round> 文字 </el-button>
-                        <el-button size="small" @click="add('image')" round> 图片 </el-button>
-                        <el-button size="small" @click="add('qrcode')" round> 二维码 </el-button>
-                        <el-button size="small" @click="add('barcode')" round> 条形码 </el-button>
-                        <el-button size="small" @click="add('stamp')" round> 印章 </el-button>
-                        <el-button size="small" @click="add('background')" round> 背景 </el-button>
-                        <el-button size="small" @click="add('border')" round> 边框 </el-button>
-                        <div style="flex: 1"></div>
-                    </div>
-                    <template #reference>
-                        <el-button :icon="Plus">
-                        </el-button>
-                    </template>
-                </el-popover>
             </div>
         </div>
         <div class="operate">
@@ -65,29 +60,36 @@ import {
     canvasOptions,
     addCanvasChild,
     removeCavnasChild,
-    getCanvasChildLabel,
+    CanvasChildType,
     currentOperatingCanvasChildIndex,
     currentOperatingCanvasChild,
-    showMainCanvas
+    showMainCanvas,
+    canvasChildLabelMap
 } from "./index.tsx";
 
 import operate from './operate.vue';
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
+
+import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled,FullScreen } from '@element-plus/icons-vue'
+import { StarOutlined, StarFilled, StarTwoTone, CloudUploadOutlined, LinkOutlined, PlusCircleOutlined } from '@ant-design/icons-vue';
 import { useLoadingOptions } from "@/components/loading/index.tsx";
-import { Delete, Plus,DeleteFilled,CircleCloseFilled } from '@element-plus/icons-vue'
+import addPopover from './addPopover.vue'
+
 
 const loadingOptions = useLoadingOptions({
 });
 
 let cc = new CanvasController({
-    max:320
+    max: 320
 });
+
+let canvass = cc.getRender();
 
 function exportPng() {
     cc.downloadPng();
 }
 
-let canvass = cc.getRender();
+
 
 const loading = computed(() => {
     return cc.loading.value;
@@ -97,12 +99,7 @@ function remove(index) {
     removeCavnasChild(index)
 }
 
-function add(type) {
-    currentOperatingCanvasChildIndex.value = addCanvasChild({
-        type: type,
-    });
-    document.body.click();
-}
+
 
 
 </script>
@@ -116,6 +113,37 @@ function add(type) {
     align-items: center;
 }
 
+.canvas-container {
+    width: 320px;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    position: relative;
+    overflow:hidden;
+    &:hover{
+
+        .canvas-container-bottom-menu {
+            bottom:0px ;
+        }
+    }
+}
+
+.canvas-container-bottom-menu {
+    width: 100%;
+    height: 48px;
+    position: fixed;
+    padding: 0 1rem;
+    background: linear-gradient(0deg, rgba(0,0,0,.3) 0%, rgba(255,255,255,0) 100%);
+    position: absolute;
+    bottom: -48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all .2s;
+}
+
 .operate {
     flex: 1;
     width: 100%;
@@ -126,18 +154,4 @@ function add(type) {
     font-size: 1rem;
     font-weight: bold;
 }
-
-.addchild {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: .8em 0.4em;
-
-    :deep(.el-button + .el-button) {
-        margin-left: 0;
-    }
-}
-</style>
-<style lang="less">
-
 </style>

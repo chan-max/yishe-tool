@@ -84,10 +84,6 @@ import { ref, computed, onMounted } from "vue";
 import iconPosition from "@/components/design/assets/icon/position.svg?component";
 import { getPositionInfoFromOptions } from "@/components/design/layout/canvas/helper.tsx";
 
-const visible = ref(true);
-
-const disabled = ref(false);
-
 
 const model = defineModel({})
 

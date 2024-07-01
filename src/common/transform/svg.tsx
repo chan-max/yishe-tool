@@ -63,10 +63,10 @@ function parseRadialPos({ at }: TRadialGradientOrientation, bbox: BBox) {
             x,
             y: y || x
         }
-    }else{
+    } else {
         return {
-            x:.5,
-            y:.5
+            x: .5,
+            y: .5
         }
     }
 }
@@ -81,7 +81,7 @@ function createColorStops(colorStops: TColorStop[], jsx = true): any[] {
     });
 }
 
-function parseLinearGradient({ orientation, colorStops }: ILinearGradient, id ,jsx = true) {
+function parseLinearGradient({ orientation, colorStops }: ILinearGradient, id, jsx = true) {
     if (!orientation) return;
     const angle = orientationToAngle(orientation) * (Math.PI / 180) - Math.PI;
     const matrix = {
@@ -102,24 +102,28 @@ function parseLinearGradient({ orientation, colorStops }: ILinearGradient, id ,j
     }
 }
 
-function parseRadialGradient({ orientation, colorStops }: IRadialGradient, id, bbox: BBox = { width: 100, height: 100 } ) {
+function parseRadialGradient({ orientation, colorStops }: IRadialGradient, id, jsx = true, bbox: BBox) {
 
     const pos = orientation ? parseRadialPos(orientation[0], bbox) : { x: 0.5, y: 0.5 };
-    
+
     if (!pos || !pos.x || !pos.y) return;
 
-    return <radialGradient id={id} cx={pos.x} cy={pos.y} r="50%">{createColorStops(colorStops)}</radialGradient>
+    if(jsx){
+        return <radialGradient id={id} cx={pos.x} cy={pos.y} r="50%">{createColorStops(colorStops)}</radialGradient>
+    }else{
+        return `<radialGradient cx="${ pos.x }" cy="${ pos.y }" r="50%">${ createColorStops(colorStops).join('') }</linearGradient>`;
+    }
 }
 
-export default function cssGradient2SVG(cssGradient: string , {id}) {
+export default function cssGradient2SVG(cssGradient: string, { id, jsx }) {
     try {
         const gradient = parse(cssGradient)[0];
 
         if (gradient.type === 'linear-gradient') {
-            return parseLinearGradient(gradient ,id);
+            return parseLinearGradient(gradient, id, jsx);
         }
         if (gradient.type === 'radial-gradient') {
-            return parseRadialGradient(gradient,id);
+            return parseRadialGradient(gradient, id, jsx, { width: 100, height: 100 });
         }
     }
     catch (err) {

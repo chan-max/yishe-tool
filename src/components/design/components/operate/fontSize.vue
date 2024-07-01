@@ -6,11 +6,16 @@
 
             <el-popover trigger="click">
                 <template #reference>
-                    <el-input type="number" v-model="model" size="small" min="0" step=".1"></el-input>
+                    <el-input type="number" v-model="model.value" size="small" min="0" step=".1">
+                        <template #suffix>
+                            <div style="font-size:1rem;"> {{ model.unit }}
+                            </div>
+                        </template>
+                    </el-input>
                 </template>
                 <el-row align="middle" justify="end">
                     <el-col :span="24">
-                        <el-radio-group v-model="unit" size="small">
+                        <el-radio-group v-model="model.unit" size="small">
                             <el-radio v-for="u in unitOptions" :value="u.value">
                                 <span style="font-size: 1rem;">{{ u.label }}</span>
                             </el-radio>
@@ -43,8 +48,9 @@ const unitOptions = ref([{
     value: 'vh',
 }])
 
+
+
 const model = defineModel({})
-const unit = defineModel('unit', {})
 
 </script>
   

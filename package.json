@@ -95,6 +95,8 @@
     "pinia": "^2.0.35",
     "qr-code-styling": "^1.6.0-rc.1",
     "quasar": "^2.14.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "redis": "^4.6.11",
     "rollup-plugin-svg-sprites": "^1.2.5",
     "scss": "^0.2.4",

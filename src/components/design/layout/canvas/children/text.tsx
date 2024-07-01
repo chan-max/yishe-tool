@@ -1,5 +1,5 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
-import { getPositionInfoFromOptions, } from '../helper.tsx'
+import { getPositionInfoFromOptions,getRelativeRealPixelSize } from '../helper.tsx'
 import { defineComponent, onUpdated } from "vue"
 
 export interface TextCanvasChildOptions {
@@ -43,8 +43,11 @@ export const defaultCanvasChildTextOptions = {
     rotateZ: 0,
     skewX: 0,
     skewY: 0,
-    fontSize: 100,
-    fontWeight: 500,
+    fontSize: {
+        value:100,
+        unit:'px'
+    },
+    fontWeight: '500',
     lineHeight: 1,
     letterSpacing: 0,
     textContent: 'hello world',
@@ -87,16 +90,8 @@ export const Text = defineComponent({
             }
 
 
-            let fontUnit = props.options.unit
-            let fontSize = fontUnit == 'px'
-                ? props.options.fontSize + 'px'
-                : fontUnit == 'vw'
-                    ? props.options.fontSize * canvasOptions.value.width / 100 + 'px'
-                    : fontUnit == 'vh'
-                        ? props.options.fontSize * canvasOptions.value.height / 100 + 'px'
-                        : 0
-
-
+            const fontSize = getRelativeRealPixelSize(props.options.fontSize)
+            
             var style: any = {
                 flexShrink: 0,
                 fontSize, // 字体尺寸相对于画布宽度

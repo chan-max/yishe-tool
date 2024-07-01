@@ -40,7 +40,7 @@
       </div>
     </el-tooltip>
 
-    <el-tooltip :hide-after="0" content="制作矢量图贴纸" placement="right">
+    <!-- <el-tooltip :hide-after="0" content="制作矢量图贴纸" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showSvgCanvas }"
         @click="showSvgCanvas = !showSvgCanvas">
         <div class="menu-bar-item-icon">
@@ -48,25 +48,25 @@
         </div>
         <span>复杂贴纸</span>
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
 
-    <el-tooltip :hide-after="0" content="图片贴图" placement="right">
+    <!-- <el-tooltip :hide-after="0" content="图片贴图" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showImageSticker }"
         @click="showImageSticker = !showImageSticker">
         <div class="menu-bar-item-icon"><icon-photo></icon-photo></div>
         <span>图片贴纸</span>
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
 
 
 
-    <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
+    <!-- <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showTextSticker }"
         @click="showTextSticker = !showTextSticker">
         <div class="menu-bar-item-icon"><icon-text></icon-text></div>
         <span>文字贴纸</span>
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
 
     <el-tooltip :hide-after="0" content="服装装饰品" placement="right">
       <div class="menu-bar-item" @click="showDecoration = !showDecoration">
@@ -77,33 +77,33 @@
       </div>
     </el-tooltip>
 
-    <el-tooltip :hide-after="0" content="制作多种印章" placement="right">
+    <!-- <el-tooltip :hide-after="0" content="制作多种印章" placement="right">
       <div class="menu-bar-item" @click="showStamp = !showStamp">
         <div class="menu-bar-item-icon"><icon-badge></icon-badge></div>
         <span>印章</span>
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
 
-    <el-tooltip :hide-after="0" content="几何图形" placement="right">
+    <!-- <el-tooltip :hide-after="0" content="几何图形" placement="right">
       <div class="menu-bar-item">
         <div class="menu-bar-item-icon"><icon-box></icon-box></div>
         <span>图形贴纸</span>
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
 
-    <el-tooltip :hide-after="0" content="定制专属二维码" placement="right">
+    <!-- <el-tooltip :hide-after="0" content="定制专属二维码" placement="right">
       <div class="menu-bar-item" @click="showQrcode = !showQrcode">
         <div class="menu-bar-item-icon"><icon-qrcode></icon-qrcode></div>
         <span>二维码</span>
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
 
-    <el-tooltip :hide-after="0" content="自定义文字" placement="right">
+    <!-- <el-tooltip :hide-after="0" content="自定义文字" placement="right">
       <div class="menu-bar-item" @click="showCustomTextSticker = !showCustomTextSticker">
         <div class="menu-bar-item-icon"><icon-paint></icon-paint></div>
         <span>文字创作</span>
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
 
     <el-tooltip :hide-after="0" content="字体" placement="right">
       <div class="menu-bar-item" @click="showFontList = true">

@@ -5,11 +5,15 @@ import { updateCanvas } from '../index.tsx'
 import { getPositionInfoFromOptions, getRelativeRealPixelSize, getRelativeRealPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
 
+import { parse } from 'gradient-parser'
+
 /*
-    
 */
+
 export const defaultCanvasChildQrcodeOptions = {
     type: 'qrcode',
+    qrCodeColor: '#6900ff',
+    errorCorrectionLevel: 'H',
     position: {
         center: true,
         verticalCenter: true,
@@ -65,6 +69,7 @@ export const defaultCanvasChildQrcodeOptions = {
         value: 100,
         unit: 'px'
     },
+    qrcodeDotType:'sequare',
     backgroundColor: '#000',
     backgroundUnit: 'px',
     qrcodeContent: '1s.design',
@@ -89,25 +94,81 @@ export const defaultCanvasChildQrcodeOptions = {
 }
 
 
+function formatToQrcodeGradient(color) {
+    let ast = parse(color)[0]
+    // gradient: {
+    //     type: 'linear',
+    //     rotation: 0,
+    //     colorStops: [{ offset: 0, color: 'blue' }, { offset: 1, color: 'red' }]
+    // }
+
+    const type = ast.type == 'linear-gradient' ? 'linear' : ast.type == "radial-gradient" ? 'radial' : null
+
+    // 与css表现差异
+    const diffDeg = 90
+
+    const rotation = type == 'linear' ? Math.PI * (ast.orientation.value - 90) / 180 : null
+
+    const colorStops = ast.colorStops.map((item) => {
+        return {
+            offset: item.length.value / 100 ,
+            color:  `rgba(${item.value[0]},${item.value[1]},${item.value[2]},${item.value[3]})`
+        }
+    })
+
+
+
+
+    return {
+        type,
+        rotation,
+        colorStops
+    }
+}
+
+function isGradientColor(val) {
+    return val.includes('gradient')
+}
+
 async function createQrcodeUrl(options) {
-    const qrCode = new QRCodeStyling({
+
+
+    const qrCodeOptions = {
         width: getRelativeRealPixelValue(options.width),
         height: getRelativeRealPixelValue(options.height),
         type: "svg",
         data: options.qrcodeContent,
-        image: "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
+        // image: "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
         dotsOptions: {
-            color: "#4267b2",
-            type: "rounded"
+            type: options.qrcodeDotType,
         },
         backgroundOptions: {
-            color: 'transparent',
+            color: 'transparent', // 背景颜色由img设置
         },
         imageOptions: {
             crossOrigin: "anonymous",
             margin: 20
+        },
+        qrOptions: {
+            typeNumber: 0,
+            errorCorrectionLevel: options.errorCorrectionLevel,
+            mode: 'Byte'
+        },
+
+        mode: 'Byte',
+    }
+    console.log(qrCodeOptions.width,qrCodeOptions.height)
+
+
+    if (options.qrCodeColor) {
+        if (isGradientColor(options.qrCodeColor)) {
+            qrCodeOptions.dotsOptions.gradient = formatToQrcodeGradient(options.qrCodeColor)
+        } else {
+            qrCodeOptions.dotsOptions.color = options.qrCodeColor
         }
-    });
+    }
+
+    const qrCode = new QRCodeStyling(qrCodeOptions as any);
 
     const file = await qrCode.getRawData()
     return URL.createObjectURL(file)
@@ -146,6 +207,8 @@ export const Qrcode = defineComponent({
                 ..._containerStyle
             }
 
+
+
             let width = getRelativeRealPixelSize(props.options.width)
             let height = getRelativeRealPixelSize(props.options.height)
 
@@ -157,7 +220,7 @@ export const Qrcode = defineComponent({
                 height: realHeightValue,
             })
 
-            const borderRadius = getBorderRadiusRealPixel(props.options.borderRadius,{
+            const borderRadius = getBorderRadiusRealPixel(props.options.borderRadius, {
                 width: realWidthValue,
                 height: realHeightValue
             })

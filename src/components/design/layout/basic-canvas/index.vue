@@ -1,25 +1,27 @@
 <template>
-  <div class="basic-canvas">
-    <component :is="component"></component>
+  <div id="basic-canvas" class="basic-canvas">
+    <canvas-teleport></canvas-teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import mainCanvas from '@/components/design/layout/canvas/canvas.vue'
-import { showCanvasLayout } from '@/components/design/store'
-import { showMainCanvas } from '@/components/design/layout/canvas/index.tsx'
+import canvasTeleport from '@/components/design/layout/canvas/teleport.vue'
+import { useLoadingOptions } from "@/components/loading/index.tsx";
 
-const component = computed(() => {
-  if (showCanvasLayout.value && showMainCanvas.value) {
-    return mainCanvas
-  }
-})
+
 
 </script>
 
 <style scoped>
-  .basic-canvas{
-    background: #eee;
-  }
+#basic-canvas {
+  widows: 100%;
+  height: 100%;
+}
+
+.basic-canvas {
+  background: #eee;
+}
+
+
 </style>

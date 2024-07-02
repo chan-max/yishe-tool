@@ -58,6 +58,7 @@ declare module 'vue' {
     Masonry: typeof import('./src/components/layout/masonry/index.vue')['default']
     Menu: typeof import('./src/components/design/layout/headerMenuDropdown/menu.vue')['default']
     MenuItem: typeof import('./src/components/design/layout/headerMenuDropdown/menuItem.vue')['default']
+    Modal: typeof import('./src/components/design/layout/sticker/modal.vue')['default']
     ModelCardViewer: typeof import('./src/components/model/modelCardViewer/index.vue')['default']
     ModelInfo: typeof import('./src/components/design/layout/modelInfo/index.vue')['default']
     OnlinePoint: typeof import('./src/components/design/components/onlinePoint.vue')['default']

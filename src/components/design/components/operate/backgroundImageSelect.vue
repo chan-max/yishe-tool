@@ -18,13 +18,13 @@
     
 <script setup lang='ts'>
 import icon from "@/components/design/assets/icon/background-image.svg?component";
-import { showSticker } from "@/components/design/store";
+import { showSticker,viewDisplayController } from "@/components/design/store";
 import { Close } from '@element-plus/icons-vue'
 
 const model = defineModel({})
 
 function select() {
-    showSticker.value = true
+    viewDisplayController.value.showStickerModal = true
 }
 
 </script> 

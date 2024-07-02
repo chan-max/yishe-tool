@@ -326,7 +326,7 @@ export const showDecoration = ref(false)
  是否展示基础画布
 */
 export const showBasicCanvas = computed(() => {
-    return showMainCanvas.value
+    return (showCanvasLayout.value && showMainCanvas.value)
 })
 
 /*
@@ -360,9 +360,17 @@ export const svgCanvasHeight = ref(100)
 // 是否展示主画布
 export const svgCanvasSyncMainCanvas = ref(false)
 
+
+export const viewDisplayController = ref({
+    showStickerModal:false, // 贴纸模态，主要用于交互操作
+})
+
+
+
 /*
     所有状态统一使用store管理
 */
+
 
 import { canvasOptions, currentOperatingCanvasChildIndex } from '@/components/design/layout/canvas/index.tsx'
 
@@ -387,7 +395,8 @@ export const useDesignStore = defineStore('_1s_design', () => {
         canvasOptions: useLocalStorage('_1s_canvasOptions', canvasOptions),
         stickerQueryTags: useLocalStorage('_1s_stickerQueryTags', stickerQueryTags),
         currentOperatingCanvasChildIndex: useLocalStorage('_1s_currentOperatingCanvasChildIndex', currentOperatingCanvasChildIndex),
-        showMainCanvas: useLocalStorage('_1s_showMainCanvas', showMainCanvas)
+        showMainCanvas: useLocalStorage('_1s_showMainCanvas', showMainCanvas),
+        viewDisplayController: useLocalStorage('_1s_viewDisplayController', viewDisplayController)
     }
 })
 

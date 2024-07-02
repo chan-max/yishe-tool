@@ -11,14 +11,14 @@
       <div id="layout-left-menu" style="height: 100%; border-right: 2px solid #f6f6f6">
         <left-menu v-if="showLeftMenu"></left-menu>
       </div>
-     
+
       <div id="layout-left" style="height: 100%; display: flex">
         <div style="height: 100%">
           <Transition v-bind="leftContainerAnimation">
-          <!-- <keep-alive> -->
-          <component :is="leftComponent"></component>
-          <!-- </keep-alive> -->
-        </Transition>
+            <!-- <keep-alive> -->
+            <component :is="leftComponent"></component>
+            <!-- </keep-alive> -->
+          </Transition>
         </div>
       </div>
 
@@ -71,6 +71,12 @@
     <font-list></font-list>
   </diydialog>
 
+  
+  <diydialog :show="viewDisplayController.showStickerModal" title="贴纸" @close="viewDisplayController.showStickerModal = false"
+    :animation="basicContainerAnimation">
+    <sticker-modal></sticker-modal>
+  </diydialog>
+
   <!-- <diydialog :show="showUpload" title="资源上传" @close="showUpload = false" :animation="basicContainerAnimation">
     <upload></upload>
   </diydialog> -->
@@ -118,6 +124,7 @@ import {
   showCustomModel,
   showSvgCanvas,
   showCanvasLayout,
+  viewDisplayController
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -149,6 +156,7 @@ import stamp from "./stamp/index.vue";
 import svgCanvas from "./svgCanvas/index.vue";
 import canvasLayout from "./canvas/index.vue";
 import basicCanvas from './basic-canvas/index.vue'
+import stickerModal from './sticker/modal.vue'
 
 const radio1 = ref()
 // initWebsocket();
@@ -254,7 +262,7 @@ onMounted(() => {
   z-index: 2;
 }
 
-#layout-left{
+#layout-left {
   box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.1);
 }
 </style>

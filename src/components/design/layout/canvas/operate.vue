@@ -89,7 +89,12 @@
           </el-collapse-item>
         </el-collapse>
       </template>
-      <template v-if="currentOperatingCanvasChild.type == CanvasChildType.IMAGE"> image </template>
+      <template v-if="currentOperatingCanvasChild.type == CanvasChildType.IMAGE">
+        <el-col :span="24">
+          <operateItemBackgroundImageSelect v-model="currentOperatingCanvasChild.backgroundImage">
+          </operateItemBackgroundImageSelect>
+        </el-col>
+      </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.BACKGROUHND">
         <el-row :gutter="24" align="middle">
           <el-col :span="24">
@@ -107,10 +112,6 @@
           <el-col :span="12">
             <operateItemZindex v-model="currentOperatingCanvasChild.zIndex">
             </operateItemZindex>
-          </el-col>
-          <el-col :span="24">
-            <operateItemBackgroundImageSelect v-model="currentOperatingCanvasChild.backgroundImage">
-            </operateItemBackgroundImageSelect>
           </el-col>
         </el-row>
       </template>
@@ -207,12 +208,12 @@
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.ELLIIPSE">
         <el-row :gutter="24" align="middle">
           <el-col :span="24">
-            <operateItemSize tooltip="只需设置整体的宽高，半径自动有宽高和边框算出" label="圆形尺寸" v-model:width="currentOperatingCanvasChild.width"
-              v-model:height="currentOperatingCanvasChild.height">
+            <operateItemSize tooltip="只需设置整体的宽高，半径自动有宽高和边框算出" label="圆形尺寸"
+              v-model:width="currentOperatingCanvasChild.width" v-model:height="currentOperatingCanvasChild.height">
             </operateItemSize>
           </el-col>
           <el-col :span="24">
-            <operateItemPosition  v-model="currentOperatingCanvasChild.position"></operateItemPosition>
+            <operateItemPosition v-model="currentOperatingCanvasChild.position"></operateItemPosition>
           </el-col>
           <el-col :span="24">
             <operateItemColor label="背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">

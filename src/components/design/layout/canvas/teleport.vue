@@ -1,5 +1,5 @@
 <template>
-    <div id="basic-canvas-canvas-container" v-if="showMainCanvas" v-loading="loading" v-bind="loadingOptions">
+    <div id="basic-canvas-canvas-container" v-if="showMainCanvas && showCanvasLayout" v-loading="loading" v-bind="loadingOptions">
         <canvass></canvass>
         <div class="top-menu">
             <div style="flex:1;"></div>
@@ -22,6 +22,7 @@ import { computed } from 'vue'
 import { CanvasController, showMainCanvas,canvasOptions } from '@/components/design/layout/canvas/index.tsx'
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled,FullScreen } from '@element-plus/icons-vue'
+import { showCanvasLayout } from '@/components/design/store.ts';
 
 let canvasController = new CanvasController({
     max: 320
@@ -32,6 +33,7 @@ const loading = computed(() => {
 });
 
 let canvass = canvasController.getRender();
+
 
 
 const loadingOptions = useLoadingOptions({

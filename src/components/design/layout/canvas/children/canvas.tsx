@@ -7,15 +7,7 @@ import { canvasOptions, calcCanvasDisplayTransformScale,calcCanvasDisplayTransfo
 */
 function createPngBackgroundStyle(scale = 1) {
     /* 模拟png背景 */
-    // .png-background {
-    //     background: #fff!important;
-    //     background-image: linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0), linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0)!important;
-    //     background-position: 0 0, 10px 10px!important;
-    //     background-size: 20px 20px!important;
-    //   }
-
     var size = 10 / scale
-
     return {
         background: '#fff!important',
         backgroundImage: `linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0), linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0)!important`,

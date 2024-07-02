@@ -374,7 +374,7 @@ export const viewDisplayController = ref({
 
 import { canvasOptions, currentOperatingCanvasChildIndex } from '@/components/design/layout/canvas/index.tsx'
 
-import { stickerQueryTags, stickerQueryParams } from "@/components/design/layout/sticker/index.ts";
+import { stickerQueryTags, stickerQueryParams } from "@/components/design/layout/sticker/index.tsx";
 import { showMainCanvas } from "@/components/design/layout/canvas/index.tsx";
 
 export const useDesignStore = defineStore('_1s_design', () => {

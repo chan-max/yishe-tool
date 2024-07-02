@@ -91,8 +91,8 @@
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.IMAGE">
         <el-col :span="24">
-          <operateItemBackgroundImageSelect v-model="currentOperatingCanvasChild.backgroundImage">
-          </operateItemBackgroundImageSelect>
+          <operateItemImageSelect v-model="currentOperatingCanvasChild.image">
+          </operateItemImageSelect>
         </el-col>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.BACKGROUHND">
@@ -256,7 +256,7 @@ import operateItemRotate from "@/components/design/components/operate/rotate.vue
 import operateItemSkew from "@/components/design/components/operate/skew.vue";
 import operateItemZindex from "@/components/design/components/operate/zIndex.vue";
 import operateItemBackgroundColor from "@/components/design/components/operate/backgroundColor.vue";
-import operateItemBackgroundImageSelect from "@/components/design/components/operate/backgroundImageSelect.vue";
+import operateItemImageSelect from "@/components/design/components/operate/imageSelect.vue";
 import operateItemSwitch from "@/components/design/components/operate/basicSwitch.vue";
 import operateItemPadding from "@/components/design/components/operate/padding.vue";
 import operateItemBorderRadius from "@/components/design/components/operate/borderRadius.vue";

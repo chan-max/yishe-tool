@@ -1,5 +1,5 @@
 <template>
-  <div class="designiy-sticker">
+  <div class="container">
     <div class="menu">
       <div class="search">
         <el-input v-model="input" placeholder="寻找贴纸">
@@ -31,31 +31,6 @@
       </div>
     </RecycleScroller>
     <loadingBottom v-if="loading"></loadingBottom>
-
-    <!-- <scrollbar id="sticker-list">
-      <div class="list" v-infinite-scroll="getList" :infinite-scroll-distance="150">
-        <el-row :gutter="8" style="row-gap: 1em">
-          <el-col :span="24 / column" v-for="item in  list" align="center">
-            <div class="item">
-              <desimage padding="10%" :src="item.thumbnail" class="image" @load="imgLoad($event, item)"></desimage>
-              <el-popover placement="auto" width="auto" trigger="click">
-                <template #reference>
-                  <div class="bar">
-                    <div class="title text-ellipsis">{{ item.name || "......" }}</div>
-                    <badge :type="item.type"></badge>
-                    <el-icon>
-                      <ArrowRightBold />
-                    </el-icon>
-                  </div>
-                </template>
-                <sticker-popover :stickerInfo="item"></sticker-popover>
-              </el-popover>
-            </div>
-          </el-col>
-        </el-row>
-        <loadingBottom v-if="loading"></loadingBottom>
-      </div>
-    </scrollbar> -->
   </div>
 </template>
 <script setup lang="tsx">
@@ -75,7 +50,7 @@ import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/i
 import tags from "./tags.vue";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import scrollbar from "@/components/scrollbar/index.vue";
-import { stickerQueryParams } from "./index";
+import { stickerQueryParams } from "./index.tsx";
 import { loadingBottom } from "@/components/loading/index.tsx";
 
 // 列表展示几列
@@ -151,7 +126,7 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
 <style lang="less" scoped>
 @item-width: 40px;
 
-.designiy-sticker {
+.container {
   width: 280px;
   height: 100%;
   display: flex;

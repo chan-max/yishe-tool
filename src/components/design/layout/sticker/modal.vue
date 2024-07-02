@@ -1,18 +1,99 @@
 <template>
     <div class="model">
-        贴纸弹层
+        <scrollbar>
+            <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
+                <el-row style="row-gap: 1em">
+                    <el-col :span="24 / column" v-for="item in  list" align="center">
+                        <el-popover trigger="click" width="180">
+                            <template #reference>
+                                <div>
+                                    <desimage class="img" padding="5%" :src="item.thumbnail">
+                                    </desimage>
+                                </div>
+                            </template>
+                            <el-row>
+                                <el-col :span="24">
+                                    <el-button @click="useAsCanvasImage(item)" link> 使用该图片作为当前背景元素 </el-button>
+                                </el-col>
+                            </el-row>
+                        </el-popover>
+                    </el-col>
+                </el-row>
+                <loadingBottom v-if="loading"></loadingBottom>
+            </div>
+        </scrollbar>
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
+import { ref, onBeforeMount } from "vue";
+import { Search, ArrowRightBold, Operation, ArrowRight } from "@element-plus/icons-vue";
+import { getStickerListApi } from "@/api";
+import { usePaging } from "@/hooks/data/paging.ts";
+import desimage from "@/components/design/components/image.vue";
+import stickerPopover from "./stickerPopover.vue";
+import {
+    currentController,
+    showImageUplaod,
+    showDecalControl,
+    viewDisplayController,
+} from "@/components/design/store";
+import { initDraggableElement } from "@/components/design/utils/draggable";
+import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
+import tags from "./tags.vue";
+import { useLoadingOptions } from "@/components/loading/index.tsx";
+import scrollbar from "@/components/scrollbar/index.vue";
+import { stickerQueryParams, stickerLabelMap, StickerType } from "./index.tsx";
+import { loadingBottom } from "@/components/loading/index.tsx";
+import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
+
+// 列表展示几列
+const column = ref(6);
+
+const loadingOptions = useLoadingOptions({});
+
+
 /*
-        贴纸弹窗
-    */
+    作为当前
+*/
+function useAsCanvasImage(item) {
+
+    if (item.type != 'image') {
+        throw '图片类型才能作为画布图片元素'
+    }
+    if (currentOperatingCanvasChild.value.type != 'image') {
+        throw '当前操作的不是图片元素'
+    }
+    currentOperatingCanvasChild.value.image = item
+    viewDisplayController.value.showStickerModal = false
+}
+
+const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePaging(
+    (params) => {
+        return getStickerListApi({
+            ...params,
+            pageSize: 20,
+            ...stickerQueryParams.value,
+        });
+    },
+    {
+        forEach(item) {
+            item.thumbnail = "https://" + item.thumbnail;
+            item.url = "https://" + item.url;
+        },
+    }
+);
+
 </script>
 
 <style scoped lang="less">
-.model{
-    width: 800px;
-    height: 400px;
+.model {
+    width: 880px;
+    height: 500px;
+}
+
+.img {
+    width: 100px;
+    height: 100px;
 }
 </style>

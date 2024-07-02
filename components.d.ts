@@ -44,6 +44,7 @@ declare module 'vue' {
     HeaderMenu: typeof import('./src/components/design/layout/headerMenu.vue')['default']
     HeaderMenuDropdown: typeof import('./src/components/design/layout/headerMenuDropdown/index.vue')['default']
     Image: typeof import('./src/components/design/components/image.vue')['default']
+    ImageSelect: typeof import('./src/components/design/components/operate/imageSelect.vue')['default']
     ImageSticker: typeof import('./src/components/design/layout/imageSticker/index.vue')['default']
     ImageUpload: typeof import('./src/components/design/layout/imageUpload/index.vue')['default']
     Input: typeof import('./src/components/design/components/operate/input.vue')['default']

@@ -14,7 +14,10 @@ import {
     createCanvasChildEllipse,
     defaultCanvasChildSvgEllipseOptions
 } from './children/svg/svg.tsx'
-
+import {
+    createCanvasChildImage,
+    defaultCanvasChildImageOptions
+} from './children/image.tsx'
 
 import { Canvas } from './children/canvas.tsx'
 
@@ -25,12 +28,6 @@ export const canvasOptions = ref({
         type: 'canvas'
     }],
 })
-
-// 保留两位小数
-function toFixed3(val): any {
-    return parseFloat(val).toFixed(3);
-}
-
 
 
 
@@ -61,7 +58,7 @@ export const canvasChildDefaultOptionsMap = {
     [CanvasChildType.CANVAS]: null,
     [CanvasChildType.TEXT]: defaultCanvasChildTextOptions,
     [CanvasChildType.BACKGROUHND]: defaultCanvasChildBackgroundOptions,
-    [CanvasChildType.IMAGE]: null,
+    [CanvasChildType.IMAGE]: defaultCanvasChildImageOptions,
     [CanvasChildType.QRCODE]: defaultCanvasChildQrcodeOptions,
     [CanvasChildType.RECT]: defaultCanvasChildSvgRectOptions,
     [CanvasChildType.ELLIIPSE]: defaultCanvasChildSvgEllipseOptions,
@@ -71,7 +68,7 @@ export const canvasChildRenderMap = {
     [CanvasChildType.CANVAS]: null,
     [CanvasChildType.TEXT]: createCanvasChildText,
     [CanvasChildType.BACKGROUHND]: createCanvasChildBackground,
-    [CanvasChildType.IMAGE]: '图片',
+    [CanvasChildType.IMAGE]: createCanvasChildImage,
     [CanvasChildType.QRCODE]: createCanvasChildQrcode,
     [CanvasChildType.RECT]: createCanvasChildRect,
     [CanvasChildType.ELLIIPSE]: createCanvasChildEllipse,
@@ -131,7 +128,7 @@ export function addCanvasChild(options) {
         id: canvas_child_id++,
     }
 
-    
+
 
     canvasOptions.value.children.push(options)
 
@@ -181,6 +178,9 @@ export function updateCanvas() {
 
 
 function createCanvasChild(options) {
+    if (!canvasChildRenderMap[options.type]) {
+        return
+    }
     return canvasChildRenderMap[options.type]?.call(null, options)
 }
 
@@ -274,20 +274,30 @@ export class CanvasController {
         if (!this.el) {
             return
         }
-        let base64 = await toPng(this.el) // 会有页面卡顿的问题
-        let img = document.createElement('img')
-        img.width = canvasOptions.value.width
-        img.height = canvasOptions.value.height
-        document.body.appendChild(img)
-        img.src = base64
-        await waitImage(img)
-        this.clearCanvas()
-        this.drawImage(img)
-        await nextTick()
-        document.body.removeChild(img)
-        this.syncCloneCanvas()
-        this.initDraggable(base64)
-        this.loading.value = false
+
+        async function update() {
+            let base64 = await toPng(this.el) // 会有页面卡顿的问题
+            let img = document.createElement('img')
+            img.width = canvasOptions.value.width
+            img.height = canvasOptions.value.height
+            document.body.appendChild(img)
+            img.src = base64
+            await waitImage(img)
+            this.clearCanvas()
+            this.drawImage(img)
+            await nextTick()
+            document.body.removeChild(img)
+            this.syncCloneCanvas()
+            this.initDraggable(base64)
+            this.loading.value = false
+        }
+
+        try {
+            await update.call(this)
+        } catch (e) {
+            console.error('画布渲染：存在丢失的元素')
+            this.loading.value = false
+        }
     }
 
 

@@ -1,5 +1,14 @@
 import { ref, computed } from 'vue'
 
+
+export enum StickerType {
+    IMAGE = 'image'
+}
+
+export const stickerLabelMap = {
+    [StickerType.IMAGE] :'图片'
+}
+
 export const stickerQueryTags = ref([
     {
         label: "最近更新",

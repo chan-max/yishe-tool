@@ -4,7 +4,7 @@
       class="img"
       v-bind="$attrs"
       :fit="fit || 'contain'"
-      lazy
+      :lazy="lazy"
       @load="load($event, info)"
       style="width: 100%; height: 100%"
       :style="{ padding }"
@@ -36,6 +36,9 @@ const props = defineProps({
   },
   fit:{
     default:'contain'
+  },
+  lazy:{
+    default:true
   },
   hideloading:{
     default:false

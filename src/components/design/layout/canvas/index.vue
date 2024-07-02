@@ -4,13 +4,12 @@
             <canvass></canvass>
             <div class="canvas-container-bottom-menu">
                 <div style="flex:1"></div>
-                <el-button  @click="showMainCanvas = true" :icon="FullScreen" type="info" text bg round size="small">
-                    <span >大画布显示</span>
+                <el-button @click="showMainCanvas = true" :icon="FullScreen" type="info" text bg round size="small">
+                    <span>大画布显示</span>
                 </el-button>
             </div>
         </div>
-        <div style="width:100%;padding:2em 1em;">
-            <div class="flex">
+        <div class="flex" style="width:100%;padding:1em;">
                 <addPopover>
                     <el-button type="primary" link>
                         <span>添加元素</span>
@@ -26,9 +25,12 @@
                     <LinkOutlined style="font-size:1.2em;margin-right:4px;" />
                     导出 PNG
                 </el-button>
+                <el-button link plain>
+                    更多...
+                </el-button>
             </div>
-            <div style="display:flex;margin-top: 1em;column-gap:10px">
-
+        <div style="width:100%;padding:0 1em;">
+            <div style="display:flex;column-gap:10px">
                 <el-select v-model="currentOperatingCanvasChildIndex">
                     <template #label="{ label }">
                         <div style="font-size:1rem;"> {{ canvasChildLabelMap[currentOperatingCanvasChild.type] }} </div>
@@ -47,7 +49,17 @@
                     </el-option>
                 </el-select>
             </div>
+
         </div>
+        <div class="flex" style="width:100%;padding:1em;">
+            <div style="flex:1;"></div>
+
+            <el-button link plain type="danger">
+                最近删除
+            </el-button>
+        </div>
+
+
         <div class="operate">
             <operate></operate>
         </div>
@@ -70,7 +82,7 @@ import {
 import operate from './operate.vue';
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 
-import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled,FullScreen } from '@element-plus/icons-vue'
+import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled, FullScreen } from '@element-plus/icons-vue'
 import { StarOutlined, StarFilled, StarTwoTone, CloudUploadOutlined, LinkOutlined, PlusCircleOutlined } from '@ant-design/icons-vue';
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import addPopover from './addPopover.vue'
@@ -121,11 +133,12 @@ function remove(index) {
     justify-content: center;
     margin: 10px;
     position: relative;
-    overflow:hidden;
-    &:hover{
+    overflow: hidden;
+
+    &:hover {
 
         .canvas-container-bottom-menu {
-            bottom:0px ;
+            bottom: 0px;
         }
     }
 }
@@ -135,7 +148,7 @@ function remove(index) {
     height: 48px;
     position: fixed;
     padding: 0 1rem;
-    background: linear-gradient(0deg, rgba(0,0,0,.3) 0%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(0deg, rgba(0, 0, 0, .3) 0%, rgba(255, 255, 255, 0) 100%);
     position: absolute;
     bottom: -48px;
     display: flex;

@@ -5,6 +5,7 @@
         </template>
         <template #name> {{ label }} </template>
         <template #content>
+            <el-tooltip placee :content="tooltip" :disabled="!tooltip" placement="top">
             <div class="flex justify-between">
                 <el-popover trigger="hover" width="200">
                     <template #reference>
@@ -35,7 +36,7 @@
                         <el-input style="width: 88px" size="small" v-model="width.value" step="10" type="number"
                             placeholder="宽">
                             <template #suffix>
-                                <div style="font-size:1rem;">{{ getUnitLabel(width.unit) }}</div>
+                                <div style="font-size:1rem;">{{ width.unit}}</div>
                             </template>
                         </el-input>
                     </template>
@@ -56,7 +57,7 @@
                     <template #reference>
                         <el-input style="width: 88px" size="small" v-model="height.value" step="10" type="number" placeholder="高">
                             <template #suffix>
-                                <div style="font-size:1rem;">{{ getUnitLabel(height.unit) }}</div>
+                                <div style="font-size:1rem;">{{ height.unit }}</div>
                             </template>
                         </el-input>
                     </template>
@@ -70,9 +71,8 @@
                         </el-col>
                     </el-row>
                 </el-popover>
-
-       
             </div>
+        </el-tooltip>
         </template>
     </operate-form-item>
 </template>
@@ -88,6 +88,9 @@ const props = defineProps({
     },
     unit: {
         default: 'px'
+    },
+    tooltip:{
+
     },
     mode: {
         default: "number",  // number | % | all  数字模式和百分比模式
@@ -125,9 +128,6 @@ const unitOptions = computed(() => {
     })
 })
 
-const getUnitLabel = (unit) => {
-    return unit == 'px' ? 'px' : unit == 'vw' ? 'vw' : unit == 'vh' ? 'vh' :  null
-}
 
 const width = defineModel("width", {});
 const height = defineModel("height", {});

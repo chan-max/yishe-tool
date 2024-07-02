@@ -44,8 +44,10 @@ export const defaultCanvasChildBackgroundOptions = {
         value:100,
         unit:'px'
     },
-    backgroundColor: '#000',
-    mode: 'number'
+    backgroundColor: {
+        color:'#000',
+        colorType:'pure'
+    },
 }
 
 export const Background = defineComponent({
@@ -80,7 +82,7 @@ export const Background = defineComponent({
             const style = {
                 width: getRelativeRealPixelSize(props.options.width),
                 height: getRelativeRealPixelSize(props.options.height),
-                background: props.options.backgroundColor,
+                background: props.options.backgroundColor.color,
                 flexShrink:0,
                 ..._style
             }
@@ -97,6 +99,6 @@ export const Background = defineComponent({
     }
 })
 
-export function createCanvasChildBackground(options, controller) {
+export function createCanvasChildBackground(options) {
     return <Background options={options}></Background>
 }

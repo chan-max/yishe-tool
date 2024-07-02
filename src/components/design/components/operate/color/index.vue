@@ -3,7 +3,7 @@
         <template #icon> <icon></icon> </template>
         <template #name> {{ label }} </template>
         <template #content>
-            <color-picker v-model:pureColor="model" v-model:gradientColor="model"></color-picker>
+            <color-picker v-model="model"></color-picker>
         </template>
     </operate-form-item>
 </template>

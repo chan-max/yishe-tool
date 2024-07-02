@@ -8,7 +8,12 @@ import { initDraggableElement } from "@/components/design/utils/draggable";
 import { createCanvasChildText, defaultCanvasChildTextOptions } from './children/text.tsx'
 import { createCanvasChildBackground, defaultCanvasChildBackgroundOptions } from './children/background.tsx'
 import { defaultCanvasChildQrcodeOptions, createCanvasChildQrcode, } from './children/qrcode.tsx'
-import {defaultCanvasChildSvgRectOptions,createCanvasChildRect} from './children/svg/svg.tsx'
+import {
+    defaultCanvasChildSvgRectOptions,
+    createCanvasChildRect,
+    createCanvasChildEllipse,
+    defaultCanvasChildSvgEllipseOptions
+} from './children/svg/svg.tsx'
 
 
 import { Canvas } from './children/canvas.tsx'
@@ -26,13 +31,6 @@ function toFixed3(val): any {
     return parseFloat(val).toFixed(3);
 }
 
-watch(() => canvasOptions.value.width, () => {
-
-})
-
-watch(() => canvasOptions.value.height, () => {
-
-})
 
 
 
@@ -44,17 +42,39 @@ export enum CanvasChildType {
     BACKGROUHND = 'background',
     IMAGE = 'image',
     QRCODE = 'qrcode',
-    RECT_BORDER = 'rect'
+    RECT = 'rect',
+    ELLIIPSE = 'ellipse',
 }
 
 
 export const canvasChildLabelMap = {
-    [CanvasChildType.CANVAS] :'画布',
-    [CanvasChildType.TEXT] :'文字',
-    [CanvasChildType.BACKGROUHND] :'背景',
-    [CanvasChildType.IMAGE] :'图片',
-    [CanvasChildType.QRCODE] :'二维码',
-    [CanvasChildType.RECT_BORDER] :'矩形',
+    [CanvasChildType.CANVAS]: '画布',
+    [CanvasChildType.TEXT]: '文字',
+    [CanvasChildType.BACKGROUHND]: '背景',
+    [CanvasChildType.IMAGE]: '图片',
+    [CanvasChildType.QRCODE]: '二维码',
+    [CanvasChildType.RECT]: '矩形',
+    [CanvasChildType.ELLIIPSE]: '圆和椭圆',
+}
+
+export const canvasChildDefaultOptionsMap = {
+    [CanvasChildType.CANVAS]: null,
+    [CanvasChildType.TEXT]: defaultCanvasChildTextOptions,
+    [CanvasChildType.BACKGROUHND]: defaultCanvasChildBackgroundOptions,
+    [CanvasChildType.IMAGE]: null,
+    [CanvasChildType.QRCODE]: defaultCanvasChildQrcodeOptions,
+    [CanvasChildType.RECT]: defaultCanvasChildSvgRectOptions,
+    [CanvasChildType.ELLIIPSE]: defaultCanvasChildSvgEllipseOptions,
+}
+
+export const canvasChildRenderMap = {
+    [CanvasChildType.CANVAS]: null,
+    [CanvasChildType.TEXT]: createCanvasChildText,
+    [CanvasChildType.BACKGROUHND]: createCanvasChildBackground,
+    [CanvasChildType.IMAGE]: '图片',
+    [CanvasChildType.QRCODE]: createCanvasChildQrcode,
+    [CanvasChildType.RECT]: createCanvasChildRect,
+    [CanvasChildType.ELLIIPSE]: createCanvasChildEllipse,
 }
 
 
@@ -105,25 +125,18 @@ var canvas_child_id = 0
 export function addCanvasChild(options) {
     let index = canvasOptions.value.children.length
 
-    let defaultOptions =
-        options.type == 'text'
-            ? defaultCanvasChildTextOptions
-            : options.type == 'background'
-                ? defaultCanvasChildBackgroundOptions
-                : options.type == 'qrcode'
-                    ?defaultCanvasChildQrcodeOptions
-                    : options.type == 'rect'
-                    ? defaultCanvasChildSvgRectOptions : null
     options = {
-        ...defaultOptions,
+        ...canvasChildDefaultOptionsMap[options.type],
         ...options,
-        index: canvasOptions.value.children.length,
         id: canvas_child_id++,
     }
 
+    
+
     canvasOptions.value.children.push(options)
-    // 返回最新的索引
-    return index
+
+    currentOperatingCanvasChildIndex.value = index
+
 }
 
 // 当前正在操作的元素
@@ -167,22 +180,8 @@ export function updateCanvas() {
 }
 
 
-function createCanvasChild(options, controller) {
-    if (options.type == CanvasChildType.TEXT) {
-        return createCanvasChildText(options, controller)
-    }
-
-    if (options.type == CanvasChildType.BACKGROUHND) {
-        return createCanvasChildBackground(options, controller)
-    }
-
-    if (options.type == CanvasChildType.QRCODE) {
-        return createCanvasChildQrcode(options, controller)
-    }
-
-    if (options.type == CanvasChildType.RECT_BORDER) {
-        return createCanvasChildRect(options)
-    }
+function createCanvasChild(options) {
+    return canvasChildRenderMap[options.type]?.call(null, options)
 }
 
 export class CanvasController {
@@ -206,13 +205,18 @@ export class CanvasController {
         downloadByFile(await this.exportPng())
     }
 
+
+    canvasId = 'canvas-display-el'
+
+    rawId = 'canvas-raw-el'
+
     get el() {
-        return document.querySelector('#canvas-raw-el') as any
+        return document.querySelector('#' + this.rawId) as any
     }
 
 
     get canvasEl() {
-        return document.querySelector('#canvas-display-el') as any
+        return document.querySelector('#' + this.canvasId) as any
     }
 
 
@@ -348,7 +352,7 @@ export class CanvasController {
         function render() {
 
             const children = canvasOptions.value.children.map((childOptions) => {
-                return createCanvasChild(childOptions, this)
+                return createCanvasChild(childOptions)
             })
 
             this.updateCanvas()

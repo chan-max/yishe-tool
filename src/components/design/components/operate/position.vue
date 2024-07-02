@@ -3,7 +3,7 @@
     <template #icon> <icon-position></icon-position> </template>
     <template #name> 显示位置 </template>
     <template #content>
-      <el-popover width="160" trigger="click">
+      <el-popover width="180" trigger="click">
         <template #reference>
           <el-button size="small" link>{{ positionLabel }}</el-button>
         </template>
@@ -46,13 +46,19 @@
                     <template #reference>
                       <div class="content">
                         <el-input
-                            style="width:60px"
+                          style="width:80px"
                           size="small"
                           type="number"
                           min="0"
                           step="1"
                           v-model.number="model[item.type].value"
-                        ></el-input>
+                        >
+                          <template #suffix>
+                              <span style="font-size: 1rem;">
+                                {{ model[item.type].unit }}
+                              </span>
+                          </template>
+                        </el-input>
                       </div>
                     </template>
                     <el-row align="middle" justify="end">
@@ -65,7 +71,6 @@
                             <span style="font-size: 1rem">{{ u.label }}</span>
                           </el-radio>
                         </el-radio-group>
-    
                       </el-col>
                     </el-row>
                   </el-popover>

@@ -161,10 +161,9 @@ function createForeignObject(options) {
     </foreignObject>
 }
 
-function isGradientColor(val) {
-    return val.includes('gradient')
+function isGradientColor(color) {
+    return typeof color == 'string' ? color.includes('gradient') : color.colorType == 'gradient'
 }
-
 
 
 const basicTextOptions = {

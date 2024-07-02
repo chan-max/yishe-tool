@@ -1,6 +1,6 @@
 
 
-import { ref, watchEffect } from 'vue'
+import { VNode, ref, watchEffect } from 'vue'
 import { updateCanvas } from '../../index.tsx'
 
 import { getPositionInfoFromOptions, getRelativeRealPixelSize, getRelativeRealPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../../helper.tsx'
@@ -17,8 +17,8 @@ import { id } from 'element-plus/es/locale/index';
 */
 
 
-function isGradientColor(val) {
-    return val &&  val.includes('gradient')
+function isGradientColor(color) {
+    return typeof color == 'string' ? color.includes('gradient') : color.colorType == 'gradient'
 }
 
 
@@ -129,53 +129,173 @@ export function createCanvasChildSvg(options) {
 }
 
 export const defaultCanvasChildSvgRectOptions = {
+    backgroundColor: {
+        color: '#fff',
+        colorType: 'pure'
+    },
+    borderColor: {
+        color: '#fff',
+        colorType: 'pure'
+    },
+    borderWidth: {
+        value: 0,
+        unit: 'px'
+    },
+    borderRadius:{
+        horizontal:{
+            value:0,
+            unit:'px'
+        },
+        vertical:{
+            value:0,
+            unit:'px'
+        }
+    },
     ...defaultCanvasChildSvgOptions
 }
 
 var uid = 0
 
+type SvgGradientNode = {
+    id: string,
+    node: VNode
+}
 
+const svgGradientCache: Record<string, SvgGradientNode> = {
+
+}
+
+function createSvgGradientCache(colorOption) {
+    let id = uid++
+    let cache = {
+        id: `url(#${id})`,
+        node: cssGradient2SVG(colorOption.color, { id: id++, jsx: true })
+    }
+    svgGradientCache[colorOption.color] = cache
+    return cache
+}
+
+function getSvgGradientColorFromColorOption(colorOption) {
+    if (colorOption.colorType == 'pure') {
+        return colorOption.color
+    }
+    if (!svgGradientCache[colorOption.color]) {
+        createSvgGradientCache(colorOption)
+    }
+    return svgGradientCache[colorOption.color].id
+}
+
+function getSvgGradientRenderFromColorOption(colorOption) {
+    if (colorOption.colorType == 'pure') {
+        return
+    }
+    if (!svgGradientCache[colorOption.color]) {
+        createSvgGradientCache(colorOption)
+    }
+    return svgGradientCache[colorOption.color].node
+}
 
 export function createCanvasChildRect(options) {
 
+   
     let width = getRelativeRealPixelValue(options.width)
     let height = getRelativeRealPixelValue(options.height)
 
+    let borderWidth = getRelativeRealPixelValue(options.borderWidth)
 
-    let isGradientBackground = isGradientColor(options.backgroundColor)
-    let isGradientBorder = isGradientColor(options.borderColor)
-    var backgroundColor = '', borderColor, gradientBackgroundVnode = null, gradientBorderVnode = null
+    const x = borderWidth / 2
+    const y = borderWidth / 2
 
-    if (options.backgroundColor) {
-        if (isGradientBackground) {
-            let id = uid++
-            backgroundColor = `url(#${id})`
+    options.borderRadius
 
-            gradientBackgroundVnode = cssGradient2SVG(options.backgroundColor, { id: id++ })
-
-        } else {
-            backgroundColor = options.backgroundColor
-        }
+    const elementSize = {
+        width,
+        height
     }
 
-    if (options.borderColor) {
-        if (isGradientBorder) {
-            let id = uid++
-            borderColor = `url(#${id})`
-            gradientBorderVnode = cssGradient2SVG(options.backgroundColor, { id: id++ })
-        } else {
-            borderColor = options.borderColor
-        }
-    }
-
-
-
+    const rx = getRelativeRealPixelValue(options.borderRadius.horizontal,elementSize)
+    const ry = getRelativeRealPixelValue(options.borderRadius.vertical,elementSize)
+    const rectWidth = width - borderWidth
+    const rectHeight = height - borderWidth
     return <Svg options={options}>
-        {gradientBackgroundVnode ? gradientBackgroundVnode : null}
-        {gradientBorderVnode ? gradientBorderVnode : null}
-        <rect width={width} height={height} x="0" y="0" fill={backgroundColor} stroke={borderColor} stroke-width={50}/>
+        {getSvgGradientRenderFromColorOption(options.backgroundColor)}
+        {getSvgGradientRenderFromColorOption(options.borderColor)}
+        <rect width={rectWidth} height={rectHeight} rx={rx} ry={ry}  x={x} y={y} fill={getSvgGradientColorFromColorOption(options.backgroundColor)} stroke={getSvgGradientColorFromColorOption(options.borderColor)} stroke-width={borderWidth} />
     </Svg>
 }
+
+
+
+/*
+    ellipse
+*/
+
+export const defaultCanvasChildSvgEllipseOptions = {
+    backgroundColor: {
+        color: '#fff',
+        colorType: 'pure'
+    },
+    borderColor: {
+        color: '#fff',
+        colorType: 'pure'
+    },
+    borderWidth: {
+        value: 0,
+        unit: 'px'
+    },
+    width: {
+        value: 100,
+        unit: 'px'
+    },
+    height: {
+        value: 100,
+        unit: 'px'
+    },
+    ...defaultCanvasChildSvgOptions
+}
+
+export function createCanvasChildEllipse(options) {
+
+    /*
+    <ellipse
+    cx="x-coordinate"      <!-- 椭圆中心点的 x 坐标 -->
+    cy="y-coordinate"      <!-- 椭圆中心点的 y 坐标 -->
+    rx="x-radius"          <!-- 椭圆水平的半径 -->
+    ry="y-radius"          <!-- 椭圆垂直的半径 -->
+    fill="fill-color"      <!-- 椭圆的填充颜色 -->
+    stroke="stroke-color"  <!-- 椭圆的描边颜色 -->
+    stroke-width="width"   <!-- 椭圆的描边宽度 -->
+    />
+*/
+
+    let width = getRelativeRealPixelValue(options.width)
+    let height = getRelativeRealPixelValue(options.height)
+    let borderWidth = getRelativeRealPixelValue(options.borderWidth)
+
+    const x = (width) / 2
+    const y = (height) / 2
+
+
+
+    const xRadius = (width - borderWidth) / 2
+    const yRadius = (height - borderWidth) / 2
+
+    return <Svg options={options}>
+        {getSvgGradientRenderFromColorOption(options.backgroundColor)}
+        {getSvgGradientRenderFromColorOption(options.borderColor)}
+        <ellipse cx={x} cy={y} rx={xRadius} ry={yRadius} fill={getSvgGradientColorFromColorOption(options.backgroundColor)} stroke={getSvgGradientColorFromColorOption(options.borderColor)} stroke-width={borderWidth}></ellipse>
+    </Svg>
+}
+
+
+/*
+    start
+*/
+
+
+
+
+
 
 
 

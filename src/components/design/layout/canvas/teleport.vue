@@ -1,11 +1,13 @@
 <template>
     <div id="basic-canvas-canvas-container" v-if="showMainCanvas" v-loading="loading" v-bind="loadingOptions">
         <canvass></canvass>
-
         <div class="top-menu">
             <div style="flex:1;"></div>
+            <el-button link>
+                宽  {{ canvasOptions.width }} x  高 {{ canvasOptions.height }}
+            </el-button>
             <el-button type="danger" link @click="showMainCanvas = false">
-                <el-icon size="24">
+                <el-icon size="18">
                     <CircleCloseFilled></CircleCloseFilled>
                 </el-icon>
             </el-button>
@@ -17,7 +19,7 @@
   
 <script setup lang="ts">
 import { computed } from 'vue'
-import { CanvasController, showMainCanvas } from '@/components/design/layout/canvas/index.tsx'
+import { CanvasController, showMainCanvas,canvasOptions } from '@/components/design/layout/canvas/index.tsx'
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled,FullScreen } from '@element-plus/icons-vue'
 

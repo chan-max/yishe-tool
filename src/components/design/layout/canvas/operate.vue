@@ -179,16 +179,48 @@
           </el-collapse-item>
         </el-collapse>
       </template>
-      <template v-if="currentOperatingCanvasChild.type == CanvasChildType.RECT_BORDER">
+      <template v-if="currentOperatingCanvasChild.type == CanvasChildType.RECT">
         <el-row :gutter="24" align="middle">
           <el-col :span="24">
-            <operateItemSize label="尺寸" v-model:width="currentOperatingCanvasChild.width"
+            <operateItemSize label="矩形尺寸" v-model:width="currentOperatingCanvasChild.width"
               v-model:height="currentOperatingCanvasChild.height">
             </operateItemSize>
           </el-col>
           <el-col :span="24">
             <operateItemColor label="背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
             </operateItemColor>
+          </el-col>
+          <el-col :span="24">
+            <operateItemBorderWidth v-model="currentOperatingCanvasChild.borderWidth">
+            </operateItemBorderWidth>
+          </el-col>
+          <el-col :span="24">
+            <operateItemColor label="边框颜色" v-model="currentOperatingCanvasChild.borderColor">
+            </operateItemColor>
+          </el-col>
+          <el-col :span="24">
+            <operateItemRectBorderRadius v-model="currentOperatingCanvasChild.borderRadius">
+            </operateItemRectBorderRadius>
+          </el-col>
+        </el-row>
+      </template>
+      <template v-if="currentOperatingCanvasChild.type == CanvasChildType.ELLIIPSE">
+        <el-row :gutter="24" align="middle">
+          <el-col :span="24">
+            <operateItemSize tooltip="只需设置整体的宽高，半径自动有宽高和边框算出" label="圆形尺寸" v-model:width="currentOperatingCanvasChild.width"
+              v-model:height="currentOperatingCanvasChild.height">
+            </operateItemSize>
+          </el-col>
+          <el-col :span="24">
+            <operateItemPosition  v-model="currentOperatingCanvasChild.position"></operateItemPosition>
+          </el-col>
+          <el-col :span="24">
+            <operateItemColor label="背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
+            </operateItemColor>
+          </el-col>
+          <el-col :span="24">
+            <operateItemBorderWidth v-model="currentOperatingCanvasChild.borderWidth">
+            </operateItemBorderWidth>
           </el-col>
           <el-col :span="24">
             <operateItemColor label="边框颜色" v-model="currentOperatingCanvasChild.borderColor">
@@ -230,6 +262,10 @@ import operateItemBorderRadius from "@/components/design/components/operate/bord
 import operateItemColor from "@/components/design/components/operate/color/index.vue";
 import operateItemQrcodeErrorCorrectionLevel from "@/components/design/components/operate/qrcodeErrorCorrectionLevel.vue";
 import operateItemQrcodeType from "@/components/design/components/operate/qrcodeType.vue";
+import operateItemBorderWidth from "@/components/design/components/operate/border/borderWidth.vue";
+import operateItemRectBorderRadius from "@/components/design/components/operate/border/rectBorderRadius.vue";
+
+
 
 import {
   CanvasController,

@@ -9,6 +9,7 @@
             <el-button size="small" @click="add('background')" round> 背景 </el-button>
             <el-button size="small" @click="add('border')" round> 边框 </el-button>
             <el-button size="small" @click="addRect" round> 矩形 </el-button>
+            <el-button size="small" @click="addEllipse" round> 圆和椭圆 </el-button>
             <div style="flex: 1"></div>
         </div>
         <template #reference>
@@ -25,21 +26,29 @@ import {
     removeCavnasChild,
     currentOperatingCanvasChildIndex,
     currentOperatingCanvasChild,
-    showMainCanvas
+    showMainCanvas,
+    CanvasChildType
 } from "./index.tsx";
 
 
 function addRect() {
-    currentOperatingCanvasChildIndex.value = addCanvasChild({
+    addCanvasChild({
         type: 'rect',
 
     });
     document.body.click();
 }
 
+function addEllipse(){
+    addCanvasChild({
+        type: 'ellipse',
+    });
+    document.body.click();
+}
+
 
 function add(type) {
-    currentOperatingCanvasChildIndex.value = addCanvasChild({
+    addCanvasChild({
         type: type,
     });
     document.body.click();

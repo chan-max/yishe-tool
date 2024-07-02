@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { canvasOptions, calcCanvasDisplayTransformScale,calcCanvasDisplayTransformScaleValue } from '@/components/design/layout/canvas/'
+import { canvasOptions, calcCanvasDisplayTransformScale,calcCanvasDisplayTransformScaleValue ,currentCanvasControllerInstance} from '@/components/design/layout/canvas'
 
 
 /*
@@ -74,11 +74,11 @@ export const Canvas = defineComponent({
 
             return <div style={containerStyle}>
                 {/* 转换的元素 */}
-                <div id={'canvas-raw-el'} style={style}>
+                <div id={currentCanvasControllerInstance.value.rawId} style={style}>
                     {ctx.slots.default()}
                 </div>
                 {/* 真实的画布 */}
-                <canvas id={'canvas-display-el'} style={canvasStyle} width={canvasOptions.value.width} height={canvasOptions.value.height}></canvas>
+                <canvas id={currentCanvasControllerInstance.value.canvasId} style={canvasStyle} width={canvasOptions.value.width} height={canvasOptions.value.height}></canvas>
             </div>
         }
     }

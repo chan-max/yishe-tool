@@ -1,5 +1,5 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
-import { getPositionInfoFromOptions,getRelativeRealPixelSize } from '../helper.tsx'
+import { getPositionInfoFromOptions, getRelativeRealPixelSize } from '../helper.tsx'
 import { defineComponent, onUpdated } from "vue"
 
 export interface TextCanvasChildOptions {
@@ -14,6 +14,10 @@ enum WritingMode {
 
 export const defaultCanvasChildTextOptions = {
     type: 'text',
+    fontColor: {
+        color: "#000",
+        colorType: 'pure'
+    },
     position: {
         center: true,
         verticalCenter: true,
@@ -44,8 +48,8 @@ export const defaultCanvasChildTextOptions = {
     skewX: 0,
     skewY: 0,
     fontSize: {
-        value:100,
-        unit:'px'
+        value: 100,
+        unit: 'px'
     },
     fontWeight: '500',
     lineHeight: 1,
@@ -58,10 +62,10 @@ export const defaultCanvasChildTextOptions = {
 
 
 function isGradientColor(color) {
-    return color.includes('gradient')
+    return typeof color == 'string' ? color.includes('gradient') : color.colorType == 'gradient'
 }
 
-export function createCanvasChildText(options, controller) {
+export function createCanvasChildText(options) {
     return <Text options={options} onVnodeUpdated={updateCanvas} onVnodeMounted={updateCanvas}></Text>
 }
 
@@ -91,7 +95,7 @@ export const Text = defineComponent({
 
 
             const fontSize = getRelativeRealPixelSize(props.options.fontSize)
-            
+
             var style: any = {
                 flexShrink: 0,
                 fontSize, // 字体尺寸相对于画布宽度
@@ -107,12 +111,12 @@ export const Text = defineComponent({
             }
 
             if (props.options.fontColor) {
-                if (isGradientColor(props.options.fontColor)) {
-                    style.background = props.options.fontColor
+                if (props.options.fontColor.colorType == 'gradient') {
+                    style.background = props.options.fontColor.color
                     style.backgroundClip = 'text'
                     style.color = 'transparent';
                 } else {
-                    style.color = props.options.fontColor;
+                    style.color = props.options.fontColor.color;
                 }
             }
 

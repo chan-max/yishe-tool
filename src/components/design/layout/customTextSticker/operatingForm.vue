@@ -56,10 +56,10 @@
               <template #icon> <icon-font-color></icon-font-color> </template>
               <template #name> 字体颜色</template>
               <template #content>
-                <color-picker
+                <!-- <color-picker
                   v-model:pureColor="operatingTextStickerOptions.fontColor"
                   v-model:gradientColor="operatingTextStickerOptions.fontGradientColor"
-                ></color-picker>
+                ></color-picker> -->
               </template>
             </operate-form-item>
           </el-col>

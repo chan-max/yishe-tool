@@ -12,7 +12,10 @@ import { parse } from 'gradient-parser'
 
 export const defaultCanvasChildQrcodeOptions = {
     type: 'qrcode',
-    qrCodeColor: '#6900ff',
+    qrCodeColor: {
+        color:'#6900ff',
+        colorType:'pure'
+    },
     errorCorrectionLevel: 'H',
     position: {
         center: true,
@@ -70,7 +73,10 @@ export const defaultCanvasChildQrcodeOptions = {
         unit: 'px'
     },
     qrcodeDotType:'sequare',
-    backgroundColor: '#000',
+    backgroundColor: {
+        color:'#000',
+        colorType:'pure'
+    },
     backgroundUnit: 'px',
     qrcodeContent: '1s.design',
     borderRadius: {
@@ -126,8 +132,8 @@ function formatToQrcodeGradient(color) {
     }
 }
 
-function isGradientColor(val) {
-    return val.includes('gradient')
+function isGradientColor(color) {
+    return typeof color == 'string' ? color.includes('gradient') : color.colorType == 'gradient'
 }
 
 async function createQrcodeUrl(options) {
@@ -157,14 +163,12 @@ async function createQrcodeUrl(options) {
 
         mode: 'Byte',
     }
-    console.log(qrCodeOptions.width,qrCodeOptions.height)
-
 
     if (options.qrCodeColor) {
-        if (isGradientColor(options.qrCodeColor)) {
-            qrCodeOptions.dotsOptions.gradient = formatToQrcodeGradient(options.qrCodeColor)
+        if (options.qrCodeColor.colorType == 'gradient') {
+            qrCodeOptions.dotsOptions.gradient = formatToQrcodeGradient(options.qrCodeColor.color)
         } else {
-            qrCodeOptions.dotsOptions.color = options.qrCodeColor
+            qrCodeOptions.dotsOptions.color = options.qrCodeColor.color
         }
     }
 
@@ -229,7 +233,7 @@ export const Qrcode = defineComponent({
                 width,
                 height,
                 flexShrink: 0,
-                background: props.options.backgroundColor,
+                background: props.options.backgroundColor.color,
                 padding,
                 borderRadius,
                 ..._style,
@@ -242,7 +246,7 @@ export const Qrcode = defineComponent({
     }
 })
 
-export function createCanvasChildQrcode(options, controller) {
+export function createCanvasChildQrcode(options) {
     return <Qrcode options={options} onVnodeUpdated={updateCanvas} onVnodeMounted={updateCanvas}></Qrcode>
 }
 

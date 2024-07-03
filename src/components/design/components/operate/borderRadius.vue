@@ -5,7 +5,7 @@
         </template>
         <template #name> 边框圆角 </template>
         <template #content>
-            <el-popover width="180" trigger="click"> 
+            <el-popover width="180" trigger="click">
                 <template #reference>
                     <el-button size="small" link>
                         <el-tooltip :content="borderRadiusLabel">
@@ -26,12 +26,12 @@
                             </el-col>
                             <el-col :span="16">
                                 <div class="input-item">
-                                    <el-popover placement="right" width="200" trigger="click"  :teleported="false">
+                                    <el-popover placement="right" width="200" trigger="click" :teleported="false">
                                         <template #reference>
                                             <el-input size="small" type="number" min="0" step="1"
                                                 style="width:88px;height:24px;" v-model.number="model[item.type].value">
                                                 <template #suffix>
-                                                    <div style="font-size:1rem;"> {{ getLabel(model[item.type].unit) }}
+                                                    <div style="font-size:1rem;"> {{ model[item.type].unit }}
                                                     </div>
                                                 </template>
                                             </el-input>
@@ -66,9 +66,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick,onMounted } from "vue";
+import { ref, computed, nextTick, onMounted } from "vue";
 import icon from "@/components/design/assets/icon/border-radius.svg?component";
 import { getBroderRadiusDispalyLabel } from "@/components/design/layout/canvas/helper.tsx";
+import { canvasOptions } from "@/components/design/layout/canvas/index.tsx";
 
 /*
  padding 存在五种单位
@@ -137,41 +138,31 @@ const borderRadiusOptions = ref([
 ]);
 
 
+const unitOptions = computed(() => {
+    return [
+        {
+            label: `使用当前画布单位(${canvasOptions.value.unit})`,
+            value: canvasOptions.value.unit,
+        },
+        {
+            label: "相对于画布宽的百分比",
+            value: "vw",
+        },
+        {
+            label: "相对于画布高的百分比",
+            value: "vh",
+        },
+        {
+            label: "相对于当前元素宽的百分比",
+            value: "%w",
+        },
+        {
+            label: "相对于当前元素高的百分比",
+            value: "%h",
+        },
+    ]
+});
 
-const unitOptions = ref([
-    {
-        label: "像素值",
-        value: "px",
-    },
-    {
-        label: "相对于画布宽的百分比",
-        value: "vw",
-    },
-    {
-        label: "相对于画布高的百分比",
-        value: "vh",
-    },
-    {
-        label: "相对于当前元素宽的百分比",
-        value: "%w",
-    },
-    {
-        label: "相对于当前元素高的百分比",
-        value: "%h",
-    },
-]);
-
-const labelMap = ref({
-    px: 'px',
-    vw: 'vw',
-    vh: 'vh',
-    '%w': '%w',
-    '%h': '%h',
-})
-
-function getLabel(val) {
-    return labelMap.value[val]
-}
 
 
 const borderRadiusLabel = computed(() => {

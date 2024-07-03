@@ -12,51 +12,56 @@ enum WritingMode {
     VRL = 'vertical-rl'
 }
 
-export const defaultCanvasChildTextOptions = {
-    type: 'text',
-    fontColor: {
-        color: "#000",
-        colorType: 'pure'
-    },
-    position: {
-        center: true,
-        verticalCenter: true,
-        horizontalCenter: true,
-        top: {
-            value: 0,
-            unit: 'px'
+export const createDefaultCanvasChildTextOptions = () => {
+
+    const canvasUnit = canvasOptions.value.unit
+
+    return {
+        type: 'text',
+        fontColor: {
+            color: "#000",
+            colorType: 'pure'
         },
-        left: {
-            value: 0,
-            unit: 'px'
+        position: {
+            center: true,
+            verticalCenter: true,
+            horizontalCenter: true,
+            top: {
+                value: 0,
+                unit: canvasUnit
+            },
+            left: {
+                value: 0,
+                unit: canvasUnit
+            },
+            bottom: {
+                value: 0,
+                unit: canvasUnit
+            },
+            right: {
+                value: 0,
+                unit: canvasUnit
+            }
         },
-        bottom: {
-            value: 0,
-            unit: 'px'
+        scaleX: 1,
+        scaleY: 1,
+        scaleZ: 1,
+        rotateX: 0,
+        rotateY: 0,
+        rotateZ: 0,
+        skewX: 0,
+        skewY: 0,
+        fontSize: {
+            value: 100,
+            unit: canvasUnit
         },
-        right: {
-            value: 0,
-            unit: 'px'
-        }
-    },
-    scaleX: 1,
-    scaleY: 1,
-    scaleZ: 1,
-    rotateX: 0,
-    rotateY: 0,
-    rotateZ: 0,
-    skewX: 0,
-    skewY: 0,
-    fontSize: {
-        value: 100,
-        unit: 'px'
-    },
-    fontWeight: '500',
-    lineHeight: 1,
-    letterSpacing: 0,
-    textContent: 'hello world',
-    writingMode: 'htb',
-    unit: 'px' // px | vw | vh
+        fontWeight: '500',
+        lineHeight: 1,
+        letterSpacing: 0,
+        textContent: 'hello world',
+        writingMode: 'htb',
+        unit: canvasUnit // px | vw | vh
+    }
 }
 
 

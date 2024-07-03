@@ -32,7 +32,7 @@
                                             <el-input size="small" type="number" min="0" step="1"
                                                 style="width:88px;height:24px;" v-model.number="model[item.type].value">
                                                 <template #suffix>
-                                                    <div style="font-size:1rem;"> {{ getLabel(model[item.type].unit) }}
+                                                    <div style="font-size:1rem;"> {{ model[item.type].unit }}
                                                     </div>
                                                 </template>
                                             </el-input>
@@ -70,7 +70,7 @@
 import { ref, computed, nextTick } from "vue";
 import icon from "@/components/design/assets/icon/padding.svg?component";
 import { getPaddingDispalyLabel } from "@/components/design/layout/canvas/helper.tsx";
-
+import { canvasOptions } from "@/components/design/layout/canvas/index.tsx";
 
 /*
  padding 存在五种单位
@@ -115,40 +115,32 @@ const paddingOptions = ref([
 
 
 
-const unitOptions = ref([
-    {
-        label: "像素值",
-        value: "px",
-    },
-    {
-        label: "相对于画布宽的百分比",
-        value: "vw",
-    },
-    {
-        label: "相对于画布高的百分比",
-        value: "vh",
-    },
-    {
-        label: "相对于当前元素宽的百分比",
-        value: "%w",
-    },
-    {
-        label: "相对于当前元素高的百分比",
-        value: "%h",
-    },
-]);
+const unitOptions = computed(() => {
+    return [
+        {
+            label: `使用当前画布单位(${canvasOptions.value.unit})`,
+            value: canvasOptions.value.unit,
+        },
+        {
+            label: "相对于画布宽的百分比",
+            value: "vw",
+        },
+        {
+            label: "相对于画布高的百分比",
+            value: "vh",
+        },
+        {
+            label: "相对于当前元素宽的百分比",
+            value: "%w",
+        },
+        {
+            label: "相对于当前元素高的百分比",
+            value: "%h",
+        },
+    ]
+});
 
-const labelMap = ref({
-    px: 'px',
-    vw: 'vw',
-    vh: 'vh',
-    '%w': '%w',
-    '%h': '%h',
-})
 
-function getLabel(val) {
-    return labelMap.value[val]
-}
 
 
 const borderRadiusLabel = computed(() => {

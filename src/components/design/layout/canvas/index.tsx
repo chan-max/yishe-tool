@@ -5,18 +5,18 @@ import { useDebounceFn } from '@vueuse/core'
 import { waitImage } from '@/common'
 import { createCanvasChildSvg } from './children/svg/svg.tsx'
 import { initDraggableElement } from "@/components/design/utils/draggable";
-import { createCanvasChildText, defaultCanvasChildTextOptions } from './children/text.tsx'
-import { createCanvasChildBackground, defaultCanvasChildBackgroundOptions } from './children/background.tsx'
-import { defaultCanvasChildQrcodeOptions, createCanvasChildQrcode, } from './children/qrcode.tsx'
+import { createCanvasChildText, createDefaultCanvasChildTextOptions } from './children/text.tsx'
+import { createCanvasChildBackground, createDefaultCanvasChildBackgroundOptions } from './children/background.tsx'
+import { createDefaultCanvasChildQrcodeOptions, createCanvasChildQrcode, } from './children/qrcode.tsx'
 import {
-    defaultCanvasChildSvgRectOptions,
+    createDefaultCanvasChildSvgRectOptions,
     createCanvasChildRect,
     createCanvasChildEllipse,
-    defaultCanvasChildSvgEllipseOptions
+    createDefaultCanvasChildSvgEllipseOptions
 } from './children/svg/svg.tsx'
 import {
     createCanvasChildImage,
-    defaultCanvasChildImageOptions
+    createDefaultCanvasChildImageOptions
 } from './children/image.tsx'
 
 import { Canvas } from './children/canvas.tsx'
@@ -24,13 +24,11 @@ import { Canvas } from './children/canvas.tsx'
 export const canvasOptions = ref({
     width: 1000,
     height: 1000,
+    unit: 'px',
     children: [{
         type: 'canvas'
     }],
 })
-
-
-
 
 
 export enum CanvasChildType {
@@ -56,12 +54,12 @@ export const canvasChildLabelMap = {
 
 export const canvasChildDefaultOptionsMap = {
     [CanvasChildType.CANVAS]: null,
-    [CanvasChildType.TEXT]: defaultCanvasChildTextOptions,
-    [CanvasChildType.BACKGROUHND]: defaultCanvasChildBackgroundOptions,
-    [CanvasChildType.IMAGE]: defaultCanvasChildImageOptions,
-    [CanvasChildType.QRCODE]: defaultCanvasChildQrcodeOptions,
-    [CanvasChildType.RECT]: defaultCanvasChildSvgRectOptions,
-    [CanvasChildType.ELLIIPSE]: defaultCanvasChildSvgEllipseOptions,
+    [CanvasChildType.TEXT]: createDefaultCanvasChildTextOptions,
+    [CanvasChildType.BACKGROUHND]: createDefaultCanvasChildBackgroundOptions,
+    [CanvasChildType.IMAGE]: createDefaultCanvasChildImageOptions,
+    [CanvasChildType.QRCODE]: createDefaultCanvasChildQrcodeOptions,
+    [CanvasChildType.RECT]: createDefaultCanvasChildSvgRectOptions,
+    [CanvasChildType.ELLIIPSE]: createDefaultCanvasChildSvgEllipseOptions,
 }
 
 export const canvasChildRenderMap = {
@@ -123,7 +121,7 @@ export function addCanvasChild(options) {
     let index = canvasOptions.value.children.length
 
     options = {
-        ...canvasChildDefaultOptionsMap[options.type],
+        ...canvasChildDefaultOptionsMap[options.type].call(null),
         ...options,
         id: canvas_child_id++,
     }
@@ -159,14 +157,6 @@ export function removeCavnasChild(index) {
     currentOperatingCanvasChildIndex.value = index - 1
 }
 
-export function calcCanvasDisplayTransformScale(max) {
-    let s = calcCanvasDisplayTransformScaleValue(max)
-    return `scale(${s}, ${s}`
-}
-
-export function calcCanvasDisplayTransformScaleValue(max) {
-    return max / Math.max(canvasOptions.value.width, canvasOptions.value.height)
-}
 
 
 export const currentCanvasControllerInstance = shallowRef(null)
@@ -287,7 +277,6 @@ export class CanvasController {
             this.drawImage(img)
             await nextTick()
             document.body.removeChild(img)
-            this.syncCloneCanvas()
             this.initDraggable(base64)
             this.loading.value = false
         }
@@ -313,45 +302,6 @@ export class CanvasController {
         this.canvasEl.width = this.canvasEl?.width
     }
 
-    get cloneCanvasEl() {
-        return document.querySelector('#canvas-cloned-el') as any
-    }
-
-    async syncCloneCanvas() {
-        await nextTick()
-        let cloneCtx = this.cloneCanvasEl?.getContext("2d")
-
-        if (!cloneCtx || !this.canvasEl) {
-            return
-        }
-        this.cloneCanvasEl.width = this.cloneCanvasEl.width;
-        cloneCtx.drawImage(this.canvasEl, 0, 0);
-    }
-
-
-    getCloneCanvasRender() {
-        return (props) => {
-
-            const containerStyle: any = {
-                width: '100%',
-                height: '100%',
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
-            }
-
-            const canvasStyle = {
-                transform: calcCanvasDisplayTransformScale(400),
-            }
-
-            this.syncCloneCanvas()
-
-            return <div style={containerStyle}>
-                <canvas class="png-background" id={'canvas-cloned-el'} style={canvasStyle} width={canvasOptions.value.width} height={canvasOptions.value.height}></canvas>
-            </div>
-        }
-    }
 
     // 画布元素是否在加载中
     pending = ref(false)

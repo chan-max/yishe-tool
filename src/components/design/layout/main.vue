@@ -71,7 +71,6 @@
     <font-list></font-list>
   </diydialog>
 
-  
   <diydialog :show="viewDisplayController.showStickerModal" title="贴纸" @close="viewDisplayController.showStickerModal = false"
     :animation="basicContainerAnimation">
     <sticker-modal></sticker-modal>

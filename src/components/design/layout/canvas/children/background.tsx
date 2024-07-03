@@ -1,53 +1,56 @@
+import { canvasOptions } from '../index.tsx'
 import { getPositionInfoFromOptions,getRelativeRealPixelSize } from '../helper.tsx'
 import { defineComponent, ref } from 'vue'
 
 /*
 */
 
-export const defaultCanvasChildBackgroundOptions = {
-    type: 'background',
-    backgroundUnit:'px',
-    position: {
-        center: true,
-        verticalCenter: true,
-        horizontalCenter: true,
-        top: {
-            value: 0,
-            unit: 'px'
+export const createDefaultCanvasChildBackgroundOptions = () => {
+    const canvasUnit = canvasOptions.value.unit
+    return {
+        type: 'background',
+        position: {
+            center: true,
+            verticalCenter: true,
+            horizontalCenter: true,
+            top: {
+                value: 0,
+                unit: canvasUnit
+            },
+            left: {
+                value: 0,
+                unit: canvasUnit
+            },
+            bottom: {
+                value: 0,
+                unit: canvasUnit
+            },
+            right: {
+                value: 0,
+                unit: canvasUnit
+            }
         },
-        left: {
-            value: 0,
-            unit: 'px'
+        scaleX: 1,
+        scaleY: 1,
+        scaleZ: 1,
+        rotateX: 0,
+        rotateY: 0,
+        rotateZ: 0,
+        skewX: 0,
+        skewY: 0,
+        width: {
+            value:100,
+            unit:canvasUnit
         },
-        bottom: {
-            value: 0,
-            unit: 'px'
+        height: {
+            value:100,
+            unit:canvasUnit
         },
-        right: {
-            value: 0,
-            unit: 'px'
-        }
-    },
-    scaleX: 1,
-    scaleY: 1,
-    scaleZ: 1,
-    rotateX: 0,
-    rotateY: 0,
-    rotateZ: 0,
-    skewX: 0,
-    skewY: 0,
-    width: {
-        value:100,
-        unit:'px'
-    },
-    height: {
-        value:100,
-        unit:'px'
-    },
-    backgroundColor: {
-        color:'#000',
-        colorType:'pure'
-    },
+        backgroundColor: {
+            color:'#000',
+            colorType:'pure'
+        },
+    }
 }
 
 export const Background = defineComponent({

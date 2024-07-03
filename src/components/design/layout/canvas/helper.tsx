@@ -8,6 +8,67 @@ import { canvasOptions } from "./index"
 const isNumber = (val) => typeof val === 'number'
 
 
+export function prasePxToCm(px) {
+    var targetEleWidth: any = 1
+    var cm = null;
+    var createEle = document.createElement('input');
+    var body = document.body;
+    createEle.setAttribute("style", "width:1cm !important;height:1cm !important;border-width:0px !important;padding:0px !important;margin:0px !important;");
+    createEle.id = "elementId_" + new Date().getTime();
+    createEle.type = "hidden";
+    body[0].appendChild(createEle);
+    var targetEle = document.getElementById(createEle.id);
+    targetEleWidth = window.getComputedStyle(targetEle).width.match(/^\d+\.?\d*/)[0];
+    cm = px / targetEleWidth;
+    targetEle.parentNode.removeChild(targetEle);
+    return cm;
+}
+
+
+const IN2CM = 2.539999918
+
+const CM2MM = 10
+
+/*
+    1cm 等于多少 px
+*/
+const CM2PX: number = (function () {
+    var el = document.createElement('input');
+    var body = document.body;
+    el.setAttribute("style", "width:1cm !important;height:1cm !important;border-width:0px !important;padding:0px !important;margin:0px !important;");
+    el.id = "id_" + new Date().getTime();
+    el.type = "hidden";
+    body.appendChild(el);
+    var targetEle = document.getElementById(el.id);
+    return Number(window.getComputedStyle(targetEle).width.match(/^\d+\.?\d*/)[0]);
+}());
+
+
+/*
+    将所有尺寸转换为px单位
+*/
+
+
+export function sizeOptionToPixelValue(size) {
+    const { value, unit } = size
+    if (unit == 'px') {
+        return value
+    }
+    if (unit == 'cm') {
+        return value * CM2PX
+    }
+
+    if (unit == 'mm') {
+        return value * CM2PX / 10
+    }
+
+    if (unit == 'in') {
+        return value * CM2PX / IN2CM
+    }
+}
+
+
+
 export function getRelativeRealPixelValue(size, elementRealSize = null) {
     let { value, unit } = size
 
@@ -16,6 +77,18 @@ export function getRelativeRealPixelValue(size, elementRealSize = null) {
     }
 
     if (unit == 'px') {
+        return value
+    }
+
+    if (unit == 'mm') {
+        return value
+    }
+
+    if (unit == 'cm') {
+        return value
+    }
+
+    if (unit == 'in') {
         return value
     }
 
@@ -36,8 +109,8 @@ export function getRelativeRealPixelValue(size, elementRealSize = null) {
     }
 }
 
-export function getRelativeRealPixelSize(value, elementRealSize = null) {
-    return getRelativeRealPixelValue(value, elementRealSize) + 'px'
+export function getRelativeRealPixelSize(sizeOption, elementRealSize = null) {
+    return getRelativeRealPixelValue(sizeOption, elementRealSize) + sizeOption.unit
 }
 
 
@@ -57,6 +130,18 @@ function getPositionRealLabel(direction, size) {
 
     if (unit == 'px') {
         return `距离${directionMap[direction]} ${value}px`
+    }
+
+    if (unit == 'cm') {
+        return `距离${directionMap[direction]} ${value}cm`
+    }
+
+    if (unit == 'mm') {
+        return `距离${directionMap[direction]} ${value}mm`
+    }
+
+    if (unit == 'in') {
+        return `距离${directionMap[direction]} ${value}in`
     }
 
     if (unit == 'vw') {
@@ -159,6 +244,18 @@ export function getPaddingRealLabel(direction, size) {
         return `距离${directionMap[direction]} ${value}px`
     }
 
+    if (unit == 'cm') {
+        return `距离${directionMap[direction]} ${value}cm`
+    }
+
+    if (unit == 'mm') {
+        return `距离${directionMap[direction]} ${value}mm`
+    }
+
+    if (unit == 'in') {
+        return `距离${directionMap[direction]} ${value}in`
+    }
+
     if (unit == 'vw') {
         return `距离${directionMap[direction]} ${value / 100} 个画布宽度`
     }
@@ -213,6 +310,18 @@ export function getBorderRadiusRealLabel(position, size) {
 
     if (unit == 'px') {
         return `${borderRadiusPositionMap[position]} ${value}px`
+    }
+
+    if (unit == 'cm') {
+        return `${borderRadiusPositionMap[position]} ${value}cm`
+    }
+
+    if (unit == 'mm') {
+        return `${borderRadiusPositionMap[position]} ${value}mm`
+    }
+
+    if (unit == 'in') {
+        return `${borderRadiusPositionMap[position]} ${value}in`
     }
 
     if (unit == 'vw') {

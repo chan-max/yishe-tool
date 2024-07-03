@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue'
-import { canvasOptions, calcCanvasDisplayTransformScale,calcCanvasDisplayTransformScaleValue ,currentCanvasControllerInstance} from '@/components/design/layout/canvas'
-
+import { canvasOptions, currentCanvasControllerInstance, } from '@/components/design/layout/canvas'
+import { sizeOptionToPixelValue } from '../helper'
 
 /*
     用于辅助观察的网格背景
@@ -16,6 +16,11 @@ function createPngBackgroundStyle(scale = 1) {
     }
 }
 
+
+
+
+
+
 export const Canvas = defineComponent({
     props: {
         options: null,
@@ -28,19 +33,34 @@ export const Canvas = defineComponent({
 
         return () => {
 
-            let transform = calcCanvasDisplayTransformScale(props.maxDisplaySize)
-            let transformValue = calcCanvasDisplayTransformScaleValue(props.maxDisplaySize)
-    
+            const pxWidth = sizeOptionToPixelValue({
+                value:canvasOptions.value.width,
+                unit:canvasOptions.value.unit
+            })
+            
+            const pxHeight = sizeOptionToPixelValue({
+                value:canvasOptions.value.height,
+                unit:canvasOptions.value.unit
+            })
+            
+        
+
+            const transformValue = props.maxDisplaySize / Math.max(pxWidth, pxHeight)
+
+            
+
             let pngBackground = createPngBackgroundStyle(transformValue)
-    
+
+      
+
             const containerStyle: any = {
-                width: canvasOptions.value.width + 'px',
-                height: canvasOptions.value.height + 'px',
+                width: canvasOptions.value.width + canvasOptions.value.unit,
+                height: canvasOptions.value.height + canvasOptions.value.unit,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 overflow: "hidden",
-                transform,
+                transform:`scale(${transformValue}, ${transformValue})`,
                 flexShrink: 0,
                 position: "relative",
                 ...pngBackground
@@ -48,8 +68,8 @@ export const Canvas = defineComponent({
 
             let style: any = {
                 flexShrink: 0,
-                width: canvasOptions.value.width + 'px',
-                height: canvasOptions.value.height + 'px',
+                width: canvasOptions.value.width + canvasOptions.value.unit,
+                height: canvasOptions.value.height + canvasOptions.value.unit,
                 position: "absolute",
                 top: 0,
                 left: 0,
@@ -70,7 +90,7 @@ export const Canvas = defineComponent({
                     {ctx.slots.default()}
                 </div>
                 {/* 真实的画布 */}
-                <canvas id={currentCanvasControllerInstance.value.canvasId} style={canvasStyle} width={canvasOptions.value.width} height={canvasOptions.value.height}></canvas>
+                <canvas id={currentCanvasControllerInstance.value.canvasId} style={canvasStyle} width={pxWidth} height={pxHeight}></canvas>
             </div>
         }
     }

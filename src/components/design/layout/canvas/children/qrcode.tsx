@@ -1,6 +1,6 @@
 import QRCodeStyling from 'qr-code-styling';
 import { ref, watchEffect } from 'vue'
-import { updateCanvas } from '../index.tsx'
+import { canvasOptions, updateCanvas } from '../index.tsx'
 
 import { getPositionInfoFromOptions, getRelativeRealPixelSize, getRelativeRealPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
@@ -10,91 +10,96 @@ import { parse } from 'gradient-parser'
 /*
 */
 
-export const defaultCanvasChildQrcodeOptions = {
-    type: 'qrcode',
-    qrCodeColor: {
-        color:'#6900ff',
-        colorType:'pure'
-    },
-    errorCorrectionLevel: 'H',
-    position: {
-        center: true,
-        verticalCenter: true,
-        horizontalCenter: true,
-        top: {
-            value: 0,
-            unit: 'px'
+export const createDefaultCanvasChildQrcodeOptions = () => {
+
+    const canvasUnit = canvasOptions.value.unit
+
+    return {
+        type: 'qrcode',
+        qrCodeColor: {
+            color:'#6900ff',
+            colorType:'pure'
         },
-        left: {
-            value: 0,
-            unit: 'px'
+        errorCorrectionLevel: 'H',
+        position: {
+            center: true,
+            verticalCenter: true,
+            horizontalCenter: true,
+            top: {
+                value: 0,
+                unit: canvasUnit
+            },
+            left: {
+                value: 0,
+                unit: canvasUnit
+            },
+            bottom: {
+                value: 0,
+                unit: canvasUnit
+            },
+            right: {
+                value: 0,
+                unit: canvasUnit
+            }
         },
-        bottom: {
-            value: 0,
-            unit: 'px'
+        padding: {
+            top: {
+                value: 0,
+                unit: canvasUnit
+            },
+            left: {
+                value: 0,
+                unit: canvasUnit
+            },
+            bottom: {
+                value: 0,
+                unit: canvasUnit
+            },
+            right: {
+                value: 0,
+                unit: canvasUnit
+            }
         },
-        right: {
-            value: 0,
-            unit: 'px'
-        }
-    },
-    padding: {
-        top: {
-            value: 0,
-            unit: 'px'
+        scaleX: 1,
+        scaleY: 1,
+        scaleZ: 1,
+        rotateX: 0,
+        rotateY: 0,
+        rotateZ: 0,
+        skewX: 0,
+        skewY: 0,
+        width: {
+            value: 100,
+            unit: canvasUnit
         },
-        left: {
-            value: 0,
-            unit: 'px'
+        height: {
+            value: 100,
+            unit: canvasUnit
         },
-        bottom: {
-            value: 0,
-            unit: 'px'
+        qrcodeDotType:'sequare',
+        backgroundColor: {
+            color:'#000',
+            colorType:'pure'
         },
-        right: {
-            value: 0,
-            unit: 'px'
-        }
-    },
-    scaleX: 1,
-    scaleY: 1,
-    scaleZ: 1,
-    rotateX: 0,
-    rotateY: 0,
-    rotateZ: 0,
-    skewX: 0,
-    skewY: 0,
-    width: {
-        value: 100,
-        unit: 'px'
-    },
-    height: {
-        value: 100,
-        unit: 'px'
-    },
-    qrcodeDotType:'sequare',
-    backgroundColor: {
-        color:'#000',
-        colorType:'pure'
-    },
-    backgroundUnit: 'px',
-    qrcodeContent: '1s.design',
-    borderRadius: {
-        leftTop: {
-            value: 0,
-            unit: 'px',
-        },
-        rightTop: {
-            value: 0,
-            unit: 'px',
-        },
-        rightBottom: {
-            value: 0,
-            unit: 'px',
-        },
-        leftBottom: {
-            value: 0,
-            unit: 'px',
+        backgroundUnit: canvasUnit,
+        qrcodeContent: '1s.design',
+        borderRadius: {
+            leftTop: {
+                value: 0,
+                unit: canvasUnit,
+            },
+            rightTop: {
+                value: 0,
+                unit: canvasUnit,
+            },
+            rightBottom: {
+                value: 0,
+                unit: canvasUnit,
+            },
+            leftBottom: {
+                value: 0,
+                unit: canvasUnit,
+            }
         }
     }
 }

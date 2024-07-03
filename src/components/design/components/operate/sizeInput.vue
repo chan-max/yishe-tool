@@ -2,7 +2,7 @@
     <el-popover :placement="placement" width="180">
         <template #reference>
             <div class="size-input">
-                <el-input style="width:80px" size="small" type="number" min="0" step="1" v-model.number="model">
+                <el-input style="width:80px" :placeholder="placeholder" size="small" type="number" min="0" step="1" v-model.number="model">
                     <template #suffix>
                         <span style="font-size: 1rem;">
                             {{ unit }}
@@ -15,7 +15,7 @@
             <el-col :span="24">
                 <el-radio-group v-model="unit" size="small">
                     <el-radio v-for="(u, index) in unitOptions" :value="u.value">
-                        <span style="font-size: 1rem">{{ u.label }}</span>
+                        <div style="font-size: 1rem;">{{ u.label }}</div>
                     </el-radio>
                 </el-radio-group>
             </el-col>
@@ -32,14 +32,19 @@ import { ref, computed, nextTick } from "vue";
 
 const props = defineProps({
     units: {
-        default: ['px', 'vw', 'vh', '%w', '%h']
+        default: ['px', 'vw', 'vh', '%w', '%h','cm','mm','in']
+    },
+    placeholder:{
+        default:''
     },
     placement:{
-    }
+    },
 })
 
 const model = defineModel({})
-const unit = defineModel('unit', {})
+const unit = defineModel('unit', {
+    default:'px'
+})
 
 const rawUnitOptions = ref([
     {
@@ -61,6 +66,18 @@ const rawUnitOptions = ref([
     {
         label: "相对于当前元素高的百分比",
         value: "%h",
+    },
+    {
+        label: "厘米",
+        value: "cm",
+    },
+    {
+        label: "毫米",
+        value: "mm",
+    },
+    {
+        label: "英寸 (1英寸 ~= 2.54厘米)",
+        value: "in",
     },
 ]);
 

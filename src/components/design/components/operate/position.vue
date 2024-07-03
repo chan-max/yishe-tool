@@ -88,7 +88,7 @@
 import { ref, computed, onMounted } from "vue";
 import iconPosition from "@/components/design/assets/icon/position.svg?component";
 import { getPositionInfoFromOptions } from "@/components/design/layout/canvas/helper.tsx";
-
+import { canvasOptions } from "@/components/design/layout/canvas/index.tsx";
 
 const model = defineModel({})
 
@@ -102,20 +102,22 @@ const positionLabel = computed(() => {
  高度百分比
 */
 
-const unitOptions = ref([
-  {
-    label: "像素值",
-    value: "px",
-  },
-  {
-    label: "相对于画布宽的百分比",
-    value: "vw",
-  },
-  {
-    label: "相对于画布高的百分比",
-    value: "vh",
-  },
-]);
+const unitOptions = computed(() => {
+    return [
+        {
+            label: `使用当前画布单位(${canvasOptions.value.unit})`,
+            value: canvasOptions.value.unit,
+        },
+        {
+            label: "相对于画布宽的百分比",
+            value: "vw",
+        },
+        {
+            label: "相对于画布高的百分比",
+            value: "vh",
+        },
+    ]
+});
 
 const positionOptions = ref([
   {

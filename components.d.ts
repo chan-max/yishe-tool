@@ -7,6 +7,8 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AbsoluteSize: typeof import('./src/components/design/components/operate/size/absoluteSize.vue')['default']
+    AbsoluteUnitSelect: typeof import('./src/components/design/components/operate/absoluteUnitSelect.vue')['default']
     AddPopover: typeof import('./src/components/design/layout/canvas/addPopover.vue')['default']
     AspectRatio: typeof import('./src/components/design/components/operate/aspectRatio.vue')['default']
     Background: typeof import('./src/components/design/components/operate/background.vue')['default']
@@ -77,6 +79,7 @@ declare module 'vue' {
     QrcodePositionMarker: typeof import('./src/components/design/components/operate/qrcodePositionMarker.vue')['default']
     QrcodeType: typeof import('./src/components/design/components/operate/qrcodeType.vue')['default']
     RectBorderRadius: typeof import('./src/components/design/components/operate/border/rectBorderRadius.vue')['default']
+    RelativeSize: typeof import('./src/components/design/components/operate/size/relativeSize.vue')['default']
     Resource: typeof import('./src/components/design/layout/textSticker/resource.vue')['default']
     Rotate: typeof import('./src/components/design/components/operate/rotate.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

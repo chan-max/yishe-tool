@@ -4,8 +4,11 @@
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.CANVAS">
         <el-row :gutter="24" align="middle">
           <el-col :span="24">
-            <operateItemSizePX label="画布尺寸" v-model:width="canvasOptions.width" v-model:height="canvasOptions.height">
-            </operateItemSizePX>
+            <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasOptions.width" v-model:height="canvasOptions.height">
+            </operateItemAbsoluteSize>
+          </el-col>
+          <el-col :span="24">
+            <operateItemAbsoluteUnitSelect label="画布尺寸单位" v-model="canvasOptions.unit"></operateItemAbsoluteUnitSelect>
           </el-col>
           <el-col :span="24">
             <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
@@ -90,10 +93,17 @@
         </el-collapse>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.IMAGE">
+        <el-row :gutter="24" align="middle">
         <el-col :span="24">
-          <operateItemImageSelect v-model="currentOperatingCanvasChild.image">
+          <operateItemImageSelect v-model="currentOperatingCanvasChild.imageInfo">
           </operateItemImageSelect>
         </el-col>
+        <el-col :span="24">
+            <operateItemSize label="背景尺寸" v-model:width="currentOperatingCanvasChild.width"
+              v-model:height="currentOperatingCanvasChild.height">
+            </operateItemSize>
+          </el-col>
+        </el-row>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.BACKGROUHND">
         <el-row :gutter="24" align="middle">
@@ -127,7 +137,7 @@
                 </operateItemTextContent>
               </el-col>
               <el-col :span="24">
-                <operateItemSize label="二维码尺寸" unit="px" v-model:width="currentOperatingCanvasChild.width"
+                <operateItemSize label="二维码尺寸" v-model:width="currentOperatingCanvasChild.width"
                   v-model:height="currentOperatingCanvasChild.height">
                 </operateItemSize>
               </el-col>
@@ -247,8 +257,8 @@ import operateItemFontFamily from "@/components/design/components/operate/fontFa
 import operateItemLineHeight from "@/components/design/components/operate/lineHeight.vue";
 import operateItemLetterSpacing from "@/components/design/components/operate/letterSpacing.vue";
 import operateItemWritingMode from "@/components/design/components/operate/writingMode.vue";
-import operateItemSize from "@/components/design/components/operate/size/index.vue";
-import operateItemSizePX from "@/components/design/components/operate/size/px.vue";
+import operateItemSize from "@/components/design/components/operate/size/relativeSize.vue";
+import operateItemAbsoluteSize from "@/components/design/components/operate/size/absoluteSize.vue";
 // import operateItemAspectRatio from "@/components/design/components/operate/aspectRatio.vue";
 import operateItemPosition from "@/components/design/components/operate/position.vue";
 import operateItemScale from "@/components/design/components/operate/scale.vue";
@@ -265,6 +275,7 @@ import operateItemQrcodeErrorCorrectionLevel from "@/components/design/component
 import operateItemQrcodeType from "@/components/design/components/operate/qrcodeType.vue";
 import operateItemBorderWidth from "@/components/design/components/operate/border/borderWidth.vue";
 import operateItemRectBorderRadius from "@/components/design/components/operate/border/rectBorderRadius.vue";
+import operateItemAbsoluteUnitSelect from "@/components/design/components/operate/absoluteUnitSelect.vue";
 
 
 

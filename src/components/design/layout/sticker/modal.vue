@@ -64,7 +64,7 @@ function useAsCanvasImage(item) {
     if (currentOperatingCanvasChild.value.type != 'image') {
         throw '当前操作的不是图片元素'
     }
-    currentOperatingCanvasChild.value.image = item
+    currentOperatingCanvasChild.value.imageInfo = item
     viewDisplayController.value.showStickerModal = false
 }
 

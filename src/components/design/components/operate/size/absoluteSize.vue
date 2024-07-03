@@ -31,19 +31,11 @@
                         </el-row>
                     </div>
                 </el-popover>
-
                 <el-input style="width: 88px" size="small" v-model="width" step="10" type="number" placeholder="宽">
-                    <template #suffix>
-                        <div style="font-size:1rem;">px</div>
-                    </template>
                 </el-input>
                 <span style="padding:0 1em" class="flex items-center justify-center">x</span>
                 <el-input style="width: 88px" size="small" v-model="height" step="10" type="number" placeholder="高">
-                    <template #suffix>
-                        <div style="font-size:1rem;">px</div>
-                    </template>
                 </el-input>
-
             </div>
         </template>
     </operate-form-item>
@@ -63,22 +55,9 @@ const props = defineProps({
 const width = defineModel("width", {});
 const height = defineModel("height", {});
 
-// 存在绑定 bug
-const unitBind = ref()
-
-watch(unitBind, (val) => [
-    unit.value = val
-])
-
 const unit = defineModel("unit", {
     default: 'px'
 });
-
-watch(unit, (val) => [
-    unitBind.value = val
-], {
-    immediate: true
-})
 
 const aspectRatio = defineModel("aspectRatio", {});
 
@@ -89,13 +68,6 @@ function toFixed0(val): any {
     return parseFloat(val).toFixed(3);
 }
 
-watch(width, (val) => {
-    updateAspectRatio();
-});
-
-watch(height, (val) => {
-    updateAspectRatio();
-});
 
 function selectAsepctRatio(val) {
     aspectRatio.value = val

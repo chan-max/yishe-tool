@@ -1,7 +1,7 @@
 
 
 import { VNode, ref, watchEffect } from 'vue'
-import { updateCanvas } from '../../index.tsx'
+import { canvasOptions, updateCanvas } from '../../index.tsx'
 
 import { getPositionInfoFromOptions, getRelativeRealPixelSize, getRelativeRealPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
@@ -22,63 +22,68 @@ function isGradientColor(color) {
 }
 
 
-export const defaultCanvasChildSvgOptions = {
-    position: {
-        center: true,
-        verticalCenter: true,
-        horizontalCenter: true,
-        top: {
-            value: 0,
-            unit: 'px'
-        },
-        left: {
-            value: 0,
-            unit: 'px'
-        },
-        bottom: {
-            value: 0,
-            unit: 'px'
-        },
-        right: {
-            value: 0,
-            unit: 'px'
-        }
-    },
-    padding: {
-        top: {
-            value: 0,
-            unit: 'px'
-        },
-        left: {
-            value: 0,
-            unit: 'px'
-        },
-        bottom: {
-            value: 0,
-            unit: 'px'
-        },
-        right: {
-            value: 0,
-            unit: 'px'
-        }
-    },
-    scaleX: 1,
-    scaleY: 1,
-    scaleZ: 1,
-    rotateX: 0,
-    rotateY: 0,
-    rotateZ: 0,
-    skewX: 0,
-    skewY: 0,
-    width: {
-        value: 100,
-        unit: 'px'
-    },
-    height: {
-        value: 100,
-        unit: 'px'
-    },
+export const createDefaultCanvasChildSvgOptions = () => {
 
+    const canvasUnit = canvasOptions.value.unit
+
+    return {
+        position: {
+            center: true,
+            verticalCenter: true,
+            horizontalCenter: true,
+            top: {
+                value: 0,
+                unit: canvasUnit
+            },
+            left: {
+                value: 0,
+                unit: canvasUnit
+            },
+            bottom: {
+                value: 0,
+                unit: canvasUnit
+            },
+            right: {
+                value: 0,
+                unit: canvasUnit
+            }
+        },
+        padding: {
+            top: {
+                value: 0,
+                unit: canvasUnit
+            },
+            left: {
+                value: 0,
+                unit: canvasUnit
+            },
+            bottom: {
+                value: 0,
+                unit: canvasUnit
+            },
+            right: {
+                value: 0,
+                unit: canvasUnit
+            }
+        },
+        scaleX: 1,
+        scaleY: 1,
+        scaleZ: 1,
+        rotateX: 0,
+        rotateY: 0,
+        rotateZ: 0,
+        skewX: 0,
+        skewY: 0,
+        width: {
+            value: 100,
+            unit: canvasUnit
+        },
+        height: {
+            value: 100,
+            unit: canvasUnit
+        },
+    
+    }
 }
 
 /*
@@ -128,30 +133,35 @@ export function createCanvasChildSvg(options) {
     return <Svg options={options} onVnodeUpdated={updateCanvas} onVnodeMounted={updateCanvas}></Svg>
 }
 
-export const defaultCanvasChildSvgRectOptions = {
-    backgroundColor: {
-        color: '#fff',
-        colorType: 'pure'
-    },
-    borderColor: {
-        color: '#fff',
-        colorType: 'pure'
-    },
-    borderWidth: {
-        value: 0,
-        unit: 'px'
-    },
-    borderRadius:{
-        horizontal:{
-            value:0,
-            unit:'px'
+export const createDefaultCanvasChildSvgRectOptions = () => {
+
+    let canvasUnit = canvasOptions.value.unit
+
+    return {
+        backgroundColor: {
+            color: '#fff',
+            colorType: 'pure'
         },
-        vertical:{
-            value:0,
-            unit:'px'
-        }
-    },
-    ...defaultCanvasChildSvgOptions
+        borderColor: {
+            color: '#fff',
+            colorType: 'pure'
+        },
+        borderWidth: {
+            value: 0,
+            unit: canvasUnit
+        },
+        borderRadius:{
+            horizontal:{
+                value:0,
+                unit:canvasUnit
+            },
+            vertical:{
+                value:0,
+                unit:canvasUnit
+            }
+        },
+        ...createDefaultCanvasChildSvgOptions()
+    }
 }
 
 var uid = 0
@@ -230,28 +240,33 @@ export function createCanvasChildRect(options) {
     ellipse
 */
 
-export const defaultCanvasChildSvgEllipseOptions = {
-    backgroundColor: {
-        color: '#fff',
-        colorType: 'pure'
-    },
-    borderColor: {
-        color: '#fff',
-        colorType: 'pure'
-    },
-    borderWidth: {
-        value: 0,
-        unit: 'px'
-    },
-    width: {
-        value: 100,
-        unit: 'px'
-    },
-    height: {
-        value: 100,
-        unit: 'px'
-    },
-    ...defaultCanvasChildSvgOptions
+export const createDefaultCanvasChildSvgEllipseOptions = () => {
+
+    const canvasUnit = canvasOptions.value.unit
+
+    return  {
+        backgroundColor: {
+            color: '#fff',
+            colorType: 'pure'
+        },
+        borderColor: {
+            color: '#fff',
+            colorType: 'pure'
+        },
+        borderWidth: {
+            value: 0,
+            unit: canvasUnit
+        },
+        width: {
+            value: 100,
+            unit: canvasUnit
+        },
+        height: {
+            value: 100,
+            unit: canvasUnit
+        },
+        ...createDefaultCanvasChildSvgOptions()
+    }
 }
 
 export function createCanvasChildEllipse(options) {

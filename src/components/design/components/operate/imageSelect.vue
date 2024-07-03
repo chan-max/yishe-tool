@@ -3,23 +3,28 @@
         <template #icon>
             <icon></icon>
         </template>
-        <template #name> 选择背景图 </template>
+        <template #name> {{ label }} </template>
         <template #content>
+            {{ model }}
             <template v-if="model">
                 <el-popover>
                     <template #reference>
                         <div class="flex items-center">
                             <div class="text-ellipsis" style="max-width: 120px;">已引用图片{{ model.name }}</div>
-                            <el-button @click="model = null" link>
-                                <el-icon size="1rem">
-                                    <Close></Close>
-                                </el-icon>
-                            </el-button>
                         </div>
                     </template>
-                    <div class="w-full flex justify-center">
-                        <desimage style="width:100px;height:100px;" :src="model.url" :lazy="false"></desimage>
-                    </div>
+                    <el-row align="middle" justify="center" style="row-gap: 1rem;">
+                        <el-col :span="24">
+                            <div class="flex justify-center">
+                                <desimage style="width:100px;height:100px;" :src="model.url" :lazy="false"></desimage>
+                            </div>
+                        </el-col>
+                        <el-col :span="24">
+                            <el-button @click="remove" size="small" :icon="Close" style="width:100%;">
+                                移除图片
+                            </el-button>
+                        </el-col>
+                    </el-row>
                 </el-popover>
             </template>
             <template v-else>
@@ -36,8 +41,18 @@ import { Close } from '@element-plus/icons-vue'
 import desimage from "@/components/design/components/image.vue";
 const model = defineModel({})
 
+const props = defineProps({
+    label:{
+        default:'选择图片'
+    }
+})
+
 function select() {
     viewDisplayController.value.showStickerModal = true
+}
+
+function remove(){
+   model.value = null
 }
 
 </script> 

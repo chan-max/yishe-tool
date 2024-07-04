@@ -47,10 +47,17 @@ const CM2PX: number = (function () {
 /*
     将所有尺寸转换为px单位
 */
+export function sizeOptionToPixelValue(size, elementRealSize = null /* 当前元素中不能含有%w %h的相对属性 */) {
+    var { value, unit } = size
 
+    if (!value) {
+        return 0
+    }
 
-export function sizeOptionToPixelValue(size) {
-    const { value, unit } = size
+    if(unit == 'currentUnit'){
+        unit = canvasOptions.value.unit
+    }
+
     if (unit == 'px') {
         return value
     }
@@ -63,17 +70,49 @@ export function sizeOptionToPixelValue(size) {
     }
 
     if (unit == 'in') {
-        return value * CM2PX / IN2CM
+        return value * CM2PX * IN2CM
+    }
+
+    if (unit == '%w') {
+        return value / 100 * elementRealSize.width
+    }
+
+    if (unit == '%h') {
+        return value / 100 * elementRealSize.height
+    }
+
+    if (unit == 'vw') {
+
+        let canvasPxWidth = sizeOptionToPixelValue({
+            value: canvasOptions.value.width,
+            unit: canvasOptions.value.unit,
+        })
+
+        return value * canvasPxWidth / 100
+    }
+
+    if (unit == 'vh') {
+        let canvasPxHeight = sizeOptionToPixelValue({
+            value: canvasOptions.value.height,
+            unit: canvasOptions.value.unit,
+        })
+        return value * canvasPxHeight / 100
     }
 }
 
 
-
-export function getRelativeRealPixelValue(size, elementRealSize = null) {
+/*
+  处理单位的百分比情况， 不考虑单位情况
+*/
+export function sizeOptionToNativeValue(size, elementRealSize = null) {
     let { value, unit } = size
 
     if (!value) {
         return 0
+    }
+
+    if(unit == 'currentUnit'){
+        unit = canvasOptions.value.unit
     }
 
     if (unit == 'px') {
@@ -109,9 +148,10 @@ export function getRelativeRealPixelValue(size, elementRealSize = null) {
     }
 }
 
-export function getRelativeRealPixelSize(sizeOption, elementRealSize = null) {
-    return getRelativeRealPixelValue(sizeOption, elementRealSize) + sizeOption.unit
+export function sizeOptionToNativeSize(sizeOption, elementRealSize = null) {
+    return sizeOptionToNativeValue(sizeOption, elementRealSize) + sizeOption.unit
 }
+
 
 
 let directionMap = {
@@ -127,6 +167,10 @@ let directionMap = {
 
 function getPositionRealLabel(direction, size) {
     let { value, unit } = size
+
+    if (unit == 'currentUnit') {
+        unit = canvasOptions.value.unit
+    }
 
     if (unit == 'px') {
         return `距离${directionMap[direction]} ${value}px`
@@ -181,10 +225,10 @@ export function getPositionInfoFromOptions(position) {
         style.position = 'absolute'
 
         if (isNumber(position.top.value)) {
-            style.top = getRelativeRealPixelSize(position.top)
+            style.top = sizeOptionToNativeSize(position.top)
             labels.push(getPositionRealLabel('top', position.top))
         } else if (isNumber(style.bottom.value)) {
-            style.bottom = getRelativeRealPixelSize(position.bottom)
+            style.bottom = sizeOptionToNativeSize(position.bottom)
             labels.push(getPositionRealLabel('bottom', position.bottom))
         }
 
@@ -196,10 +240,10 @@ export function getPositionInfoFromOptions(position) {
         style.position = 'absolute'
 
         if (isNumber(position.left.value)) {
-            style.left = getRelativeRealPixelSize(position.left)
+            style.left = sizeOptionToNativeSize(position.left)
             labels.push(getPositionRealLabel('left', position.left))
         } else if (isNumber(style.right.value)) {
-            style.right = getRelativeRealPixelSize(position.right)
+            style.right = sizeOptionToNativeSize(position.right)
             labels.push(getPositionRealLabel('right', position.right))
         }
 
@@ -209,18 +253,18 @@ export function getPositionInfoFromOptions(position) {
         style.position = 'absolute'
 
         if (isNumber(position.top.value)) {
-            style.top = getRelativeRealPixelSize(position.top)
+            style.top = sizeOptionToNativeSize(position.top)
             labels.push(getPositionRealLabel('top', position.top))
         } else if (isNumber(position.bottom.value)) {
-            style.bottom = getRelativeRealPixelSize(position.bottom)
+            style.bottom = sizeOptionToNativeSize(position.bottom)
             labels.push(getPositionRealLabel('bottom', position.bottom))
         }
 
         if (isNumber(position.left.value)) {
-            style.left = getRelativeRealPixelSize(position.left)
+            style.left = sizeOptionToNativeSize(position.left)
             labels.push(getPositionRealLabel('left', position.left))
         } else if (isNumber(position.right.value)) {
-            style.right = getRelativeRealPixelSize(position.right)
+            style.right = sizeOptionToNativeSize(position.right)
             labels.push(getPositionRealLabel('right', position.right))
         }
     }
@@ -239,6 +283,10 @@ export function getPositionInfoFromOptions(position) {
 
 export function getPaddingRealLabel(direction, size) {
     let { value, unit } = size
+
+    if (unit == 'currentUnit') {
+        unit = canvasOptions.value.unit
+    }
 
     if (unit == 'px') {
         return `距离${directionMap[direction]} ${value}px`
@@ -286,10 +334,10 @@ export function getPaddingDispalyLabel(padding) {
 
 export function getPaddingRealPixel(padding, elementRealSize) {
     return [
-        getRelativeRealPixelSize(padding.top, elementRealSize),
-        getRelativeRealPixelSize(padding.right, elementRealSize),
-        getRelativeRealPixelSize(padding.bottom, elementRealSize),
-        getRelativeRealPixelSize(padding.left, elementRealSize)
+        sizeOptionToNativeSize(padding.top, elementRealSize),
+        sizeOptionToNativeSize(padding.right, elementRealSize),
+        sizeOptionToNativeSize(padding.bottom, elementRealSize),
+        sizeOptionToNativeSize(padding.left, elementRealSize)
     ].join(' ')
 }
 
@@ -307,6 +355,10 @@ const borderRadiusPositionMap = {
 
 export function getBorderRadiusRealLabel(position, size) {
     let { value, unit } = size
+
+    if (unit == 'currentUnit') {
+        unit = canvasOptions.value.unit
+    }
 
     if (unit == 'px') {
         return `${borderRadiusPositionMap[position]} ${value}px`
@@ -355,10 +407,10 @@ export function getBroderRadiusDispalyLabel(borderRadius) {
 
 export function getBorderRadiusRealPixel(borderRadius, elementRealSize) {
     return [
-        getRelativeRealPixelSize(borderRadius.leftTop, elementRealSize),
-        getRelativeRealPixelSize(borderRadius.rightTop, elementRealSize),
-        getRelativeRealPixelSize(borderRadius.rightBottom, elementRealSize),
-        getRelativeRealPixelSize(borderRadius.leftBottom, elementRealSize)
+        sizeOptionToNativeSize(borderRadius.leftTop, elementRealSize),
+        sizeOptionToNativeSize(borderRadius.rightTop, elementRealSize),
+        sizeOptionToNativeSize(borderRadius.rightBottom, elementRealSize),
+        sizeOptionToNativeSize(borderRadius.leftBottom, elementRealSize)
     ].join(' ')
 }
 

@@ -1,5 +1,5 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
-import { getPositionInfoFromOptions, getRelativeRealPixelSize } from '../helper.tsx'
+import { getPositionInfoFromOptions, sizeOptionToNativeSize } from '../helper.tsx'
 import { defineComponent, onUpdated } from "vue"
 
 export interface TextCanvasChildOptions {
@@ -60,7 +60,6 @@ export const createDefaultCanvasChildTextOptions = () => {
         letterSpacing: 0,
         textContent: 'hello world',
         writingMode: 'htb',
-        unit: canvasUnit // px | vw | vh
     }
 }
 
@@ -99,7 +98,7 @@ export const Text = defineComponent({
             }
 
 
-            const fontSize = getRelativeRealPixelSize(props.options.fontSize)
+            const fontSize = sizeOptionToNativeSize(props.options.fontSize)
 
             var style: any = {
                 flexShrink: 0,

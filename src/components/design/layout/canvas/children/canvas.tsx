@@ -44,14 +44,9 @@ export const Canvas = defineComponent({
             })
             
         
-
             const transformValue = props.maxDisplaySize / Math.max(pxWidth, pxHeight)
 
-            
-
             let pngBackground = createPngBackgroundStyle(transformValue)
-
-      
 
             const containerStyle: any = {
                 width: canvasOptions.value.width + canvasOptions.value.unit,

@@ -1,6 +1,6 @@
 <template>
   <el-scrollbar>
-    <div style="margin: 1em 1em">
+    <div style="margin: 1em 1.2em">
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.CANVAS">
         <el-row :gutter="24" align="middle">
           <el-col :span="24">

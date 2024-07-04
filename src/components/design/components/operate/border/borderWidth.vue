@@ -3,7 +3,7 @@
         <template #icon> <icon></icon> </template>
         <template #name> 边框尺寸 </template>
         <template #content>
-            <el-popover trigger="click">
+            <el-popover trigger="click" width="180">
                 <template #reference>
                     <el-input type="number" style="width:80px" v-model="model.value" size="small" min="0" step="1">
                         <template #suffix>
@@ -28,7 +28,8 @@
 
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/border-width.svg?component";
-import { ref } from 'vue'
+import { ref ,computed} from 'vue'
+import { canvasOptions } from "@/components/design/layout/canvas/index.tsx";
 
 const props = defineProps({
     tooltip: {
@@ -36,17 +37,30 @@ const props = defineProps({
     },
 })
 
-const unitOptions = ref([{
-    label: '像素值',
-    value: 'px',
-}, {
-    label: '画布宽度百分比',
-    value: 'vw',
-}, {
-    label: '画布高度度百分比',
-    value: 'vh',
-}])
-
+const unitOptions = computed(() => {
+    return [
+        {
+            label: `使用当前画布单位(${canvasOptions.value.unit})`,
+            value: canvasOptions.value.unit,
+        },
+        {
+            label: "相对于画布宽的百分比",
+            value: "vw",
+        },
+        {
+            label: "相对于画布高的百分比",
+            value: "vh",
+        },
+        {
+            label: "相对于当前元素宽的百分比",
+            value: "%w",
+        },
+        {
+            label: "相对于当前元素高的百分比",
+            value: "%h",
+        },
+    ]
+});
 
 
 const model = defineModel({})

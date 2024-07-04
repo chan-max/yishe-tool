@@ -2,7 +2,7 @@ import QRCodeStyling from 'qr-code-styling';
 import { ref, watchEffect } from 'vue'
 import { canvasOptions, updateCanvas } from '../index.tsx'
 
-import { getPositionInfoFromOptions, getRelativeRealPixelSize, getRelativeRealPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
+import { getPositionInfoFromOptions, sizeOptionToNativeSize, sizeOptionToNativeValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
 
 import { parse } from 'gradient-parser'
@@ -145,8 +145,8 @@ async function createQrcodeUrl(options) {
 
 
     const qrCodeOptions = {
-        width: getRelativeRealPixelValue(options.width),
-        height: getRelativeRealPixelValue(options.height),
+        width: sizeOptionToNativeValue(options.width),
+        height: sizeOptionToNativeValue(options.height),
         type: "svg",
         data: options.qrcodeContent,
         // image: "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
@@ -218,11 +218,11 @@ export const Qrcode = defineComponent({
 
 
 
-            let width = getRelativeRealPixelSize(props.options.width)
-            let height = getRelativeRealPixelSize(props.options.height)
+            let width = sizeOptionToNativeSize(props.options.width)
+            let height = sizeOptionToNativeSize(props.options.height)
 
-            let realWidthValue = getRelativeRealPixelValue(props.options.width)
-            let realHeightValue = getRelativeRealPixelValue(props.options.height)
+            let realWidthValue = sizeOptionToNativeValue(props.options.width)
+            let realHeightValue = sizeOptionToNativeValue(props.options.height)
 
             let padding = getPaddingRealPixel(props.options.padding, {
                 width: realWidthValue,

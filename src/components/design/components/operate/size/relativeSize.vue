@@ -102,13 +102,14 @@ const props = defineProps({
 });
 
 
-
-
 const unitOptions = computed(() => {
-    return [
+
+    let currentUnit = canvasOptions.value.unit
+
+    const options = [
         {
-            label: `使用当前画布单位(${canvasOptions.value.unit})`,
-            value: canvasOptions.value.unit,
+            label: `使用当前画布单位(${currentUnit})`,
+            value: currentUnit,
         },
         {
             label: '画布宽度的百分比',
@@ -119,11 +120,13 @@ const unitOptions = computed(() => {
             value: 'vh',
         }
     ]
+
+    return options
 })
 
 
-const width = defineModel("width", {});
-const height = defineModel("height", {});
+const width: any = defineModel("width", {});
+const height: any = defineModel("height", {});
 
 const aspectRatio = defineModel("aspectRatio", {});
 

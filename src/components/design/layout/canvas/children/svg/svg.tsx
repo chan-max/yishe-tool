@@ -3,7 +3,7 @@
 import { VNode, ref, watchEffect } from 'vue'
 import { canvasOptions, updateCanvas } from '../../index.tsx'
 
-import { getPositionInfoFromOptions, getRelativeRealPixelSize, getRelativeRealPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../../helper.tsx'
+import { getPositionInfoFromOptions, sizeOptionToNativeSize, sizeOptionToNativeValue, sizeOptionToPixelValue, } from '../../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
 import { svgToBase64 } from "@/common/transform/index";
 import { renderToString } from '@vue/server-renderer';
@@ -17,9 +17,6 @@ import { id } from 'element-plus/es/locale/index';
 */
 
 
-function isGradientColor(color) {
-    return typeof color == 'string' ? color.includes('gradient') : color.colorType == 'gradient'
-}
 
 
 export const createDefaultCanvasChildSvgOptions = () => {
@@ -82,7 +79,7 @@ export const createDefaultCanvasChildSvgOptions = () => {
             value: 100,
             unit: canvasUnit
         },
-    
+
     }
 }
 
@@ -111,8 +108,8 @@ export const Svg = defineComponent({
                 ..._containerStyle
             }
 
-            let width = getRelativeRealPixelValue(props.options.width)
-            let height = getRelativeRealPixelValue(props.options.height)
+            let width = sizeOptionToNativeSize(props.options.width)
+            let height = sizeOptionToNativeSize(props.options.height)
 
             const style = {
                 width,
@@ -150,14 +147,14 @@ export const createDefaultCanvasChildSvgRectOptions = () => {
             value: 0,
             unit: canvasUnit
         },
-        borderRadius:{
-            horizontal:{
-                value:0,
-                unit:canvasUnit
+        borderRadius: {
+            horizontal: {
+                value: 0,
+                unit: canvasUnit
             },
-            vertical:{
-                value:0,
-                unit:canvasUnit
+            vertical: {
+                value: 0,
+                unit: canvasUnit
             }
         },
         ...createDefaultCanvasChildSvgOptions()
@@ -207,30 +204,33 @@ function getSvgGradientRenderFromColorOption(colorOption) {
 
 export function createCanvasChildRect(options) {
 
-   
-    let width = getRelativeRealPixelValue(options.width)
-    let height = getRelativeRealPixelValue(options.height)
+    let width = sizeOptionToPixelValue(options.width)
+    let height = sizeOptionToPixelValue(options.height)
 
-    let borderWidth = getRelativeRealPixelValue(options.borderWidth)
-
-    const x = borderWidth / 2
-    const y = borderWidth / 2
-
-    options.borderRadius
-
-    const elementSize = {
+    // 像素单位
+    const elementRealSize = {
         width,
         height
     }
 
-    const rx = getRelativeRealPixelValue(options.borderRadius.horizontal,elementSize)
-    const ry = getRelativeRealPixelValue(options.borderRadius.vertical,elementSize)
+    // 边框尺寸
+    let borderWidth = sizeOptionToPixelValue(options.borderWidth,elementRealSize)
+
+
+    const x = borderWidth / 2
+    const y = borderWidth / 2
+
+    const rx = sizeOptionToPixelValue(options.borderRadius.horizontal, elementRealSize)
+    const ry = sizeOptionToPixelValue(options.borderRadius.vertical, elementRealSize)
+
+
+
     const rectWidth = width - borderWidth
     const rectHeight = height - borderWidth
     return <Svg options={options}>
         {getSvgGradientRenderFromColorOption(options.backgroundColor)}
         {getSvgGradientRenderFromColorOption(options.borderColor)}
-        <rect width={rectWidth} height={rectHeight} rx={rx} ry={ry}  x={x} y={y} fill={getSvgGradientColorFromColorOption(options.backgroundColor)} stroke={getSvgGradientColorFromColorOption(options.borderColor)} stroke-width={borderWidth} />
+        <rect width={rectWidth} height={rectHeight} rx={rx} ry={ry} x={x} y={y} fill={getSvgGradientColorFromColorOption(options.backgroundColor)} stroke={getSvgGradientColorFromColorOption(options.borderColor)} stroke-width={borderWidth} />
     </Svg>
 }
 
@@ -244,7 +244,7 @@ export const createDefaultCanvasChildSvgEllipseOptions = () => {
 
     const canvasUnit = canvasOptions.value.unit
 
-    return  {
+    return {
         backgroundColor: {
             color: '#fff',
             colorType: 'pure'
@@ -283,15 +283,20 @@ export function createCanvasChildEllipse(options) {
     />
 */
 
-    let width = getRelativeRealPixelValue(options.width)
-    let height = getRelativeRealPixelValue(options.height)
-    let borderWidth = getRelativeRealPixelValue(options.borderWidth)
+    let width = sizeOptionToPixelValue(options.width)
+    let height = sizeOptionToPixelValue(options.height)
+
+
+
+    let borderWidth = sizeOptionToPixelValue(options.borderWidth,{
+        width,
+        height,
+    })
 
     const x = (width) / 2
     const y = (height) / 2
 
-
-
+    
     const xRadius = (width - borderWidth) / 2
     const yRadius = (height - borderWidth) / 2
 

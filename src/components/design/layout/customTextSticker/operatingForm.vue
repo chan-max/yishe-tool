@@ -204,7 +204,7 @@
 
 <script setup>
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
-import operateFormItem from "@/components/design/components/operate/operateFormItem.vue";
+import operateFormItem from "@/components/design/layout/canvas/operate/operateFormItem.vue";
 import colorPicker from "../../components/colorPicker.vue";
 
 import iconBold from "@/components/design/assets/icon/bold.svg?component";

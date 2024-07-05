@@ -103,7 +103,7 @@ import {
 import { svgCanvasChildren,  svgCanvasWidth,
   svgCanvasHeight, } from '@/components/design/store'
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
-import operateFormItem from "@/components/design/components/operate/operateFormItem.vue";
+import operateFormItem from "@/components/design/layout/canvas/operate/operateFormItem.vue";
 import colorPicker from "../../components/colorPicker.vue";
 
 import iconWritingMode from "@/components/design/assets/icon/writing-mode.svg?component";
@@ -112,14 +112,14 @@ import iconBorderWidth from "@/components/design/assets/icon/border-width.svg?co
 import iconBorderStyle from "@/components/design/assets/icon/border-style.svg?component";
 import iconBorderColor from "@/components/design/assets/icon/border-color.svg?component";
 import { operatingTextStickerOptions, showFontList } from "../../store";
-import operateItemTextContent from '@/components/design/components/operate/textContent.vue'
-import operateItemFontSize from '@/components/design/components/operate/fontSize.vue'
-import operateItemFontWeight from '@/components/design/components/operate/fontWeight.vue'
-import operateItemFontItalic from '@/components/design/components/operate/italic.vue'
-import operateItemFontColor from '@/components/design/components/operate/fontColor.vue'
-import operateItemFontFamily from '@/components/design/components/operate/fontFamily.vue'
-import operateItemLineHeight from '@/components/design/components/operate/lineHeight.vue'
-import operateItemLetterSpacing from '@/components/design/components/operate/letterSpacing.vue'
+import operateItemTextContent from '@/components/design/layout/canvas/operate/textContent.vue'
+import operateItemFontSize from '@/components/design/layout/canvas/operate/fontSize.vue'
+import operateItemFontWeight from '@/components/design/layout/canvas/operate/fontWeight.vue'
+import operateItemFontItalic from '@/components/design/layout/canvas/operate/italic.vue'
+import operateItemFontColor from '@/components/design/layout/canvas/operate/fontColor.vue'
+import operateItemFontFamily from '@/components/design/layout/canvas/operate/fontFamily.vue'
+import operateItemLineHeight from '@/components/design/layout/canvas/operate/lineHeight.vue'
+import operateItemLetterSpacing from '@/components/design/layout/canvas/operate/letterSpacing.vue'
 
 import layout from './layout.vue'
 

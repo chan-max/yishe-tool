@@ -1,5 +1,5 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
-import { getPositionInfoFromOptions, sizeOptionToNativeSize } from '../helper.tsx'
+import { getPositionInfoFromOptions, } from '../helper.tsx'
 import { computed, defineComponent, onUpdated, ref } from "vue"
 
 export const createDefaultCanvasChildImageOptions = () => {

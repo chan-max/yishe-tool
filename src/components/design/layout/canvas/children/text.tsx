@@ -1,6 +1,7 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
-import { getPositionInfoFromOptions, sizeOptionToNativeSize } from '../helper.tsx'
-import { defineComponent, onUpdated } from "vue"
+import { getPositionInfoFromOptions, formatToNativeSizeOption } from '../helper.tsx'
+import { defineComponent, onUpdated, ref,watchEffect } from "vue"
+import CircleType from "circletype";
 
 export interface TextCanvasChildOptions {
     center: boolean | null | undefined
@@ -65,10 +66,6 @@ export const createDefaultCanvasChildTextOptions = () => {
 
 
 
-function isGradientColor(color) {
-    return typeof color == 'string' ? color.includes('gradient') : color.colorType == 'gradient'
-}
-
 export function createCanvasChildText(options) {
     return <Text options={options} onVnodeUpdated={updateCanvas} onVnodeMounted={updateCanvas}></Text>
 }
@@ -80,6 +77,18 @@ export const Text = defineComponent({
     setup(props, ctx) {
 
         const options = props.options
+
+
+        const textRef = ref()
+
+        watchEffect(() => {
+            let el = textRef.value
+            if (!el) {
+                return
+            }
+
+            new CircleType(el);
+        })
 
         return () => {
             const {
@@ -98,11 +107,13 @@ export const Text = defineComponent({
             }
 
 
-            const fontSize = sizeOptionToNativeSize(props.options.fontSize)
+            const fontSize = formatToNativeSizeOption(props.options.fontSize)
+
+
 
             var style: any = {
                 flexShrink: 0,
-                fontSize, // 字体尺寸相对于画布宽度
+                fontSize: fontSize.value + fontSize.unit,
                 fontWeight: props.options.fontWeight,
                 fontStyle: props.options.italic ? 'italic' : 'normal',
                 whiteSpace: 'pre-line', // 用于显示换行
@@ -126,7 +137,7 @@ export const Text = defineComponent({
 
 
             return <div style={containerStyle}>
-                <span style={style}>
+                <span ref={textRef} style={style}>
                     {props.options.textContent}
                 </span>
             </div>

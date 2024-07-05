@@ -4,31 +4,33 @@
             <canvass></canvass>
             <div class="canvas-container-bottom-menu">
                 <div style="flex:1"></div>
-                <el-button @click="showMainCanvas = true" :icon="FullScreen" type="info" text bg round size="small">
-                    <span>大画布显示</span>
-                </el-button>
+                <el-tooltip content="小画布始终展示等比缩放的尺寸，大画布可以显示真实尺寸">
+                    <el-button @click="showMainCanvas = true" :icon="FullScreen" type="info" text bg round size="small">
+                        <span>大画布显示</span>
+                    </el-button>
+                </el-tooltip>
             </div>
         </div>
-        <div class="flex" style="width:100%;padding:1em;">
-                <addPopover>
-                    <el-button type="primary" link>
-                        <span>添加元素</span>
-                    </el-button>
-                </addPopover>
+        <div class="flex" style="width:100%;padding:1em;padding-top:2rem;">
+            <addPopover>
+                <el-button type="primary" link>
+                    <span>添加元素</span>
+                </el-button>
+            </addPopover>
 
-                <div style="flex:1;"></div>
-                <el-button plain link>
-                    <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
-                    上传
-                </el-button>
-                <el-button link @click="exportPng" plain>
-                    <LinkOutlined style="font-size:1.2em;margin-right:4px;" />
-                    导出 PNG
-                </el-button>
-                <el-button link plain>
-                    更多...
-                </el-button>
-            </div>
+            <div style="flex:1;"></div>
+            <el-button plain link>
+                <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
+                上传
+            </el-button>
+            <el-button link @click="exportPng" plain>
+                <LinkOutlined style="font-size:1.2em;margin-right:4px;" />
+                导出 PNG
+            </el-button>
+            <el-button link plain>
+                更多
+            </el-button>
+        </div>
         <div style="width:100%;padding:0 1em;">
             <div style="display:flex;column-gap:10px">
                 <el-select v-model="currentOperatingCanvasChildIndex">
@@ -135,12 +137,12 @@ function remove(index) {
     position: relative;
     overflow: hidden;
 
-    &:hover {
+    // &:hover {
 
-        .canvas-container-bottom-menu {
-            bottom: 0px;
-        }
-    }
+    //     .canvas-container-bottom-menu {
+    //         bottom: 0px;
+    //     }
+    // }
 }
 
 .canvas-container-bottom-menu {
@@ -148,9 +150,10 @@ function remove(index) {
     height: 48px;
     position: fixed;
     padding: 0 1rem;
-    background: linear-gradient(0deg, rgba(0, 0, 0, .3) 0%, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(0deg, rgba(0, 0, 0, .2) 0%, rgba(255, 255, 255, 0) 100%);
     position: absolute;
-    bottom: -48px;
+    // bottom: -48px;
+    bottom: 0px;
     display: flex;
     align-items: center;
     justify-content: space-between;

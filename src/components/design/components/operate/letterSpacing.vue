@@ -1,9 +1,9 @@
 <template>
     <operate-form-item>
         <template #icon> <icon-letter-spacing></icon-letter-spacing> </template>
-        <template #name> 间距 </template>
+        <template #name> 文字间距 </template>
         <template #content>
-            <el-input  style="width:64px"  type="number" v-model="model" size="small" min="-1" max="1"
+            <el-input  style="width:64px"  type="number" v-model="model" size="small" min="-1" max="10"
                 step=".1"></el-input>
         </template>
     </operate-form-item>

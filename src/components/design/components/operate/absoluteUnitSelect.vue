@@ -28,9 +28,7 @@ const props = defineProps({
     }
 })
 
-watch(canvasOptions,() => {
-    console.log(canvasOptions.value)
-})
+
 
 const emits = defineEmits(['change'])
 
@@ -38,31 +36,8 @@ const emits = defineEmits(['change'])
     深度遍历更新所有单位
     只更新绝对单位
 */
-function change(currentUnit) {
-    const unitKeys = ['width','height','top','left','right','bottom','fontSize','leftTop','rightTop','leftBottom','rightBottom','borderWidth','horizontal','vertical']
-    const absoluteUnits = ['px', 'cm', 'mm', 'in']
-    
-    function updateUnit(item){
-        if(Array.isArray(item)){
-            return item.forEach(updateUnit)
-        }
-
-        if(item == null || typeof item != 'object'){
-            return
-        }
-
-
-        if (item && !isNaN(Number(item.value)) && item.unit && absoluteUnits.includes(item.unit)) {
-            
-           return item.unit = currentUnit
-        }
-
-        for (let key in item) {
-            updateUnit(item[key])
-        }
-    }
-
-    updateUnit(canvasOptions.value.children)
+function change(unit){
+    emits('change',unit)
 }
 
 const model = defineModel({

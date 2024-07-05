@@ -4,11 +4,11 @@
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.CANVAS">
         <el-row :gutter="24" align="middle">
           <el-col :span="24">
-            <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasOptions.width" v-model:height="canvasOptions.height">
+            <operateItemAbsoluteSize  label="画布尺寸" v-model:width="canvasOptions.width" v-model:height="canvasOptions.height">
             </operateItemAbsoluteSize>
           </el-col>
           <el-col :span="24">
-            <operateItemAbsoluteUnitSelect label="画布尺寸单位" v-model="canvasOptions.unit"></operateItemAbsoluteUnitSelect>
+            <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位" v-model="canvasOptions.unit"></operateItemAbsoluteUnitSelect>
           </el-col>
           <el-col :span="24">
             <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
@@ -277,7 +277,9 @@ import operateItemBorderWidth from "@/components/design/components/operate/borde
 import operateItemRectBorderRadius from "@/components/design/components/operate/border/rectBorderRadius.vue";
 import operateItemAbsoluteUnitSelect from "@/components/design/components/operate/absoluteUnitSelect.vue";
 
-
+import {
+  updateCanvasOptionsUnit
+} from './helper'
 
 import {
   CanvasController,
@@ -290,6 +292,10 @@ import {
   currentOperatingCanvasChild,
   CanvasChildType,
 } from "./index.tsx";
+
+function absoluteUnitChange(unit){
+  updateCanvasOptionsUnit(unit)
+}
 
 const textCollapseActives = ref(["1", "2", "3", "4"]);
 

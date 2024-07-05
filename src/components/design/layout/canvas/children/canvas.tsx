@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue'
 import { canvasOptions, currentCanvasControllerInstance, } from '@/components/design/layout/canvas'
-import { sizeOptionToPixelValue } from '../helper'
+import { formatSizeOptionToPixelValue } from '../helper'
 
 /*
     用于辅助观察的网格背景
@@ -33,12 +33,12 @@ export const Canvas = defineComponent({
 
         return () => {
 
-            const pxWidth = sizeOptionToPixelValue({
+            const pxWidth = formatSizeOptionToPixelValue({
                 value:canvasOptions.value.width,
                 unit:canvasOptions.value.unit
             })
             
-            const pxHeight = sizeOptionToPixelValue({
+            const pxHeight = formatSizeOptionToPixelValue({
                 value:canvasOptions.value.height,
                 unit:canvasOptions.value.unit
             })

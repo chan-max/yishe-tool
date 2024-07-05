@@ -2,7 +2,7 @@ import QRCodeStyling from 'qr-code-styling';
 import { ref, watchEffect } from 'vue'
 import { canvasOptions, updateCanvas } from '../index.tsx'
 
-import { getPositionInfoFromOptions, sizeOptionToNativeSize, sizeOptionToNativeValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
+import { getPositionInfoFromOptions, formatToNativeSizeString, formatSizeOptionToPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
 
 import { parse } from 'gradient-parser'
@@ -145,8 +145,8 @@ async function createQrcodeUrl(options) {
 
 
     const qrCodeOptions = {
-        width: sizeOptionToNativeValue(options.width),
-        height: sizeOptionToNativeValue(options.height),
+        width: formatSizeOptionToPixelValue(options.width),
+        height: formatSizeOptionToPixelValue(options.height),
         type: "svg",
         data: options.qrcodeContent,
         // image: "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
@@ -216,27 +216,20 @@ export const Qrcode = defineComponent({
                 ..._containerStyle
             }
 
-
-
-            let width = sizeOptionToNativeSize(props.options.width)
-            let height = sizeOptionToNativeSize(props.options.height)
-
-            let realWidthValue = sizeOptionToNativeValue(props.options.width)
-            let realHeightValue = sizeOptionToNativeValue(props.options.height)
-
+             
             let padding = getPaddingRealPixel(props.options.padding, {
-                width: realWidthValue,
-                height: realHeightValue,
+                width: props.options.width,
+                height: props.options.height,
             })
 
             const borderRadius = getBorderRadiusRealPixel(props.options.borderRadius, {
-                width: realWidthValue,
-                height: realHeightValue
+                width: props.options.width,
+                height: props.options.height,
             })
 
             const style = {
-                width,
-                height,
+                width:formatToNativeSizeString(props.options.width),
+                height:formatToNativeSizeString(props.options.height),
                 flexShrink: 0,
                 background: props.options.backgroundColor.color,
                 padding,

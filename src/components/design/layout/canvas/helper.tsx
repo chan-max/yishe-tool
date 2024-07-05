@@ -5,7 +5,39 @@
 
 import { canvasOptions } from "./index"
 
+
+export function updateCanvasOptionsUnit(currentUnit) {
+    const unitKeys = ['width','height','top','left','right','bottom','fontSize','leftTop','rightTop','leftBottom','rightBottom','borderWidth','horizontal','vertical']
+    const absoluteUnits = ['px', 'cm', 'mm', 'in']
+    
+    function updateUnit(item){
+        if(Array.isArray(item)){
+            return item.forEach(updateUnit)
+        }
+
+        if(item == null || typeof item != 'object'){
+            return
+        }
+
+
+        if (item && !isNaN(Number(item.value)) && item.unit && absoluteUnits.includes(item.unit)) {
+            
+           return item.unit = currentUnit
+        }
+
+        for (let key in item) {
+            updateUnit(item[key])
+        }
+    }
+
+    updateUnit(canvasOptions.value.children)
+}
+
+
 const isNumber = (val) => typeof val === 'number'
+
+
+
 
 
 export function prasePxToCm(px) {
@@ -47,16 +79,20 @@ const CM2PX: number = (function () {
 /*
     将所有尺寸转换为px单位
 */
-export function sizeOptionToPixelValue(size, elementRealSize = null /* 当前元素中不能含有%w %h的相对属性 */) {
+export function formatSizeOptionToPixelValue(size, elementRealSize = null /* 当前元素中不能含有%w %h的相对属性 */) {
+
+    if(!isNaN(Number(size))) {
+        return size
+    }
+
     var { value, unit } = size
 
     if (!value) {
         return 0
     }
 
-    if(unit == 'currentUnit'){
-        unit = canvasOptions.value.unit
-    }
+
+
 
     if (unit == 'px') {
         return value
@@ -74,16 +110,18 @@ export function sizeOptionToPixelValue(size, elementRealSize = null /* 当前元
     }
 
     if (unit == '%w') {
-        return value / 100 * elementRealSize.width
+        let real = formatSizeOptionToPixelValue(elementRealSize.width)
+        return value / 100 * real
     }
 
     if (unit == '%h') {
-        return value / 100 * elementRealSize.height
+        let real = formatSizeOptionToPixelValue(elementRealSize.height)
+        return value / 100 * real
     }
 
     if (unit == 'vw') {
 
-        let canvasPxWidth = sizeOptionToPixelValue({
+        let canvasPxWidth = formatSizeOptionToPixelValue({
             value: canvasOptions.value.width,
             unit: canvasOptions.value.unit,
         })
@@ -92,7 +130,7 @@ export function sizeOptionToPixelValue(size, elementRealSize = null /* 当前元
     }
 
     if (unit == 'vh') {
-        let canvasPxHeight = sizeOptionToPixelValue({
+        let canvasPxHeight = formatSizeOptionToPixelValue({
             value: canvasOptions.value.height,
             unit: canvasOptions.value.unit,
         })
@@ -101,58 +139,86 @@ export function sizeOptionToPixelValue(size, elementRealSize = null /* 当前元
 }
 
 
-/*
-  处理单位的百分比情况， 不考虑单位情况
-*/
-export function sizeOptionToNativeValue(size, elementRealSize = null) {
+
+
+export function formatToNativeSizeString(size, relativeElementSize) {
+    const option = formatToNativeSizeOption(size, relativeElementSize)
+    return option.value + option.unit
+}
+
+export function formatToNativeSizeOption(size, relativeElementSize) {
     let { value, unit } = size
 
     if (!value) {
-        return 0
-    }
-
-    if(unit == 'currentUnit'){
-        unit = canvasOptions.value.unit
+        return {
+            value: '0',
+            unit: 'px'
+        }
     }
 
     if (unit == 'px') {
-        return value
+        return {
+            value,
+            unit: 'px'
+        }
     }
 
     if (unit == 'mm') {
-        return value
+        return {
+            value,
+            unit: 'mm'
+        }
     }
 
     if (unit == 'cm') {
-        return value
+        return {
+            value,
+            unit: 'cm'
+        }
     }
 
     if (unit == 'in') {
-        return value
+        return {
+            value,
+            unit: 'in'
+        }
     }
 
+    /*
+        相对于画布的元素
+    */
+
     if (unit == 'vw') {
-        return value * canvasOptions.value.width / 100
+        return {
+            value: value * canvasOptions.value.width / 100,
+            unit: canvasOptions.value.unit
+        }
     }
 
     if (unit == 'vh') {
-        return value * canvasOptions.value.height / 100
+        return {
+            value: value * canvasOptions.value.height / 100,
+            unit: canvasOptions.value.unit
+        }
     }
 
     if (unit == '%w') {
-        return value * (elementRealSize?.width || 0) / 100
+        m
+        const { value: relativeSize, unit: relativeUnit } = formatToNativeSizeOption(relativeElementSize.width)
+        return {
+            unit,
+            value: value / 100 * relativeSize
+        }
     }
 
     if (unit == '%h') {
-        return value * (elementRealSize?.height || 0) / 100
+        const { value: relativeSize, unit: relativeUnit } = formatToNativeSizeOption(relativeElementSize.height)
+        return {
+            unit,
+            value: value / 100 * relativeSize
+        }
     }
 }
-
-export function sizeOptionToNativeSize(sizeOption, elementRealSize = null) {
-    return sizeOptionToNativeValue(sizeOption, elementRealSize) + sizeOption.unit
-}
-
-
 
 let directionMap = {
     top: '上方',
@@ -168,9 +234,6 @@ let directionMap = {
 function getPositionRealLabel(direction, size) {
     let { value, unit } = size
 
-    if (unit == 'currentUnit') {
-        unit = canvasOptions.value.unit
-    }
 
     if (unit == 'px') {
         return `距离${directionMap[direction]} ${value}px`
@@ -225,11 +288,13 @@ export function getPositionInfoFromOptions(position) {
         style.position = 'absolute'
 
         if (isNumber(position.top.value)) {
-            style.top = sizeOptionToNativeSize(position.top)
-            labels.push(getPositionRealLabel('top', position.top))
+            let top = formatToNativeSizeOption(position.top)
+            style.top = top.value + top.unit
+            labels.push(getPositionRealLabel('top', top))
         } else if (isNumber(style.bottom.value)) {
-            style.bottom = sizeOptionToNativeSize(position.bottom)
-            labels.push(getPositionRealLabel('bottom', position.bottom))
+            let bottom = formatToNativeSizeOption(position.bottom)
+            style.bottom = bottom.value + bottom.unit
+            labels.push(getPositionRealLabel('bottom', bottom))
         }
 
         labels.push('水平居中')
@@ -240,11 +305,13 @@ export function getPositionInfoFromOptions(position) {
         style.position = 'absolute'
 
         if (isNumber(position.left.value)) {
-            style.left = sizeOptionToNativeSize(position.left)
-            labels.push(getPositionRealLabel('left', position.left))
+            let left = formatToNativeSizeOption(position.left)
+            style.left = left.value + left.unit
+            labels.push(getPositionRealLabel('left', left))
         } else if (isNumber(style.right.value)) {
-            style.right = sizeOptionToNativeSize(position.right)
-            labels.push(getPositionRealLabel('right', position.right))
+            let right = formatToNativeSizeOption(position.right)
+            style.right = right.value + right.unit
+            labels.push(getPositionRealLabel('right', right))
         }
 
         labels.push('垂直居中')
@@ -253,19 +320,23 @@ export function getPositionInfoFromOptions(position) {
         style.position = 'absolute'
 
         if (isNumber(position.top.value)) {
-            style.top = sizeOptionToNativeSize(position.top)
-            labels.push(getPositionRealLabel('top', position.top))
+            let top = formatToNativeSizeOption(position.top)
+            style.top = top.value + top.unit
+            labels.push(getPositionRealLabel('top', top))
         } else if (isNumber(position.bottom.value)) {
-            style.bottom = sizeOptionToNativeSize(position.bottom)
-            labels.push(getPositionRealLabel('bottom', position.bottom))
+            let bottom = formatToNativeSizeOption(position.bottom)
+            style.bottom = bottom.value + bottom.unit
+            labels.push(getPositionRealLabel('bottom', bottom))
         }
 
         if (isNumber(position.left.value)) {
-            style.left = sizeOptionToNativeSize(position.left)
-            labels.push(getPositionRealLabel('left', position.left))
+            let left = formatToNativeSizeOption(position.left)
+            style.left = left.value + left.unit
+            labels.push(getPositionRealLabel('left', left))
         } else if (isNumber(position.right.value)) {
-            style.right = sizeOptionToNativeSize(position.right)
-            labels.push(getPositionRealLabel('right', position.right))
+            let right = formatToNativeSizeOption(position.right)
+            style.right = right.value + right.unit
+            labels.push(getPositionRealLabel('right', right))
         }
     }
 
@@ -334,10 +405,10 @@ export function getPaddingDispalyLabel(padding) {
 
 export function getPaddingRealPixel(padding, elementRealSize) {
     return [
-        sizeOptionToNativeSize(padding.top, elementRealSize),
-        sizeOptionToNativeSize(padding.right, elementRealSize),
-        sizeOptionToNativeSize(padding.bottom, elementRealSize),
-        sizeOptionToNativeSize(padding.left, elementRealSize)
+        formatToNativeSizeString(padding.top, elementRealSize),
+        formatToNativeSizeString(padding.right, elementRealSize),
+        formatToNativeSizeString(padding.bottom, elementRealSize),
+        formatToNativeSizeString(padding.left, elementRealSize)
     ].join(' ')
 }
 
@@ -407,10 +478,10 @@ export function getBroderRadiusDispalyLabel(borderRadius) {
 
 export function getBorderRadiusRealPixel(borderRadius, elementRealSize) {
     return [
-        sizeOptionToNativeSize(borderRadius.leftTop, elementRealSize),
-        sizeOptionToNativeSize(borderRadius.rightTop, elementRealSize),
-        sizeOptionToNativeSize(borderRadius.rightBottom, elementRealSize),
-        sizeOptionToNativeSize(borderRadius.leftBottom, elementRealSize)
+        formatToNativeSizeString(borderRadius.leftTop, elementRealSize),
+        formatToNativeSizeString(borderRadius.rightTop, elementRealSize),
+        formatToNativeSizeString(borderRadius.rightBottom, elementRealSize),
+        formatToNativeSizeString(borderRadius.leftBottom, elementRealSize)
     ].join(' ')
 }
 

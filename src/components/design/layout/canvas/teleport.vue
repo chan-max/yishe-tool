@@ -4,7 +4,7 @@
         <div class="top-menu">
             <div style="flex:1;"></div>
             <el-button link>
-                宽  {{ canvasOptions.width }} x  高 {{ canvasOptions.height }}
+                宽  {{ canvasOptions.width }}{{ canvasOptions.unit }}   高 {{ canvasOptions.height }}{{ canvasOptions.unit }}
             </el-button>
             <el-button type="danger" link @click="showMainCanvas = false">
                 <el-icon size="18">

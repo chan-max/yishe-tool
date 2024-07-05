@@ -1,5 +1,5 @@
 import { canvasOptions } from '../index.tsx'
-import { getPositionInfoFromOptions,sizeOptionToNativeSize } from '../helper.tsx'
+import { getPositionInfoFromOptions ,formatToNativeSizeString} from '../helper.tsx'
 import { defineComponent, ref } from 'vue'
 
 /*
@@ -83,8 +83,8 @@ export const Background = defineComponent({
 
 
             const style = {
-                width: sizeOptionToNativeSize(props.options.width),
-                height: sizeOptionToNativeSize(props.options.height),
+                width: formatToNativeSizeString(props.options.width),
+                height: formatToNativeSizeString(props.options.height),
                 background: props.options.backgroundColor.color,
                 flexShrink:0,
                 ..._style

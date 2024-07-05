@@ -3,7 +3,7 @@
 import { VNode, ref, watchEffect } from 'vue'
 import { canvasOptions, updateCanvas } from '../../index.tsx'
 
-import { getPositionInfoFromOptions, sizeOptionToNativeSize, sizeOptionToNativeValue, sizeOptionToPixelValue, } from '../../helper.tsx'
+import { getPositionInfoFromOptions,formatToNativeSizeOption,formatToNativeSizeString, formatSizeOptionToPixelValue, } from '../../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
 import { svgToBase64 } from "@/common/transform/index";
 import { renderToString } from '@vue/server-renderer';
@@ -108,8 +108,8 @@ export const Svg = defineComponent({
                 ..._containerStyle
             }
 
-            let width = sizeOptionToNativeSize(props.options.width)
-            let height = sizeOptionToNativeSize(props.options.height)
+            let width = formatToNativeSizeString(props.options.width)
+            let height = formatToNativeSizeString(props.options.height)
 
             const style = {
                 width,
@@ -204,24 +204,24 @@ function getSvgGradientRenderFromColorOption(colorOption) {
 
 export function createCanvasChildRect(options) {
 
-    let width = sizeOptionToPixelValue(options.width)
-    let height = sizeOptionToPixelValue(options.height)
+    let width = formatSizeOptionToPixelValue(options.width)
+    let height = formatSizeOptionToPixelValue(options.height)
 
     // 像素单位
     const elementRealSize = {
-        width,
-        height
+        width:options.width,
+        height:options.height
     }
 
     // 边框尺寸
-    let borderWidth = sizeOptionToPixelValue(options.borderWidth,elementRealSize)
+    let borderWidth = formatSizeOptionToPixelValue(options.borderWidth,elementRealSize)
 
 
     const x = borderWidth / 2
     const y = borderWidth / 2
 
-    const rx = sizeOptionToPixelValue(options.borderRadius.horizontal, elementRealSize)
-    const ry = sizeOptionToPixelValue(options.borderRadius.vertical, elementRealSize)
+    const rx = formatSizeOptionToPixelValue(options.borderRadius.horizontal, elementRealSize)
+    const ry = formatSizeOptionToPixelValue(options.borderRadius.vertical, elementRealSize)
 
 
 
@@ -283,22 +283,22 @@ export function createCanvasChildEllipse(options) {
     />
 */
 
-    let width = sizeOptionToPixelValue(options.width)
-    let height = sizeOptionToPixelValue(options.height)
+    let width = formatSizeOptionToPixelValue(options.width)
+    let height = formatSizeOptionToPixelValue(options.height)
 
 
 
-    let borderWidth = sizeOptionToPixelValue(options.borderWidth,{
-        width,
-        height,
+    let borderWidth = formatSizeOptionToPixelValue(options.borderWidth,{
+        width:options.width,
+        height:options.height,
     })
 
     const x = (width) / 2
     const y = (height) / 2
 
-    
     const xRadius = (width - borderWidth) / 2
     const yRadius = (height - borderWidth) / 2
+
 
     return <Svg options={options}>
         {getSvgGradientRenderFromColorOption(options.backgroundColor)}

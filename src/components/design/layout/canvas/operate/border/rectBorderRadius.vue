@@ -59,7 +59,6 @@
 
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/border-radius.svg?component";
-import sizeInput from '../sizeInput.vue'
 import { ref, computed } from 'vue'
 import { canvasOptions } from "@/components/design/layout/canvas/index.tsx";
 

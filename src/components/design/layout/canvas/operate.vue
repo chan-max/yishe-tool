@@ -1,17 +1,22 @@
 <template>
   <el-scrollbar>
-    <div style="margin: 1em 1.2em">
+    <div style="margin: 1rem 1rem">
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.CANVAS">
         <el-row :gutter="24" align="middle">
           <el-col :span="24">
-            <operateItemAbsoluteSize  label="画布尺寸" v-model:width="canvasOptions.width" v-model:height="canvasOptions.height">
+            <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasOptions.width"
+              v-model:height="canvasOptions.height">
             </operateItemAbsoluteSize>
           </el-col>
           <el-col :span="24">
-            <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位" v-model="canvasOptions.unit"></operateItemAbsoluteUnitSelect>
+            <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位" v-model="canvasOptions.unit">
+            </operateItemAbsoluteUnitSelect>
           </el-col>
           <el-col :span="24">
             <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
+          </el-col>
+          <el-col :span="24">
+            <operateItemSwitch label="显示真实大小" v-model="canvasOptions.showCanvasRealSize"></operateItemSwitch>
           </el-col>
         </el-row>
       </template>
@@ -30,7 +35,6 @@
                 <operateItemFontSize v-model="currentOperatingCanvasChild.fontSize">
                 </operateItemFontSize>
               </el-col>
-
               <el-col :span="12">
                 <operateItemFontItalic v-model="currentOperatingCanvasChild.italic"></operateItemFontItalic>
               </el-col>
@@ -61,6 +65,10 @@
                 <operateItemFontWeight v-model="currentOperatingCanvasChild.fontWeight">
                 </operateItemFontWeight>
               </el-col>
+              <el-col :span="24">
+                <operateItemTextShadow  v-model="currentOperatingCanvasChild.textShadow">
+                </operateItemTextShadow>
+              </el-col>
             </el-row>
           </el-collapse-item>
           <el-collapse-item name="2">
@@ -72,7 +80,6 @@
                 <operateItemWritingMode v-model="currentOperatingCanvasChild.writingMode">
                 </operateItemWritingMode>
               </el-col>
-
               <el-col :span="24">
                 <operateItemScale v-model:x="currentOperatingCanvasChild.scaleX"
                   v-model:y="currentOperatingCanvasChild.scaleY" v-model:z="currentOperatingCanvasChild.scaleZ">
@@ -94,11 +101,11 @@
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.IMAGE">
         <el-row :gutter="24" align="middle">
-        <el-col :span="24">
-          <operateItemImageSelect v-model="currentOperatingCanvasChild.imageInfo">
-          </operateItemImageSelect>
-        </el-col>
-        <el-col :span="24">
+          <el-col :span="24">
+            <operateItemImageSelect v-model="currentOperatingCanvasChild.imageInfo">
+            </operateItemImageSelect>
+          </el-col>
+          <el-col :span="24">
             <operateItemSize label="背景尺寸" v-model:width="currentOperatingCanvasChild.width"
               v-model:height="currentOperatingCanvasChild.height">
             </operateItemSize>
@@ -233,10 +240,6 @@
             <operateItemBorderWidth v-model="currentOperatingCanvasChild.borderWidth">
             </operateItemBorderWidth>
           </el-col>
-          <el-col :span="24">
-            <operateItemColor label="边框颜色" v-model="currentOperatingCanvasChild.borderColor">
-            </operateItemColor>
-          </el-col>
         </el-row>
       </template>
     </div>
@@ -276,6 +279,9 @@ import operateItemQrcodeType from "@/components/design/layout/canvas/operate/qrc
 import operateItemBorderWidth from "@/components/design/layout/canvas/operate/border/borderWidth.vue";
 import operateItemRectBorderRadius from "@/components/design/layout/canvas/operate/border/rectBorderRadius.vue";
 import operateItemAbsoluteUnitSelect from "@/components/design/layout/canvas/operate/absoluteUnitSelect.vue";
+import operateItemTextShadow from "@/components/design/layout/canvas/operate/text-shadow/index.vue";
+
+
 
 import {
   updateCanvasOptionsUnit
@@ -293,7 +299,7 @@ import {
   CanvasChildType,
 } from "./index.tsx";
 
-function absoluteUnitChange(unit){
+function absoluteUnitChange(unit) {
   updateCanvasOptionsUnit(unit)
 }
 

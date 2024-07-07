@@ -22,8 +22,8 @@ import {
 import { Canvas } from './children/canvas.tsx'
 
 export const canvasOptions = ref({
-    width: 1000,
-    height: 1000,
+    width: 500,
+    height: 500,
     unit: 'px',
     children: [{
         type: 'canvas'

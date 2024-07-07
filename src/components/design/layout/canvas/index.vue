@@ -1,7 +1,11 @@
 <template>
     <div class="container flex flex-col items-center">
-        <div v-if="!showMainCanvas" v-loading="loading" v-bind="loadingOptions" class="canvas-container">
+
+        <div ref="canvasContainerRef" @mousemove="mousemove" v-if="!showMainCanvas" v-loading="loading"
+            v-bind="loadingOptions" class="canvas-container">
             <canvass></canvass>
+            <drag-tip v-if="showDragTip"></drag-tip>
+
             <div class="canvas-container-bottom-menu">
                 <div style="flex:1"></div>
                 <el-tooltip content="小画布始终展示等比缩放的尺寸，大画布可以显示真实尺寸">
@@ -88,6 +92,33 @@ import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled, 
 import { StarOutlined, StarFilled, StarTwoTone, CloudUploadOutlined, LinkOutlined, PlusCircleOutlined } from '@ant-design/icons-vue';
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import addPopover from './addPopover.vue'
+import dragTip from "./dragTip.vue";
+import { useElementHover, useDebounceFn } from '@vueuse/core'
+
+const canvasContainerRef = ref()
+
+
+const showDragTip = computed(() => {
+    return isHovered.value && !mouseMovedRecent.value
+})
+
+const isHovered = useElementHover(canvasContainerRef, {
+    delayEnter: 0
+})
+
+// 鼠标最近是否移动
+const mouseMovedRecent = ref(false)
+const mouseMoveTimer = ref()
+const mousemove = function () {
+    mouseMovedRecent.value = true
+    clearTimeout(mouseMoveTimer.value)
+    mouseMoveTimer.value = setTimeout(() => {
+        console.log('timeout')
+        mouseMovedRecent.value = false
+    }, 3000);
+}
+
+
 
 
 const loadingOptions = useLoadingOptions({

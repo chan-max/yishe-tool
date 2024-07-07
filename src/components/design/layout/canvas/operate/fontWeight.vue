@@ -4,6 +4,9 @@
                     <template #name> 厚度 </template>
                     <template #content>
                       <el-select v-model="model" size="small" style="min-width: 72px">
+                        <template #label="{label,value}">
+                          <span :style="{ fontWeight: value }"> {{ label }} </span>
+                        </template>
                         <el-option v-for="item in fontWeightOptions" :key="item.value" :label="item.label"
                           :value="item.value">
                           <span :style="{ fontWeight: item.value }"> {{ item.label }} </span>

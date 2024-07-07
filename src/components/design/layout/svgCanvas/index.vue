@@ -104,7 +104,7 @@ import { svgCanvasChildren,  svgCanvasWidth,
   svgCanvasHeight, } from '@/components/design/store'
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import operateFormItem from "@/components/design/layout/canvas/operate/operateFormItem.vue";
-import colorPicker from "../../components/colorPicker.vue";
+
 
 import iconWritingMode from "@/components/design/assets/icon/writing-mode.svg?component";
 

@@ -1,13 +1,11 @@
 <template>
   <div class="color-picker">
-
-    <color-picker v-bind="attrs" useType="both" v-model:pureColor="model.color" v-model:gradientColor="model.color"
+    <color-picker v-bind="attrs" :useType="type" v-model:pureColor="model.color" v-model:gradientColor="model.color"
       v-model:activeKey="model.colorType">
       <template #extra>
         <slot />
       </template>
     </color-picker>
-    
   </div>
 </template>
 <script setup>
@@ -33,7 +31,9 @@ watch(model,() => {
 let attrs = useAttrs();
 
 const props = defineProps({
-  type: ''
+  type: {
+    default:'both'
+  }
 })
 
 </script>

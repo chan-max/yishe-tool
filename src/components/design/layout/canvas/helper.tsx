@@ -7,22 +7,36 @@ import { canvasOptions } from "./index"
 
 
 export function updateCanvasOptionsUnit(currentUnit) {
-    const unitKeys = ['width','height','top','left','right','bottom','fontSize','leftTop','rightTop','leftBottom','rightBottom','borderWidth','horizontal','vertical']
+    const unitKeys = ['width',
+        'height',
+        'top',
+        'left',
+        'right',
+        'bottom',
+        'fontSize',
+        'leftTop',
+        'rightTop',
+        'leftBottom',
+        'rightBottom',
+        'borderWidth',
+        'horizontal',
+        'vertical',
+        'blur'
+    ]
     const absoluteUnits = ['px', 'cm', 'mm', 'in']
-    
-    function updateUnit(item){
-        if(Array.isArray(item)){
+
+    function updateUnit(item) {
+        if (Array.isArray(item)) {
             return item.forEach(updateUnit)
         }
 
-        if(item == null || typeof item != 'object'){
+        if (item == null || typeof item != 'object') {
             return
         }
 
-
         if (item && !isNaN(Number(item.value)) && item.unit && absoluteUnits.includes(item.unit)) {
-            
-           return item.unit = currentUnit
+
+            return item.unit = currentUnit
         }
 
         for (let key in item) {
@@ -81,7 +95,7 @@ const CM2PX: number = (function () {
 */
 export function formatSizeOptionToPixelValue(size, elementRealSize = null /* 当前元素中不能含有%w %h的相对属性 */) {
 
-    if(!isNaN(Number(size))) {
+    if (!isNaN(Number(size))) {
         return size
     }
 
@@ -141,12 +155,12 @@ export function formatSizeOptionToPixelValue(size, elementRealSize = null /* 当
 
 
 
-export function formatToNativeSizeString(size, relativeElementSize) {
+export function formatToNativeSizeString(size, relativeElementSize = null) {
     const option = formatToNativeSizeOption(size, relativeElementSize)
     return option.value + option.unit
 }
 
-export function formatToNativeSizeOption(size, relativeElementSize) {
+export function formatToNativeSizeOption(size, relativeElementSize = null) {
     let { value, unit } = size
 
     if (!value) {
@@ -484,4 +498,30 @@ export function getBorderRadiusRealPixel(borderRadius, elementRealSize) {
         formatToNativeSizeString(borderRadius.leftBottom, elementRealSize)
     ].join(' ')
 }
+
+
+
+// 解析阴影效果
+export function parseTextShadowOptionsToCSS(textShadowOption) {
+    if (!Array.isArray(textShadowOption)) {
+        return
+    }
+
+    const string = textShadowOption.map((option) => {
+        const { horizontal, vertical, blur, color, disabled } = option
+
+        if (disabled) {
+            return null
+        }
+
+        return [
+            formatToNativeSizeString(horizontal), formatToNativeSizeString(vertical), formatToNativeSizeString(blur), color.color
+        ].join(' ')
+
+    }).filter(Boolean).join(',')
+
+    return string
+}
+
+
 

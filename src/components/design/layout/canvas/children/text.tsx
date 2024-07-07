@@ -1,6 +1,6 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
-import { getPositionInfoFromOptions, formatToNativeSizeOption } from '../helper.tsx'
-import { defineComponent, onUpdated, ref,watchEffect } from "vue"
+import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS } from '../helper.tsx'
+import { defineComponent, onMounted, onUpdated, ref, watchEffect } from "vue"
 import CircleType from "circletype";
 
 export interface TextCanvasChildOptions {
@@ -56,6 +56,7 @@ export const createDefaultCanvasChildTextOptions = () => {
             value: 100,
             unit: canvasUnit
         },
+        textShadow: [],
         fontWeight: '500',
         lineHeight: 1,
         letterSpacing: 0,
@@ -70,25 +71,57 @@ export function createCanvasChildText(options) {
     return <Text options={options} onVnodeUpdated={updateCanvas} onVnodeMounted={updateCanvas}></Text>
 }
 
+
+function createTextContent(props) {
+    // textContent
+    // letterSpacing
+    // fontSize
+    // lineHeight
+
+}
+
 export const Text = defineComponent({
     props: {
         options: null
     },
     setup(props, ctx) {
 
-        const options = props.options
+        const innerTextRef = ref()
 
 
-        const textRef = ref()
+        // 文字单元格
+        const textContentCells = ref()
+
+        // 每个单元格的class
+        const textCellClass = ref('text-cell-class')
 
         watchEffect(() => {
-            let el = textRef.value
+
+            // 触发依赖
+            let el = innerTextRef.value
             if (!el) {
                 return
             }
 
-            new CircleType(el);
+
+            let cells = el.querySelectorAll(`.${textCellClass.value}`)
+
+
+            Array.prototype.forEach.call(cells, (cell) => {
+                let { row, col } = cell.dataset
+                let item = textContentCells.value[row][col]
+
+                item.pxWidth = window.getComputedStyle(cell).width.slice(0, -2)
+                item.pxHeight = window.getComputedStyle(cell).height.slice(0, -2)
+            })
+
+
+
+            // el.innerHTML = props.options.textContent
+            // new CircleType(el).radius(340);
         })
+
+
 
         return () => {
             const {
@@ -107,6 +140,7 @@ export const Text = defineComponent({
             }
 
 
+
             const fontSize = formatToNativeSizeOption(props.options.fontSize)
 
 
@@ -122,7 +156,8 @@ export const Text = defineComponent({
                 fontFamily: props.options.fontFamilyInfo ? `font_${props.options.fontFamilyInfo.id}` : null,
                 writingMode: props.options.writingMode == 'htb' ? WritingMode.HTB : props.options.writingMode == 'vlr' ? WritingMode.VLR : props.options.writingMode == 'vrl' ? WritingMode.VRL : null,
                 transform: `scale3d(${props.options.scaleX ?? 1}, ${props.options.scaleY ?? 1}, ${props.options.scaleZ ?? 1}) rotateX(${props.options.rotateX ?? 0}deg) rotateY(${props.options.rotateY ?? 0}deg) rotateZ(${props.options.rotateZ ?? 0}deg) skew(${props.options.skewX ?? 0}deg, ${props.options.skewY ?? 0}deg)`,
-                ..._style
+                ..._style,
+                textShadow: parseTextShadowOptionsToCSS(props.options.textShadow)
             }
 
             if (props.options.fontColor) {
@@ -136,11 +171,53 @@ export const Text = defineComponent({
             }
 
 
+            const innerStyle: any = {
+                position: 'relative'
+            }
+
+            const innerItemStyle = {
+
+            }
+
+
+
+
+            textContentCells.value = props.options.textContent.split('\n').filter((item) => item !== '').map((row) => {
+                return row.split('').map((content) => {
+                    return {
+                        style:{
+                            display: 'inline-block',
+                            position:'absolute'
+                        },
+                        content
+                    }
+                })
+            })
+
+            const textContent = <div ref={innerTextRef} style={innerStyle}>
+                {textContentCells.value.map((row, rowIndex) => {
+                    return <div>
+                        {row.map((item, columnIndex) => {
+                            return <div style={item.style}  class={textCellClass.value} data-row={rowIndex} data-col={columnIndex}>{item.content}</div>
+                        })}
+                    </div>
+                })}
+            </div>
+
             return <div style={containerStyle}>
-                <span ref={textRef} style={style}>
-                    {props.options.textContent}
-                </span>
+                <div style={style}>
+                    {textContent}
+                </div>
             </div>
         }
     }
 })
+
+
+/*
+    圆的旋转角度坐标公式 
+    圆心坐标 x0，y0
+    T 为旋转的角度 ，相当于路径的距离
+    x2= (x1-x0)cosT-(y1-y0)sinT+x0
+    y2=(y1-y0)cosT+(x1-x0)sinT+y0
+*/

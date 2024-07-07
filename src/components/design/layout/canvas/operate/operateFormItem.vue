@@ -41,7 +41,7 @@ const props = defineProps({
   justify-content: space-between;
   column-gap: 16px;
   min-height: 40px;
-  padding: .5em 0;
+  padding: 1.2rem 0;
   .el-select__wrapper{
     min-height: 24px;
   }
@@ -71,11 +71,14 @@ const props = defineProps({
   display: flex;
   align-items: center;
 }
+
+
 .operate-form-item-content {
   display: flex;
   align-items: center;
   justify-content: end;
   height: 100%;
   flex: 1;
+  padding-right: .5rem;
 }
 </style>

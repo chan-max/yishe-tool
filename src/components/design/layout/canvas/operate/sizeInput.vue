@@ -2,7 +2,7 @@
     <el-popover :placement="placement" width="180">
         <template #reference>
             <div class="size-input">
-                <el-input style="width:80px" :placeholder="placeholder" size="small" type="number" min="0" step="1" v-model.number="model">
+                <el-input :placeholder="placeholder" size="small" type="number" min="0" step="1" v-model.number="model">
                     <template #suffix>
                         <span style="font-size: 1rem;">
                             {{ unit }}
@@ -31,76 +31,33 @@ import { ref, computed, nextTick } from "vue";
 */
 
 const props = defineProps({
-    units: {
-        default: ['px', 'vw', 'vh', '%w', '%h','cm','mm','in']
+    unitOptions: {
+        default: []
     },
-    placeholder:{
-        default:''
+    placeholder: {
+        default: ''
     },
-    placement:{
+    placement: {
     },
 })
 
 const model = defineModel({})
-const unit = defineModel('unit', {
-    default:'px'
-})
+const unit = defineModel('unit', {})
 
-
-
-const rawUnitOptions = ref([
-    {
-        label: "像素值",
-        value: "px",
-    },
-    {
-        label: "相对于画布宽的百分比",
-        value: "vw",
-    },
-    {
-        label: "相对于画布高的百分比",
-        value: "vh",
-    },
-    {
-        label: "相对于当前元素宽的百分比",
-        value: "%w",
-    },
-    {
-        label: "相对于当前元素高的百分比",
-        value: "%h",
-    },
-    {
-        label: "厘米",
-        value: "cm",
-    },
-    {
-        label: "毫米",
-        value: "mm",
-    },
-    {
-        label: "英寸 (1英寸 ~= 2.54厘米)",
-        value: "in",
-    },
-]);
-
-
-
-const unitOptions = computed(() => {
-    return props.units.map((unit) => {
-        return rawUnitOptions.value.find((item) => item.value == unit)
-    })
-})
 </script>
 
 <style scoped lang="less">
 .size-input {
-    height: 30px;
+    flex-shrink: 0;
+    height: 20px;
     display: flex;
+    width: 80px;
     align-items: center;
     justify-content: end;
 
     :deep(.el-input) {
-        width: 48px;
+        height: 20px;
+        width: 80px;
     }
 }
 </style>

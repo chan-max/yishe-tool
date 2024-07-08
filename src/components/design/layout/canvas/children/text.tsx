@@ -1,5 +1,5 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
-import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS } from '../helper.tsx'
+import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue } from '../helper.tsx'
 import { defineComponent, onMounted, onUpdated, ref, watchEffect } from "vue"
 import CircleType from "circletype";
 
@@ -77,7 +77,6 @@ function createTextContent(props) {
     // letterSpacing
     // fontSize
     // lineHeight
-
 }
 
 export const Text = defineComponent({
@@ -86,33 +85,32 @@ export const Text = defineComponent({
     },
     setup(props, ctx) {
 
-        const innerTextRef = ref()
+        const textContainerRef = ref()
 
-
-        // 文字单元格
-        const textContentCells = ref()
-
-        // 每个单元格的class
-        const textCellClass = ref('text-cell-class')
 
         watchEffect(() => {
-
-            // 触发依赖
-            let el = innerTextRef.value
+            let el = textContainerRef.value
             if (!el) {
                 return
             }
 
 
-            let cells = el.querySelectorAll(`.${textCellClass.value}`)
+            let lineHeightPixelValue = formatSizeOptionToPixelValue({
+                value: props.options.lineHeight * props.options.fontSize.value,
+                unit: props.options.fontSize.unit,
+            })
+
+            let letterSpacingPixelValue = formatSizeOptionToPixelValue({
+                value: props.options.letterSpacing * props.options.fontSize.value,
+                unit: props.options.fontSize.unit,
+            })
 
 
-            Array.prototype.forEach.call(cells, (cell) => {
-                let { row, col } = cell.dataset
-                let item = textContentCells.value[row][col]
 
-                item.pxWidth = window.getComputedStyle(cell).width.slice(0, -2)
-                item.pxHeight = window.getComputedStyle(cell).height.slice(0, -2)
+            createRoundText(el, {
+                textContent: props.options.textContent,
+                lineHeightPixelValue,
+                letterSpacingPixelValue
             })
 
 
@@ -120,7 +118,6 @@ export const Text = defineComponent({
             // el.innerHTML = props.options.textContent
             // new CircleType(el).radius(340);
         })
-
 
 
         return () => {
@@ -139,11 +136,7 @@ export const Text = defineComponent({
                 ..._containerStyle
             }
 
-
-
             const fontSize = formatToNativeSizeOption(props.options.fontSize)
-
-
 
             var style: any = {
                 flexShrink: 0,
@@ -176,37 +169,11 @@ export const Text = defineComponent({
             }
 
             const innerItemStyle = {
-
             }
 
 
-
-
-            textContentCells.value = props.options.textContent.split('\n').filter((item) => item !== '').map((row) => {
-                return row.split('').map((content) => {
-                    return {
-                        style:{
-                            display: 'inline-block',
-                            position:'absolute'
-                        },
-                        content
-                    }
-                })
-            })
-
-            const textContent = <div ref={innerTextRef} style={innerStyle}>
-                {textContentCells.value.map((row, rowIndex) => {
-                    return <div>
-                        {row.map((item, columnIndex) => {
-                            return <div style={item.style}  class={textCellClass.value} data-row={rowIndex} data-col={columnIndex}>{item.content}</div>
-                        })}
-                    </div>
-                })}
-            </div>
-
             return <div style={containerStyle}>
-                <div style={style}>
-                    {textContent}
+                <div ref={textContainerRef} style={style}>
                 </div>
             </div>
         }
@@ -214,10 +181,151 @@ export const Text = defineComponent({
 })
 
 
-/*
-    圆的旋转角度坐标公式 
-    圆心坐标 x0，y0
-    T 为旋转的角度 ，相当于路径的距离
-    x2= (x1-x0)cosT-(y1-y0)sinT+x0
-    y2=(y1-y0)cosT+(x1-x0)sinT+y0
-*/
+
+// 计算该点的角度，12点钟为0
+function calculateAngle(x, y) {
+
+    let radian = Math.atan(x / y)
+
+    let degree = radian * (180 / Math.PI);
+    if (degree < 0) {
+        degree += 360;
+    }
+
+    return degree
+}
+
+// 获取下一个圆弧上点的坐标
+
+function calculatePoint(x0, y0, r, x1, y1, d) {
+    // 计算起点到圆心的向量
+    let dx1 = x1 - x0;
+    let dy1 = y1 - y0;
+
+    // 计算起点与圆心连线的角度（以弧度计）
+    let angle1 = Math.atan2(dy1, dx1);
+
+    // 顺时针旋转的角度（以弧度计）
+    let angle2 = angle1 - (d / r);
+
+    // 计算新点的坐标
+    let x2 = x0 + r * Math.cos(angle2);
+    let y2 = y0 + r * Math.sin(angle2);
+
+    return {
+        x: x2,
+        y: y2,
+        deg: calculateAngle(x2, y2)
+    };
+}
+
+
+
+// 根据角度获取坐标点
+function getCoordByDeg(r, deg) {
+    // 将角度转换为弧度
+    const radian = 2 * Math.PI / 360 * deg
+
+    let x = r * Math.sin(radian);
+    let y = r * Math.cos(radian);
+
+    return { x: x, y: y, deg };
+}
+
+
+function createRoundText(container, options) {
+
+    const {
+        lineHeightPixelValue,
+        letterSpacingPixelValue,
+        textContent,
+        radius,
+        startDeg = 0,
+        direction = 1
+    } = options
+
+    var minRadius // 最小半径 
+
+    container.innerHTML = ''
+
+    const innerContainer = document.createElement('div')
+
+    innerContainer.style.position = 'relative'
+
+    // 文字单元格
+    const textContentCells = textContent.split('\n').filter((item) => item !== '').map((row) => {
+        return row.split('').map((content) => {
+            let el = document.createElement('div')
+            el.style.position = 'absolute';
+            el.style.display = 'inline-block'
+
+            el.innerHTML = content
+
+            return {
+                content,
+                el
+            }
+        })
+    })
+
+    // 插入元素
+
+    textContentCells.forEach((row) => {
+        let el = document.createElement('div')
+        row.forEach((item) => {
+            el.appendChild(item.el)
+        })
+        innerContainer.appendChild(el)
+    })
+
+    container.appendChild(innerContainer)
+
+    // 元素插入页面后再计算真实宽度
+    textContentCells.forEach((row) => {
+        row.forEach((item) => {
+            item.width = Number(window.getComputedStyle(item.el).width.slice(0, -2))
+            item.height = Number(window.getComputedStyle(item.el).height.slice(0, -2))
+        })
+    })
+
+    textContentCells.forEach((row) => {
+
+        // 外侧最小可能的周长
+        const outerMinCircumference = row.reduce((a, b) => {
+            return a + b.width + letterSpacingPixelValue
+        }, 0)
+
+        // 最小允许的半径
+        minRadius = outerMinCircumference / (2 * Math.PI)
+
+        const radius = minRadius
+
+        // 弧形的起始坐标
+        let startPosition = getCoordByDeg(radius, 0)
+
+        console.log('startPosition', startPosition)
+
+        row.forEach((item, index) => {
+
+            var distance = 0
+
+            for (let i = 0; i <= index; i++) {
+                let item = row[i - 1]
+                if (item) {
+                    distance += item.width
+                }
+            }
+
+
+            let pos = calculatePoint(0, 0, radius, startPosition.x, startPosition.y, distance)
+
+            console.log(pos)
+
+            item.x = pos.x
+            item.y = pos.y
+            item.deg = pos.deg
+
+        })
+    })
+
+}

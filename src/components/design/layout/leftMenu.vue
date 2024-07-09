@@ -238,12 +238,13 @@ import iconCanvas from '@/components/design/assets/icon/canvas.svg?component'
   }
 
   span {
-    font-size: 10px;
+    font-size: .9rem;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     max-width: 50px;
-    font-weight: 400;
+    font-weight: 900;
+    color:#666;
   }
 
   &:hover {

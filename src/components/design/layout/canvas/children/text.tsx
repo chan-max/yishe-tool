@@ -62,6 +62,10 @@ export const createDefaultCanvasChildTextOptions = () => {
         letterSpacing: 0,
         textContent: 'hello world',
         writingMode: 'htb',
+        roundTextRadius: {
+            unit: canvasUnit,
+            value: 0,
+        }
     }
 }
 
@@ -72,12 +76,6 @@ export function createCanvasChildText(options) {
 }
 
 
-function createTextContent(props) {
-    // textContent
-    // letterSpacing
-    // fontSize
-    // lineHeight
-}
 
 export const Text = defineComponent({
     props: {
@@ -106,14 +104,11 @@ export const Text = defineComponent({
             })
 
 
-
             createRoundText(el, {
                 textContent: props.options.textContent,
                 lineHeightPixelValue,
                 letterSpacingPixelValue
             })
-
-
 
             // el.innerHTML = props.options.textContent
             // new CircleType(el).radius(340);
@@ -183,17 +178,24 @@ export const Text = defineComponent({
 
 
 // 计算该点的角度，12点钟为0
-function calculateAngle(x, y) {
-
-    let radian = Math.atan(x / y)
-
+function calculateDeg(x, y) {
+    let radian = Math.atan(x / y);
     let degree = radian * (180 / Math.PI);
-    if (degree < 0) {
+
+    if (x < 0 && y >= 0) {
+        // 第二象限
         degree += 360;
+    } else if (x < 0 && y < 0) {
+        // 第三象限
+        degree += 180;
+    } else if (x >= 0 && y < 0) {
+        // 第四象限
+        degree += 180;
     }
 
-    return degree
+    return degree;
 }
+
 
 // 获取下一个圆弧上点的坐标
 
@@ -215,7 +217,7 @@ function calculatePoint(x0, y0, r, x1, y1, d) {
     return {
         x: x2,
         y: y2,
-        deg: calculateAngle(x2, y2)
+        deg: calculateDeg(x2, y2)
     };
 }
 
@@ -233,15 +235,26 @@ function getCoordByDeg(r, deg) {
 }
 
 
-function createRoundText(container, options) {
+/*
+    input
+    环形的半径，默认为最小尺寸，即以圆形铺满，
+    起始位置的角度
+        - 自适应对称
+        - 正上方开始    
+    换行文字已最外行为基准
+*/
 
+
+
+function createRoundText(container, options) {
     const {
         lineHeightPixelValue,
         letterSpacingPixelValue,
         textContent,
-        radius,
-        startDeg = 0,
-        direction = 1
+        radius, // 半径不直观，改为 弧度 或者 角度值
+        startDeg = 0, 
+        direction = 1,
+        fitDeg // 填充角度，希望你的文字 占据多少角度 ， 多行情况好像有问题 ， 多行情况文字长度不统一 ， 所以只能用半径 , 半径应该考虑
     } = options
 
     var minRadius // 最小半径 
@@ -259,6 +272,8 @@ function createRoundText(container, options) {
             el.style.position = 'absolute';
             el.style.display = 'inline-block'
 
+        
+
             el.innerHTML = content
 
             return {
@@ -269,7 +284,6 @@ function createRoundText(container, options) {
     })
 
     // 插入元素
-
     textContentCells.forEach((row) => {
         let el = document.createElement('div')
         row.forEach((item) => {
@@ -280,14 +294,19 @@ function createRoundText(container, options) {
 
     container.appendChild(innerContainer)
 
+
+
     // 元素插入页面后再计算真实宽度
     textContentCells.forEach((row) => {
         row.forEach((item) => {
+            // 由于获取真实尺寸，始终为像素值，所以需要把所有涉及到的单位统一为像素
             item.width = Number(window.getComputedStyle(item.el).width.slice(0, -2))
             item.height = Number(window.getComputedStyle(item.el).height.slice(0, -2))
         })
     })
 
+
+    // 计算位置和角度
     textContentCells.forEach((row) => {
 
         // 外侧最小可能的周长
@@ -298,12 +317,10 @@ function createRoundText(container, options) {
         // 最小允许的半径
         minRadius = outerMinCircumference / (2 * Math.PI)
 
-        const radius = minRadius
+        const radius = minRadius 
 
         // 弧形的起始坐标
         let startPosition = getCoordByDeg(radius, 0)
-
-        console.log('startPosition', startPosition)
 
         row.forEach((item, index) => {
 
@@ -317,15 +334,18 @@ function createRoundText(container, options) {
             }
 
 
-            let pos = calculatePoint(0, 0, radius, startPosition.x, startPosition.y, distance)
 
-            console.log(pos)
+            let pos = calculatePoint(0, 0, radius, startPosition.x, startPosition.y, distance)
 
             item.x = pos.x
             item.y = pos.y
             item.deg = pos.deg
 
+            item.el.style.left = item.x + 'px'
+            item.el.style.bottom = item.y + 'px'
+            item.el.style.transform = `rotate(${item.deg}deg)`
         })
     })
 
+    console.log(textContentCells)
 }

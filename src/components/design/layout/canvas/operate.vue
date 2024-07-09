@@ -66,7 +66,7 @@
                 </operateItemFontWeight>
               </el-col>
               <el-col :span="24">
-                <operateItemTextShadow  v-model="currentOperatingCanvasChild.textShadow">
+                <operateItemTextShadow v-model="currentOperatingCanvasChild.textShadow">
                 </operateItemTextShadow>
               </el-col>
             </el-row>
@@ -97,6 +97,18 @@
               </el-col>
             </el-row>
           </el-collapse-item>
+
+          <el-collapse-item name="3">
+            <template #title>
+              <div class="title">环形文字</div>
+            </template>
+            <el-row :gutter="24" align="middle">
+              <el-col :span="24">
+                <operateItemRoundTextRadius v-model="currentOperatingCanvasChild.roundTextRadius"></operateItemRoundTextRadius>
+              </el-col>
+            </el-row>
+          </el-collapse-item>
+
         </el-collapse>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.IMAGE">
@@ -280,6 +292,7 @@ import operateItemBorderWidth from "@/components/design/layout/canvas/operate/bo
 import operateItemRectBorderRadius from "@/components/design/layout/canvas/operate/border/rectBorderRadius.vue";
 import operateItemAbsoluteUnitSelect from "@/components/design/layout/canvas/operate/absoluteUnitSelect.vue";
 import operateItemTextShadow from "@/components/design/layout/canvas/operate/text-shadow/index.vue";
+import operateItemRoundTextRadius from "@/components/design/layout/canvas/operate/text/roundTextRadius.vue";
 
 
 

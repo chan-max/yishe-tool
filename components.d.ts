@@ -83,6 +83,7 @@ declare module 'vue' {
     RelativeSize: typeof import('./src/components/design/layout/canvas/operate/size/relativeSize.vue')['default']
     Resource: typeof import('./src/components/design/layout/textSticker/resource.vue')['default']
     Rotate: typeof import('./src/components/design/layout/canvas/operate/rotate.vue')['default']
+    RoundTextRadius: typeof import('./src/components/design/layout/canvas/operate/text/roundTextRadius.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SaveModel: typeof import('./src/components/design/layout/saveModel/index.vue')['default']

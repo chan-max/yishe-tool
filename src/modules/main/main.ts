@@ -58,7 +58,6 @@ app.use(pinia)
 syncUserInfoToLocal()
 
 app.use(VueVirtualScroller)
-app.component('RecycleScroller', RecycleScroller)
 
 app.use(Antd)
 

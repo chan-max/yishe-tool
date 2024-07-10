@@ -1,11 +1,12 @@
 <template>
-    <div id="basic-canvas-canvas-container" v-if="showMainCanvas && showCanvasLayout" v-loading="loading" v-bind="loadingOptions">
+    <div id="basic-canvas-canvas-container" v-if="showMainCanvas && showCanvasLayout">
         <canvass></canvass>
         <div class="top-menu">
             <div style="flex:1;"></div>
-            <el-button link>
+            <div v-if="loading" class="italic font-bold"> 正在渲染贴纸... </div>
+            <div>
                 宽  {{ canvasOptions.width }}{{ canvasOptions.unit }}   高 {{ canvasOptions.height }}{{ canvasOptions.unit }}
-            </el-button>
+            </div>
             <el-button type="danger" link @click="showMainCanvas = false">
                 <el-icon size="18">
                     <CircleCloseFilled></CircleCloseFilled>
@@ -66,6 +67,7 @@ const loadingOptions = useLoadingOptions({
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
+    column-gap: 2rem;
 }
 
 .top-menu{

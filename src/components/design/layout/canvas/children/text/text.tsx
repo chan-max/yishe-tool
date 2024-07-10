@@ -1,7 +1,9 @@
-import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
-import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue } from '../helper.tsx'
-import { defineComponent, onMounted, onUpdated, ref, watchEffect } from "vue"
+import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../../index.tsx"
+import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue } from '../../helper.tsx'
+import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick } from "vue"
 import CircleType from "circletype";
+import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistancePoint } from './calc.tsx'
+
 
 export interface TextCanvasChildOptions {
     center: boolean | null | undefined
@@ -62,20 +64,25 @@ export const createDefaultCanvasChildTextOptions = () => {
         letterSpacing: 0,
         textContent: 'hello world',
         writingMode: 'htb',
+        roundTextHorizontalRadius: {
+            unit: canvasUnit,
+            value: 100,
+        },
+        roundTextVerticalRadius: {
+            unit: canvasUnit,
+            value: 100,
+        },
         roundTextRadius: {
             unit: canvasUnit,
-            value: 0,
-        }
+            value: 100,
+        },
+        roundTextStartDeg: 270,
     }
 }
-
-
 
 export function createCanvasChildText(options) {
     return <Text options={options} onVnodeUpdated={updateCanvas} onVnodeMounted={updateCanvas}></Text>
 }
-
-
 
 export const Text = defineComponent({
     props: {
@@ -92,26 +99,32 @@ export const Text = defineComponent({
                 return
             }
 
+            const horizontalRadius = formatSizeOptionToPixelValue(props.options.roundTextHorizontalRadius)
+            const verticalRadius = formatSizeOptionToPixelValue(props.options.roundTextVerticalRadius)
+            const radius = formatSizeOptionToPixelValue(props.options.roundTextRadius)
 
             let lineHeightPixelValue = formatSizeOptionToPixelValue({
                 value: props.options.lineHeight * props.options.fontSize.value,
                 unit: props.options.fontSize.unit,
             })
 
+
             let letterSpacingPixelValue = formatSizeOptionToPixelValue({
                 value: props.options.letterSpacing * props.options.fontSize.value,
                 unit: props.options.fontSize.unit,
             })
 
+            
 
             createRoundText(el, {
-                textContent: props.options.textContent,
-                lineHeightPixelValue,
-                letterSpacingPixelValue
+                textContent: props.options.textContent, // 文字内容
+                lineHeightPixelValue, // 行高
+                letterSpacingPixelValue, // 字间距
+                horizontalRadius, // 半径
+                verticalRadius,
+                radius,
+                startDeg: props.options.roundTextStartDeg
             })
-
-            // el.innerHTML = props.options.textContent
-            // new CircleType(el).radius(340);
         })
 
 
@@ -158,15 +171,6 @@ export const Text = defineComponent({
                 }
             }
 
-
-            const innerStyle: any = {
-                position: 'relative'
-            }
-
-            const innerItemStyle = {
-            }
-
-
             return <div style={containerStyle}>
                 <div ref={textContainerRef} style={style}>
                 </div>
@@ -176,63 +180,6 @@ export const Text = defineComponent({
 })
 
 
-
-// 计算该点的角度，12点钟为0
-function calculateDeg(x, y) {
-    let radian = Math.atan(x / y);
-    let degree = radian * (180 / Math.PI);
-
-    if (x < 0 && y >= 0) {
-        // 第二象限
-        degree += 360;
-    } else if (x < 0 && y < 0) {
-        // 第三象限
-        degree += 180;
-    } else if (x >= 0 && y < 0) {
-        // 第四象限
-        degree += 180;
-    }
-
-    return degree;
-}
-
-
-// 获取下一个圆弧上点的坐标
-
-function calculatePoint(x0, y0, r, x1, y1, d) {
-    // 计算起点到圆心的向量
-    let dx1 = x1 - x0;
-    let dy1 = y1 - y0;
-
-    // 计算起点与圆心连线的角度（以弧度计）
-    let angle1 = Math.atan2(dy1, dx1);
-
-    // 顺时针旋转的角度（以弧度计）
-    let angle2 = angle1 - (d / r);
-
-    // 计算新点的坐标
-    let x2 = x0 + r * Math.cos(angle2);
-    let y2 = y0 + r * Math.sin(angle2);
-
-    return {
-        x: x2,
-        y: y2,
-        deg: calculateDeg(x2, y2)
-    };
-}
-
-
-
-// 根据角度获取坐标点
-function getCoordByDeg(r, deg) {
-    // 将角度转换为弧度
-    const radian = 2 * Math.PI / 360 * deg
-
-    let x = r * Math.sin(radian);
-    let y = r * Math.cos(radian);
-
-    return { x: x, y: y, deg };
-}
 
 
 /*
@@ -244,18 +191,19 @@ function getCoordByDeg(r, deg) {
     换行文字已最外行为基准
 */
 
-
-
-function createRoundText(container, options) {
+async function createRoundText(container, options) {
     const {
         lineHeightPixelValue,
         letterSpacingPixelValue,
         textContent,
-        radius, // 半径不直观，改为 弧度 或者 角度值
-        startDeg = 0, 
+        horizontalRadius,
+        verticalRadius,
+        startDeg = 0, // 起始角度，
         direction = 1,
-        fitDeg // 填充角度，希望你的文字 占据多少角度 ， 多行情况好像有问题 ， 多行情况文字长度不统一 ， 所以只能用半径 , 半径应该考虑
+        radius
     } = options
+
+    let isCircle = horizontalRadius == verticalRadius
 
     var minRadius // 最小半径 
 
@@ -263,16 +211,16 @@ function createRoundText(container, options) {
 
     const innerContainer = document.createElement('div')
 
+    innerContainer.style.width = '0px'
+    innerContainer.style.height = '0px'
     innerContainer.style.position = 'relative'
 
-    // 文字单元格
+    // 生成文字单元格
     const textContentCells = textContent.split('\n').filter((item) => item !== '').map((row) => {
         return row.split('').map((content) => {
             let el = document.createElement('div')
             el.style.position = 'absolute';
             el.style.display = 'inline-block'
-
-        
 
             el.innerHTML = content
 
@@ -294,7 +242,7 @@ function createRoundText(container, options) {
 
     container.appendChild(innerContainer)
 
-
+    await nextTick()
 
     // 元素插入页面后再计算真实宽度
     textContentCells.forEach((row) => {
@@ -305,9 +253,10 @@ function createRoundText(container, options) {
         })
     })
 
-
     // 计算位置和角度
-    textContentCells.forEach((row) => {
+    textContentCells.forEach((row, rowIndex) => {
+
+        let rows = textContentCells.length
 
         // 外侧最小可能的周长
         const outerMinCircumference = row.reduce((a, b) => {
@@ -317,10 +266,11 @@ function createRoundText(container, options) {
         // 最小允许的半径
         minRadius = outerMinCircumference / (2 * Math.PI)
 
-        const radius = minRadius 
-
         // 弧形的起始坐标
-        let startPosition = getCoordByDeg(radius, 0)
+        let startPosition = isCircle ? getRoundPos(horizontalRadius, startDeg) : getEllipsePos(horizontalRadius, verticalRadius, startDeg)
+
+        const hr = horizontalRadius + (rows - rowIndex) * lineHeightPixelValue
+        const vr = verticalRadius + (rows - rowIndex) * lineHeightPixelValue
 
         row.forEach((item, index) => {
 
@@ -334,18 +284,24 @@ function createRoundText(container, options) {
             }
 
 
+            let pos = isCircle 
+            ? findRoundDistancePoint(hr, startPosition.x, startPosition.y, distance) 
+            : findEllipseDistancePoint(hr, vr, startPosition.x, startPosition.y, distance)
 
-            let pos = calculatePoint(0, 0, radius, startPosition.x, startPosition.y, distance)
+
 
             item.x = pos.x
             item.y = pos.y
             item.deg = pos.deg
 
-            item.el.style.left = item.x + 'px'
-            item.el.style.bottom = item.y + 'px'
+            item.el.style.left = (item.x - (letterSpacingPixelValue) / 2) + 'px'
+            item.el.style.bottom = (item.y - lineHeightPixelValue / 2) + 'px'
             item.el.style.transform = `rotate(${item.deg}deg)`
         })
     })
-
-    console.log(textContentCells)
 }
+
+
+
+
+

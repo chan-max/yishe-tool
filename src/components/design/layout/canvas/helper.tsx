@@ -101,12 +101,11 @@ export function formatSizeOptionToPixelValue(size, elementRealSize = null /* 当
 
     var { value, unit } = size
 
+    value = Number(value)
+
     if (!value) {
         return 0
     }
-
-
-
 
     if (unit == 'px') {
         return value

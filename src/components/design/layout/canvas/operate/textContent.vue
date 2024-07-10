@@ -5,7 +5,7 @@
     </template>
     <template #name> {{ label }} </template>
     <template #content>
-      <el-input :placeholder="placeholder" type="textarea" v-model="model" size="small"></el-input>
+      <el-input :placeholder="placeholder" :autosize="{minRows:2,maxRows:10}" type="textarea" v-model="model" size="small"></el-input>
     </template>
   </operate-form-item>
 </template>

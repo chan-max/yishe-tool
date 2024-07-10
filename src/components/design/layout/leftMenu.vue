@@ -217,7 +217,7 @@ import iconCanvas from '@/components/design/assets/icon/canvas.svg?component'
   width: 50px;
   height: 50px;
   display: flex;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   justify-content: center;

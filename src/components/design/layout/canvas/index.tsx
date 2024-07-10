@@ -5,7 +5,7 @@ import { useDebounceFn } from '@vueuse/core'
 import { waitImage } from '@/common'
 import { createCanvasChildSvg } from './children/svg/svg.tsx'
 import { initDraggableElement } from "@/components/design/utils/draggable";
-import { createCanvasChildText, createDefaultCanvasChildTextOptions } from './children/text.tsx'
+import { createCanvasChildText, createDefaultCanvasChildTextOptions } from './children/text/text.tsx'
 import { createCanvasChildBackground, createDefaultCanvasChildBackgroundOptions } from './children/background.tsx'
 import { createDefaultCanvasChildQrcodeOptions, createCanvasChildQrcode, } from './children/qrcode.tsx'
 import {

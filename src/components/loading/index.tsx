@@ -16,7 +16,7 @@ export enum LoadingType {
     LIST_BOTTOM,
 }
 
-function creaateLoadingOptions(options = {}){
+function creaateLoadingOptions(options:any = {}){
    return {
         'element-loading-text': options.text, //	显示在加载图标下方的加载文案	
         'element-loading-spinner': options.svg || svgLoading,//	自定义加载图标	

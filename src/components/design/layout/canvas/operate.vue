@@ -103,8 +103,18 @@
               <div class="title">环形文字</div>
             </template>
             <el-row :gutter="24" align="middle">
+              <!-- <el-col :span="24">
+                <operateItemRoundTextRadius v-model="currentOperatingCanvasChild.roundTextRadius">
+                </operateItemRoundTextRadius>
+              </el-col> -->
               <el-col :span="24">
-                <operateItemRoundTextRadius v-model="currentOperatingCanvasChild.roundTextRadius"></operateItemRoundTextRadius>
+                <operateItemEllipseTextRadius v-model:horizontal="currentOperatingCanvasChild.roundTextHorizontalRadius"
+                  v-model:vertical="currentOperatingCanvasChild.roundTextVerticalRadius">
+                </operateItemEllipseTextRadius>
+              </el-col>
+              <el-col :span="24">
+                <operateItemRoundTextStartDeg v-model="currentOperatingCanvasChild.roundTextStartDeg">
+                </operateItemRoundTextStartDeg>
               </el-col>
             </el-row>
           </el-collapse-item>
@@ -293,6 +303,8 @@ import operateItemRectBorderRadius from "@/components/design/layout/canvas/opera
 import operateItemAbsoluteUnitSelect from "@/components/design/layout/canvas/operate/absoluteUnitSelect.vue";
 import operateItemTextShadow from "@/components/design/layout/canvas/operate/text-shadow/index.vue";
 import operateItemRoundTextRadius from "@/components/design/layout/canvas/operate/text/roundTextRadius.vue";
+import operateItemRoundTextStartDeg from "@/components/design/layout/canvas/operate/text/roundTextStartDeg.vue";
+import operateItemEllipseTextRadius from "@/components/design/layout/canvas/operate/text/ellipseTextRadius.vue";
 
 
 

@@ -5,8 +5,12 @@
         </template>
         <template #name> 起始角度 </template>
         <template #content>
-            <el-tooltip content="起始角度范围为 0 ～ 360 ，从正上方顺时针计算">
-                <el-input type="number" v-model="model" size="small" max="360" min="0" step="12"></el-input>
+            <el-tooltip content="起始角度范围为 0 ～ 360 ，从正上方顺时针计算" :hide-after="0">
+                <el-input style="width:90px" type="number" v-model="model" size="small" max="360" min="0" step="12">
+                    <!-- <template #suffix>
+                        
+                    </template> -->
+                </el-input>
             </el-tooltip>
         </template>
     </operate-form-item>

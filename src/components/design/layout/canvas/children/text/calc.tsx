@@ -1,58 +1,74 @@
 
 
-export function getEllipsePos(angleDegree, a, b) {
-    // 将角度转换为弧度，并调整方向（顺时针到逆时针）
-    // const angleRad = ((90 - angleDegree) * Math.PI) / 180;
-    const angleRad = 2 * Math.PI / 360 * angleDegree
+export function getEllipsePos(a, b,angle) {
+ // 将角度转换为弧度
+ const radians = (90 - angle) * Math.PI / 180;
+
+ // 计算椭圆参数方程的 t
+ const t = Math.atan2(a * Math.sin(radians), b * Math.cos(radians));
+
+ // 计算椭圆上点的坐标
+ const x = a * Math.cos(t);
+ const y = b * Math.sin(t);
 
 
-    // 计算椭圆上的点坐标
-    const x = a * Math.cos(angleRad);
-    const y = b * Math.sin(angleRad);
-
-    console.log(x, y);
-
-    // 返回计算得到的坐标
-    return { x, y };
+ return { x, y };
 }
 
 
 
-/*
-    计算椭圆上的点与其近焦点生成的角度
-*/
-function calculateAngleToFocus(a, b, x, y) {
-    // 计算焦距
-    const c = Math.sqrt(a * a - b * b);
+export function findEllipseDistancePoint(a, b, x1, y1, d, isClockwise = true) {
+    // 计算椭圆上给定点的参数 t
+    let t = Math.atan2(y1 / b, x1 / a);
+    if (t < 0) t += 2 * Math.PI;  // 确保 t 在 [0, 2π) 范围内
 
-    // 焦点位置
-    const focus1 = { x: c, y: 0 };
-    const focus2 = { x: -c, y: 0 };
+    const direction = isClockwise ? -1 : 1;
+    const steps = 100;  // 迭代步数
+    const stepSize = d / steps;
 
-    // 计算给定点到两个焦点的距离
-    const distToFocus1 = Math.sqrt((x - focus1.x) ** 2 + (y - focus1.y) ** 2);
-    const distToFocus2 = Math.sqrt((x - focus2.x) ** 2 + (y - focus2.y) ** 2);
+    for (let i = 0; i < steps; i++) {
+        // 计算当前点的坐标
+        const x = a * Math.cos(t);
+        const y = b * Math.sin(t);
 
-    // 确定近焦点
-    const nearFocus = distToFocus1 < distToFocus2 ? focus1 : focus2;
+        // 计算椭圆在当前点的切线方向
+        const dx = -a * Math.sin(t);
+        const dy = b * Math.cos(t);
 
-    // 计算从点到近焦点的向量
-    const vectorX = nearFocus.x - x;
-    const vectorY = nearFocus.y - y;
+        // 计算单位切向量
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const ux = dx / length;
+        const uy = dy / length;
 
-    // 计算角度（以y轴正方向为0度，顺时针）
-    let angle = Math.atan2(vectorX, -vectorY);
+        // 沿切线方向移动一小步
+        const nextX = x + direction * stepSize * ux;
+        const nextY = y + direction * stepSize * uy;
 
-    // 将角度转换为度数，并调整到0-360度范围
-    angle = (angle * 180 / Math.PI + 360) % 360;
+        // 将新点投影回椭圆上
+        t = Math.atan2(nextY / b, nextX / a);
+        if (t < 0) t += 2 * Math.PI;
+    }
 
-    return angle;
-}
+    // 计算最终点的坐标
+    const x2 = a * Math.cos(t);
+    const y2 = b * Math.sin(t);
 
+    // 计算从椭圆中心到点的角度（弧度）
+    let angleFromCenter = Math.atan2(y2, x2);
 
-export function findEllipseDistancePoint(a, b, x1, y1, d) {
+    // 将角度转换为度数，并调整为从y轴正方向开始的顺时针角度
+    let rotationAngle = (90 - angleFromCenter * 180 / Math.PI + 360) % 360;
+
+    // 计算文字的旋转角度，使底部指向椭圆中心
+    let textRotation = rotationAngle;
+
     
+
+    return { x: x2, y: y2, deg: textRotation };
 }
+
+
+
 
 
 /*

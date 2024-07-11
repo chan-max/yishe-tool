@@ -8,7 +8,7 @@
 
             <div class="canvas-container-bottom-menu">
                 <div style="flex:1"></div>
-                <el-tooltip content="小画布始终展示等比缩放的尺寸，大画布可以显示真实尺寸">
+                <el-tooltip :hide-after="0" content="小画布始终展示等比缩放的尺寸，大画布可以显示真实尺寸">
                     <el-button @click="showMainCanvas = true" :icon="FullScreen" type="info" text bg round size="small">
                         <span>大画布显示</span>
                     </el-button>

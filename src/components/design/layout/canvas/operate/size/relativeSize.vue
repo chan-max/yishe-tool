@@ -5,7 +5,7 @@
         </template>
         <template #name> {{ label }} </template>
         <template #content>
-            <el-tooltip placee :content="tooltip" :disabled="!tooltip" placement="top">
+            <el-tooltip  :hide-after="0" :content="tooltip" :disabled="!tooltip" placement="top">
                 <div class="flex justify-between">
                     <el-popover trigger="hover" width="200">
                         <template #reference>

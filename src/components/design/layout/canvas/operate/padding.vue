@@ -8,7 +8,7 @@
       <el-popover width="160" trigger="click">
         <template #reference>
           <el-button size="small" link>
-            <el-tooltip :content="borderRadiusLabel">
+            <el-tooltip :content="borderRadiusLabel" :hide-after="0">
               <div class="text-ellipsis" style="max-width: 200px">
                 {{ borderRadiusLabel }}
               </div>

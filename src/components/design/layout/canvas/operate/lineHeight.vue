@@ -3,7 +3,7 @@
         <template #icon> <icon-line-height></icon-line-height> </template>
         <template #name> 行高 </template>
         <template #content>
-           <el-tooltip content="文字的行高相对于字号">
+           <el-tooltip content="文字的行高相对于字号" :hide-after="0">
             <el-input type="number" style="width:64px" v-model="model" size="small" min="0" max="5"
                 step=".1"></el-input>
            </el-tooltip>

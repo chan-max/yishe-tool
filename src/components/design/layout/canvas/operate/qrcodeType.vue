@@ -5,7 +5,7 @@
         </template>
         <template #name> 二维码点类型 </template>
         <template #content>
-            <el-tooltip content="二维码类型">
+            <el-tooltip content="二维码类型" :hide-after="0">
                 <el-select v-model="model" size="small" placeholder="" style="width:120px">
                     <template #label="{ label}">
                         <div style="font-size: 1rem;">    {{ label }}</div>

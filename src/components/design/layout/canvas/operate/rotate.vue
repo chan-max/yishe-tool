@@ -5,7 +5,7 @@
         </template>
         <template #name> 元素旋转 </template>
         <template #content>
-            <el-tooltip content="用于旋转元素，单位为旋转的角度">
+            <el-tooltip content="用于旋转元素，单位为旋转的角度" :hide-after="0">
                 <div>
                     <span style="margin:0 .3em">x</span>
                     <el-input style="width:54px" size="small" v-model="x" step="1" min="0" max="360" type="number"

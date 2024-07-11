@@ -123,7 +123,7 @@ export const Text = defineComponent({
                 horizontalRadius, // 半径
                 verticalRadius,
                 radius,
-                startDeg: props.options.roundTextStartDeg
+                startDeg: Number(props.options.roundTextStartDeg)
             })
         })
 
@@ -191,6 +191,10 @@ export const Text = defineComponent({
     换行文字已最外行为基准
 */
 
+function getElementComputedPixelValue(el,property){
+    return  Number(window.getComputedStyle(el)[property].slice(0, -2))
+}
+
 async function createRoundText(container, options) {
     const {
         lineHeightPixelValue,
@@ -248,8 +252,13 @@ async function createRoundText(container, options) {
     textContentCells.forEach((row) => {
         row.forEach((item) => {
             // 由于获取真实尺寸，始终为像素值，所以需要把所有涉及到的单位统一为像素
-            item.width = Number(window.getComputedStyle(item.el).width.slice(0, -2))
-            item.height = Number(window.getComputedStyle(item.el).height.slice(0, -2))
+            item.width = getElementComputedPixelValue(item.el,'width')
+            item.height = getElementComputedPixelValue(item.el,'height')
+
+            /*
+              该宽高是包括行高和字间距的
+            */
+        
         })
     })
 
@@ -269,6 +278,7 @@ async function createRoundText(container, options) {
         // 弧形的起始坐标
         let startPosition = isCircle ? getRoundPos(horizontalRadius, startDeg) : getEllipsePos(horizontalRadius, verticalRadius, startDeg)
 
+        
         const hr = horizontalRadius + (rows - rowIndex) * lineHeightPixelValue
         const vr = verticalRadius + (rows - rowIndex) * lineHeightPixelValue
 
@@ -294,9 +304,16 @@ async function createRoundText(container, options) {
             item.y = pos.y
             item.deg = pos.deg
 
-            item.el.style.left = (item.x - (letterSpacingPixelValue) / 2) + 'px'
-            item.el.style.bottom = (item.y - lineHeightPixelValue / 2) + 'px'
-            item.el.style.transform = `rotate(${item.deg}deg)`
+            if(isCircle) {
+                item.el.style.left = (item.x - (letterSpacingPixelValue) / 2) + 'px'
+                item.el.style.bottom = (item.y - lineHeightPixelValue / 2) + 'px'
+                item.el.style.transform = `rotate(${item.deg}deg)`
+            }else{
+                item.el.style.left = (item.x - (letterSpacingPixelValue + item.width)) + 'px'
+
+                item.el.style.bottom = (item.y - lineHeightPixelValue / 2) + 'px'
+                item.el.style.transform = `rotate(${item.deg}deg)`
+            }
         })
     })
 }

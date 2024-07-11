@@ -5,7 +5,7 @@
         </template>
         <template #name> 元素倾斜 </template>
         <template #content>
-            <el-tooltip content="用于调整元素倾斜角度">
+            <el-tooltip content="用于调整元素倾斜角度" :hide-after="0">
                 <div>
                     <span style="margin:0 .3em">x</span>
                     <el-input style="width:54px" size="small" v-model="x" step="1" min="0" max="360" type="number"

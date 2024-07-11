@@ -5,7 +5,7 @@
         </template>
         <template #name> 纠错等级 </template>
         <template #content>
-            <el-tooltip content="纠错等级越高，二维码在损坏的情况下扫描成功率越高">
+            <el-tooltip content="纠错等级越高，二维码在损坏的情况下扫描成功率越高" :hide-after="0">
                 <el-select v-model="model" size="small" placeholder="" style="width:120px">
                     <template #label="{label}">
                         <div style="font-size: 1rem;">    {{ label }}</div>

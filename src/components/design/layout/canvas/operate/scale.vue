@@ -5,7 +5,7 @@
         </template>
         <template #name> 尺寸缩放 </template>
         <template #content>
-            <el-tooltip content="用于缩放元素">
+            <el-tooltip content="用于缩放元素" :hide-after="0">
                 <div>
                     <span style="margin:0 .3em">x</span>
                     <el-input style="width:54px" size="small" v-model="x" step=".1" min="-10" max="10" type="number"

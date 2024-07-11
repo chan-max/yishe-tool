@@ -3,7 +3,7 @@
         <template #icon> <icon-writing-mode></icon-writing-mode> </template>
         <template #name> 排列方式 </template>
         <template #content>
-            <el-tooltip content="英文和数字显示方向会有影响">
+            <el-tooltip content="英文和数字显示方向会有影响" :hide-after="0">
                 <el-select v-model="model" size="small" style="min-width: 72px">
                 <el-option v-for="item in writingModeOptions" :key="item.value" :label="item.label" :value="item.value">
                     <span> {{ item.label }} </span>

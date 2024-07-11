@@ -126,18 +126,14 @@ export function addCanvasChild(options) {
         id: canvas_child_id++,
     }
 
-
-
     canvasOptions.value.children.push(options)
-
     currentOperatingCanvasChildIndex.value = index
-
 }
 
 // 当前正在操作的元素
 export const currentOperatingCanvasChildIndex = ref(0)
 
-export const currentOperatingCanvasChild = computed(() => {
+export const currentOperatingCanvasChild:any = computed(() => {
     let child = canvasOptions.value.children[currentOperatingCanvasChildIndex.value]
 
     if (!child) {

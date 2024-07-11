@@ -65,7 +65,7 @@ const props = defineProps({
 }
 
 .operate-form-item-title {
-  font-size: 10px;
+  font-size: 1rem;
   line-height: normal;
   text-wrap: nowrap;
   display: flex;

@@ -1,6 +1,6 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../../index.tsx"
 import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue } from '../../helper.tsx'
-import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick } from "vue"
+import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watch } from "vue"
 import CircleType from "circletype";
 import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistancePoint } from './calc.tsx'
 
@@ -64,6 +64,7 @@ export const createDefaultCanvasChildTextOptions = () => {
         letterSpacing: 0,
         textContent: 'hello world',
         writingMode: 'htb',
+        isRoundText: false,
         roundTextHorizontalRadius: {
             unit: canvasUnit,
             value: 100,
@@ -72,11 +73,8 @@ export const createDefaultCanvasChildTextOptions = () => {
             unit: canvasUnit,
             value: 100,
         },
-        roundTextRadius: {
-            unit: canvasUnit,
-            value: 100,
-        },
-        roundTextStartDeg: 270,
+        roundTextStartDeg: 0,
+        isCounterclockwise: false, // 文字是否指向圆心，默认为否
     }
 }
 
@@ -90,42 +88,30 @@ export const Text = defineComponent({
     },
     setup(props, ctx) {
 
+        // 文字容器，用于布局
         const textContainerRef = ref()
 
+        // 用来包裹文字单元块 ， 需要相对布局
+        const roundTextInnerContainerRef = ref()
+
+        // 文字单元格
+        const textContentCells = ref([])
+
+        // key值，用于更新
+        const key = ref(0)
 
         watchEffect(() => {
-            let el = textContainerRef.value
+            let el = roundTextInnerContainerRef.value
+
             if (!el) {
                 return
             }
-
-            const horizontalRadius = formatSizeOptionToPixelValue(props.options.roundTextHorizontalRadius)
-            const verticalRadius = formatSizeOptionToPixelValue(props.options.roundTextVerticalRadius)
-            const radius = formatSizeOptionToPixelValue(props.options.roundTextRadius)
-
-            let lineHeightPixelValue = formatSizeOptionToPixelValue({
-                value: props.options.lineHeight * props.options.fontSize.value,
-                unit: props.options.fontSize.unit,
-            })
-
-
-            let letterSpacingPixelValue = formatSizeOptionToPixelValue({
-                value: props.options.letterSpacing * props.options.fontSize.value,
-                unit: props.options.fontSize.unit,
-            })
-
-            
-
-            createRoundText(el, {
-                textContent: props.options.textContent, // 文字内容
-                lineHeightPixelValue, // 行高
-                letterSpacingPixelValue, // 字间距
-                horizontalRadius, // 半径
-                verticalRadius,
-                radius,
-                startDeg: Number(props.options.roundTextStartDeg)
-            })
+            if (props.options.isRoundText) {
+                createRoundText(el, props.options, textContentCells.value)
+            }
         })
+
+
 
 
         return () => {
@@ -146,6 +132,7 @@ export const Text = defineComponent({
 
             const fontSize = formatToNativeSizeOption(props.options.fontSize)
 
+
             var style: any = {
                 flexShrink: 0,
                 fontSize: fontSize.value + fontSize.unit,
@@ -161,6 +148,9 @@ export const Text = defineComponent({
                 textShadow: parseTextShadowOptionsToCSS(props.options.textShadow)
             }
 
+
+
+            // 处理文字颜色
             if (props.options.fontColor) {
                 if (props.options.fontColor.colorType == 'gradient') {
                     style.background = props.options.fontColor.color
@@ -171,15 +161,54 @@ export const Text = defineComponent({
                 }
             }
 
-            return <div style={containerStyle}>
+
+            const innerStyle = {
+                background: 'inherit',
+                color: 'inherit',
+                backgroundClip: 'inherit',
+            }
+
+            const rowStyle = {
+                background: 'inherit',
+                color: 'inherit',
+                backgroundClip: 'inherit',
+            }
+
+            const cellStyle = {
+                display: 'inline-block',
+                background: 'inherit',
+                color: 'inherit',
+                backgroundClip: 'inherit',
+            }
+
+
+            // 生成文字单元格
+            const rows = props.options.textContent.split('\n').filter((item) => item !== '')
+            textContentCells.value = rows.map((row) => {
+                return row.split('').map((content) => {
+                    return {
+                        content,
+                    }
+                })
+            })
+
+            let round = <div ref={roundTextInnerContainerRef} style={innerStyle}>
+                {textContentCells.value.map((row, rowIndex) => {
+                    const cells = row.map((cell, columnIndex) => {
+                        return <div id={`row-${rowIndex}-col-${columnIndex}`} data-rowIndex={rowIndex} data-columnIndex={columnIndex} style={{ ...cellStyle, ...cell.style }}>{cell.content}</div>
+                    })
+                    return <div style={rowStyle}> {cells} </div>
+                })}
+            </div>
+
+            return <div style={containerStyle} key={key.value}>
                 <div ref={textContainerRef} style={style}>
+                    {props.options.isRoundText ? round : props.options.textContent}
                 </div>
             </div>
         }
     }
 })
-
-
 
 
 /*
@@ -191,74 +220,57 @@ export const Text = defineComponent({
     换行文字已最外行为基准
 */
 
-function getElementComputedPixelValue(el,property){
-    return  Number(window.getComputedStyle(el)[property].slice(0, -2))
+function getElementComputedPixelValue(el, property) {
+    return Number(window.getComputedStyle(el)[property].slice(0, -2))
 }
 
-async function createRoundText(container, options) {
-    const {
-        lineHeightPixelValue,
-        letterSpacingPixelValue,
-        textContent,
-        horizontalRadius,
-        verticalRadius,
-        startDeg = 0, // 起始角度，
-        direction = 1,
-        radius
-    } = options
+
+
+async function createRoundText(innerContainer, options, textContentCells) {
+
+    // innerContainer.style.width = '0px'
+    // innerContainer.style.height = '0px'
+    innerContainer.style.position = 'relative'
+
+    let startDeg = options.roundTextStartDeg
+    let isCounterclockwise = options.isCounterclockwise
+
+
+    const horizontalRadius = formatSizeOptionToPixelValue(options.roundTextHorizontalRadius)
+    const verticalRadius = formatSizeOptionToPixelValue(options.roundTextVerticalRadius)
+
+
+    let lineHeightPixelValue = formatSizeOptionToPixelValue({
+        value: options.lineHeight * options.fontSize.value,
+        unit: options.fontSize.unit,
+    })
+
+    let letterSpacingPixelValue = formatSizeOptionToPixelValue({
+        value: options.letterSpacing * options.fontSize.value,
+        unit: options.fontSize.unit,
+    })
 
     let isCircle = horizontalRadius == verticalRadius
 
-    var minRadius // 最小半径 
-
-    container.innerHTML = ''
-
-    const innerContainer = document.createElement('div')
-
-    innerContainer.style.width = '0px'
-    innerContainer.style.height = '0px'
-    innerContainer.style.position = 'relative'
-
-    // 生成文字单元格
-    const textContentCells = textContent.split('\n').filter((item) => item !== '').map((row) => {
-        return row.split('').map((content) => {
-            let el = document.createElement('div')
-            el.style.position = 'absolute';
-            el.style.display = 'inline-block'
-
-            el.innerHTML = content
-
-            return {
-                content,
-                el
-            }
-        })
-    })
-
-    // 插入元素
-    textContentCells.forEach((row) => {
-        let el = document.createElement('div')
-        row.forEach((item) => {
-            el.appendChild(item.el)
-        })
-        innerContainer.appendChild(el)
-    })
-
-    container.appendChild(innerContainer)
-
-    await nextTick()
-
     // 元素插入页面后再计算真实宽度
-    textContentCells.forEach((row) => {
-        row.forEach((item) => {
-            // 由于获取真实尺寸，始终为像素值，所以需要把所有涉及到的单位统一为像素
-            item.width = getElementComputedPixelValue(item.el,'width')
-            item.height = getElementComputedPixelValue(item.el,'height')
 
+    textContentCells.forEach((row, rowIndex) => {
+        row.forEach((item, columnIndex) => {
+            let el = innerContainer.querySelector(`#row-${rowIndex}-col-${columnIndex}`)
+            el.style.position = 'absolute'
+
+            // item.style.position = 'absolute'
+            item.el = el
+
+            // 由于获取真实尺寸，始终为像素值，所以需要把所有涉及到的单位统一为像素
+            let width = getElementComputedPixelValue(item.el, 'width')
+            let height = getElementComputedPixelValue(item.el, 'height')
+            item.width = width
+            item.height = height
+            item.rawWidth = width - letterSpacingPixelValue
             /*
               该宽高是包括行高和字间距的
             */
-        
         })
     })
 
@@ -273,12 +285,12 @@ async function createRoundText(container, options) {
         }, 0)
 
         // 最小允许的半径
-        minRadius = outerMinCircumference / (2 * Math.PI)
+        // minRadius = outerMinCircumference / (2 * Math.PI)
 
         // 弧形的起始坐标
         let startPosition = isCircle ? getRoundPos(horizontalRadius, startDeg) : getEllipsePos(horizontalRadius, verticalRadius, startDeg)
 
-        
+
         const hr = horizontalRadius + (rows - rowIndex) * lineHeightPixelValue
         const vr = verticalRadius + (rows - rowIndex) * lineHeightPixelValue
 
@@ -293,25 +305,23 @@ async function createRoundText(container, options) {
                 }
             }
 
-
-            let pos = isCircle 
-            ? findRoundDistancePoint(hr, startPosition.x, startPosition.y, distance) 
-            : findEllipseDistancePoint(hr, vr, startPosition.x, startPosition.y, distance)
-
-
+            let pos = isCircle
+                ? findRoundDistancePoint(hr, startPosition.x, startPosition.y, distance, !isCounterclockwise)
+                : findEllipseDistancePoint(hr, vr, startPosition.x, startPosition.y, distance, !isCounterclockwise)
 
             item.x = pos.x
             item.y = pos.y
             item.deg = pos.deg
 
-            if(isCircle) {
+            if (isCircle) {
+                // 圆
                 item.el.style.left = (item.x - (letterSpacingPixelValue) / 2) + 'px'
                 item.el.style.bottom = (item.y - lineHeightPixelValue / 2) + 'px'
                 item.el.style.transform = `rotate(${item.deg}deg)`
-            }else{
-                item.el.style.left = (item.x - (letterSpacingPixelValue + item.width)) + 'px'
-
-                item.el.style.bottom = (item.y - lineHeightPixelValue / 2) + 'px'
+            } else {
+                // 椭圆
+                item.el.style.left = (item.x) + 'px'
+                item.el.style.bottom = (item.y) + 'px'
                 item.el.style.transform = `rotate(${item.deg}deg)`
             }
         })

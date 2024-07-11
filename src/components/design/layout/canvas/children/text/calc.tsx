@@ -1,22 +1,23 @@
 
 
-export function getEllipsePos(a, b,angle) {
- // 将角度转换为弧度
- const radians = (90 - angle) * Math.PI / 180;
+export function getEllipsePos(a, b, angle) {
+    // 将角度转换为弧度
+    const radians = (90 - angle) * Math.PI / 180;
 
- // 计算椭圆参数方程的 t
- const t = Math.atan2(a * Math.sin(radians), b * Math.cos(radians));
+    // 计算椭圆参数方程的 t
+    const t = Math.atan2(a * Math.sin(radians), b * Math.cos(radians));
 
- // 计算椭圆上点的坐标
- const x = a * Math.cos(t);
- const y = b * Math.sin(t);
+    // 计算椭圆上点的坐标
+    const x = a * Math.cos(t);
+    const y = b * Math.sin(t);
 
-
- return { x, y };
+    return { x, y };
 }
 
 
-
+/*
+ 椭圆弧长计算太过复杂，使用直线距离代替
+*/
 export function findEllipseDistancePoint(a, b, x1, y1, d, isClockwise = true) {
     // 计算椭圆上给定点的参数 t
     let t = Math.atan2(y1 / b, x1 / a);
@@ -62,21 +63,16 @@ export function findEllipseDistancePoint(a, b, x1, y1, d, isClockwise = true) {
     // 计算文字的旋转角度，使底部指向椭圆中心
     let textRotation = rotationAngle;
 
-    
-
     return { x: x2, y: y2, deg: textRotation };
 }
-
-
-
-
 
 /*
    圆形路径位置
 */
 
-export function findRoundDistancePoint(r, x1, y1, d) {
+export function findRoundDistancePoint(r, x1, y1, d, isClockwise = true) {
 
+    d = isClockwise ? d : -d
     // 计算起始点的角度（以y轴为0度，顺时针方向）
     let startAngle = (Math.atan2(x1, y1) * 180 / Math.PI + 360) % 360;
 

@@ -18,6 +18,9 @@
           <el-col :span="24">
             <operateItemSwitch label="显示真实大小" v-model="canvasOptions.showCanvasRealSize"></operateItemSwitch>
           </el-col>
+          <el-col :span="24">
+            <operateItemColor label="辅助背景颜色" tooltip="用于辅助画布中的元素，不会对实际画布产生影响" type="pure" v-model="canvasOptions.backgroundColor"></operateItemColor>
+          </el-col>
         </el-row>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.TEXT">
@@ -35,18 +38,18 @@
                 <operateItemFontSize v-model="currentOperatingCanvasChild.fontSize">
                 </operateItemFontSize>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="24">
                 <operateItemFontItalic v-model="currentOperatingCanvasChild.italic"></operateItemFontItalic>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="24">
                 <operateItemFontColor v-model="currentOperatingCanvasChild.fontColor">
                 </operateItemFontColor>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="24">
                 <operateItemLineHeight v-model="currentOperatingCanvasChild.lineHeight">
                 </operateItemLineHeight>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="24">
                 <operateItemLetterSpacing v-model="currentOperatingCanvasChild.letterSpacing">
                 </operateItemLetterSpacing>
               </el-col>
@@ -57,11 +60,11 @@
               <el-col :span="24">
                 <operateItemPosition v-model="currentOperatingCanvasChild.position"></operateItemPosition>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="24">
                 <operateItemZindex v-model="currentOperatingCanvasChild.zIndex">
                 </operateItemZindex>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="24">
                 <operateItemFontWeight v-model="currentOperatingCanvasChild.fontWeight">
                 </operateItemFontWeight>
               </el-col>
@@ -95,6 +98,11 @@
                   v-model:y="currentOperatingCanvasChild.skewY">
                 </operateItemSkew>
               </el-col>
+              <el-col :span="24">
+                <operateItemTextStroke v-model:width="currentOperatingCanvasChild.textStrokeWidth"
+                  v-model:color="currentOperatingCanvasChild.textStrokeColor">
+                </operateItemTextStroke>
+              </el-col>
             </el-row>
           </el-collapse-item>
 
@@ -117,11 +125,52 @@
               </el-col>
               <el-col :span="24">
                 <!-- <operateItemRoundTextDirection v-model="currentOperatingCanvasChild.roundTextDirection"></operateItemRoundTextDirection> -->
-                <operateItemSwitch label="是否使用逆时针排列" v-model="currentOperatingCanvasChild.isCounterclockwise"></operateItemSwitch>
+                <operateItemSwitch label="是否使用逆时针排列" v-model="currentOperatingCanvasChild.isCounterclockwise">
+                </operateItemSwitch>
               </el-col>
             </el-row>
           </el-collapse-item>
-
+          <el-collapse-item name="4">
+            <template #title>
+              <div class="title">滤镜效果</div>
+            </template>
+            <el-col :span="24">
+              <operateItemFilterBlur v-model="currentOperatingCanvasChild.filterBlur">
+              </operateItemFilterBlur>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterBrightness v-model="currentOperatingCanvasChild.filterBrightness">
+              </operateItemFilterBrightness>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterContrast v-model="currentOperatingCanvasChild.filterContrast">
+              </operateItemFilterContrast>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterGrayscale v-model="currentOperatingCanvasChild.filterGrayscale">
+              </operateItemFilterGrayscale>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterInvert v-model="currentOperatingCanvasChild.filterInvert">
+              </operateItemFilterInvert>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterOpacity v-model="currentOperatingCanvasChild.filterOpacity">
+              </operateItemFilterOpacity>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterSaturate v-model="currentOperatingCanvasChild.filterSaturate">
+              </operateItemFilterSaturate>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterSepia v-model="currentOperatingCanvasChild.filterSepia">
+              </operateItemFilterSepia>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterHueRotate v-model="currentOperatingCanvasChild.filterHueRotate">
+              </operateItemFilterHueRotate>
+            </el-col>
+          </el-collapse-item>
         </el-collapse>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.IMAGE">
@@ -147,11 +196,11 @@
           <el-col :span="24">
             <operateItemPosition v-model="currentOperatingCanvasChild.position"></operateItemPosition>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="24">
             <operateItemBackgroundColor v-model="currentOperatingCanvasChild.backgroundColor">
             </operateItemBackgroundColor>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="24">
             <operateItemZindex v-model="currentOperatingCanvasChild.zIndex">
             </operateItemZindex>
           </el-col>
@@ -173,11 +222,11 @@
                   v-model:height="currentOperatingCanvasChild.height">
                 </operateItemSize>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="24">
                 <operateItemBackgroundColor v-model="currentOperatingCanvasChild.backgroundColor">
                 </operateItemBackgroundColor>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="24">
                 <operateItemColor label="二维码颜色" v-model="currentOperatingCanvasChild.qrCodeColor">
                 </operateItemColor>
               </el-col>
@@ -247,7 +296,7 @@
           </el-col>
         </el-row>
       </template>
-      <template v-if="currentOperatingCanvasChild.type == CanvasChildType.ELLIIPSE">
+      <template v-if="currentOperatingCanvasChild.type == CanvasChildType.ELLIPSE">
         <el-row :gutter="24" align="middle">
           <el-col :span="24">
             <operateItemSize tooltip="只需设置整体的宽高，半径自动有宽高和边框算出" label="圆形尺寸"
@@ -265,6 +314,10 @@
             <operateItemBorderWidth v-model="currentOperatingCanvasChild.borderWidth">
             </operateItemBorderWidth>
           </el-col>
+          <el-col :span="24">
+            <operateItemColor label="边框颜色" v-model="currentOperatingCanvasChild.borderColor">
+            </operateItemColor>
+          </el-col>
         </el-row>
       </template>
     </div>
@@ -276,6 +329,7 @@ import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from
 import { Close } from "@element-plus/icons-vue";
 
 // import operateFormItem from "@/components/design/layout/canvas/operate/operateFormItem.vue";
+import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
 import operateItemTextContent from "@/components/design/layout/canvas/operate/textContent.vue";
 import operateItemFontSize from "@/components/design/layout/canvas/operate/fontSize.vue";
 import operateItemFontWeight from "@/components/design/layout/canvas/operate/fontWeight.vue";
@@ -298,18 +352,29 @@ import operateItemImageSelect from "@/components/design/layout/canvas/operate/im
 import operateItemSwitch from "@/components/design/layout/canvas/operate/basicSwitch.vue";
 import operateItemPadding from "@/components/design/layout/canvas/operate/padding.vue";
 import operateItemBorderRadius from "@/components/design/layout/canvas/operate/borderRadius.vue";
-import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
+
 import operateItemQrcodeErrorCorrectionLevel from "@/components/design/layout/canvas/operate/qrcodeErrorCorrectionLevel.vue";
 import operateItemQrcodeType from "@/components/design/layout/canvas/operate/qrcodeType.vue";
 import operateItemBorderWidth from "@/components/design/layout/canvas/operate/border/borderWidth.vue";
 import operateItemRectBorderRadius from "@/components/design/layout/canvas/operate/border/rectBorderRadius.vue";
 import operateItemAbsoluteUnitSelect from "@/components/design/layout/canvas/operate/absoluteUnitSelect.vue";
 import operateItemTextShadow from "@/components/design/layout/canvas/operate/text-shadow/index.vue";
-import operateItemRoundTextRadius from "@/components/design/layout/canvas/operate/text/roundTextRadius.vue";
+// import operateItemRoundTextRadius from "@/components/design/layout/canvas/operate/text/roundTextRadius.vue";
 import operateItemRoundTextStartDeg from "@/components/design/layout/canvas/operate/text/roundTextStartDeg.vue";
 import operateItemEllipseTextRadius from "@/components/design/layout/canvas/operate/text/ellipseTextRadius.vue";
-import operateItemRoundTextDirection from "@/components/design/layout/canvas/operate/text/roundTextDirection.vue";
+// import operateItemRoundTextDirection from "@/components/design/layout/canvas/operate/text/roundTextDirection.vue";
+import operateItemTextStroke from "@/components/design/layout/canvas/operate/text/textStroke.vue";
 
+// 滤镜相关
+import operateItemFilterBlur from "@/components/design/layout/canvas/operate/filter/blur.vue";
+import operateItemFilterBrightness from "@/components/design/layout/canvas/operate/filter/brightness.vue";
+import operateItemFilterContrast from "@/components/design/layout/canvas/operate/filter/contrast.vue";
+import operateItemFilterGrayscale from "@/components/design/layout/canvas/operate/filter/grayscale.vue";
+import operateItemFilterInvert from "@/components/design/layout/canvas/operate/filter/invert.vue";
+import operateItemFilterOpacity from "@/components/design/layout/canvas/operate/filter/opacity.vue";
+import operateItemFilterSaturate from "@/components/design/layout/canvas/operate/filter/saturate.vue";
+import operateItemFilterSepia from "@/components/design/layout/canvas/operate/filter/sepia.vue";
+import operateItemFilterHueRotate from "@/components/design/layout/canvas/operate/filter/hueRotate.vue";
 
 import {
   updateCanvasOptionsUnit

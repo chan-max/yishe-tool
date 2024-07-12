@@ -32,6 +32,8 @@ import icon from "@/components/design/assets/icon/round-text-radius.svg?componen
 import { ref, computed } from 'vue'
 import { canvasOptions } from '@/components/design/layout/canvas/index.tsx'
 
+
+
 const props = defineProps({
     tooltip: {
         default: ''

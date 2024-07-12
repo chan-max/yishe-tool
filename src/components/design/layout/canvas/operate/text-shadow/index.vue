@@ -5,13 +5,13 @@
         </template>
         <template #name> 文字阴影 </template>
         <template #content>
-            <el-popover width="800"  placement="top"     :visible="showPopover">
+            <el-popover width="800"  placement="top" :visible="showPopover">
                 <template #reference>
                     <el-button link @click="click">
                         {{  showPopover ? '关闭设置' : '打开设置'   }}
                     </el-button>
                 </template>
-                <el-row align="middle" justify="space-around" style="row-gap:.4rem" :gutter="24">
+                <el-row align="middle" justify="space-around" style="row-gap:.8rem" :gutter="24">
                     <template v-for="item, index in model">
                         <el-col :span="24">
                             <div class="flex items-center justify-between" style="column-gap:2rem">
@@ -29,13 +29,12 @@
                                     v-model:unit="model[index].horizontal.unit"></size-input>
                                 颜色:
                                 <color-picker type="pure" v-model="model[index].color"></color-picker>
-                                隐藏；
+                                隐藏：
                                 <el-switch size="small" v-model="model[index].disabled"></el-switch>
                                 <el-button type="danger" plain size="small" @click="remove(index)"> 移除 </el-button>
                             </div>
 
                         </el-col>
-
                     </template>
                     <el-col :span="24">
                         <el-button-group class="w-full" style="display:flex;">

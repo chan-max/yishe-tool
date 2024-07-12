@@ -1,5 +1,5 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../../index.tsx"
-import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue } from '../../helper.tsx'
+import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, formatToNativeSizeString } from '../../helper.tsx'
 import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watch } from "vue"
 import CircleType from "circletype";
 import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistancePoint } from './calc.tsx'
@@ -75,6 +75,29 @@ export const createDefaultCanvasChildTextOptions = () => {
         },
         roundTextStartDeg: 0,
         isCounterclockwise: false, // 文字是否指向圆心，默认为否
+
+        textStrokeWidth: {
+            unit: canvasUnit,
+            value: 0,
+        },
+        textStrokeColor: {
+            type: 'pure',
+            color: '#fff',
+        },
+
+
+        filterBlur: {
+            value: 0,
+            unit: canvasUnit
+        },
+        filterBrightness: 100, // 亮度百分比，默认为100 ，正常
+        filterContrast: 100, // 对比度
+        filterGrayscale: 0, // 灰度
+        filterHueRotate: 0, // 色相旋转
+        filterInvert: 0, // 反转输入
+        filterOpacity: 100, // 透明度
+        filterSaturate: 100, // 饱和度
+        filterSepia: 0, // 褐色
     }
 }
 
@@ -111,9 +134,6 @@ export const Text = defineComponent({
             }
         })
 
-
-
-
         return () => {
             const {
                 containerStyle: _containerStyle,
@@ -133,6 +153,10 @@ export const Text = defineComponent({
             const fontSize = formatToNativeSizeOption(props.options.fontSize)
 
 
+            const filter = `blur(${formatToNativeSizeString(props.options.filterBlur)}) brightness(${props.options.filterBrightness}%) contrast(${props.options.filterContrast}%) grayscale(${props.options.filterGrayscale}%) hue-rotate(${props.options.filterHueRotate}deg) invert(${props.options.filterInvert}%) opacity(${props.options.filterOpacity}%) saturate(${props.options.filterSaturate}%)`;
+
+            console.log(filter)
+
             var style: any = {
                 flexShrink: 0,
                 fontSize: fontSize.value + fontSize.unit,
@@ -143,9 +167,11 @@ export const Text = defineComponent({
                 letterSpacing: props.options.letterSpacing + 'em',
                 fontFamily: props.options.fontFamilyInfo ? `font_${props.options.fontFamilyInfo.id}` : null,
                 writingMode: props.options.writingMode == 'htb' ? WritingMode.HTB : props.options.writingMode == 'vlr' ? WritingMode.VLR : props.options.writingMode == 'vrl' ? WritingMode.VRL : null,
-                transform: `scale3d(${props.options.scaleX ?? 1}, ${props.options.scaleY ?? 1}, ${props.options.scaleZ ?? 1}) rotateX(${props.options.rotateX ?? 0}deg) rotateY(${props.options.rotateY ?? 0}deg) rotateZ(${props.options.rotateZ ?? 0}deg) skew(${props.options.skewX ?? 0}deg, ${props.options.skewY ?? 0}deg)`,
+                transform: `scale3d(${props.options.scaleX ?? 1}, ${props.options.scaleY || 1}, ${props.options.scaleZ || 1}) rotateX(${props.options.rotateX || 0}deg) rotateY(${props.options.rotateY || 0}deg) rotateZ(${props.options.rotateZ || 0}deg) skew(${props.options.skewX || 0}deg, ${props.options.skewY || 0}deg)`,
                 ..._style,
-                textShadow: parseTextShadowOptionsToCSS(props.options.textShadow)
+                filter,
+                textShadow: parseTextShadowOptionsToCSS(props.options.textShadow),
+                textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color
             }
 
 
@@ -160,6 +186,7 @@ export const Text = defineComponent({
                     style.color = props.options.fontColor.color;
                 }
             }
+
 
 
             const innerStyle = {
@@ -192,7 +219,7 @@ export const Text = defineComponent({
                 })
             })
 
-            let round = <div ref={roundTextInnerContainerRef} style={innerStyle}>
+            let roundNode = <div ref={roundTextInnerContainerRef} style={innerStyle}>
                 {textContentCells.value.map((row, rowIndex) => {
                     const cells = row.map((cell, columnIndex) => {
                         return <div id={`row-${rowIndex}-col-${columnIndex}`} data-rowIndex={rowIndex} data-columnIndex={columnIndex} style={{ ...cellStyle, ...cell.style }}>{cell.content}</div>
@@ -203,7 +230,7 @@ export const Text = defineComponent({
 
             return <div style={containerStyle} key={key.value}>
                 <div ref={textContainerRef} style={style}>
-                    {props.options.isRoundText ? round : props.options.textContent}
+                    {props.options.isRoundText ? roundNode : props.options.textContent}
                 </div>
             </div>
         }

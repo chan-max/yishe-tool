@@ -16,13 +16,7 @@
             </div>
         </div>
         <div class="flex" style="width:100%;padding:1em;padding-top:2rem;">
-            <addPopover>
-                <el-button type="primary" link>
-                    <span>添加元素</span>
-                </el-button>
-            </addPopover>
 
-            <div style="flex:1;"></div>
             <el-button plain link>
                 <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
                 上传
@@ -34,6 +28,12 @@
             <el-button link plain>
                 更多
             </el-button>
+            <div style="flex:1;"></div>
+            <addPopover>
+                <el-button type="primary" link>
+                    <span>添加元素</span>
+                </el-button>
+            </addPopover>
         </div>
         <div style="width:100%;padding:0 1em;">
             <div style="display:flex;column-gap:10px">

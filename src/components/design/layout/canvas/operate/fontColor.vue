@@ -12,8 +12,6 @@
 import iconFontColor from "@/components/design/assets/icon/font-color.svg?component";
 const model = defineModel({});
 
-
-
 </script>
 
 <style></style>

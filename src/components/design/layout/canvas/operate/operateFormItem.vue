@@ -48,6 +48,10 @@ const props = defineProps({
   .el-input__wrapper{
     height: 24px!important;
   }
+
+  .el-select--small .el-select__wrapper{
+    font-size: 1rem;
+  }
 }
 
 .operate-form-item-icon {
@@ -80,5 +84,6 @@ const props = defineProps({
   height: 100%;
   flex: 1;
   padding-right: .5rem;
+  column-gap: 1rem;
 }
 </style>

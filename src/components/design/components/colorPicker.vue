@@ -39,8 +39,8 @@ const props = defineProps({
 </script>
 <style lang="less">
 .color-picker {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 4px;
   overflow: hidden;
   display: flex;

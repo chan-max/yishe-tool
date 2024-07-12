@@ -38,7 +38,7 @@ export enum CanvasChildType {
     IMAGE = 'image',
     QRCODE = 'qrcode',
     RECT = 'rect',
-    ELLIIPSE = 'ellipse',
+    ELLIPSE = 'ellipse',
 }
 
 
@@ -49,7 +49,7 @@ export const canvasChildLabelMap = {
     [CanvasChildType.IMAGE]: '图片',
     [CanvasChildType.QRCODE]: '二维码',
     [CanvasChildType.RECT]: '矩形',
-    [CanvasChildType.ELLIIPSE]: '圆和椭圆',
+    [CanvasChildType.ELLIPSE]: '圆和椭圆',
 }
 
 export const canvasChildDefaultOptionsMap = {
@@ -59,7 +59,7 @@ export const canvasChildDefaultOptionsMap = {
     [CanvasChildType.IMAGE]: createDefaultCanvasChildImageOptions,
     [CanvasChildType.QRCODE]: createDefaultCanvasChildQrcodeOptions,
     [CanvasChildType.RECT]: createDefaultCanvasChildSvgRectOptions,
-    [CanvasChildType.ELLIIPSE]: createDefaultCanvasChildSvgEllipseOptions,
+    [CanvasChildType.ELLIPSE]: createDefaultCanvasChildSvgEllipseOptions,
 }
 
 export const canvasChildRenderMap = {
@@ -69,7 +69,7 @@ export const canvasChildRenderMap = {
     [CanvasChildType.IMAGE]: createCanvasChildImage,
     [CanvasChildType.QRCODE]: createCanvasChildQrcode,
     [CanvasChildType.RECT]: createCanvasChildRect,
-    [CanvasChildType.ELLIIPSE]: createCanvasChildEllipse,
+    [CanvasChildType.ELLIPSE]: createCanvasChildEllipse,
 }
 
 

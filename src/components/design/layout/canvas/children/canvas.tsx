@@ -1,6 +1,8 @@
 import { defineComponent } from 'vue'
-import { canvasOptions, currentCanvasControllerInstance, } from '@/components/design/layout/canvas'
+import { canvasOptions, currentCanvasControllerInstance,showMainCanvas } from '@/components/design/layout/canvas'
 import { formatSizeOptionToPixelValue } from '../helper'
+
+
 
 /*
     用于辅助观察的网格背景
@@ -44,7 +46,9 @@ export const Canvas = defineComponent({
             })
             
         
-            const transformValue =  canvasOptions.value.showCanvasRealSize ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
+            const transformValue =  (canvasOptions.value.showCanvasRealSize && showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
+
+
 
             let pngBackground = createPngBackgroundStyle(transformValue)
 

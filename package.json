@@ -66,6 +66,7 @@
     "fs": "^0.0.1-security",
     "gradient-parser": "^1.0.2",
     "gradient2svg": "^0.0.4",
+    "gsap": "^3.12.5",
     "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
     "http-proxy-middleware": "^3.0.0",

@@ -24,7 +24,7 @@ export async function uploadToCOS({
             Region: cos.options.Region
         })
         return {
-            url: res.Location,
+            url: `https://${res.Location}`,
             key
         }
     } catch (e) {
@@ -33,16 +33,25 @@ export async function uploadToCOS({
 }
 
 
-// 删除
-export async function deleteCOSFile(filename) {
-    const cos = getCOS();
-    // 调用删除文件的方法
-    const res =  await cos.deleteObject({
-        Bucket: cos.options.Bucket,
-        Region: cos.options.Region,
-        Key: filename
+export function deleteCOSFile(key) {
+    return new Promise((resolve, reject) => {
+        const cos = getCOS();
+        
+        key = String(key)
+        cos.deleteObject({
+            Bucket: cos.options.Bucket,
+            Region: cos.options.Region,
+            Key: key
+        }, function (err, data) {
+            if (err) {
+                console.error('删除文件失败:', err);
+                reject(err);
+            } else {
+                console.log('删除文件成功:', data);
+                resolve(data);
+            }
+        });
     });
-    return res
 }
 
 

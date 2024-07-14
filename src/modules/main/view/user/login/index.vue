@@ -9,16 +9,19 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-<div class="login-container">
-  <password-login v-if="loginType == LoginType.PASSWORD"></password-login>
-  <qrcode-login v-else></qrcode-login>
-</div> 
+  <div class="login-container">
+    <password-login v-if="loginType == LoginType.PASSWORD"></password-login>
+    <qrcode-login v-else></qrcode-login>
+  </div>
 </template>
 
 <script setup>
 import passwordLogin from './passwordLogin.vue'
 import qrcodeLogin from './qrcodeLogin.vue'
-import {loginType,LoginType} from './index.ts'
+import { loginType, LoginType } from './index.ts'
+
+
+
 
 </script>
 
@@ -30,6 +33,6 @@ import {loginType,LoginType} from './index.ts'
   align-items: center;
   width: 100%;
   height: 100%;
-  flex:auto;
+  flex: auto;
 }
 </style>

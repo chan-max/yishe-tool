@@ -42,7 +42,7 @@ import { currentController, isUsingClickDelaySticker, clickDelaySticker } from '
 import { eventMixin } from "./event";
 import { meta } from '../meta'
 import { Base } from './base'
-
+import { gsap } from 'gsap';
 
 const mixins = [
     _1stfExporterMixin,
@@ -351,6 +351,8 @@ export class ModelController extends Base {
         this.scene.add(this.gltf.scene);
         this.mesh = this.findMainMesh(this.gltf);
         this.initialCameraPosition.copy(this.camera.position);
+
+        this.doOpenAnimation()
     }
 
     // 移除主模型
@@ -489,15 +491,15 @@ export class ModelController extends Base {
         clickDelaySticker.value = stickerInfo
 
         const remove = this.onClick(async () => {
-            if(this.isMeshClicked){
+            if (this.isMeshClicked) {
                 const decal = new DecalController({
                     ...stickerInfo
                 })
-               await decal.stickToMousePosition()
-               isUsingClickDelaySticker.value = false
-               clickDelaySticker.value = null
-               remove()
-            }else{
+                await decal.stickToMousePosition()
+                isUsingClickDelaySticker.value = false
+                clickDelaySticker.value = null
+                remove()
+            } else {
                 // 给点提示
                 return
             }
@@ -629,6 +631,24 @@ export class ModelController extends Base {
             position: randomPoint,
             rotation: new Vector3(0, 0, 0)
         }
+    }
+
+
+
+    doOpenAnimation() {
+
+        this.camera.position.set(2 * Math.random(), 2* Math.random(), 2* Math.random())
+
+        gsap.to(this.camera.position, {
+            x: 0,
+            y: 0,
+            z: 1,
+            duration: 1, // 动画持续时间（秒）
+            ease: "back.out", // 缓动函数，使动画更自然
+            onUpdate: () => {
+                this.camera.lookAt(this.scene.position);
+            }
+        });
     }
 }
 

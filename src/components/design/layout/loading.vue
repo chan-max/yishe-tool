@@ -1,9 +1,6 @@
 <template>
   <div id="loading">
-    <div class="designiy-loader-text">
-      正在创建场景...
-    </div>
-    <span class="loader"></span>
+    <span class="loader">1s.design</span>
   </div>
 </template>
 <script setup>
@@ -16,52 +13,46 @@
   height: 100%;
   z-index: 999999;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* backdrop-filter: blur(6px);
-  background:rgba(155,155,155,.5); */
-  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, .5);
 }
 
 
-.designiy-loader-text{
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: bold;
-  padding:10px 0px;
+.loader {
+  font-size:32px;
+  display: inline-block;
+  font-style: italic;
+  font-family: ins;
+  color: #fff;
+  box-sizing: border-box;
+  text-shadow: 0 0 2px #FFF, 0 0 1px #FFF, 0 0 1px #FFF;
+  position: relative;
+}
+.loader::after {
+  content: '1s.design';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #6900ff;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  animation: animloader 1.2s linear infinite;
 }
 
-.loader{
-      display: block;
-      position: relative;
-      height: 10px;
-      width: 200px;
-      border: 1px solid #fff;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .loader::after {
-      content: '';
-      width: 200px;
-      height: 100%;
-      background: var(--1s-main);
-      position: absolute;
-      top: 0;
-      left: 0;
-      box-sizing: border-box;
-      animation: animloader 2s linear infinite;
-    }
-    
-    @keyframes animloader {
-      0% {
-        left: 0;
-        transform: translateX(-100%);
-      }
-      100% {
-        left: 100%;
-        transform: translateX(0%);
-      }
-    }
-    
+@keyframes animloader {
+  0% {
+    width: 0%;
+  }
+  90% {
+    width: 100%;
+  }
+  100% {
+    width: 100%;
+  }
+}
 </style>

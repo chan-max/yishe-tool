@@ -38,7 +38,7 @@ export function saveScreenshot() {
 export const isDarkMode = ref(false)
 
 // 加载
-export const isLoading = shallowRef(false);
+export const isFirstPageLoading = shallowRef(true);
 
 // 当前组件是否全屏
 export const isFullScreen = ref(false)

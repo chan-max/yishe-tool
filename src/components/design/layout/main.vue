@@ -1,5 +1,5 @@
 <template>
-  <loading v-if="isLoading"></loading>
+  <loading v-if="isFirstPageLoading"></loading>
   <div id="layout-container" style="width: 100%; height: 100%; display: flex; flex-direction: column">
     <div id="layout-header" style="height: var(--1s-header-height)">
       <div v-if="showHeader" style="width: 100%; height: 100%; display: flex">
@@ -14,11 +14,9 @@
 
       <div id="layout-left" style="height: 100%; display: flex">
         <div style="height: 100%">
-          <Transition v-bind="leftContainerAnimation">
-            <!-- <keep-alive> -->
-            <component :is="leftComponent"></component>
-            <!-- </keep-alive> -->
-          </Transition>
+          <!-- <keep-alive> -->
+          <component :is="leftComponent"></component>
+          <!-- </keep-alive> -->
         </div>
       </div>
 
@@ -71,24 +69,25 @@
     <font-list></font-list>
   </diydialog>
 
-  <diydialog :show="viewDisplayController.showStickerModal" title="贴纸" @close="viewDisplayController.showStickerModal = false"
-    :animation="basicContainerAnimation">
+  <diydialog :show="viewDisplayController.showStickerModal" title="贴纸"
+    @close="viewDisplayController.showStickerModal = false" :animation="basicContainerAnimation">
     <sticker-modal></sticker-modal>
   </diydialog>
 
-  <!-- <diydialog :show="showUpload" title="资源上传" @close="showUpload = false" :animation="basicContainerAnimation">
+  <diydialog :show="showUpload" title="资源上传" @close="showUpload = false" :animation="basicContainerAnimation" top="12%">
     <upload></upload>
-  </diydialog> -->
+  </diydialog>
 
   <!-- <diydialog :show="showSaveModel" title="保存模型" @close="showSaveModel = false" :animation="basicContainerAnimation">
     <save-model></save-model>
   </diydialog> -->
 </template>
-<script setup>
+<script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
 import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
+import { useLoginStatusStore } from "@/store/stores/login";
 import {
   currentController,
   canvasBgColor,
@@ -100,7 +99,7 @@ import {
   showTextSticker,
   showWorkspace,
   showDecalControl,
-  isLoading,
+  isFirstPageLoading,
   showImageUplaod,
   showCustomTextSticker,
   showFontUpload,
@@ -156,12 +155,17 @@ import svgCanvas from "./svgCanvas/index.vue";
 import canvasLayout from "./canvas/index.vue";
 import basicCanvas from './basic-canvas/index.vue'
 import stickerModal from './sticker/modal.vue'
+import { Modal } from 'ant-design-vue';
+import Utils from "@/common/utils";
+import { createVNode } from 'vue';
+import { isLogin } from "@/store/stores/loginAction";
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { useRoute, useRouter } from "vue-router";
 
-const radio1 = ref()
-// initWebsocket();
+const router = useRouter()
+const loginStore = useLoginStatusStore()
 
 const des = useDesignStore();
-
 
 const leftContainerAnimation = ref({
   "enter-active-class": "animate__animated animate__bounceIn",
@@ -219,11 +223,43 @@ const mountContainer = ref();
 
 // 渲染动画
 
-onMounted(() => {
+isFirstPageLoading.value = true
+
+onMounted(async () => {
   const modelController = new ModelController();
   modelController.render(mountContainer.value);
-});
 
+  await Utils.sleep(1200)
+  isFirstPageLoading.value = false
+
+  // 提示用户登录
+  if (!loginStore.isLogin) {
+    await Modal.confirm({
+      content: <div>
+        建议登录后可以解锁全部功能
+        <ul>
+          <li> 工作台 </li>
+          <li> 发布与保存 </li>
+          <li> 分享评论 </li>
+        </ul>
+      </div>,
+      icon: createVNode(ExclamationCircleOutlined),
+      onOk() {
+        router.push({
+          name: 'Login',
+          query: {
+            redirectTo: 'Design'
+          }
+        })
+      },
+      okText: <div>去登录</div>,
+      cancelText: '暂不',
+      onCancel() {
+        Modal.destroyAll();
+      },
+    });
+  }
+});
 
 </script>
 

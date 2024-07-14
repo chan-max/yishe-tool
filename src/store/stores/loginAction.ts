@@ -18,7 +18,7 @@ const LOGIN_FLAG = "1s_login";
 export const getLocalUserInfo = () =>
   JSON.parse(
     localStorage.getItem(LOGIN_FLAG) || sessionStorage.getItem(LOGIN_FLAG)
-  );
+);
 
   
 export const clearLocalUserInfo = () => {

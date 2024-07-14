@@ -9,23 +9,56 @@
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
-  <el-config-provider :locale="elementLocale">
-    <header-menu v-if="$route?.meta?.header"></header-menu>
-    <div class="app-content">
-      <router-view></router-view>
-    </div>
-  </el-config-provider>
+  <a-config-provider :theme="antdTheme">
+    <el-config-provider :locale="elementLocale">
+      <header-menu v-if="$route?.meta?.header"></header-menu>
+      <div class="app-content">
+        <router-view></router-view>
+      </div>
+    </el-config-provider>
+  </a-config-provider>
 </template>
 <script setup>
 import { computed, ref } from "vue";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
 import headerMenu from "./view/base/header/index.vue";
-import footerMenu from "./view/base/footer/index.vue";
+// import footerMenu from "./view/base/footer/index.vue";
+import { theme } from 'ant-design-vue'
+
+const { defaultAlgorithm, darkAlgorithm } = theme
+
+
 
 import { useI18n } from "vue-i18n";
 
 const { t, locale, global } = useI18n();
+
+const screenSize = ref(window.innerWidth)
+
+const customToken = computed(() => {
+  if (screenSize.value < 768) {
+    return { fontSize: 10 }
+  } else if (screenSize.value < 1200) {
+    return { fontSize: 11 }
+  } else {
+    return { fontSize: 12 }
+  }
+})
+
+// 监听窗口大小变化
+window.addEventListener('resize', () => {
+  screenSize.value = window.innerWidth
+})
+
+const antdTheme = computed(() => ({
+  algorithm: defaultAlgorithm,
+  token: {
+    ...customToken.value,
+    colorPrimary: "#6900ff",
+  },
+}))
+
 
 const elementLocale = computed(() => {
   if (locale.value == "en") {
@@ -62,7 +95,7 @@ body {
   /* font-family: alimama; */
 }
 
-#app > * {
+#app>* {
   flex-shrink: 0;
 }
 
@@ -73,7 +106,8 @@ body {
   display: flex;
   align-items: center;
   flex-direction: column;
-  & > * {
+
+  &>* {
     flex-shrink: 0;
   }
 }

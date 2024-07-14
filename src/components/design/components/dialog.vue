@@ -1,24 +1,10 @@
 <template>
   <KeepAlive>
     <transition v-bind="animation">
-      <Draggable
-        v-if="show"
-        ref="dialogRef"
-        class="designiy-dialog"
-        v-slot="{ x, y }"
-        :initial-value="{ x, y }"
-        :prevent-default="true"
-        :handle="handle"
-        :style="{ zIndex: 1000 }"
-        @vue:mounted="mounted"
-      >
+      <Draggable v-if="show" ref="dialogRef" class="designiy-dialog" v-slot="{ x, y }" :initial-value="{ x, y }"
+        :prevent-default="true" :handle="handle" :style="{ zIndex: 1000,}" @vue:mounted="mounted">
         <Teleport to="body">
-          <div
-            v-if="show && mask"
-            class="dialog-mask"
-            @click="$emit('close')"
-            :style="{ zIndex: 999 }"
-          ></div>
+          <div v-if="show && mask" class="dialog-mask" @click="$emit('close')" :style="{ zIndex: 999 }"></div>
         </Teleport>
         <div ref="handle" v-show="header" class="designiy-dialog-header">
           <div class="designiy-dialog-header-title">
@@ -26,7 +12,9 @@
             <span v-else> {{ title }} </span>
           </div>
           <div @click="close" class="designiy-dialog-header-close">
-            <el-icon size="16"><CloseBold /></el-icon>
+            <el-icon size="16">
+              <CloseBold />
+            </el-icon>
           </div>
         </div>
         <div class="designiy-dialog-content">
@@ -54,9 +42,10 @@ function mounted() {
   if (!dialogRef.value) {
     return;
   }
+
   // 在中间
   let el = dialogRef.value.$el;
-  el.style.top = `calc(50% - ${el.clientHeight / 2}px)`;
+  el.style.top =  props.top ||  `calc(50% - ${el.clientHeight / 2}px)`;
 }
 
 const props = defineProps({
@@ -72,6 +61,9 @@ const props = defineProps({
     default: true,
   },
   animation: {},
+  top: {
+    default: null
+  },
 });
 
 const emits = defineEmits(["close"]);
@@ -85,6 +77,7 @@ function close() {
   background: var(--1s-container-background);
   position: fixed;
   border-radius: 6px;
+
   * {
     pointer-events: auto !important;
   }
@@ -109,6 +102,7 @@ function close() {
   height: 32px;
   border-radius: 50%;
   background-color: #fff;
+
   &:hover {
     background-color: #eee;
   }

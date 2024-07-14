@@ -5,7 +5,7 @@
         </template>
         <template #name> 文字阴影 </template>
         <template #content>
-            <el-popover width="800"  placement="top" :visible="showPopover">
+            <el-popover width="800"  placement="bottom" :visible="showPopover">
                 <template #reference>
                     <el-button link @click="click">
                         {{  showPopover ? '关闭设置' : '打开设置'   }}
@@ -14,7 +14,7 @@
                 <el-row align="middle" justify="space-around" style="row-gap:.8rem" :gutter="24">
                     <template v-for="item, index in model">
                         <el-col :span="24">
-                            <div class="flex items-center justify-between" style="column-gap:2rem">
+                            <div class="flex items-center justify-between" style="column-gap:1rem">
                                 <span>
                                     {{ index + 1 }}:
                                 </span>

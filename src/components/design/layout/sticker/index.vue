@@ -25,7 +25,9 @@
           <div class="bar">
             <div class="title text-ellipsis">{{ item.name || "......" }}</div>
             <badge :type="item.type"></badge>
-            <el-icon><ArrowRight /></el-icon>
+            <el-icon>
+              <ArrowRight />
+            </el-icon>
           </div>
         </sticker-popover>
       </div>
@@ -35,7 +37,7 @@
 </template>
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
-import { Search, ArrowRightBold, Operation,ArrowRight } from "@element-plus/icons-vue";
+import { Search, ArrowRightBold, Operation, ArrowRight } from "@element-plus/icons-vue";
 import { getStickerListApi } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/design/components/image.vue";
@@ -52,6 +54,8 @@ import { useLoadingOptions } from "@/components/loading/index.tsx";
 import scrollbar from "@/components/scrollbar/index.vue";
 import { stickerQueryParams } from "./index.tsx";
 import { loadingBottom } from "@/components/loading/index.tsx";
+
+const input = ref()
 
 // 列表展示几列
 const column = ref(2);
@@ -164,15 +168,15 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   justify-content: center;
   height: 100%;
   width: 100%;
-  padding: 3px;
+  padding: 0px;
   row-gap: 6px;
 }
 
 .image {
-  width: 100%;
+  width: 120px !important;
   background-color: #efefef;
   border-radius: 0.2em;
-  height: 120px;
+  height: 120px !important;
 }
 
 

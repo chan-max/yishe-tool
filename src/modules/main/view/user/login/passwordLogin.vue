@@ -2,32 +2,33 @@
   <div class="login-form">
     <div style="padding: 20px 0px; display: flex; justify-content: space-between">
       <div style="font-size: 16px; color: #666">登录衣设账号</div>
-      <icon-qrcode
-        @click="loginType = LoginType.QRCODE"
-        style="height: 20px; width: 20px"
-      ></icon-qrcode>
+      <icon-qrcode @click="loginType = LoginType.QRCODE" style="height: 20px; width: 20px"></icon-qrcode>
     </div>
     <el-form :model="loginForm" ref="form" :rules="rules" label-position="top">
       <el-form-item prop="account">
         <el-input placeholder="请输入账号或邮箱" v-model="loginForm.account">
           <template #prefix>
-            <el-icon><User /></el-icon>
+            <el-icon>
+              <User />
+            </el-icon>
           </template>
         </el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input
-          placeholder="请输入密码"
-          v-model="loginForm.password"
-          :type="showPassword ? 'text' : 'password'"
-        >
+        <el-input placeholder="请输入密码" v-model="loginForm.password" :type="showPassword ? 'text' : 'password'">
           <template #prefix>
-            <el-icon><Lock /></el-icon>
+            <el-icon>
+              <Lock />
+            </el-icon>
           </template>
           <template #suffix>
             <span class="showPassword" @click="showPassword = !showPassword">
-              <el-icon v-if="showPassword"><View /></el-icon>
-              <el-icon v-else><Hide /></el-icon>
+              <el-icon v-if="showPassword">
+                <View />
+              </el-icon>
+              <el-icon v-else>
+                <Hide />
+              </el-icon>
             </span>
           </template>
         </el-input>
@@ -36,13 +37,8 @@
       <div class="login-error">{{ errMsg }}</div>
 
       <el-form-item>
-        <el-button
-          style="width: 100%"
-          type="primary"
-          @click="submit(form)"
-          :loading="loading"
-        >
-          登 录
+        <el-button style="width: 100%" type="primary" @click="submit(form)" :loading="loading">
+          {{ loading ? '登录中...' : '登 录' }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -120,7 +116,7 @@ const rules = reactive({
 });
 
 async function submit(form) {
-  const validateRes = await form.validate(() => {});
+  const validateRes = await form.validate(() => { });
 
   if (!validateRes) {
     return;
@@ -129,19 +125,25 @@ async function submit(form) {
   // loading.value = true;
 
   try {
+    loading.value = true
     let res = await login(toRaw(loginForm));
     doLoginAction(res.data, isOnce.value);
     // message.success("登录成功!");
     await nextTick();
     loading.value = false;
-    router.replace({ name: "Home" });
-  } catch (e) {}
+    router.replace({ name: route.query.redirectTo || "Home" });
+  } catch (e) {
+    loading.value = false
+  }
 }
+
+
 </script>
 
 <style lang="less">
 .login-form {
   width: 360px;
+
   .el-input__inner {
     font-size: 12px;
     font-weight: 300;
@@ -167,6 +169,7 @@ async function submit(form) {
   font-size: 12px;
   font-weight: 400;
   text-decoration: underline;
+
   &:hover {
     cursor: pointer;
     color: var(--el-color-primary);

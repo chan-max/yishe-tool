@@ -7,16 +7,8 @@
     </el-radio-group>
   </div> -->
     <div v-if="uploadTabType == 'local'">
-      <el-upload
-        style="padding: 0"
-        v-model:file-list="fileList"
-        drag
-        :auto-upload="false"
-        multiple
-        v-bind="$attrs"
-        :on-change="fileListChange"
-        accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff"
-      >
+      <el-upload style="padding: 0" v-model:file-list="fileList" drag :auto-upload="false" multiple v-bind="$attrs"
+        :on-change="fileListChange" accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff,font/otf">
         <div class="placeholder">
           <icon-file-upload></icon-file-upload>
           <div style="font-size: 12px">点击或拖拽上传</div>
@@ -25,6 +17,7 @@
             <el-button size="small">  扫码上传 </el-button>
           </div> -->
         </div>
+
         <template #tip>
           <div class="tip">
             <div>
@@ -39,24 +32,17 @@
             <div>
               <div class="file-bar">
                 <div class="file-bar-header">
-                  <desimage
-                    @focus="null"
-                    :src="file.url"
-                    style="height: 3.2em; width: 3.2em"
-                    fit="contain"
-                  ></desimage>
+                  <desimage @focus="null" :src="file.url" style="height: 3.2em; width: 3.2em" fit="contain"></desimage>
                   <div style="font-size: 1.2rem">{{ file.name }}</div>
                   <el-tooltip content="图片会自动上传到贴纸" placement="top">
-                    <el-icon style="height: 2em" size="1.5rem"><Warning /></el-icon>
+                    <el-icon style="height: 2em" size="1.5rem">
+                      <Warning />
+                    </el-icon>
                   </el-tooltip>
                   <div style="flex: 1"></div>
-                  <el-button
-                    @click="removeFile(file)"
-                    type="danger"
-                    link
-                    style="height: 2em"
-                    ><el-icon size="2rem"><CircleCloseFilled /></el-icon
-                  ></el-button>
+                  <el-button @click="removeFile(file)" type="danger" link style="height: 2em"><el-icon size="2rem">
+                      <CircleCloseFilled />
+                    </el-icon></el-button>
                 </div>
                 <div class="file-bar-tags">
                   <tags-input v-model="file.tags"></tags-input>
@@ -68,22 +54,21 @@
             <div>
               <div class="file-bar">
                 <div class="file-bar-header">
-                  <el-icon size="3.2em"
-                    ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
-                  ></el-icon>
-                  <div
-                    style="font-size: 1.6em;"
-                    @vue:mounted="initFontFamily(file, $event)"
-                  >
+                  <el-icon size="3.2em">
+                    <component :is="fileTypeIcons[getFileSuffix(file.name)]"></component>
+                  </el-icon>
+                  <div style="font-size: 1.6em;" @vue:mounted="initFontFamily(file, $event)">
                     {{ file.name }}
                   </div>
                   <el-tooltip content="左侧的文字会自动生成缩略图" placement="top">
-                    <el-icon size="1.5rem"><Warning /></el-icon>
+                    <el-icon size="1.5rem">
+                      <Warning />
+                    </el-icon>
                   </el-tooltip>
                   <div style="flex: 1"></div>
-                  <el-button @click="removeFile(file)" type="danger" link
-                    ><el-icon size="2rem"><CircleCloseFilled /></el-icon
-                  ></el-button>
+                  <el-button @click="removeFile(file)" type="danger" link><el-icon size="2rem">
+                      <CircleCloseFilled />
+                    </el-icon></el-button>
                 </div>
                 <div class="file-bar-tags">
                   <tags-input v-model="file.tags"></tags-input>
@@ -104,15 +89,9 @@
         <el-button round @click="uploadTabType = 'scan'" :icon="Iphone">
           APP 扫码上传
         </el-button>
-        <el-button
-          type="primary"
-          round
-          @click="doUpload"
-          :loading="loading"
-          :icon="UploadFilled"
-          :disabled="fileList.length == 0"
-        >
-          {{ fileList.length ? `上传该 ${fileList.length} 个文件` : "选择文件"  }}
+        <el-button type="primary" round @click="doUpload" :loading="loading" :icon="UploadFilled"
+          :disabled="fileList.length == 0">
+          {{ fileList.length ? `上传该 ${fileList.length} 个文件` : "选择文件" }}
         </el-button>
       </template>
       <template v-if="uploadTabType == 'scan'">
@@ -123,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref ,toRaw} from "vue";
+import { ref, toRaw } from "vue";
 import fileUpload from "./fileUpload/index.vue";
 import { message } from "ant-design-vue";
 import { uploadManyFile, createStickerApi, uploadFile } from "@/api";
@@ -143,12 +122,12 @@ import iconFont from "@/icon/fileType/font.svg";
 import iconGlb from "@/icon/fileType/glb.svg";
 import tags from "@/components/design/components/tags.vue";
 import tagsInput from "@/components/design/components/tagsInput.vue";
-import {htmlToPngFile} from '@/common/transform'
+import { htmlToPngFile } from '@/common/transform'
 import desimage from '@/components/design/components/image.vue';
 
-import {createFontThumbnail} from '@/components/design/utils/utils'
+import { createFontThumbnail } from '@/components/design/utils/utils'
 import { toPng } from "html-to-image";
-
+import Utils from '@/common/utils'
 
 /*
   scan 
@@ -171,6 +150,7 @@ const fileTypeIcons = {
   svg: iconImg,
   ttf: iconFont,
   glb: iconGlb,
+  otf: iconFont,
 };
 
 function isImg(name) {
@@ -247,21 +227,21 @@ async function uploadSingleFile(file) {
     /* 需要生成缩略图 */
 
     const png = await createFontThumbnail({
-      file:file.raw,
+      file: file.raw,
     })
 
 
-    const {url:thumbnailUrl} = await uploadToCOS({
-      file:png
+    const { url: thumbnailUrl } = await uploadToCOS({
+      file: png
     })
 
-    const {url:fileUrl} = await uploadToCOS({key:new Date().getTime(),file:file.raw})
+    const { url: fileUrl } = await uploadToCOS({ key: new Date().getTime(), file: file.raw })
 
     const params = {
-      url:fileUrl,
+      url: fileUrl,
       name: file.raw.name,
       size: file.size,
-      thumbnail:thumbnailUrl
+      thumbnail: thumbnailUrl
     };
 
     await uploadFile(params);
@@ -385,5 +365,9 @@ footer {
     display: none;
   }
 
+}
+
+:deep(.el-upload-list__item:hover) {
+  background-color: #fafafa;
 }
 </style>

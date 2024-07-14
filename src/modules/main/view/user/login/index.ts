@@ -6,3 +6,4 @@ export enum LoginType {
 }
 
 export const loginType = ref(LoginType.PASSWORD)
+

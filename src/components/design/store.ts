@@ -363,6 +363,7 @@ export const svgCanvasSyncMainCanvas = ref(false)
 
 export const viewDisplayController = ref({
     showStickerModal:false, // 贴纸模态，主要用于交互操作
+    showProject:false // 是否展示我的项目
 })
 
 

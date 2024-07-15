@@ -81,6 +81,12 @@
   <!-- <diydialog :show="showSaveModel" title="保存模型" @close="showSaveModel = false" :animation="basicContainerAnimation">
     <save-model></save-model>
   </diydialog> -->
+
+  <!-- 个人项目弹层 -->
+  <diydialog :show="viewDisplayController.showProject" title="我的创作项目" @close="viewDisplayController.showProject = false" :animation="basicContainerAnimation">
+    <projectModal></projectModal>
+  </diydialog>
+
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -160,6 +166,11 @@ import Utils from "@/common/utils";
 import { createVNode } from 'vue';
 import { isLogin } from "@/store/stores/loginAction";
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+
+import projectModal from './project/index.vue';
+
+
+
 import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter()
@@ -299,5 +310,9 @@ onMounted(async () => {
 
 #layout-left {
   box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.1);
+}
+
+#layout-right {
+  box-shadow: -1px 0px 0px 0px rgba(0, 0, 0, 0.1);
 }
 </style>

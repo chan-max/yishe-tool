@@ -16,14 +16,11 @@
       style="width: 100%; height: 200px; flex-shrink: 0"
       :src="currentOperatingBaseModelInfo?.url"
     ></base-gltf-viewer>
-    <description-imgs></description-imgs>
-    {{ currentOperatingBaseModelInfo }}
   </div>
 </template>
 <script setup>
 import { currentOperatingBaseModelInfo } from "../../store";
 import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
-import descriptionImgs from "./descriptionImgs.vue";
 </script>
 <style lang="less">
 .designiy-model-info {

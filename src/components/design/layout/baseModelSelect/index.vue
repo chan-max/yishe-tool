@@ -4,9 +4,40 @@
       <div class="img">
         <desimage :src="item.thumbnail"></desimage>
       </div>
-      <h2>{{ item.name }}</h2>
+
+      <h1 style="max-width:300px;word-wrap: break-word;">{{ item.name }}</h1>
+
       <div>{{ item.description }}</div>
+      <div>最近更新时间： {{ item.updateTime }}</div>
+
+      <a-row>
+        <a-col :span="24">
+          <a-image-preview-group v-if="item.meta.details">
+            <div style="width:100%;display:flex;overflow:auto;width:300px;column-gap:4px;row-gap: 4px;">
+              <a-image v-for="img in item.meta.details" :width="36" :height="36" :src="img.url" />
+            </div>
+          </a-image-preview-group>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="24">
+          <a-statistic :value="item.link_count" :precision="0">
+            <template #prefix>
+              <FormOutlined />
+            </template>
+            <template #suffix>
+              个作品使用了该模型
+            </template>
+          </a-statistic>
+        </a-col>
+      </a-row>
+
+
+
+
       <div style="flex:1;"></div>
+
       <a-row>
         <a-col :span="24" align="right">
           <a-statistic title="单件售价" :value="item.price" :precision="2">
@@ -23,7 +54,7 @@
 <script setup>
 import { getProductModelListApi } from "@/api";
 import { onMounted, ref } from "vue";
-import { PayCircleOutlined } from "@ant-design/icons-vue";
+import { PayCircleOutlined, FormOutlined } from "@ant-design/icons-vue";
 import {
   showBaseModelSelect,
   currentOperatingBaseModelInfo,
@@ -68,8 +99,8 @@ function selectModel(productModel) {
   overflow: auto;
   display: flex;
   column-gap: 10px;
-  margin: 16px;
-  padding: 16px;
+  margin: 12px;
+  padding: 12px;
 }
 
 .item {

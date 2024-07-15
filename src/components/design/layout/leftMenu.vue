@@ -1,6 +1,13 @@
 <template>
   <div class="menu-bar">
-    <el-tooltip :hide-after="0" content="选择模型" placement="right">
+    <el-tooltip :hide-after="0" content="创作项目" placement="right">
+      <div class="menu-bar-item"
+        @click="viewDisplayController.showProject = !viewDisplayController.showProject">
+        <div class="menu-bar-item-icon"><icon-project></icon-project></div>
+        <span>我的创作</span>
+      </div>
+    </el-tooltip>
+    <el-tooltip :hide-after="0" content="工作台" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showWorkspace }"
         @click="showWorkspace = !showWorkspace">
         <div class="menu-bar-item-icon"><icon-workspace></icon-workspace></div>
@@ -25,8 +32,11 @@
     <el-tooltip :hide-after="0" content="选择模型" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
         @click="showBaseModelSelect = !showBaseModelSelect">
-        <div class="menu-bar-item-icon"><icon-shirt></icon-shirt></div>
-        <span>选择模型</span>
+        <desimage style="width:30px;height:30px;" v-if="currentOperatingBaseModelInfo" :src="currentOperatingBaseModelInfo.thumbnail"></desimage>
+        <div v-else class="menu-bar-item-icon">
+          <icon-shirt></icon-shirt>
+        </div>
+        <span> {{ currentOperatingBaseModelInfo ? '切换模型' : '选择模型' }} </span>
       </div>
     </el-tooltip>
 
@@ -171,7 +181,9 @@ import {
   showStamp,
   showCustomModel,
   showSvgCanvas,
-  showCanvasLayout
+  showCanvasLayout,
+  currentOperatingBaseModelInfo,
+  viewDisplayController
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?component";
@@ -195,7 +207,10 @@ import iconDecoration from "@/icon/design/decoration.svg?component";
 import iconCustomModel from '@/components/design/assets/icon/custom-model.svg?component'
 import iconSvgCanvas from '@/components/design/assets/icon/svg-canvas.svg?component'
 import iconCanvas from '@/components/design/assets/icon/canvas.svg?component'
+import iconProject from '@/components/design/assets/icon/project.svg?component'
 
+
+import desimage from "@/components/design/components/image.vue";
 </script>
 <style lang="less">
 .menu-bar {
@@ -244,7 +259,7 @@ import iconCanvas from '@/components/design/assets/icon/canvas.svg?component'
     overflow: hidden;
     max-width: 50px;
     font-weight: 900;
-    color:#666;
+    color: #666;
   }
 
   &:hover {

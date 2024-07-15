@@ -17,7 +17,7 @@
       </div>
       <tags @change="tagChange"></tags>
     </div>
-    <RecycleScroller class="scroll-list" v-if="list.length" :items="list" @scroll-end="scrollEnd" :item-size="150"
+    <RecycleScroller class="scroll-list" v-if="list.length" :items="list" @scroll-end="scrollEnd" :item-size="140"
       :itemSecondarySize="130" :gridItems="2" item-class="scroll-list-item" key-field="id" v-slot="{ item, index }">
       <div class="item">
         <desimage padding="10%" :src="item.thumbnail" class="image" @load="imgLoad($event, item)"></desimage>
@@ -174,9 +174,10 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
 
 .image {
   width: 120px !important;
+  height: 100px !important;
   background-color: #efefef;
-  border-radius: 0.2em;
-  height: 120px !important;
+  border-radius: .4rem;
+
 }
 
 

@@ -22,7 +22,9 @@ import { onBeforeMount, onMounted,ref } from "vue";
 import { getModelById } from "@/api";
 
 // 阻止缩放屏幕影响使用体验
-const radio1 = ref('')
+usePreventScreenResize();
+
+
 const route = useRoute();
 
 onBeforeMount(async () => {
@@ -35,7 +37,7 @@ onBeforeMount(async () => {
   }
 });
 
-usePreventScreenResize();
+
 </script>
 <style lang="less">
 @import url(./theme.less);

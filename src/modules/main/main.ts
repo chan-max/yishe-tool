@@ -20,7 +20,7 @@ import i18n from '@/i18n/index.ts'
 import 'animate.css';
 import '@/style/base.less'
 import '@/style/vars.less'
-import 'default-passive-events'
+
 
 import Antd from 'ant-design-vue'
 //  import "ant-design-vue/dist/antd.css";

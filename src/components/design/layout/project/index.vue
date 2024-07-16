@@ -35,6 +35,7 @@ import content from './content.vue'
 import { SearchOutlined } from '@ant-design/icons-vue'
 const searchText = ref('')
 
+
 const tabs = ref([
         {
                 label: '最近'
@@ -48,7 +49,6 @@ const tabs = ref([
         {
                 label: '我上传的'
         },
-
 ])
 
 const activeKey = ref()

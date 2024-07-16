@@ -31,7 +31,7 @@ function customValidate(value) {
 <style>
 .v3ti {
   min-height: 0!important;
-  background-color: transparent !important;
+  background-color: #fff !important;
   border: 1px solid #eee!important;
 }
 .v3ti-new-tag {
@@ -46,6 +46,6 @@ function customValidate(value) {
 }
 .v3ti--focus {
   border:1px solid var(--el-color-primary) !important;
-  box-shadow: none;
+  box-shadow: none!important;
 }
 </style>

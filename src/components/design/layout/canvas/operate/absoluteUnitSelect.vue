@@ -5,7 +5,7 @@
         </template>
         <template #name> {{ label }} </template>
         <template #content>
-            <el-select @change="change" v-model="model" size="small" style="width: 88px">
+            <el-select @change="change" v-model="model" size="small" style="width: 80px">
                 <template #label="{ value }">
                     {{ value }}
                 </template>

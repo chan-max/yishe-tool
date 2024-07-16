@@ -12,7 +12,6 @@
             <el-button size="small">  扫码上传 </el-button>
           </div> -->
         </div>
-
         <template #tip>
           <div class="tip">
             <div>
@@ -109,9 +108,7 @@ import { toPng } from "html-to-image";
 import Utils from '@/common/utils'
 import { useLoginStatusStore } from "@/store/stores/login";
 
-
 const loginStore = useLoginStatusStore()
-
 
 /*
   scan 

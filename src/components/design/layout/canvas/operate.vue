@@ -1,8 +1,8 @@
 <template>
   <el-scrollbar>
-    <div style="margin: 1rem 1rem">
+    <div style="margin: 1rem">
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.CANVAS">
-        <el-row :gutter="24" align="middle">
+        <el-row  align="middle">
           <el-col :span="24">
             <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasOptions.width"
               v-model:height="canvasOptions.height">
@@ -29,10 +29,13 @@
             <template #title>
               <div class="title">文字属性</div>
             </template>
-            <el-row :gutter="24" align="middle">
+            <el-row align="middle">
               <el-col :span="24">
                 <operateItemTextContent v-model="currentOperatingCanvasChild.textContent">
                 </operateItemTextContent>
+              </el-col>
+              <el-col :span="24">
+                <operateItemSwitch label="使用繁体字" v-model="currentOperatingCanvasChild.isTraditionalChinese"></operateItemSwitch>
               </el-col>
               <el-col :span="24">
                 <operateItemFontSize v-model="currentOperatingCanvasChild.fontSize">

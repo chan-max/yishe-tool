@@ -1,11 +1,9 @@
 <template>
     <div class="container flex flex-col items-center">
-
         <div ref="canvasContainerRef" @mousemove="mousemove" v-if="!showMainCanvas" v-loading="loading"
             v-bind="loadingOptions" class="canvas-container">
             <canvass></canvass>
             <drag-tip v-if="showDragTip"></drag-tip>
-
             <div class="canvas-container-bottom-menu">
                 <div style="flex:1"></div>
                 <el-tooltip :hide-after="0" content="小画布始终展示等比缩放的尺寸，大画布可以显示真实尺寸">
@@ -15,7 +13,8 @@
                 </el-tooltip>
             </div>
         </div>
-        <div class="flex" style="width:100%;padding:1em;padding-top:2rem;">
+        
+        <div class="flex" style="width:100%;padding:1rem;padding-top:2rem;">
 
             <el-button plain link>
                 <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
@@ -29,6 +28,9 @@
                 更多
             </el-button>
             <div style="flex:1;"></div>
+            <el-button link plain type="danger">
+                最近删除
+            </el-button>
             <addPopover>
                 <el-button type="primary" link>
                     <span>添加元素</span>
@@ -57,14 +59,6 @@
             </div>
 
         </div>
-        <div class="flex" style="width:100%;padding:1em;">
-            <div style="flex:1;"></div>
-
-            <el-button link plain type="danger">
-                最近删除
-            </el-button>
-        </div>
-
 
         <div class="operate">
             <operate></operate>

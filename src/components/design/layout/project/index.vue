@@ -1,15 +1,12 @@
 <template>
         <a-row style="height:600px;width:1080px;margin:12px;">
-                <a-col :span="4">
-                        <a-tabs size="small" v-model:activeKey="activeKey" tab-position="left">
-                                <a-tab-pane v-for="tab, i in tabs" :key="i">
-                                        <template #tab>
-                                                {{ tab.label }}
-                                        </template>
-                                </a-tab-pane>
-                        </a-tabs>
+
+                <a-col :span="3">
+                        <el-tabs tab-position="left" style="height: 200px">
+                                <el-tab-pane v-for="tab, i in tabs" :label="tab.label"></el-tab-pane>
+                        </el-tabs>
                 </a-col>
-                <a-col :span="20">
+                <a-col :span="21">
                         <a-row style="height:48px;" align="top">
                                 <a-input v-model:value="searchText" style="width:240px;" placeholder="快速搜索">
                                         <template #prefix>

@@ -1,8 +1,9 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../../index.tsx"
 import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, formatToNativeSizeString } from '../../helper.tsx'
 import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watch } from "vue"
-import CircleType from "circletype";
+// import CircleType from "circletype";
 import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistancePoint } from './calc.tsx'
+import { tify, sify } from 'chinese-conv';
 
 
 export interface TextCanvasChildOptions {
@@ -84,8 +85,6 @@ export const createDefaultCanvasChildTextOptions = () => {
             type: 'pure',
             color: '#fff',
         },
-
-
         filterBlur: {
             value: 0,
             unit: canvasUnit
@@ -98,6 +97,9 @@ export const createDefaultCanvasChildTextOptions = () => {
         filterOpacity: 100, // 透明度
         filterSaturate: 100, // 饱和度
         filterSepia: 0, // 褐色
+
+        // 是否使用繁体字
+        isTraditionalChinese: false
     }
 }
 
@@ -129,6 +131,7 @@ export const Text = defineComponent({
             if (!el) {
                 return
             }
+
             if (props.options.isRoundText) {
                 createRoundText(el, props.options, textContentCells.value)
             }
@@ -153,7 +156,17 @@ export const Text = defineComponent({
             const fontSize = formatToNativeSizeOption(props.options.fontSize)
 
 
-            const filter = `blur(${formatToNativeSizeString(props.options.filterBlur)}) brightness(${props.options.filterBrightness}%) contrast(${props.options.filterContrast}%) grayscale(${props.options.filterGrayscale}%) hue-rotate(${props.options.filterHueRotate}deg) invert(${props.options.filterInvert}%) opacity(${props.options.filterOpacity}%) saturate(${props.options.filterSaturate}%)`;
+            const filter = [
+                `blur(${formatToNativeSizeString(props.options.filterBlur)})`,
+                `brightness(${props.options.filterBrightness}%)`,
+                `contrast(${props.options.filterContrast}%)`,
+                `grayscale(${props.options.filterGrayscale}%)`,
+                `hue-rotate(${props.options.filterHueRotate}deg)`,
+                `invert(${props.options.filterInvert}%)`,
+                `opacity(${props.options.filterOpacity}%)`,
+                `saturate(${props.options.filterSaturate}%)`
+            ].join(' ')
+
 
             console.log(filter)
 
@@ -209,8 +222,17 @@ export const Text = defineComponent({
             }
 
 
+            var textContent = props.options.textContent
+
+            // 设置为繁体字
+            if(props.options.isTraditionalChinese){
+                textContent = tify(textContent)
+            }
+            
+
             // 生成文字单元格
-            const rows = props.options.textContent.split('\n').filter((item) => item !== '')
+            const rows = textContent.split('\n').filter((item) => item !== '')
+            
             textContentCells.value = rows.map((row) => {
                 return row.split('').map((content) => {
                     return {
@@ -218,6 +240,7 @@ export const Text = defineComponent({
                     }
                 })
             })
+
 
             let roundNode = <div ref={roundTextInnerContainerRef} style={innerStyle}>
                 {textContentCells.value.map((row, rowIndex) => {
@@ -230,7 +253,7 @@ export const Text = defineComponent({
 
             return <div style={containerStyle} key={key.value}>
                 <div ref={textContainerRef} style={style}>
-                    {props.options.isRoundText ? roundNode : props.options.textContent}
+                    {props.options.isRoundText ? roundNode : textContent}
                 </div>
             </div>
         }

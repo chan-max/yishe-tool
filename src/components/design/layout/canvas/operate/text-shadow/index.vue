@@ -5,13 +5,15 @@
         </template>
         <template #name> 文字阴影 </template>
         <template #content>
-            <el-popover width="800"  placement="bottom" :visible="showPopover">
+            <el-popover width="800" placement="bottom" :visible="showPopover">
                 <template #reference>
                     <el-button link @click="click">
-                        {{  showPopover ? '关闭设置' : '打开设置'   }}
+                        {{ showPopover ? '关闭设置' : '打开设置' }}
                     </el-button>
                 </template>
-                <el-row align="middle" justify="space-around" style="row-gap:.8rem" :gutter="24">
+                <template #default>
+                    
+                    <el-row align="middle" justify="space-around" style="row-gap:.8rem" :gutter="24">
                     <template v-for="item, index in model">
                         <el-col :span="24">
                             <div class="flex items-center justify-between" style="column-gap:1rem">
@@ -47,6 +49,8 @@
                         </el-button-group>
                     </el-col>
                 </el-row>
+                </template>
+         
             </el-popover>
         </template>
     </operate-form-item>
@@ -54,7 +58,7 @@
 
 <script setup lang="tsx">
 import icon from "@/components/design/assets/icon/text-shadow.svg?component";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onBeforeMount } from "vue";
 import { canvasOptions } from "@/components/design/layout/canvas/index.tsx";
 import sizeInput from '../sizeInput.vue'
 import colorPicker from "@/components/design/components/colorPicker.vue";
@@ -77,6 +81,8 @@ const props = defineProps({
         default: "",
     },
 });
+
+
 
 function addShadow() {
 
@@ -106,7 +112,7 @@ function remove(index) {
     model.value.splice(index, 1)
 }
 
-function clear(){
+function clear() {
     model.value = []
 }
 

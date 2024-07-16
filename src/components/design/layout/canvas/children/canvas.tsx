@@ -1,8 +1,8 @@
 import { defineComponent } from 'vue'
-import { canvasOptions, currentCanvasControllerInstance,showMainCanvas } from '@/components/design/layout/canvas'
+import { canvasOptions, currentCanvasControllerInstance, showMainCanvas } from '@/components/design/layout/canvas'
 import { formatSizeOptionToPixelValue } from '../helper'
 
-
+import { SvgFilter } from './svgFilter/index.tsx'
 
 /*
     用于辅助观察的网格背景
@@ -20,9 +20,6 @@ function createPngBackgroundStyle(scale = 1) {
 
 
 
-
-
-
 export const Canvas = defineComponent({
     props: {
         options: null,
@@ -36,17 +33,17 @@ export const Canvas = defineComponent({
         return () => {
 
             const pxWidth = formatSizeOptionToPixelValue({
-                value:canvasOptions.value.width,
-                unit:canvasOptions.value.unit
+                value: canvasOptions.value.width,
+                unit: canvasOptions.value.unit
             })
-            
+
             const pxHeight = formatSizeOptionToPixelValue({
-                value:canvasOptions.value.height,
-                unit:canvasOptions.value.unit
+                value: canvasOptions.value.height,
+                unit: canvasOptions.value.unit
             })
-            
-        
-            const transformValue =  (canvasOptions.value.showCanvasRealSize && showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
+
+
+            const transformValue = (canvasOptions.value.showCanvasRealSize && showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
 
 
 
@@ -59,7 +56,7 @@ export const Canvas = defineComponent({
                 alignItems: "center",
                 justifyContent: "center",
                 overflow: "hidden",
-                transform:`scale(${transformValue}, ${transformValue})`,
+                transform: `scale(${transformValue}, ${transformValue})`,
                 flexShrink: 0,
                 position: "relative",
                 ...pngBackground
@@ -84,6 +81,8 @@ export const Canvas = defineComponent({
             }
 
             return <div style={containerStyle}>
+                {/* svg过滤器 */}
+                <SvgFilter></SvgFilter>
                 {/* 转换的元素 */}
                 <div id={currentCanvasControllerInstance.value.rawId} style={style}>
                     {ctx.slots.default()}

@@ -31,10 +31,10 @@
                         </el-row>
                     </div>
                 </el-popover>
-                <el-input style="width: 88px" size="small" v-model="width" step="10" type="number" placeholder="宽">
+                <el-input style="width: 80px" size="small" v-model="width" step="10" type="number" placeholder="宽">
                 </el-input>
                 <span style="padding:0 1em" class="flex items-center justify-center">x</span>
-                <el-input style="width: 88px" size="small" v-model="height" step="10" type="number" placeholder="高">
+                <el-input style="width: 80px" size="small" v-model="height" step="10" type="number" placeholder="高">
                 </el-input>
             </div>
         </template>

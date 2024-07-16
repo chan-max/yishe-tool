@@ -48,6 +48,7 @@
     "axios": "^1.4.0",
     "bootstrap-icons": "^1.10.3",
     "canvg": "^4.0.2",
+    "chinese-conv": "^1.1.0",
     "circletype": "^2.3.0",
     "color": "^4.2.3",
     "concurrently": "^8.2.1",

@@ -24,12 +24,10 @@ import {
     canvasOptions,
     addCanvasChild,
     removeCavnasChild,
-    currentOperatingCanvasChildIndex,
     currentOperatingCanvasChild,
     showMainCanvas,
     CanvasChildType
 } from "./index.tsx";
-
 
 function addRect() {
     addCanvasChild({

@@ -11,8 +11,7 @@ draggingImage.style.objectFit = 'contain';
 draggingImage.style.cursor = 'grab';
 document.body.appendChild(draggingImage);
 
-
-export const initDraggableElement = (el, cb, sourceOrGetter) => {
+export const initDraggableElement = (el, cb, sourceOrGetter?) => {
 
     sourceOrGetter ||= el.src
 

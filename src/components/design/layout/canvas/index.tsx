@@ -20,15 +20,39 @@ import {
 } from './children/image.tsx'
 
 import { Canvas } from './children/canvas.tsx'
+import { createFilterDefaultOptions } from './children/defaultOptions.tsx'
 
+/*
+    画布参数
+*/
 export const canvasOptions = ref({
     width: 500,
     height: 500,
     unit: 'px',
+    showCanvasRealSize: false,
+    backgroundColor: '',
     children: [{
-        type: 'canvas'
+        type: 'canvas',
+        ...createFilterDefaultOptions('px')
     }],
 })
+
+
+
+// 获取子元素最高层级的元素，而不是获取该层级 ， 有多个返回第一个
+export function getCanvasTopZIndexChild() {
+    const maxIndex = Math.max(...canvasOptions.value.children.map((item: any) => item.zIndex).filter(Boolean));
+    let maxChild: any = canvasOptions.value.children.find((item: any) => item.zIndex === maxIndex);
+
+    return maxChild
+}
+
+export function getCanvasChildTopZIndex() {
+    return getCanvasTopZIndexChild()?.zIndex || 0
+}
+
+
+
 
 
 export enum CanvasChildType {
@@ -84,8 +108,6 @@ interface CanvasOptions {
 }
 
 
-import { showBasicCanvas } from '@/components/design/store';
-
 
 /*
     是否展示主画布
@@ -93,25 +115,6 @@ import { showBasicCanvas } from '@/components/design/store';
 export const showMainCanvas = ref(true)
 
 
-const isPromise = (val) => {
-    return val.catch && val.then;
-};
-
-function createAsyncComponent(loader) {
-    return defineAsyncComponent({
-        // 加载异步组件时使用的组件
-        loader,
-        loadingComponent: () => null,
-        // 展示加载组件前的延迟时间，默认为 200ms
-        delay: 200,
-
-        // 加载失败后展示的组件
-        errorComponent: () => null,
-        // 如果提供了一个 timeout 时间限制，并超时了
-        // 也会显示这里配置的报错组件，默认值是：Infinity
-        timeout: 3000
-    })
-}
 
 // 添加画布子元素
 
@@ -133,7 +136,7 @@ export function addCanvasChild(options) {
 // 当前正在操作的元素
 export const currentOperatingCanvasChildIndex = ref(0)
 
-export const currentOperatingCanvasChild:any = computed(() => {
+export const currentOperatingCanvasChild: any = computed(() => {
     let child = canvasOptions.value.children[currentOperatingCanvasChildIndex.value]
 
     if (!child) {
@@ -302,7 +305,7 @@ export class CanvasController {
     // 画布元素是否在加载中
     pending = ref(false)
 
-    getRender(params) {
+    getRender() {
 
         // 改为异步组件
         function render() {
@@ -312,6 +315,7 @@ export class CanvasController {
             })
 
             this.updateCanvas()
+
 
             return <Canvas>
                 {children}

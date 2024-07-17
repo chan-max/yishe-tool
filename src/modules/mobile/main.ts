@@ -23,7 +23,7 @@ import { router} from '../mobile/router'
 import '@/style/cover-antdesign.less'
 import 'animate.css';
 import '@/style/base.less'
-import 'default-passive-events'
+// import 'default-passive-events'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/display.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'

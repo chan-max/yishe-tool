@@ -32,11 +32,11 @@
     <el-tooltip :hide-after="0" content="选择模型" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
         @click="showBaseModelSelect = !showBaseModelSelect">
-        <desimage style="width:30px;height:30px;" v-if="currentOperatingBaseModelInfo" :src="currentOperatingBaseModelInfo.thumbnail"></desimage>
+        <desimage style="width:30px;height:30px;" v-if="currentOperatingBaseModelInfo.id" :src="Utils.formatUrl(currentOperatingBaseModelInfo.thumbnail)"></desimage>
         <div v-else class="menu-bar-item-icon">
           <icon-shirt></icon-shirt>
         </div>
-        <span> {{ currentOperatingBaseModelInfo ? '切换模型' : '选择模型' }} </span>
+        <span> {{ currentOperatingBaseModelInfo.id ? '切换模型' : '选择模型' }} </span>
       </div>
     </el-tooltip>
 
@@ -208,7 +208,7 @@ import iconCustomModel from '@/components/design/assets/icon/custom-model.svg?co
 import iconSvgCanvas from '@/components/design/assets/icon/svg-canvas.svg?component'
 import iconCanvas from '@/components/design/assets/icon/canvas.svg?component'
 import iconProject from '@/components/design/assets/icon/project.svg?component'
-
+import Utils from '@/common/utils'
 
 import desimage from "@/components/design/components/image.vue";
 </script>

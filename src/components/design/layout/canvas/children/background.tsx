@@ -40,11 +40,11 @@ export const createDefaultCanvasChildBackgroundOptions = () => {
         skewY: 0,
         width: {
             value:100,
-            unit:canvasUnit
+            unit:'vw'
         },
         height: {
             value:100,
-            unit:canvasUnit
+            unit:'vh'
         },
         backgroundColor: {
             color:'#000',

@@ -1,5 +1,5 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../../index.tsx"
-import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, formatToNativeSizeString } from '../../helper.tsx'
+import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, formatToNativeSizeString,createFilterFromOptions,createTransformString } from '../../helper.tsx'
 import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watch } from "vue"
 // import CircleType from "circletype";
 import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistancePoint } from './calc.tsx'
@@ -155,21 +155,6 @@ export const Text = defineComponent({
 
             const fontSize = formatToNativeSizeOption(props.options.fontSize)
 
-
-            const filter = [
-                `blur(${formatToNativeSizeString(props.options.filterBlur)})`,
-                `brightness(${props.options.filterBrightness}%)`,
-                `contrast(${props.options.filterContrast}%)`,
-                `grayscale(${props.options.filterGrayscale}%)`,
-                `hue-rotate(${props.options.filterHueRotate}deg)`,
-                `invert(${props.options.filterInvert}%)`,
-                `opacity(${props.options.filterOpacity}%)`,
-                `saturate(${props.options.filterSaturate}%)`
-            ].join(' ')
-
-
-            console.log(filter)
-
             var style: any = {
                 flexShrink: 0,
                 fontSize: fontSize.value + fontSize.unit,
@@ -180,11 +165,11 @@ export const Text = defineComponent({
                 letterSpacing: props.options.letterSpacing + 'em',
                 fontFamily: props.options.fontFamilyInfo ? `font_${props.options.fontFamilyInfo.id}` : null,
                 writingMode: props.options.writingMode == 'htb' ? WritingMode.HTB : props.options.writingMode == 'vlr' ? WritingMode.VLR : props.options.writingMode == 'vrl' ? WritingMode.VRL : null,
-                transform: `scale3d(${props.options.scaleX ?? 1}, ${props.options.scaleY || 1}, ${props.options.scaleZ || 1}) rotateX(${props.options.rotateX || 0}deg) rotateY(${props.options.rotateY || 0}deg) rotateZ(${props.options.rotateZ || 0}deg) skew(${props.options.skewX || 0}deg, ${props.options.skewY || 0}deg)`,
-                ..._style,
-                filter,
+                transform: createTransformString(props.options),
+                filter:createFilterFromOptions(props.options),
                 textShadow: parseTextShadowOptionsToCSS(props.options.textShadow),
-                textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color
+                textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color,
+                ..._style,
             }
 
 

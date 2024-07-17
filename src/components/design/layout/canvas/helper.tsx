@@ -1,13 +1,11 @@
-
-/*
-    获取
-*/
+import Utils from '@/common/utils';
 
 import { canvasOptions } from "./index"
 
 
 export function updateCanvasOptionsUnit(currentUnit) {
-    const unitKeys = ['width',
+    const unitKeys = [
+        'width',
         'height',
         'top',
         'left',
@@ -71,24 +69,6 @@ export function prasePxToCm(px) {
 }
 
 
-const IN2CM = 2.539999918
-
-const CM2MM = 10
-
-/*
-    1cm 等于多少 px
-*/
-const CM2PX: number = (function () {
-    var el = document.createElement('input');
-    var body = document.body;
-    el.setAttribute("style", "width:1cm !important;height:1cm !important;border-width:0px !important;padding:0px !important;margin:0px !important;");
-    el.id = "id_" + new Date().getTime();
-    el.type = "hidden";
-    body.appendChild(el);
-    var targetEle = document.getElementById(el.id);
-    return Number(window.getComputedStyle(targetEle).width.match(/^\d+\.?\d*/)[0]);
-}());
-
 
 /*
     将所有尺寸转换为px单位
@@ -111,15 +91,15 @@ export function formatSizeOptionToPixelValue(size, elementRealSize = null /* 当
         return value
     }
     if (unit == 'cm') {
-        return value * CM2PX
+        return value * Utils.CM2PX
     }
 
     if (unit == 'mm') {
-        return value * CM2PX / 10
+        return value * Utils.CM2PX / 10
     }
 
     if (unit == 'in') {
-        return value * CM2PX * IN2CM
+        return value * Utils.CM2PX * Utils.IN2CM
     }
 
     if (unit == '%w') {
@@ -523,4 +503,31 @@ export function parseTextShadowOptionsToCSS(textShadowOption) {
 }
 
 
+/*
+    处理滤镜
+*/
+
+export function createFilterFromOptions(options) {
+    return [
+        `blur(${formatToNativeSizeString(options.filterBlur)})`,
+        `brightness(${options.filterBrightness}%)`,
+        `contrast(${options.filterContrast}%)`,
+        `sepia(${options.filterSepia}%)`,
+        `grayscale(${options.filterGrayscale}%)`,
+        `hue-rotate(${options.filterHueRotate}deg)`,
+        `invert(${options.filterInvert}%)`,
+        `opacity(${options.filterOpacity}%)`,
+        `saturate(${options.filterSaturate}%)`,
+    ].join(' ')
+}
+
+
+
+export function createTransformString(options) {
+    return `scale3d(${options.scaleX ?? 1}, ${options.scaleY ?? 1},  ${options.scaleZ ?? 1}) 
+    rotateX(${options.rotateX ?? 0}deg) 
+    rotateY(${options.rotateY ?? 0}deg) 
+    rotateZ(${options.rotateZ ?? 0}deg) 
+    skew(${options.skewX ?? 0}deg, ${options.skewY ?? 0}deg)`
+}
 

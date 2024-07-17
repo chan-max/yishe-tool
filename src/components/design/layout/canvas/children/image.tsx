@@ -1,5 +1,5 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
-import { getPositionInfoFromOptions, } from '../helper.tsx'
+import { getPositionInfoFromOptions, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../helper.tsx'
 import { computed, defineComponent, onUpdated, ref } from "vue"
 
 export const createDefaultCanvasChildImageOptions = () => {
@@ -31,11 +31,11 @@ export const createDefaultCanvasChildImageOptions = () => {
         },
         width: {
             value: 100,
-            unit: canvasUnit,
+            unit: 'vw',
         },
         height: {
             value: 100,
-            unit:canvasUnit,
+            unit: 'vh',
         },
         scaleX: 1,
         scaleY: 1,
@@ -45,7 +45,21 @@ export const createDefaultCanvasChildImageOptions = () => {
         rotateZ: 0,
         skewX: 0,
         skewY: 0,
-        imageInfo: null
+        imageInfo: null,
+        objectFit: 'contain',
+        filterBlur: {
+            value: 0,
+            unit: canvasUnit
+        },
+        filterBrightness: 100, // 亮度百分比，默认为100 ，正常
+        filterContrast: 100, // 对比度
+        filterGrayscale: 0, // 灰度
+        filterHueRotate: 0, // 色相旋转
+        filterInvert: 0, // 反转输入
+        filterOpacity: 100, // 透明度
+        filterSaturate: 100, // 饱和度
+        filterSepia: 0, // 褐色
+        zIndex: 0,
     }
 }
 
@@ -61,13 +75,12 @@ export const Image = defineComponent({
     },
     setup(props, ctx) {
 
-        const options = props.options
-
         const imgUrl = computed(() => {
             return props.options.imageInfo ? props.options.imageInfo.url : null
         })
 
         return () => {
+
             const {
                 containerStyle: _containerStyle,
                 style: _style
@@ -85,9 +98,16 @@ export const Image = defineComponent({
 
             var style: any = {
                 flexShrink: 0,
-                transform: `scale3d(${props.options.scaleX ?? 1}, ${props.options.scaleY ?? 1}, ${props.options.scaleZ ?? 1}) rotateX(${props.options.rotateX ?? 0}deg) rotateY(${props.options.rotateY ?? 0}deg) rotateZ(${props.options.rotateZ ?? 0}deg) skew(${props.options.skewX ?? 0}deg, ${props.options.skewY ?? 0}deg)`,
-                ..._style
+                transform: createTransformString(props.options),
+                width: formatToNativeSizeString(props.options.width),
+                height: formatToNativeSizeString(props.options.height),
+                objectFit: props.options.objectFit,
+                filter: createFilterFromOptions(props.options),
+                zIndex:props.options.zIndex,
+                ..._style,
             }
+
+
 
             return <div style={containerStyle}>
                 <img src={imgUrl.value} style={style}></img>

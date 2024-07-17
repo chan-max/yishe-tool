@@ -11,7 +11,7 @@
 
 import { createApp } from 'vue'
 import 'animate.css';
-import 'default-passive-events'
+// import 'default-passive-events'
 import "tailwindcss/tailwind.css"
 import { createPinia } from 'pinia'
 

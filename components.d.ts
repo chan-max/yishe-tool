@@ -73,6 +73,7 @@ declare module 'vue' {
     Modal: typeof import('./src/components/design/layout/sticker/modal.vue')['default']
     ModelCardViewer: typeof import('./src/components/model/modelCardViewer/index.vue')['default']
     ModelInfo: typeof import('./src/components/design/layout/modelInfo/index.vue')['default']
+    ObjectFit: typeof import('./src/components/design/layout/canvas/operate/objectFit.vue')['default']
     OnlinePoint: typeof import('./src/components/design/components/onlinePoint.vue')['default']
     Opacity: typeof import('./src/components/design/layout/canvas/operate/filter/opacity.vue')['default']
     Operate: typeof import('./src/components/design/layout/canvas/operate.vue')['default']

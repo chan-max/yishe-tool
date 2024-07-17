@@ -37,7 +37,7 @@
                 </el-button>
             </addPopover>
         </div>
-        <div style="width:100%;padding:0 1em;">
+        <div style="width:100%;padding:1rem;">
             <div style="display:flex;column-gap:10px">
                 <el-select v-model="currentOperatingCanvasChildIndex">
                     <template #label="{ label }">

@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/z-index.svg?component";
 import { ref } from 'vue'
-import { canvasOptions, currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
+import { canvasOptions, currentOperatingCanvasChild, getCanvasTopZIndexChild } from "@/components/design/layout/canvas/index.tsx";
 
 const props = defineProps({
     tooltip: {
@@ -29,9 +29,11 @@ const props = defineProps({
 
 // 设置为最顶层的zIndex
 function setTopZIndex() {
-    const maxIndex = Math.max(...canvasOptions.value.children.map((item: any) => item.zIndex).filter(Boolean));
-    let maxChild: any = canvasOptions.value.children.find((item: any) => item.zIndex === maxIndex);
-    currentOperatingCanvasChild.value.zIndex = (maxChild.zIndex || 0) + 1
+    let maxZIndex = getCanvasTopZIndexChild()?.zIndex || 0
+
+    if (maxZIndex > currentOperatingCanvasChild.value.zIndex) {
+        currentOperatingCanvasChild.value.zIndex = maxZIndex + 1
+    }
 }
 
 const model = defineModel({})

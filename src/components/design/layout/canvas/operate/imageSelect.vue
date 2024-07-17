@@ -5,12 +5,11 @@
         </template>
         <template #name> {{ label }} </template>
         <template #content>
-            {{ model }}
             <template v-if="model">
                 <el-popover>
                     <template #reference>
                         <div class="flex items-center">
-                            <div class="text-ellipsis" style="max-width: 120px;">已引用图片{{ model.name }}</div>
+                            <div class="text-ellipsis" style="font-size:1rem;max-width: 180px;">已引用图片 : {{ model.name }}</div>
                         </div>
                     </template>
                     <el-row align="middle" justify="center" style="row-gap: 1rem;">

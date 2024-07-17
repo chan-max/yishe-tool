@@ -2,21 +2,21 @@
     <div class="model">
         <scrollbar>
             <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
-                <el-row style="row-gap: 1em">
+                <el-row style="row-gap: 1em;padding: 20px;" >
                     <el-col :span="24 / column" v-for="item in  list" align="center">
-                        <el-popover trigger="click" width="180">
-                            <template #reference>
-                                <div>
-                                    <desimage class="img" padding="5%" :src="item.thumbnail">
-                                    </desimage>
-                                </div>
+                        <a-dropdown arrow placement="bottom">
+                            <div>
+                                <desimage class="img" padding="5%" :src="item.thumbnail">
+                                </desimage>
+                            </div>
+                            <template #overlay>
+                                <a-menu>
+                                    <a-menu-item v-if="item.type == 'image'" @click="useAsCanvasImage(item)">
+                                        使用该图片作为当前背景元素
+                                    </a-menu-item>
+                                </a-menu>
                             </template>
-                            <el-row>
-                                <el-col :span="24">
-                                    <el-button @click="useAsCanvasImage(item)" link> 使用该图片作为当前背景元素 </el-button>
-                                </el-col>
-                            </el-row>
-                        </el-popover>
+                        </a-dropdown>
                     </el-col>
                 </el-row>
                 <loadingBottom v-if="loading"></loadingBottom>
@@ -46,9 +46,10 @@ import scrollbar from "@/components/scrollbar/index.vue";
 import { stickerQueryParams, stickerLabelMap, StickerType } from "./index.tsx";
 import { loadingBottom } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
+import Utils from '@/common/utils'
 
 // 列表展示几列
-const column = ref(6);
+const column = ref(8);
 
 const loadingOptions = useLoadingOptions({});
 
@@ -78,22 +79,25 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
     },
     {
         forEach(item) {
-            item.thumbnail = "https://" + item.thumbnail;
-            item.url = "https://" + item.url;
+            item.thumbnail = Utils.formatUrl(item.thumbnail)
+            item.url = Utils.formatUrl(item.url)
         },
     }
 );
 
 </script>
 
+
+
 <style scoped lang="less">
 .model {
-    width: 880px;
+    width: 920px;
     height: 500px;
 }
 
 .img {
     width: 100px;
     height: 100px;
+    background:#f1f1f1;
 }
 </style>

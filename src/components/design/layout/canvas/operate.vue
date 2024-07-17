@@ -2,26 +2,76 @@
   <el-scrollbar>
     <div style="margin: 1rem">
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.CANVAS">
-        <el-row  align="middle">
-          <el-col :span="24">
-            <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasOptions.width"
-              v-model:height="canvasOptions.height">
-            </operateItemAbsoluteSize>
-          </el-col>
-          <el-col :span="24">
-            <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位" v-model="canvasOptions.unit">
-            </operateItemAbsoluteUnitSelect>
-          </el-col>
-          <el-col :span="24">
-            <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
-          </el-col>
-          <el-col :span="24">
-            <operateItemSwitch label="显示真实大小" v-model="canvasOptions.showCanvasRealSize"></operateItemSwitch>
-          </el-col>
-          <el-col :span="24">
-            <operateItemColor label="辅助背景颜色" tooltip="用于辅助画布中的元素，不会对实际画布产生影响" type="pure" v-model="canvasOptions.backgroundColor"></operateItemColor>
-          </el-col>
-        </el-row>
+        <el-collapse v-model="canvasCollapseActives">
+          <el-collapse-item name="1">
+            <template #title>
+              <div class="title">画布属性</div>
+            </template>
+            <el-row align="middle">
+              <el-col :span="24">
+                <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasOptions.width"
+                  v-model:height="canvasOptions.height">
+                </operateItemAbsoluteSize>
+              </el-col>
+              <el-col :span="24">
+                <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位" v-model="canvasOptions.unit">
+                </operateItemAbsoluteUnitSelect>
+              </el-col>
+              <el-col :span="24">
+                <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
+              </el-col>
+              <el-col :span="24">
+                <operateItemSwitch label="显示真实大小" v-model="canvasOptions.showCanvasRealSize"></operateItemSwitch>
+              </el-col>
+              <el-col :span="24">
+                <operateItemColor label="辅助背景颜色" tooltip="用于辅助画布中的元素，不会对实际画布产生影响" type="pure"
+                  v-model="canvasOptions.backgroundColor"></operateItemColor>
+              </el-col>
+            </el-row>
+          </el-collapse-item>
+          <el-collapse-item name="4">
+            <template #title>
+              <div class="title">滤镜效果</div>
+            </template>
+            <el-col :span="24">
+              <operateItemFilterBlur v-model="currentOperatingCanvasChild.filterBlur">
+              </operateItemFilterBlur>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterBrightness v-model="currentOperatingCanvasChild.filterBrightness">
+              </operateItemFilterBrightness>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterContrast v-model="currentOperatingCanvasChild.filterContrast">
+              </operateItemFilterContrast>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterGrayscale v-model="currentOperatingCanvasChild.filterGrayscale">
+              </operateItemFilterGrayscale>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterInvert v-model="currentOperatingCanvasChild.filterInvert">
+              </operateItemFilterInvert>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterOpacity v-model="currentOperatingCanvasChild.filterOpacity">
+              </operateItemFilterOpacity>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterSaturate v-model="currentOperatingCanvasChild.filterSaturate">
+              </operateItemFilterSaturate>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterSepia v-model="currentOperatingCanvasChild.filterSepia">
+              </operateItemFilterSepia>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterHueRotate v-model="currentOperatingCanvasChild.filterHueRotate">
+              </operateItemFilterHueRotate>
+            </el-col>
+          </el-collapse-item>
+        </el-collapse>
+
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.TEXT">
         <el-collapse v-model="textCollapseActives">
@@ -35,7 +85,8 @@
                 </operateItemTextContent>
               </el-col>
               <el-col :span="24">
-                <operateItemSwitch label="使用繁体字" v-model="currentOperatingCanvasChild.isTraditionalChinese"></operateItemSwitch>
+                <operateItemSwitch label="使用繁体字" v-model="currentOperatingCanvasChild.isTraditionalChinese">
+                </operateItemSwitch>
               </el-col>
               <el-col :span="24">
                 <operateItemFontSize v-model="currentOperatingCanvasChild.fontSize">
@@ -127,7 +178,6 @@
                 </operateItemRoundTextStartDeg>
               </el-col>
               <el-col :span="24">
-                <!-- <operateItemRoundTextDirection v-model="currentOperatingCanvasChild.roundTextDirection"></operateItemRoundTextDirection> -->
                 <operateItemSwitch label="是否使用逆时针排列" v-model="currentOperatingCanvasChild.isCounterclockwise">
                 </operateItemSwitch>
               </el-col>
@@ -177,17 +227,74 @@
         </el-collapse>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.IMAGE">
-        <el-row :gutter="24" align="middle">
-          <el-col :span="24">
-            <operateItemImageSelect v-model="currentOperatingCanvasChild.imageInfo">
-            </operateItemImageSelect>
-          </el-col>
-          <el-col :span="24">
-            <operateItemSize label="背景尺寸" v-model:width="currentOperatingCanvasChild.width"
-              v-model:height="currentOperatingCanvasChild.height">
-            </operateItemSize>
-          </el-col>
-        </el-row>
+        <el-collapse v-model="imageCollapseActives">
+          <el-collapse-item name="1">
+            <template #title>
+              <div class="title">基础属性</div>
+            </template>
+            <el-row :gutter="24" align="middle">
+              <el-col :span="24">
+                <operateItemImageSelect v-model="currentOperatingCanvasChild.imageInfo">
+                </operateItemImageSelect>
+              </el-col>
+              <el-col :span="24">
+                <operateItemSize label="背景尺寸" v-model:width="currentOperatingCanvasChild.width"
+                  v-model:height="currentOperatingCanvasChild.height">
+                </operateItemSize>
+              </el-col>
+              <el-col :span="24">
+                <operateItemObjectFit v-model="currentOperatingCanvasChild.objectFit">
+                </operateItemObjectFit>
+              </el-col>
+              <el-col :span="24">
+                <operateItemZindex v-model="currentOperatingCanvasChild.zIndex">
+                </operateItemZindex>
+              </el-col>
+            </el-row>
+          </el-collapse-item>
+
+          <el-collapse-item name="4">
+            <template #title>
+              <div class="title">滤镜效果</div>
+            </template>
+            <el-col :span="24">
+              <operateItemFilterBlur v-model="currentOperatingCanvasChild.filterBlur">
+              </operateItemFilterBlur>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterBrightness v-model="currentOperatingCanvasChild.filterBrightness">
+              </operateItemFilterBrightness>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterContrast v-model="currentOperatingCanvasChild.filterContrast">
+              </operateItemFilterContrast>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterGrayscale v-model="currentOperatingCanvasChild.filterGrayscale">
+              </operateItemFilterGrayscale>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterInvert v-model="currentOperatingCanvasChild.filterInvert">
+              </operateItemFilterInvert>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterOpacity v-model="currentOperatingCanvasChild.filterOpacity">
+              </operateItemFilterOpacity>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterSaturate v-model="currentOperatingCanvasChild.filterSaturate">
+              </operateItemFilterSaturate>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterSepia v-model="currentOperatingCanvasChild.filterSepia">
+              </operateItemFilterSepia>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterHueRotate v-model="currentOperatingCanvasChild.filterHueRotate">
+              </operateItemFilterHueRotate>
+            </el-col>
+          </el-collapse-item>
+        </el-collapse>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.BACKGROUHND">
         <el-row :gutter="24" align="middle">
@@ -327,9 +434,9 @@
   </el-scrollbar>
 </template>
 
+
 <script setup lang="ts">
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
-import { Close } from "@element-plus/icons-vue";
 
 // import operateFormItem from "@/components/design/layout/canvas/operate/operateFormItem.vue";
 import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
@@ -379,6 +486,10 @@ import operateItemFilterSaturate from "@/components/design/layout/canvas/operate
 import operateItemFilterSepia from "@/components/design/layout/canvas/operate/filter/sepia.vue";
 import operateItemFilterHueRotate from "@/components/design/layout/canvas/operate/filter/hueRotate.vue";
 
+import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
+
+
+
 import {
   updateCanvasOptionsUnit
 } from './helper'
@@ -399,11 +510,14 @@ function absoluteUnitChange(unit) {
   updateCanvasOptionsUnit(unit)
 }
 
+const canvasCollapseActives = ref(["1", "2", "3", "4"])
+
 const textCollapseActives = ref(["1", "2", "3", "4"]);
 
 const qrcodeCollapseActives = ref(["1", "2", "3", "4"]);
 
-const visible = ref("");
+const imageCollapseActives = ref(["1", "2", "3", "4"]);
+
 
 function remove(index) {
   removeCavnasChild(index);

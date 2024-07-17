@@ -60,7 +60,7 @@ watchEffect(() => {
 export const showBaseModelSelect = ref(false);
 
 // 当前操作的模型信息 , 如果不提供默认值 ， 会出现 【object】的问题
-export const currentOperatingBaseModelInfo = ref({} as any)
+export const currentOperatingBaseModelInfo = ref(null as any)
 
 // 是否展示场景控制弹窗
 export const showSceneControl = ref(false)

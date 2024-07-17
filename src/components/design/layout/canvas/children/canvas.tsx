@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue'
 import { canvasOptions, currentCanvasControllerInstance, showMainCanvas } from '@/components/design/layout/canvas'
-import { formatSizeOptionToPixelValue } from '../helper'
+import { createFilterFromOptions, formatSizeOptionToPixelValue } from '../helper'
 
 import { SvgFilter } from './svgFilter/index.tsx'
 
@@ -32,6 +32,8 @@ export const Canvas = defineComponent({
 
         return () => {
 
+            let childCanvasOptions = canvasOptions.value.children.find((item) => item.type == 'canvas')
+
             const pxWidth = formatSizeOptionToPixelValue({
                 value: canvasOptions.value.width,
                 unit: canvasOptions.value.unit
@@ -44,8 +46,6 @@ export const Canvas = defineComponent({
 
 
             const transformValue = (canvasOptions.value.showCanvasRealSize && showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
-
-
 
             let pngBackground = createPngBackgroundStyle(transformValue)
 
@@ -77,7 +77,8 @@ export const Canvas = defineComponent({
                 top: 0,
                 left: 0,
                 zIndex: 99,
-                display: 'none'
+                display: 'none',
+                filter:createFilterFromOptions(childCanvasOptions)
             }
 
             return <div style={containerStyle}>

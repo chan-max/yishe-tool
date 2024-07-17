@@ -33,12 +33,9 @@ const loading = computed(() => {
     return canvasController.loading.value;
 });
 
+
+
 let canvass = canvasController.getRender();
-
-
-
-const loadingOptions = useLoadingOptions({
-});
 
 </script>
   

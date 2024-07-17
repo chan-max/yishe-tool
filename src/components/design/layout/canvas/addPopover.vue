@@ -21,7 +21,6 @@
 <script setup lang='ts'>
 import {
     CanvasController,
-    canvasOptions,
     addCanvasChild,
     removeCavnasChild,
     currentOperatingCanvasChild,

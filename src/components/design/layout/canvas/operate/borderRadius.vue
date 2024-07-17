@@ -81,29 +81,6 @@ import { canvasOptions } from "@/components/design/layout/canvas/index.tsx";
 */
 
 
-// const parentPopoverVisible = ref(false)
-
-// function click() {
-//     parentPopoverVisible.value = !parentPopoverVisible.value
-// }
-
-// const childVisible = ref(false)
-
-// async function parentLeave() {
-//     setTimeout(() => {
-//         if (!childVisible.value) {
-//             parentPopoverVisible.value = false
-//         }
-//     }, (333));
-// }
-
-// function childShow() {
-//     childVisible.value = true
-// }
-
-// function childHide() {
-//     childVisible.value = false
-// }
 
 
 const model = defineModel({});

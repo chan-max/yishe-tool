@@ -24,6 +24,7 @@ import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/design/components/image.vue";
 import { cacheFontFamily } from "@/components/design/store";
 import { message } from "ant-design-vue";
+import Utils from '@/common/utils'
 
 const model = defineModel({});
 
@@ -50,7 +51,17 @@ watch(model, async () => {
         key: "loadfont",
         duration: 0,
     });
-    const file = await fetchFile(url);
+
+    var file
+
+    try{
+        file = await fetchFile(url);
+    }catch(e){
+        return message.error({
+            content:`字体${name}加载失败`,
+            key: "loadfont",
+        })
+    }
 
     const fontStyle = document.createElement("style");
     const fontId = `font_${id}`;
@@ -82,8 +93,8 @@ const { list, getList } = usePaging(
     },
     {
         forEach(item) {
-            item.thumbnail = "https://" + item.thumbnail;
-            item.url = "https://" + item.url;
+            item.thumbnail = Utils.formatUrl(item.thumbnail)
+            item.url = Utils.formatUrl(item.url)
         },
     }
 );

@@ -4,6 +4,7 @@ import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watc
 // import CircleType from "circletype";
 import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistancePoint } from './calc.tsx'
 import { tify, sify } from 'chinese-conv';
+import { createFilterDefaultOptions } from "../defaultOptions.tsx";
 
 
 export interface TextCanvasChildOptions {
@@ -56,14 +57,14 @@ export const createDefaultCanvasChildTextOptions = () => {
         skewX: 0,
         skewY: 0,
         fontSize: {
-            value: 100,
+            value: 14,
             unit: canvasUnit
         },
         textShadow: [],
         fontWeight: '500',
         lineHeight: 1,
         letterSpacing: 0,
-        textContent: 'hello world',
+        textContent: '富与贵，是人之所欲也；不以其道得之，不处也',
         writingMode: 'htb',
         isRoundText: false,
         roundTextHorizontalRadius: {
@@ -85,19 +86,7 @@ export const createDefaultCanvasChildTextOptions = () => {
             type: 'pure',
             color: '#fff',
         },
-        filterBlur: {
-            value: 0,
-            unit: canvasUnit
-        },
-        filterBrightness: 100, // 亮度百分比，默认为100 ，正常
-        filterContrast: 100, // 对比度
-        filterGrayscale: 0, // 灰度
-        filterHueRotate: 0, // 色相旋转
-        filterInvert: 0, // 反转输入
-        filterOpacity: 100, // 透明度
-        filterSaturate: 100, // 饱和度
-        filterSepia: 0, // 褐色
-
+       ... createFilterDefaultOptions(canvasUnit),
         // 是否使用繁体字
         isTraditionalChinese: false
     }

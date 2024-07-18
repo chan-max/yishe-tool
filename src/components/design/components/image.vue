@@ -1,20 +1,15 @@
 <template>
   <div class="img-container">
-    <el-image
-      class="img"
-      v-bind="$attrs"
-      :fit="fit || 'contain'"
-      :lazy="lazy"
-      @load="load($event, info)"
-      style="width: 100%; height: 100%"
-      :style="{ padding }"
-    >
+    <el-image class="img" v-bind="$attrs" :fit="fit || 'contain'" :lazy="lazy" @load="load($event, info)"
+      style="width: 100%; height: 100%" :style="{ padding }">
       <template #placeholder>
-        <div  class="img_loading"></div>
+        <div class="img_loading"></div>
       </template>
       <template #error>
         <div class="img_error">
-          <el-icon style="color: #aaa"><Picture /></el-icon>
+          <el-icon style="color: #aaa">
+            <Picture />
+          </el-icon>
         </div>
       </template>
     </el-image>
@@ -31,17 +26,17 @@ const props = defineProps({
   padding: {
     default: "0",
   },
-  info:{
-    default:{}
+  info: {
+    default: {}
   },
-  fit:{
-    default:'contain'
+  fit: {
+    default: 'contain'
   },
-  lazy:{
-    default:true
+  lazy: {
+    default: false
   },
-  hideloading:{
-    default:false
+  hideloading: {
+    default: false
   }
 });
 
@@ -50,15 +45,15 @@ const props = defineProps({
 */
 
 function load(e) {
-  emits('load',e.target)
+  emits('load', e.target)
 }
 </script>
 <style lang="less" scoped>
-
-.img-container{
+.img-container {
   width: 100%;
-  height:100%;
+  height: 100%;
 }
+
 .img {
   border-radius: 4px;
   overflow: hidden;
@@ -81,6 +76,7 @@ function load(e) {
     background-position: 100% 50%;
     animation: skeleton-loading 1.4s ease infinite;
   }
+
   &_error {
     width: 100%;
     height: 100%;
@@ -94,6 +90,7 @@ function load(e) {
   0% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0 50%;
   }
@@ -103,6 +100,7 @@ function load(e) {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }

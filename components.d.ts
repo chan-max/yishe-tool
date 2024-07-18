@@ -127,6 +127,7 @@ declare module 'vue' {
     TextStroke: typeof import('./src/components/design/layout/canvas/operate/text/textStroke.vue')['default']
     Unit: typeof import('./src/components/design/layout/canvas/operate/unit.vue')['default']
     Upload: typeof import('./src/components/design/layout/upload/index.vue')['default']
+    Url: typeof import('./src/components/design/layout/canvas/operate/filter/url.vue')['default']
     UserAvatar: typeof import('./src/components/user/userAvatar.vue')['default']
     UserAvatarForm: typeof import('./src/components/user/userAvatarForm.vue')['default']
     VanButton: typeof import('vant/es')['Button']

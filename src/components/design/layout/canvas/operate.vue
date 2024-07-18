@@ -42,7 +42,7 @@
           </el-collapse-item>
           <el-collapse-item name="4">
             <template #title>
-              <div class="title">滤镜效果</div>
+              <div class="title">画布滤镜效果</div>
             </template>
             <el-col :span="24">
               <operateItemFilterBlur v-model="currentOperatingCanvasChild.filterBlur">
@@ -79,6 +79,10 @@
             <el-col :span="24">
               <operateItemFilterHueRotate v-model="currentOperatingCanvasChild.filterHueRotate">
               </operateItemFilterHueRotate>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterUrl v-model="currentOperatingCanvasChild.filterUrl">
+              </operateItemFilterUrl>
             </el-col>
           </el-collapse-item>
         </el-collapse>
@@ -496,6 +500,9 @@ import operateItemFilterOpacity from "@/components/design/layout/canvas/operate/
 import operateItemFilterSaturate from "@/components/design/layout/canvas/operate/filter/saturate.vue";
 import operateItemFilterSepia from "@/components/design/layout/canvas/operate/filter/sepia.vue";
 import operateItemFilterHueRotate from "@/components/design/layout/canvas/operate/filter/hueRotate.vue";
+import operateItemFilterUrl from "@/components/design/layout/canvas/operate/filter/url.vue";
+
+
 
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
 

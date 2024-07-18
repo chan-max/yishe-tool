@@ -1,6 +1,7 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
 import { getPositionInfoFromOptions, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../helper.tsx'
 import { computed, defineComponent, onUpdated, ref } from "vue"
+import { createFilterDefaultOptions } from "./defaultOptions.tsx"
 
 export const createDefaultCanvasChildImageOptions = () => {
 
@@ -47,18 +48,7 @@ export const createDefaultCanvasChildImageOptions = () => {
         skewY: 0,
         imageInfo: null,
         objectFit: 'contain',
-        filterBlur: {
-            value: 0,
-            unit: canvasUnit
-        },
-        filterBrightness: 100, // 亮度百分比，默认为100 ，正常
-        filterContrast: 100, // 对比度
-        filterGrayscale: 0, // 灰度
-        filterHueRotate: 0, // 色相旋转
-        filterInvert: 0, // 反转输入
-        filterOpacity: 100, // 透明度
-        filterSaturate: 100, // 饱和度
-        filterSepia: 0, // 褐色
+        ...createFilterDefaultOptions(canvasUnit),
         zIndex: 0,
     }
 }
@@ -103,7 +93,7 @@ export const Image = defineComponent({
                 height: formatToNativeSizeString(props.options.height),
                 objectFit: props.options.objectFit,
                 filter: createFilterFromOptions(props.options),
-                zIndex:props.options.zIndex,
+                zIndex: props.options.zIndex,
                 ..._style,
             }
 

@@ -22,9 +22,10 @@ function createPngBackgroundStyle(scale = 1) {
 export function createDefaultCanvasChildCanvasOptions() {
     return {
         type: 'canvas',
+        undeletable:true, // 不可删除
         ...createFilterDefaultOptions('px'),
-        backgroundColor:{
-            color:'rgba(0,0,0,0)'
+        backgroundColor: {
+            color: 'rgba(0,0,0,0)'
         },
     }
 }
@@ -98,9 +99,11 @@ export const Canvas = defineComponent({
                 {/* svg过滤器 */}
                 <SvgFilter></SvgFilter>
                 {/* 转换的元素 */}
+
                 <div id={currentCanvasControllerInstance.value?.rawId} style={style}>
                     {ctx.slots.default()}
                 </div>
+
                 {/* 真实的画布 */}
                 <canvas id={currentCanvasControllerInstance.value.canvasId} style={canvasStyle} width={pxWidth} height={pxHeight}></canvas>
             </div>

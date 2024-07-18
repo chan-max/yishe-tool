@@ -48,7 +48,7 @@
                         <div style="display:flex;align-items: center;font-size:1rem;height:100%;">
                             {{ canvasChildLabelMap[item.type] }}
                             <div style="flex:1"></div>
-                            <el-button v-if="index != 0" link type="danger" @click="remove(index)">
+                            <el-button v-if="!item.undeletable" link type="danger" @click="remove(index)">
                                 <el-icon size="14">
                                     <CircleCloseFilled></CircleCloseFilled>
                                 </el-icon>

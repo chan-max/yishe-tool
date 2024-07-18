@@ -1,11 +1,11 @@
 
 import { canvasOptions } from "../index"
 
-export const createFilterDefaultOptions = (blurWidth = 'px') => {
+export const createFilterDefaultOptions = (blurUnit = 'px') => {
     return {
         filterBlur: {
             value: 0,
-            unit: blurWidth
+            unit: blurUnit
         },
         filterBrightness: 100, // 亮度百分比，默认为100 ，正常
         filterContrast: 100, // 对比度
@@ -15,5 +15,6 @@ export const createFilterDefaultOptions = (blurWidth = 'px') => {
         filterOpacity: 100, // 透明度
         filterSaturate: 100, // 饱和度
         filterSepia: 0, // 褐色
+        filterUrl:''
     }
 }

@@ -518,7 +518,8 @@ export function createFilterFromOptions(options) {
         `invert(${options.filterInvert}%)`,
         `opacity(${options.filterOpacity}%)`,
         `saturate(${options.filterSaturate}%)`,
-    ].join(' ')
+        options.filterUrl && `url(#${options.filterUrl})`
+    ].filter(Boolean).join(' ')
 }
 
 

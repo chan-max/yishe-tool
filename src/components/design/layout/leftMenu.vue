@@ -32,11 +32,11 @@
     <el-tooltip :hide-after="0" content="选择模型" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
         @click="showBaseModelSelect = !showBaseModelSelect">
-        <desimage style="width:30px;height:30px;" v-if="currentOperatingBaseModelInfo.id" :src="Utils.formatUrl(currentOperatingBaseModelInfo.thumbnail)"></desimage>
+        <desimage style="width:30px;height:30px;" v-if="currentOperatingBaseModelInfo?.id" :src="Utils.formatUrl(currentOperatingBaseModelInfo.thumbnail)"></desimage>
         <div v-else class="menu-bar-item-icon">
           <icon-shirt></icon-shirt>
         </div>
-        <span> {{ currentOperatingBaseModelInfo.id ? '切换模型' : '选择模型' }} </span>
+        <span> {{ currentOperatingBaseModelInfo?.id ? '切换模型' : '选择模型' }} </span>
       </div>
     </el-tooltip>
 

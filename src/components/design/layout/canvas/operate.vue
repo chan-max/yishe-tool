@@ -5,7 +5,7 @@
         <el-collapse v-model="canvasCollapseActives">
           <el-collapse-item name="1">
             <template #title>
-              <div class="title">画布属性</div>
+              <div class="title">画布配置</div>
             </template>
             <el-row align="middle">
               <el-col :span="24">
@@ -25,7 +25,18 @@
               </el-col>
               <el-col :span="24">
                 <operateItemColor label="辅助背景颜色" tooltip="用于辅助画布中的元素，不会对实际画布产生影响" type="pure"
-                  v-model="canvasOptions.backgroundColor"></operateItemColor>
+                  v-model="canvasOptions.supportBackgroundColor"></operateItemColor>
+              </el-col>
+            </el-row>
+          </el-collapse-item>
+          <el-collapse-item name="2">
+            <template #title>
+              <div class="title">画布属性</div>
+            </template>
+            <el-row>
+              <el-col :span="24">
+                <operateItemColor label="画布背景颜色" tooltip="画布背景颜色" 
+                  v-model="currentOperatingCanvasChild.backgroundColor"></operateItemColor>
               </el-col>
             </el-row>
           </el-collapse-item>

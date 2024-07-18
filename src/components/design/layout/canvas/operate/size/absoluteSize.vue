@@ -5,38 +5,22 @@
         </template>
         <template #name> {{ label }} </template>
         <template #content>
-            <div class="flex justify-between">
-                <el-popover trigger="hover" width="200">
-                    <template #reference>
-                        <el-button size="small" link style="margin-right:.6em;">
-                            <el-icon size="16">
-                                <Setting></Setting>
-                            </el-icon>
-                        </el-button>
-                    </template>
-                    <div>
-                        <el-row style="padding:.5em 0">
-                            <el-col :span="24">
-                                <div class="flex flex-wrap " style="gap:1em;">
-                                    <el-tag size="small" style="cursor:pointer;" effect="plain"
-                                        v-for="item in aspectRatioOptions" @click="selectAsepctRatio(item.value)">
-                                        <div style="font-size: 1rem;">
-                                            {{
-                                                item.label }}
-                                        </div>
-                                    </el-tag>
-                                    <div style="flex: 1"></div>
-                                </div>
-                            </el-col>
-                        </el-row>
-                    </div>
-                </el-popover>
-                <el-input style="width: 80px" size="small" v-model="width" step="10" type="number" placeholder="宽">
-                </el-input>
-                <span style="padding:0 1em" class="flex items-center justify-center">x</span>
-                <el-input style="width: 80px" size="small" v-model="height" step="10" type="number" placeholder="高">
-                </el-input>
-            </div>
+            <span style="font-size:1rem"> 宽 </span>
+            <el-input style="width: 80px" size="small" v-model="width" step="10" type="number" placeholder="宽">
+                <template #suffix>
+                    <span class="text-[1rem]">  
+                        {{ canvasOptions.unit }}
+                    </span>
+                </template>
+            </el-input>
+            <span style="font-size:1rem"> 高 </span>
+            <el-input style="width: 80px" size="small" v-model="height" step="10" type="number" placeholder="高">
+                <template #suffix>
+                    <span class="text-[1rem]">  
+                        {{ canvasOptions.unit }}
+                    </span>
+                </template>
+            </el-input>
         </template>
     </operate-form-item>
 </template>
@@ -45,6 +29,7 @@
 import icon from "@/components/design/assets/icon/size.svg?component";
 import { ref, watch, computed } from "vue";
 import { Setting } from "@element-plus/icons-vue";
+import {canvasOptions} from '@/components/design/layout/canvas/index.tsx'
 
 const props = defineProps({
     label: {

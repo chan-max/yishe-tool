@@ -19,6 +19,8 @@ import {
     createDefaultCanvasChildImageOptions
 } from './children/image.tsx'
 
+import { createDefaultCanvasChildCanvasOptions } from './children/canvas'
+
 import { Canvas } from './children/canvas.tsx'
 import { createFilterDefaultOptions } from './children/defaultOptions.tsx'
 
@@ -30,11 +32,14 @@ export const canvasOptions = ref({
     height: 500,
     unit: 'px',
     showCanvasRealSize: false,
-    backgroundColor: '',
-    children: [{
-        type: 'canvas',
-        ...createFilterDefaultOptions('px')
-    }],
+    supportBackgroundColor: {
+        type:'pure',
+        color:'rgba(0,0,0,0)'
+    },
+    children: [
+        // 默认会存在一个画布元素
+        createDefaultCanvasChildCanvasOptions()
+    ],
 })
 
 
@@ -316,8 +321,8 @@ export class CanvasController {
 
             this.updateCanvas()
 
-
-            return <Canvas>
+            return <Canvas options={canvasOptions.value.children.find((item) => item.type == 'canvas')
+        }>
                 {children}
             </Canvas>
         }

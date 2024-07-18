@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import { canvasOptions, currentCanvasControllerInstance, showMainCanvas } from '@/components/design/layout/canvas'
-import { createFilterFromOptions, formatSizeOptionToPixelValue } from '../helper'
-
+import { createFilterFromOptions, formatSizeOptionToPixelValue, } from '../helper'
+import { createFilterDefaultOptions } from './defaultOptions.tsx'
 import { SvgFilter } from './svgFilter/index.tsx'
 
 /*
@@ -19,6 +19,17 @@ function createPngBackgroundStyle(scale = 1) {
 }
 
 
+export function createDefaultCanvasChildCanvasOptions() {
+    return {
+        type: 'canvas',
+        ...createFilterDefaultOptions('px'),
+        backgroundColor:{
+            color:'rgba(0,0,0,0)'
+        },
+    }
+}
+
+
 
 export const Canvas = defineComponent({
     props: {
@@ -31,8 +42,6 @@ export const Canvas = defineComponent({
     setup(props, ctx) {
 
         return () => {
-
-            let childCanvasOptions = canvasOptions.value.children.find((item) => item.type == 'canvas')
 
             const pxWidth = formatSizeOptionToPixelValue({
                 value: canvasOptions.value.width,
@@ -49,6 +58,7 @@ export const Canvas = defineComponent({
 
             let pngBackground = createPngBackgroundStyle(transformValue)
 
+            // 画布的辅助背景
             const containerStyle: any = {
                 width: canvasOptions.value.width + canvasOptions.value.unit,
                 height: canvasOptions.value.height + canvasOptions.value.unit,
@@ -59,9 +69,11 @@ export const Canvas = defineComponent({
                 transform: `scale(${transformValue}, ${transformValue})`,
                 flexShrink: 0,
                 position: "relative",
-                ...pngBackground
+                ...pngBackground,
+                // background: canvasOptions.value.supportBackgroundColor.color
             }
 
+            // 画布真实元素背景
             let style: any = {
                 flexShrink: 0,
                 width: canvasOptions.value.width + canvasOptions.value.unit,
@@ -69,7 +81,9 @@ export const Canvas = defineComponent({
                 position: "absolute",
                 top: 0,
                 left: 0,
-                zIndex: 0
+                zIndex: 0,
+                filter: createFilterFromOptions(props.options),
+                background: props.options.backgroundColor.color,
             }
 
             const canvasStyle: any = {
@@ -78,14 +92,13 @@ export const Canvas = defineComponent({
                 left: 0,
                 zIndex: 99,
                 display: 'none',
-                filter:createFilterFromOptions(childCanvasOptions)
             }
 
             return <div style={containerStyle}>
                 {/* svg过滤器 */}
                 <SvgFilter></SvgFilter>
                 {/* 转换的元素 */}
-                <div id={currentCanvasControllerInstance.value.rawId} style={style}>
+                <div id={currentCanvasControllerInstance.value?.rawId} style={style}>
                     {ctx.slots.default()}
                 </div>
                 {/* 真实的画布 */}

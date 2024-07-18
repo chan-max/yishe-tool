@@ -94,9 +94,6 @@ import iconPaper from "@/modules/app/assets/icon/paper.svg?url";
 import iconSetting from "@/modules/app/assets/icon/setting.svg?url";
 import iconShare from "@/modules/app/assets/icon/share.svg?url";
 
-
-const designStore = useDesignStore();
-
 const router = useIonRouter();
 
 function quit() {

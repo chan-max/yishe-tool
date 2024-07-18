@@ -379,14 +379,10 @@ import { stickerQueryTags, stickerQueryParams } from "@/components/design/layout
 import { showMainCanvas } from "@/components/design/layout/canvas/index.tsx";
 
 export const useDesignStore = defineStore('_1s_design', () => {
-
-    // 同步到缓存 , 性能较差
-
     return {
         showWorkspace: useLocalStorage('_1s_showWorkspace', showWorkspace),
-        operatingTextStickerOptions: useLocalStorage('_1s_operatingTextStickerOptions', operatingTextStickerOptions),
         showBaseModelSelect: useLocalStorage('_1s_showBaseModelSelect', showBaseModelSelect),
-        // showBasicCanvas: useLocalStorage('_1s_showBasicCanvas', showBasicCanvas),
+        showBasicCanvas: useLocalStorage('_1s_showBasicCanvas', showBasicCanvas),
         showThreeCanvas: useLocalStorage('_1s_showThreeCanvas', showThreeCanvas),
         showSticker: useLocalStorage('_1s_showSticker', showSticker),
         currentOperatingBaseModelInfo: useLocalStorage('_1s_currentOperatingBaseModelInfo', currentOperatingBaseModelInfo),

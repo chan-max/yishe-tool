@@ -1,6 +1,6 @@
 <template>
   <el-scrollbar>
-    <div style="margin: 1rem">
+    <div class="canvas-operate-form" style="margin: 1rem">
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.CANVAS">
         <el-collapse v-model="canvasCollapseActives">
           <el-collapse-item name="1">
@@ -545,7 +545,16 @@ function fontLoad() {
   currentCanvasControllerInstance.value.updateCanvas();
 }
 </script>
+<style lang="less">
+.canvas-operate-form{
+  --el-border-radius-base:2px;
+  --el-border-color:#f1f1f1!important;
 
+}
+
+
+
+</style>
 <style scoped>
 :deep(.el-scrollbar__bar.is-vertical) {
   width: 4px;

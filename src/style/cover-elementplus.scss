@@ -15,6 +15,7 @@
   padding: 0 20px !important;
 }
 
-:root{
-  --el-border-radius-base:4px;
+.el-slider{
+  --el-slider-button-size:12px!important;
+  --el-slider-height:4px;
 }

@@ -6,17 +6,28 @@
         <template #name> 元素旋转 </template>
         <template #content>
             <el-tooltip content="用于旋转元素，单位为旋转的角度" :hide-after="0">
-                <div>
-                    <span style="margin:0 .3em">x</span>
-                    <el-input style="width:54px" size="small" v-model="x" step="1" min="0" max="360" type="number"
-                        ></el-input>
-                    <span style="margin:0 .3em">y</span>
-                    <el-input style="width:54px" size="small" v-model="y" step="1" min="0" max="360" type="number"
-                        ></el-input>
-                    <span style="margin:0 .3em">z</span>
-                    <el-input style="width:54px" size="small" v-model="z" step="1" min="0" max="360" type="number"
-                        ></el-input>
-                </div>
+                <el-popover trigger="click" width="180">  
+                    <template #reference>
+                        <el-button link>
+                            <div style="font-size: 1rem;display:flex;column-gap:.5rem;">
+                                <span >x:</span>
+                                <span > {{ x }} deg</span>
+                                <span> y:</span>
+                                <span> {{ y }}deg </span>
+                                <span>z:</span>
+                                <span>{{ z }}deg</span>
+                            </div>
+                        </el-button>
+                    </template>
+                    <el-row align="middle" justify="end" :gutter="12">
+                        <el-col :span="6"> x轴 </el-col>
+                        <el-col :span="18"> <el-slider :min="0" :max="360" v-model="x" /></el-col>
+                        <el-col :span="6"> y轴 </el-col>
+                        <el-col :span="18"> <el-slider :min="0" :max="360" v-model="y" /></el-col>
+                        <el-col :span="6"> z轴 </el-col>
+                        <el-col :span="18"> <el-slider :min="0" :max="360" v-model="z" /></el-col>
+                    </el-row>
+                </el-popover>
             </el-tooltip>
         </template>
     </operate-form-item>
@@ -25,6 +36,8 @@
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/rotate.svg?component";
 import { ref } from 'vue'
+
+
 
 const x = defineModel('x', { default: '' })
 const y = defineModel('y', { default: '' })

@@ -262,7 +262,7 @@ export class CanvasController {
     updateQueue = []; // 画布更新队列
     isUpdating = false; // 是否正在更新
     updateWorker = null; // 更新任务
-    updateWorkDelay = 500; // 更新延迟
+    updateWorkDelay = 999; // 更新延迟
 
     async updateCanvasJob() {
         if (!this.el) {

@@ -21,6 +21,7 @@ export function updateCanvasOptionsUnit(currentUnit) {
         'vertical',
         'blur'
     ]
+
     const absoluteUnits = ['px', 'cm', 'mm', 'in']
 
     function updateUnit(item) {
@@ -47,26 +48,6 @@ export function updateCanvasOptionsUnit(currentUnit) {
 
 
 const isNumber = (val) => typeof val === 'number'
-
-
-
-
-
-export function prasePxToCm(px) {
-    var targetEleWidth: any = 1
-    var cm = null;
-    var createEle = document.createElement('input');
-    var body = document.body;
-    createEle.setAttribute("style", "width:1cm !important;height:1cm !important;border-width:0px !important;padding:0px !important;margin:0px !important;");
-    createEle.id = "elementId_" + new Date().getTime();
-    createEle.type = "hidden";
-    body[0].appendChild(createEle);
-    var targetEle = document.getElementById(createEle.id);
-    targetEleWidth = window.getComputedStyle(targetEle).width.match(/^\d+\.?\d*/)[0];
-    cm = px / targetEleWidth;
-    targetEle.parentNode.removeChild(targetEle);
-    return cm;
-}
 
 
 
@@ -113,12 +94,10 @@ export function formatSizeOptionToPixelValue(size, elementRealSize = null /* 当
     }
 
     if (unit == 'vw') {
-
         let canvasPxWidth = formatSizeOptionToPixelValue({
             value: canvasOptions.value.width,
             unit: canvasOptions.value.unit,
         })
-
         return value * canvasPxWidth / 100
     }
 
@@ -525,10 +504,14 @@ export function createFilterFromOptions(options) {
 
 
 export function createTransformString(options) {
-    return `scale3d(${options.scaleX ?? 1}, ${options.scaleY ?? 1},  ${options.scaleZ ?? 1}) 
-    rotateX(${options.rotateX ?? 0}deg) 
-    rotateY(${options.rotateY ?? 0}deg) 
-    rotateZ(${options.rotateZ ?? 0}deg) 
-    skew(${options.skewX ?? 0}deg, ${options.skewY ?? 0}deg)`
+    
+    let val = `
+    scale3d(${options.scaleX ?? 1}, ${options.scaleY ?? 1},  ${options.scaleZ ?? 1}) 
+    rotateX(${options.rotateX ?? 0}deg)
+    rotateY(${options.rotateY ?? 0}deg)
+    rotateZ(${options.rotateZ ?? 0}deg)
+    translate3d(${formatToNativeSizeString(options.translateX)},${formatToNativeSizeString(options.translateY)},${formatToNativeSizeString(options.translateZ)})
+    skew(${options.skewX ?? 0}deg, ${options.skewY ?? 0}deg)
+    `
+    return val
 }
-

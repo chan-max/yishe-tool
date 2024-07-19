@@ -1,10 +1,10 @@
 import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../../index.tsx"
-import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, formatToNativeSizeString,createFilterFromOptions,createTransformString } from '../../helper.tsx'
+import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../../helper.tsx'
 import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watch } from "vue"
 // import CircleType from "circletype";
 import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistancePoint } from './calc.tsx'
 import { tify, sify } from 'chinese-conv';
-import { createFilterDefaultOptions } from "../defaultOptions.tsx";
+import { createFilterDefaultOptions, createTransformDefaultOptions, createPositionDefaultOptions } from "../defaultOptions.tsx";
 
 
 export interface TextCanvasChildOptions {
@@ -27,35 +27,7 @@ export const createDefaultCanvasChildTextOptions = () => {
             color: "#000",
             colorType: 'pure'
         },
-        position: {
-            center: true,
-            verticalCenter: true,
-            horizontalCenter: true,
-            top: {
-                value: 0,
-                unit: canvasUnit
-            },
-            left: {
-                value: 0,
-                unit: canvasUnit
-            },
-            bottom: {
-                value: 0,
-                unit: canvasUnit
-            },
-            right: {
-                value: 0,
-                unit: canvasUnit
-            }
-        },
-        scaleX: 1,
-        scaleY: 1,
-        scaleZ: 1,
-        rotateX: 0,
-        rotateY: 0,
-        rotateZ: 0,
-        skewX: 0,
-        skewY: 0,
+        position: createPositionDefaultOptions(canvasUnit),
         fontSize: {
             value: 14,
             unit: canvasUnit
@@ -86,7 +58,8 @@ export const createDefaultCanvasChildTextOptions = () => {
             type: 'pure',
             color: '#fff',
         },
-       ... createFilterDefaultOptions(canvasUnit),
+        ...createTransformDefaultOptions(canvasUnit),
+        ...createFilterDefaultOptions(canvasUnit),
         // 是否使用繁体字
         isTraditionalChinese: false
     }
@@ -155,9 +128,10 @@ export const Text = defineComponent({
                 fontFamily: props.options.fontFamilyInfo ? `font_${props.options.fontFamilyInfo.id}` : null,
                 writingMode: props.options.writingMode == 'htb' ? WritingMode.HTB : props.options.writingMode == 'vlr' ? WritingMode.VLR : props.options.writingMode == 'vrl' ? WritingMode.VRL : null,
                 transform: createTransformString(props.options),
-                filter:createFilterFromOptions(props.options),
+                filter: createFilterFromOptions(props.options),
                 textShadow: parseTextShadowOptionsToCSS(props.options.textShadow),
                 textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color,
+                perspective:formatToNativeSizeString(props.options.perspective),
                 ..._style,
             }
 
@@ -199,14 +173,14 @@ export const Text = defineComponent({
             var textContent = props.options.textContent
 
             // 设置为繁体字
-            if(props.options.isTraditionalChinese){
+            if (props.options.isTraditionalChinese) {
                 textContent = tify(textContent)
             }
-            
+
 
             // 生成文字单元格
             const rows = textContent.split('\n').filter((item) => item !== '')
-            
+
             textContentCells.value = rows.map((row) => {
                 return row.split('').map((content) => {
                     return {

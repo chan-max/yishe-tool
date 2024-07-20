@@ -39,7 +39,7 @@
                         type="number"
                         min="0"
                         step="1"
-                        style="width: 88px; height: 24px"
+                        style="width: 80px; height: 24px"
                         v-model.number="model[item.type].value"
                       >
                         <template #suffix>

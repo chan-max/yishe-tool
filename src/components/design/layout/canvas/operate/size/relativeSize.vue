@@ -9,7 +9,7 @@
 
             <el-popover trigger="hover" width="200">
                 <template #reference>
-                    <el-input style="width: 88px" size="small" v-model="width.value" step="10" type="number"
+                    <el-input style="width: 80px" size="small" v-model="width.value" step="10" type="number"
                         placeholder="宽">
                         <template #suffix>
                             <div style="font-size:1rem;">{{ width.unit }}</div>
@@ -31,7 +31,7 @@
 
             <el-popover trigger="hover" width="200">
                 <template #reference>
-                    <el-input style="width: 88px" size="small" v-model="height.value" step="10" type="number"
+                    <el-input style="width: 80px" size="small" v-model="height.value" step="10" type="number"
                         placeholder="高">
                         <template #suffix>
                             <div style="font-size:1rem;">{{ height.unit }}</div>

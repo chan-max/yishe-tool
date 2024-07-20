@@ -28,24 +28,46 @@ const isPromise = (val) => {
 
 
 export function formatUrl(url) {
-    if(!url){
+    if (!url) {
         return
     }
     url = url.trim();
     return url.startsWith('http') ? url : 'https://' + url;
 }
 
+
+
+
+
+
+
+
 class Utils {
 
     IN2CM = 2.539999918
 
-    CM2PX = CM2PX
+    CM2PX = CM2PX //  1厘米等于多少像素
 
     sleep = sleep
 
     formatUrl = formatUrl
 
     isPromise = isPromise
+
+
+    // 单位转换
+    pxToCM(px) {
+        return px / this.CM2PX
+    }
+
+    pxToMM(px) {
+        return px / this.CM2PX * 10
+    }
+
+    pxToIn(px) {
+        return px / this.CM2PX / this.IN2CM
+    }
+
 }
 
 

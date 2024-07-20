@@ -7,9 +7,9 @@ import { SvgFilter } from './svgFilter/index.tsx'
 /*
     用于辅助观察的网格背景
 */
-function createPngBackgroundStyle(scale = 1) {
+export function createPngBackgroundStyle(scale = 1, cellWidth = 10) {
     /* 模拟png背景 */
-    var size = 10 / scale
+    var size = cellWidth / scale
     return {
         background: '#fff!important',
         backgroundImage: `linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0), linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0)!important`,
@@ -22,7 +22,7 @@ function createPngBackgroundStyle(scale = 1) {
 export function createDefaultCanvasChildCanvasOptions() {
     return {
         type: 'canvas',
-        undeletable:true, // 不可删除
+        undeletable: true, // 不可删除
         ...createFilterDefaultOptions('px'),
         backgroundColor: {
             color: 'rgba(0,0,0,0)'

@@ -117,7 +117,7 @@ import operateItemFontSize from '@/components/design/layout/canvas/operate/fontS
 import operateItemFontWeight from '@/components/design/layout/canvas/operate/fontWeight.vue'
 import operateItemFontItalic from '@/components/design/layout/canvas/operate/italic.vue'
 import operateItemFontColor from '@/components/design/layout/canvas/operate/fontColor.vue'
-import operateItemFontFamily from '@/components/design/layout/canvas/operate/fontFamily.vue'
+import operateItemFontFamily from '@/components/design/layout/canvas/operate/fontFamily/fontFamily.vue'
 import operateItemLineHeight from '@/components/design/layout/canvas/operate/lineHeight.vue'
 import operateItemLetterSpacing from '@/components/design/layout/canvas/operate/letterSpacing.vue'
 

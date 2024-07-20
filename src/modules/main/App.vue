@@ -39,10 +39,10 @@ const screenSize = ref(window.innerWidth)
 const customToken = computed(() => {
   if (screenSize.value < 768) {
     return { fontSize: 10 }
-  } else if (screenSize.value < 1200) {
-    return { fontSize: 11 }
+  } else if (screenSize.value < 1960) {
+    return { fontSize: 10 }
   } else {
-    return { fontSize: 12 }
+    return { fontSize: 11 }
   }
 })
 

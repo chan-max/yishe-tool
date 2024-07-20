@@ -35,8 +35,8 @@
             </template>
             <el-row>
               <el-col :span="24">
-                <operateItemColor label="画布背景颜色" tooltip="画布背景颜色" 
-                  v-model="currentOperatingCanvasChild.backgroundColor"></operateItemColor>
+                <operateItemColor label="画布背景颜色" tooltip="画布背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
+                </operateItemColor>
               </el-col>
             </el-row>
           </el-collapse-item>
@@ -460,14 +460,14 @@ import operateItemFontSize from "@/components/design/layout/canvas/operate/fontS
 import operateItemFontWeight from "@/components/design/layout/canvas/operate/fontWeight.vue";
 import operateItemFontItalic from "@/components/design/layout/canvas/operate/italic.vue";
 import operateItemFontColor from "@/components/design/layout/canvas/operate/fontColor.vue";
-import operateItemFontFamily from "@/components/design/layout/canvas/operate/fontFamily.vue";
+import operateItemFontFamily from "@/components/design/layout/canvas/operate/fontFamily/fontFamily.vue";
 import operateItemLineHeight from "@/components/design/layout/canvas/operate/lineHeight.vue";
 import operateItemLetterSpacing from "@/components/design/layout/canvas/operate/letterSpacing.vue";
 import operateItemWritingMode from "@/components/design/layout/canvas/operate/writingMode.vue";
 import operateItemSize from "@/components/design/layout/canvas/operate/size/relativeSize.vue";
 import operateItemAbsoluteSize from "@/components/design/layout/canvas/operate/size/absoluteSize.vue";
 // import operateItemAspectRatio from "@/components/design/layout/canvas/operate/aspectRatio.vue";
-import operateItemPosition from "@/components/design/layout/canvas/operate/position.vue";
+import operateItemPosition from "@/components/design/layout/canvas/operate/position/position.vue";
 import operateItemScale from "@/components/design/layout/canvas/operate/scale.vue";
 import operateItemRotate from "@/components/design/layout/canvas/operate/rotate.vue";
 import operateItemSkew from "@/components/design/layout/canvas/operate/skew.vue";
@@ -546,14 +546,7 @@ function fontLoad() {
 }
 </script>
 <style lang="less">
-.canvas-operate-form{
-  --el-border-radius-base:2px;
-  --el-border-color:#f1f1f1!important;
-
-}
-
-
-
+.canvas-operate-form {}
 </style>
 <style scoped>
 :deep(.el-scrollbar__bar.is-vertical) {

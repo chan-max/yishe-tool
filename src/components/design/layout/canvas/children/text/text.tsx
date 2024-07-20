@@ -5,7 +5,7 @@ import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watc
 import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistancePoint } from './calc.tsx'
 import { tify, sify } from 'chinese-conv';
 import { createFilterDefaultOptions, createTransformDefaultOptions, createPositionDefaultOptions } from "../defaultOptions.tsx";
-
+import { initFontFamilyInfoWithMessage } from '@/components/design/layout/canvas/operate/fontFamily/index.ts'
 
 export interface TextCanvasChildOptions {
     center: boolean | null | undefined
@@ -61,7 +61,9 @@ export const createDefaultCanvasChildTextOptions = () => {
         ...createTransformDefaultOptions(canvasUnit),
         ...createFilterDefaultOptions(canvasUnit),
         // 是否使用繁体字
-        isTraditionalChinese: false
+        isTraditionalChinese: false,
+        containerEl: null,
+        targetEl: null,
     }
 }
 
@@ -77,6 +79,10 @@ export const Text = defineComponent({
 
         // 文字容器，用于布局
         const textContainerRef = ref()
+
+        watch(textContainerRef, () => {
+            props.options.targetEl = textContainerRef.value
+        })
 
         // 用来包裹文字单元块 ， 需要相对布局
         const roundTextInnerContainerRef = ref()
@@ -115,27 +121,33 @@ export const Text = defineComponent({
                 ..._containerStyle
             }
 
-            const fontSize = formatToNativeSizeOption(props.options.fontSize)
-
             var style: any = {
                 flexShrink: 0,
-                fontSize: fontSize.value + fontSize.unit,
+                fontSize: formatToNativeSizeString(props.options.fontSize),
                 fontWeight: props.options.fontWeight,
                 fontStyle: props.options.italic ? 'italic' : 'normal',
-                whiteSpace: 'pre-line', // 用于显示换行
                 lineHeight: props.options.lineHeight + 'em',
                 letterSpacing: props.options.letterSpacing + 'em',
-                fontFamily: props.options.fontFamilyInfo ? `font_${props.options.fontFamilyInfo.id}` : null,
+                fontFamily: null,
                 writingMode: props.options.writingMode == 'htb' ? WritingMode.HTB : props.options.writingMode == 'vlr' ? WritingMode.VLR : props.options.writingMode == 'vrl' ? WritingMode.VRL : null,
                 transform: createTransformString(props.options),
                 filter: createFilterFromOptions(props.options),
                 textShadow: parseTextShadowOptionsToCSS(props.options.textShadow),
                 textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color,
-                perspective:formatToNativeSizeString(props.options.perspective),
+                perspective: formatToNativeSizeString(props.options.perspective),
+
+                // 用于显示换行
+                whiteSpace: 'pre-line',
+                textWrap: 'nowrap',
                 ..._style,
             }
 
 
+            if (props.options.fontFamilyInfo) {
+                style.fontFamily = `font_${props.options.fontFamilyInfo.id}`
+                // 由于不确定字体是否加载，需要初始化一下
+                initFontFamilyInfoWithMessage(props.options.fontFamilyInfo)
+            }
 
             // 处理文字颜色
             if (props.options.fontColor) {

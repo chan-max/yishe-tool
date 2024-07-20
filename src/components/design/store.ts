@@ -344,8 +344,12 @@ export const isUsingClickDelaySticker = ref(false)
 export const clickDelaySticker = ref()
 
 
+/*
+    当前页面中使用并加载了哪些字体 , 并且字体是否在加载中
+*/
 export const cacheFontFamily = ref({})
 
+export const cacheFontFamilyLoadingMap = ref({})
 
 /*
     svg 画布

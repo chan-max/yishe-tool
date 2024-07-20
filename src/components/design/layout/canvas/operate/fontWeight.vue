@@ -3,7 +3,7 @@
     <template #icon> <icon-bold></icon-bold> </template>
     <template #name> 厚度 </template>
     <template #content>
-      <el-select v-model="model" size="small" style="width: 88px">
+      <el-select v-model="model" size="small" style="width: 80px">
         <template #label="{ label, value }">
           <span :style="{ fontWeight: value }"> {{ label }} </span>
         </template>

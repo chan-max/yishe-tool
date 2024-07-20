@@ -21,11 +21,11 @@
                     </template>
                     <el-row align="middle" justify="end" :gutter="12">
                         <el-col :span="6"> x轴 </el-col>
-                        <el-col :span="18"> <el-slider :min="0" :max="10" :step=".1" v-model="x" /></el-col>
+                        <el-col :span="18"> <el-slider :min="0" :max="10" :step=".1" v-model="x" :marks="marks" :format-tooltip="formatTooltip"/></el-col>
                         <el-col :span="6"> y轴 </el-col>
-                        <el-col :span="18"> <el-slider :min="0" :max="10" :step=".1" v-model="y" /></el-col>
+                        <el-col :span="18"> <el-slider :min="0" :max="10" :step=".1" v-model="y" :marks="marks" :format-tooltip="formatTooltip"/></el-col>
                         <el-col :span="6"> z轴 </el-col>
-                        <el-col :span="18"> <el-slider :min="0" :max="10" :step=".1" v-model="z" /></el-col>
+                        <el-col :span="18"> <el-slider :min="0" :max="10" :step=".1" v-model="z" :marks="marks" :format-tooltip="formatTooltip"/></el-col>
                     </el-row>
                 </el-popover>
             </el-tooltip>
@@ -40,6 +40,21 @@ import { ref } from 'vue'
 const x = defineModel('x', { default: '' })
 const y = defineModel('y', { default: '' })
 const z = defineModel('z', { default: '' })
+
+
+function formatTooltip(val){
+
+    if(val == 1){
+        return '原始尺寸'
+    }
+
+    return val 
+}
+
+const marks = ref({
+    1:''
+})
+
 </script>
   
 <style></style>

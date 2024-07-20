@@ -1,9 +1,11 @@
 <template>
     <operate-form-item>
-        <template #icon> <icon-font-family></icon-font-family> </template>
+        <template #icon>
+            <icon></icon>
+        </template>
         <template #name> 个性字体</template>
         <template #content>
-            <el-select v-model="model" size="small" filterable clearable :filter-method="filter">
+            <el-select v-model="model" size="small" filterable clearable :filter-method="filter" style="width:180px">
                 <el-option-group label="网络字体">
                     <template v-for="item in list" :key="item.id">
                         <el-option v-if="!item.hide" :label="item.name" :value="item">
@@ -17,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import iconFontFamily from "@/components/design/assets/icon/font-family.svg?component";
+import icon from "@/components/design/assets/icon/font-family.svg?component";
 import { ref, onBeforeMount, watch } from "vue";
 import { getFontListApi, fetchFile } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
@@ -25,6 +27,7 @@ import desimage from "@/components/design/components/image.vue";
 import { cacheFontFamily } from "@/components/design/store";
 import { message } from "ant-design-vue";
 import Utils from '@/common/utils'
+import { initFontFamilyInfo, initFontFamilyInfoWithMessage } from './index.ts'
 
 const model = defineModel({});
 
@@ -42,49 +45,16 @@ watch(model, async () => {
         return;
     }
     const { url, id, name } = info;
-    if (cacheFontFamily.value[id]) {
-        return;
-    }
 
-    message.loading({
-        content: `正在加载字体${name}`,
-        key: "loadfont",
-        duration: 0,
-    });
-
-    var file
-
-    try{
-        file = await fetchFile(url);
-    }catch(e){
-        return message.error({
-            content:`字体${name}加载失败`,
-            key: "loadfont",
-        })
-    }
-
-    const fontStyle = document.createElement("style");
-    const fontId = `font_${id}`;
-    fontStyle.innerHTML = `
-                @font-face {
-                    font-family: ${fontId};
-                    src: url(${URL.createObjectURL(file)}); 
-                }
-    `;
-    document.head.appendChild(fontStyle);
-    fontStyle.setAttribute("font_id", fontId);
-    cacheFontFamily.value[id] = fontStyle;
-
-    message.success({
-        content: `字体加载成功`,
-        key: "loadfont",
-    });
+    await initFontFamilyInfoWithMessage(info)
 
     emits('font-load')
-},{
-    immediate:true
+}, {
+    immediate: true
 });
 
+
+// 字体列表
 const { list, getList } = usePaging(
     (params) => {
         return getFontListApi({

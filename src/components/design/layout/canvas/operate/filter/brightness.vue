@@ -6,7 +6,7 @@
         <template #name> 亮度 </template>
         <template #content>
             <el-tooltip content="亮度效果，0位全黑，100为正常显示效果" :hide-after="0">
-                <el-input style="width:84px" type="number" v-model="model" size="small" max="999" min="0" step="1">
+                <el-input style="width:80px" type="number" v-model="model" size="small" max="999" min="0" step="1">
                     <template #suffix>
                         <div style="font-size:1rem;"> % </div>
                     </template>

@@ -1,0 +1,241 @@
+<template>
+  <operate-form-item>
+    <template #icon> <icon-position></icon-position> </template>
+    <template #name> 显示位置 </template>
+    <template #content>
+      <el-popover width="auto" trigger="click">
+        <template #reference>
+          <el-button size="small" link>{{ positionLabel }}</el-button>
+        </template>
+        <div>
+          <el-row v-if="active == 'params'" align="middle" justify="center" style="width:160px;row-gap:.2rem;">
+            <el-col :span="24">
+              <div class="flex items-center justify-between">
+                <span style="font-weight: bold; padding: 1em 0">优先级自上而下排列 </span>
+                <el-button @click="active = 'drag'" link>
+                  <AimOutlined />手动调整
+                </el-button>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div>整体居中</div>
+            </el-col>
+            <el-col :span="16">
+              <div class="content">
+                <el-switch size="small" v-model="model.center"></el-switch>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div>垂直居中</div>
+            </el-col>
+            <el-col :span="16">
+              <div class="content">
+                <el-switch size="small" v-model="model.verticalCenter"></el-switch>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div>水平居中</div>
+            </el-col>
+            <el-col :span="16">
+              <div class="content">
+                <el-switch size="small" v-model="model.horizontalCenter"></el-switch>
+              </div>
+            </el-col>
+            <template v-for="item in positionOptions">
+              <el-col :span="8">
+                <div>{{ item.label }}</div>
+              </el-col>
+              <el-col :span="16">
+                <div>
+                  <el-popover placement="right" :teleported="false">
+                    <template #reference>
+                      <div class="content">
+                        <el-input style="width:80px" size="small" type="number" min="0" step="1"
+                          v-model.number="model[item.type].value">
+                          <template #suffix>
+                            <span style="font-size: 1rem;">
+                              {{ model[item.type].unit }}
+                            </span>
+                          </template>
+                        </el-input>
+                      </div>
+                    </template>
+                    <el-row align="middle" justify="end">
+                      <el-col :span="24">
+                        <el-radio-group v-model="model[item.type].unit" size="small">
+                          <el-radio v-for="(u, index) in unitOptions" :value="u.value">
+                            <span style="font-size: 1rem">{{ u.label }}</span>
+                          </el-radio>
+                        </el-radio-group>
+                      </el-col>
+                    </el-row>
+                  </el-popover>
+                </div>
+              </el-col>
+            </template>
+          </el-row>
+
+          <div v-if="active == 'drag'">
+            <div class="flex justify-between">
+              <el-button link style="padding-bottom: 1rem;" @click="active = 'params'">
+                <LeftOutlined />返回
+              </el-button>
+              <el-button @click="reset" link style="padding-bottom: 1rem;">
+                重置位置
+              </el-button>
+            </div>
+            <dragger ref="draggerRef" v-bind="draggerAttrs" v-model="draggerValue" @init="draggerInit"
+              @drag="draggerDrag">
+            </dragger>
+          </div>
+        </div>
+      </el-popover>
+    </template>
+  </operate-form-item>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import iconPosition from "@/components/design/assets/icon/position.svg?component";
+import { getPositionInfoFromOptions, formatSizeOptionToPixelValue } from "@/components/design/layout/canvas/helper.tsx";
+import { canvasOptions, currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
+import dragger from './dragger.vue'
+import Utils from '@/common/utils'
+
+
+import { Pointer } from '@element-plus/icons-vue'
+import { AimOutlined, LeftOutlined } from '@ant-design/icons-vue'
+
+const model = defineModel({
+  default: {} as any
+})
+
+
+const active = ref('params')
+
+const positionLabel = computed(() => {
+  return getPositionInfoFromOptions(model.value).label;
+});
+
+/*
+ 像素
+ 宽度百分比，
+ 高度百分比
+*/
+
+const draggerRef = ref()
+
+function reset() {
+  draggerRef.value.reset()
+}
+
+const draggerValue = ref({
+  x: 0,
+  y: 0
+})
+
+const draggerAttrs = computed(() => {
+
+  // 计算 宽高，子元素宽高 缩放尺寸
+  const cw = formatSizeOptionToPixelValue({
+    value: canvasOptions.value.width,
+    unit: canvasOptions.value.unit
+  })
+
+  const ch = formatSizeOptionToPixelValue({
+    value: canvasOptions.value.height,
+    unit: canvasOptions.value.unit
+  })
+
+  // 控制拖拽板的大小
+  let scale = 200 / Math.max(cw, ch)
+
+
+  let target = currentOperatingCanvasChild.value.targetEl
+
+  let tw = Number(window.getComputedStyle(target).width.split('px')[0])
+  let th = Number(window.getComputedStyle(target).height.split('px')[0])
+
+
+  return {
+    scale: scale,
+    containerWidth: cw,
+    containerHeight: ch,
+    targetWidth: tw,
+    targetHeight: th,
+  }
+})
+
+
+function draggerInit() {
+  // 确认使用拖拽，清理参数 状态，
+  model.value.center = false
+  model.value.horizontalCenter = false
+  model.value.verticalCenter = false
+  model.value.top.value = 0
+  model.value.left.value = 0
+}
+
+
+// 实时拖拽触发
+function draggerDrag(pos) {
+  let { x, y } = pos
+
+  var top, left
+
+  // 强制把单位调整为画布单位
+  let canvasUnit = canvasOptions.value.unit
+
+  if (canvasUnit == 'px') {
+    model.value.top.value = y
+    model.value.left.value = x
+  }
+
+}
+
+
+const unitOptions = computed(() => {
+  return [
+    {
+      label: `使用当前画布单位(${canvasOptions.value.unit})`,
+      value: canvasOptions.value.unit,
+    },
+    {
+      label: "相对于画布宽的百分比",
+      value: "vw",
+    },
+    {
+      label: "相对于画布高的百分比",
+      value: "vh",
+    },
+  ]
+});
+
+const positionOptions = ref([
+  {
+    label: "距离顶部",
+    type: "top",
+  },
+  {
+    label: "距离左侧",
+    type: "left",
+  },
+  {
+    label: "距离底部",
+    type: "bottom",
+  },
+  {
+    label: "距离右侧",
+    type: "right",
+  },
+]);
+</script>
+
+<style scoped lang="less">
+.content {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+</style>

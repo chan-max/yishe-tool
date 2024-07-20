@@ -10,7 +10,7 @@
                 <el-popover  width="180" trigger="click">
                     <template #reference>
                         <el-input size="small" type="number" min="0" step="1"
-                        style="width:84px;"
+                        style="width:80px;"
                             v-model.number="model.horizontal.value">
                             <template #suffix>
                                 <div style="font-size:1rem;"> {{ model.horizontal.unit }}
@@ -33,7 +33,7 @@
                 <el-popover  width="180" trigger="click">
                     <template #reference>
                         <el-input size="small" type="number" min="0" step="1"
-                            style="width:84px;"
+                            style="width:80px;"
                             v-model.number="model.vertical.value">
                             <template #suffix>
                                 <div style="font-size:1rem;"> {{ model.vertical.unit }}

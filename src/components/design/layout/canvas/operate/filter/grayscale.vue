@@ -6,7 +6,7 @@
         <template #name> 灰度 </template>
         <template #content>
             <el-tooltip content="默认为0" :hide-after="0">
-                <el-input style="width:84px" type="number" v-model="model" size="small" max="100" min="0" step="1">
+                <el-input style="width:80px" type="number" v-model="model" size="small" max="100" min="0" step="1">
                     <template #suffix>
                         <div style="font-size:1rem;"> % </div>
                     </template>

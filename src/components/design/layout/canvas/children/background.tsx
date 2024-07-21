@@ -48,7 +48,7 @@ export const createDefaultCanvasChildBackgroundOptions = () => {
         },
         backgroundColor: {
             color:'#000',
-            colorType:'pure'
+            type:'pure'
         },
     }
 }

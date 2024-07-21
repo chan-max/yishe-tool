@@ -3,6 +3,9 @@ import Utils from '@/common/utils';
 import { canvasOptions } from "./index"
 
 
+/*
+    更新所有子元素的单位值
+*/
 export function updateCanvasOptionsUnit(currentUnit) {
     const unitKeys = [
         'width',
@@ -24,6 +27,8 @@ export function updateCanvasOptionsUnit(currentUnit) {
 
     const absoluteUnits = ['px', 'cm', 'mm', 'in']
 
+    const excludeKeys = ['targetEl']
+
     function updateUnit(item) {
         if (Array.isArray(item)) {
             return item.forEach(updateUnit)
@@ -34,11 +39,16 @@ export function updateCanvasOptionsUnit(currentUnit) {
         }
 
         if (item && !isNaN(Number(item.value)) && item.unit && absoluteUnits.includes(item.unit)) {
-
             return item.unit = currentUnit
         }
 
+
         for (let key in item) {
+
+            if (excludeKeys.includes(key)) {
+                return
+            }
+
             updateUnit(item[key])
         }
     }
@@ -235,12 +245,12 @@ function getPositionRealLabel(direction, size) {
 export function getPositionInfoFromOptions(position) {
     const containerStyle: any = {}
     const style: any = {}
-    const labels = []
+
 
     if (!position) {
         return {
             containerStyle,
-            style, labels
+            style
         }
     }
 
@@ -248,12 +258,12 @@ export function getPositionInfoFromOptions(position) {
         containerStyle.display = 'flex'
         containerStyle.alignItems = 'center'
         containerStyle.justifyContent = 'center'
-        labels.push('整体居中')
+
     } else if (position.verticalCenter && position.horizontalCenter) {
         containerStyle.display = 'flex'
         containerStyle.alignItems = 'center'
         containerStyle.justifyContent = 'center'
-        labels.push('整体居中')
+
     } else if (!position.verticalCenter && position.horizontalCenter) {
         containerStyle.display = 'flex'
         containerStyle.justifyContent = 'center'
@@ -262,14 +272,12 @@ export function getPositionInfoFromOptions(position) {
         if (isNumber(position.top.value)) {
             let top = formatToNativeSizeOption(position.top)
             style.top = top.value + top.unit
-            labels.push(getPositionRealLabel('top', top))
+
         } else if (isNumber(style.bottom.value)) {
             let bottom = formatToNativeSizeOption(position.bottom)
             style.bottom = bottom.value + bottom.unit
-            labels.push(getPositionRealLabel('bottom', bottom))
         }
 
-        labels.push('水平居中')
     } else if (position.verticalCenter && !position.horizontalCenter) {
         containerStyle.display = 'flex'
         containerStyle.alignItems = 'center'
@@ -279,14 +287,14 @@ export function getPositionInfoFromOptions(position) {
         if (isNumber(position.left.value)) {
             let left = formatToNativeSizeOption(position.left)
             style.left = left.value + left.unit
-            labels.push(getPositionRealLabel('left', left))
+
         } else if (isNumber(style.right.value)) {
             let right = formatToNativeSizeOption(position.right)
             style.right = right.value + right.unit
-            labels.push(getPositionRealLabel('right', right))
+
         }
 
-        labels.push('垂直居中')
+
     } else {
         // 自定义属性
         style.position = 'absolute'
@@ -294,29 +302,34 @@ export function getPositionInfoFromOptions(position) {
         if (isNumber(position.top.value)) {
             let top = formatToNativeSizeOption(position.top)
             style.top = top.value + top.unit
-            labels.push(getPositionRealLabel('top', top))
+
         } else if (isNumber(position.bottom.value)) {
             let bottom = formatToNativeSizeOption(position.bottom)
             style.bottom = bottom.value + bottom.unit
-            labels.push(getPositionRealLabel('bottom', bottom))
+
         }
 
         if (isNumber(position.left.value)) {
             let left = formatToNativeSizeOption(position.left)
             style.left = left.value + left.unit
-            labels.push(getPositionRealLabel('left', left))
+
         } else if (isNumber(position.right.value)) {
             let right = formatToNativeSizeOption(position.right)
             style.right = right.value + right.unit
-            labels.push(getPositionRealLabel('right', right))
+
         }
     }
 
     return {
         containerStyle,
         style,
-        label: labels.length == 0 ? '未设置' : labels.join(' , ')
     }
+}
+
+export function getPositionLabelFromOptions(position) {
+    const labels = []
+
+    return '位置'
 }
 
 
@@ -504,7 +517,7 @@ export function createFilterFromOptions(options) {
 
 
 export function createTransformString(options) {
-    
+
     let val = `
     scale3d(${options.scaleX ?? 1}, ${options.scaleY ?? 1},  ${options.scaleZ ?? 1}) 
     rotateX(${options.rotateX ?? 0}deg)

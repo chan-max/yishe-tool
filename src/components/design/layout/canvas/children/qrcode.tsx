@@ -1,14 +1,14 @@
 import QRCodeStyling from 'qr-code-styling';
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, watch } from 'vue'
 import { canvasOptions, updateCanvas } from '../index.tsx'
 
 import { getPositionInfoFromOptions, formatToNativeSizeString, formatSizeOptionToPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
 
+import { createPositionDefaultOptions } from './defaultOptions.tsx';
+
 import { parse } from 'gradient-parser'
 
-/*
-*/
 
 export const createDefaultCanvasChildQrcodeOptions = () => {
 
@@ -17,31 +17,11 @@ export const createDefaultCanvasChildQrcodeOptions = () => {
     return {
         type: 'qrcode',
         qrCodeColor: {
-            color:'#6900ff',
-            colorType:'pure'
+            color: '#6900ff',
+            type: 'pure'
         },
         errorCorrectionLevel: 'H',
-        position: {
-            center: true,
-            verticalCenter: true,
-            horizontalCenter: true,
-            top: {
-                value: 0,
-                unit: canvasUnit
-            },
-            left: {
-                value: 0,
-                unit: canvasUnit
-            },
-            bottom: {
-                value: 0,
-                unit: canvasUnit
-            },
-            right: {
-                value: 0,
-                unit: canvasUnit
-            }
-        },
+        position: createPositionDefaultOptions(canvasUnit),
         padding: {
             top: {
                 value: 0,
@@ -76,10 +56,10 @@ export const createDefaultCanvasChildQrcodeOptions = () => {
             value: 100,
             unit: canvasUnit
         },
-        qrcodeDotType:'sequare',
+        qrcodeDotType: 'sequare',
         backgroundColor: {
-            color:'#000',
-            colorType:'pure'
+            color: '#000',
+            type: 'pure'
         },
         backgroundUnit: canvasUnit,
         qrcodeContent: '1s.design',
@@ -122,8 +102,8 @@ function formatToQrcodeGradient(color) {
 
     const colorStops = ast.colorStops.map((item) => {
         return {
-            offset: item.length.value / 100 ,
-            color:  `rgba(${item.value[0]},${item.value[1]},${item.value[2]},${item.value[3]})`
+            offset: item.length.value / 100,
+            color: `rgba(${item.value[0]},${item.value[1]},${item.value[2]},${item.value[3]})`
         }
     })
 
@@ -137,9 +117,6 @@ function formatToQrcodeGradient(color) {
     }
 }
 
-function isGradientColor(color) {
-    return typeof color == 'string' ? color.includes('gradient') : color.colorType == 'gradient'
-}
 
 async function createQrcodeUrl(options) {
 
@@ -170,7 +147,7 @@ async function createQrcodeUrl(options) {
     }
 
     if (options.qrCodeColor) {
-        if (options.qrCodeColor.colorType == 'gradient') {
+        if (options.qrCodeColor.type == 'gradient') {
             qrCodeOptions.dotsOptions.gradient = formatToQrcodeGradient(options.qrCodeColor.color)
         } else {
             qrCodeOptions.dotsOptions.color = options.qrCodeColor.color
@@ -192,6 +169,12 @@ export const Qrcode = defineComponent({
         const options = props.options
 
         const qrcodeUrl = ref()
+
+        const targetEl = ref()
+
+        watch(targetEl, () => {
+            props.options.targetEl = targetEl.value
+        })
 
         watchEffect(() => {
             createQrcodeUrl(props.options).then((url) => {
@@ -216,7 +199,7 @@ export const Qrcode = defineComponent({
                 ..._containerStyle
             }
 
-             
+
             let padding = getPaddingRealPixel(props.options.padding, {
                 width: props.options.width,
                 height: props.options.height,
@@ -228,8 +211,8 @@ export const Qrcode = defineComponent({
             })
 
             const style = {
-                width:formatToNativeSizeString(props.options.width),
-                height:formatToNativeSizeString(props.options.height),
+                width: formatToNativeSizeString(props.options.width),
+                height: formatToNativeSizeString(props.options.height),
                 flexShrink: 0,
                 background: props.options.backgroundColor.color,
                 padding,
@@ -238,7 +221,7 @@ export const Qrcode = defineComponent({
             }
 
             return <div style={containerStyle}>
-                {qrcodeUrl.value ? <img onLoad={updateCanvas} style={style} src={qrcodeUrl.value}></img> : null}
+                {qrcodeUrl.value ? <img ref={targetEl} onLoad={updateCanvas} style={style} src={qrcodeUrl.value}></img> : null}
             </div>
         }
     }

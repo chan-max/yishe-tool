@@ -68,6 +68,15 @@ class Utils {
         return px / this.CM2PX / this.IN2CM
     }
 
+
+    getComputedWidth(el) {
+        return Number(window.getComputedStyle(el).width.split('px')[0])
+    }
+
+    getComputedHeight(el) {
+        return Number(window.getComputedStyle(el).height.split('px')[0])
+    }
+
 }
 
 

@@ -137,11 +137,11 @@ export const createDefaultCanvasChildSvgRectOptions = () => {
     return {
         backgroundColor: {
             color: '#fff',
-            colorType: 'pure'
+            type: 'pure'
         },
         borderColor: {
             color: '#fff',
-            colorType: 'pure'
+            type: 'pure'
         },
         borderWidth: {
             value: 0,
@@ -183,7 +183,7 @@ function createSvgGradientCache(colorOption) {
 }
 
 function getSvgGradientColorFromColorOption(colorOption) {
-    if (colorOption.colorType == 'pure') {
+    if (colorOption.type == 'pure') {
         return colorOption.color
     }
     if (!svgGradientCache[colorOption.color]) {
@@ -193,7 +193,7 @@ function getSvgGradientColorFromColorOption(colorOption) {
 }
 
 function getSvgGradientRenderFromColorOption(colorOption) {
-    if (colorOption.colorType == 'pure') {
+    if (colorOption.type == 'pure') {
         return
     }
     if (!svgGradientCache[colorOption.color]) {
@@ -247,11 +247,11 @@ export const createDefaultCanvasChildSvgEllipseOptions = () => {
     return {
         backgroundColor: {
             color: '#fff',
-            colorType: 'pure'
+            type: 'pure'
         },
         borderColor: {
             color: '#fff',
-            colorType: 'pure'
+            type: 'pure'
         },
         borderWidth: {
             value: 0,

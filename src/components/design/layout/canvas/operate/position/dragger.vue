@@ -18,9 +18,10 @@
                 height: targetHeight + 'px',
                 left: position.x + 'px',
                 top: position.y + 'px',
-                cursor: isDragging ? 'grabbing' : 'grab'
+                cursor: isDragging ? 'grabbing' : 'grab',
+                fontSize: Math.min(targetWidth, targetHeight) / 4 + 'px'
             }" @mousedown="startDrag">
-                {{ position }}
+            
             </div>
         </div>
     </div>
@@ -68,11 +69,12 @@ defineExpose({
         position.value = {
             x: 0, y: 0,
         }
+        emits('drag', position.value)
     }
 })
 
 
-const emits = defineEmits(['drag','init'])
+const emits = defineEmits(['drag', 'init'])
 
 
 const targetContainerRef = ref(null);
@@ -138,7 +140,7 @@ onUnmounted(() => {
 
 .target {
     position: absolute;
-    background-color: #3498db;
+    background-color: rgba(115, 0, 255, .3);
     color: white;
     display: flex;
     align-items: center;

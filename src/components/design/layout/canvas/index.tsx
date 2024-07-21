@@ -33,8 +33,8 @@ export const canvasOptions = ref({
     unit: 'px',
     showCanvasRealSize: false,
     supportBackgroundColor: {
-        type:'pure',
-        color:'rgba(0,0,0,0)'
+        type: 'pure',
+        color: 'rgba(0,0,0,0)'
     },
     children: [
         // 默认会存在一个画布元素
@@ -321,8 +321,7 @@ export class CanvasController {
 
             this.updateCanvas()
 
-            return <Canvas options={canvasOptions.value.children.find((item) => item.type == 'canvas')
-        }>
+            return <Canvas options={canvasOptions.value.children.find((item) => item.type == 'canvas')}>
                 {children}
             </Canvas>
         }

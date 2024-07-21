@@ -162,7 +162,7 @@ function createForeignObject(options) {
 }
 
 function isGradientColor(color) {
-    return typeof color == 'string' ? color.includes('gradient') : color.colorType == 'gradient'
+    return typeof color == 'string' ? color.includes('gradient') : color.type == 'gradient'
 }
 
 

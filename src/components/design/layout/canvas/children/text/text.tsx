@@ -6,6 +6,7 @@ import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistance
 import { tify, sify } from 'chinese-conv';
 import { createFilterDefaultOptions, createTransformDefaultOptions, createPositionDefaultOptions } from "../defaultOptions.tsx";
 import { initFontFamilyInfoWithMessage } from '@/components/design/layout/canvas/operate/fontFamily/index.ts'
+import Utils from "@/common/utils.ts";
 
 export interface TextCanvasChildOptions {
     center: boolean | null | undefined
@@ -25,7 +26,7 @@ export const createDefaultCanvasChildTextOptions = () => {
         type: 'text',
         fontColor: {
             color: "#000",
-            colorType: 'pure'
+            type: 'pure'
         },
         position: createPositionDefaultOptions(canvasUnit),
         fontSize: {
@@ -82,6 +83,11 @@ export const Text = defineComponent({
 
         watch(textContainerRef, () => {
             props.options.targetEl = textContainerRef.value
+        })
+
+        onUpdated(() => {
+            props.options.targetComputedWidth = Utils.getComputedWidth(textContainerRef.value)
+            props.options.targetComputedHeight = Utils.getComputedHeight(textContainerRef.value)
         })
 
         // 用来包裹文字单元块 ， 需要相对布局
@@ -151,7 +157,7 @@ export const Text = defineComponent({
 
             // 处理文字颜色
             if (props.options.fontColor) {
-                if (props.options.fontColor.colorType == 'gradient') {
+                if (props.options.fontColor.type == 'gradient') {
                     style.background = props.options.fontColor.color
                     style.backgroundClip = 'text'
                     style.color = 'transparent';

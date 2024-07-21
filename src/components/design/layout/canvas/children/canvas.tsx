@@ -105,6 +105,7 @@ export const Canvas = defineComponent({
                     {ctx.slots.default()}
                 </div>
 
+
                 {/* 真实的画布 */}
                 <canvas id={currentCanvasControllerInstance.value.canvasId} style={canvasStyle} width={pxWidth} height={pxHeight}></canvas>
             </div>

@@ -394,6 +394,16 @@
               <div class="title">中心图片设置</div>
             </template>
           </el-collapse-item>
+          <el-collapse-item name="common">
+            <template #title>
+              <div class="title">通用属性</div>
+            </template>
+            <el-col :span="24">
+              <operateItemZindex v-model="currentOperatingCanvasChild.zIndex">
+              </operateItemZindex>
+            </el-col>
+          </el-collapse-item>
+
         </el-collapse>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.RECT">

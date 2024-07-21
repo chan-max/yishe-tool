@@ -31,7 +31,7 @@ const props = defineProps({
 function setTopZIndex() {
     let maxZIndex = getCanvasTopZIndexChild()?.zIndex || 0
 
-    if (maxZIndex > currentOperatingCanvasChild.value.zIndex) {
+    if (maxZIndex >= currentOperatingCanvasChild.value.zIndex) {
         currentOperatingCanvasChild.value.zIndex = maxZIndex + 1
     }
 }

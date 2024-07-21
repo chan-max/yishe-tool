@@ -97,7 +97,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import iconPosition from "@/components/design/assets/icon/position.svg?component";
-import { getPositionInfoFromOptions, formatSizeOptionToPixelValue } from "@/components/design/layout/canvas/helper.tsx";
+import { getPositionInfoFromOptions, getPositionLabelFromOptions,formatSizeOptionToPixelValue } from "@/components/design/layout/canvas/helper.tsx";
 import { canvasOptions, currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 import dragger from './dragger.vue'
 import Utils from '@/common/utils'
@@ -114,7 +114,7 @@ const model = defineModel({
 const active = ref('params')
 
 const positionLabel = computed(() => {
-  return getPositionInfoFromOptions(model.value).label;
+  return getPositionLabelFromOptions(model.value);
 });
 
 /*
@@ -148,27 +148,25 @@ const draggerAttrs = computed(() => {
   })
 
   // 控制拖拽板的大小
-  let scale = 200 / Math.max(cw, ch)
+  let scale = 240 / Math.max(cw, ch)
 
-
-  let target = currentOperatingCanvasChild.value.targetEl
-
-  let tw = Number(window.getComputedStyle(target).width.split('px')[0])
-  let th = Number(window.getComputedStyle(target).height.split('px')[0])
 
 
   return {
     scale: scale,
     containerWidth: cw,
     containerHeight: ch,
-    targetWidth: tw,
-    targetHeight: th,
+    targetWidth: currentOperatingCanvasChild.value.targetComputedWidth,
+    targetHeight: currentOperatingCanvasChild.value.targetComputedHeight,
   }
 })
 
 
 function draggerInit() {
   // 确认使用拖拽，清理参数 状态，
+
+  // 初始化需要重新计算拖拽的长度
+
   model.value.center = false
   model.value.horizontalCenter = false
   model.value.verticalCenter = false
@@ -183,14 +181,39 @@ function draggerDrag(pos) {
 
   var top, left
 
+  top = Number(top)
+  left = Number(left)
+
   // 强制把单位调整为画布单位
   let canvasUnit = canvasOptions.value.unit
 
   if (canvasUnit == 'px') {
-    model.value.top.value = y
-    model.value.left.value = x
+    top = y
+    left = x
   }
 
+
+
+  if (canvasUnit == 'cm') {
+    top = Utils.pxToCM(y)
+    left = Utils.pxToCM(x)
+  }
+
+
+  if (canvasUnit == 'mm') {
+    top = Utils.pxToMM(y)
+    left = Utils.pxToMM(x)
+  }
+
+
+  if (canvasUnit == 'in') {
+    top = Utils.pxToIn(y)
+    left = Utils.pxToIn(x)
+  }
+
+
+  model.value.top.value = top
+  model.value.left.value = left
 }
 
 

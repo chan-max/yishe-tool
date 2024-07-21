@@ -103,7 +103,7 @@ function addShadow() {
         },
         color: {
             color: '#fff',
-            colorType: 'pure'
+            type: 'pure'
         }
     });
 }

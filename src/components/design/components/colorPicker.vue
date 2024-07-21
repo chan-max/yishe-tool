@@ -1,7 +1,7 @@
 <template>
   <div class="color-picker">
     <color-picker v-bind="attrs" :useType="type" v-model:pureColor="model.color" v-model:gradientColor="model.color"
-      v-model:activeKey="model.colorType">
+      v-model:activeKey="model.type">
       <template #extra>
         <slot />
       </template>
@@ -17,7 +17,7 @@ import { useAttrs } from "vue";
 const model = defineModel({
   default: {
     color: "#fff",
-    colorType: 'pure'
+    type: 'pure'
   }
 })
 

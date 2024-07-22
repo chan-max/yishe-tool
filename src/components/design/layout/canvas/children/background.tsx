@@ -1,4 +1,4 @@
-import { canvasOptions } from '../index.tsx'
+import { canvasStickerOptions } from '../index.tsx'
 import { getPositionInfoFromOptions ,formatToNativeSizeString} from '../helper.tsx'
 import { defineComponent, ref } from 'vue'
 
@@ -6,7 +6,7 @@ import { defineComponent, ref } from 'vue'
 */
 
 export const createDefaultCanvasChildBackgroundOptions = () => {
-    const canvasUnit = canvasOptions.value.unit
+    const canvasUnit = canvasStickerOptions.value.unit
     return {
         type: 'background',
         position: {

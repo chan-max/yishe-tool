@@ -6,13 +6,16 @@
         <template #name> 个性字体</template>
         <template #content>
             <el-select v-model="model" size="small" filterable clearable :filter-method="filter" style="width:180px">
-                <el-option-group label="网络字体">
-                    <template v-for="item in list" :key="item.id">
-                        <el-option v-if="!item.hide" :label="item.name" :value="item">
-                            <desimage :src="item.thumbnail" style="width: 240px; height: 32px"></desimage>
-                        </el-option>
-                    </template>
-                </el-option-group>
+                <template #label="{ label }">
+                    {{ model.name }}
+                </template>
+                <!-- <el-option-group label="网络字体"> -->
+                <template v-for="item in list" :key="item.id">
+                    <el-option v-if="!item.hide" :label="item.name" :value="item">
+                        <desimage :src="item.thumbnail" style="width: 240px; height: 32px"></desimage>
+                    </el-option>
+                </template>
+                <!-- </el-option-group> -->
             </el-select>
         </template>
     </operate-form-item>

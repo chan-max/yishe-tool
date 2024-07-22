@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { canvasOptions, currentCanvasControllerInstance, showMainCanvas } from '@/components/design/layout/canvas'
+import { canvasStickerOptions, currentCanvasControllerInstance, showMainCanvas } from '@/components/design/layout/canvas'
 import { createFilterFromOptions, formatSizeOptionToPixelValue, } from '../helper'
 import { createFilterDefaultOptions } from './defaultOptions.tsx'
 import { SvgFilter } from './svgFilter/index.tsx'
@@ -18,8 +18,7 @@ export function createPngBackgroundStyle(scale = 1, cellWidth = 10) {
     }
 }
 
-
-export function createDefaultCanvasChildCanvasOptions() {
+export function createDefaultCanvasChildcanvasStickerOptions() {
     return {
         type: 'canvas',
         undeletable: true, // 不可删除
@@ -45,24 +44,24 @@ export const Canvas = defineComponent({
         return () => {
 
             const pxWidth = formatSizeOptionToPixelValue({
-                value: canvasOptions.value.width,
-                unit: canvasOptions.value.unit
+                value: canvasStickerOptions.value.width,
+                unit: canvasStickerOptions.value.unit
             })
 
             const pxHeight = formatSizeOptionToPixelValue({
-                value: canvasOptions.value.height,
-                unit: canvasOptions.value.unit
+                value: canvasStickerOptions.value.height,
+                unit: canvasStickerOptions.value.unit
             })
 
 
-            const transformValue = (canvasOptions.value.showCanvasRealSize && showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
+            const transformValue = (canvasStickerOptions.value.showCanvasRealSize && showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
 
             let pngBackground = createPngBackgroundStyle(transformValue)
 
             // 画布的辅助背景
             const containerStyle: any = {
-                width: canvasOptions.value.width + canvasOptions.value.unit,
-                height: canvasOptions.value.height + canvasOptions.value.unit,
+                width: canvasStickerOptions.value.width + canvasStickerOptions.value.unit,
+                height: canvasStickerOptions.value.height + canvasStickerOptions.value.unit,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -71,20 +70,20 @@ export const Canvas = defineComponent({
                 flexShrink: 0,
                 position: "relative",
                 ...pngBackground,
-                // background: canvasOptions.value.supportBackgroundColor.color
+                // background: canvasStickerOptions.value.supportBackgroundColor.color
             }
 
             // 画布真实元素背景
             let style: any = {
                 flexShrink: 0,
-                width: canvasOptions.value.width + canvasOptions.value.unit,
-                height: canvasOptions.value.height + canvasOptions.value.unit,
+                width: canvasStickerOptions.value.width + canvasStickerOptions.value.unit,
+                height: canvasStickerOptions.value.height + canvasStickerOptions.value.unit,
                 position: "absolute",
                 top: 0,
                 left: 0,
                 zIndex: 0,
                 // filter: createFilterFromOptions(props.options),
-                // filter:'url(#example)',
+                filter:'url(#example)',
                 background: props.options.backgroundColor.color,
             }
 
@@ -101,7 +100,7 @@ export const Canvas = defineComponent({
                 <SvgFilter></SvgFilter>
                 {/* 转换的元素 */}
 
-                <div id={currentCanvasControllerInstance.value?.rawId} style={style}>
+                <div  id={currentCanvasControllerInstance.value?.rawId} style={style}>
                     {ctx.slots.default()}
                 </div>
 

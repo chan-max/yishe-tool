@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/contrast.svg?component";
-import { canvasOptions } from '@/components/design/layout/canvas/index.tsx'
+import { canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
 
 const props = defineProps({
     tooltip: {

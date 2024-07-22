@@ -9,23 +9,23 @@
             </template>
             <el-row align="middle">
               <el-col :span="24">
-                <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasOptions.width"
-                  v-model:height="canvasOptions.height">
+                <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasStickerOptions.width"
+                  v-model:height="canvasStickerOptions.height">
                 </operateItemAbsoluteSize>
               </el-col>
               <el-col :span="24">
-                <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位" v-model="canvasOptions.unit">
+                <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位" v-model="canvasStickerOptions.unit">
                 </operateItemAbsoluteUnitSelect>
               </el-col>
               <el-col :span="24">
                 <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
               </el-col>
               <el-col :span="24">
-                <operateItemSwitch label="显示真实大小" v-model="canvasOptions.showCanvasRealSize"></operateItemSwitch>
+                <operateItemSwitch label="显示真实大小" v-model="canvasStickerOptions.showCanvasRealSize"></operateItemSwitch>
               </el-col>
               <el-col :span="24">
                 <operateItemColor label="辅助背景颜色" tooltip="用于辅助画布中的元素，不会对实际画布产生影响" type="pure"
-                  v-model="canvasOptions.supportBackgroundColor"></operateItemColor>
+                  v-model="canvasStickerOptions.supportBackgroundColor"></operateItemColor>
               </el-col>
             </el-row>
           </el-collapse-item>
@@ -237,6 +237,10 @@
             <el-col :span="24">
               <operateItemFilterHueRotate v-model="currentOperatingCanvasChild.filterHueRotate">
               </operateItemFilterHueRotate>
+            </el-col>
+            <el-col :span="24">
+              <operateItemFilterUrl v-model="currentOperatingCanvasChild.filterUrl">
+              </operateItemFilterUrl>
             </el-col>
           </el-collapse-item>
         </el-collapse>
@@ -519,12 +523,12 @@ import operateItemObjectFit from "@/components/design/layout/canvas/operate/obje
 
 
 import {
-  updateCanvasOptionsUnit
+  updatecanvasStickerOptionsUnit
 } from './helper'
 
 import {
   CanvasController,
-  canvasOptions,
+  canvasStickerOptions,
   addCanvasChild,
   removeCavnasChild,
   currentOperatingCanvasChildIndex,
@@ -535,7 +539,7 @@ import {
 } from "./index.tsx";
 
 function absoluteUnitChange(unit) {
-  updateCanvasOptionsUnit(unit)
+  updatecanvasStickerOptionsUnit(unit)
 }
 
 const canvasCollapseActives = ref(["1", "2", "3", "4"])

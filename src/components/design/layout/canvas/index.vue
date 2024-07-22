@@ -43,7 +43,7 @@
                     <template #label="{ label }">
                         <div style="font-size:1rem;"> {{ canvasChildLabelMap[currentOperatingCanvasChild.type] }} </div>
                     </template>
-                    <el-option class="canvas-child-select-option" v-for="(item, index) in canvasOptions.children"
+                    <el-option class="canvas-child-select-option" v-for="(item, index) in canvasStickerOptions.children"
                         :value="index" :label="canvasChildLabelMap[item.type]">
                         <div style="display:flex;align-items: center;font-size:1rem;height:100%;">
                             {{ canvasChildLabelMap[item.type] }}
@@ -69,7 +69,7 @@
 <script setup lang="tsx">
 import {
     CanvasController,
-    canvasOptions,
+    canvasStickerOptions,
     addCanvasChild,
     removeCavnasChild,
     CanvasChildType,

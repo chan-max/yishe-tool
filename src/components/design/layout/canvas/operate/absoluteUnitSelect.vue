@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { ref, reactive,watch } from 'vue'
 import icon from "@/components/design/assets/icon/unit.svg?component";
-import { canvasOptions } from '@/components/design/layout/canvas/index.tsx';
+import { canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx';
 const props = defineProps({
     label: {
         default: '尺寸单位'

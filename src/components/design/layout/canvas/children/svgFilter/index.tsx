@@ -1,8 +1,17 @@
-
+import { canvasStickerOptions, currentOperatingCanvasChildIndex } from '@/components/design/layout/canvas/index.tsx'
 
 
 // 创建svg滤镜
 
+/*
+    svg 滤镜中统一使用 px 单位
+*/
+
+
+
+export enum SvgFilterEffects {
+    DROP_SHADOW = 'drop-shadow',
+}
 
 
 
@@ -128,15 +137,11 @@ export const FeSpotLight = ({ x, y, z, pointsAtX, pointsAtY, pointsAtZ, specular
 
 
 // 马赛克效果滤镜
-export const MosaicFilter = () => (
-    <>
-    <feFlood x="4" y="4" height="2" width="2"/>
-    {/* <feComposite width="8" height="8"/>
-    <feTile result="a"/>
-    <feComposite in="SourceGraphic" in2="a" operator="in"/>
-    <feMorphology operator="dilate"radius="5"/> */}
+export const MosaicFilter = () => {
+    return <>
+        <feDropShadow dx="200" dy="2" stdDeviation="0" flood-color="#ff0000" flood-opacity="1"></feDropShadow>
     </>
-);
+}
 
 
 export function SvgFilter(props) {

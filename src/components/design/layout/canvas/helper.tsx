@@ -1,12 +1,12 @@
 import Utils from '@/common/utils';
 
-import { canvasOptions } from "./index"
+import { canvasStickerOptions } from "./index"
 
 
 /*
     更新所有子元素的单位值
 */
-export function updateCanvasOptionsUnit(currentUnit) {
+export function updatecanvasStickerOptionsUnit(currentUnit) {
     const unitKeys = [
         'width',
         'height',
@@ -53,7 +53,7 @@ export function updateCanvasOptionsUnit(currentUnit) {
         }
     }
 
-    updateUnit(canvasOptions.value.children)
+    updateUnit(canvasStickerOptions.value.children)
 }
 
 
@@ -105,16 +105,16 @@ export function formatSizeOptionToPixelValue(size, elementRealSize = null /* 当
 
     if (unit == 'vw') {
         let canvasPxWidth = formatSizeOptionToPixelValue({
-            value: canvasOptions.value.width,
-            unit: canvasOptions.value.unit,
+            value: canvasStickerOptions.value.width,
+            unit: canvasStickerOptions.value.unit,
         })
         return value * canvasPxWidth / 100
     }
 
     if (unit == 'vh') {
         let canvasPxHeight = formatSizeOptionToPixelValue({
-            value: canvasOptions.value.height,
-            unit: canvasOptions.value.unit,
+            value: canvasStickerOptions.value.height,
+            unit: canvasStickerOptions.value.unit,
         })
         return value * canvasPxHeight / 100
     }
@@ -172,15 +172,15 @@ export function formatToNativeSizeOption(size, relativeElementSize = null) {
 
     if (unit == 'vw') {
         return {
-            value: value * canvasOptions.value.width / 100,
-            unit: canvasOptions.value.unit
+            value: value * canvasStickerOptions.value.width / 100,
+            unit: canvasStickerOptions.value.unit
         }
     }
 
     if (unit == 'vh') {
         return {
-            value: value * canvasOptions.value.height / 100,
-            unit: canvasOptions.value.unit
+            value: value * canvasStickerOptions.value.height / 100,
+            unit: canvasStickerOptions.value.unit
         }
     }
 
@@ -341,7 +341,7 @@ export function getPaddingRealLabel(direction, size) {
     let { value, unit } = size
 
     if (unit == 'currentUnit') {
-        unit = canvasOptions.value.unit
+        unit = canvasStickerOptions.value.unit
     }
 
     if (unit == 'px') {
@@ -413,7 +413,7 @@ export function getBorderRadiusRealLabel(position, size) {
     let { value, unit } = size
 
     if (unit == 'currentUnit') {
-        unit = canvasOptions.value.unit
+        unit = canvasStickerOptions.value.unit
     }
 
     if (unit == 'px') {

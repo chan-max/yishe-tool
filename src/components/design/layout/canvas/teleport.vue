@@ -5,7 +5,7 @@
             <div style="flex:1;"></div>
             <div v-if="loading" class="italic font-bold"> 正在渲染贴纸... </div>
             <div>
-                宽  {{ canvasOptions.width }}{{ canvasOptions.unit }}   高 {{ canvasOptions.height }}{{ canvasOptions.unit }}
+                宽  {{ canvasStickerOptions.width }}{{ canvasStickerOptions.unit }}   高 {{ canvasStickerOptions.height }}{{ canvasStickerOptions.unit }}
             </div>
             <el-button type="danger" link @click="showMainCanvas = false">
                 <el-icon size="18">
@@ -20,7 +20,7 @@
   
 <script setup lang="ts">
 import { computed } from 'vue'
-import { CanvasController, showMainCanvas,canvasOptions } from '@/components/design/layout/canvas/index.tsx'
+import { CanvasController, showMainCanvas,canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled,FullScreen } from '@element-plus/icons-vue'
 import { showCanvasLayout } from '@/components/design/store.ts';

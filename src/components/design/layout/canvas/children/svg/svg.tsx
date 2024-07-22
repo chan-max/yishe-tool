@@ -1,7 +1,7 @@
 
 
 import { VNode, ref, watchEffect } from 'vue'
-import { canvasOptions, updateCanvas } from '../../index.tsx'
+import { canvasStickerOptions, updateCanvas } from '../../index.tsx'
 
 import { getPositionInfoFromOptions,formatToNativeSizeOption,formatToNativeSizeString, formatSizeOptionToPixelValue, } from '../../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
@@ -21,7 +21,7 @@ import { id } from 'element-plus/es/locale/index';
 
 export const createDefaultCanvasChildSvgOptions = () => {
 
-    const canvasUnit = canvasOptions.value.unit
+    const canvasUnit = canvasStickerOptions.value.unit
 
     return {
         position: {
@@ -132,7 +132,7 @@ export function createCanvasChildSvg(options) {
 
 export const createDefaultCanvasChildSvgRectOptions = () => {
 
-    let canvasUnit = canvasOptions.value.unit
+    let canvasUnit = canvasStickerOptions.value.unit
 
     return {
         backgroundColor: {
@@ -242,7 +242,7 @@ export function createCanvasChildRect(options) {
 
 export const createDefaultCanvasChildSvgEllipseOptions = () => {
 
-    const canvasUnit = canvasOptions.value.unit
+    const canvasUnit = canvasStickerOptions.value.unit
 
     return {
         backgroundColor: {

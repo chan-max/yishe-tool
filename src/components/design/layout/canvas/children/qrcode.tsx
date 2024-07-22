@@ -1,6 +1,6 @@
 import QRCodeStyling from 'qr-code-styling';
 import { ref, watchEffect, watch } from 'vue'
-import { canvasOptions, updateCanvas } from '../index.tsx'
+import { canvasStickerOptions, updateCanvas } from '../index.tsx'
 
 import { getPositionInfoFromOptions, formatToNativeSizeString, formatSizeOptionToPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
@@ -12,7 +12,7 @@ import { parse } from 'gradient-parser'
 
 export const createDefaultCanvasChildQrcodeOptions = () => {
 
-    const canvasUnit = canvasOptions.value.unit
+    const canvasUnit = canvasStickerOptions.value.unit
 
     return {
         type: 'qrcode',

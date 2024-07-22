@@ -1,5 +1,5 @@
 
-import { canvasOptions } from "../index"
+import { canvasStickerOptions } from "../index"
 
 export const createFilterDefaultOptions = (blurUnit = 'px') => {
     return {

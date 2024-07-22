@@ -1,11 +1,11 @@
-import { canvasOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
+import { canvasStickerOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
 import { getPositionInfoFromOptions, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../helper.tsx'
 import { computed, defineComponent, onUpdated, ref } from "vue"
 import { createFilterDefaultOptions } from "./defaultOptions.tsx"
 
 export const createDefaultCanvasChildImageOptions = () => {
 
-    const canvasUnit = canvasOptions.value.unit
+    const canvasUnit = canvasStickerOptions.value.unit
 
     return {
         type: 'image',

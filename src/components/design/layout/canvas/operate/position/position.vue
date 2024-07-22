@@ -98,7 +98,7 @@
 import { ref, computed, onMounted } from "vue";
 import iconPosition from "@/components/design/assets/icon/position.svg?component";
 import { getPositionInfoFromOptions, getPositionLabelFromOptions,formatSizeOptionToPixelValue } from "@/components/design/layout/canvas/helper.tsx";
-import { canvasOptions, currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
+import { canvasStickerOptions, currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 import dragger from './dragger.vue'
 import Utils from '@/common/utils'
 
@@ -138,18 +138,17 @@ const draggerAttrs = computed(() => {
 
   // 计算 宽高，子元素宽高 缩放尺寸
   const cw = formatSizeOptionToPixelValue({
-    value: canvasOptions.value.width,
-    unit: canvasOptions.value.unit
+    value: canvasStickerOptions.value.width,
+    unit: canvasStickerOptions.value.unit
   })
 
   const ch = formatSizeOptionToPixelValue({
-    value: canvasOptions.value.height,
-    unit: canvasOptions.value.unit
+    value: canvasStickerOptions.value.height,
+    unit: canvasStickerOptions.value.unit
   })
 
   // 控制拖拽板的大小
   let scale = 240 / Math.max(cw, ch)
-
 
 
   return {
@@ -185,7 +184,7 @@ function draggerDrag(pos) {
   left = Number(left)
 
   // 强制把单位调整为画布单位
-  let canvasUnit = canvasOptions.value.unit
+  let canvasUnit = canvasStickerOptions.value.unit
 
   if (canvasUnit == 'px') {
     top = y
@@ -220,8 +219,8 @@ function draggerDrag(pos) {
 const unitOptions = computed(() => {
   return [
     {
-      label: `使用当前画布单位(${canvasOptions.value.unit})`,
-      value: canvasOptions.value.unit,
+      label: `使用当前画布单位(${canvasStickerOptions.value.unit})`,
+      value: canvasStickerOptions.value.unit,
     },
     {
       label: "相对于画布宽的百分比",

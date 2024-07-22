@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/z-index.svg?component";
 import { ref } from 'vue'
-import { canvasOptions, currentOperatingCanvasChild, getCanvasTopZIndexChild } from "@/components/design/layout/canvas/index.tsx";
+import { canvasStickerOptions, currentOperatingCanvasChild, getCanvasTopZIndexChild } from "@/components/design/layout/canvas/index.tsx";
 
 const props = defineProps({
     tooltip: {

@@ -69,7 +69,7 @@
 import { ref, computed, nextTick, onMounted } from "vue";
 import icon from "@/components/design/assets/icon/border-radius.svg?component";
 import { getBroderRadiusDispalyLabel } from "@/components/design/layout/canvas/helper.tsx";
-import { canvasOptions } from "@/components/design/layout/canvas/index.tsx";
+import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
 
 /*
  padding 存在五种单位
@@ -118,8 +118,8 @@ const borderRadiusOptions = ref([
 const unitOptions = computed(() => {
     return [
         {
-            label: `使用当前画布单位(${canvasOptions.value.unit})`,
-            value: canvasOptions.value.unit,
+            label: `使用当前画布单位(${canvasStickerOptions.value.unit})`,
+            value: canvasStickerOptions.value.unit,
         },
         {
             label: "相对于画布宽的百分比",

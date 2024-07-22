@@ -19,7 +19,7 @@ import {
     createDefaultCanvasChildImageOptions
 } from './children/image.tsx'
 
-import { createDefaultCanvasChildCanvasOptions } from './children/canvas'
+import { createDefaultCanvasChildcanvasStickerOptions } from './children/canvas'
 
 import { Canvas } from './children/canvas.tsx'
 import { createFilterDefaultOptions } from './children/defaultOptions.tsx'
@@ -27,7 +27,7 @@ import { createFilterDefaultOptions } from './children/defaultOptions.tsx'
 /*
     画布参数
 */
-export const canvasOptions = ref({
+export const canvasStickerOptions = ref({
     width: 500,
     height: 500,
     unit: 'px',
@@ -36,9 +36,12 @@ export const canvasOptions = ref({
         type: 'pure',
         color: 'rgba(0,0,0,0)'
     },
+    svgFilter: {
+        children: []
+    },
     children: [
         // 默认会存在一个画布元素
-        createDefaultCanvasChildCanvasOptions()
+        createDefaultCanvasChildcanvasStickerOptions()
     ],
 })
 
@@ -46,8 +49,8 @@ export const canvasOptions = ref({
 
 // 获取子元素最高层级的元素，而不是获取该层级 ， 有多个返回第一个
 export function getCanvasTopZIndexChild() {
-    const maxIndex = Math.max(...canvasOptions.value.children.map((item: any) => item.zIndex).filter(Boolean));
-    let maxChild: any = canvasOptions.value.children.find((item: any) => item.zIndex === maxIndex);
+    const maxIndex = Math.max(...canvasStickerOptions.value.children.map((item: any) => item.zIndex).filter(Boolean));
+    let maxChild: any = canvasStickerOptions.value.children.find((item: any) => item.zIndex === maxIndex);
 
     return maxChild
 }
@@ -106,7 +109,7 @@ interface CanvasChild {
     type: CanvasChildType
 }
 
-interface CanvasOptions {
+interface canvasStickerOptions {
     width: number | string,
     height: number | string,
     children: CanvasChild[],
@@ -126,7 +129,7 @@ export const showMainCanvas = ref(true)
 var canvas_child_id = 0
 
 export function addCanvasChild(options) {
-    let index = canvasOptions.value.children.length
+    let index = canvasStickerOptions.value.children.length
 
     options = {
         ...canvasChildDefaultOptionsMap[options.type].call(null),
@@ -134,7 +137,7 @@ export function addCanvasChild(options) {
         id: canvas_child_id++,
     }
 
-    canvasOptions.value.children.push(options)
+    canvasStickerOptions.value.children.push(options)
     currentOperatingCanvasChildIndex.value = index
 }
 
@@ -142,11 +145,11 @@ export function addCanvasChild(options) {
 export const currentOperatingCanvasChildIndex = ref(0)
 
 export const currentOperatingCanvasChild: any = computed(() => {
-    let child = canvasOptions.value.children[currentOperatingCanvasChildIndex.value]
+    let child = canvasStickerOptions.value.children[currentOperatingCanvasChildIndex.value]
 
     if (!child) {
         currentOperatingCanvasChildIndex.value = 0
-        return canvasOptions.value.children[0]
+        return canvasStickerOptions.value.children[0]
     }
 
     return child
@@ -157,7 +160,7 @@ export function removeCavnasChild(index) {
         return
     }
 
-    canvasOptions.value.children.splice(index, 1)
+    canvasStickerOptions.value.children.splice(index, 1)
     currentOperatingCanvasChildIndex.value = index - 1
 }
 
@@ -272,8 +275,8 @@ export class CanvasController {
         async function update() {
             let base64 = await toPng(this.el) // 会有页面卡顿的问题
             let img = document.createElement('img')
-            img.width = canvasOptions.value.width
-            img.height = canvasOptions.value.height
+            img.width = canvasStickerOptions.value.width
+            img.height = canvasStickerOptions.value.height
             document.body.appendChild(img)
             img.src = base64
             await waitImage(img)
@@ -315,13 +318,13 @@ export class CanvasController {
         // 改为异步组件
         function render() {
 
-            const children = canvasOptions.value.children.map((childOptions) => {
+            const children = canvasStickerOptions.value.children.map((childOptions) => {
                 return createCanvasChild(childOptions)
             })
 
             this.updateCanvas()
 
-            return <Canvas options={canvasOptions.value.children.find((item) => item.type == 'canvas')}>
+            return <Canvas options={canvasStickerOptions.value.children.find((item) => item.type == 'canvas')}>
                 {children}
             </Canvas>
         }

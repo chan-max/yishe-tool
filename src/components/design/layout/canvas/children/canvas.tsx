@@ -83,7 +83,7 @@ export const Canvas = defineComponent({
                 left: 0,
                 zIndex: 0,
                 // filter: createFilterFromOptions(props.options),
-                filter:'url(#example)',
+                filter:'url(#rendering-filter)',
                 background: props.options.backgroundColor.color,
             }
 

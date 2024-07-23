@@ -561,10 +561,10 @@ function fontLoad() {
 }
 </script>
 <style lang="less">
-.canvas-operate-form {}
-
-input::part(#text-field-container) {
-  height: 40px;
+.el-input--small {
+  input::-webkit-textfield-decoration-container {
+    height: 16px;
+  }
 }
 </style>
 <style scoped>

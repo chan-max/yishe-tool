@@ -1,5 +1,5 @@
 import { canvasStickerOptions, currentOperatingCanvasChildIndex } from '@/components/design/layout/canvas/index.tsx'
-
+import { formatSizeOptionToPixelValue } from '../../helper'
 
 // 创建svg滤镜
 
@@ -9,12 +9,16 @@ import { canvasStickerOptions, currentOperatingCanvasChildIndex } from '@/compon
 
 
 export enum SvgFilterEffects {
-    DROP_SHADOW = 'drop-shadow'
+    DROP_SHADOW = 'drop-shadow',
+    GAUSSIAN_BLUR = 'gaussian-blur',
 }
 
 export const SvgFilterEffectDisplayLabelMap = {
-    [SvgFilterEffects.DROP_SHADOW]: '投影(feDropShadow)'
+    [SvgFilterEffects.DROP_SHADOW]: '投影 (feDropShadow)',
+    [SvgFilterEffects.GAUSSIAN_BLUR]:'模糊 (feGaussianBlur)'
 }
+
+
 
 function createFeDropShadowDefaultOptions() {
     let unit = canvasStickerOptions.value.unit
@@ -44,12 +48,25 @@ function createFeDropShadowDefaultOptions() {
     }
 }
 
+function createFeDropShadow(options) {
 
-export const SvgFilterCreatorMap = {
-    [SvgFilterEffects.DROP_SHADOW]: createFeDropShadowDefaultOptions
+    const dx = formatSizeOptionToPixelValue(options.dx)
+    const dy = formatSizeOptionToPixelValue(options.dy)
+    const stdDeviationX = formatSizeOptionToPixelValue(options.stdDeviationX)
+    const stdDeviationY = formatSizeOptionToPixelValue(options.stdDeviationY)
+
+    return <feDropShadow dx={dx} dy={dy} stdDeviation={`${stdDeviationX} ${stdDeviationY}`} flood-color={options.floodColor.color} flood-opacity={options.floodOpacity}></feDropShadow>
 }
 
+/* 滤镜默认配置创建映射 */
+export const SvgFilterCreatorMap = {
+    [SvgFilterEffects.DROP_SHADOW]: createFeDropShadowDefaultOptions,
+}
 
+/* 滤镜默认dom创建映射 */
+export const SvgFilterDOMCreatorMap = {
+    [SvgFilterEffects.DROP_SHADOW]: createFeDropShadow
+}
 
 /* 添加 过滤特效 */
 export function addSvgFilterEffect(type) {
@@ -191,12 +208,19 @@ export const MosaicFilter = () => {
 }
 
 
+
+
+
 export function SvgFilter(props) {
     return <svg id="filter-container-id" height="0" width="0" xmlns="http://www.w3.org/2000/svg" >
         <defs>
-            <filter id="example" x="0" y="0" xmlns="http://www.w3.org/2000/svg">
-                <MosaicFilter></MosaicFilter>
+            <filter id="rendering-filter" x="0" y="0" xmlns="http://www.w3.org/2000/svg">
+                {canvasStickerOptions.value.svgFilter.children.map((child) => {
+                    return SvgFilterDOMCreatorMap[child.type]?.call(null, child)
+                })}
             </filter>
+
+            {/* 各种内置滤镜 */}
         </defs>
     </svg>
 }

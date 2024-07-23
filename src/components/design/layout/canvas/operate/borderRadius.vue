@@ -28,7 +28,7 @@
                                 <div class="input-item">
                                     <el-popover placement="right" width="200" trigger="click" :teleported="false">
                                         <template #reference>
-                                            <el-input size="small" type="number" min="0" step="1"
+                                            <el-input size="small"  min="0" step="1"
                                                 style="width:80px;height:24px;" v-model.number="model[item.type].value">
                                                 <template #suffix>
                                                     <div style="font-size:1rem;"> {{ model[item.type].unit }}

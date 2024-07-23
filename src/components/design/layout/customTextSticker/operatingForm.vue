@@ -12,7 +12,7 @@
               <template #name> 文字大小 </template>
               <template #content>
                 <el-input
-                  type="number"
+                  
                   v-model="operatingTextStickerOptions.fontSize"
                   size="small"
                 ></el-input>
@@ -96,7 +96,7 @@
               <template #name> 行高 </template>
               <template #content>
                 <el-input
-                  type="number"
+                  
                   v-model="operatingTextStickerOptions.lineHeight"
                   size="small"
                   min="0"
@@ -112,7 +112,7 @@
               <template #name> 间距 </template>
               <template #content>
                 <el-input
-                  type="number"
+                  
                   v-model="operatingTextStickerOptions.letterSpacing"
                   size="small"
                   min="-1"
@@ -160,7 +160,7 @@
               <template #name> 边框宽度 </template>
               <template #content>
                 <el-input
-                  type="number"
+                  
                   v-model="operatingTextStickerOptions.borderWidth"
                   min="0"
                   max="5"

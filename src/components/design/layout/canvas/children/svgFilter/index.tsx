@@ -8,10 +8,57 @@ import { canvasStickerOptions, currentOperatingCanvasChildIndex } from '@/compon
 */
 
 
-
 export enum SvgFilterEffects {
-    DROP_SHADOW = 'drop-shadow',
+    DROP_SHADOW = 'drop-shadow'
 }
+
+export const SvgFilterEffectDisplayLabelMap = {
+    [SvgFilterEffects.DROP_SHADOW]: '投影(feDropShadow)'
+}
+
+function createFeDropShadowDefaultOptions() {
+    let unit = canvasStickerOptions.value.unit
+    return {
+        type: SvgFilterEffects.DROP_SHADOW,
+        dx: {
+            value: 1,
+            unit: unit
+        },
+        dy: {
+            value: 1,
+            unit: unit
+        },
+        stdDeviationX: {
+            value: 1,
+            unit: unit
+        },
+        stdDeviationY: {
+            value: 1,
+            unit: unit
+        },
+        floodColor: {
+            type: 'pure',
+            color: "#ff0000",
+        },
+        floodOpacity: 1,
+    }
+}
+
+
+export const SvgFilterCreatorMap = {
+    [SvgFilterEffects.DROP_SHADOW]: createFeDropShadowDefaultOptions
+}
+
+
+
+/* 添加 过滤特效 */
+export function addSvgFilterEffect(type) {
+    canvasStickerOptions.value.svgFilter.children.push(
+        SvgFilterCreatorMap[type]?.call()
+    )
+}
+
+
 
 
 
@@ -139,7 +186,7 @@ export const FeSpotLight = ({ x, y, z, pointsAtX, pointsAtY, pointsAtZ, specular
 // 马赛克效果滤镜
 export const MosaicFilter = () => {
     return <>
-        <feDropShadow dx="200" dy="2" stdDeviation="0" flood-color="#ff0000" flood-opacity="1"></feDropShadow>
+        <feDropShadow dx="0" dy="0" stdDeviation="10 10" flood-color="#ff0000" flood-opacity="1"></feDropShadow>
     </>
 }
 

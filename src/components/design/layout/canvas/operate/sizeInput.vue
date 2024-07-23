@@ -2,7 +2,7 @@
     <el-popover :placement="placement" width="180">
         <template #reference>
             <div class="size-input">
-                <el-input :placeholder="placeholder" size="small" type="number" min="0" step="1" v-model.number="model">
+                <el-input :placeholder="placeholder" size="small"  min="0" step="1" v-model.number="model">
                     <template #suffix>
                         <span style="font-size: 1rem;">
                             {{ unit }}

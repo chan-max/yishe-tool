@@ -4,7 +4,7 @@
             <div class="label">宽度</div>
         </el-col>
         <el-col :span="14">
-            <el-input size="small" v-model="svgCanvasWidth"  type="number" min="100" step="10"></el-input>
+            <el-input size="small" v-model="svgCanvasWidth"   min="100" step="10"></el-input>
         </el-col>
     </el-row>
     <el-row :gutter="16">
@@ -14,7 +14,7 @@
             </div>
         </el-col>
         <el-col :span="14">
-            <el-input v-model="svgCanvasHeight" size="small" type="number" min="100" step="10"></el-input>
+            <el-input v-model="svgCanvasHeight" size="small"  min="100" step="10"></el-input>
         </el-col>
     </el-row>
     <el-row :gutter="16">

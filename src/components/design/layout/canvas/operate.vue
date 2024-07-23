@@ -14,7 +14,8 @@
                 </operateItemAbsoluteSize>
               </el-col>
               <el-col :span="24">
-                <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位" v-model="canvasStickerOptions.unit">
+                <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位"
+                  v-model="canvasStickerOptions.unit">
                 </operateItemAbsoluteUnitSelect>
               </el-col>
               <el-col :span="24">
@@ -561,6 +562,10 @@ function fontLoad() {
 </script>
 <style lang="less">
 .canvas-operate-form {}
+
+input::part(#text-field-container) {
+  height: 40px;
+}
 </style>
 <style scoped>
 :deep(.el-scrollbar__bar.is-vertical) {

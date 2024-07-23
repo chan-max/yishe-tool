@@ -106,7 +106,7 @@ export const Canvas = defineComponent({
 
 
                 {/* 真实的画布 */}
-                <canvas id={currentCanvasControllerInstance.value.canvasId} style={canvasStyle} width={pxWidth} height={pxHeight}></canvas>
+                <canvas id={currentCanvasControllerInstance.value?.canvasId} style={canvasStyle} width={pxWidth} height={pxHeight}></canvas>
             </div>
         }
     }

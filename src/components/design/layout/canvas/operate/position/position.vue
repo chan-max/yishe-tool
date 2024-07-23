@@ -50,7 +50,7 @@
                   <el-popover placement="right" :teleported="false">
                     <template #reference>
                       <div class="content">
-                        <el-input style="width:80px" size="small" type="number" min="0" step="1"
+                        <el-input style="width:80px" size="small"  min="0" step="1"
                           v-model.number="model[item.type].value">
                           <template #suffix>
                             <span style="font-size: 1rem;">

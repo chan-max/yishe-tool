@@ -11,7 +11,7 @@
                 边长
                 <el-popover trigger="click">
                     <template #reference>
-                        <el-input style="width:80px" type="number" v-model="width.value" size="small" min="0" step="1">
+                        <el-input style="width:80px"  v-model="width.value" size="small" min="0" step="1">
                             <template #suffix>
                                 <div style="font-size:1rem;"> {{ width.unit }}</div>
                             </template>

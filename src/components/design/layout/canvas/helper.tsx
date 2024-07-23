@@ -53,7 +53,7 @@ export function updatecanvasStickerOptionsUnit(currentUnit) {
         }
     }
 
-    updateUnit(canvasStickerOptions.value.children)
+    updateUnit(canvasStickerOptions.value)
 }
 
 

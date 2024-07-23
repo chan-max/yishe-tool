@@ -213,7 +213,7 @@ export class CanvasController {
 
 
     get canvasEl() {
-        return document.querySelector('#' + this.canvasId) as any
+        return document.querySelector('#' + this?.canvasId) as any
     }
 
 

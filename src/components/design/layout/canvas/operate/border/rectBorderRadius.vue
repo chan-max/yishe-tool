@@ -9,7 +9,7 @@
                 <span>水平</span>
                 <el-popover  width="180" trigger="click">
                     <template #reference>
-                        <el-input size="small" type="number" min="0" step="1"
+                        <el-input size="small"  min="0" step="1"
                         style="width:80px;"
                             v-model.number="model.horizontal.value">
                             <template #suffix>
@@ -32,7 +32,7 @@
                 <span>垂直</span>
                 <el-popover  width="180" trigger="click">
                     <template #reference>
-                        <el-input size="small" type="number" min="0" step="1"
+                        <el-input size="small"  min="0" step="1"
                             style="width:80px;"
                             v-model.number="model.vertical.value">
                             <template #suffix>

@@ -6,7 +6,7 @@
         <template #name> {{ label }} </template>
         <template #content>
             <span style="font-size:1rem"> 宽 </span>
-            <el-input style="width: 80px" size="small" v-model="width" step="10" type="number" placeholder="宽">
+            <el-input style="width: 80px" size="small" v-model="width" step="10"  placeholder="宽">
                 <template #suffix>
                     <span class="text-[1rem]">  
                         {{ canvasStickerOptions.unit }}
@@ -14,7 +14,7 @@
                 </template>
             </el-input>
             <span style="font-size:1rem"> 高 </span>
-            <el-input style="width: 80px" size="small" v-model="height" step="10" type="number" placeholder="高">
+            <el-input style="width: 80px" size="small" v-model="height" step="10"  placeholder="高">
                 <template #suffix>
                     <span class="text-[1rem]">  
                         {{ canvasStickerOptions.unit }}

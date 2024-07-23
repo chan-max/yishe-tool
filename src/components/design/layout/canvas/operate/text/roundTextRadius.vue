@@ -7,7 +7,7 @@
         <template #content>
             <el-popover trigger="click">
                 <template #reference>
-                        <el-input style="width:80px" type="number" v-model="model.value" size="small" min="0" step="1">
+                        <el-input style="width:80px"  v-model="model.value" size="small" min="0" step="1">
                             <template #suffix>
                                 <div style="font-size:1rem;"> {{ model.unit }}</div>
                             </template>

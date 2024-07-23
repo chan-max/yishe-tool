@@ -7,7 +7,7 @@
         <template #content>
             <el-popover>
                 <template #reference>
-                    <el-input size="small" style="width:164px;" v-model="model" type="number" min=".1" max="10"
+                    <el-input size="small" style="width:164px;" v-model="model"  min=".1" max="10"
                         step=".1"></el-input>
                 </template>
                 <div style="display:flex;gap:1em;flex-wrap:wrap;">

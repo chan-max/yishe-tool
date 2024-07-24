@@ -1,7 +1,7 @@
 
 
 import { VNode, ref, watchEffect } from 'vue'
-import { canvasStickerOptions, updateCanvas } from '../../index.tsx'
+import { canvasStickerOptions, updateRenderingCanvas } from '../../index.tsx'
 
 import { getPositionInfoFromOptions,formatToNativeSizeOption,formatToNativeSizeString, formatSizeOptionToPixelValue, } from '../../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
@@ -119,7 +119,7 @@ export const Svg = defineComponent({
             }
 
             return <div style={containerStyle}>
-                {/* {props.options.svgUrl ? <img onLoad={updateCanvas} style={style} src={props.options.svgUrl}></img> : null} */}
+                {/* {props.options.svgUrl ? <img onLoad={updateRenderingCanvas} style={style} src={props.options.svgUrl}></img> : null} */}
                 <svg style={style}>  {ctx.slots.default && ctx.slots.default()}</svg>
             </div>
         }
@@ -127,7 +127,7 @@ export const Svg = defineComponent({
 })
 
 export function createCanvasChildSvg(options) {
-    return <Svg options={options} onVnodeUpdated={updateCanvas} onVnodeMounted={updateCanvas}></Svg>
+    return <Svg options={options} onVnodeUpdated={updateRenderingCanvas} onVnodeMounted={updateRenderingCanvas}></Svg>
 }
 
 export const createDefaultCanvasChildSvgRectOptions = () => {

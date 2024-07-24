@@ -169,8 +169,8 @@ export function removeCavnasChild(index) {
 export const currentCanvasControllerInstance = shallowRef(null)
 
 
-export function updateCanvas() {
-    currentCanvasControllerInstance.value?.updateCanvas()
+export function updateRenderingCanvas() {
+    currentCanvasControllerInstance.value?.updateRenderingCanvas()
 }
 
 
@@ -185,7 +185,7 @@ export class CanvasController {
     target = null
     constructor(params) {
         currentCanvasControllerInstance.value = this
-        // this.updateCanvas = useDebounceFn(this.updateCanvas, 666).bind(this)
+        // this.updateRenderingCanvas = useDebounceFn(this.updateRenderingCanvas, 666).bind(this)
         this.maxDisplaySize = params.max
     }
 
@@ -237,11 +237,11 @@ export class CanvasController {
     }
 
     // 需要组件渲染后再更新
-    async updateCanvas() {
+    async updateRenderingCanvas() {
         this.loading.value = true
         clearTimeout(this.updateWorker);
         this.updateWorker = setTimeout(() => {
-            this.addTask(this.updateCanvasJob);
+            this.addTask(this.updateRenderingCanvasJob);
         }, this.updateWorkDelay);
     }
 
@@ -267,7 +267,7 @@ export class CanvasController {
     updateWorker = null; // 更新任务
     updateWorkDelay = 999; // 更新延迟
 
-    async updateCanvasJob() {
+    async updateRenderingCanvasJob() {
         if (!this.el) {
             return
         }
@@ -322,7 +322,7 @@ export class CanvasController {
                 return createCanvasChild(childOptions)
             })
 
-            this.updateCanvas()
+            this.updateRenderingCanvas()
 
             return <Canvas options={canvasStickerOptions.value.children.find((item) => item.type == 'canvas')}>
                 {children}

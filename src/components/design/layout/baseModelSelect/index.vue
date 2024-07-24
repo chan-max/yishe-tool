@@ -47,7 +47,7 @@
           </a-statistic>
         </a-col>
       </a-row>
-      <a-button @click="selectModel(item)" type="primary" ghost> 使用该模型 </a-button>
+      <el-button @click="selectModel(item)" type="primary" plain> 使用该模型 </el-button>
     </div>
   </div>
 </template>

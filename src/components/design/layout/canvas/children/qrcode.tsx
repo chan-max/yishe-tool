@@ -1,6 +1,6 @@
 import QRCodeStyling from 'qr-code-styling';
-import { ref, watchEffect, watch } from 'vue'
-import { canvasStickerOptions, updateCanvas } from '../index.tsx'
+import { ref, watchEffect, watch, onUpdated, onMounted } from 'vue'
+import { canvasStickerOptions, updateRenderingCanvas } from '../index.tsx'
 
 import { getPositionInfoFromOptions, formatToNativeSizeString, formatSizeOptionToPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
@@ -9,6 +9,7 @@ import { createPositionDefaultOptions } from './defaultOptions.tsx';
 
 import { parse } from 'gradient-parser'
 
+import Utils from '@/common/utils'
 
 export const createDefaultCanvasChildQrcodeOptions = () => {
 
@@ -170,11 +171,17 @@ export const Qrcode = defineComponent({
 
         const qrcodeUrl = ref()
 
+
         const targetEl = ref()
 
-        watch(targetEl, () => {
-            props.options.targetEl = targetEl.value
-        })
+        function setTargetSize() {
+            props.options.targetComputedWidth = Utils.getComputedWidth(targetEl.value)
+            props.options.targetComputedHeight = Utils.getComputedHeight(targetEl.value)
+        }
+
+        onUpdated(setTargetSize)
+        onMounted(setTargetSize)
+
 
         watchEffect(() => {
             createQrcodeUrl(props.options).then((url) => {
@@ -221,14 +228,14 @@ export const Qrcode = defineComponent({
             }
 
             return <div style={containerStyle}>
-                {qrcodeUrl.value ? <img ref={targetEl} onLoad={updateCanvas} style={style} src={qrcodeUrl.value}></img> : null}
+                {qrcodeUrl.value ? <img ref={targetEl} onLoad={updateRenderingCanvas} style={style} src={qrcodeUrl.value}></img> : null}
             </div>
         }
     }
 })
 
 export function createCanvasChildQrcode(options) {
-    return <Qrcode options={options} onVnodeUpdated={updateCanvas} onVnodeMounted={updateCanvas}></Qrcode>
+    return <Qrcode options={options} onVnodeUpdated={updateRenderingCanvas} onVnodeMounted={updateRenderingCanvas}></Qrcode>
 }
 
 

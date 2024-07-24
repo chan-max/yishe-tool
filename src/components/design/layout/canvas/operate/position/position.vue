@@ -150,6 +150,7 @@ const draggerAttrs = computed(() => {
   // 控制拖拽板的大小
   let scale = 240 / Math.max(cw, ch)
 
+  
 
   return {
     scale: scale,

@@ -1,4 +1,4 @@
-import { canvasStickerOptions, currentCanvasControllerInstance, updateCanvas } from "../../index.tsx"
+import { canvasStickerOptions, currentCanvasControllerInstance, updateRenderingCanvas } from "../../index.tsx"
 import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../../helper.tsx'
 import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watch } from "vue"
 // import CircleType from "circletype";
@@ -28,6 +28,7 @@ export const createDefaultCanvasChildTextOptions = () => {
             color: "#000",
             type: 'pure'
         },
+        zIndex:0,
         position: createPositionDefaultOptions(canvasUnit),
         fontSize: {
             value: 14,
@@ -64,12 +65,13 @@ export const createDefaultCanvasChildTextOptions = () => {
         // 是否使用繁体字
         isTraditionalChinese: false,
         containerEl: null,
-        targetEl: null,
+        targetComputedWidth: 0,
+        targetComputedHeight: 0,
     }
 }
 
 export function createCanvasChildText(options) {
-    return <Text options={options} onVnodeUpdated={updateCanvas} onVnodeMounted={updateCanvas}></Text>
+    return <Text options={options} onVnodeUpdated={updateRenderingCanvas} onVnodeMounted={updateRenderingCanvas}></Text>
 }
 
 export const Text = defineComponent({
@@ -80,10 +82,6 @@ export const Text = defineComponent({
 
         // 文字容器，用于布局
         const textContainerRef = ref()
-
-        watch(textContainerRef, () => {
-            props.options.targetEl = textContainerRef.value
-        })
 
         onUpdated(() => {
             props.options.targetComputedWidth = Utils.getComputedWidth(textContainerRef.value)
@@ -236,11 +234,6 @@ export const Text = defineComponent({
     换行文字已最外行为基准
 */
 
-function getElementComputedPixelValue(el, property) {
-    return Number(window.getComputedStyle(el)[property].slice(0, -2))
-}
-
-
 
 async function createRoundText(innerContainer, options, textContentCells) {
 
@@ -279,8 +272,8 @@ async function createRoundText(innerContainer, options, textContentCells) {
             item.el = el
 
             // 由于获取真实尺寸，始终为像素值，所以需要把所有涉及到的单位统一为像素
-            let width = getElementComputedPixelValue(item.el, 'width')
-            let height = getElementComputedPixelValue(item.el, 'height')
+            let width = Utils.getComputedWidth(item.el)
+            let height = Utils.getComputedHeight(item.el)
             item.width = width
             item.height = height
             item.rawWidth = width - letterSpacingPixelValue

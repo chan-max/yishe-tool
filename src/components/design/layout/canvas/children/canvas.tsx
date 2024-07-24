@@ -83,7 +83,7 @@ export const Canvas = defineComponent({
                 left: 0,
                 zIndex: 0,
                 // filter: createFilterFromOptions(props.options),
-                filter:'url(#rendering-filter)',
+                filter: 'url(#rendering-filter)',
                 background: props.options.backgroundColor.color,
             }
 
@@ -96,11 +96,11 @@ export const Canvas = defineComponent({
             }
 
             return <div style={containerStyle}>
-                {/* svg过滤器 */}
-                <SvgFilter></SvgFilter>
-                {/* 转换的元素 */}
 
-                <div  id={currentCanvasControllerInstance.value?.rawId} style={style}>
+                {/* 转换的元素 */}
+                <div id={currentCanvasControllerInstance.value?.rawId} style={style}>
+                    {/* svg过滤器 */}
+                    <SvgFilter></SvgFilter>
                     {ctx.slots.default()}
                 </div>
 

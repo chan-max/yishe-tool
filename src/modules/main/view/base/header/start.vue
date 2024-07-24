@@ -14,7 +14,8 @@
       <div class="item">二维码</div>
       <div class="item">条形码</div>
       <div class="item">矢量图形</div>
-      <div class="item">矢量图形</div>
+      <div class="item">春联</div>
+      <div class="item">特效图</div>
     </div>
     <div>
       <div class="title">上传资源</div>
@@ -31,19 +32,21 @@
   display: flex;
   column-gap: 6em;
 }
+
 .title {
   color: #333;
-  font-size: 1.1em;
+  font-size: 1rem;
   font-weight: 300;
   padding: 1em 0;
 }
 
 .item {
   color: #333336;
-  font-size: 1em;
+  font-size: 1.1rem;
   font-weight: 300;
   padding: 0.4em 0;
-  font-weight: 500;
+  font-weight: 400;
+
   &:hover {
     color: #000;
     cursor: pointer;

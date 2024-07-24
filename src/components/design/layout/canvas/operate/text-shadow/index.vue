@@ -12,7 +12,6 @@
                     </el-button>
                 </template>
                 <template #default>
-                    
                     <el-row align="middle" justify="space-around" style="row-gap:.8rem" :gutter="24">
                     <template v-for="item, index in model">
                         <el-col :span="24">

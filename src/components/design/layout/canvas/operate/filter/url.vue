@@ -31,13 +31,13 @@
                                         <span> {{ canvasStickerOptions.unit }}</span>
                                     </template>
                                 </el-input>
-                                <div class="label">横向标准差</div>
+                                <div class="label">横向模糊</div>
                                 <el-input style="width: 80px" type="number" v-model="opt.stdDeviationX.value" size="small">
                                     <template #suffix>
                                         <span> {{ canvasStickerOptions.unit }}</span>
                                     </template>
                                 </el-input>
-                                <div class="label">纵向标准差</div>
+                                <div class="label">纵向模糊</div>
                                 <el-input style="width: 80px" type="number" v-model="opt.stdDeviationY.value" size="small">
                                     <template #suffix>
                                         <span> {{ canvasStickerOptions.unit }}</span>
@@ -56,11 +56,58 @@
                                 <el-button @click="remove(index)" type="danger" size="small" plain> 移除 </el-button>
                             </div>
                         </template>
+
+                        <template v-if="opt.type == SvgFilterEffects.GAUSSIAN_BLUR">
+                            <div class="flex items-center" style="column-gap:1rem">
+                                <div>
+                                    {{ SvgFilterEffectDisplayLabelMap[opt.type] }}
+                                </div>
+                                <div class="label">横向模糊</div>
+                                <el-input style="width: 80px" type="number" v-model="opt.stdDeviationX.value" size="small">
+                                    <template #suffix>
+                                        <span> {{ canvasStickerOptions.unit }}</span>
+                                    </template>
+                                </el-input>
+                                <div class="label">纵向模糊</div>
+                                <el-input style="width: 80px" type="number" v-model="opt.stdDeviationY.value" size="small">
+                                    <template #suffix>
+                                        <span> {{ canvasStickerOptions.unit }}</span>
+                                    </template>
+                                </el-input>
+                                <el-button @click="remove(index)" type="danger" size="small" plain> 移除 </el-button>
+                            </div>
+                        </template>
+
+                        <template v-if="opt.type == SvgFilterEffects.MORPHOLOGY">
+                            <div class="flex items-center" style="column-gap:1rem">
+                                <div>
+                                    {{ SvgFilterEffectDisplayLabelMap[opt.type] }}
+                                </div>
+                                <div class="label">横向半径</div>
+                                <el-input style="width: 80px" type="number" v-model="opt.radiusX.value" size="small">
+                                    <template #suffix>
+                                        <span> {{ canvasStickerOptions.unit }}</span>
+                                    </template>
+                                </el-input>
+                                <div class="label">纵向半径</div>
+                                <el-input style="width: 80px" type="number" v-model="opt.radiusY.value" size="small">
+                                    <template #suffix>
+                                        <span> {{ canvasStickerOptions.unit }}</span>
+                                    </template>
+                                </el-input>
+                                <div class="label">模式</div>
+                                <el-select style="width: 80px" type="number" v-model="opt.operator" size="small">
+                                    <el-option v-for="op in FeMorphologyOperatorOptions" :value="op.value"
+                                        :label="op.label" />
+                                </el-select>
+                                <el-button @click="remove(index)" type="danger" size="small" plain> 移除 </el-button>
+                            </div>
+                        </template>
                     </el-col>
 
                     <el-col :span="24">
                         <el-dropdown>
-                            <el-button size="small" type="primary" plain> 添加阴影特效 </el-button>
+                            <el-button size="small" type="primary" plain> 添加滤镜特效 </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item v-for="item in SvgFilterEffects" @click="addSvgFilterEffect(item)">
@@ -83,6 +130,7 @@ import {
     addSvgFilterEffect,
     SvgFilterEffects,
     SvgFilterEffectDisplayLabelMap,
+    FeMorphologyOperatorOptions
 } from "@/components/design/layout/canvas/children/svgFilter/index";
 import { ref } from "vue";
 import colorPicker from "@/components/design/components/colorPicker.vue";

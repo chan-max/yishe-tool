@@ -39,6 +39,9 @@
                 <operateItemColor label="画布背景颜色" tooltip="画布背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
                 </operateItemColor>
               </el-col>
+              <el-col :span="24">
+                <a-alert message="我们更希望你使用一个新的背景元素，而不是直接更改画布的背景颜色或其他效果，虽然最终实现的效果相同" banner closable />
+              </el-col>
             </el-row>
           </el-collapse-item>
           <el-collapse-item name="4">
@@ -313,6 +316,10 @@
               <operateItemFilterHueRotate v-model="currentOperatingCanvasChild.filterHueRotate">
               </operateItemFilterHueRotate>
             </el-col>
+            <el-col :span="24">
+              <operateItemFilterUrl v-model="currentOperatingCanvasChild.filterUrl">
+              </operateItemFilterUrl>
+            </el-col>
           </el-collapse-item>
         </el-collapse>
       </template>
@@ -557,7 +564,7 @@ function remove(index) {
 }
 
 function fontLoad() {
-  currentCanvasControllerInstance.value.updateCanvas();
+  currentCanvasControllerInstance.value.updateRenderingCanvas();
 }
 </script>
 <style lang="less">
@@ -566,11 +573,23 @@ function fontLoad() {
     height: 16px;
   }
 }
+
+.el-alert__title {
+  font-size: 1.2rem !important;
+  line-height: 1.4rem !important;
+}
+
+.el-alert__description {
+  font-size: 1rem !important;
+  line-height: 1.2rem;
+}
 </style>
 <style scoped>
 :deep(.el-scrollbar__bar.is-vertical) {
   width: 4px;
 }
+
+
 
 .title {
   font-size: 1rem;

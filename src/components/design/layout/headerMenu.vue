@@ -10,10 +10,10 @@
 -->
 <template>
   <div class="designiy-header">
-    <div class="designiy-header-menu">
+    <!-- <div class="designiy-header-menu">
       <header-menu-dropdown />
-    </div>
-    <div class="designiy-header-logo">
+    </div> -->
+    <div class="designiy-header-logo" style="margin:0 12px;">
       <img src="logo.png" style="height: 24px" object-fit="contain" />
     </div>
     <div style="flex-grow: 1"></div>

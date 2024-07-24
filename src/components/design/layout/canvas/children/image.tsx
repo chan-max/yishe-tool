@@ -1,7 +1,7 @@
-import { canvasStickerOptions, currentCanvasControllerInstance, updateCanvas } from "../index.tsx"
+import { canvasStickerOptions, currentCanvasControllerInstance, updateRenderingCanvas } from "../index.tsx"
 import { getPositionInfoFromOptions, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../helper.tsx'
 import { computed, defineComponent, onUpdated, ref } from "vue"
-import { createFilterDefaultOptions } from "./defaultOptions.tsx"
+import { createFilterDefaultOptions, createPositionDefaultOptions, createTransformDefaultOptions } from "./defaultOptions.tsx"
 
 export const createDefaultCanvasChildImageOptions = () => {
 
@@ -9,27 +9,7 @@ export const createDefaultCanvasChildImageOptions = () => {
 
     return {
         type: 'image',
-        position: {
-            center: true,
-            verticalCenter: true,
-            horizontalCenter: true,
-            top: {
-                value: 0,
-                unit: canvasUnit
-            },
-            left: {
-                value: 0,
-                unit: canvasUnit
-            },
-            bottom: {
-                value: 0,
-                unit: canvasUnit
-            },
-            right: {
-                value: 0,
-                unit: canvasUnit
-            }
-        },
+        position: createPositionDefaultOptions(canvasUnit),
         width: {
             value: 100,
             unit: 'vw',
@@ -38,14 +18,7 @@ export const createDefaultCanvasChildImageOptions = () => {
             value: 100,
             unit: 'vh',
         },
-        scaleX: 1,
-        scaleY: 1,
-        scaleZ: 1,
-        rotateX: 0,
-        rotateY: 0,
-        rotateZ: 0,
-        skewX: 0,
-        skewY: 0,
+        ...createTransformDefaultOptions(canvasUnit),
         imageInfo: null,
         objectFit: 'contain',
         ...createFilterDefaultOptions(canvasUnit),
@@ -56,7 +29,7 @@ export const createDefaultCanvasChildImageOptions = () => {
 
 
 export function createCanvasChildImage(options) {
-    return <Image options={options} onVnodeUpdated={updateCanvas} onVnodeMounted={updateCanvas}></Image>
+    return <Image options={options} onVnodeUpdated={updateRenderingCanvas} onVnodeMounted={updateRenderingCanvas}></Image>
 }
 
 export const Image = defineComponent({
@@ -69,12 +42,25 @@ export const Image = defineComponent({
             return props.options.imageInfo ? props.options.imageInfo.url : null
         })
 
+
+        // 图片是否加载失败
+        let loadError = ref(false)
+
+        function onLoad() {
+            loadError.value = false
+        }
+
+        function onError() {
+            loadError.value = true
+        }
+
         return () => {
 
             const {
                 containerStyle: _containerStyle,
                 style: _style
             } = getPositionInfoFromOptions(props.options.position)
+
 
             var containerStyle: any = {
                 width: '100%',
@@ -85,6 +71,7 @@ export const Image = defineComponent({
                 zIndex: props.options.zIndex,
                 ..._containerStyle
             }
+
 
             var style: any = {
                 flexShrink: 0,
@@ -100,7 +87,15 @@ export const Image = defineComponent({
 
 
             return <div style={containerStyle}>
-                <img src={imgUrl.value} style={style}></img>
+
+                {
+                    !imgUrl.value
+                        ? '未选择图片'
+                        : loadError.value
+                            ? '图片加载失败'
+                            : <img onLoad={onLoad} onError={onError} src={imgUrl.value} style={style}></img>
+                }
+
             </div>
         }
     }

@@ -1,6 +1,7 @@
 import { canvasStickerOptions } from '../index.tsx'
-import { getPositionInfoFromOptions ,formatToNativeSizeString} from '../helper.tsx'
-import { defineComponent, ref } from 'vue'
+import { getPositionInfoFromOptions, formatToNativeSizeString } from '../helper.tsx'
+import { defineComponent, ref, onUpdated, onMounted } from 'vue'
+import Utils from '@/common/utils'
 
 /*
 */
@@ -39,16 +40,16 @@ export const createDefaultCanvasChildBackgroundOptions = () => {
         skewX: 0,
         skewY: 0,
         width: {
-            value:100,
-            unit:'vw'
+            value: 100,
+            unit: 'vw'
         },
         height: {
-            value:100,
-            unit:'vh'
+            value: 100,
+            unit: 'vh'
         },
         backgroundColor: {
-            color:'#000',
-            type:'pure'
+            color: '#000',
+            type: 'pure'
         },
     }
 }
@@ -61,6 +62,16 @@ export const Background = defineComponent({
 
         const options = props.options
 
+        const targetEl = ref()
+
+
+        function setTargetSize() {
+            props.options.targetComputedWidth = Utils.getComputedWidth(targetEl.value)
+            props.options.targetComputedHeight = Utils.getComputedHeight(targetEl.value)
+        }
+
+        onUpdated(setTargetSize)
+        onMounted(setTargetSize)
 
         return () => {
 
@@ -86,7 +97,7 @@ export const Background = defineComponent({
                 width: formatToNativeSizeString(props.options.width),
                 height: formatToNativeSizeString(props.options.height),
                 background: props.options.backgroundColor.color,
-                flexShrink:0,
+                flexShrink: 0,
                 ..._style
             }
 
@@ -96,7 +107,7 @@ export const Background = defineComponent({
 
 
             return <div style={containerStyle}>
-                <div style={style}></div>
+                <div ref={targetEl} style={style}></div>
             </div>
         }
     }

@@ -3,12 +3,12 @@
         <template #icon>
             <icon></icon>
         </template>
-        <template #name> 自定义滤镜 </template>
+        <template #name> 高级滤镜 </template>
         <template #content>
             <el-popover width="auto" trigger="click" :visible="showPopover">
                 <template #reference>
                     <el-button link size="small" @click="showPopover = !showPopover">
-                        使用自定义滤镜
+                        使用高级滤镜
                     </el-button>
                 </template>
 

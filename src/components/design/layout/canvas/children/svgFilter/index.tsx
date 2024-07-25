@@ -1,137 +1,61 @@
 import { canvasStickerOptions, currentOperatingCanvasChildIndex } from '@/components/design/layout/canvas/index.tsx'
 import { formatSizeOptionToPixelValue } from '../../helper'
 
+import { createFeDisplacementMap, createFeDisplacementMapDefaultOptions } from './effect/displacementMap'
+import { createFeDropShadow, createFeDropShadowDefaultOptions } from './effect/dropShadow'
+import { createFeGaussianBlurDefaultOptions, createFeGaussianBlur } from './effect/gaussianBlur'
+import { createFeMorphology, createFeMorphologyDefaultOptions, } from './effect/morphology'
+
+export { FeMorphologyOperator, FeMorphologyOperatorOptions } from './effect/morphology'
+
+import { createFeFlood, createFeFloodDefaultOptions } from './effect/flood'
+
 // 创建svg滤镜
 
 /*
     svg 滤镜中统一使用 px 单位
 */
 
+
+
+
 export enum SvgFilterEffects {
     DROP_SHADOW = 'drop-shadow',
     GAUSSIAN_BLUR = 'gaussian-blur',
     MORPHOLOGY = 'morphology',
+    DISPLACEMENT_MAP = 'displacement-map',
+    FLOOD = 'flood',
+    TURBULENCE = 'turbulence',
 }
 
 export const SvgFilterEffectDisplayLabelMap = {
     [SvgFilterEffects.DROP_SHADOW]: '投影 (feDropShadow)',
     [SvgFilterEffects.GAUSSIAN_BLUR]: '模糊 (feGaussianBlur)',
     [SvgFilterEffects.MORPHOLOGY]: '形态 (feMorphology)',
+    [SvgFilterEffects.DISPLACEMENT_MAP]: '位移图 (feDisplacementMap)',
+    [SvgFilterEffects.FLOOD]: '颜色填充 (feFlood)',
+    [SvgFilterEffects.TURBULENCE] :'湍流效果 (feTurbulence)'
 }
 
-
-
-function createFeDropShadowDefaultOptions() {
-    let unit = canvasStickerOptions.value.unit
-    return {
-        type: SvgFilterEffects.DROP_SHADOW,
-        dx: {
-            value: 1,
-            unit: unit
-        },
-        dy: {
-            value: 1,
-            unit: unit
-        },
-        stdDeviationX: {
-            value: 1,
-            unit: unit
-        },
-        stdDeviationY: {
-            value: 1,
-            unit: unit
-        },
-        floodColor: {
-            type: 'pure',
-            color: "#ff0000",
-        },
-        floodOpacity: 1,
-    }
-}
-
-function createFeGaussianBlurDefaultOptions() {
-    let unit = canvasStickerOptions.value.unit
-    return {
-        type: SvgFilterEffects.GAUSSIAN_BLUR,
-        stdDeviationX: {
-            value: 1,
-            unit: unit
-        },
-        stdDeviationY: {
-            value: 1,
-            unit: unit
-        },
-    }
-}
-
-function createFeMorphologyDefaultOptions() {
-    let unit = canvasStickerOptions.value.unit
-    return {
-        type: SvgFilterEffects.MORPHOLOGY,
-        radiusX: {
-            value: 1,
-            unit: unit
-        },
-        radiusY: {
-            value: 1,
-            unit: unit
-        },
-        operator: FeMorphologyOperator.ERODE
-    }
-}
-
-export enum FeMorphologyOperator {
-    ERODE = 'erode', // 侵蚀
-    DILATE = 'dilate', // 膨胀
-}
-
-
-export const FeMorphologyOperatorOptions = [
-    {
-        label: '侵蚀效果',
-        value: FeMorphologyOperator.ERODE
-    },
-    {
-        label: '膨胀效果',
-        value: FeMorphologyOperator.DILATE
-    },
-]
-
-
-function createFeMorphology(options) {
-
-    let radiusX = formatSizeOptionToPixelValue(options.radiusX)
-    let radiusY = formatSizeOptionToPixelValue(options.radiusY)
-    return <feMorphology operator={options.operator} radius={`${radiusX} ${radiusY}`} result={options.result} />
-}
-
-
-function createFeGaussianBlur(options) {
-    const stdDeviationX = formatSizeOptionToPixelValue(options.stdDeviationX)
-    const stdDeviationY = formatSizeOptionToPixelValue(options.stdDeviationY)
-    return <feGaussianBlur in="SourceGraphic" stdDeviation={`${stdDeviationX} ${stdDeviationY}`} edgeMode="duplicate"></feGaussianBlur>
-}
-
-function createFeDropShadow(options) {
-    const dx = formatSizeOptionToPixelValue(options.dx)
-    const dy = formatSizeOptionToPixelValue(options.dy)
-    const stdDeviationX = formatSizeOptionToPixelValue(options.stdDeviationX)
-    const stdDeviationY = formatSizeOptionToPixelValue(options.stdDeviationY)
-    return <feDropShadow dx={dx} dy={dy} stdDeviation={`${stdDeviationX} ${stdDeviationY}`} flood-color={options.floodColor.color} flood-opacity={options.floodOpacity}></feDropShadow>
-}
 
 /* 滤镜默认配置创建映射 */
 export const SvgFilterCreatorMap = {
     [SvgFilterEffects.DROP_SHADOW]: createFeDropShadowDefaultOptions,
     [SvgFilterEffects.GAUSSIAN_BLUR]: createFeGaussianBlurDefaultOptions,
     [SvgFilterEffects.MORPHOLOGY]: createFeMorphologyDefaultOptions,
+    [SvgFilterEffects.DISPLACEMENT_MAP]: createFeDisplacementMapDefaultOptions,
+    [SvgFilterEffects.FLOOD]:createFeFloodDefaultOptions,
+    [SvgFilterEffects.TURBULENCE] :null
 }
 
 /* 滤镜默认dom创建映射 */
 export const SvgFilterDOMCreatorMap = {
     [SvgFilterEffects.DROP_SHADOW]: createFeDropShadow,
     [SvgFilterEffects.GAUSSIAN_BLUR]: createFeGaussianBlur,
-    [SvgFilterEffects.MORPHOLOGY]: createFeMorphology
+    [SvgFilterEffects.MORPHOLOGY]: createFeMorphology,
+    [SvgFilterEffects.DISPLACEMENT_MAP]: createFeDisplacementMap,
+    [SvgFilterEffects.FLOOD]:createFeFlood,
+    [SvgFilterEffects.TURBULENCE] :null
 }
 
 /* 添加 过滤特效 */
@@ -147,7 +71,6 @@ export function addSvgFilterEffect(type) {
         opt.call()
     )
 }
-
 
 
 

@@ -206,18 +206,12 @@
             <template #title>
               <div class="title">滤镜效果</div>
             </template>
-            <el-col :span="24">
               <operateItemFilterBlur v-model="currentOperatingCanvasChild.filterBlur">
               </operateItemFilterBlur>
-            </el-col>
-            <el-col :span="24">
               <operateItemFilterBrightness v-model="currentOperatingCanvasChild.filterBrightness">
               </operateItemFilterBrightness>
-            </el-col>
-            <el-col :span="24">
               <operateItemFilterContrast v-model="currentOperatingCanvasChild.filterContrast">
               </operateItemFilterContrast>
-            </el-col>
             <el-col :span="24">
               <operateItemFilterGrayscale v-model="currentOperatingCanvasChild.filterGrayscale">
               </operateItemFilterGrayscale>

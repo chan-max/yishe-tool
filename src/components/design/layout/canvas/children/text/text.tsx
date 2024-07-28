@@ -38,7 +38,7 @@ export const createDefaultCanvasChildTextOptions = () => {
         fontWeight: '500',
         lineHeight: 1,
         letterSpacing: 0,
-        textContent: '富与贵，是人之所欲也；不以其道得之，不处也',
+        textContent: '富与贵，人之所欲也；不以其道得之，不处也',
         writingMode: 'htb',
         isRoundText: false,
         roundTextHorizontalRadius: {
@@ -61,7 +61,7 @@ export const createDefaultCanvasChildTextOptions = () => {
             color: '#fff',
         },
         ...createTransformDefaultOptions(canvasUnit),
-        ...createFilterDefaultOptions(canvasUnit),
+        filter:createFilterDefaultOptions(canvasUnit),
         // 是否使用繁体字
         isTraditionalChinese: false,
         containerEl: null,
@@ -135,7 +135,7 @@ export const Text = defineComponent({
                 fontFamily: null,
                 writingMode: props.options.writingMode == 'htb' ? WritingMode.HTB : props.options.writingMode == 'vlr' ? WritingMode.VLR : props.options.writingMode == 'vrl' ? WritingMode.VRL : null,
                 transform: createTransformString(props.options),
-                filter: createFilterFromOptions(props.options),
+                filter: createFilterFromOptions(props.options.filter),
                 textShadow: parseTextShadowOptionsToCSS(props.options.textShadow),
                 textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color,
                 perspective: formatToNativeSizeString(props.options.perspective),

@@ -14,23 +14,30 @@
             </div>
         </div>
 
-        <div class="flex" style="width:100%;padding:1rem;padding-top:2rem;">
+        <div class="flex" style="width:100%;padding:1rem;padding-top:2rem;column-gap:1rem;">
 
             <el-button plain link>
                 <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
                 上传
             </el-button>
-            <el-button link @click="exportPng" plain>
-                <LinkOutlined style="font-size:1.2em;margin-right:4px;" />
-                导出 PNG
-            </el-button>
+
+            <el-dropdown>
+                <el-button link  plain>
+                    <LinkOutlined style="font-size:1.2em;margin-right:4px;" />
+                    导出 PNG
+                </el-button>
+                <template #dropdown>
+                    <el-dropdown-menu >
+                        <el-dropdown-item @click="exportPng"> 导出原始图 </el-dropdown-item>
+                        <el-dropdown-item> 自动去除空白边框 </el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
+
             <el-button link plain>
                 更多
             </el-button>
             <div style="flex:1;"></div>
-            <el-button link plain type="danger">
-                最近删除
-            </el-button>
             <addPopover>
                 <el-button type="primary" link>
                     <span>添加元素</span>

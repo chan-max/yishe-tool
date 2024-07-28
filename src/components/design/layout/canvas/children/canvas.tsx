@@ -22,7 +22,7 @@ export function createDefaultCanvasChildcanvasStickerOptions() {
     return {
         type: 'canvas',
         undeletable: true, // 不可删除
-        ...createFilterDefaultOptions('px'),
+        filter: createFilterDefaultOptions('px'),
         backgroundColor: {
             color: 'rgba(0,0,0,0)'
         },
@@ -58,6 +58,8 @@ export const Canvas = defineComponent({
 
             let pngBackground = createPngBackgroundStyle(transformValue)
 
+
+
             // 画布的辅助背景
             const containerStyle: any = {
                 width: canvasStickerOptions.value.width + canvasStickerOptions.value.unit,
@@ -82,8 +84,7 @@ export const Canvas = defineComponent({
                 top: 0,
                 left: 0,
                 zIndex: 0,
-                // filter: createFilterFromOptions(props.options),
-                filter: 'url(#rendering-filter)',
+                filter: createFilterFromOptions(props.options.filter),
                 background: props.options.backgroundColor.color,
             }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="img-container">
-    <el-image class="img" v-bind="$attrs" :fit="fit || 'contain'" :lazy="lazy" @load="load($event, info)"
+    <el-image class="el-img" v-bind="$attrs" :fit="fit || 'contain'" :lazy="lazy" @load="load($event, info)"
       style="width: 100%; height: 100%" :style="{ padding }">
       <template #placeholder>
         <div class="img_loading"></div>
@@ -54,13 +54,13 @@ function load(e) {
   height: 100%;
 }
 
-.img {
-  border-radius: 4px;
+.el-img {
   overflow: hidden;
   cursor: pointer;
   width: 100%;
   height: 100%;
   transition: all 0.3s;
+  display: block;
 
   // &:hover {
   //   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;

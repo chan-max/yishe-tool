@@ -66,8 +66,13 @@ const isNumber = (val) => typeof val === 'number'
 */
 export function formatSizeOptionToPixelValue(size, elementRealSize = null /* 当前元素中不能含有%w %h的相对属性 */) {
 
+
     if (!isNaN(Number(size))) {
         return size
+    }
+
+    if (!size) {
+        return null
     }
 
     var { value, unit } = size
@@ -91,6 +96,11 @@ export function formatSizeOptionToPixelValue(size, elementRealSize = null /* 当
 
     if (unit == 'in') {
         return value * Utils.CM2PX * Utils.IN2CM
+    }
+
+    // 特殊记录，如果只有一个百分号 ， 则不确定是相对谁的宽度 , 直接返回拼接字符串即可
+    if (unit == '%') {
+        return value + '%'
     }
 
     if (unit == '%w') {
@@ -510,7 +520,7 @@ export function createFilterFromOptions(options) {
         `invert(${options.filterInvert}%)`,
         `opacity(${options.filterOpacity}%)`,
         `saturate(${options.filterSaturate}%)`,
-        options.filterUrl && `url(#${options.filterUrl})`
+        options.filterUrl && `url(#${options.filterUrl?.filterName})`
     ].filter(Boolean).join(' ')
 }
 

@@ -37,7 +37,11 @@ export const canvasStickerOptions = ref({
         color: 'rgba(0,0,0,0)'
     },
     svgFilter: {
-        children: []
+        // 正在操作的自定义的滤镜元素， 只存在一个
+        children: [],
+
+        // 内置的滤镜
+        // builtInSvgFilters: [],
     },
     children: [
         // 默认会存在一个画布元素
@@ -227,6 +231,8 @@ export class CanvasController {
     getBase64() {
         return this.canvasEl.toDataURL('image/png')
     }
+
+        
 
     drawImage(img) {
         if (!this.ctx) {

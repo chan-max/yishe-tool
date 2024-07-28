@@ -6,7 +6,7 @@
         <template #name> 模糊效果 </template>
         <template #content>
             <el-tooltip content="模糊效果" :hide-after="0">
-                <el-input style="width:80px"  v-model="model.value" size="small" max="999" min="0" step="1">
+                <el-input style="width:80px" type="number"  v-model="model.value" size="small" max="999" min="0" step="1">
                     <template #suffix>
                         <div style="font-size:1rem;"> {{ canvasStickerOptions.unit }}</div>
                     </template>

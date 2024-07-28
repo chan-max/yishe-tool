@@ -21,7 +21,7 @@ export const createDefaultCanvasChildImageOptions = () => {
         ...createTransformDefaultOptions(canvasUnit),
         imageInfo: null,
         objectFit: 'contain',
-        ...createFilterDefaultOptions(canvasUnit),
+        filter:createFilterDefaultOptions(canvasUnit),
         zIndex: 0,
     }
 }
@@ -79,7 +79,7 @@ export const Image = defineComponent({
                 width: formatToNativeSizeString(props.options.width),
                 height: formatToNativeSizeString(props.options.height),
                 objectFit: props.options.objectFit,
-                filter: createFilterFromOptions(props.options),
+                filter: createFilterFromOptions(props.options.filter),
                 zIndex: props.options.zIndex,
                 ..._style,
             }

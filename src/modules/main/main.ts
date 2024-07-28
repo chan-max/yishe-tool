@@ -24,7 +24,7 @@ import '@/style/vars.less'
 
 import Antd from 'ant-design-vue'
 //  import "ant-design-vue/dist/antd.css";
-import '@/style/cover-antdesign.less'
+
 
 import ElementPlus from 'element-plus'
 
@@ -43,6 +43,9 @@ import {defaultResponseInterceptors} from '@/api/apiInterception'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css"; //required if you're not going to override default slots
+
+
+import '@/style/cover-antdesign.less'
 
 // pc 端专有的拦截器
 apiInstance.interceptors.response.use(defaultResponseInterceptors);

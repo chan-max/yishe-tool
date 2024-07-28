@@ -4,41 +4,28 @@ import { formatSizeOptionToPixelValue } from '../../../helper'
 import { SvgFilterEffects } from '..'
 
 
-export function createFeFloodDefaultOptions(options = {}) {
+export function createFeTileDefaultOptions(options = {}) {
     let unit = canvasStickerOptions.value.unit
     return {
         x: {
-            value: 1,
+            value: 0,
             unit: unit
         },
         y: {
-            value: 1,
+            value: 0,
             unit: unit
         },
-        width: {
-            value: 1,
-            unit: unit
-        },
-        height: {
-            value: 1,
-            unit: unit
-        },
-        type: SvgFilterEffects.FLOOD,
-        floodColor: {
-            type: 'pure',
-            color: "#000000",
-        },
-        floodOpacity: 1,
-        ...options
+        type: SvgFilterEffects.Tile,
+        result: null,
     }
 }
 
-export function createFeFlood(options) {
+export function createFeTile(options) {
 
     let x = formatSizeOptionToPixelValue(options.x)
     let y = formatSizeOptionToPixelValue(options.y)
     let width = formatSizeOptionToPixelValue(options.width)
     let height = formatSizeOptionToPixelValue(options.height)
 
-    return <feFlood x={x} y={y} width={width} height={height} flood-color={options.floodColor.color} flood-opacity={options.floodOpacity}></feFlood>
+    return <feTile x={x} y={y} width={width} height={height} result={options.result}></feTile>
 }

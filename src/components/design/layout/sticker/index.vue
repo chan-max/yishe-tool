@@ -176,8 +176,7 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   width: 120px !important;
   height: 100px !important;
   background-color: #efefef;
-  border-radius: .4rem;
-
+  border-radius: 4px;
 }
 
 
@@ -198,10 +197,10 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
 
 .bar {
   width: 100%;
-  font-size: 1em;
+  font-size: 1rem;
   color: #555;
   display: flex;
-  padding: 0 2px;
+  padding: 0 .5rem;
   justify-content: space-between;
   align-items: center;
   column-gap: 1em;

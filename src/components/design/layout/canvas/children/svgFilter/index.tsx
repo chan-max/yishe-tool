@@ -26,6 +26,8 @@ export enum SvgFilterEffects {
     DISPLACEMENT_MAP = 'displacement-map',
     FLOOD = 'flood',
     TURBULENCE = 'turbulence',
+    COMPOSITE = 'composite',
+    Tile ='tile'
 }
 
 export const SvgFilterEffectDisplayLabelMap = {
@@ -34,7 +36,9 @@ export const SvgFilterEffectDisplayLabelMap = {
     [SvgFilterEffects.MORPHOLOGY]: '形态 (feMorphology)',
     [SvgFilterEffects.DISPLACEMENT_MAP]: '位移图 (feDisplacementMap)',
     [SvgFilterEffects.FLOOD]: '颜色填充 (feFlood)',
-    [SvgFilterEffects.TURBULENCE] :'湍流效果 (feTurbulence)'
+    [SvgFilterEffects.TURBULENCE]: '湍流效果 (feTurbulence)',
+    [SvgFilterEffects.COMPOSITE]: '组合 (feComposite)',
+    [SvgFilterEffects.Tile]:'重复填充 (feTile)'
 }
 
 
@@ -44,8 +48,8 @@ export const SvgFilterCreatorMap = {
     [SvgFilterEffects.GAUSSIAN_BLUR]: createFeGaussianBlurDefaultOptions,
     [SvgFilterEffects.MORPHOLOGY]: createFeMorphologyDefaultOptions,
     [SvgFilterEffects.DISPLACEMENT_MAP]: createFeDisplacementMapDefaultOptions,
-    [SvgFilterEffects.FLOOD]:createFeFloodDefaultOptions,
-    [SvgFilterEffects.TURBULENCE] :null
+    [SvgFilterEffects.FLOOD]: createFeFloodDefaultOptions,
+    [SvgFilterEffects.TURBULENCE]: null
 }
 
 /* 滤镜默认dom创建映射 */
@@ -54,8 +58,8 @@ export const SvgFilterDOMCreatorMap = {
     [SvgFilterEffects.GAUSSIAN_BLUR]: createFeGaussianBlur,
     [SvgFilterEffects.MORPHOLOGY]: createFeMorphology,
     [SvgFilterEffects.DISPLACEMENT_MAP]: createFeDisplacementMap,
-    [SvgFilterEffects.FLOOD]:createFeFlood,
-    [SvgFilterEffects.TURBULENCE] :null
+    [SvgFilterEffects.FLOOD]: createFeFlood,
+    [SvgFilterEffects.TURBULENCE]: null
 }
 
 /* 添加 过滤特效 */
@@ -196,27 +200,33 @@ export const FeSpotLight = ({ x, y, z, pointsAtX, pointsAtY, pointsAtZ, specular
 
 
 
-// 马赛克效果滤镜
-export const MosaicFilter = () => {
-    return <>
-        <feDropShadow dx="0" dy="0" stdDeviation="10 10" flood-color="#ff0000" flood-opacity="1"></feDropShadow>
-    </>
+export function createFilter(props, children) {
+    return <filter id={props.id} x="0" y="0">
+        {children}
+    </filter>
 }
 
 
 
 
+import { BuiltInSvgFilterRenderList } from './builtIn'
+
+
 
 export function SvgFilter(props) {
-    return <svg id="filter-container-id" height="0" width="0" xmlns="http://www.w3.org/2000/svg" >
+    return <svg id="filter-container-id" height="0" width="0">
         <defs>
-            <filter id="rendering-filter" x="0" y="0" xmlns="http://www.w3.org/2000/svg">
+            <filter id="rendering-filter" x="0" y="0">
                 {canvasStickerOptions.value.svgFilter.children.map((child) => {
                     return SvgFilterDOMCreatorMap[child.type]?.call(null, child)
                 })}
             </filter>
-
             {/* 各种内置滤镜 */}
+            {
+                BuiltInSvgFilterRenderList.map((opt) => {
+                    return opt.render()
+                })
+            }
         </defs>
     </svg>
 }

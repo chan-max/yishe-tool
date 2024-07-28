@@ -1,8 +1,23 @@
 
-/*
-  记录待实现的特效
-  马赛克效果
-*/
 
 
 
+export enum SvgFilterInput {
+    SourceGraphic = 'SourceGraphic',
+    SourceAlpha = 'SourceAlpha',
+    BackgroundImage = 'BackgroundImage',
+    BackgroundAlpha = 'BackgroundAlpha',
+    FillPaint = 'FillPaint',
+    StrokePaint = 'StrokePaint'
+}
+
+
+
+export enum SvgFilterInput2 {
+    SourceGraphic = 'SourceGraphic',
+    SourceAlpha = 'SourceAlpha',
+    BackgroundImage = 'BackgroundImage',
+    BackgroundAlpha = 'BackgroundAlpha',
+    FillPaint = 'FillPaint',
+    StrokePaint = 'StrokePaint'
+}

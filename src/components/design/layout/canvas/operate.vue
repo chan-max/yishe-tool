@@ -48,46 +48,7 @@
             <template #title>
               <div class="title">画布滤镜效果</div>
             </template>
-            <el-col :span="24">
-              <operateItemFilterBlur v-model="currentOperatingCanvasChild.filterBlur">
-              </operateItemFilterBlur>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterBrightness v-model="currentOperatingCanvasChild.filterBrightness">
-              </operateItemFilterBrightness>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterContrast v-model="currentOperatingCanvasChild.filterContrast">
-              </operateItemFilterContrast>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterGrayscale v-model="currentOperatingCanvasChild.filterGrayscale">
-              </operateItemFilterGrayscale>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterInvert v-model="currentOperatingCanvasChild.filterInvert">
-              </operateItemFilterInvert>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterOpacity v-model="currentOperatingCanvasChild.filterOpacity">
-              </operateItemFilterOpacity>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterSaturate v-model="currentOperatingCanvasChild.filterSaturate">
-              </operateItemFilterSaturate>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterSepia v-model="currentOperatingCanvasChild.filterSepia">
-              </operateItemFilterSepia>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterHueRotate v-model="currentOperatingCanvasChild.filterHueRotate">
-              </operateItemFilterHueRotate>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterUrl v-model="currentOperatingCanvasChild.filterUrl">
-              </operateItemFilterUrl>
-            </el-col>
+            <operateItemFilterGroup v-model="currentOperatingCanvasChild.filter"></operateItemFilterGroup>
           </el-collapse-item>
         </el-collapse>
 
@@ -206,40 +167,7 @@
             <template #title>
               <div class="title">滤镜效果</div>
             </template>
-              <operateItemFilterBlur v-model="currentOperatingCanvasChild.filterBlur">
-              </operateItemFilterBlur>
-              <operateItemFilterBrightness v-model="currentOperatingCanvasChild.filterBrightness">
-              </operateItemFilterBrightness>
-              <operateItemFilterContrast v-model="currentOperatingCanvasChild.filterContrast">
-              </operateItemFilterContrast>
-            <el-col :span="24">
-              <operateItemFilterGrayscale v-model="currentOperatingCanvasChild.filterGrayscale">
-              </operateItemFilterGrayscale>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterInvert v-model="currentOperatingCanvasChild.filterInvert">
-              </operateItemFilterInvert>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterOpacity v-model="currentOperatingCanvasChild.filterOpacity">
-              </operateItemFilterOpacity>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterSaturate v-model="currentOperatingCanvasChild.filterSaturate">
-              </operateItemFilterSaturate>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterSepia v-model="currentOperatingCanvasChild.filterSepia">
-              </operateItemFilterSepia>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterHueRotate v-model="currentOperatingCanvasChild.filterHueRotate">
-              </operateItemFilterHueRotate>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterUrl v-model="currentOperatingCanvasChild.filterUrl">
-              </operateItemFilterUrl>
-            </el-col>
+            <operateItemFilterGroup v-model="currentOperatingCanvasChild.filter"></operateItemFilterGroup>
           </el-collapse-item>
         </el-collapse>
       </template>
@@ -274,46 +202,7 @@
             <template #title>
               <div class="title">滤镜效果</div>
             </template>
-            <el-col :span="24">
-              <operateItemFilterBlur v-model="currentOperatingCanvasChild.filterBlur">
-              </operateItemFilterBlur>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterBrightness v-model="currentOperatingCanvasChild.filterBrightness">
-              </operateItemFilterBrightness>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterContrast v-model="currentOperatingCanvasChild.filterContrast">
-              </operateItemFilterContrast>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterGrayscale v-model="currentOperatingCanvasChild.filterGrayscale">
-              </operateItemFilterGrayscale>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterInvert v-model="currentOperatingCanvasChild.filterInvert">
-              </operateItemFilterInvert>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterOpacity v-model="currentOperatingCanvasChild.filterOpacity">
-              </operateItemFilterOpacity>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterSaturate v-model="currentOperatingCanvasChild.filterSaturate">
-              </operateItemFilterSaturate>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterSepia v-model="currentOperatingCanvasChild.filterSepia">
-              </operateItemFilterSepia>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterHueRotate v-model="currentOperatingCanvasChild.filterHueRotate">
-              </operateItemFilterHueRotate>
-            </el-col>
-            <el-col :span="24">
-              <operateItemFilterUrl v-model="currentOperatingCanvasChild.filterUrl">
-              </operateItemFilterUrl>
-            </el-col>
+            <operateItemFilterGroup v-model="currentOperatingCanvasChild.filter"></operateItemFilterGroup>
           </el-collapse-item>
         </el-collapse>
       </template>
@@ -506,18 +395,8 @@ import operateItemEllipseTextRadius from "@/components/design/layout/canvas/oper
 // import operateItemRoundTextDirection from "@/components/design/layout/canvas/operate/text/roundTextDirection.vue";
 import operateItemTextStroke from "@/components/design/layout/canvas/operate/text/textStroke.vue";
 
-// 滤镜相关
-import operateItemFilterBlur from "@/components/design/layout/canvas/operate/filter/blur.vue";
-import operateItemFilterBrightness from "@/components/design/layout/canvas/operate/filter/brightness.vue";
-import operateItemFilterContrast from "@/components/design/layout/canvas/operate/filter/contrast.vue";
-import operateItemFilterGrayscale from "@/components/design/layout/canvas/operate/filter/grayscale.vue";
-import operateItemFilterInvert from "@/components/design/layout/canvas/operate/filter/invert.vue";
-import operateItemFilterOpacity from "@/components/design/layout/canvas/operate/filter/opacity.vue";
-import operateItemFilterSaturate from "@/components/design/layout/canvas/operate/filter/saturate.vue";
-import operateItemFilterSepia from "@/components/design/layout/canvas/operate/filter/sepia.vue";
-import operateItemFilterHueRotate from "@/components/design/layout/canvas/operate/filter/hueRotate.vue";
-import operateItemFilterUrl from "@/components/design/layout/canvas/operate/filter/url.vue";
 
+import operateItemFilterGroup from "@/components/design/layout/canvas/operate/filter/group.vue";
 
 
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";

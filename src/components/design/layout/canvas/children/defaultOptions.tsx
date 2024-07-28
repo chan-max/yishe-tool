@@ -15,7 +15,7 @@ export const createFilterDefaultOptions = (blurUnit = 'px') => {
         filterOpacity: 100, // 透明度
         filterSaturate: 100, // 饱和度
         filterSepia: 0, // 褐色
-        filterUrl: ''
+        filterUrl: null
     }
 }
 

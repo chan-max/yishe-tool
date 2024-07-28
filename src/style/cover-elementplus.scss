@@ -12,7 +12,7 @@
 
 :root{
   --el-border-radius-base:6px;
-  --el-border-color:#eee!important;
+  --el-border-color:#ddd!important;
 }
 
 .el-select-dropdown__item {
@@ -22,4 +22,9 @@
 .el-slider{
   --el-slider-button-size:12px!important;
   --el-slider-height:4px;
+}
+
+.el-scrollbar__bar{
+  width: 4px!important;
+  height: 4px!important;
 }

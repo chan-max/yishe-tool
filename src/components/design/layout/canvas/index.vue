@@ -22,14 +22,14 @@
             </el-button>
 
             <el-dropdown>
-                <el-button link  plain>
+                <el-button link plain>
                     <LinkOutlined style="font-size:1.2em;margin-right:4px;" />
                     导出 PNG
                 </el-button>
                 <template #dropdown>
-                    <el-dropdown-menu >
+                    <el-dropdown-menu>
                         <el-dropdown-item @click="exportPng"> 导出原始图 </el-dropdown-item>
-                        <el-dropdown-item> 自动去除空白边框 </el-dropdown-item>
+                        <el-dropdown-item @click="exportPngWithoutBorder"> 自动去除空白边框 </el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -135,6 +135,11 @@ function exportPng() {
     cc.downloadPng();
 }
 
+
+/* 导出去除多余空白的图片 */
+function exportPngWithoutBorder() {
+    cc.downloadPngWithoutBorder();
+}
 
 
 const loading = computed(() => {

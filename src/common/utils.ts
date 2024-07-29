@@ -38,7 +38,50 @@ export function formatUrl(url) {
 
 
 
+/*
+    去除imageData的多余空白
+*/
+function trimImageData(imageData): ImageData {
+    const { width, height, data } = imageData;
+    let minX = width, minY = height, maxX = 0, maxY = 0;
 
+    // 查找边界
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const index = (y * width + x) * 4;
+            const alpha = data[index + 3];
+
+            if (alpha !== 0) {
+                minX = Math.min(minX, x);
+                minY = Math.min(minY, y);
+                maxX = Math.max(maxX, x);
+                maxY = Math.max(maxY, y);
+            }
+        }
+    }
+
+    // 计算新的尺寸
+    const trimmedWidth = maxX - minX + 1;
+    const trimmedHeight = maxY - minY + 1;
+
+    // 创建新的 ImageData
+    const trimmedData = new ImageData(trimmedWidth, trimmedHeight);
+
+    // 复制相关像素数据
+    for (let y = 0; y < trimmedHeight; y++) {
+        for (let x = 0; x < trimmedWidth; x++) {
+            const sourceIndex = ((minY + y) * width + (minX + x)) * 4;
+            const targetIndex = (y * trimmedWidth + x) * 4;
+
+            trimmedData.data[targetIndex] = data[sourceIndex];
+            trimmedData.data[targetIndex + 1] = data[sourceIndex + 1];
+            trimmedData.data[targetIndex + 2] = data[sourceIndex + 2];
+            trimmedData.data[targetIndex + 3] = data[sourceIndex + 3];
+        }
+    }
+
+    return trimmedData;
+}
 
 
 
@@ -87,6 +130,9 @@ class Utils {
         return Number(window.getComputedStyle(el).height.split('px')[0])
     }
 
+
+    // 去除imageData的空白
+    trimImageData = trimImageData
 }
 
 

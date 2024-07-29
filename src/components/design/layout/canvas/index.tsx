@@ -24,6 +24,10 @@ import { createDefaultCanvasChildcanvasStickerOptions } from './children/canvas'
 import { Canvas } from './children/canvas.tsx'
 import { createFilterDefaultOptions } from './children/defaultOptions.tsx'
 
+import Utils from '@/common/utils'
+
+import { imageDataToFile } from '@/common/transform'
+
 /*
     画布参数
 */
@@ -202,6 +206,15 @@ export class CanvasController {
         return file
     }
 
+    async downloadPngWithoutBorder() {
+        const imageData = this.ctx.getImageData(0, 0, this.canvasEl.width, this.canvasEl.height);
+        const trimmed = Utils.trimImageData(imageData)
+
+        downloadByFile(imageDataToFile(trimmed))
+    }
+
+
+
     async downloadPng() {
         downloadByFile(await this.exportPng())
     }
@@ -232,7 +245,9 @@ export class CanvasController {
         return this.canvasEl.toDataURL('image/png')
     }
 
-        
+
+
+
 
     drawImage(img) {
         if (!this.ctx) {
@@ -301,6 +316,9 @@ export class CanvasController {
             this.loading.value = false
         }
     }
+
+
+
 
 
     initDraggable(base64) {

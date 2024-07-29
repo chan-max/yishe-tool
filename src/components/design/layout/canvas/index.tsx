@@ -206,14 +206,12 @@ export class CanvasController {
         return file
     }
 
-    async downloadPngWithoutBorder() {
+    async downloadTrimmedPng() {
         const imageData = this.ctx.getImageData(0, 0, this.canvasEl.width, this.canvasEl.height);
         const trimmed = Utils.trimImageData(imageData)
 
         downloadByFile(imageDataToFile(trimmed))
     }
-
-
 
     async downloadPng() {
         downloadByFile(await this.exportPng())

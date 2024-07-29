@@ -456,13 +456,36 @@ function fontLoad() {
   font-size: 1rem !important;
   line-height: 1.2rem;
 }
+
+.canvas-operate-form {
+  --el-text-color-placeholder: #222;
+  --el-border-radius-base: 6px;
+  --el-border-color: rgba(0, 0, 0, 0) !important;
+
+  .el-input__wrapper,
+  .el-select__wrapper {
+    background-color: #f6f6f6;
+    color: #000;
+  }
+
+}
+
+.el-popover {
+  --el-text-color-placeholder: #222;
+  --el-border-radius-base: 6px;
+  --el-border-color: rgba(0, 0, 0, 0) !important;
+
+  .el-input__wrapper,
+  .el-select__wrapper {
+    background-color: #f6f6f6;
+    color: #000;
+  }
+}
 </style>
 <style scoped>
 :deep(.el-scrollbar__bar.is-vertical) {
   width: 4px;
 }
-
-
 
 .title {
   font-size: 1rem;

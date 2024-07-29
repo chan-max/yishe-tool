@@ -29,7 +29,7 @@
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item @click="exportPng"> 导出原始图 </el-dropdown-item>
-                        <el-dropdown-item @click="exportPngWithoutBorder"> 自动去除空白边框 </el-dropdown-item>
+                        <el-dropdown-item @click="exportTrimmedPng"> 自动去除空白边框 </el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -137,8 +137,8 @@ function exportPng() {
 
 
 /* 导出去除多余空白的图片 */
-function exportPngWithoutBorder() {
-    cc.downloadPngWithoutBorder();
+function exportTrimmedPng() {
+    cc.downloadTrimmedPng();
 }
 
 

@@ -179,7 +179,6 @@ export class ModelController extends Base {
         this.renderer.setPixelRatio(window.devicePixelRatio)
         // 初始化时暴露场景和渲染器
         currentController.value = this;
-        window.mc = this
     }
 
     // 初始化容器

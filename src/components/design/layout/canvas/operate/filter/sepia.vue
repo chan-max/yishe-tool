@@ -6,7 +6,7 @@
         <template #name> 深褐色 </template>
         <template #content>
             <el-tooltip content="值为100%则完全是深褐色的，值为0%图像无变化" :hide-after="0">
-                <el-input style="width:80px"  v-model="model" size="small" max="100" min="0" step="1">
+                <el-input style="width:80px"  v-model="model" size="small" max="100" min="0" step="1" type="number">
                     <template #suffix>
                         <div style="font-size:1rem;"> % </div>
                     </template>

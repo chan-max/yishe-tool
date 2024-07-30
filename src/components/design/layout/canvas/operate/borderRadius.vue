@@ -5,7 +5,7 @@
         </template>
         <template #name> 边框圆角 </template>
         <template #content>
-            <el-popover width="180" trigger="click">
+            <el-popover width="180" trigger="click" popper-class="el-popover-operation">
                 <template #reference>
                     <el-button size="small" link>
                         <el-tooltip :content="borderRadiusLabel" :hide-after="0">
@@ -26,7 +26,7 @@
                             </el-col>
                             <el-col :span="16">
                                 <div class="input-item">
-                                    <el-popover placement="right" width="200" trigger="click" :teleported="false">
+                                    <el-popover placement="right" width="200" trigger="click" :teleported="false" popper-class="el-popover-operation">
                                         <template #reference>
                                             <el-input size="small"  min="0" step="1"
                                                 style="width:80px;height:24px;" v-model.number="model[item.type].value">

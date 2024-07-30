@@ -4,7 +4,7 @@
         <template #name> 文字间距 </template>
         <template #content>
             <el-tooltip content="文字间距相对于当前文字大小" :hide-after="0">
-                <el-input  style="width:64px"   v-model="model" size="small" min="-1" max="10"
+                <el-input  style="width:64px" type="number"  v-model="model" size="small" min="-1" max="10"
                 step=".1"></el-input>
             </el-tooltip>
         </template>

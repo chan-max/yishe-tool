@@ -457,29 +457,27 @@ function fontLoad() {
   line-height: 1.2rem;
 }
 
-.canvas-operate-form {
+.operate-form-item,.el-popover-operation{
   --el-text-color-placeholder: #222;
   --el-border-radius-base: 6px;
-  --el-border-color: rgba(0, 0, 0, 0) !important;
+
 
   .el-input__wrapper,
-  .el-select__wrapper {
+  .el-select__wrapper,
+  .el-textarea__inner {
     background-color: #f6f6f6;
     color: #000;
+    &:hover{
+      // box-shadow: #6900ffdd 0px 0px 0px 1px;
+    }
+
+
   }
 
-}
-
-.el-popover {
-  --el-text-color-placeholder: #222;
-  --el-border-radius-base: 6px;
-  --el-border-color: rgba(0, 0, 0, 0) !important;
-
-  .el-input__wrapper,
-  .el-select__wrapper {
-    background-color: #f6f6f6;
-    color: #000;
+  .el-input,.el-select,.el-textarea{
+    --el-border-color: rgba(0, 0, 0, 0) !important;
   }
+
 }
 </style>
 <style scoped>

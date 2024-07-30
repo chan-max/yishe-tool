@@ -8,7 +8,7 @@
                 <gltf-viewer :model="item.meta.modelInfo"></gltf-viewer>
                 <!-- <desimage :src="'https://' + item.thumbnail" :draggable="false"></desimage> -->
             </div>
-            <el-popover placement="auto" trigger="click" width="auto">
+            <el-popover placement="auto" trigger="click" width="auto" >
               <template #reference>
                 <div class="bar">
                   <div class="title text-ellipsis">{{ item.name || "......" }}</div>

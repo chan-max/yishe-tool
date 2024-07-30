@@ -33,11 +33,22 @@ export async function downloadByFile(file) {
     a.href = URL.createObjectURL(file)
     a.download = file.name
     a.click()
+
+    return
+
+    // 处理图片情况
+    fetch(url)
+    .then((response) => response.blob())
+    .then((blob) => {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
 }
 
 export function svgToBase64(svg) {
-
-
 
     if (typeof svg == 'string') {
         svg = svg
@@ -48,7 +59,7 @@ export function svgToBase64(svg) {
     }
 
     if (svg.__v_isVNode) {
-
+        
     }
 
     var base64 = btoa(unescape(encodeURIComponent(svg)));

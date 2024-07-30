@@ -30,6 +30,41 @@ function ensureFormData(obj) {
     return new FormData()
 }
 
+
+/*
+    对象转 formData
+*/
+function objectToFormData(obj, form, namespace) {
+    const formData = form || new FormData();
+  
+    for (let property in obj) {
+      if (!obj.hasOwnProperty(property)) {
+        continue;
+      }
+  
+      const key = namespace ? `${namespace}[${property}]` : property;
+      const value = obj[property];
+  
+      if (value instanceof Date) {
+        formData.append(key, value.toISOString());
+      } else if (value instanceof Array) {
+        value.forEach((element, index) => {
+          const arrayKey = `${key}[${index}]`;
+          if (typeof element === 'object' && !(element instanceof File)) {
+            objectToFormData(element, formData, arrayKey);
+          } else {
+            formData.append(arrayKey, element);
+          }
+        });
+      } else if (typeof value === 'object' && !(value instanceof File)) {
+        objectToFormData(value, formData, key);
+      } else {
+        formData.append(key, value);
+      }
+    }
+    return formData;
+  }
+
 /*
  暂时不需要兼容文件上传
 */

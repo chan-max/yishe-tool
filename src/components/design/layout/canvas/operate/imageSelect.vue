@@ -6,7 +6,7 @@
         <template #name> {{ label }} </template>
         <template #content>
             <template v-if="model">
-                <el-popover placement="right">
+                <el-popover placement="right" popper-class="el-popover-operation">
                     <template #reference>
                         <div class="flex items-center">
                             <div class="text-ellipsis" style="font-size:1rem;max-width: 180px;">已引用图片 : {{ model.name }}</div>

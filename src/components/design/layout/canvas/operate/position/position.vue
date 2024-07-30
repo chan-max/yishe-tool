@@ -3,7 +3,7 @@
     <template #icon> <icon-position></icon-position> </template>
     <template #name> 显示位置 </template>
     <template #content>
-      <el-popover width="auto" trigger="click">
+      <el-popover width="auto" trigger="click" popper-class="el-popover-operation">
         <template #reference>
           <el-button size="small" link>{{ positionLabel }}</el-button>
         </template>
@@ -47,7 +47,7 @@
               </el-col>
               <el-col :span="16">
                 <div>
-                  <el-popover placement="right" :teleported="false">
+                  <el-popover placement="right" :teleported="false" popper-class="el-popover-operation">
                     <template #reference>
                       <div class="content">
                         <el-input style="width:80px" size="small"  min="0" step="1"

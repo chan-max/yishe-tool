@@ -5,7 +5,7 @@
     </template>
     <template #name> 内间距 </template>
     <template #content>
-      <el-popover width="160" trigger="click">
+      <el-popover width="160" trigger="click" popper-class="el-popover-operation">
         <template #reference>
           <el-button size="small" link>
             <el-tooltip :content="borderRadiusLabel" :hide-after="0">

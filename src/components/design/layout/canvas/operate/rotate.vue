@@ -7,7 +7,7 @@
         <template #content>
             <el-tooltip content="用于旋转元素，单位为旋转的角度" :hide-after="0">
                 <div>
-                    <el-popover trigger="click" width="180">
+                    <el-popover trigger="click" width="180" popper-class="el-popover-operation">
                         <template #reference>
                             <el-button link>
                                 <div style="font-size: 1rem;display:flex;column-gap:.5rem;">

@@ -3,7 +3,7 @@
         <template #icon> <icon></icon> </template>
         <template #name> 边框尺寸 </template>
         <template #content>
-            <el-popover trigger="click" width="180">
+            <el-popover trigger="click" width="180" popper-class="el-popover-operation">
                 <template #reference>
                     <el-input  style="width:80px" v-model="model.value" size="small" min="0" step="1">
                         <template #suffix>

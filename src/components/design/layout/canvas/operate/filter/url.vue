@@ -5,7 +5,7 @@
         </template>
         <template #name> 高级滤镜 </template>
         <template #content>
-            <el-popover width="auto" trigger="click" :visible="showPopover">
+            <el-popover width="auto" trigger="click" :visible="showPopover" popper-class="el-popover-operation">
                 <template #reference>
                     <el-button link size="small" @click="showPopover = !showPopover">
                         {{ activeFilter ? activeFilter.label : '未使用滤镜' }}

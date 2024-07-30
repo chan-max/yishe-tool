@@ -1,5 +1,5 @@
 <template>
-    <el-popover :placement="placement" width="180">
+    <el-popover :placement="placement" width="180" popper-class="el-popover-operation">
         <template #reference>
             <div class="size-input">
                 <el-input :placeholder="placeholder" size="small"  min="0" step="1" v-model.number="model">

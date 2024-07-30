@@ -1,7 +1,9 @@
 import { setFullscreen } from "@/common/browser";
 import { useLocalStorage } from "@vueuse/core";
-import { computed, ref, shallowRef, watchEffect, watch, nextTick, reactive } from "vue"
+import { computed, ref, shallowRef, watchEffect, watch, nextTick, reactive, toRaw } from "vue"
 import { defineStore } from "pinia";
+import Utils from '@/common/utils'
+import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
 
 
 // 当前实例
@@ -60,7 +62,7 @@ watchEffect(() => {
 export const showBaseModelSelect = ref(false);
 
 // 当前操作的模型信息 , 如果不提供默认值 ， 会出现 【object】的问题
-export const currentOperatingBaseModelInfo = ref(null as any)
+export const currentOperatingBaseModelInfo = ref({} as any)
 
 // 是否展示场景控制弹窗
 export const showSceneControl = ref(false)
@@ -131,8 +133,9 @@ watch(
         if (!currentOperatingBaseModelInfo.value?.url) {
             return;
         }
-        await nextTick();
-        currentController.value.setMainModel(currentOperatingBaseModelInfo.value?.url);
+        // await nextTick();
+        await Utils.sleep(33)
+        currentController.value?.setMainModel(currentOperatingBaseModelInfo.value?.url);
     },
     {
         immediate: true,
@@ -366,8 +369,8 @@ export const svgCanvasSyncMainCanvas = ref(false)
 
 
 export const viewDisplayController = ref({
-    showStickerModal:false, // 贴纸模态，主要用于交互操作
-    showProject:false // 是否展示我的项目
+    showStickerModal: false, // 贴纸模态，主要用于交互操作
+    showProject: false // 是否展示我的项目
 })
 
 
@@ -390,8 +393,6 @@ export const useDesignStore = defineStore('_1s_design', () => {
         showThreeCanvas: useLocalStorage('_1s_showThreeCanvas', showThreeCanvas),
         showSticker: useLocalStorage('_1s_showSticker', showSticker),
         currentOperatingBaseModelInfo: useLocalStorage('_1s_currentOperatingBaseModelInfo', currentOperatingBaseModelInfo),
-        showSvgCanvas: useLocalStorage('_1s_showSvgCanvas', showSvgCanvas),
-        svgCanvasChildren: useLocalStorage('_1s_svgCanvasChildren', svgCanvasChildren),
         showCanvasLayout: useLocalStorage('_1s_showCanvasLayout', showCanvasLayout),
         canvasStickerOptions: useLocalStorage('_1s_canvasStickerOptions', canvasStickerOptions),
         stickerQueryTags: useLocalStorage('_1s_stickerQueryTags', stickerQueryTags),
@@ -402,8 +403,37 @@ export const useDesignStore = defineStore('_1s_design', () => {
 })
 
 
+const designStore = useDesignStore();
 
 
+
+
+// 上一个场景的所有状态
+const previousDesignState = ref(null)
+
+designStore.$subscribe((mutation, state) => {
+
+    // if (!previousDesignState.value) {
+    //     return
+    // }
+
+
+
+    let currentState = Utils.deepUnref(state)
+
+    let difference = diff(previousDesignState.value, currentState)
+    previousDesignState.value = currentState
+
+    // 直接拿着差异的 key 去更新即可
+    console.log('差异', difference)
+
+
+})
+
+
+/*
+    同步工作区所有个人状态
+*/
 
 
 

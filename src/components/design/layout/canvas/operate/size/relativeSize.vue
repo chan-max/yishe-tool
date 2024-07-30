@@ -7,7 +7,7 @@
         <template #content>
             <span style="font-size: 1rem;">宽</span>
 
-            <el-popover trigger="hover" width="200">
+            <el-popover trigger="hover" width="200" popper-class="el-popover-operation">
                 <template #reference>
                     <el-input style="width: 80px" size="small" v-model="width.value" step="10" 
                         placeholder="宽">
@@ -29,7 +29,7 @@
 
             <span style="font-size: 1rem;">高</span>
 
-            <el-popover trigger="hover" width="200">
+            <el-popover trigger="hover" width="200" popper-class="el-popover-operation">
                 <template #reference>
                     <el-input style="width: 80px" size="small" v-model="height.value" step="10" 
                         placeholder="高">

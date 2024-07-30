@@ -5,7 +5,7 @@
         </template>
         <template #name> 宽高比 </template>
         <template #content>
-            <el-popover>
+            <el-popover popper-class="el-popover-operation">
                 <template #reference>
                     <el-input size="small" style="width:164px;" v-model="model"  min=".1" max="10"
                         step=".1"></el-input>

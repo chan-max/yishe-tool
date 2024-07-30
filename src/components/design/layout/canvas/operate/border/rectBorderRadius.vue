@@ -7,7 +7,7 @@
         <template #content>
             <div class="flex items-center" style="column-gap:1rem;">
                 <span>水平</span>
-                <el-popover  width="180" trigger="click">
+                <el-popover  width="180" trigger="click" popper-class="el-popover-operation">
                     <template #reference>
                         <el-input size="small"  min="0" step="1"
                         style="width:80px;"
@@ -30,7 +30,7 @@
                     </el-row>
                 </el-popover>
                 <span>垂直</span>
-                <el-popover  width="180" trigger="click">
+                <el-popover  width="180" trigger="click" popper-class="el-popover-operation">
                     <template #reference>
                         <el-input size="small"  min="0" step="1"
                             style="width:80px;"

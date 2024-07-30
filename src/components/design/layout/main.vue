@@ -236,8 +236,10 @@ const mountContainer = ref();
 
 isFirstPageLoading.value = true
 
+const modelController = new ModelController();
+
 onMounted(async () => {
-  const modelController = new ModelController();
+
   modelController.render(mountContainer.value);
 
   await Utils.sleep(1200)

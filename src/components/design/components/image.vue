@@ -3,10 +3,10 @@
     <el-image class="el-img" v-bind="$attrs" :fit="fit || 'contain'" :lazy="lazy" @load="load($event, info)"
       style="width: 100%; height: 100%" :style="{ padding }">
       <template #placeholder>
-        <div class="img_loading"></div>
+        <div class="el-img_loading"></div>
       </template>
       <template #error>
-        <div class="img_error">
+        <div class="el-img_error">
           <el-icon style="color: #aaa">
             <Picture />
           </el-icon>

@@ -84,6 +84,7 @@ function trimImageData(imageData): ImageData {
 }
 
 
+import { deepUnref } from './vue'
 
 class Utils {
 
@@ -133,6 +134,11 @@ class Utils {
 
     // 去除imageData的空白
     trimImageData = trimImageData
+
+
+
+    // 深层解构
+    deepUnref = deepUnref
 }
 
 

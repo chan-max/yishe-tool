@@ -84,6 +84,7 @@ onMounted(async () => {
     { passive: false }
   );
 });
+import { isRef, isReactive, toRaw, unref } from 'vue'
 
 function selectModel(productModel) {
   // 选择基础模型

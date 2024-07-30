@@ -5,7 +5,7 @@
         </template>
         <template #name> 文字阴影 </template>
         <template #content>
-            <el-popover width="800" placement="bottom" :visible="showPopover">
+            <el-popover width="800" placement="bottom" :visible="showPopover" popper-class="el-popover-operation">
                 <template #reference>
                     <el-button link @click="click">
                         {{ showPopover ? '关闭设置' : '打开设置' }}

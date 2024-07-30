@@ -5,9 +5,9 @@
         </template>
         <template #name> 圆形文字半径 </template>
         <template #content>
-            <el-popover trigger="click">
+            <el-popover trigger="click" popper-class="el-popover-operation">
                 <template #reference>
-                        <el-input style="width:80px"  v-model="model.value" size="small" min="0" step="1">
+                        <el-input style="width:80px"  type="number" v-model="model.value" size="small" min="0" step="1">
                             <template #suffix>
                                 <div style="font-size:1rem;"> {{ model.unit }}</div>
                             </template>

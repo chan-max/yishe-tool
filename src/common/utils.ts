@@ -84,6 +84,10 @@ function trimImageData(imageData): ImageData {
 }
 
 
+function isEmptyObject(val) {
+    return typeof val === 'object' && JSON.stringify(val) == '{}'
+}
+
 import { deepUnref } from './vue'
 
 class Utils {
@@ -98,6 +102,8 @@ class Utils {
 
     isPromise = isPromise
 
+
+    isEmptyObject = isEmptyObject
 
     // 单位转换
     pxToCM(px) {

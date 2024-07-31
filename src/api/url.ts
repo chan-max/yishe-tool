@@ -32,6 +32,10 @@ export enum Url {
     // 登录
     LOGIN = '/api/auth/login',
 
+    UPDATE_USER_META = '/api/user/updateMeta' , 
+
+    GET_USER_META = '/api/user/getMeta' , 
+
     // 获取首页模型信息
     GET_BANNER_MODEL = '/getBannerModel',
 

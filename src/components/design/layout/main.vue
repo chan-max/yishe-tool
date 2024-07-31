@@ -83,10 +83,10 @@
   </diydialog> -->
 
   <!-- 个人项目弹层 -->
-  <diydialog :show="viewDisplayController.showProject" title="我的创作项目" @close="viewDisplayController.showProject = false" :animation="basicContainerAnimation">
+  <diydialog :show="viewDisplayController.showProject" title="我的创作项目" @close="viewDisplayController.showProject = false"
+    :animation="basicContainerAnimation">
     <projectModal></projectModal>
   </diydialog>
-
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -128,7 +128,8 @@ import {
   showCustomModel,
   showSvgCanvas,
   showCanvasLayout,
-  viewDisplayController
+  viewDisplayController,
+  startSyncDesignStorage
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -166,7 +167,7 @@ import Utils from "@/common/utils";
 import { createVNode } from 'vue';
 import { isLogin } from "@/store/stores/loginAction";
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-
+import Api from '@/api'
 import projectModal from './project/index.vue';
 
 
@@ -271,6 +272,27 @@ onMounted(async () => {
         Modal.destroyAll();
       },
     });
+  } else {
+    /* 获取数据并同步 */
+    const data = await Api.getUserMeta({
+      metaKey: 'designStorage'
+    })
+
+    if (!Utils.isEmptyObject(data)) {
+      // 存在用户数据，需要同步
+
+      // for (let key in data) {
+      //   des[key] = data[key];
+      // }
+      des.$patch(data)
+
+      startSyncDesignStorage()
+    }
+
+    /*
+      开启实时同步更新
+    */
+
   }
 });
 

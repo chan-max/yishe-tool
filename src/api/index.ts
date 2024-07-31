@@ -2,19 +2,19 @@
 import { uploadToCOS } from "./cos";
 import { apiInstance, source } from "./apiInstance";
 import { Url } from "./url";
-export {uploadToCOS}  from './cos'
+export { uploadToCOS } from './cos'
 
 
 
-export async function fetchFile(url,filename = String(new Date().getTime())) {
+export async function fetchFile(url, filename = String(new Date().getTime())) {
   const response = await fetch(url);
-  
+
   if (!response.ok) {
-      throw new Error("文件请求失败");
+    throw new Error("文件请求失败");
   }
 
   // 这将会返回一个 Blob 对象，其实就是 File 的父类。
-  const blob = await response.blob(); 
+  const blob = await response.blob();
 
   // 你可以将 blob 直接返回，或者转换为 File 对象。如果需要转换为 File，必须提供文件名。
   const file = new File([blob], filename);
@@ -31,13 +31,13 @@ export const register = (data: any) =>
 // 登录
 export const login = (data) =>
   new Promise(async (resolve, reject) => {
-    try{
+    try {
       let res = await apiInstance.post(Url.LOGIN, data);
       resolve(res.data);
-    }catch(e){
-        reject()
+    } catch (e) {
+      reject()
     }
-});
+  });
 
 // 获取首页展示栏模型
 export const getBannerModel = () =>
@@ -309,13 +309,13 @@ export const uploadFile = (params) => new Promise(async (resolve, reject) => {
   const data = {
     ...params,
     thumbnail: params.thumbnail,
-    name:params.name,
-    type:params.name.split(".").pop(),
-    size:params.size,
-    meta:params.meta || {},
+    name: params.name,
+    type: params.name.split(".").pop(),
+    size: params.size,
+    meta: params.meta || {},
   }
 
-  await apiInstance.post('/api/file/create',data)
+  await apiInstance.post('/api/file/create', data)
   resolve(void 0)
 })
 
@@ -324,7 +324,7 @@ export const uploadFile = (params) => new Promise(async (resolve, reject) => {
   获取商品模型列表
 */
 export const getProductModelListApi = (data) => new Promise(async (resolve, reject) => {
-  let res =  await apiInstance.post('/api/product-model/page', data )
+  let res = await apiInstance.post('/api/product-model/page', data)
   resolve(res.data.data)
 })
 
@@ -334,7 +334,7 @@ export const getProductModelListApi = (data) => new Promise(async (resolve, reje
 */
 
 export interface StickerListParams {
-  type :'image' | 'text' | 'composition'
+  type: 'image' | 'text' | 'composition'
 }
 
 
@@ -342,7 +342,7 @@ export interface StickerListParams {
     获取所有贴纸
 */
 export const getStickerListApi = (data) => new Promise(async (resolve, reject) => {
-  let res =  await apiInstance.post('/api/sticker/page', data )
+  let res = await apiInstance.post('/api/sticker/page', data)
   resolve(res.data.data)
 })
 
@@ -350,21 +350,21 @@ export const getStickerListApi = (data) => new Promise(async (resolve, reject) =
  创建贴纸
 */
 export const createStickerApi = (data) => new Promise(async (resolve, reject) => {
-  let res =  await apiInstance.post('/api/sticker/create', data )
+  let res = await apiInstance.post('/api/sticker/create', data)
   resolve(res.data.data)
 })
 
-export const getFileListApi = (params) => new Promise(async (resolve,reject) => {
+export const getFileListApi = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post('/api/file/page')
   resolve(res.data.data)
 })
 
 
 /* 获取字体列表 */
-export const getFontListApi = (params) => new Promise(async (resolve,reject) => {
-  const res = await apiInstance.post('/api/file/page',{
+export const getFontListApi = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post('/api/file/page', {
     ...params,
-    type:'ttf,woff,otf'
+    type: 'ttf,woff,otf'
   })
   resolve(res.data.data)
 })
@@ -376,19 +376,47 @@ export const getFontListApi = (params) => new Promise(async (resolve,reject) => 
 export const createCustomModelApi = (data) => apiInstance.post(Url.UPLOAD_CUSTOM_MODEL, data);
 
 
-export const getCustomModelListApi = (params) => new Promise(async (resolve,reject) => {
-  const res = await apiInstance.post('/api/custom-model/page',params)
+export const getCustomModelListApi = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post('/api/custom-model/page', params)
   resolve(res.data.data)
 })
 
 
 // 根据图片id来查询图片
 export const getProductModelById = (id: string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.get('/api/product-model', { params:{id} })
+  const data = await apiInstance.get('/api/product-model', { params: { id } })
   resolve(data.data.data)
 })
 
 export const getStickerByIdApi = (id: string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.get('/api/sticker',  { params:{id} })
+  const data = await apiInstance.get('/api/sticker', { params: { id } })
   resolve(data.data.data)
 })
+
+
+
+
+
+
+
+
+class Api {
+
+
+
+  /*
+  更新个人用户的元数据
+  */
+  async updateUserMeta(params) {
+    const data = await apiInstance.post(Url.UPDATE_USER_META, params)
+    return
+  }
+
+
+  async getUserMeta(params) {
+    const res = await apiInstance.post(Url.GET_USER_META, params)
+    return res.data.data
+  }
+}
+
+export default new Api()

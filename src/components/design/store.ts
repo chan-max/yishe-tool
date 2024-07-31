@@ -1,10 +1,10 @@
 import { setFullscreen } from "@/common/browser";
-import { useLocalStorage } from "@vueuse/core";
+import { useDebounceFn, useLocalStorage } from "@vueuse/core";
 import { computed, ref, shallowRef, watchEffect, watch, nextTick, reactive, toRaw } from "vue"
 import { defineStore } from "pinia";
 import Utils from '@/common/utils'
 import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
-
+import Api from '@/api'
 
 // 当前实例
 export const currentController = shallowRef(null);
@@ -385,8 +385,14 @@ import { canvasStickerOptions, currentOperatingCanvasChildIndex } from '@/compon
 import { stickerQueryTags, stickerQueryParams } from "@/components/design/layout/sticker/index.tsx";
 import { showMainCanvas } from "@/components/design/layout/canvas/index.tsx";
 
+
+// 当前仓库的名字
+export const storageName = ref('')
+
 export const useDesignStore = defineStore('_1s_design', () => {
     return {
+        version: null,
+        storageName: useLocalStorage('_1s_storageName', storageName),
         showWorkspace: useLocalStorage('_1s_showWorkspace', showWorkspace),
         showBaseModelSelect: useLocalStorage('_1s_showBaseModelSelect', showBaseModelSelect),
         showBasicCanvas: useLocalStorage('_1s_showBasicCanvas', showBasicCanvas),
@@ -407,33 +413,40 @@ const designStore = useDesignStore();
 
 
 
-
-// 上一个场景的所有状态
-const previousDesignState = ref(null)
+/*
+    最近更新时间
+*/
+export const lastModifiedTime = ref()
 
 designStore.$subscribe((mutation, state) => {
-
-    // if (!previousDesignState.value) {
-    //     return
-    // }
-
-
-
-    let currentState = Utils.deepUnref(state)
-
-    let difference = diff(previousDesignState.value, currentState)
-    previousDesignState.value = currentState
-
-    // 直接拿着差异的 key 去更新即可
-    console.log('差异', difference)
-
-
+    lastModifiedTime.value = new Date()
 })
+
 
 
 /*
     同步工作区所有个人状态
 */
+
+/*
+    开始同步 
+    bug 请李缓存也会视为更改页面状态，也会触发更新
+*/
+export function startSyncDesignStorage() {
+
+    let sync = useDebounceFn(function sync(state) {
+        let currentState = Utils.deepUnref(state)
+
+        Api.updateUserMeta({
+            metaKey: 'designStorage',
+            data: currentState
+        })
+    }, 999)
+
+    designStore.$subscribe((mutation, state) => {
+        sync(state)
+    })
+}
 
 
 

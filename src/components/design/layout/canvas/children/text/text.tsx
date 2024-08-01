@@ -28,7 +28,7 @@ export const createDefaultCanvasChildTextOptions = () => {
             color: "#000",
             type: 'pure'
         },
-        zIndex:0,
+        zIndex: 0,
         position: createPositionDefaultOptions(canvasUnit),
         fontSize: {
             value: 14,
@@ -60,8 +60,8 @@ export const createDefaultCanvasChildTextOptions = () => {
             type: 'pure',
             color: '#fff',
         },
-        ...createTransformDefaultOptions(canvasUnit),
-        filter:createFilterDefaultOptions(canvasUnit),
+        transform: createTransformDefaultOptions(canvasUnit),
+        filter: createFilterDefaultOptions(canvasUnit),
         // 是否使用繁体字
         isTraditionalChinese: false,
         containerEl: null,
@@ -125,6 +125,7 @@ export const Text = defineComponent({
                 ..._containerStyle
             }
 
+
             var style: any = {
                 flexShrink: 0,
                 fontSize: formatToNativeSizeString(props.options.fontSize),
@@ -134,11 +135,11 @@ export const Text = defineComponent({
                 letterSpacing: props.options.letterSpacing + 'em',
                 fontFamily: null,
                 writingMode: props.options.writingMode == 'htb' ? WritingMode.HTB : props.options.writingMode == 'vlr' ? WritingMode.VLR : props.options.writingMode == 'vrl' ? WritingMode.VRL : null,
-                transform: createTransformString(props.options),
+                transform: createTransformString(props.options.transform),
                 filter: createFilterFromOptions(props.options.filter),
                 textShadow: parseTextShadowOptionsToCSS(props.options.textShadow),
                 textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color,
-                perspective: formatToNativeSizeString(props.options.perspective),
+                perspective: formatToNativeSizeString(props.options.transform.perspective),
 
                 // 用于显示换行
                 whiteSpace: 'pre-line',

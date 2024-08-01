@@ -108,7 +108,15 @@
               </el-col>
             </el-row>
           </el-collapse-item>
+
           <el-collapse-item name="2">
+            <template #title>
+              <div class="title">通用属性</div>
+            </template>
+            <operateItemCommonGroup v-model="currentOperatingCanvasChild"></operateItemCommonGroup>
+          </el-collapse-item>
+
+          <el-collapse-item name="3">
             <template #title>
               <div class="title">高级属性</div>
             </template>
@@ -118,21 +126,6 @@
                 </operateItemWritingMode>
               </el-col>
               <el-col :span="24">
-                <operateItemScale v-model:x="currentOperatingCanvasChild.scaleX"
-                  v-model:y="currentOperatingCanvasChild.scaleY" v-model:z="currentOperatingCanvasChild.scaleZ">
-                </operateItemScale>
-              </el-col>
-              <el-col :span="24">
-                <operateItemRotate v-model:x="currentOperatingCanvasChild.rotateX"
-                  v-model:y="currentOperatingCanvasChild.rotateY" v-model:z="currentOperatingCanvasChild.rotateZ">
-                </operateItemRotate>
-              </el-col>
-              <el-col :span="24">
-                <operateItemSkew v-model:x="currentOperatingCanvasChild.skewX"
-                  v-model:y="currentOperatingCanvasChild.skewY">
-                </operateItemSkew>
-              </el-col>
-              <el-col :span="24">
                 <operateItemTextStroke v-model:width="currentOperatingCanvasChild.textStrokeWidth"
                   v-model:color="currentOperatingCanvasChild.textStrokeColor">
                 </operateItemTextStroke>
@@ -140,7 +133,7 @@
             </el-row>
           </el-collapse-item>
 
-          <el-collapse-item name="3">
+          <el-collapse-item name="4">
             <template #title>
               <div class="title">环形文字</div>
             </template>
@@ -163,7 +156,7 @@
               </el-col>
             </el-row>
           </el-collapse-item>
-          <el-collapse-item name="4">
+          <el-collapse-item name="5">
             <template #title>
               <div class="title">滤镜效果</div>
             </template>
@@ -373,9 +366,7 @@ import operateItemSize from "@/components/design/layout/canvas/operate/size/rela
 import operateItemAbsoluteSize from "@/components/design/layout/canvas/operate/size/absoluteSize.vue";
 // import operateItemAspectRatio from "@/components/design/layout/canvas/operate/aspectRatio.vue";
 import operateItemPosition from "@/components/design/layout/canvas/operate/position/position.vue";
-import operateItemScale from "@/components/design/layout/canvas/operate/scale.vue";
-import operateItemRotate from "@/components/design/layout/canvas/operate/rotate.vue";
-import operateItemSkew from "@/components/design/layout/canvas/operate/skew.vue";
+
 import operateItemZindex from "@/components/design/layout/canvas/operate/zIndex.vue";
 import operateItemBackgroundColor from "@/components/design/layout/canvas/operate/backgroundColor.vue";
 import operateItemImageSelect from "@/components/design/layout/canvas/operate/imageSelect.vue";
@@ -401,7 +392,7 @@ import operateItemFilterGroup from "@/components/design/layout/canvas/operate/fi
 
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
 
-
+import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue';
 
 import {
   updatecanvasStickerOptionsUnit
@@ -457,7 +448,8 @@ function fontLoad() {
   line-height: 1.2rem;
 }
 
-.operate-form-item,.el-popover-operation{
+.operate-form-item,
+.el-popover-operation {
   --el-text-color-placeholder: #222;
   --el-border-radius-base: 6px;
 
@@ -467,14 +459,17 @@ function fontLoad() {
   .el-textarea__inner {
     background-color: #f6f6f6;
     color: #000;
-    &:hover{
+
+    &:hover {
       // box-shadow: #6900ffdd 0px 0px 0px 1px;
     }
 
 
   }
 
-  .el-input,.el-select,.el-textarea{
+  .el-input,
+  .el-select,
+  .el-textarea {
     --el-border-color: rgba(0, 0, 0, 0) !important;
   }
 

@@ -24,6 +24,9 @@ axios.defaults.timeout = 100000; // 时间超时设置100s
 axios.defaults.baseURL = import.meta.env.VITE_API;
 
 export const apiInstance: any = axios.create({
+    validateStatus: function (status) {
+        return status >= 200 && status < 300 || status === 401; // 允许 401
+    }
 });
 
 export const source = axios.CancelToken.source();

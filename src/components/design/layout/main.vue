@@ -129,7 +129,8 @@ import {
   showSvgCanvas,
   showCanvasLayout,
   viewDisplayController,
-  startSyncDesignStorage
+  startSyncDesignStorage,
+  lastModifiedTime
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -285,7 +286,7 @@ onMounted(async () => {
       //   des[key] = data[key];
       // }
       des.$patch(data)
-
+      lastModifiedTime.value = data.lastModifiedTime
       startSyncDesignStorage()
     }
 

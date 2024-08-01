@@ -389,11 +389,21 @@ import { showMainCanvas } from "@/components/design/layout/canvas/index.tsx";
 // 当前仓库的名字
 export const storageName = ref('')
 
+
+/*
+    最近更新时间
+*/
+export const lastModifiedTime = ref()
+
+
+
+
 export const useDesignStore = defineStore('_1s_design', () => {
     return {
         version: null,
         storageName: useLocalStorage('_1s_storageName', storageName),
         showWorkspace: useLocalStorage('_1s_showWorkspace', showWorkspace),
+        // lastModifiedTime: useLocalStorage('_1s_lastModifiedTime', lastModifiedTime),
         showBaseModelSelect: useLocalStorage('_1s_showBaseModelSelect', showBaseModelSelect),
         showBasicCanvas: useLocalStorage('_1s_showBasicCanvas', showBasicCanvas),
         showThreeCanvas: useLocalStorage('_1s_showThreeCanvas', showThreeCanvas),
@@ -412,17 +422,9 @@ export const useDesignStore = defineStore('_1s_design', () => {
 const designStore = useDesignStore();
 
 
-
-/*
-    最近更新时间
-*/
-export const lastModifiedTime = ref()
-
 designStore.$subscribe((mutation, state) => {
     lastModifiedTime.value = new Date()
 })
-
-
 
 /*
     同步工作区所有个人状态
@@ -432,18 +434,42 @@ designStore.$subscribe((mutation, state) => {
     开始同步 
     bug 请李缓存也会视为更改页面状态，也会触发更新
 */
+
+
+// 同步状态
+export const syncState = ref({
+    loading: false, // 正在保存中
+    success: false, // 成功
+    failed: false // 失败
+})
+
 export function startSyncDesignStorage() {
 
     let sync = useDebounceFn(function sync(state) {
+
         let currentState = Utils.deepUnref(state)
 
-        Api.updateUserMeta({
-            metaKey: 'designStorage',
-            data: currentState
-        })
+        try {
+            Api.updateUserMeta({
+                metaKey: 'designStorage',
+                data: {
+                    ...currentState,
+                    lastModifiedTime: lastModifiedTime.value
+                }
+            })
+            syncState.value.success = true
+        } catch (e) {
+            syncState.value.failed = true
+        } finally {
+            syncState.value.loading = false
+        }
+
     }, 999)
 
     designStore.$subscribe((mutation, state) => {
+
+        syncState.value.loading = true
+
         sync(state)
     })
 }

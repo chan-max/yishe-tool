@@ -17,7 +17,45 @@
       <img src="logo.png" style="height: 24px" object-fit="contain" />
     </div>
 
-    <div> {{ storageName || '未命名' }} </div>
+
+    <el-popover width="240" trigger="click" popper-style="padding:2rem">
+      <template #reference>
+        <el-button size="small" link  v-if="loginStatusStore.isLogin">
+          {{ storageName || '未命名' }}
+          <el-icon size="1rem" style="margin-left: .4rem;">
+            <el-tooltip content="正在同步到远程" placement="right">
+              <LoadingOutlined style="color:var(--el-color-primary)"  v-if="syncState.loading" />
+            </el-tooltip>
+            <el-tooltip content="同步成功"  placement="right">
+              <CheckCircleOutlined style="color:var(--el-color-success)" v-if="!syncState.loading && syncState.success" />
+            </el-tooltip>
+            <el-tooltip content="同步失败"  placement="right">
+              <ExclamationCircleOutlined style="color:var(--el-color-danger)"
+                v-if="!syncState.loading && syncState.failed" />
+            </el-tooltip>
+          </el-icon>
+        </el-button>
+      </template>
+      <el-row style="row-gap: 1rem;" align="middle">
+        <el-col :span="8">
+          场景名称：
+        </el-col>
+        <el-col :span="16">
+          <el-input v-model="storageName" size="small"></el-input>
+        </el-col>
+        <el-col :span="8">
+          最近更新：
+        </el-col>
+        <el-col :span="16">
+          <div style="text-align: right;height:24px;line-height: 24px;">{{ displayDate }}</div>
+        </el-col>
+        <el-col :span="24">
+          <el-button size="small" type="primary" class="w-full">
+            另存到工作台
+          </el-button>
+        </el-col>
+      </el-row>
+    </el-popover>
 
     <div style="flex-grow: 1"></div>
     <div>
@@ -43,7 +81,8 @@ import {
   showSaveModel,
   showUpload,
   lastModifiedTime,
-  storageName
+  storageName,
+  syncState
 } from "../store";
 
 import { Share } from "@element-plus/icons-vue";
@@ -52,10 +91,13 @@ import headerMenuDropdown from "./headerMenuDropdown/index.vue";
 import { onShortcutTrigger } from "../shortcut/index";
 import iconHelp from "@/icon/help.svg?component";
 import { useLoginStatusStore } from "@/store/stores/login";
+import { useDateFormat, useNow } from '@vueuse/core'
+import { LoadingOutlined, CheckOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from '@ant-design/icons-vue'
 
 
-const radio1 = ref('1')
 const loginStatusStore = useLoginStatusStore();
+
+const displayDate = useDateFormat(lastModifiedTime, 'YYYY-MM-DD hh:mm:ss')
 
 const props = defineProps([]);
 </script>

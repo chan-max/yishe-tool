@@ -3,6 +3,7 @@ import { getPositionInfoFromOptions, formatToNativeSizeString, createFilterFromO
 import { computed, defineComponent, onMounted, onUpdated, ref } from "vue"
 import { createFilterDefaultOptions, createPositionDefaultOptions, createTransformDefaultOptions } from "./defaultOptions.tsx"
 import Utils from '@/common/utils'
+import { useDebounceFn } from "@vueuse/core"
 
 export const createDefaultCanvasChildRawCanvasOptions = () => {
 
@@ -47,23 +48,21 @@ export const RawCanvas = defineComponent({
             props.options.targetComputedHeight = Utils.getComputedHeight(canvasRef.value)
         })
 
-        onMounted(paint)
-        onUpdated(paint)
-
-        function paint() {
-
+        const paint = useDebounceFn(function paint() {
             const width = formatSizeOptionToPixelValue(props.options.width)
             const height = formatSizeOptionToPixelValue(props.options.width)
-
-
-
             let context = canvasCtx.value
             if (!context) {
                 return
             }
-            context.fillStyle = "#FF0000";
-            context.fillRect(0, 0, width / 2, height / 2);
-        }
+
+
+            
+        })
+
+
+        onMounted(paint)
+        onUpdated(paint)
 
 
 
@@ -109,6 +108,66 @@ export const RawCanvas = defineComponent({
     }
 })
 
+
+function createFireEffect(context) {
+    const canvas = context.canvas;
+    const particles = [];
+    const particleCount = 100;
+    const colors = ['#ff4500', '#ff8c00', '#ffd700', '#ffffff'];
+
+    function Particle(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 20 + 10;
+        this.speedX = Math.random() * 3 - 1.5;
+        this.speedY = Math.random() * -3 - 1.5;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.opacity = 1;
+    }
+
+    Particle.prototype.update = function() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.size *= 0.95;
+        this.opacity -= 0.02;
+        if (this.opacity < 0) this.opacity = 0;
+    };
+
+    Particle.prototype.draw = function() {
+        context.globalAlpha = this.opacity;
+        context.fillStyle = this.color;
+        context.beginPath();
+        context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        context.fill();
+        context.globalAlpha = 1;
+    };
+
+    function createParticles(x, y) {
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle(x, y));
+        }
+    }
+
+    function animate() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+            if (particles[i].size <= 0.5) {
+                particles.splice(i, 1);
+                i--;
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+
+    canvas.addEventListener('mousemove', function(event) {
+        createParticles(event.clientX, event.clientY);
+    });
+
+    animate();
+}
+ 
 
 
 

@@ -80,13 +80,6 @@
                 </operateItemFontFamily>
               </el-col>
               <el-col :span="24">
-                <operateItemPosition v-model="currentOperatingCanvasChild.position"></operateItemPosition>
-              </el-col>
-              <el-col :span="24">
-                <operateItemZindex v-model="currentOperatingCanvasChild.zIndex">
-                </operateItemZindex>
-              </el-col>
-              <el-col :span="24">
                 <operateItemFontWeight v-model="currentOperatingCanvasChild.fontWeight">
                 </operateItemFontWeight>
               </el-col>
@@ -94,19 +87,6 @@
                 <operateItemTextShadow v-model="currentOperatingCanvasChild.textShadow">
                 </operateItemTextShadow>
               </el-col>
-            </el-row>
-          </el-collapse-item>
-
-          <el-collapse-item name="2" title="通用属性">
-
-            <operateItemCommonGroup v-model="currentOperatingCanvasChild"></operateItemCommonGroup>
-          </el-collapse-item>
-
-          <el-collapse-item name="3">
-            <template #title>
-              <div class="title">高级属性</div>
-            </template>
-            <el-row :gutter="24" align="middle">
               <el-col :span="24">
                 <operateItemWritingMode v-model="currentOperatingCanvasChild.writingMode">
                 </operateItemWritingMode>
@@ -118,6 +98,12 @@
               </el-col>
             </el-row>
           </el-collapse-item>
+
+          <el-collapse-item name="2" title="通用属性">
+
+            <operateItemCommonGroup v-model="currentOperatingCanvasChild"></operateItemCommonGroup>
+          </el-collapse-item>
+
 
           <el-collapse-item name="4">
             <template #title>

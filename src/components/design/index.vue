@@ -21,6 +21,9 @@ import { useRoute } from "vue-router";
 import { onBeforeMount, onMounted,ref } from "vue";
 import { getModelById } from "@/api";
 
+
+
+
 // 阻止缩放屏幕影响使用体验
 usePreventScreenResize();
 

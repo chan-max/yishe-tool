@@ -445,6 +445,8 @@ export const syncState = ref({
 
 export function startSyncDesignStorage() {
 
+    console.log('Starting sync design storage')
+
     let sync = useDebounceFn(function sync(state) {
 
         let currentState = Utils.deepUnref(state)

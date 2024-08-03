@@ -287,9 +287,9 @@ onMounted(async () => {
       // }
       des.$patch(data)
       lastModifiedTime.value = data.lastModifiedTime
-      startSyncDesignStorage()
-    }
 
+    }
+    startSyncDesignStorage()
     /*
       开启实时同步更新
     */

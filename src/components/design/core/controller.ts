@@ -179,6 +179,8 @@ export class ModelController extends Base {
         this.renderer.setPixelRatio(window.devicePixelRatio)
         // 初始化时暴露场景和渲染器
         currentController.value = this;
+
+        window.mc = this
     }
 
     // 初始化容器
@@ -636,7 +638,7 @@ export class ModelController extends Base {
 
     doOpenAnimation() {
 
-        this.camera.position.set(2 * Math.random(), 2* Math.random(), 2* Math.random())
+        this.camera.position.set(2 * Math.random(), 2 * Math.random(), 2 * Math.random())
 
         gsap.to(this.camera.position, {
             x: 0,

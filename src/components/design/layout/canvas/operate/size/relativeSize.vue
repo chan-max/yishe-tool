@@ -6,10 +6,9 @@
         <template #name> {{ label }} </template>
         <template #content>
             <span style="font-size: 1rem;">宽</span>
-
             <el-popover trigger="hover" width="200" popper-class="el-popover-operation">
                 <template #reference>
-                    <el-input style="width: 80px" size="small" v-model="width.value" step="10" 
+                    <el-input type="number" style="width: 80px" size="small" v-model="width.value" step="10" min="0"
                         placeholder="宽">
                         <template #suffix>
                             <div style="font-size:1rem;">{{ width.unit }}</div>
@@ -31,8 +30,8 @@
 
             <el-popover trigger="hover" width="200" popper-class="el-popover-operation">
                 <template #reference>
-                    <el-input style="width: 80px" size="small" v-model="height.value" step="10" 
-                        placeholder="高">
+                    <el-input type="number" style="width: 80px" size="small" v-model="height.value" step="10"
+                        placeholder="高" min="0">
                         <template #suffix>
                             <div style="font-size:1rem;">{{ height.unit }}</div>
                         </template>

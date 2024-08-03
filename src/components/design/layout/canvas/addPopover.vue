@@ -8,8 +8,9 @@
             <el-button size="small" @click="add('stamp')" round> 印章 </el-button>
             <el-button size="small" @click="add('background')" round> 背景 </el-button>
             <el-button size="small" @click="add('border')" round> 边框 </el-button>
-            <el-button size="small" @click="addRect" round> 矩形 </el-button>
-            <el-button size="small" @click="addEllipse" round> 圆和椭圆 </el-button>
+            <el-button size="small" @click="add('rect')" round> 矩形 </el-button>
+            <el-button size="small" @click="add('ellipse')" round> 圆和椭圆 </el-button>
+            <el-button size="small" @click="add('rawCanvas')" round> 原生画布 </el-button>
             <div style="flex: 1"></div>
         </div>
         <template #reference>
@@ -27,21 +28,6 @@ import {
     showMainCanvas,
     CanvasChildType
 } from "./index.tsx";
-
-function addRect() {
-    addCanvasChild({
-        type: 'rect',
-
-    });
-    document.body.click();
-}
-
-function addEllipse(){
-    addCanvasChild({
-        type: 'ellipse',
-    });
-    document.body.click();
-}
 
 
 function add(type) {

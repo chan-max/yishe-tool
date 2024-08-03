@@ -3,10 +3,10 @@
     <operateItemZindex v-model="model.zIndex"></operateItemZindex>
     <operateItemScale v-model:x="model.transform.scaleX" v-model:y="model.transform.scaleY"
         v-model:z="model.transform.scaleZ">
-        <operateItemRotate v-model:x="model.transform.rotateX" v-model:y="model.transform.rotateY"
+    </operateItemScale>
+    <operateItemRotate v-model:x="model.transform.rotateX" v-model:y="model.transform.rotateY"
             v-model:z="model.transform.rotateZ">
         </operateItemRotate>
-    </operateItemScale>
     <operateItemSkew v-model:x="model.transform.skewX" v-model:y="model.transform.skewY">
     </operateItemSkew>
 </template>

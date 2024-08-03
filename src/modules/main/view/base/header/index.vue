@@ -52,7 +52,7 @@ const menuOptions = [{}];
 .header-bar {
   width: 100%;
   height: var(--1s-header-menu-height);
-  background: rgba(245, 245, 247, 1);
+  background: #fff;
   // box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   padding: 0 6vw;
   box-sizing: border-box;

@@ -75,8 +75,8 @@
             </template>
           </el-row>
 
-          <div v-if="active == 'drag'">
-            <div class="flex justify-between">
+          <div v-if="active == 'drag'" class="flex flex-col items-center justify-center">
+            <div class="flex justify-between w-full">
               <el-button link style="padding-bottom: 1rem;" @click="active = 'params'">
                 <LeftOutlined />返回
               </el-button>

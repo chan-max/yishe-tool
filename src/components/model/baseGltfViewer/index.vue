@@ -41,7 +41,7 @@ import {
   Vector2,
 } from "three";
 
-const loading = ref(true);
+const loading = ref(false);
 
 function gltfLoader(url) {
   let loader = new GLTFLoader();
@@ -132,6 +132,8 @@ async function initModel() {
   if(!props.src){
     return
   }
+
+  loading.value = true
 
   let gltf = await gltfLoader(props.src);
 

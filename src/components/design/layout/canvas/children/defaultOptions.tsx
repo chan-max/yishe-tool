@@ -1,6 +1,16 @@
 
 import { canvasStickerOptions } from "../index"
 
+
+export const createBasicDefaultOptions = () => {
+    return {
+
+        // 用于统计当前元素的宽高，供其他功能使用
+        targetComputedWidth:null,
+        targetComputedHeight:null,
+    }
+}
+
 export const createFilterDefaultOptions = (blurUnit = 'px') => {
     return {
         filterBlur: {

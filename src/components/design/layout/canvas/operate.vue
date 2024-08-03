@@ -3,10 +3,7 @@
     <div class="canvas-operate-form" style="margin: 1rem">
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.CANVAS">
         <el-collapse v-model="canvasCollapseActives">
-          <el-collapse-item name="1">
-            <template #title>
-              <div class="title">画布配置</div>
-            </template>
+          <el-collapse-item name="1" title="画布配置" >
             <el-row align="middle">
               <el-col :span="24">
                 <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasStickerOptions.width"
@@ -30,10 +27,7 @@
               </el-col>
             </el-row>
           </el-collapse-item>
-          <el-collapse-item name="2">
-            <template #title>
-              <div class="title">画布属性</div>
-            </template>
+          <el-collapse-item name="2" title="画布属性">
             <el-row>
               <el-col :span="24">
                 <operateItemColor label="画布背景颜色" tooltip="画布背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
@@ -44,10 +38,7 @@
               </el-col>
             </el-row>
           </el-collapse-item>
-          <el-collapse-item name="4">
-            <template #title>
-              <div class="title">画布滤镜效果</div>
-            </template>
+          <el-collapse-item name="4" title="画布滤镜效果">
             <operateItemFilterGroup v-model="currentOperatingCanvasChild.filter"></operateItemFilterGroup>
           </el-collapse-item>
         </el-collapse>
@@ -55,10 +46,7 @@
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.TEXT">
         <el-collapse v-model="textCollapseActives">
-          <el-collapse-item name="1">
-            <template #title>
-              <div class="title">文字属性</div>
-            </template>
+          <el-collapse-item name="1" title="文字属性">
             <el-row align="middle">
               <el-col :span="24">
                 <operateItemTextContent v-model="currentOperatingCanvasChild.textContent">
@@ -109,10 +97,8 @@
             </el-row>
           </el-collapse-item>
 
-          <el-collapse-item name="2">
-            <template #title>
-              <div class="title">通用属性</div>
-            </template>
+          <el-collapse-item name="2" title="通用属性">
+
             <operateItemCommonGroup v-model="currentOperatingCanvasChild"></operateItemCommonGroup>
           </el-collapse-item>
 
@@ -343,6 +329,22 @@
           </el-col>
         </el-row>
       </template>
+      <template v-if="currentOperatingCanvasChild.type == CanvasChildType.ROW_CANVAS">
+        <el-collapse v-model="rawCanvasCollapseActives">
+          <el-collapse-item name="1" title="基础属性">
+            <operateItemSize label="尺寸" v-model:width="currentOperatingCanvasChild.width"
+              v-model:height="currentOperatingCanvasChild.height">
+            </operateItemSize>
+          </el-collapse-item>
+          <el-collapse-item name="2">
+            <template #title>
+              <div class="title">通用属性</div>
+            </template>
+            <operateItemCommonGroup v-model="currentOperatingCanvasChild"></operateItemCommonGroup>
+          </el-collapse-item>
+        </el-collapse>
+
+      </template>
     </div>
   </el-scrollbar>
 </template>
@@ -415,13 +417,10 @@ function absoluteUnitChange(unit) {
 }
 
 const canvasCollapseActives = ref(["1", "2", "3", "4"])
-
 const textCollapseActives = ref(["1", "2", "3", "4"]);
-
 const qrcodeCollapseActives = ref(["1", "2", "3", "4"]);
-
 const imageCollapseActives = ref(["1", "2", "3", "4"]);
-
+const rawCanvasCollapseActives = ref(["1", "2", "3", "4"]);
 
 function remove(index) {
   removeCavnasChild(index);
@@ -480,7 +479,9 @@ function fontLoad() {
   width: 4px;
 }
 
-.title {
+
+
+:deep(.el-collapse-item__header) {
   font-size: 1rem;
   margin-left: 0.5em;
 }

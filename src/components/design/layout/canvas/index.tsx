@@ -19,6 +19,8 @@ import {
     createDefaultCanvasChildImageOptions
 } from './children/image.tsx'
 
+import { createCanvasChildRawCanvas, createDefaultCanvasChildRawCanvasOptions } from './children/rawCanvas.tsx'
+
 import { createDefaultCanvasChildcanvasStickerOptions } from './children/canvas'
 
 import { Canvas } from './children/canvas.tsx'
@@ -79,6 +81,8 @@ export enum CanvasChildType {
     QRCODE = 'qrcode',
     RECT = 'rect',
     ELLIPSE = 'ellipse',
+
+    ROW_CANVAS = 'rawCanvas',
 }
 
 
@@ -90,6 +94,7 @@ export const canvasChildLabelMap = {
     [CanvasChildType.QRCODE]: '二维码',
     [CanvasChildType.RECT]: '矩形',
     [CanvasChildType.ELLIPSE]: '圆和椭圆',
+    [CanvasChildType.ROW_CANVAS]: '原生画布'
 }
 
 export const canvasChildDefaultOptionsMap = {
@@ -100,6 +105,7 @@ export const canvasChildDefaultOptionsMap = {
     [CanvasChildType.QRCODE]: createDefaultCanvasChildQrcodeOptions,
     [CanvasChildType.RECT]: createDefaultCanvasChildSvgRectOptions,
     [CanvasChildType.ELLIPSE]: createDefaultCanvasChildSvgEllipseOptions,
+    [CanvasChildType.ROW_CANVAS]: createDefaultCanvasChildRawCanvasOptions
 }
 
 export const canvasChildRenderMap = {
@@ -110,6 +116,7 @@ export const canvasChildRenderMap = {
     [CanvasChildType.QRCODE]: createCanvasChildQrcode,
     [CanvasChildType.RECT]: createCanvasChildRect,
     [CanvasChildType.ELLIPSE]: createCanvasChildEllipse,
+    [CanvasChildType.ROW_CANVAS]: createCanvasChildRawCanvas
 }
 
 

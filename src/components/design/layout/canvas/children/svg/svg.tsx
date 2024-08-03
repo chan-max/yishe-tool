@@ -176,7 +176,7 @@ function createSvgGradientCache(colorOption) {
     let id = uid++
     let cache = {
         id: `url(#${id})`,
-        node: cssGradient2SVG(colorOption.color, { id: id++, jsx: true })
+        node: cssGradient2SVG(colorOption.color, { id: id++, jsx: true }) as VNode
     }
     svgGradientCache[colorOption.color] = cache
     return cache

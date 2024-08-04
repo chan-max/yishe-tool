@@ -110,7 +110,7 @@ function close() {
 
 .designiy-dialog-header-title {
   color: #333;
-  font-size: 12px;
+  font-size: 1.2rem;
 }
 
 .designiy-dialog-content {

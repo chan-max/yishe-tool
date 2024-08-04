@@ -12,9 +12,6 @@
             <el-col :span="24">
               <div class="flex items-center justify-between">
                 <span style="font-weight: bold; padding: 1em 0">优先级自上而下排列 </span>
-                <el-button @click="active = 'drag'" link>
-                  <AimOutlined />手动调整
-                </el-button>
               </div>
             </el-col>
             <el-col :span="8">
@@ -50,7 +47,7 @@
                   <el-popover placement="right" :teleported="false" popper-class="el-popover-operation">
                     <template #reference>
                       <div class="content">
-                        <el-input style="width:80px" size="small"  min="0" step="1"
+                        <el-input style="width:80px" size="small" min="0" step="1"
                           v-model.number="model[item.type].value">
                           <template #suffix>
                             <span style="font-size: 1rem;">
@@ -73,20 +70,31 @@
                 </div>
               </el-col>
             </template>
+            <el-col :span="24">
+              <div style="height:30px;" class="flex items-center">
+                <el-button @click="active = 'drag'" class="w-full" size="small">
+                  <AimOutlined />手动调整
+                </el-button>
+              </div>
+            </el-col>
           </el-row>
 
-          <div v-if="active == 'drag'" class="flex flex-col items-center justify-center">
-            <div class="flex justify-between w-full">
-              <el-button link style="padding-bottom: 1rem;" @click="active = 'params'">
-                <LeftOutlined />返回
-              </el-button>
-              <el-button @click="reset" link style="padding-bottom: 1rem;">
-                重置位置
-              </el-button>
-            </div>
+          <div v-if="active == 'drag'">
+
             <dragger ref="draggerRef" v-bind="draggerAttrs" v-model="draggerValue" @init="draggerInit"
               @drag="draggerDrag">
             </dragger>
+
+            <div class="flex  w-full items-center" style="margin-top:1rem;">
+              <el-button link @click="active = 'params'">
+                <LeftOutlined />返回
+              </el-button>
+              <el-button @click="reset" link>
+                <RedoOutlined></RedoOutlined>
+                重置位置
+              </el-button>
+            </div>
+
           </div>
         </div>
       </el-popover>
@@ -97,14 +105,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import iconPosition from "@/components/design/assets/icon/position.svg?component";
-import { getPositionInfoFromOptions, getPositionLabelFromOptions,formatSizeOptionToPixelValue } from "@/components/design/layout/canvas/helper.tsx";
+import { getPositionInfoFromOptions, getPositionLabelFromOptions, formatSizeOptionToPixelValue } from "@/components/design/layout/canvas/helper.tsx";
 import { canvasStickerOptions, currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 import dragger from './dragger.vue'
 import Utils from '@/common/utils'
 
-
 import { Pointer } from '@element-plus/icons-vue'
-import { AimOutlined, LeftOutlined } from '@ant-design/icons-vue'
+import { AimOutlined, LeftOutlined, RedoOutlined } from '@ant-design/icons-vue'
 
 const model = defineModel({
   default: {} as any
@@ -150,7 +157,7 @@ const draggerAttrs = computed(() => {
   // 控制拖拽板的大小
   let scale = 240 / Math.max(cw, ch)
 
-  
+
 
   return {
     scale: scale,

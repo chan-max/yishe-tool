@@ -1,8 +1,10 @@
-import { defineComponent } from 'vue'
+import { defineComponent, onUpdated } from 'vue'
 import { canvasStickerOptions, currentCanvasControllerInstance, showMainCanvas } from '@/components/design/layout/canvas'
 import { createFilterFromOptions, formatSizeOptionToPixelValue, } from '../helper'
 import { createFilterDefaultOptions } from './defaultOptions.tsx'
 import { SvgFilter } from './svgFilter/index.tsx'
+import { updateRenderingCanvas } from '../index.tsx'
+
 
 /*
     用于辅助观察的网格背景
@@ -40,6 +42,8 @@ export const Canvas = defineComponent({
         }
     },
     setup(props, ctx) {
+
+        onUpdated(updateRenderingCanvas)
 
         return () => {
 

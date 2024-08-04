@@ -2,6 +2,9 @@ import { canvasStickerOptions, currentCanvasControllerInstance, updateRenderingC
 import { getPositionInfoFromOptions, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../helper.tsx'
 import { computed, defineComponent, onUpdated, ref } from "vue"
 import { createFilterDefaultOptions, createPositionDefaultOptions, createTransformDefaultOptions } from "./defaultOptions.tsx"
+import Utils from '@/common/utils'
+import { useProps } from "vue"
+
 
 export const createDefaultCanvasChildImageOptions = () => {
 
@@ -18,10 +21,10 @@ export const createDefaultCanvasChildImageOptions = () => {
             value: 100,
             unit: 'vh',
         },
-        transform:createTransformDefaultOptions(canvasUnit),
+        transform: createTransformDefaultOptions(canvasUnit),
         imageInfo: null,
         objectFit: 'contain',
-        filter:createFilterDefaultOptions(canvasUnit),
+        filter: createFilterDefaultOptions(canvasUnit),
         zIndex: 0,
     }
 }
@@ -37,6 +40,14 @@ export const Image = defineComponent({
         options: null
     },
     setup(props, ctx) {
+
+
+        const targetRef = ref()
+
+        onUpdated(() => {
+            props.options.targetComputedWidth = Utils.getComputedWidth(targetRef.value)
+            props.options.targetComputedHeight = Utils.getComputedHeight(targetRef.value)
+        })
 
         const imgUrl = computed(() => {
             return props.options.imageInfo ? props.options.imageInfo.url : null
@@ -87,13 +98,12 @@ export const Image = defineComponent({
 
 
             return <div style={containerStyle}>
-
                 {
                     !imgUrl.value
                         ? '未选择图片'
                         : loadError.value
                             ? '图片加载失败'
-                            : <img onLoad={onLoad} onError={onError} src={imgUrl.value} style={style}></img>
+                            : <img ref={targetRef} onLoad={onLoad} onError={onError} src={imgUrl.value} style={style}></img>
                 }
 
             </div>

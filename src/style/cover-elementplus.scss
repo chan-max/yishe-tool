@@ -7,6 +7,10 @@
 
 @use "element-plus/theme-chalk/src/index.scss" as *;
 
+.el-dialog__header{
+  --el-dialog-title-font-size:1.2rem!important;
+}
+
 .el-popover.el-popper{
   box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 8px 0px, rgba(0, 0, 0, 0.08) 0px 5px 20px 0px;
   border-radius: 8px;
@@ -24,4 +28,8 @@
 .el-scrollbar__bar {
   width: 4px !important;
   height: 4px !important;
+}
+
+.el-loading-mask{
+  z-index: 99;
 }

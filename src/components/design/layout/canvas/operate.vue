@@ -3,7 +3,7 @@
     <div class="canvas-operate-form" style="margin: 1rem">
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.CANVAS">
         <el-collapse v-model="canvasCollapseActives">
-          <el-collapse-item name="1" title="画布配置" >
+          <el-collapse-item name="1" title="画布配置">
             <el-row align="middle">
               <el-col :span="24">
                 <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasStickerOptions.width"
@@ -138,7 +138,7 @@
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.IMAGE">
         <el-collapse v-model="imageCollapseActives">
-          <el-collapse-item name="1">
+          <el-collapse-item name="1" title="基础属性">
             <template #title>
               <div class="title">基础属性</div>
             </template>
@@ -156,11 +156,11 @@
                 <operateItemObjectFit v-model="currentOperatingCanvasChild.objectFit">
                 </operateItemObjectFit>
               </el-col>
-              <el-col :span="24">
-                <operateItemZindex v-model="currentOperatingCanvasChild.zIndex">
-                </operateItemZindex>
-              </el-col>
             </el-row>
+          </el-collapse-item>
+
+          <el-collapse-item name="2" title="通用属性">
+            <operateItemCommonGroup v-model="currentOperatingCanvasChild"></operateItemCommonGroup>
           </el-collapse-item>
 
           <el-collapse-item name="4">
@@ -357,7 +357,7 @@ import operateItemPosition from "@/components/design/layout/canvas/operate/posit
 
 import operateItemZindex from "@/components/design/layout/canvas/operate/zIndex.vue";
 import operateItemBackgroundColor from "@/components/design/layout/canvas/operate/backgroundColor.vue";
-import operateItemImageSelect from "@/components/design/layout/canvas/operate/imageSelect.vue";
+import operateItemImageSelect from "@/components/design/layout/canvas/operate/imageSelect/index.vue";
 import operateItemSwitch from "@/components/design/layout/canvas/operate/basicSwitch.vue";
 import operateItemPadding from "@/components/design/layout/canvas/operate/padding.vue";
 import operateItemBorderRadius from "@/components/design/layout/canvas/operate/borderRadius.vue";

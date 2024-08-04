@@ -189,6 +189,8 @@ export function updateRenderingCanvas() {
 }
 
 
+
+
 function createCanvasChild(options) {
     if (!canvasChildRenderMap[options.type]) {
         return
@@ -196,13 +198,24 @@ function createCanvasChild(options) {
     return canvasChildRenderMap[options.type]?.call(null, options)
 }
 
+
+
+export const renderingLoading = ref(false)
+
 export class CanvasController {
+
+
     target = null
+
+
     constructor(params) {
         currentCanvasControllerInstance.value = this
         // this.updateRenderingCanvas = useDebounceFn(this.updateRenderingCanvas, 666).bind(this)
         this.maxDisplaySize = params.max
     }
+
+    // 保存最近的画布base64 格式
+    base64 = null
 
     maxDisplaySize = null
 
@@ -221,7 +234,8 @@ export class CanvasController {
     }
 
     async downloadPng() {
-        downloadByFile(await this.exportPng())
+        const imageData = this.ctx.getImageData(0, 0, this.canvasEl.width, this.canvasEl.height);
+        downloadByFile(imageDataToFile(imageData))
     }
 
 
@@ -265,6 +279,7 @@ export class CanvasController {
     // 需要组件渲染后再更新
     async updateRenderingCanvas() {
         this.loading.value = true
+        renderingLoading.value = true
         clearTimeout(this.updateWorker);
         this.updateWorker = setTimeout(() => {
             this.addTask(this.updateRenderingCanvasJob);
@@ -299,26 +314,37 @@ export class CanvasController {
         }
 
         async function update() {
-            let base64 = await toPng(this.el) // 会有页面卡顿的问题
+
+
+            try {
+                this.base64 = await toPng(this.el)
+            } catch (e) {
+                return
+            }
+
             let img = document.createElement('img')
             img.width = canvasStickerOptions.value.width
             img.height = canvasStickerOptions.value.height
             document.body.appendChild(img)
-            img.src = base64
+            img.src = this.base64
             await waitImage(img)
             this.clearCanvas()
             this.drawImage(img)
             await nextTick()
             document.body.removeChild(img)
-            this.initDraggable(base64)
+            this.initDraggable(this.base64)
+
             this.loading.value = false
+            renderingLoading.value = false
         }
+
 
         try {
             await update.call(this)
         } catch (e) {
             console.error('画布渲染：存在丢失的元素')
             this.loading.value = false
+            renderingLoading.value = false
         }
     }
 
@@ -327,8 +353,13 @@ export class CanvasController {
 
 
     initDraggable(base64) {
-        initDraggableElement(this.canvasEl, () => {
-        }, () => base64)
+        initDraggableElement(
+            this.el,
+            () => {
+
+            },
+            () => base64
+        )
     }
 
     clearCanvas() {

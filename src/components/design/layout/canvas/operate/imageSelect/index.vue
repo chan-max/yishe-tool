@@ -9,7 +9,8 @@
                 <el-popover placement="right" popper-class="el-popover-operation">
                     <template #reference>
                         <div class="flex items-center">
-                            <div class="text-ellipsis" style="font-size:1rem;max-width: 180px;">已引用图片 : {{ model.name }}</div>
+                            <div class="text-ellipsis" style="font-size:1rem;max-width: 180px;">已引用图片 : {{ model.name }}
+                            </div>
                         </div>
                     </template>
                     <el-row align="middle" justify="center" style="row-gap: 1rem;">
@@ -31,6 +32,8 @@
             </template>
         </template>
     </operate-form-item>
+
+    <modal v-model="dialogShow" @close="dialogShow = false"></modal>
 </template>
     
 <script setup lang='ts'>
@@ -38,20 +41,24 @@ import icon from "@/components/design/assets/icon/background-image.svg?component
 import { showSticker, viewDisplayController } from "@/components/design/store";
 import { Close } from '@element-plus/icons-vue'
 import desimage from "@/components/design/components/image.vue";
+import modal from './modal.vue';
 const model = defineModel({})
+import { ref } from 'vue'
 
 const props = defineProps({
-    label:{
-        default:'选择图片'
+    label: {
+        default: '选择图片'
     }
 })
 
+const dialogShow = ref(false)
+
 function select() {
-    viewDisplayController.value.showStickerModal = true
+    dialogShow.value = true
 }
 
-function remove(){
-   model.value = null
+function remove() {
+    model.value = null
 }
 
 </script> 

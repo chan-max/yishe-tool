@@ -163,30 +163,33 @@
                     </template>
 
 
-                    <el-col :span="24">
-                        <div class="flex toolbar">
-                            <el-button v-if="activeTab == Tab.BuiltIn" :icon="Switch" size="small"
-                                @click="activeTab = Tab.Custom"> 使用自定义高级滤镜 </el-button>
-                            <el-button v-if="activeTab == Tab.Custom" :icon="Switch" size="small" 
-                                @click="activeTab = Tab.BuiltIn"> 使用内置滤镜 </el-button>
+                    <el-row style="margin-top:1rem">
+                        <el-col :span="24">
+                            <div class="flex toolbar">
+                                <el-button v-if="activeTab == Tab.BuiltIn" :icon="Switch" size="small"
+                                    @click="activeTab = Tab.Custom"> 使用自定义高级滤镜 </el-button>
+                                <el-button v-if="activeTab == Tab.Custom" :icon="Switch" size="small"
+                                    @click="activeTab = Tab.BuiltIn"> 使用内置滤镜 </el-button>
 
-                            <el-dropdown v-if="activeTab == Tab.Custom">
-                                <el-button style="margin-left: 1rem;" size="small" type="primary" plain> 添加滤镜特效 </el-button>
-                                <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item v-for="item in SvgFilterEffects"
-                                            @click="addSvgFilterEffect(item)">
-                                            {{ SvgFilterEffectDisplayLabelMap[item] }}
-                                        </el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
+                                <el-dropdown v-if="activeTab == Tab.Custom">
+                                    <el-button style="margin-left: 1rem;" size="small" type="primary" plain> 添加滤镜特效
+                                    </el-button>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item v-for="item in SvgFilterEffects"
+                                                @click="addSvgFilterEffect(item)">
+                                                {{ SvgFilterEffectDisplayLabelMap[item] }}
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
 
-                            <div style="flex:1;"></div>
+                                <div style="flex:1;"></div>
 
-                            <el-button size="small" type="danger" @click="showPopover = false"> 关闭 </el-button>
-                        </div>
-                    </el-col>
+                                <el-button size="small" type="danger" @click="showPopover = false"> 关闭 </el-button>
+                            </div>
+                        </el-col>
+                    </el-row>
                 </div>
             </el-popover>
         </template>

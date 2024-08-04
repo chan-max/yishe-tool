@@ -1,6 +1,6 @@
 <template>
     <div class="container flex flex-col items-center">
-        <div ref="canvasContainerRef" @mousemove="mousemove" v-if="!showMainCanvas" v-loading="loading"
+        <div ref="canvasContainerRef" @mousemove="mousemove" v-if="!showMainCanvas" v-loading="renderingLoading"
             v-bind="loadingOptions" class="canvas-container">
             <canvass></canvass>
             <drag-tip v-if="showDragTip"></drag-tip>
@@ -83,7 +83,8 @@ import {
     currentOperatingCanvasChildIndex,
     currentOperatingCanvasChild,
     showMainCanvas,
-    canvasChildLabelMap
+    canvasChildLabelMap,
+    renderingLoading
 } from "./index.tsx";
 
 import operate from './operate.vue';
@@ -141,16 +142,9 @@ function exportTrimmedPng() {
     cc.downloadTrimmedPng();
 }
 
-
-const loading = computed(() => {
-    return cc.loading.value;
-});
-
 function remove(index) {
     removeCavnasChild(index)
 }
-
-
 
 
 </script>

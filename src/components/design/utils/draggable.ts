@@ -1,22 +1,30 @@
 // 使元素可拖拽
 
+
+
+
 const draggingImage = document.createElement('img');
 draggingImage.style.position = 'fixed';
 draggingImage.style.pointerEvents = 'none';
-draggingImage.style.width = '100px'
+draggingImage.style.maxWidth = '120px'
+draggingImage.style.maxHeight = '120px'
 draggingImage.style.zIndex = '999999';
 draggingImage.style.cursor = 'pointer'
 draggingImage.style.objectFit = 'contain';
-// draggingImage.style.border = '1px solid red'
+draggingImage.style.boxShadow =  `rgba(115, 0, 255, 0.9) 0px 0px 0px 3px`;
 draggingImage.style.cursor = 'grab';
 document.body.appendChild(draggingImage);
 
-export const initDraggableElement = (el, cb, sourceOrGetter?) => {
+
+
+export const initDraggableElement = (el, cb, sourceOrGetter = null) => {
+
+
 
     sourceOrGetter ||= el.src
 
     el._src = typeof sourceOrGetter === 'function' ? sourceOrGetter() : sourceOrGetter
-     
+
     // 保证同一元素只初始化一次,需要保证src能够更新
     if (el._isDraggable) {
         return
@@ -32,7 +40,7 @@ export const initDraggableElement = (el, cb, sourceOrGetter?) => {
     // 鼠标按下事件处理函数
 
     var clickX, clickY, isDown = false
-    
+
     function onMouseDown(event) {
         isDown = true
         clickX = event.clientX;

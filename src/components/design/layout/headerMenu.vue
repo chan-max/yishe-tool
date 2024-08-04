@@ -20,18 +20,17 @@
 
     <el-popover width="240" trigger="click" popper-style="padding:2rem">
       <template #reference>
-        <el-button size="small" link  v-if="loginStatusStore.isLogin">
+        <el-button size="small" link v-if="loginStatusStore.isLogin">
           {{ storageName || '未命名' }}
           <el-icon size="1rem" style="margin-left: .4rem;">
-            <el-tooltip content="正在同步到远程" placement="right">
-              <LoadingOutlined style="color:var(--el-color-primary)"  v-if="syncState.loading" />
+            <el-tooltip content="正在同步到远程" placement="right" v-if="syncState.loading">
+              <LoadingOutlined style="color:var(--el-color-primary)" />
             </el-tooltip>
-            <el-tooltip content="同步成功"  placement="right">
-              <CheckCircleOutlined style="color:var(--el-color-success)" v-if="!syncState.loading && syncState.success" />
+            <el-tooltip content="同步成功" placement="right" v-if="!syncState.loading && syncState.success">
+              <CheckCircleOutlined style="color:var(--el-color-success)" />
             </el-tooltip>
-            <el-tooltip content="同步失败"  placement="right">
-              <ExclamationCircleOutlined style="color:var(--el-color-danger)"
-                v-if="!syncState.loading && syncState.failed" />
+            <el-tooltip content="同步失败" placement="right" v-if="!syncState.loading && syncState.failed">
+              <ExclamationCircleOutlined style="color:var(--el-color-danger)" />
             </el-tooltip>
           </el-icon>
         </el-button>
@@ -50,7 +49,7 @@
           <div style="text-align: right;height:24px;line-height: 24px;">{{ displayDate }}</div>
         </el-col>
         <el-col :span="24">
-          <el-button size="small" type="primary" class="w-full">
+          <el-button size="small" class="w-full" plain>
             另存到工作台
           </el-button>
         </el-col>

@@ -1,6 +1,6 @@
 <template>
     <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
-        <el-row style="row-gap: 8px;width:1000px;">
+        <el-row style="row-gap: 8px;width:990px;">
             <el-col :span="24 / column" v-for="item in  list" align="center">
                 <div style="width:100%;height:100%;flex-shrink: 0;" class="flex flex-col items-center justify-center">
                     <desimage padding="5%" :src="item.thumbnail"
@@ -18,6 +18,9 @@
                             </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
+                                    <el-dropdown-item>
+                                        <el-button  size="small" link> 在工作台使用 </el-button>
+                                    </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-button type="danger" size="small" link>删除</el-button>
                                     </el-dropdown-item>

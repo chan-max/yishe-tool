@@ -1,11 +1,14 @@
 <template>
     <div id="basic-canvas-canvas-container" v-if="showMainCanvas && showCanvasLayout">
-        <canvass></canvass>
+        <div style="overflow:auto;width:100%;height:100%;padding:100px;" class="flex items-center justify-center;">
+            <canvass></canvass>
+        </div>
         <div class="top-menu">
             <div style="flex:1;"></div>
             <div v-if="loading" class="italic font-bold"> 正在渲染贴纸... </div>
             <div>
-                宽  {{ canvasStickerOptions.width }}{{ canvasStickerOptions.unit }}   高 {{ canvasStickerOptions.height }}{{ canvasStickerOptions.unit }}
+                宽 {{ canvasStickerOptions.width }}{{ canvasStickerOptions.unit }} 高 {{ canvasStickerOptions.height }}{{
+                    canvasStickerOptions.unit }}
             </div>
             <el-button type="danger" link @click="showMainCanvas = false">
                 <el-icon size="18">
@@ -20,9 +23,9 @@
   
 <script setup lang="ts">
 import { computed } from 'vue'
-import { CanvasController, showMainCanvas,canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
+import { CanvasController, showMainCanvas, canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
 import { useLoadingOptions } from "@/components/loading/index.tsx";
-import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled,FullScreen } from '@element-plus/icons-vue'
+import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled, FullScreen } from '@element-plus/icons-vue'
 import { showCanvasLayout } from '@/components/design/store.ts';
 
 let canvasController = new CanvasController({
@@ -49,16 +52,18 @@ let canvass = canvasController.getRender();
     background: #eee;
     border: 1px solid #eee;
     position: relative;
+    overflow: auto;
 
     * {
         flex-shrink: 0;
     }
 }
 
-.top-menu,.bottom-menu{
+.top-menu,
+.bottom-menu {
     position: absolute;
 
-    left: 0;
+    right: 0;
     width: 100%;
     display: flex;
     align-items: center;
@@ -67,11 +72,11 @@ let canvass = canvasController.getRender();
     column-gap: 2rem;
 }
 
-.top-menu{
+.top-menu {
     top: 0;
 }
 
-.bottom-menu{
+.bottom-menu {
     bottom: 0;
 }
 </style>

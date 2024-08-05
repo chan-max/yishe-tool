@@ -49,8 +49,7 @@
                 <tags-input v-model="file.tags"></tags-input>
               </div>
               <div class="file-bar-description">
-                <a-textarea v-model:value="file.description" placeholder="文件描述"
-                  :auto-size="{ minRows: 2, maxRows: 5 }" />
+                <a-textarea v-model:value="file.description" placeholder="文件描述" :auto-size="{ minRows: 2, maxRows: 5 }" />
               </div>
             </div>
           </div>
@@ -82,7 +81,6 @@
 
 <script setup lang="ts">
 import { ref, toRaw } from "vue";
-import fileUpload from "./fileUpload/index.vue";
 import { message } from "ant-design-vue";
 import { uploadManyFile, createStickerApi, uploadFile } from "@/api";
 import { uploadToCOS } from "@/api/cos";
@@ -180,9 +178,6 @@ function removeFile(file) {
   fileList.value.splice(fileList.value.indexOf(file), 1);
 }
 
-function getPreviewUrl(file) {
-  return URL.createObjectURL(file);
-}
 
 const loading = ref(false);
 
@@ -200,8 +195,9 @@ async function uploadSingleFile(file) {
       keywords,
       type: "image", // 默认为图片贴纸,
       thumbnail: url,
-      description:file.description,
-      isPublic: file.isPublic
+      description: file.description,
+      isPublic: file.isPublic,
+      uploaderId: loginStore.userInfo.id
     };
     await createStickerApi(params);
   }
@@ -224,10 +220,11 @@ async function uploadSingleFile(file) {
       name: file.raw.name,
       size: file.size,
       thumbnail: thumbnailUrl,
-      description:file.description,
-      isPublic: file.isPublic
+      description: file.description,
+      isPublic: file.isPublic,
+      uploaderId: loginStore.userInfo.id
     };
-    
+
     await uploadFile(params);
   }
 }

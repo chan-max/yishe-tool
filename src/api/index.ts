@@ -1,6 +1,7 @@
 
-import { uploadToCOS } from "./cos";
+
 import { apiInstance, source } from "./apiInstance";
+import { uploadToCOS } from "./cos";
 import { Url } from "./url";
 export { uploadToCOS } from './cos'
 
@@ -355,7 +356,7 @@ export const createStickerApi = (data) => new Promise(async (resolve, reject) =>
 })
 
 export const getFileListApi = (params) => new Promise(async (resolve, reject) => {
-  const res = await apiInstance.post('/api/file/page')
+  const res = await apiInstance.post('/api/file/page',params)
   resolve(res.data.data)
 })
 
@@ -393,13 +394,6 @@ export const getStickerByIdApi = (id: string) => new Promise(async (resolve, rej
   resolve(data.data.data)
 })
 
-
-
-
-
-
-
-
 class Api {
 
 
@@ -417,6 +411,12 @@ class Api {
     const res = await apiInstance.post(Url.GET_USER_META, params)
     return res.data.data
   }
+
+  uploadToCOS = uploadToCOS
+
+  createStickerApi = createStickerApi
+
+  getFileListApi = getFileListApi
 }
 
 export default new Api()

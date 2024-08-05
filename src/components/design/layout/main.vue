@@ -192,7 +192,7 @@ const leftContainerAnimation = ref({
 const basicContainerAnimation = ref({
   "enter-active-class": "animate__animated animate__bounceIn",
   "leave-active-class": "animate__animated animate__bounceOut",
-  duration: 100,
+  duration: 66,
 });
 
 const basicCanvasRef = ref();

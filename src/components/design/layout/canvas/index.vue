@@ -16,10 +16,28 @@
 
         <div class="flex" style="width:100%;padding:1rem;padding-top:2rem;column-gap:1rem;">
 
-            <el-button plain link>
-                <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
-                上传
-            </el-button>
+            <el-popover width="240px" trigger="click">
+                <template #reference>
+                    <el-button plain link>
+                        <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
+                        上传
+                    </el-button>
+                </template>
+                <el-row style="row-gap: 1rem;" align="middle">
+                    <el-col :span="8">
+                        贴纸名称：
+                    </el-col>
+                    <el-col :span="16">
+                        <el-input v-model="stickerName" size="small"></el-input>
+                    </el-col>
+
+                    <el-col :span="24">
+                        <el-button size="small" class="w-full" plain @click="submit" :loading="loading">
+                            保存
+                        </el-button>
+                    </el-col>
+                </el-row>
+            </el-popover>
 
             <el-dropdown>
                 <el-button link plain>
@@ -96,9 +114,16 @@ import { useLoadingOptions } from "@/components/loading/index.tsx";
 import addPopover from './addPopover.vue'
 import dragTip from "./dragTip.vue";
 import { useElementHover, useDebounceFn } from '@vueuse/core'
+import Api from '@/api'
+import { message } from "ant-design-vue";
+import { useLoginStatusStore } from "@/store/stores/login";
+
+const loginStore = useLoginStatusStore()
 
 const canvasContainerRef = ref()
 
+
+const stickerName = ref('')
 
 const showDragTip = computed(() => {
     return isHovered.value && !mouseMovedRecent.value
@@ -126,26 +151,56 @@ const mousemove = function () {
 const loadingOptions = useLoadingOptions({
 });
 
-let cc = new CanvasController({
+let canvasController = new CanvasController({
     max: 320
 });
 
-let canvass = cc.getRender();
+let canvass = canvasController.getRender();
 
 function exportPng() {
-    cc.downloadPng();
+    canvasController.downloadPng();
 }
 
 
 /* 导出去除多余空白的图片 */
 function exportTrimmedPng() {
-    cc.downloadTrimmedPng();
+    canvasController.downloadTrimmedPng();
 }
 
 function remove(index) {
     removeCavnasChild(index)
 }
 
+
+/*
+    提交该贴纸
+*/
+
+const loading = ref(false)
+
+async function submit() {
+
+    loading.value = true
+
+    const file = await canvasController.toPngFile()
+
+    const cos = await Api.uploadToCOS({
+        file: file
+    })
+
+    await Api.createStickerApi({
+        thumbnail: cos.url,
+        name: stickerName.value,
+        type: 'composition',
+        meta: {
+            data: canvasStickerOptions.value
+        },
+        uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null 
+    })
+
+    loading.value = false
+    message.success('保存成功')
+}
 
 </script>
 

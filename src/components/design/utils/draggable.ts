@@ -6,13 +6,20 @@
 const draggingImage = document.createElement('img');
 draggingImage.style.position = 'fixed';
 draggingImage.style.pointerEvents = 'none';
-draggingImage.style.maxWidth = '120px'
-draggingImage.style.maxHeight = '120px'
+draggingImage.style.maxWidth = '160px'
+draggingImage.style.maxHeight = '160px'
+
+draggingImage.style.minWidth = '80px'
+draggingImage.style.minHeight = '80px'
+
 draggingImage.style.zIndex = '999999';
 draggingImage.style.cursor = 'pointer'
 draggingImage.style.objectFit = 'contain';
 draggingImage.style.boxShadow =  `rgba(115, 0, 255, 0.9) 0px 0px 0px 3px`;
 draggingImage.style.cursor = 'grab';
+
+draggingImage.style.display = 'none';
+
 document.body.appendChild(draggingImage);
 
 

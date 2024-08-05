@@ -221,7 +221,7 @@ export class CanvasController {
 
     loading = ref(false)
 
-    async exportPng() {
+    async toPngFile() {
         const file = await htmlToPngFile(this.el)
         return file
     }

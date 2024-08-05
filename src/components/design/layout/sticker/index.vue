@@ -24,7 +24,6 @@
         <sticker-popover :stickerInfo="item">
           <div class="bar">
             <div class="title text-ellipsis">{{ item.name || "......" }}</div>
-            <badge :type="item.type"></badge>
             <el-icon>
               <ArrowRight />
             </el-icon>
@@ -54,6 +53,7 @@ import { useLoadingOptions } from "@/components/loading/index.tsx";
 import scrollbar from "@/components/scrollbar/index.vue";
 import { stickerQueryParams } from "./index.tsx";
 import { loadingBottom } from "@/components/loading/index.tsx";
+import Utils from '@/common/utils'
 
 const input = ref()
 
@@ -67,28 +67,6 @@ function tagChange() {
   getList();
 }
 
-/*
- 徽章类型
-*/
-const badge = (props) => {
-  return (
-    <div style={{ textWrap: "nowrap" }}>
-      {props.type == "image"
-        ? "图片"
-        : props.type == "text"
-          ? "艺术字"
-          : props.type == "qrcode"
-            ? "二维码"
-            : props.type == "barcode"
-              ? "条形码"
-              : props.type == "badge"
-                ? "徽章"
-                : props.type == "stamp"
-                  ? "印章"
-                  : "未知类型"}
-    </div>
-  );
-};
 
 function imgLoad(el, info) {
   const img = el;
@@ -120,8 +98,8 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   },
   {
     forEach(item) {
-      item.thumbnail = "https://" + item.thumbnail;
-      item.url = "https://" + item.url;
+      item.thumbnail = Utils.formatUrl(item.thumbnail);
+      item.url = Utils.formatUrl(item.url);
     },
   }
 );

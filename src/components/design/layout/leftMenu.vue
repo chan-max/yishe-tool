@@ -4,7 +4,7 @@
       <div class="menu-bar-item"
         @click="viewDisplayController.showProject = !viewDisplayController.showProject">
         <div class="menu-bar-item-icon"><icon-project></icon-project></div>
-        <span>我的创作</span>
+        <span>创作项目</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="工作台" placement="right">

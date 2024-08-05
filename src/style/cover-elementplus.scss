@@ -33,3 +33,7 @@
 .el-loading-mask{
   z-index: 99;
 }
+
+.el-button:focus-visible{
+  outline: none !important;
+}

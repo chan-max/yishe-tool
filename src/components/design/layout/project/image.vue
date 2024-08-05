@@ -1,11 +1,13 @@
 <template>
     <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
-        <el-row style="row-gap: 1rem;">
+        <el-row style="row-gap: 8px;width:1000px;">
             <el-col :span="24 / column" v-for="item in  list" align="center">
-
-                <desimage class="img" padding="5%" :src="item.thumbnail">
-                </desimage>
-
+                <div style="width:100%;height:100%;flex-shrink: 0;" class="flex flex-col items-center justify-center">
+                    <desimage padding="5%" :src="item.thumbnail"
+                        style="background:#f6f6f6!important;width:160px;height:160px;">
+                    </desimage>
+                    <div class="bar"></div>
+                </div>
             </el-col>
         </el-row>
         <loadingBottom v-if="loading"></loadingBottom>
@@ -36,7 +38,7 @@ import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/i
 import Utils from '@/common/utils'
 
 // 列表展示几列
-const column = ref(8);
+const column = ref(6);
 
 const loadingOptions = useLoadingOptions({});
 
@@ -59,12 +61,9 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
 
 </script>
 
-
-
 <style scoped lang="less">
-.img {
-    width: 100px !important;
-    height: 100px !important;
-    background: #f1f1f1;
+.bar{
+    width: 100%;
+    height:24px;
 }
 </style>

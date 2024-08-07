@@ -16,27 +16,38 @@
 
         <div class="flex" style="width:100%;padding:1rem;padding-top:2rem;column-gap:1rem;">
 
-            <el-popover width="240px" trigger="click">
+            <el-popover width="360px" trigger="click" :visible="stickerInfoVisible">
                 <template #reference>
-                    <el-button plain link>
+                    <el-button plain link @click="stickerInfoVisible = true">
                         <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
                         上传
                     </el-button>
                 </template>
-                <el-row style="row-gap: 1rem;" align="middle">
-                    <el-col :span="8">
-                        贴纸名称：
-                    </el-col>
-                    <el-col :span="16">
-                        <el-input v-model="stickerName" size="small"></el-input>
-                    </el-col>
-
-                    <el-col :span="24">
-                        <el-button size="small" class="w-full" plain @click="submit" :loading="loading">
-                            保存
-                        </el-button>
-                    </el-col>
-                </el-row>
+                <el-form label-width="72px" :inline-message="false" :show-message="false" label-position="left">
+                    <el-form-item label="贴纸名称：">
+                        <el-input v-model="stickerInfo.name" size="small"></el-input>
+                    </el-form-item>
+                    <el-form-item label="贴纸描述:">
+                        <el-input type="textarea" v-model="stickerInfo.description" size="small"></el-input>
+                    </el-form-item>
+                    <el-form-item label="关键字:">
+                        <tagsInput v-model="stickerInfo.keywords" :autocomplete-tags="stickerAutoplacementTags"
+                            autocompletePlacement="right"></tagsInput>
+                    </el-form-item>
+                    <el-form-item label="是否共享:">
+                        <a-switch v-model:checked="stickerInfo.isPublic" checked-children="公开" un-checked-children="私密" />
+                    </el-form-item>
+                    <el-form-item>
+                        <div class="flex w-full">
+                            <el-button size="small" type="danger" plain @click="stickerInfoVisible = false">
+                                关闭
+                            </el-button>
+                            <el-button size="small" class="w-full" plain @click="submit" :loading="loading">
+                                保存
+                            </el-button>
+                        </div>
+                    </el-form-item>
+                </el-form>
             </el-popover>
 
             <el-dropdown>
@@ -82,9 +93,7 @@
                     </el-option>
                 </el-select>
             </div>
-
         </div>
-
         <div class="operate">
             <operate></operate>
         </div>
@@ -117,13 +126,23 @@ import { useElementHover, useDebounceFn } from '@vueuse/core'
 import Api from '@/api'
 import { message } from "ant-design-vue";
 import { useLoginStatusStore } from "@/store/stores/login";
+import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
+import { stickerAutoplacementTags } from '@/components/design/components/tagsInput/index.ts'
+
 
 const loginStore = useLoginStatusStore()
 
 const canvasContainerRef = ref()
 
+const stickerInfoVisible = ref(false)
 
-const stickerName = ref('')
+const stickerInfo = ref({
+    name: '',
+    description: '',
+    keywords: [],
+    isPublic: false
+})
+
 
 const showDragTip = computed(() => {
     return isHovered.value && !mouseMovedRecent.value
@@ -182,29 +201,39 @@ async function submit() {
 
     loading.value = true
 
-    const file = await canvasController.toPngFile()
+    try {
+        const file = await canvasController.toPngFile()
 
-    const cos = await Api.uploadToCOS({
-        file: file
-    })
+        const cos = await Api.uploadToCOS({
+            file: file
+        })
 
-    await Api.createStickerApi({
-        thumbnail: cos.url,
-        name: stickerName.value,
-        type: 'composition',
-        meta: {
-            data: canvasStickerOptions.value
-        },
-        uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null 
-    })
+        await Api.createStickerApi({
+            thumbnail: cos.url,
+            ...stickerInfo.value,
+            keywords: stickerInfo.value.keywords.join(','),
+            type: 'composition',
+            meta: {
+                data: canvasStickerOptions.value
+            },
+            uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null
+        })
 
-    loading.value = false
-    message.success('保存成功')
+        loading.value = false
+        message.success('保存成功')
+    } catch (e) {
+        loading.value = false
+        message.error('保存失败')
+    }
 }
 
 </script>
 
 <style lang="less" scoped>
+:deep(.el-form-item) {
+    margin-bottom: 8px;
+}
+
 .container {
     width: 340px;
     height: 100%;
@@ -255,5 +284,9 @@ async function submit() {
 .title {
     font-size: 1rem;
     font-weight: bold;
+}
+
+.label {
+    line-height: 22px;
 }
 </style>

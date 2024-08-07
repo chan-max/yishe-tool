@@ -1,6 +1,10 @@
 
 import { fetchFile } from "@/api";
-import { cacheFontFamily, cacheFontFamilyLoadingMap } from "@/components/design/store";
+import { cacheFontFamily,  } from "@/components/design/store";
+
+const cacheFontFamilyLoadingMap = {
+
+}
 
 import { message } from "ant-design-vue";
 
@@ -16,17 +20,19 @@ export async function initFontFamilyInfo(info) {
         return;
     }
 
-    if (cacheFontFamilyLoadingMap.value[id]) {
+    if (cacheFontFamilyLoadingMap[id]) {
         return
     }
 
     try {
-        cacheFontFamilyLoadingMap.value[id] = true
+        cacheFontFamilyLoadingMap[id] = true
         file = await fetchFile(url);
     } catch (e) {
-        cacheFontFamilyLoadingMap.value[id] = false
+        cacheFontFamilyLoadingMap[id] = false
         throw new Error('')
     }
+    
+
 
     const fontStyle = document.createElement("style");
     const fontId = `font_${id}`;
@@ -42,14 +48,13 @@ export async function initFontFamilyInfo(info) {
     fontStyle.setAttribute("font_id", fontId);
 
     cacheFontFamily.value[id] = fontStyle;
-    cacheFontFamilyLoadingMap.value[id] = false
+    cacheFontFamilyLoadingMap[id] = false
 }
 
 
 
 
 export async function initFontFamilyInfoWithMessage(info) {
-
     const { url, id, name } = info;
     try {
         // 存在缓存
@@ -57,7 +62,7 @@ export async function initFontFamilyInfoWithMessage(info) {
             return;
         }
 
-        if (cacheFontFamilyLoadingMap.value[id]) {
+        if (cacheFontFamilyLoadingMap[id]) {
             return
         }
 

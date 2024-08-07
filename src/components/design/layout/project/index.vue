@@ -18,7 +18,7 @@
         </a-input>
       </el-row>
       <el-row>
-        <div style="height: calc(600px - 48px); width:1000px;overflow: auto;">
+        <div style="height: calc(600px - 48px); min-width:1020px;overflow: auto;">
           <component :is="activeComponent"></component>
         </div>
       </el-row>

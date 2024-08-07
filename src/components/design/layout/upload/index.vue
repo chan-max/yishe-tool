@@ -25,20 +25,16 @@
           <div>
             <div class="file-bar">
               <div class="file-bar-header">
-                <desimage v-if="isImg(file.name)" @focus="null" :src="file.url" style="height: 3.2em; width: 3.2em"
-                  fit="contain"></desimage>
-                <el-icon v-if="isFont(file.name)" size="3.2em">
+                <desimage v-if="Utils.type.isImageName(file.name)" @focus="null" :src="file.url"
+                  style="height: 3.2em; width: 3.2em" fit="contain"></desimage>
+                <el-icon v-if="Utils.type.isFontName(file.name)" size="3.2em">
                   <component :is="fileTypeIcons[getFileSuffix(file.name)]"></component>
                 </el-icon>
-                <div v-if="isImg(file.name)" style="font-size: 1.2rem">{{ file.name }}</div>
-                <div v-if="isFont(file.name)" style="font-size: 1.6em;" @vue:mounted="initFontFamily(file, $event)">
+                <div v-if="Utils.type.isImageName(file.name)" style="font-size: 1.2rem">{{ file.name }}</div>
+                <div v-if="Utils.type.isFontName(file.name)" style="font-size: 1.6em;"
+                  @vue:mounted="initFontFamily(file, $event)">
                   {{ file.name }}
                 </div>
-                <el-tooltip content="图片会自动上传到贴纸" placement="top">
-                  <el-icon style="height: 2em" size="1.5rem">
-                    <Warning />
-                  </el-icon>
-                </el-tooltip>
                 <div style="flex: 1"></div>
                 <a-switch v-model:checked="file.isPublic" checked-children="公开" un-checked-children="私密" />
                 <el-button @click="removeFile(file)" type="danger" link style="height: 2em"><el-icon size="2rem">
@@ -46,7 +42,8 @@
                   </el-icon></el-button>
               </div>
               <div class="file-bar-tags">
-                <tags-input v-model="file.tags"></tags-input>
+                <tags-input v-model="file.tags"
+                  :autocompleteTags="Utils.type.isFontName(file.name) ? fontAutoplacementTags : imageAutoplacementTags"></tags-input>
               </div>
               <div class="file-bar-description">
                 <a-textarea v-model:value="file.description" placeholder="文件描述" :auto-size="{ minRows: 2, maxRows: 5 }" />
@@ -56,6 +53,7 @@
         </template>
       </el-upload>
     </div>
+
     <div v-if="uploadTabType == 'scan'" class="flex flex-col justify-center items-center">
       <div class="qrcode" style="width: 10rem; height: 10rem"></div>
       <div class="tip">打开app扫码上传</div>
@@ -98,13 +96,17 @@ import iconImg from "@/icon/fileType/img.svg";
 import iconFont from "@/icon/fileType/font.svg";
 import iconGlb from "@/icon/fileType/glb.svg";
 import tags from "@/components/design/components/tags.vue";
-import tagsInput from "@/components/design/components/tagsInput.vue";
+import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
+import { fontAutoplacementTags, imageAutoplacementTags } from '@/components/design/components/tagsInput/index.ts'
+
 import { htmlToPngFile } from '@/common/transform'
 import desimage from '@/components/design/components/image.vue';
 import { createFontThumbnail } from '@/components/design/utils/utils'
 import { toPng } from "html-to-image";
 import Utils from '@/common/utils'
 import { useLoginStatusStore } from "@/store/stores/login";
+
+
 
 const loginStore = useLoginStatusStore()
 
@@ -132,13 +134,8 @@ const fileTypeIcons = {
   otf: iconFont,
 };
 
-function isImg(name) {
-  return ["png", "svg", "jpeg", "jpg"].includes(name.split(".").pop());
-}
 
-function isFont(name) {
-  return ["otf", "ttf", "woff"].includes(name.split(".").pop());
-}
+
 
 function close() {
   loading.value = false;
@@ -149,7 +146,7 @@ function close() {
 */
 var id = 999;
 function initFontFamily(file, e) {
-  if (!isFont(file.name)) {
+  if (!Utils.type.isFontName(file.name)) {
     return;
   }
 
@@ -186,14 +183,14 @@ async function uploadSingleFile(file) {
   file = toRaw(file)
   const keywords = file.tags && file.tags.join(",");
 
-  if (isImg(file.name)) {
+  if (Utils.type.isImageName(file.name)) {
     const { url } = await uploadToCOS({ file: file.raw });
     const params = {
       name: file.raw.name,
       size: file.size,
       url,
       keywords,
-      type: "image", // 默认为图片贴纸,
+      type: "image", // 默认为图片贴纸, 图片统一为 image
       thumbnail: url,
       description: file.description,
       isPublic: file.isPublic,
@@ -202,7 +199,7 @@ async function uploadSingleFile(file) {
     await createStickerApi(params);
   }
 
-  if (isFont(file.name)) {
+  if (Utils.type.isFontName(file.name)) {
     /* 需要生成缩略图 */
 
     const png = await createFontThumbnail({
@@ -219,6 +216,7 @@ async function uploadSingleFile(file) {
       url: fileUrl,
       name: file.raw.name,
       size: file.size,
+      keywords,
       thumbnail: thumbnailUrl,
       description: file.description,
       isPublic: file.isPublic,

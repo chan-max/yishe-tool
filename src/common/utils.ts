@@ -90,6 +90,10 @@ function isEmptyObject(val) {
 
 import { deepUnref } from './vue'
 
+
+import logger from './logger'
+import { Type } from './type'
+
 class Utils {
 
     IN2CM = 2.539999918
@@ -145,7 +149,17 @@ class Utils {
 
     // 深层解构
     deepUnref = deepUnref
+
+
+    // 日志打印
+    logger = logger
+
+    type = new Type()
 }
 
 
-export default new Utils()
+let utils = new Utils()
+
+window.utils = utils
+
+export default utils

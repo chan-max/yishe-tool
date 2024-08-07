@@ -123,7 +123,7 @@ declare module 'vue' {
     SvgIcon: typeof import('./src/components/svgIcon.vue')['default']
     TabFont: typeof import('./src/components/design/layout/project/tabFont.vue')['default']
     Tags: typeof import('./src/components/design/components/tags.vue')['default']
-    TagsInput: typeof import('./src/components/design/components/tagsInput.vue')['default']
+    TagsInput: typeof import('./src/components/design/components/tagsInput/tagsInput.vue')['default']
     Teleport: typeof import('./src/components/design/layout/canvas/teleport.vue')['default']
     TextContent: typeof import('./src/components/design/layout/canvas/operate/textContent.vue')['default']
     TextDesigner: typeof import('./src/components/design/components/textDesigner/index.vue')['default']

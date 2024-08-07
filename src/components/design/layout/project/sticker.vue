@@ -7,7 +7,7 @@
                         style="background:#f6f6f6!important;width:240px;height:180px;border-radius: 8px;">
                     </desimage>
                     <div class="bar flex items-center justify-between">
-                        <div> {{ item.name }} </div>
+                        <div class="text-ellipsis" style="max-width:80px;"> {{ item.name }} </div>
                         <div class="public-tag" v-if="!item.isPublic"> 已共享 </div>
                         <div style="flex:1;"></div>
                         <el-dropdown>
@@ -19,16 +19,16 @@
                             <template #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item>
-                                        <el-button  size="small" link> 在工作台使用 </el-button>
+                                        <el-button size="small" link @click="useSticker(item)"> 在工作台使用 </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-button type="danger" size="small" link>删除</el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button  size="small" link> 发布 </el-button>
+                                        <el-button size="small" link> 发布 </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button  size="small" link> 分享给好友 </el-button>
+                                        <el-button size="small" link> 分享给好友 </el-button>
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -38,6 +38,7 @@
             </el-col>
         </el-row>
         <loadingBottom v-if="loading"></loadingBottom>
+        <div class="endofpage" v-if="isLastPage"> 到底了~ </div>
     </div>
 </template>
 
@@ -63,13 +64,16 @@ import scrollbar from "@/components/scrollbar/index.vue";
 import { loadingBottom } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 import Utils from '@/common/utils'
+import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
+import { message } from "ant-design-vue";
+
 
 // 列表展示几列
 const column = ref(4);
 
 const loadingOptions = useLoadingOptions({});
 
-const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePaging(
+const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPage, currentPage, totalPage, } = usePaging(
     (params) => {
         return getStickerListApi({
             ...params,
@@ -86,6 +90,12 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
     }
 );
 
+
+function useSticker(item) {
+    canvasStickerOptions.value = item.meta.data
+    message.success('引用成功')
+}
+
 </script>
 
 
@@ -98,12 +108,20 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
     column-gap: 1rem;
 }
 
-.public-tag{
+.public-tag {
     background-color: #ccc;
-    color:#fff;
+    color: #fff;
     border-radius: 2px;
     padding: 2px;
     font-size: .8rem;
     font-weight: bold;
+}
+
+.endofpage{
+    width: 100%;
+    text-align: center;
+    height: 36px;
+    line-height: 36px;
+    color: #aaa;
 }
 </style>

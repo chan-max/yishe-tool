@@ -151,6 +151,7 @@ export const Text = defineComponent({
             if (props.options.fontFamilyInfo) {
                 style.fontFamily = `font_${props.options.fontFamilyInfo.id}`
                 // 由于不确定字体是否加载，需要初始化一下
+
                 initFontFamilyInfoWithMessage(props.options.fontFamilyInfo)
             }
 

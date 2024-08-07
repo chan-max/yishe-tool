@@ -1,15 +1,7 @@
 <template>
   <div class="designiy-image-upload">
-    <el-upload
-      class="designiy-image-upload-main"
-      :auto-upload="false"
-      :show-file-list="false"
-      v-model:file-list="files"
-      :limit="1"
-      :on-exceed="handleExceed"
-      ref="upload"
-      drag
-    >
+    <el-upload class="designiy-image-upload-main" :auto-upload="false" :show-file-list="false" v-model:file-list="files"
+      :limit="1" :on-exceed="handleExceed" ref="upload" drag>
       <img v-if="files[0]" :src="previewUrl" />
       <template v-else>
         <icon-upload style="width: 50px; height: 50px"></icon-upload>
@@ -17,12 +9,8 @@
       </template>
     </el-upload>
     <a-divider />
-    <a-qrcode
-      style="width: 50px; height: 50px"
-      value="http://www.antdv.com"
-      color="var(--el-color-primary)"
-      bg-color="#fff"
-    />
+    <a-qrcode style="width: 50px; height: 50px" value="http://www.antdv.com" color="var(--el-color-primary)"
+      bg-color="#fff" />
     <div class="designiy-image-upload-form">
       <div class="designiy-image-upload-form-label">贴纸名称</div>
       <el-input></el-input>

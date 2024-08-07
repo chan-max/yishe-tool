@@ -22,13 +22,13 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         immediate: true,
         pageSize: 30,
         initialList: ref([]),
-        callback:null, // 处理每个请求元素的回调
-        filter:null, // 请求结果被插入列表前的过滤器，被过滤掉的不会添加到列表中
-        forEach:null,
+        callback: null, // 处理每个请求元素的回调
+        filter: null, // 请求结果被插入列表前的过滤器，被过滤掉的不会添加到列表中
+        forEach: null,
         ...options,
     }
 
-    
+
     // 列表数据 , 可用外界传入的参数，也可以自身初始化
     const list = options.initialList
     // 当前页数
@@ -49,6 +49,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         return loading.value && currentPage.value == 1
     })
 
+
     const subsequentLoading = computed(() => {
         return loading.value && currentPage.value != 1
     })
@@ -61,12 +62,14 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
             return;
         }
 
+
         try {
-            currentPage.value++
-            if (currentPage.value > totalPage.value) {
+ 
+            if (currentPage.value >= totalPage.value) {
                 return
             }
 
+            currentPage.value++
             loading.value = true
             let res = await getListFn({
                 currentPage: currentPage.value,
@@ -83,11 +86,11 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
                 res.list.forEach(options.callback)
             }
 
-            if(options.filter){
+            if (options.filter) {
                 res.list = res.list.filter(options.filter)
             }
 
-            if(options.forEach){
+            if (options.forEach) {
                 res.list.forEach(options.forEach)
             }
 
@@ -115,11 +118,15 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
 
     // 重置分页状态
-    function reset(){
+    function reset() {
         totalPage.value = Infinity
         currentPage.value = 0
         list.value = []
     }
+
+    const isLastPage = computed(() => {
+        return (currentPage.value == totalPage.value) && !loading.value
+    })
 
     return {
         currentPage, // 当前页数
@@ -131,6 +138,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         loading, // 是否正在加载
         reset, // 重置列表
         firstLoading, // 首次加载
-        subsequentLoading // 非首次加载
+        subsequentLoading, // 非首次加载
+        isLastPage, // 是否到达最后一页
     }
 }

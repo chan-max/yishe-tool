@@ -4,4 +4,5 @@ declare module '@/components'
 
 interface Window {
     mc: any;
+    utils: any
 }

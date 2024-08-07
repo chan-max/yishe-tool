@@ -1,6 +1,6 @@
 <template>
     <div id="basic-canvas-canvas-container" v-if="showMainCanvas && showCanvasLayout">
-        <div style="overflow:auto;width:100%;height:100%;padding:100px;" class="flex items-center justify-center;">
+        <div style="overflow:auto;width:100%;height:100%;" class="flex items-center justify-center">
             <canvass></canvass>
         </div>
         <div class="top-menu">

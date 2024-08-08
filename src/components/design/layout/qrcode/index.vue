@@ -23,7 +23,7 @@ import { timeout } from "@/common/time";
 import { qrCodeOptions, barCodeOptions } from "@/components/design/store.ts";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import {
-  currentController,
+  currentModelController,
   showImageUplaod,
   showDecalControl,
 } from "@/components/design/store";
@@ -66,7 +66,7 @@ async function createQrCode() {
     const src = createImgObjectURL(img);
     const base64 = imgToBase64(img);
 
-    currentController.value.stickToMousePosition(
+    currentModelController.value.stickToMousePosition(
       {
         img: img,
         type: "qrcode",

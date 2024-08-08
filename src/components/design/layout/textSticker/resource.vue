@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { ref, onBeforeMount } from "vue";
-import { currentController, showDecalControl } from "../../store";
+import { currentModelController, showDecalControl } from "../../store";
 import { initDraggableElement } from "../../utils/draggable";
 import { getTextSticker } from "@/api";
 
@@ -36,7 +36,7 @@ const currentPage = ref(1);
 function load(e, info) {
   var el = e.target;
   initDraggableElement(el, () => {
-    currentController.value.stickToMousePosition({
+    currentModelController.value.stickToMousePosition({
       type: "text",
       src: info.preview_img,
       ...info,

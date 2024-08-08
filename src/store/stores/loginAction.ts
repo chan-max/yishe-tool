@@ -10,6 +10,7 @@
  */
 import { useLoginStatusStore } from "@/store/stores/login";
 import router from "@/modules/main/router";
+import Api from '@/api'
 
 const LOGIN_FLAG = "1s_login";
 
@@ -18,9 +19,9 @@ const LOGIN_FLAG = "1s_login";
 export const getLocalUserInfo = () =>
   JSON.parse(
     localStorage.getItem(LOGIN_FLAG) || sessionStorage.getItem(LOGIN_FLAG)
-);
+  );
 
-  
+
 export const clearLocalUserInfo = () => {
   localStorage.removeItem(LOGIN_FLAG);
   sessionStorage.removeItem(LOGIN_FLAG);
@@ -41,14 +42,14 @@ export const updateLocalUserInfo = (data: Record<string, any>) => {
 };
 
 export const isLogin = () => {
-  let local =  getLocalUserInfo()
+  let local = getLocalUserInfo()
   return local && local.isLogin
 };
 
 export const doLoginAction = (data, once = false) => {
   // 保存登录时间
   const now = new Date().getTime();
-  const {userInfo,token} = data
+  const { userInfo, token } = data
 
   // 同步用户信息
   const loginStatusStore = useLoginStatusStore();
@@ -62,7 +63,8 @@ export const doLoginAction = (data, once = false) => {
 
 
 
-export const doLogout = () => {
+export const doLogout = async () => {
+  await Api.logout();
   const loginStatusStore = useLoginStatusStore();
   loginStatusStore.isLogin = false;
   loginStatusStore.userInfo = null;

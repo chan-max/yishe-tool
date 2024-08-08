@@ -116,7 +116,7 @@ declare module 'vue' {
     SizeInput: typeof import('./src/components/design/layout/canvas/operate/sizeInput.vue')['default']
     Skew: typeof import('./src/components/design/layout/canvas/operate/skew.vue')['default']
     Stamp: typeof import('./src/components/design/layout/stamp/index.vue')['default']
-    Sticker: typeof import('./src/components/design/layout/sticker/index.vue')['default']
+    Sticker: typeof import('./src/components/design/layout/project/sticker.vue')['default']
     StickerPopover: typeof import('./src/components/design/layout/sticker/stickerPopover.vue')['default']
     SubHeaderMenu: typeof import('./src/components/design/layout/subHeaderMenu/index.vue')['default']
     SvgCanvas: typeof import('./src/components/design/layout/svgCanvas/index.vue')['default']

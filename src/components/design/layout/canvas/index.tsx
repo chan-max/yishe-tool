@@ -28,6 +28,8 @@ import { createFilterDefaultOptions } from './children/defaultOptions.tsx'
 
 import Utils from '@/common/utils'
 
+import { currentModelController } from '@/components/design/store'
+
 import { imageDataToFile } from '@/common/transform'
 
 /*
@@ -355,6 +357,10 @@ export class CanvasController {
         initDraggableElement(
             this.el,
             () => {
+                const modelController = currentModelController.value
+
+                modelController
+
             },
             () => base64
         )

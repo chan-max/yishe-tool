@@ -44,7 +44,7 @@
   </div>
 </template>
 <script setup>
-import { isFullScreen, currentController, saveScreenshot } from "../store";
+import { isFullScreen, currentModelController, saveScreenshot } from "../store";
 import iconFullscreen from "@/icon/fullscreen.svg?component";
 import iconRotate from "@/icon/rotate.svg?component";
 import iconLocate from "@/icon/locate.svg?component";
@@ -56,11 +56,11 @@ function takeshot() {
 }
 
 function locate() {
-  currentController.value.resetPosition();
+  currentModelController.value.resetPosition();
 }
 
 function animate() {
-  currentController.value.animate = !currentController.value.animate;
+  currentModelController.value.animate = !currentModelController.value.animate;
 }
 </script>
 <style lang="less">

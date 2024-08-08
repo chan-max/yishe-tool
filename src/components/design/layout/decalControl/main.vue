@@ -1,23 +1,9 @@
 <template>
   <div class="container">
     <h6>旋转角度</h6>
-    <el-slider
-      :min="0"
-      :max="100"
-      :step="1"
-      v-model="rotation"
-      size="small"
-      @input="onRotationInput"
-    />
+    <el-slider :min="0" :max="100" :step="1" v-model="rotation" size="small" @input="onRotationInput" />
     <h6>贴纸尺寸</h6>
-    <el-slider
-      :min="0"
-      :max="100"
-      :step="1"
-      v-model="size"
-      size="small"
-      @input="onSizeInput"
-    />
+    <el-slider :min="0" :max="100" :step="1" v-model="size" size="small" @input="onSizeInput" />
     <h6>固定位置</h6>
     <el-button @click="remove" type="primary" round>移除该贴纸</el-button>
   </div>
@@ -44,7 +30,6 @@ const onSizeInput = debounce((value) => {
   operatingDecal.value?.scale(value / 100);
 });
 
-watch(operatingDecal, () => {});
 
 function remove() {
   operatingDecal.value.remove();
@@ -59,16 +44,7 @@ function remove() {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  row-gap: 10px;
-
-  .el-slider {
-  }
-}
-
-.label {
-  font-size: 12px;
-  font-weight: bold;
-  color: #555;
+  padding: 2rem;
+  row-gap: 1rem;
 }
 </style>

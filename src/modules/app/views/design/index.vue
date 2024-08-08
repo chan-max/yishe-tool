@@ -42,7 +42,7 @@
             <van-badge>
               <ion-icon slot="icon-only" :icon="iconPaper"></ion-icon>
               <template #content>
-                {{ currentController?.decalControllers.length }}
+                {{ currentModelController?.decalControllers.length }}
               </template>
             </van-badge>
           </ion-button>
@@ -84,7 +84,7 @@ import workspace from './layout/workspace/index.vue';
 import { showSelectModel, showSticker, showWorkspace } from "./store";
 import { ModelController } from "@/components/design/core/controller";
 import { meta } from "./meta";
-import { useDesignStore, currentOperatingBaseModelInfo, currentController } from "@/components/design/store";
+import { useDesignStore, currentOperatingBaseModelInfo, currentModelController } from "@/components/design/store";
 import { useIonRouter } from "@ionic/vue";
 import iconCloth from "@/modules/app/assets/icon/cloth.svg?url";
 import iconSticker from "@/modules/app/assets/icon/sticker.svg?url";

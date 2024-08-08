@@ -1,5 +1,5 @@
 import { watch ,ref} from "vue";
-import { currentController, operatingTextStickerOptions, showDecalControl } from "../../store";
+import { currentModelController, operatingTextStickerOptions, showDecalControl } from "../../store";
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
 import { getFontById } from "@/api";
@@ -224,7 +224,7 @@ export async function _initDraggableTextSticker(){
   initDraggableElement(
     canvasBackgroundEl.value,
     async (img) => {
-      await currentController.value.stickToMousePosition({
+      await currentModelController.value.stickToMousePosition({
         base64: base64.value,
         local: true,
         type: "text",

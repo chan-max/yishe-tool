@@ -7,8 +7,8 @@
       </div>
     </div>
     <div class="decal">
-      <div class="decal-content" v-if="currentController?.decalControllers.length">
-        <template v-for="(decal, index) in currentController.decalControllers" :key="index">
+      <div class="decal-content" v-if="currentModelController?.decalControllers.length">
+        <template v-for="(decal, index) in currentModelController.decalControllers" :key="index">
           <div class="decal-item" :class="{ active: isActive(decal) }">
             <desimage :src="decal.info.src" fit="contain" class="decal-item-image"></desimage>
             <div class="decal-item-content">
@@ -30,7 +30,7 @@
                     <icon-setting></icon-setting>
                   </el-icon>
                 </el-button>
-                <el-button @click="removeDecal(decal)" link size="small" round type="danger">
+                <el-button @click="removeDecal(decal)" link round type="danger">
                   <el-icon>
                     <icon-delete></icon-delete>
                   </el-icon>
@@ -49,10 +49,10 @@
       <el-button round>
         <span> 上传 </span>
       </el-button>
-      <el-button :disabled="!currentController?.decalControllers.length" @click="showSaveModel = true" type="primary"
+      <el-button :disabled="!currentModelController?.decalControllers.length" @click="showSaveModel = true" type="primary"
         round style="flex: 1">
         <span>
-          共 {{ currentController?.decalControllers.length }} 张贴纸 ， 保存该模型
+          共 {{ currentModelController?.decalControllers.length }} 张贴纸 ， 保存该模型
         </span>
       </el-button>
     </div>
@@ -61,12 +61,12 @@
 <script setup>
 import {
   currentOperatingBaseModelInfo,
-  currentController,
+  currentModelController,
   showSaveModel,
   operatingDecal,
   showDecalControl,
 } from "../../store";
-import { computed ,ref} from "vue";
+import { computed, ref } from "vue";
 import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
 import { useNow, useDateFormat } from "@vueuse/core";
 import { MoreFilled, CloseBold, Edit, EditPen } from "@element-plus/icons-vue";
@@ -104,7 +104,7 @@ function removeDecal(decal) {
 }
 
 .info {
-  padding: 1em;
+  padding: 1rem;
   display: flex;
   justify-content: space-between;
 }
@@ -126,8 +126,8 @@ function removeDecal(decal) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1em;
-  row-gap: 0.5em;
+  padding: 1rem;
+  row-gap: 0.5rem;
 }
 
 .decal-item {
@@ -136,19 +136,19 @@ function removeDecal(decal) {
   display: flex;
   align-items: center;
   background-color: #f9f9f9;
-  column-gap: 1em;
-  padding: 1em;
-  border-radius: 1em;
+  column-gap: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
   transition: all 0.3s;
 
   &:hover {
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+    box-shadow: rgba(115, 0, 255, 0.3) 0px 0px 0px 3px;
     cursor: pointer;
   }
 }
 
 .active {
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+  box-shadow: rgba(115, 0, 255, 0.3) 0px 0px 0px 3px;
 }
 
 .decal-item-image {

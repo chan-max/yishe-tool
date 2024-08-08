@@ -42,7 +42,7 @@ import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/design/components/image.vue";
 import stickerPopover from "./stickerPopover.vue";
 import {
-  currentController,
+  currentModelController,
   showImageUplaod,
   showDecalControl,
 } from "@/components/design/store";
@@ -72,7 +72,7 @@ function imgLoad(el, info) {
   const img = el;
   initDraggableElement(img, async () => {
     const base64 = imgToBase64(img);
-    currentController.value.stickToMousePosition({
+    currentModelController.value.stickToMousePosition({
       img: img,
       type: "image",
       local: false,

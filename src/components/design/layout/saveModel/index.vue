@@ -20,7 +20,7 @@
 import { ref, onBeforeMount, computed } from "vue";
 import { createCustomModelApi, uploadToCOS } from "@/api";
 import { ElMessageBox } from "element-plus";
-import { currentController, lastestScreenshot } from "../../store";
+import { currentModelController, lastestScreenshot } from "../../store";
 import { base64ToFile, base64ToPngFile } from "@/common/transform/base64ToFile";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { message } from "ant-design-vue";
@@ -39,7 +39,7 @@ async function save() {
   }
 
   // 上传本地贴纸 , 过滤出本地的贴纸
-  let localDecals = currentController.value.decalControllers.filter(
+  let localDecals = currentModelController.value.decalControllers.filter(
     (decal) => decal.isLocal
   );
 
@@ -55,7 +55,7 @@ async function save() {
     name: name.value,
     thumbnail: url,
     meta: {
-      modelInfo: currentController.value.exportTo1stf(),
+      modelInfo: currentModelController.value.exportTo1stf(),
     },
     uploader_id: loginStore.userInfo.id,
   };

@@ -3,7 +3,7 @@
     <div class="designiy-decal-list-title">
       已使用的贴纸
       <span style="background: #eee; padding: 2px 5px; border-radius: 3px">{{
-        currentController.decalControllers.length
+        currentModelController.decalControllers.length
       }}</span>
     </div>
     <div class="designiy-decal-list-content">
@@ -23,11 +23,11 @@
   </div>
 </template>
 <script setup>
-import { currentOperatingBaseModelInfo, currentController } from "../../store";
+import { currentOperatingBaseModelInfo, currentModelController } from "../../store";
 import { computed } from "vue";
 
 const stickers = computed(() => {
-  return currentController.value.decalControllers.map((decal) => {
+  return currentModelController.value.decalControllers.map((decal) => {
     return decal.info;
   });
 });

@@ -42,7 +42,7 @@
 </template>
 <script setup>
 import { onMounted, ref, computed } from "vue";
-import { currentController } from "../../store";
+import { currentModelController } from "../../store";
 import { Picture, FolderOpened, Search, Operation } from "@element-plus/icons-vue";
 import { getImage } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
@@ -60,7 +60,7 @@ function load(e, info) {
     const src = createImgObjectURL(img);
     const base64 = imgToBase64(img);
 
-    currentController.value.stickToMousePosition({
+    currentModelController.value.stickToMousePosition({
       img: img,
       type: "image",
       local: false,

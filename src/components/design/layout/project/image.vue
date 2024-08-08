@@ -22,7 +22,7 @@ import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/design/components/image.vue";
 
 import {
-    currentController,
+    currentModelController,
     showImageUplaod,
     showDecalControl,
     viewDisplayController,

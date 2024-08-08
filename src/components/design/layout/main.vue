@@ -99,7 +99,7 @@ import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import {
-  currentController,
+  currentModelController,
   canvasBgColor,
   canvasBgOpacity,
   showBaseModelSelect,

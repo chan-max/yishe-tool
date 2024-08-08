@@ -11,7 +11,7 @@
 import { getLocalUserInfo, updateLocalUserInfo } from "@/store/stores/loginAction";
 import { defineStore } from "pinia";
 import { reactive, ref, watch, toRaw, isReactive, isRef, unref } from "vue";
- 
+
 export const useLoginStatusStore = defineStore("login_status", () => {
   const isLogin = ref(false);
   const loginTime = ref();
@@ -30,19 +30,27 @@ export const useLoginStatusStore = defineStore("login_status", () => {
     once.value = localUserInfo.once
     isAdmin.value = localUserInfo.isAdmin
   }
-  
+
+
+  function logout() {
+    isLogin.value = false
+    userInfo.value = null
+    token.value = null
+  }
+
   return {
     isLogin, //
     userInfo,
     loginTime,
     token,
     once,
-    isAdmin
+    isAdmin,
+    logout
   };
 });
 
 // 同步用户信息到本地
-export function syncUserInfoToLocal(){
+export function syncUserInfoToLocal() {
   const loginStore = useLoginStatusStore()
   // 同步登录信息到本地
   watch(loginStore.$state, () => {
@@ -70,6 +78,6 @@ function deepToRaw(data) {
     }
     return result
   }
-  
+
   return data
 }

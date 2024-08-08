@@ -108,20 +108,13 @@ function isMobile() {
 }
 
 import router from '@/modules/main/router'
-
+import { useLoginStatusStore } from "@/store/stores/login";
 
 export const defaultResponseInterceptors = (response) => {
-  if (response?.data?.code === 400) {
-    // 登录失效
-    doLogout()
-    router.push({ name: 'Login' })
-    message.error(response?.data?.message)
-    throw new Error()
-  }
-
-  if (response?.data?.code === 401) {
-    doLogout()
+  if (response?.data?.code === 400 ||response?.data?.code === 401) {
+    let loginStore = useLoginStatusStore()
     // router.push({ name: 'Login' })
+    loginStore.logout()
     openLoginDialog()
     message.error('请登录')
     throw new Error()

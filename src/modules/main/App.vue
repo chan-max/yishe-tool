@@ -20,7 +20,8 @@
 
 
   <!-- 全局登录弹窗 -->
-  <a-modal v-model:open="showLoginFormModal" :footer="null" :centered="true" style="min-width:440px;" width="440px">
+  <a-modal v-model:open="showLoginFormModal" :footer="null" :centered="true" :destroyOnClose="true"
+    style="min-width:440px;" width="440px">
     <loginForm></loginForm>
   </a-modal>
 </template>

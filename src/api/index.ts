@@ -40,6 +40,13 @@ export const login = (data) =>
     }
   });
 
+// 根据图片id来查询图片
+export const logout = () => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.post('/api/user/logout')
+  resolve(null)
+})
+
+
 // 获取首页展示栏模型
 export const getBannerModel = () =>
   new Promise(async (resolve, reject) => {
@@ -394,6 +401,11 @@ export const getStickerByIdApi = (id: string) => new Promise(async (resolve, rej
 })
 
 class Api {
+
+
+  /* 用户相关 */
+
+  logout = logout
 
   /*
   更新个人用户的元数据

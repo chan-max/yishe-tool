@@ -38,7 +38,7 @@
   </el-popover>
 </template>
 <script setup lang="ts">
-import { currentController,showCanvasLayout } from "@/components/design/store";
+import { currentModelController,showCanvasLayout } from "@/components/design/store";
 import { getStickerTypeLabel } from './index'
 import { TopRight } from '@element-plus/icons-vue'
 import { addCanvasChild, currentOperatingCanvasChildIndex, canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
@@ -66,7 +66,7 @@ function addCanvasBackground() {
 }
 
 function use() {
-  currentController.value.addClickDelaySticker({
+  currentModelController.value.addClickDelaySticker({
     ...props.stickerInfo,
   });
 }

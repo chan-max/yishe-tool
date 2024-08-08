@@ -16,7 +16,10 @@ import { message } from 'ant-design-vue'
 import { ref } from 'vue'
 
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
-import { currentController, operatingDecal, showDecalControl } from '../store';
+import { currentModelController, operatingDecal, showDecalControl } from '../store';
+
+
+
 
 export interface DecalControllerParams {
   // 定义贴纸的类型
@@ -34,6 +37,9 @@ export interface DecalControllerParams {
   // 该贴纸的宽高比
   aspectRatio: number
 }
+
+
+
 
 export class DecalController {
 
@@ -58,11 +64,11 @@ export class DecalController {
   ensureAdd() {
     this.initDecalClickEvent();
     this.initMousemoveEvent();
-    currentController.value.decalControllers.push(this);
+    currentModelController.value.decalControllers.push(this);
     operatingDecal.value = this
   }
 
-  // 核心控制器
+
   // 当前贴花使用的图片
   private img = null;
 
@@ -86,6 +92,8 @@ export class DecalController {
   // 尺寸比 0 - 1 最小尺寸 到最大尺寸
   sizeRatio = 1
   // 尺寸
+
+
   _size = 0.1
   get size() {
     return new Vector3(this._size, this._size / this.imgAspectRatio, this._size);
@@ -109,11 +117,11 @@ export class DecalController {
 
   // 记录贴花添加时的鼠标位置
   get mouse() {
-    return new Vector2(currentController.value.mouse.x, currentController.value.mouse.y)
+    return new Vector2(currentModelController.value.mouse.x, currentModelController.value.mouse.y)
   }
 
   get parentMesh() {
-    return currentController.value.mesh;
+    return currentModelController.value.mesh;
   }
 
   // 记录贴画时摄像机的位置
@@ -157,19 +165,19 @@ export class DecalController {
   create() {
     // 检查是否已创建，并清除旧贴纸
     if (this.mesh) {
-      currentController.value.scene.remove(this.mesh);
+      currentModelController.value.scene.remove(this.mesh);
     }
 
     var decalGeometry = new DecalGeometry(this.parentMesh, this.position, this.rotation, this.size);
     this.mesh = new Mesh(decalGeometry, this.material);
-    currentController.value.scene.add(this.mesh);
+    currentModelController.value.scene.add(this.mesh);
   }
 
   //  销毁该贴纸
   remove() {
     this.removeMesh()
     // 从贴纸中移除
-    currentController.value.decalControllers.splice(currentController.value.decalControllers.indexOf(this), 1)
+    currentModelController.value.decalControllers.splice(currentModelController.value.decalControllers.indexOf(this), 1)
     operatingDecal.value = null
   }
 
@@ -186,10 +194,10 @@ export class DecalController {
 
     message.loading({ type: 'info', content: '正在渲染贴纸', key: 'sticking', duration: 0 })
 
-    this.currentMousePosition = currentController.value.mouse.clone()
+    this.currentMousePosition = currentModelController.value.mouse.clone()
 
     const raycaster = new Raycaster();
-    raycaster.setFromCamera(this.currentMousePosition, currentController.value.camera);
+    raycaster.setFromCamera(this.currentMousePosition, currentModelController.value.camera);
 
     const intersects = raycaster.intersectObject(this.parentMesh, true);
 
@@ -233,7 +241,7 @@ export class DecalController {
 
   // 在随机位置贴图
   async stickToRandomPosition() {
-    let { position, rotation } = currentController.value.getRandomPosition();
+    let { position, rotation } = currentModelController.value.getRandomPosition();
     this._position = position
     this._rotation = rotation
     if (!this.material) {
@@ -246,7 +254,7 @@ export class DecalController {
 
   // 移除当前贴纸
   private removeMesh() {
-    currentController.value.scene.remove(this.mesh);
+    currentModelController.value.scene.remove(this.mesh);
   }
 
 
@@ -276,7 +284,7 @@ export class DecalController {
         return
       }
       const raycaster = new Raycaster()
-      raycaster.setFromCamera(currentController.value.mouse, currentController.value.camera)
+      raycaster.setFromCamera(currentModelController.value.mouse, currentModelController.value.camera)
       const intersects = raycaster.intersectObject(this.mesh, true)
       const intersect = intersects[0]
       if (!intersect) {
@@ -287,8 +295,10 @@ export class DecalController {
     }
 
     // 绑定点击事件
-    currentController.value.onClick(decalClick.bind(this))
+    currentModelController.value.onClick(decalClick.bind(this))
   }
+
+
 
 
   // 鼠标是否覆盖在元素上
@@ -300,7 +310,7 @@ export class DecalController {
         return
       }
       const raycaster = new Raycaster()
-      raycaster.setFromCamera(currentController.value.mouse, currentController.value.camera)
+      raycaster.setFromCamera(currentModelController.value.mouse, currentModelController.value.camera)
 
       const intersects = raycaster.intersectObject(this.mesh, true)
       const intersect = intersects[0]
@@ -311,7 +321,7 @@ export class DecalController {
     }
 
     // 绑定点击事件
-    currentController.value.onMousemove(decalHover.bind(this))
+    currentModelController.value.onMousemove(decalHover.bind(this))
   }
 
 

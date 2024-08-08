@@ -76,7 +76,7 @@ import {
   canvasBgColor,
   canvasBgOpacity,
   isDarkMode,
-  currentController,
+  currentModelController,
   showSaveModel,
   showUpload,
   lastModifiedTime,

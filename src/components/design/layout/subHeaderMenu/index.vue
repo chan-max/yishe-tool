@@ -61,7 +61,7 @@ import {
   online,
   isEdit,
   currentEditingModelInfo,
-  currentController,
+  currentModelController,
 } from "../../store";
 import iconPrev from "@/icon/design/prev.svg?component";
 import iconCamera from "@/icon/camera.svg?component";

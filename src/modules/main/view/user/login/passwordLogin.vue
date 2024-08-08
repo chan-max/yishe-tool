@@ -48,10 +48,10 @@
         <input type="checkbox" v-model="isOnce" />
       </div> -->
       <div></div>
-      <div class="login-link">忘记密码？</div>
+      <div class="login-link" @click="">忘记密码？</div>
     </div>
     <el-divider>
-      <div class="login-link" @click="$router.push({ name: 'Signup' })">
+      <div class="login-link" @click="signup">
         没有账号？去注册
       </div>
     </el-divider>
@@ -135,6 +135,10 @@ async function submit(form) {
   }
 }
 
+function signup() {
+  showLoginFormModal.value = false
+  router.push({ name: 'Signup' })
+}
 
 </script>
 

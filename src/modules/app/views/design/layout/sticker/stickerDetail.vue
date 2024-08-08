@@ -34,7 +34,7 @@ import { onBeforeMount } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";
 import { getStickerListApi } from "@/api";
-import {currentController} from '@/components/design/store'
+import {currentModelController} from '@/components/design/store'
 
 
 function didDismiss() {
@@ -47,7 +47,7 @@ function didDismiss() {
     添加贴纸
 */
 function add(){
-    currentController.value.addClickDelaySticker({
+    currentModelController.value.addClickDelaySticker({
       ...currentPreviewSticker.value
     })
     showStickerDetail.value = false;

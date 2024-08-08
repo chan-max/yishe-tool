@@ -23,6 +23,7 @@
 .el-slider {
   --el-slider-button-size: 12px !important;
   --el-slider-height: 4px;
+  --el-slider-button-wrapper-offset:-16px!important;
 }
 
 .el-scrollbar__bar {

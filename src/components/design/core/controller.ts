@@ -38,11 +38,16 @@ import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
-import { currentController, isUsingClickDelaySticker, clickDelaySticker } from '@/components/design/store'
+import { currentModelController, isUsingClickDelaySticker, clickDelaySticker } from '@/components/design/store'
 import { eventMixin } from "./event";
 import { meta } from '../meta'
 import { Base } from './base'
 import { gsap } from 'gsap';
+
+import {
+    currentOperatingBaseModelInfo,
+} from "@/components/design/store.ts";
+
 
 const mixins = [
     _1stfExporterMixin,
@@ -178,8 +183,7 @@ export class ModelController extends Base {
         mixins.forEach((mixin) => mixin(this));
         this.renderer.setPixelRatio(window.devicePixelRatio)
         // 初始化时暴露场景和渲染器
-        currentController.value = this;
-
+        currentModelController.value = this;
         window.mc = this
     }
 
@@ -277,7 +281,12 @@ export class ModelController extends Base {
         }
         this.initCanvasContainer(target);
         this.initBasicLight()
+
+        if (currentOperatingBaseModelInfo.value?.url) {
+            this.setMainModel(currentOperatingBaseModelInfo.value?.url);
+        }
         this.execRender();
+
         this.isMounted = true;
     }
 

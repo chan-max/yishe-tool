@@ -7,7 +7,7 @@ import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-ob
 import Api from '@/api'
 
 // 当前实例
-export const currentController = shallowRef(null);
+export const currentModelController = shallowRef(null);
 
 // 截屏组件实例
 export const screenshotInstance = ref();
@@ -20,7 +20,7 @@ export const lastestScreenshot = computed(() => {
 })
 
 export function saveScreenshot() {
-    const base64 = currentController.value.getScreenshotBase64();
+    const base64 = currentModelController.value.getScreenshotBase64();
     screenshotInstance.value.execScreenshot(base64);
 
     if (screenshots.value.length >= 10) {
@@ -135,7 +135,7 @@ watch(
         }
         // await nextTick();
         await Utils.sleep(33)
-        currentController.value?.setMainModel(currentOperatingBaseModelInfo.value?.url);
+        currentModelController.value?.setMainModel(currentOperatingBaseModelInfo.value?.url);
     },
     {
         immediate: true,
@@ -146,11 +146,11 @@ watch(
 // 改变画布背景颜色
 watchEffect(() => {
 
-    if (!currentController.value) {
+    if (!currentModelController.value) {
         return
     }
 
-    currentController.value.setBgColor(canvasBgColor.value, canvasBgOpacity.value)
+    currentModelController.value.setBgColor(canvasBgColor.value, canvasBgOpacity.value)
 });
 
 /*

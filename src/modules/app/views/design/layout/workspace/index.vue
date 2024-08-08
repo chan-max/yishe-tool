@@ -18,7 +18,7 @@
         </ion-header>
         <ion-content class="content">
             <ion-list>
-                <template v-for="item in currentController?.decalControllers">
+                <template v-for="item in currentModelController?.decalControllers">
                     <ion-item>
                         <ion-thumbnail slot="start">
                             <van-image :src="item.info.thumbnail" />
@@ -38,7 +38,7 @@ import { getProductModelListApi } from "@/api";
 import { onBeforeMount } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { getStickerListApi } from "@/api";
-import { useDesignStore, currentOperatingBaseModelInfo, currentController } from "@/components/design/store";
+import { useDesignStore, currentOperatingBaseModelInfo, currentModelController } from "@/components/design/store";
 
 
 

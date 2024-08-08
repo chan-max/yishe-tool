@@ -1,8 +1,9 @@
 <template>
     <div id="basic-canvas-canvas-container" v-if="showMainCanvas && showCanvasLayout">
-        <div style="overflow:auto;width:100%;height:100%;" class="flex items-center justify-center">
+        <div ref="panzoomRef">
             <canvass></canvass>
         </div>
+
         <div class="top-menu">
             <div style="flex:1;"></div>
             <div v-if="loading" class="italic font-bold"> 正在渲染贴纸... </div>
@@ -22,11 +23,14 @@
 </template>
   
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { CanvasController, showMainCanvas, canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled, FullScreen } from '@element-plus/icons-vue'
 import { showCanvasLayout } from '@/components/design/store.ts';
+import panzoom from 'panzoom'
+
+const panzoomRef = ref()
 
 let canvasController = new CanvasController({
     max: 320
@@ -36,9 +40,15 @@ const loading = computed(() => {
     return canvasController.loading.value;
 });
 
-
-
 let canvass = canvasController.getRender();
+
+watch(panzoomRef, () => {
+    if (panzoomRef.value) {
+        panzoom(panzoomRef.value, {
+            smoothScroll: false
+        })
+    }
+})
 
 </script>
   

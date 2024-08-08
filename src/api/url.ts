@@ -13,15 +13,15 @@ function unifySlashes(input) {
     return input.replace(/(\/+|\\+)/g, '/');
 }
 
-export function toRealPath(path){
+export function toRealPath(path) {
     path = unifySlashes(path)
-    return path.replace('api','')
+    return path.replace('api', '')
 }
 
 
 export enum Url {
     // 图片上传
-    UPLOAD_IMAGE = '/imageUpload' ,  
+    UPLOAD_IMAGE = '/imageUpload',
 
     // 上传基础模型
     UPLOAD_BASE_MODEL = '/uploadBaseModel',
@@ -32,9 +32,9 @@ export enum Url {
     // 登录
     LOGIN = '/api/auth/login',
 
-    UPDATE_USER_META = '/api/user/updateMeta' , 
+    UPDATE_USER_META = '/api/user/updateMeta',
 
-    GET_USER_META = '/api/user/getMeta' , 
+    GET_USER_META = '/api/user/getMeta',
 
     // 获取首页模型信息
     GET_BANNER_MODEL = '/getBannerModel',
@@ -55,7 +55,7 @@ export enum Url {
 
     // 获取模型列表
     GET_MODEL_LIST = '/getModelList',
-    
+
     SEND_MAIL = '/sendEmail',
 
     // 获取用户列表，后台使用
@@ -82,7 +82,7 @@ export enum Url {
     GET_MODEL_BY_ID = '/getModelById',
 
 
-    GET_BASIC_CONFIG = '/getBasicConfig',
+    GET_BASIC_CONFIG = '/api/getBasicConfig',
 
     GET_LIST = '/getList',
 
@@ -119,9 +119,9 @@ export enum Url {
 
     GET_INDEX_AVAILABLE_MODEL = '/getIndexAvailableModel',
 
-    FOLLOW = 'follow',
+    FOLLOW = '/api/user/follow',
 
-    UNFOLLOW = 'unfollow',
+    UNFOLLOW = '/api/user/unfollow',
 
     GET_MY_FRIENDS = 'getMyFriends',
 

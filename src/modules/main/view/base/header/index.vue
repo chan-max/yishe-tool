@@ -12,12 +12,8 @@
   <!-- <top></top> -->
   <div ref="headerBar" class="header-bar flex justify-center z-10">
     <div class="left flex items-center">
-      <img
-        class="logo"
-        src="logo.png"
-        style="width: 100px; object-fit: contain; margin-right: 4em"
-        @click="$router.push({ name: 'Design' })"
-      />
+      <img class="logo" src="logo.png" style="width: 100px; object-fit: contain; margin-right: 4em"
+        @click="$router.push({ name: 'Design' })" />
     </div>
     <des-menu></des-menu>
     <div style="flex: 1"></div>
@@ -26,8 +22,10 @@
         <user-avatar />
       </template>
       <template v-else>
-        <el-button link @click="$router.push({ name: 'Login' })" round size="small">
-          <el-icon><UserFilled /></el-icon>
+        <el-button link @click="openLoginDialog" round size="small">
+          <el-icon>
+            <UserFilled />
+          </el-icon>
           登录
         </el-button>
       </template>
@@ -42,6 +40,9 @@ import userAvatar from "@/components/user/userAvatar.vue";
 import { ref, onMounted, onUnmounted } from "vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import desMenu from "./menu.vue";
+import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
+
+
 
 const loginStatusStore = useLoginStatusStore();
 
@@ -62,11 +63,14 @@ const menuOptions = [{}];
   position: fixed;
   top: 0;
   transition: all 0.5s;
+
   &:hover {
     background-color: #fff;
   }
+
   z-index: 999;
-  & > * {
+
+  &>* {
     flex-shrink: 0;
   }
 }
@@ -74,6 +78,7 @@ const menuOptions = [{}];
 .logo {
   cursor: pointer;
   transition: all 0.1s;
+
   &:hover {
     transform: scale(1.1);
   }

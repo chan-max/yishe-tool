@@ -8,41 +8,43 @@
         <el-form-item prop="account">
           <el-input placeholder="请输入账号" v-model="signupForm.account">
             <template #prefix>
-              <el-icon><User /></el-icon>
+              <el-icon>
+                <User />
+              </el-icon>
             </template>
             <template #suffix>
               <el-tooltip content="账号由6 ～ 16位数字，字母组成" placement="right">
-                <el-icon><InfoFilled /></el-icon>
+                <el-icon>
+                  <InfoFilled />
+                </el-icon>
               </el-tooltip>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input
-            placeholder="请输入密码"
-            v-model="signupForm.password"
-            type="password"
-          >
+          <el-input placeholder="请输入密码" v-model="signupForm.password" type="password">
             <template #prefix>
-              <el-icon><Lock /></el-icon>
+              <el-icon>
+                <Lock />
+              </el-icon>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="repassword">
-          <el-input
-            placeholder="请再次确认密码"
-            v-model="signupForm.repassword"
-            type="password"
-          >
+          <el-input placeholder="请再次确认密码" v-model="signupForm.repassword" type="password">
             <template #prefix>
-              <el-icon><Lock /></el-icon>
+              <el-icon>
+                <Lock />
+              </el-icon>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="email">
           <el-input placeholder="请输入邮箱" v-model="signupForm.email">
             <template #prefix>
-              <el-icon><Message /></el-icon>
+              <el-icon>
+                <Message />
+              </el-icon>
             </template>
           </el-input>
         </el-form-item>
@@ -50,7 +52,9 @@
           <div class="signup-validateCode">
             <el-input placeholder="请输入邮箱验证码" v-model="signupForm.validateCode">
               <template #prefix>
-                <el-icon><Bell /></el-icon>
+                <el-icon>
+                  <Bell />
+                </el-icon>
               </template>
             </el-input>
             <el-button @click="sendCode">
@@ -157,7 +161,7 @@ async function sendCode() {
 }
 
 async function submit() {
-  const validateRes = await form.value.validate(() => {});
+  const validateRes = await form.value.validate(() => { });
   if (!validateRes) {
     return;
   }
@@ -187,6 +191,7 @@ async function submit() {
 
 .signup-form {
   width: 360px;
+
   .el-input__inner {
     font-size: 12px;
     font-weight: 300;
@@ -202,6 +207,7 @@ async function submit() {
   font-size: 12px;
   font-weight: 400;
   text-decoration: underline;
+
   &:hover {
     cursor: pointer;
     color: var(--el-color-primary);

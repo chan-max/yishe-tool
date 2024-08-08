@@ -1,9 +1,9 @@
 
 
 import { apiInstance, source } from "./apiInstance";
-import { uploadToCOS } from "./cos";
+import { deleteCOSFile, uploadToCOS } from "./cos";
 import { Url } from "./url";
-export { uploadToCOS } from './cos'
+export { uploadToCOS, deleteCOSFile } from './cos'
 
 
 
@@ -258,13 +258,6 @@ export const unfollow = (params) => new Promise(async (resolve, reject) => {
   resolve(res.data.data)
 })
 
-// 获取我的好友列表
-export const getMyFriends = (params) => new Promise(async (resolve, reject) => {
-  const res = await apiInstance.post(Url.GET_MY_FRIENDS, params)
-  resolve(res.data.data)
-})
-
-
 // 获取我的关注列表
 export const getMyFollowings = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post(Url.GET_MY_FOLLOWINGS, params)
@@ -274,6 +267,12 @@ export const getMyFollowings = (params) => new Promise(async (resolve, reject) =
 // 获取我的关注列表
 export const getMyFollowers = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post(Url.GET_MY_FOLLOWERS, params)
+  resolve(res.data.data)
+})
+
+// 获取我的好友列表
+export const getMyFriends = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post(Url.GET_MY_FRIENDS, params)
   resolve(res.data.data)
 })
 
@@ -356,7 +355,7 @@ export const createStickerApi = (data) => new Promise(async (resolve, reject) =>
 })
 
 export const getFileListApi = (params) => new Promise(async (resolve, reject) => {
-  const res = await apiInstance.post('/api/file/page',params)
+  const res = await apiInstance.post('/api/file/page', params)
   resolve(res.data.data)
 })
 
@@ -396,8 +395,6 @@ export const getStickerByIdApi = (id: string) => new Promise(async (resolve, rej
 
 class Api {
 
-
-
   /*
   更新个人用户的元数据
   */
@@ -414,9 +411,20 @@ class Api {
 
   uploadToCOS = uploadToCOS
 
+  deleteCOSFile = deleteCOSFile
+
+
   createStickerApi = createStickerApi
 
   getFileListApi = getFileListApi
+
+
+  /* 用户关系处理 */
+  follow = follow
+  unfollow = unfollow
+
+  // 获取系统通用配置
+  getBasicConfig = getBasicConfig
 }
 
 export default new Api()

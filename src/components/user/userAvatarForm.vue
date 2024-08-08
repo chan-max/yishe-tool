@@ -16,9 +16,9 @@
         style="margin-left: 1em; flex-direction: column; flex: 1"
         class="flex justify-around"
       >
-        <div class="font-bold">{{ userInfo.name || "没名字" }}</div>
+        <div class="font-bold">{{ userInfo.name || "--" }}</div>
         <div style="overflow: hidden; font-size: 1em">
-          {{ userInfo.email || "没邮箱" }}
+          {{ userInfo.email || "--" }}
         </div>
       </div>
     </div>

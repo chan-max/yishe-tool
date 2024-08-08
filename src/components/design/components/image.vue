@@ -1,7 +1,7 @@
 <template>
   <div class="img-container">
-    <el-image class="el-img" v-bind="$attrs" :fit="fit || 'contain'" :lazy="lazy" @load="load($event, info)"
-      style="width: 100%; height: 100%" :style="{ padding }">
+    <el-image ref="elImageRef" class="el-img" v-bind="$attrs" :fit="fit || 'contain'" :lazy="lazy"
+      @load="load($event, info)" style="width: 100%; height: 100%" :style="{ padding }">
       <template #placeholder>
         <div class="el-img_loading"></div>
       </template>
@@ -20,6 +20,8 @@ import { onMounted, ref, computed, nextTick } from "vue";
 import { Picture, FolderOpened, Search, Operation } from "@element-plus/icons-vue";
 
 const emits = defineEmits(['load'])
+
+const elImageRef = ref()
 
 const props = defineProps({
   // 是否可拖拽
@@ -47,6 +49,24 @@ const props = defineProps({
 function load(e) {
   emits('load', e.target)
 }
+
+
+defineExpose({
+  getNaturalSize() {
+    // 获取
+    let el = elImageRef.value.$el.querySelector('img');
+
+    if(!el.complete){
+      return console.warn('img not loaded while get natural size')
+    }
+
+    return {
+      width: el.naturalWidth,
+      height: el.naturalHeight
+    }
+  }
+})
+
 </script>
 <style lang="less" scoped>
 .img-container {

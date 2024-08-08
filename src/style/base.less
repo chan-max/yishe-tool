@@ -1,36 +1,48 @@
-img::part(span){
+img::part(span) {
     border: none;
 }
 
-:root{
-   --1s-main:#6900ff;
+:root {
+    --1s-main: #6900ff;
 }
 
-body,html{
+@font-face {
+    font-family: "alimama";
+    src: url("/public/fonts/AlimamaFangYuanTiVF-Thin.ttf");
+}
+
+@font-face {
+    font-family: "ins";
+    src: url("/public/fonts/ins.otf");
+}
+
+
+body,
+html {
     width: 100%;
     height: 100%;
     font-family: Microsoft YaHei;
-    font-size:10px;
+    font-size: 10px;
 }
 
 
 
 
-.text-ellipsis{
+.text-ellipsis {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
 }
 
-.chess-background{
-   background-image: linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0), linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0)
+.chess-background {
+    background-image: linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0), linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0)
 }
 
 
 // 禁用输入框填充颜色
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active  {
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
 }

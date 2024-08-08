@@ -18,9 +18,7 @@
               <el-col :span="24">
                 <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
               </el-col>
-              <el-col :span="24">
-                <operateItemSwitch label="显示真实大小" v-model="canvasStickerOptions.showCanvasRealSize"></operateItemSwitch>
-              </el-col>
+                <!-- <operateItemSwitch label="显示真实大小" v-model="canvasStickerOptions.showCanvasRealSize"></operateItemSwitch> -->
               <el-col :span="24">
                 <operateItemColor label="辅助背景颜色" tooltip="用于辅助画布中的元素，不会对实际画布产生影响" type="pure"
                   v-model="canvasStickerOptions.supportBackgroundColor"></operateItemColor>
@@ -397,6 +395,8 @@ import {
   currentOperatingCanvasChild,
   CanvasChildType,
 } from "./index.tsx";
+
+
 
 function absoluteUnitChange(unit) {
   updatecanvasStickerOptionsUnit(unit)

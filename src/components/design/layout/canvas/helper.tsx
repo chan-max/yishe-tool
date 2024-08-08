@@ -7,27 +7,29 @@ import { canvasStickerOptions } from "./index"
     更新所有子元素的单位值
 */
 export function updatecanvasStickerOptionsUnit(currentUnit) {
-    const unitKeys = [
-        'width',
-        'height',
-        'top',
-        'left',
-        'right',
-        'bottom',
-        'fontSize',
-        'leftTop',
-        'rightTop',
-        'leftBottom',
-        'rightBottom',
-        'borderWidth',
-        'horizontal',
-        'vertical',
-        'blur'
-    ]
+
+
+    // const unitKeys = [
+    //     'width',
+    //     'height',
+    //     'top',
+    //     'left',
+    //     'right',
+    //     'bottom',
+    //     'fontSize',
+    //     'leftTop',
+    //     'rightTop',
+    //     'leftBottom',
+    //     'rightBottom',
+    //     'borderWidth',
+    //     'horizontal',
+    //     'vertical',
+    //     'blur'
+    // ]
 
     const absoluteUnits = ['px', 'cm', 'mm', 'in']
 
-    const excludeKeys = ['targetEl']
+    const excludeKeys = []
 
     function updateUnit(item) {
         if (Array.isArray(item)) {

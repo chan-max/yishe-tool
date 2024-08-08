@@ -63,7 +63,7 @@
     </div>
 
     <user-avatar v-if="loginStatusStore.isLogin" />
-    <el-button @click="$router.push({ name: 'Login', query: { redirectTo: 'Design' } })" v-else round type="primary">
+    <el-button @click="login" v-else round type="primary">
       登 录
     </el-button>
   </div>
@@ -92,13 +92,25 @@ import iconHelp from "@/icon/help.svg?component";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { useDateFormat, useNow } from '@vueuse/core'
 import { LoadingOutlined, CheckOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from '@ant-design/icons-vue'
+import { useRouter } from 'vue-router'
 
+import { openLoginDialog } from '@/modules/main/view/user/login/index.tsx'
+
+const router = useRouter()
 
 const loginStatusStore = useLoginStatusStore();
 
 const displayDate = useDateFormat(lastModifiedTime, 'YYYY-MM-DD hh:mm:ss')
 
 const props = defineProps([]);
+
+function login() {
+  // router.push({ name: 'Login', query: { redirectTo: 'Design' } })
+  openLoginDialog()
+}
+
+
+
 </script>
 
 <style lang="less" scoped>

@@ -18,7 +18,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeMount } from "vue";
-import { loginType, LoginType } from "./index.ts";
+import { loginType, LoginType } from "./index.tsx";
 import { QRCode } from "easyqrcodejs";
 import { UAParser } from "ua-parser-js";
 import { requestQRCodeLoginInfo } from "@/api";

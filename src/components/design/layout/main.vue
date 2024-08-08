@@ -1,5 +1,7 @@
 <template>
   <loading v-if="isFirstPageLoading"></loading>
+
+
   <div id="layout-container" style="width: 100%; height: 100%; display: flex; flex-direction: column">
     <div id="layout-header" style="height: var(--1s-header-height)">
       <div v-if="showHeader" style="width: 100%; height: 100%; display: flex">
@@ -20,10 +22,10 @@
         </div>
       </div>
 
-
       <div id="layout-canvas">
         <screenshot ref="screenshotInstance"></screenshot>
-        <div v-show="showThreeCanvas" id="threejs-canvas" style="width: 100%; height: 100%" ref="mountContainer">
+        <div v-show="showThreeCanvas" @contextmenu="onContextMenu" id="threejs-canvas" style="width: 100%; height: 100%"
+          ref="mountContainer">
         </div>
         <basic-canvas v-show="showBasicCanvas" style="width: 100%; height: 100%; z-index: 1"
           ref="basicCanvasRef"></basic-canvas>
@@ -33,6 +35,8 @@
         <div style="height: 100%">
           <component :is="rightComponent"></component>
         </div>
+
+
       </div>
     </div>
   </div>
@@ -170,10 +174,9 @@ import { isLogin } from "@/store/stores/loginAction";
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import Api from '@/api'
 import projectModal from './project/index.vue';
-
-
-
+import ContextMenu from '@imengyu/vue3-context-menu'
 import { useRoute, useRouter } from "vue-router";
+import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
 
 const router = useRouter()
 const loginStore = useLoginStatusStore()
@@ -260,14 +263,16 @@ onMounted(async () => {
       </div>,
       icon: createVNode(ExclamationCircleOutlined),
       onOk() {
-        router.push({
-          name: 'Login',
-          query: {
-            redirectTo: 'Design'
-          }
-        })
+        // router.push({
+        //   name: 'Login',
+        //   query: {
+        //     redirectTo: 'Design'
+        //   }
+        // })
+
+        openLoginDialog()
       },
-      okText: <div>去登录</div>,
+      okText: <div>登录</div>,
       cancelText: '暂不',
       onCancel() {
         Modal.destroyAll();
@@ -296,6 +301,38 @@ onMounted(async () => {
 
   }
 });
+
+
+
+/**
+ * 画布右键菜单
+*/
+function onContextMenu(e) {
+  return
+  //prevent the browser's default menu
+  e.preventDefault();
+  //show your menu
+  ContextMenu.showContextMenu({
+    x: e.x,
+    y: e.y,
+    items: [
+      {
+        label: "A menu item",
+        onClick: () => {
+          alert("You click a menu item");
+        }
+      },
+      {
+        label: "A submenu",
+        children: [
+          { label: "Item1" },
+          { label: "Item2" },
+          { label: "Item3" },
+        ]
+      },
+    ]
+  });
+}
 
 </script>
 

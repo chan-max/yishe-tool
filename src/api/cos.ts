@@ -1,14 +1,26 @@
 
 import COS from 'cos-js-sdk-v5';
+import { useConfigStore } from '@/store/stores/config';
+
 
 var _cos
 export const getCOS = () => {
-    return _cos || (_cos = new COS({
-        SecretId: 'AKIDMdmaMD0uiNwkVH0gTJFKXaXJyV4hHmAL',
-        SecretKey: 'HPdigqyzpgTNICCQnK0ZF6zrrpkbL4un',
-        Bucket: '1s-1257307499',
-        Region: 'ap-beijing'
-    } as any))
+
+    let configStore = useConfigStore()
+
+    if (_cos) {
+        return _cos
+    }
+
+
+    _cos = new COS({
+        SecretId: configStore.cos.SecretId,
+        SecretKey: configStore.cos.SecretKey,
+        Bucket: configStore.cos.Bucket,
+        Region: configStore.cos.Region,
+    } as any)
+
+    return _cos
 }
 
 export async function uploadToCOS({
@@ -36,7 +48,7 @@ export async function uploadToCOS({
 export function deleteCOSFile(key) {
     return new Promise((resolve, reject) => {
         const cos = getCOS();
-        
+
         key = String(key)
         cos.deleteObject({
             Bucket: cos.options.Bucket,

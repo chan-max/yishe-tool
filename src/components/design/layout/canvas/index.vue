@@ -32,7 +32,7 @@
                     </el-form-item>
                     <el-form-item label="关键字:">
                         <tagsInput v-model="stickerInfo.keywords" :autocomplete-tags="stickerAutoplacementTags"
-                            autocompletePlacement="right"></tagsInput>
+                            :autocomplete-width="400" autocompletePlacement="right"></tagsInput>
                     </el-form-item>
                     <el-form-item label="是否共享:">
                         <a-switch v-model:checked="stickerInfo.isPublic" checked-children="公开" un-checked-children="私密" />

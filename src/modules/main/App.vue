@@ -17,6 +17,12 @@
       </div>
     </el-config-provider>
   </a-config-provider>
+
+
+  <!-- 全局登录弹窗 -->
+  <a-modal v-model:open="showLoginFormModal" :footer="null" :centered="true" style="min-width:440px;" width="440px">
+    <loginForm></loginForm>
+  </a-modal>
 </template>
 <script setup>
 import { computed, ref } from "vue";
@@ -26,9 +32,12 @@ import headerMenu from "./view/base/header/index.vue";
 // import footerMenu from "./view/base/footer/index.vue";
 import { theme } from 'ant-design-vue'
 
+import { Modal } from 'ant-design-vue'
+import loginForm from '@/modules/main/view/user/login/index.vue'
+import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
+
 
 const { defaultAlgorithm, darkAlgorithm } = theme
-
 
 
 import { useI18n } from "vue-i18n";
@@ -68,6 +77,10 @@ const elementLocale = computed(() => {
     return zhCn;
   }
 });
+
+
+
+
 </script>
 <style>
 html,
@@ -78,15 +91,6 @@ body {
   overflow: hidden;
 }
 
-@font-face {
-  font-family: "alimama";
-  src: url("/public/fonts/AlimamaFangYuanTiVF-Thin.ttf");
-}
-
-@font-face {
-  font-family: "ins";
-  src: url("/public/fonts/ins.otf");
-}
 
 #app {
   width: 100%;

@@ -26,8 +26,6 @@ document.body.appendChild(draggingImage);
 
 export const initDraggableElement = (el, cb, sourceOrGetter = null) => {
 
-
-
     sourceOrGetter ||= el.src
 
     el._src = typeof sourceOrGetter === 'function' ? sourceOrGetter() : sourceOrGetter
@@ -96,5 +94,5 @@ export const initDraggableElement = (el, cb, sourceOrGetter = null) => {
 
     // 返回拖动结束时的事件回调函数
     el._isDraggable = true
-    return
+    return 
 }

@@ -43,13 +43,11 @@ import { defaultResponseInterceptors } from '@/api/apiInterception'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css"; //required if you're not going to override default slots
-
+import Api from '@/api'
 
 import '@/style/cover-antdesign.less'
 
 import { createMetaManager } from 'vue-meta'
-
-
 
 // pc 端专有的拦截器
 apiInstance.interceptors.response.use(defaultResponseInterceptors);
@@ -64,6 +62,8 @@ app.use(pinia)
 
 syncUserInfoToLocal()
 
+
+
 app.use(VueVirtualScroller)
 
 app.use(Antd)
@@ -76,7 +76,25 @@ app.use(ElementPlus)
 
 app.config.globalProperties.__DEV__ = import.meta.env.DEV
 
-app.mount('#app')
+
+import { useConfigStore } from '@/store/stores/config.ts';
+
+
+async function setup() {
+
+    const configStore = useConfigStore()
+
+    const res = await Api.getBasicConfig()
+
+
+    configStore.$patch(res)
+
+
+    app.mount('#app')
+}
+
+
+setup()
 
 
 

@@ -314,14 +314,11 @@ export class CanvasController {
         }
 
         async function update() {
-
-
             try {
                 this.base64 = await toPng(this.el)
             } catch (e) {
                 return
             }
-
             let img = document.createElement('img')
             img.width = canvasStickerOptions.value.width
             img.height = canvasStickerOptions.value.height
@@ -332,10 +329,12 @@ export class CanvasController {
             this.drawImage(img)
             await nextTick()
             document.body.removeChild(img)
-            this.initDraggable(this.base64)
-
             this.loading.value = false
             renderingLoading.value = false
+
+            if (!showMainCanvas.value) {
+                this.initDraggable(this.base64)
+            }
         }
 
 
@@ -356,7 +355,6 @@ export class CanvasController {
         initDraggableElement(
             this.el,
             () => {
-
             },
             () => base64
         )

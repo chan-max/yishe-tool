@@ -43,10 +43,11 @@
       </el-form-item>
     </el-form>
     <div style="display: flex; justify-content: space-between">
-      <div class="login-type">
+      <!-- <div class="login-type">
         仅此次登陆
         <input type="checkbox" v-model="isOnce" />
-      </div>
+      </div> -->
+      <div></div>
       <div class="login-link">忘记密码？</div>
     </div>
     <el-divider>
@@ -65,19 +66,16 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import { useRouter, useRoute } from "vue-router";
 import { message } from "ant-design-vue";
 import { ElMessage } from "element-plus";
-import { loginType, LoginType } from "./index.ts";
+import { loginType, LoginType } from "./index.tsx";
 
 import { View, Hide, User, Lock } from "@element-plus/icons-vue";
 import { doLoginAction } from "@/store/stores/loginAction";
 import iconQrcode from "@/icon/qrcode-half.svg?component";
-
+import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
 const userStore = useLoginStatusStore();
 const router = useRouter();
 
 const route = useRoute();
-
-// 有来源的话成功后会跳回去
-const from = route.query.form;
 
 const loading = ref(false);
 
@@ -128,10 +126,10 @@ async function submit(form) {
     loading.value = true
     let res = await login(toRaw(loginForm));
     doLoginAction(res.data, isOnce.value);
-    // message.success("登录成功!");
+    message.success("登录成功!");
+    showLoginFormModal.value = false
     await nextTick();
     loading.value = false;
-    router.replace({ name: route.query.redirectTo || "Home" });
   } catch (e) {
     loading.value = false
   }

@@ -18,10 +18,7 @@
 <script setup>
 import passwordLogin from './passwordLogin.vue'
 import qrcodeLogin from './qrcodeLogin.vue'
-import { loginType, LoginType } from './index.ts'
-
-
-
+import { loginType, LoginType } from './index.tsx'
 
 </script>
 

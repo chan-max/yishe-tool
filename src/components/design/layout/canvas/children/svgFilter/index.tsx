@@ -18,7 +18,6 @@ import { createFeFlood, createFeFloodDefaultOptions } from './effect/flood'
 
 
 
-
 export enum SvgFilterEffects {
     DROP_SHADOW = 'drop-shadow',
     GAUSSIAN_BLUR = 'gaussian-blur',
@@ -27,7 +26,7 @@ export enum SvgFilterEffects {
     FLOOD = 'flood',
     TURBULENCE = 'turbulence',
     COMPOSITE = 'composite',
-    Tile ='tile'
+    Tile = 'tile'
 }
 
 export const SvgFilterEffectDisplayLabelMap = {
@@ -38,7 +37,7 @@ export const SvgFilterEffectDisplayLabelMap = {
     [SvgFilterEffects.FLOOD]: '颜色填充 (feFlood)',
     [SvgFilterEffects.TURBULENCE]: '湍流效果 (feTurbulence)',
     [SvgFilterEffects.COMPOSITE]: '组合 (feComposite)',
-    [SvgFilterEffects.Tile]:'重复填充 (feTile)'
+    [SvgFilterEffects.Tile]: '重复填充 (feTile)'
 }
 
 
@@ -197,21 +196,13 @@ export const FeSpotLight = ({ x, y, z, pointsAtX, pointsAtY, pointsAtZ, specular
     <feSpotLight x={x} y={y} z={z} pointsAtX={pointsAtX} pointsAtY={pointsAtY} pointsAtZ={pointsAtZ} specularExponent={specularExponent} limitingConeAngle={limitingConeAngle} />
 );
 
-
-
-
 export function createFilter(props, children) {
     return <filter id={props.id} x="0" y="0">
         {children}
     </filter>
 }
 
-
-
-
 import { BuiltInSvgFilterRenderList } from './builtIn'
-
-
 
 export function SvgFilter(props) {
     return <svg id="filter-container-id" height="0" width="0">

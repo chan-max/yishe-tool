@@ -1,135 +1,209 @@
 <template>
-  <div class="user-update">
-    <div class="user-update-header">
-      <div style="font-size: 1.2rem; font-weight: bold; color: #444">更新个人信息</div>
+    <div class="update-container">
+        <div class="update-form">
+            <div style="font-size: 16px; color: #666; text-align: left; padding: 20px 0px">
+                更新个人信息
+            </div>
+            <el-form :model="updateForm" ref="form" :rules="rules">
+                <el-form-item prop="password">
+                    <el-input placeholder="请输入密码" v-model="updateForm.password" type="password">
+                        <template #prefix>
+                            <el-icon>
+                                <Lock />
+                            </el-icon>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="repassword">
+                    <el-input placeholder="请再次确认密码" v-model="updateForm.repassword" type="password">
+                        <template #prefix>
+                            <el-icon>
+                                <Lock />
+                            </el-icon>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="email">
+                    <el-input placeholder="请输入邮箱" v-model="updateForm.email">
+                        <template #prefix>
+                            <el-icon>
+                                <Message />
+                            </el-icon>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="validateCode">
+                    <div class="signup-validateCode">
+                        <el-input placeholder="请输入邮箱验证码" v-model="updateForm.validateCode">
+                            <template #prefix>
+                                <el-icon>
+                                    <Bell />
+                                </el-icon>
+                            </template>
+                        </el-input>
+                        <el-button @click="sendCode">
+                            <span style="font-size: 12px; font-weight: 400"> 发送验证码 </span>
+                        </el-button>
+                    </div>
+                </el-form-item>
+                <el-form-item>
+                    <el-button style="width: 100%" type="primary" @click="submit(form)">
+                        修 改
+                    </el-button>
+                </el-form-item>
+            </el-form>
+            <el-divider>
+                <div class="signup-link" @click="$router.push({ name: 'Login' })">
+                    已有账号？去登录
+                </div>
+            </el-divider>
+        </div>
     </div>
-
-    <div class="user-update-content">
-      <div class="user-update-content-left">
-        <avatar-upload @select="selectAvatar" />
-      </div>
-      <div class="user-update-content-right">
-        <el-form size="large" label-position="top">
-          <div class="user-update-content-right-subtitle">基本信息</div>
-          <el-form-item label="名字">
-            <el-input />
-          </el-form-item>
-          <el-form-item label="手机号">
-            <el-input />
-          </el-form-item>
-          <el-form-item label="收货地址">
-            <el-input />
-          </el-form-item>
-
-          <div class="user-update-content-right-subtitle">性别</div>
-          <el-form-item>
-            <el-radio-group size="large">
-              <el-radio label="男" />
-              <el-radio label="女" />
-              <el-radio label="保密" />
-            </el-radio-group>
-          </el-form-item>
-          <el-button @click="submit" type="primary"> 确认修改 </el-button>
-        </el-form>
-      </div>
-    </div>
-  </div>
 </template>
+  
+<script setup>
+import { reactive, toRaw, ref } from "vue";
+import { sendEmail, register } from "@/api/index";
+import { ResponseStatusCodeEnum } from "@common/statusCode.js";
+import { message } from "ant-design-vue";
+import {
+    View,
+    Hide,
+    User,
+    Lock,
+    Message,
+    InfoFilled,
+    Bell,
+} from "@element-plus/icons-vue";
+import { useRouter } from "vue-router";
 
-<script setup lang="ts">
-import avatarUpload from "./avatarUpload.vue";
-import { reactive } from "vue";
-import { updateUserInfo } from "@/api/index";
-import { useLoginStatusStore } from "@/store/stores/login";
+const router = useRouter();
 
-const form = reactive({
-  avatar: "",
+const updateForm = reactive({
+    account: "",
+    password: "",
+    email: "",
+    repassword: "",
+    validateCode: "",
 });
 
-function selectAvatar(file) {
-  form.avatar = file;
+const form = ref();
+
+const rules = reactive({
+    account: [
+        {
+            message: "账号由6～18位字符组成",
+            required: true,
+            max: 16,
+            min: 6,
+            trigger: ["blur"],
+        },
+    ],
+    email: [
+        { message: "请输入正确的邮箱格式", type: "email", required: true, trigger: ["blur"] },
+    ],
+    password: [
+        {
+            message: "密码由6～18位字符组成",
+            required: true,
+            max: 16,
+            min: 6,
+            trigger: ["blur"],
+        },
+    ],
+    repassword: [
+        {
+            message: "两次密码输入不一致",
+            required: true,
+            validator(form, val) {
+                if (!val) {
+                    form.message = "请输入确认密码";
+                    return false;
+                } else {
+                    form.message = "两次密码输入不一致";
+                    return val === updateForm.password;
+                }
+            },
+            trigger: ["blur"],
+        },
+    ],
+    validateCode: {
+        len: 6,
+        required: true,
+        message: "请输入验证码",
+    },
+});
+
+async function sendCode() {
+    form.value.validateField("email", (v) => {
+        if (!v) {
+            return;
+        }
+        // 发送验证码
+        sendEmail({ email: updateForm.email });
+    });
 }
 
 async function submit() {
-  const userStore = useLoginStatusStore();
-  await updateUserInfo({
-    ...userStore.userInfo,
-    ...form,
-  });
+    const validateRes = await form.value.validate(() => { });
+    if (!validateRes) {
+        return;
+    }
+
+    var formData = new FormData();
+
+    formData.append("account", updateForm.account);
+    formData.append("email", updateForm.email);
+    formData.append("password", updateForm.password);
+    formData.append("validateCode", updateForm.validateCode);
+
+    await register(formData);
+    message.success("注册成功！");
+    router.replace({ name: "Login" });
 }
 </script>
-
-<style lang="less" scoped>
-.user-update {
-  .el-form-item__label {
-    position: relative;
-    z-index: 1;
-    font-size: 12px;
-    font-weight: bold;
-    background-color: #fff;
-    display: inline-block !important;
-    top: 10px;
-    left: 10px;
-    padding: 0px 10px;
-    margin-bottom: 0px !important;
-  }
-  .el-input__inner {
-    height: 45px;
-  }
-
-  .el-radio-group {
+<style>
+.update-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-  }
-}
-.user-update-header {
-  width: 100%;
-  height: 60px;
-  // background-color: fade(var(--el-color-primary), 6%);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 calc(50% - 600px);
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex: auto;
+    height: 100%;
 }
 
-.user-update-content {
-  width: 100%;
-  margin-top: 80px;
-  height: auto;
-  display: flex;
-  justify-content: center;
+.update-form {
+    width: 360px;
+
+    .el-input__inner {
+        font-size: 12px;
+        font-weight: 300;
+    }
+
+    .el-input__prefix {
+        color: #000;
+    }
 }
 
-.user-update-content-left {
-  height: 1000px;
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.signup-link {
+    color: #999;
+    font-size: 12px;
+    font-weight: 400;
+    text-decoration: underline;
+
+    &:hover {
+        cursor: pointer;
+        color: var(--el-color-primary);
+        text-decoration: underline;
+    }
 }
 
-.user-update-content-right {
-  width: 900px;
-  height: 1000px;
-}
-
-.user-update-content-right-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-}
-
-.user-update-content-right-subtitle {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-}
-
-.user-update-content-right-desc {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
+.signup-validateCode {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    justify-content: space-between;
 }
 </style>
-@/store/stores/login
+  

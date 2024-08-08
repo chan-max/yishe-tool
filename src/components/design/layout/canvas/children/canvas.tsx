@@ -1,10 +1,9 @@
-import { defineComponent, onUpdated } from 'vue'
+import { defineComponent, onUpdated, ref, watch } from 'vue'
 import { canvasStickerOptions, currentCanvasControllerInstance, showMainCanvas } from '@/components/design/layout/canvas'
 import { createFilterFromOptions, formatSizeOptionToPixelValue, } from '../helper'
 import { createFilterDefaultOptions } from './defaultOptions.tsx'
 import { SvgFilter } from './svgFilter/index.tsx'
 import { updateRenderingCanvas } from '../index.tsx'
-
 
 /*
     用于辅助观察的网格背景
@@ -45,6 +44,9 @@ export const Canvas = defineComponent({
 
         onUpdated(updateRenderingCanvas)
 
+
+        const rawElRef = ref()
+
         return () => {
 
             const pxWidth = formatSizeOptionToPixelValue({
@@ -58,11 +60,9 @@ export const Canvas = defineComponent({
             })
 
 
-            const transformValue = (canvasStickerOptions.value.showCanvasRealSize && showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
+            const transformValue = (showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
 
             let pngBackground = createPngBackgroundStyle(transformValue)
-
-
 
             // 画布的辅助背景
             const containerStyle: any = {
@@ -103,7 +103,7 @@ export const Canvas = defineComponent({
             return <div style={containerStyle}>
 
                 {/* 转换的元素 */}
-                <div id={currentCanvasControllerInstance.value?.rawId} style={style}>
+                <div id={currentCanvasControllerInstance.value?.rawId} style={style} ref={rawElRef}>
                     {/* svg过滤器 */}
                     <SvgFilter></SvgFilter>
                     {ctx.slots.default()}

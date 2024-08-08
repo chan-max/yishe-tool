@@ -13,6 +13,7 @@ import { ElMessage } from 'element-plus'
 import { message } from 'ant-design-vue'
 import { doLogout } from "@/store/stores/loginAction";
 import { useRouter } from "vue-router";
+import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
 
 
 function ensureFormData(obj) {
@@ -120,7 +121,8 @@ export const defaultResponseInterceptors = (response) => {
 
   if (response?.data?.code === 401) {
     doLogout()
-    router.push({ name: 'Login' })
+    // router.push({ name: 'Login' })
+    openLoginDialog()
     message.error('请登录')
     throw new Error()
   }

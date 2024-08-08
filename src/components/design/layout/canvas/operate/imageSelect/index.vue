@@ -16,12 +16,19 @@
                     <el-row align="middle" justify="center" style="row-gap: 1rem;">
                         <el-col :span="24">
                             <div class="flex justify-center">
-                                <desimage style="width:100px;height:100px;" :src="model.url" :lazy="false"></desimage>
+                                <desimage @load="imgLoad" ref="imgRef" style="width:100px;height:100px;" :src="model.url"
+                                    :lazy="false">
+                                </desimage>
                             </div>
                         </el-col>
                         <el-col :span="24">
                             <el-button @click="remove" size="small" :icon="Close" style="width:100%;">
                                 移除图片
+                            </el-button>
+                        </el-col>
+                        <el-col :span="24">
+                            <el-button @click="syncCanvasSize" size="small" style="width:100%;">
+                                同步到主画布尺寸
                             </el-button>
                         </el-col>
                     </el-row>
@@ -37,19 +44,35 @@
 </template>
     
 <script setup lang='ts'>
+import { ref } from 'vue'
 import icon from "@/components/design/assets/icon/background-image.svg?component";
 import { showSticker, viewDisplayController } from "@/components/design/store";
 import { Close } from '@element-plus/icons-vue'
 import desimage from "@/components/design/components/image.vue";
 import modal from './modal.vue';
+
+import {
+    updatecanvasStickerOptionsUnit
+} from '@/components/design/layout/canvas/helper'
+
+import {
+    canvasStickerOptions
+} from '@/components/design/layout/canvas/index'
+
+
+
 const model = defineModel({})
-import { ref } from 'vue'
+
 
 const props = defineProps({
     label: {
         default: '选择图片'
     }
 })
+
+/*
+    增加按图片尺寸调整画布尺寸功能
+*/
 
 const dialogShow = ref(false)
 
@@ -59,6 +82,25 @@ function select() {
 
 function remove() {
     model.value = null
+}
+
+
+function imgLoad() {
+}
+
+/*
+    将当前画布尺寸同步为当前图片尺寸，
+    适用于处理单个图片的形式
+*/
+
+const imgRef = ref()
+function syncCanvasSize() {
+    let { width, height } = imgRef.value.getNaturalSize()
+
+
+    canvasStickerOptions.value.width = width
+    canvasStickerOptions.value.height = height
+    updatecanvasStickerOptionsUnit('px')
 }
 
 </script> 

@@ -17,9 +17,14 @@ export const useConfigStore = defineStore("global_config", () => {
 
     const ok = ref(false)
 
+    const cos = ref()
+
+
+
     const websocket = ref('')
     return {
         websocket,
-        ok
+        ok,
+        cos
     }
 })

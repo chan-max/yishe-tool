@@ -52,7 +52,6 @@ import { MoreOutlined } from '@ant-design/icons-vue'
 import {
     currentModelController,
     showImageUplaod,
-    showDecalControl,
     viewDisplayController,
 } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";

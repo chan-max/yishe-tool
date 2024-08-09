@@ -24,7 +24,6 @@ import desimage from "@/components/design/components/image.vue";
 import {
     currentModelController,
     showImageUplaod,
-    showDecalControl,
     viewDisplayController,
 } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";

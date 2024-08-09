@@ -80,11 +80,7 @@ export const showTextSticker = ref(false)
 
 // 是否展示工作台窗口
 export const showWorkspace = ref(true)
-watch(showWorkspace, (value) => {
-    if (value) {
-        showDecalControl.value = false
-    }
-})
+
 
 
 // 是否展示贴画控制弹窗
@@ -373,7 +369,12 @@ export const svgCanvasSyncMainCanvas = ref(false)
 
 export const viewDisplayController = ref({
     showStickerModal: false, // 贴纸模态，主要用于交互操作
-    showProject: false // 是否展示我的项目
+    showProject: false, // 是否展示我的项目
+
+
+
+    // 是否展示贴纸 
+    showDecalControl:false
 })
 
 

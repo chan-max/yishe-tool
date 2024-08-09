@@ -1,5 +1,5 @@
 import { watch ,ref} from "vue";
-import { currentModelController, operatingTextStickerOptions, showDecalControl } from "../../store";
+import { currentModelController, operatingTextStickerOptions } from "../../store";
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { initDraggableElement } from "../../utils/draggable";
 import { getFontById } from "@/api";
@@ -233,7 +233,6 @@ export async function _initDraggableTextSticker(){
         meta:{
         }
       });
-    //   showDecalControl.value = true;
     },
     base64.value
   );

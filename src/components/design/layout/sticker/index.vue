@@ -44,7 +44,6 @@ import stickerPopover from "./stickerPopover.vue";
 import {
   currentModelController,
   showImageUplaod,
-  showDecalControl,
 } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";

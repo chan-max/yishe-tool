@@ -25,7 +25,6 @@ import { initDraggableElement } from "@/components/design/utils/draggable";
 import {
   currentModelController,
   showImageUplaod,
-  showDecalControl,
 } from "@/components/design/store";
 import {
   imgToFile,
@@ -75,7 +74,6 @@ async function createQrCode() {
         base64: base64,
       },
       () => {
-        // showDecalControl.value = true;
       }
     );
   });

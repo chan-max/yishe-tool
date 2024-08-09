@@ -355,17 +355,18 @@ export class CanvasController {
     }
 
     initDraggable() {
+        let self = this
         initDraggableElement(
             this.el,
             () => {
 
                 currentModelController.value.stickToMousePosition({
                     isLocalResource: true,
-                    base64: this.base64,
+                    base64: self.base64,
                     data: Utils.clone(canvasStickerOptions.value),
                 })
             },
-            () => this.base64
+            () => self.base64
         )
     }
 

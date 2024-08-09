@@ -33,9 +33,6 @@ import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/design/components/image.vue";
 import stickerPopover from "./stickerPopover.vue";
 import {
-    currentModelController,
-    showImageUplaod,
-    showDecalControl,
     viewDisplayController,
 } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";

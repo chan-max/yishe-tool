@@ -67,7 +67,7 @@ export class DecalController {
       this.info.src = this.info.thumbnail
     }
 
-    if(this.info.isLocalResource){
+    if (this.info.isLocalResource) {
       this.info.src = this.info.base64
     }
 
@@ -182,6 +182,8 @@ export class DecalController {
       image.onload = function () {
         texture.needsUpdate = true; // 更新纹理
       };
+
+
     } else {
       texture = await textureLoader.loadAsync(this.img?.src || this.info.src || this.info.thumbnail)
     }

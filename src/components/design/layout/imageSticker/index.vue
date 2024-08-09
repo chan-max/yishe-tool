@@ -46,7 +46,7 @@ import { currentModelController } from "../../store";
 import { Picture, FolderOpened, Search, Operation } from "@element-plus/icons-vue";
 import { getImage } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
-import { showImageUplaod, showDecalControl } from "../../store";
+import { showImageUplaod } from "../../store";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 
 const input = ref();
@@ -68,7 +68,6 @@ function load(e, info) {
       ...info,
       base64: base64,
     });
-    // showDecalControl.value = true;
   });
 }
 

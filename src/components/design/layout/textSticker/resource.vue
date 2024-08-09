@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { ref, onBeforeMount } from "vue";
-import { currentModelController, showDecalControl } from "../../store";
+import { currentModelController, } from "../../store";
 import { initDraggableElement } from "../../utils/draggable";
 import { getTextSticker } from "@/api";
 
@@ -41,7 +41,6 @@ function load(e, info) {
       src: info.preview_img,
       ...info,
     });
-    // showDecalControl.value = true;
   });
 }
 

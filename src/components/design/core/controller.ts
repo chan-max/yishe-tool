@@ -484,6 +484,7 @@ export class ModelController extends Base {
     }
 
 
+
     // 添加贴纸
     async addSticker(stickerInfo) {
         this.callHook(this.meta.onStickerBeforeCreate)

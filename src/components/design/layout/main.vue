@@ -82,9 +82,9 @@
     <upload></upload>
   </diydialog>
 
-  <!-- <diydialog :show="showSaveModel" title="保存模型" @close="showSaveModel = false" :animation="basicContainerAnimation">
+  <diydialog :show="showSaveModel" title="保存模型" @close="showSaveModel = false" :animation="basicContainerAnimation">
     <save-model></save-model>
-  </diydialog> -->
+  </diydialog>
 
   <!-- 个人项目弹层 -->
   <diydialog :show="viewDisplayController.showProject" title="创作项目" @close="viewDisplayController.showProject = false"
@@ -372,9 +372,11 @@ function onContextMenu(e) {
 
 #layout-left {
   box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid #eee;
 }
 
 #layout-right {
   box-shadow: -1px 0px 0px 0px rgba(0, 0, 0, 0.1);
+  border-left: 1px solid #eee;
 }
 </style>

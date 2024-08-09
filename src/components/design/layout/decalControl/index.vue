@@ -5,7 +5,7 @@
 </template>
 <script setup>
 import { onMounted, ref, computed, watch } from "vue";
-import { operatingDecal } from "../../store.ts";
+import { currentOperatingDecalController } from "../../store.ts";
 import { debounce } from "../../utils/utils.ts";
 import decalMain from './main.vue';
 

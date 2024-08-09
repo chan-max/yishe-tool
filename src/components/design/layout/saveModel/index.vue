@@ -40,7 +40,7 @@ async function save() {
 
   // 上传本地贴纸 , 过滤出本地的贴纸
   let localDecals = currentModelController.value.decalControllers.filter(
-    (decal) => decal.isLocal
+    (decal) => decal.isLocalResource
   );
 
   // 只负责把贴纸上传即可

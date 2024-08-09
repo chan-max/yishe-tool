@@ -9,15 +9,15 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-<div class="workspace">
-  <div class="workspace-banner"></div>
-  <div class="tabs">
-    <tabs></tabs>
+  <div class="workspace">
+    <div class="workspace-banner"></div>
+    <div class="tabs">
+      <tabs></tabs>
+    </div>
+    <div class="workspace-content">
+      <component :is="activeComponent"></component>
+    </div>
   </div>
-  <div class="workspace-content">
-    <component :is="activeComponent"></component>
-  </div>
-</div>
 </template>
 <script setup>
 import tabs from "./tabs.vue";

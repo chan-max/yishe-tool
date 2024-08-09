@@ -113,7 +113,7 @@ watch(showCustomTextSticker, (value) => {
 export const showQrcode = ref(false)
 
 // 当前正在操作的贴花实例
-export const operatingDecal = shallowRef()
+export const currentOperatingDecalController = shallowRef()
 
 // 是否展示图片上传弹窗
 export const showImageUplaod = ref(false)

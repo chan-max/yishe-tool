@@ -88,9 +88,15 @@ function isEmptyObject(val) {
     return typeof val === 'object' && JSON.stringify(val) == '{}'
 }
 
+
+function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
+
 import { deepUnref } from './vue'
 
-
+import transform from './transform/index'
 import logger from './logger'
 import { Type } from './type'
 
@@ -151,10 +157,15 @@ class Utils {
     deepUnref = deepUnref
 
 
+    // 对象深拷贝
+    clone = clone
+
     // 日志打印
     logger = logger
 
     type = new Type()
+
+    transform = transform
 }
 
 

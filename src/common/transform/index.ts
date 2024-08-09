@@ -2,23 +2,51 @@
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 
 
-export function imgToBase64(img) {
+export async function imgToBase64(img) {
     img.setAttribute('crossorigin', 'anonymous');
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
     canvas.height = img.naturalHeight;
     canvas.width = img.naturalWidth;
+    // canvas.height = img.height;
+    // canvas.width = img.width;
+    
     ctx.drawImage(img, 0, 0);
     var base64 = canvas.toDataURL('image/png')
+
     return base64;
 }
 
-export const imgToFile = (img) => {
-    return base64ToFile(imgToBase64(img))
+
+export async function imgToFile(img) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    // 设置canvas的宽高
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    // 将图片绘制到canvas上
+    context.drawImage(img, 0, 0);
+
+
+    return new Promise((resolve) => {
+        // 将canvas转换为Blob
+        canvas.toBlob(function (blob) {
+            // 创建File对象
+            const file = new File([blob], 'image.png', { type: 'image/png' });
+
+            return resolve(file)
+        }, 'image/png');
+    })
 }
 
-export const createImgObjectURL = (img) => {
-    return URL.createObjectURL(imgToFile(img))
+// export const imgToFile = async (img) => {
+//     return base64ToPngFile(await imgToBase64(img))
+// }
+
+export const createImgObjectURL = async (img) => {
+    return URL.createObjectURL(await imgToFile(img))
 }
 
 
@@ -54,6 +82,7 @@ export function svgToBase64(svg) {
 }
 
 import { base64ToSvgFile, base64ToPngFile, base64ToFile } from './base64ToFile'
+import { waitImage } from "..";
 
 
 /* svg元素或字符串转文件格式 */
@@ -109,3 +138,19 @@ export const imageDataToFile = (imageData) => {
 
     return base64ToPngFile(dataURL)
 }
+
+
+
+
+
+class Transform {
+    imgToBase64 = imgToBase64
+
+    imgToFile = imgToFile
+
+    createImgObjectURL = createImgObjectURL
+}
+
+
+
+export default new Transform()

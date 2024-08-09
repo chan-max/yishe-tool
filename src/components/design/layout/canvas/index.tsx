@@ -19,6 +19,7 @@ import {
     createDefaultCanvasChildImageOptions
 } from './children/image.tsx'
 
+
 import { createCanvasChildRawCanvas, createDefaultCanvasChildRawCanvasOptions } from './children/rawCanvas.tsx'
 
 import { createDefaultCanvasChildcanvasStickerOptions } from './children/canvas'
@@ -316,11 +317,15 @@ export class CanvasController {
         }
 
         async function update() {
+
+            console.log('update')
             try {
                 this.base64 = await toPng(this.el)
             } catch (e) {
                 return
             }
+
+
             let img = document.createElement('img')
             img.width = canvasStickerOptions.value.width
             img.height = canvasStickerOptions.value.height
@@ -349,20 +354,18 @@ export class CanvasController {
         }
     }
 
-
-
-
-
-    initDraggable(base64) {
+    initDraggable() {
         initDraggableElement(
             this.el,
             () => {
-                const modelController = currentModelController.value
 
-                modelController
-
+                currentModelController.value.stickToMousePosition({
+                    isLocalResource: true,
+                    base64: this.base64,
+                    data: Utils.clone(canvasStickerOptions.value),
+                })
             },
-            () => base64
+            () => this.base64
         )
     }
 

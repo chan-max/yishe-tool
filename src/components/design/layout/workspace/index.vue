@@ -9,10 +9,11 @@
     <div class="decal">
       <div class="decal-content" v-if="currentModelController?.decalControllers.length">
         <template v-for="(decal, index) in currentModelController.decalControllers" :key="index">
-          <div class="decal-item" :class="{ active: isActive(decal) }">
+          <div class="decal-item" @click="decalItemClick(decal)"
+            :class="{ active: isMouseover(decal) || isCurrent(decal) }">
             <desimage :src="decal.info.src" fit="contain" class="decal-item-image"></desimage>
             <div class="decal-item-content">
-              <div class="decal-item-content-title text-ellipsis">名称</div>
+              <div class="decal-item-content-title text-ellipsis"> {{ decal.info.name }} </div>
               <div class="decal-item-content-desc text-ellipsis">
                 添加于 {{ formatDate(decal.createdAt) }}
               </div>
@@ -20,21 +21,16 @@
             <div style="flex: 1"></div>
             <div class="decal-item-bar">
               <el-button-group>
-                <el-button link size="small" round>
-                  <el-icon>
-                    <icon-more></icon-more>
-                  </el-icon>
+                <el-button link round :icon="iconMore">
                 </el-button>
-                <el-button link size="small" round @click="setting(decal)">
-                  <el-icon>
-                    <icon-setting></icon-setting>
-                  </el-icon>
+                <el-button link round @click="setting(decal)" :icon="iconSetting">
                 </el-button>
-                <el-button @click="removeDecal(decal)" link round type="danger">
-                  <el-icon>
-                    <icon-delete></icon-delete>
-                  </el-icon>
-                </el-button>
+                <el-popconfirm title="确定要移除该贴纸吗？" @confirm="removeDecal(decal)" confirm-button-type="danger">
+                  <template #reference>
+                    <el-button link round type="danger" :icon="iconDelete">
+                    </el-button>
+                  </template>
+                </el-popconfirm>
               </el-button-group>
             </div>
           </div>
@@ -63,7 +59,7 @@ import {
   currentOperatingBaseModelInfo,
   currentModelController,
   showSaveModel,
-  operatingDecal,
+  currentOperatingDecalController,
   showDecalControl,
 } from "../../store";
 import { computed, ref } from "vue";
@@ -81,12 +77,20 @@ function formatDate(date) {
   return d.value;
 }
 
-function isActive(decal) {
+function isMouseover(decal) {
   return decal.mouseover.value;
 }
 
+function decalItemClick(decal) {
+  return currentOperatingDecalController.value = decal;
+}
+
+function isCurrent(decal) {
+  return decal.id.value == currentOperatingDecalController.value.id.value
+}
+
 function setting(decal) {
-  operatingDecal.value = decal;
+  currentOperatingDecalController.value = decal;
   showDecalControl.value = true;
 }
 
@@ -127,7 +131,7 @@ function removeDecal(decal) {
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  row-gap: 0.5rem;
+  row-gap: 1rem;
 }
 
 .decal-item {
@@ -139,16 +143,16 @@ function removeDecal(decal) {
   column-gap: 1rem;
   padding: 1rem;
   border-radius: 1rem;
-  transition: all 0.3s;
-
+  transition: all 0.2s;
+  
   &:hover {
-    box-shadow: rgba(115, 0, 255, 0.3) 0px 0px 0px 3px;
+    box-shadow: rgba(115, 0, 255, 0.1) 0px 0px 0px 3px;
     cursor: pointer;
   }
 }
 
 .active {
-  box-shadow: rgba(115, 0, 255, 0.3) 0px 0px 0px 3px;
+  box-shadow: rgba(115, 0, 255, 0.3) 0px 0px 0px 3px !important;
 }
 
 .decal-item-image {

@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from "vue";
-import { operatingDecal, showWorkspace, showDecalControl } from "../../store";
+import { currentOperatingDecalController, showWorkspace, showDecalControl } from "../../store";
 import { debounce } from "../../utils/utils";
 
 const rotation = ref(0);
@@ -23,16 +23,16 @@ const rotation = ref(0);
 const size = ref(0);
 
 const onRotationInput = debounce((value) => {
-  operatingDecal.value?.rotate((2 * Math.PI * value) / 100);
+  currentOperatingDecalController.value?.rotate((2 * Math.PI * value) / 100);
 });
 
 const onSizeInput = debounce((value) => {
-  operatingDecal.value?.scale(value / 100);
+  currentOperatingDecalController.value?.scale(value / 100);
 });
 
 
 function remove() {
-  operatingDecal.value.remove();
+  currentOperatingDecalController.value.remove();
   showDecalControl.value = false;
   showWorkspace.value = true;
 }

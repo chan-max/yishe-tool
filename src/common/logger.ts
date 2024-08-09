@@ -94,4 +94,7 @@ Logger.prettyInfo = function (title: any, ...text: any[]) {
     text.forEach((t) => this.pretty('info', title, t))
 }
 
+
+
+
 export default Logger

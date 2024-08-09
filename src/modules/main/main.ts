@@ -62,8 +62,6 @@ app.use(pinia)
 
 syncUserInfoToLocal()
 
-
-
 app.use(VueVirtualScroller)
 
 app.use(Antd)
@@ -82,13 +80,15 @@ import { useConfigStore } from '@/store/stores/config.ts';
 
 async function setup() {
 
-    const configStore = useConfigStore()
-
-    const res = await Api.getBasicConfig()
 
 
-    configStore.$patch(res)
-
+    try {
+        const configStore = useConfigStore()
+        const res = await Api.getBasicConfig()
+        configStore.$patch(res)
+    } catch (e) {
+        console.warn('basic config load error')
+    }
 
     app.mount('#app')
 }

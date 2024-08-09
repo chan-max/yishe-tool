@@ -11,19 +11,19 @@ import {
   TextureLoader,
   Vector2,
   Vector3,
+
 } from "three";
 import { message } from 'ant-design-vue'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import { v4 } from 'uuid'
+import Utils from '@/common/utils'
 
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
-import { currentModelController, operatingDecal, showDecalControl } from '../store';
-
-
-
+import { currentModelController, currentOperatingDecalController, showDecalControl } from '../store';
 
 export interface DecalControllerParams {
   // 定义贴纸的类型
-  type: 'image' | 'text' | 'composition' | 'qrcode' | 'barcode' | 'stamp',
+  type: 'image' | 'composition',
   // 贴纸的资源id,如果不是上传的文件则不需要
   id?: any,
   // 使用的图片元素
@@ -40,8 +40,15 @@ export interface DecalControllerParams {
 
 
 
-
 export class DecalController {
+
+  // 用于响应式的状态
+  state = reactive({
+    id: null
+  })
+
+  id = ref()
+
 
   context = null
 
@@ -52,11 +59,18 @@ export class DecalController {
   updatedAt = new Date()
 
   constructor(info: any) {
+    this.state.id = this.id.value = v4()
+
     this.context = this
     this.info = info
     if (!this.info.src) {
       this.info.src = this.info.thumbnail
     }
+
+    if(this.info.isLocalResource){
+      this.info.src = this.info.base64
+    }
+
     this.img = info.img
   }
 
@@ -65,7 +79,7 @@ export class DecalController {
     this.initDecalClickEvent();
     this.initMousemoveEvent();
     currentModelController.value.decalControllers.push(this);
-    operatingDecal.value = this
+    currentOperatingDecalController.value = this
   }
 
 
@@ -109,7 +123,7 @@ export class DecalController {
   mesh = null;
 
   // 是否是本地资源
-  get isLocal() {
+  get isLocalResource() {
     return this.info.local
   }
 
@@ -143,15 +157,35 @@ export class DecalController {
       wireframe: false,
     }
 
+
+    // 材质
     var texture = null
 
     const textureLoader = new TextureLoader();
     textureLoader.setWithCredentials(true)
     textureLoader.setCrossOrigin('*')
 
-    // 记载图片比较费时间
 
-    texture = await textureLoader.loadAsync(this.img?.src || this.info.src || this.info.thumbnail);
+    // 该种方式也会重新请求图片
+    // texture = new Texture(this.img)
+
+    // 加载图片比较费时间
+    // let objectUrl = await Utils.transform.createImgObjectURL(this.info.img)
+    // let base64 = await  Utils.transform.imgToBase64(this.info.img)
+
+    if (this.info.isLocalResource) {
+      const image = new Image();
+      image.src = this.info.base64;
+
+      // 创建纹理
+      texture = new Texture(image);
+      image.onload = function () {
+        texture.needsUpdate = true; // 更新纹理
+      };
+    } else {
+      texture = await textureLoader.loadAsync(this.img?.src || this.info.src || this.info.thumbnail)
+    }
+
 
     this.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
 
@@ -178,7 +212,7 @@ export class DecalController {
     this.removeMesh()
     // 从贴纸中移除
     currentModelController.value.decalControllers.splice(currentModelController.value.decalControllers.indexOf(this), 1)
-    operatingDecal.value = null
+    currentOperatingDecalController.value = null
   }
 
 
@@ -197,6 +231,7 @@ export class DecalController {
     this.currentMousePosition = currentModelController.value.mouse.clone()
 
     const raycaster = new Raycaster();
+
     raycaster.setFromCamera(this.currentMousePosition, currentModelController.value.camera);
 
     const intersects = raycaster.intersectObject(this.parentMesh, true);
@@ -212,6 +247,7 @@ export class DecalController {
       await this.initTexture()
     }
 
+
     const position = intersects[0].point;
 
     this._position = position;
@@ -220,6 +256,8 @@ export class DecalController {
 
     copy.transformDirection(this.parentMesh.matrixWorld);
     copy.add(position);
+
+
 
     const helper = new Object3D();
     helper.position.copy(position);
@@ -236,7 +274,7 @@ export class DecalController {
     }
 
     this.currentMousePosition = null
-    message.success({ content: '贴纸加载成功', key: 'sticking' })
+    message.success({ content: '贴纸添加成功', key: 'sticking' })
   }
 
   // 在随机位置贴图
@@ -290,7 +328,7 @@ export class DecalController {
       if (!intersect) {
         return
       }
-      operatingDecal.value = this
+      currentOperatingDecalController.value = this
       showDecalControl.value = true
     }
 

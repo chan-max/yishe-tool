@@ -437,6 +437,13 @@ class Api {
 
   // 获取系统通用配置
   getBasicConfig = getBasicConfig
+
+  getCustomModelListApi = getCustomModelListApi
+
+
+  getProductModelById = getProductModelById
+
+  getStickerByIdApi = getStickerByIdApi
 }
 
 export default new Api()

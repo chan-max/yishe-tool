@@ -2,11 +2,7 @@
   <div style="height: 600px; margin: 12px" class="flex">
     <div style="width: 120px">
       <el-tabs v-model="activeKey" tab-position="left" style="height: 400px">
-        <el-tab-pane
-          v-for="(tab, i) in tabs"
-          :label="tab.label"
-          :name="tab.key"
-        ></el-tab-pane>
+        <el-tab-pane v-for="(tab, i) in tabs" :label="tab.label" :name="tab.key"></el-tab-pane>
       </el-tabs>
     </div>
     <div style="flex-shrink: 0">
@@ -32,6 +28,9 @@ import { SearchOutlined } from "@ant-design/icons-vue";
 import tabImage from "./image.vue";
 import tabSticker from "./sticker.vue";
 import tabFont from "./tabFont.vue";
+import tabCustomModel from './customModel/index.vue'
+import { useLocalStorage } from "@vueuse/core";
+
 const searchText = ref("");
 
 enum UserOwnSourceType {
@@ -43,7 +42,7 @@ enum UserOwnSourceType {
   LIKED = "liked",
 }
 
-const activeKey = ref(UserOwnSourceType.STICKER);
+const activeKey = useLocalStorage('_1s_projectActiveTab',UserOwnSourceType.STICKER);
 
 const activeComponent = computed(() => {
   return toRaw(tabs.value.find((item) => item.key == activeKey.value).component);
@@ -57,10 +56,10 @@ const tabs = ref([
   {
     label: "设计模型",
     key: "customModel",
-    component: tabImage,
+    component: tabCustomModel,
   },
   {
-    label: "我的贴纸",
+    label: "贴纸",
     key: "sticker",
     component: tabSticker,
   },

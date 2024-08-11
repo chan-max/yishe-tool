@@ -281,10 +281,14 @@ export class ModelController extends Base {
         }
         this.initCanvasContainer(target);
         this.initBasicLight()
+        this.setBgColor('#eee')
+
 
         if (currentOperatingBaseModelInfo.value?.url) {
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);
         }
+
+
         this.execRender();
 
         this.isMounted = true;

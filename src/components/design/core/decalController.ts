@@ -44,7 +44,10 @@ export class DecalController {
 
   // 用于响应式的状态
   state = reactive({
-    id: null
+    id: null,
+    isLocalResource: false,
+    url: null, // 贴纸的路径，用于贴花和展示
+    src: null // 等同于 url
   })
 
   id = ref()
@@ -59,7 +62,12 @@ export class DecalController {
   updatedAt = new Date()
 
   constructor(info: any) {
+
+
     this.state.id = this.id.value = v4()
+    this.state.isLocalResource = info.isLocalResource
+    this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64
+
 
     this.context = this
     this.info = info
@@ -235,6 +243,8 @@ export class DecalController {
     const raycaster = new Raycaster();
 
     raycaster.setFromCamera(this.currentMousePosition, currentModelController.value.camera);
+
+    
 
     const intersects = raycaster.intersectObject(this.parentMesh, true);
 

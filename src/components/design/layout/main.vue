@@ -1,7 +1,6 @@
 <template>
   <loading v-if="isFirstPageLoading"></loading>
 
-
   <div id="layout-container" style="width: 100%; height: 100%; display: flex; flex-direction: column">
     <div id="layout-header" style="height: var(--1s-header-height)">
       <div v-if="showHeader" style="width: 100%; height: 100%; display: flex">
@@ -25,18 +24,26 @@
       <div id="layout-canvas">
         <screenshot ref="screenshotInstance"></screenshot>
         <div v-show="showThreeCanvas" @contextmenu="onContextMenu" id="threejs-canvas" style="width: 100%; height: 100%"
-          ref="mountContainer">
-        </div>
+          ref="mountContainer"></div>
         <basic-canvas v-show="showBasicCanvas" style="width: 100%; height: 100%; z-index: 1"
           ref="basicCanvasRef"></basic-canvas>
+
+
+        <div v-if="showBottomMenu" style="
+          height: var(--1s-bottom-menu-height);
+          position: absolute;
+          z-index: 9;
+          bottom: 30px;
+          ">
+          <bottom-menu></bottom-menu>
+        </div>
+
       </div>
 
       <div id="layout-right" style="display: flex">
         <div style="height: 100%">
           <component :is="rightComponent"></component>
         </div>
-
-
       </div>
     </div>
   </div>
@@ -45,15 +52,6 @@
     :animation="basicContainerAnimation">
     <image-upload></image-upload>
   </diydialog>
-
-  <div v-if="showBottomMenu" style="
-      height: var(--1s-bottom-menu-height);
-      position: absolute;
-      z-index: 9;
-      bottom: 30px;
-    ">
-    <bottom-menu></bottom-menu>
-  </div>
 
   <diydialog :show="showBaseModelSelect" @close="showBaseModelSelect = false" :animation="basicContainerAnimation">
     <template #title> 选择基础模型</template>
@@ -134,7 +132,7 @@ import {
   showCanvasLayout,
   viewDisplayController,
   startSyncDesignStorage,
-  lastModifiedTime
+  lastModifiedTime,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -165,21 +163,24 @@ import upload from "./upload/index.vue";
 import stamp from "./stamp/index.vue";
 import svgCanvas from "./svgCanvas/index.vue";
 import canvasLayout from "./canvas/index.vue";
-import basicCanvas from './basic-canvas/index.vue'
-import stickerModal from './sticker/modal.vue'
-import { Modal } from 'ant-design-vue';
+import basicCanvas from "./basic-canvas/index.vue";
+import stickerModal from "./sticker/modal.vue";
+import { Modal } from "ant-design-vue";
 import Utils from "@/common/utils";
-import { createVNode } from 'vue';
+import { createVNode } from "vue";
 import { isLogin } from "@/store/stores/loginAction";
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import Api from '@/api'
-import projectModal from './project/index.vue';
-import ContextMenu from '@imengyu/vue3-context-menu'
+import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
+import Api from "@/api";
+import projectModal from "./project/index.vue";
+import ContextMenu from "@imengyu/vue3-context-menu";
 import { useRoute, useRouter } from "vue-router";
-import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
+import {
+  openLoginDialog,
+  showLoginFormModal,
+} from "@/modules/main/view/user/login/index.tsx";
 
-const router = useRouter()
-const loginStore = useLoginStatusStore()
+const router = useRouter();
+const loginStore = useLoginStatusStore();
 
 const des = useDesignStore();
 
@@ -188,7 +189,7 @@ const leftContainerAnimation = ref({
   // "leave-active-class": "animate__animated animate__bounceOut",
   duration: {
     enter: 33,
-    leave: 0
+    leave: 0,
   },
 });
 
@@ -239,28 +240,29 @@ const mountContainer = ref();
 
 // 渲染动画
 
-isFirstPageLoading.value = true
+isFirstPageLoading.value = true;
 
 const modelController = new ModelController();
 
 onMounted(async () => {
-
   modelController.render(mountContainer.value);
 
-  await Utils.sleep(1200)
-  isFirstPageLoading.value = false
+  await Utils.sleep(1200);
+  isFirstPageLoading.value = false;
 
   // 提示用户登录
   if (!loginStore.isLogin) {
     await Modal.confirm({
-      content: <div>
-        建议登录后可以解锁全部功能
-        <ul>
-          <li> 工作台 </li>
-          <li> 发布与保存 </li>
-          <li> 分享评论 </li>
-        </ul>
-      </div>,
+      content: (
+        <div>
+          建议登录后可以解锁全部功能
+          <ul>
+            <li> 工作台 </li>
+            <li> 发布与保存 </li>
+            <li> 分享评论 </li>
+          </ul>
+        </div>
+      ),
       icon: createVNode(ExclamationCircleOutlined),
       onOk() {
         // router.push({
@@ -270,10 +272,10 @@ onMounted(async () => {
         //   }
         // })
 
-        openLoginDialog()
+        openLoginDialog();
       },
       okText: <div>登录</div>,
-      cancelText: '暂不',
+      cancelText: "暂不",
       onCancel() {
         Modal.destroyAll();
       },
@@ -281,8 +283,8 @@ onMounted(async () => {
   } else {
     /* 获取数据并同步 */
     const data = await Api.getUserMeta({
-      metaKey: 'designStorage'
-    })
+      metaKey: "designStorage",
+    });
 
     if (!Utils.isEmptyObject(data)) {
       // 存在用户数据，需要同步
@@ -290,25 +292,21 @@ onMounted(async () => {
       // for (let key in data) {
       //   des[key] = data[key];
       // }
-      des.$patch(data)
-      lastModifiedTime.value = data.lastModifiedTime
-
+      des.$patch(data);
+      lastModifiedTime.value = data.lastModifiedTime;
     }
-    startSyncDesignStorage()
+    startSyncDesignStorage();
     /*
       开启实时同步更新
     */
-
   }
 });
 
-
-
 /**
  * 画布右键菜单
-*/
+ */
 function onContextMenu(e) {
-  return
+  return;
   //prevent the browser's default menu
   e.preventDefault();
   //show your menu
@@ -320,20 +318,15 @@ function onContextMenu(e) {
         label: "A menu item",
         onClick: () => {
           alert("You click a menu item");
-        }
+        },
       },
       {
         label: "A submenu",
-        children: [
-          { label: "Item1" },
-          { label: "Item2" },
-          { label: "Item3" },
-        ]
+        children: [{ label: "Item1" }, { label: "Item2" }, { label: "Item3" }],
       },
-    ]
+    ],
   });
 }
-
 </script>
 
 <style lang="less">

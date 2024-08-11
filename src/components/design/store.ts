@@ -48,15 +48,13 @@ export const isFullScreen = ref(false)
 watchEffect(() => setFullscreen(isFullScreen.value))
 
 // 画布背景颜色 
-export const canvasBgColor = ref('')
+export const canvasBgColor = ref(0x000000)
 
 // 画布背景透明度
 export const canvasBgOpacity = ref('0')
 
 // 画布颜色随着暗色模式的变化而变化
-watchEffect(() => {
-    canvasBgColor.value = isDarkMode.value ? '#1d1d1d' : '#f2f2f2'
-})
+
 
 // 是否展示基础模型选择菜单
 export const showBaseModelSelect = ref(false);
@@ -146,6 +144,7 @@ watchEffect(() => {
         return
     }
 
+    return
     currentModelController.value.setBgColor(canvasBgColor.value, canvasBgOpacity.value)
 });
 
@@ -374,7 +373,7 @@ export const viewDisplayController = ref({
 
 
     // 是否展示贴纸 
-    showDecalControl:false
+    showDecalControl: false
 })
 
 

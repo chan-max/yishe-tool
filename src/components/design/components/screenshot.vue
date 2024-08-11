@@ -60,7 +60,7 @@ function clear() {
 }
 
 async function execScreenshot(base64) {
-  audio.value.play();
+  // audio.value.play();
   src.value = base64;
   if (show.value) {
     show.value = false;

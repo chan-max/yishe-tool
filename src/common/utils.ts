@@ -27,12 +27,26 @@ const isPromise = (val) => {
 };
 
 
-export function formatUrl(url) {
+interface UrlOptions {
+    nocache: boolean;
+}
+export function formatUrl(url, options: UrlOptions = {
+    nocache: false
+}) {
     if (!url) {
         return
     }
+
+
+
     url = url.trim();
-    return url.startsWith('http') ? url : 'https://' + url;
+    url = url.startsWith('http') ? url : 'https://' + url
+
+    if(options.nocache){
+        url += '?' + new Date().getTime()
+    }
+
+    return url;
 }
 
 

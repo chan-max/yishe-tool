@@ -1,15 +1,17 @@
 <template>
   <div class="container">
     <div>
-      <el-button type="info" plain link>查看所有贴花</el-button>
+      <el-button type="info" plain @click="showWorkspace = true">查看所有贴花</el-button>
     </div>
-    <h6>旋转角度</h6>
-    <el-slider :min="0" :max="100" :step="1" v-model="rotation" size="small" @input="onRotationInput" />
-    <h6>贴纸尺寸</h6>
-    <el-slider :min="0" :max="100" :step="1" v-model="size" size="small" @input="onSizeInput" />
-    <h6>固定位置</h6>
-    <el-button @click="remove" type="primary" round>移除该贴纸</el-button>
 
+    <div style="padding:1rem;">
+      <h6>旋转角度</h6>
+      <el-slider :min="0" :max="100" :step="1" v-model="rotation" size="small" @input="onRotationInput" />
+      <h6>贴纸尺寸</h6>
+      <el-slider :min="0" :max="100" :step="1" v-model="size" size="small" @input="onSizeInput" />
+      <h6>固定位置</h6>
+    </div>
+    <el-button @click="remove" type="primary" round>移除该贴纸</el-button>
   </div>
 </template>
 
@@ -48,7 +50,7 @@ function remove() {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 2rem;
+  padding: 1rem;
   row-gap: 1rem;
 }
 </style>

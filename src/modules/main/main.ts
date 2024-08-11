@@ -79,19 +79,17 @@ import { useConfigStore } from '@/store/stores/config.ts';
 
 
 async function setup() {
-
-
-
-    try {
+    Api.getBasicConfig().then((res) => {
         const configStore = useConfigStore()
-        const res = await Api.getBasicConfig()
         configStore.$patch(res)
-    } catch (e) {
+    }).catch(() => {
         console.warn('basic config load error')
-    }
-
-    app.mount('#app')
+    }).finally(() => {
+        app.mount('#app')
+    })
 }
+
+
 
 
 setup()

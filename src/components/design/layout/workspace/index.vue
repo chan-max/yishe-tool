@@ -61,6 +61,8 @@ import {
   showSaveModel,
   currentOperatingDecalController,
   showDecalControl,
+  viewDisplayController,
+showWorkspace
 } from "../../store";
 import { computed, ref } from "vue";
 import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
@@ -91,6 +93,7 @@ function isCurrent(decal) {
 
 function setting(decal) {
   currentOperatingDecalController.value = decal;
+  showWorkspace.value = false
   showDecalControl.value = true;
 }
 
@@ -144,7 +147,7 @@ function removeDecal(decal) {
   padding: 1rem;
   border-radius: 1rem;
   transition: all 0.2s;
-  
+
   &:hover {
     box-shadow: rgba(115, 0, 255, 0.1) 0px 0px 0px 3px;
     cursor: pointer;

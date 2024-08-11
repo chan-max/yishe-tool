@@ -58,7 +58,7 @@
 
     <div style="flex-grow: 1"></div>
     <div class="flex ">
-      <el-button @click="showSaveModel = true" round> 保存该模型 </el-button>
+      <el-button @click="showSaveModel = true" round> 保存当前模型 </el-button>
       <el-button @click="showUpload = true" round> 资源上传 </el-button>
     </div>
 

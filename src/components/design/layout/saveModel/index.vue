@@ -9,11 +9,21 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-  <div class="designiy-save-model">
-    <el-input v-model="name"></el-input>
-    <img :src="previewSrc" style="wdith: 200px; height: 200px" />
-    显示基础模型，创建后的模型缩略图 用了哪些贴纸，什么类型，是否上传了
-    <el-button @click="save" type="primary"> 上传模型 </el-button>
+  <div style="  width: 800px;
+  height: 400px;
+  padding: 1rem;">
+    <el-row justify="center" align="center">
+      <el-col :span="8">
+        <desimage style="width:200px;height:200px;" :src="thumbnail"></desimage>
+      </el-col>
+      <el-col :span="16">
+        <el-input v-model="form.name"></el-input>
+        显示基础模型，创建后的模型缩略图 用了哪些贴纸，什么类型，是否上传了
+        <el-button @click="save" type="primary"> 上传模型 </el-button>
+      </el-col>
+    </el-row>
+
+
   </div>
 </template>
 <script setup>
@@ -24,8 +34,20 @@ import { currentModelController, lastestScreenshot } from "../../store";
 import { base64ToFile, base64ToPngFile } from "@/common/transform/base64ToFile";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { message } from "ant-design-vue";
+import desimage from "@/components/design/components/image.vue";
 
-const name = ref();
+const thumbnail = ref()
+
+const form = ref({
+  name: null,
+})
+
+
+
+
+onBeforeMount(() => {
+  thumbnail.value = currentModelController.value.getScreenshotBase64()
+})
 
 const loginStore = useLoginStatusStore();
 
@@ -33,23 +55,27 @@ const previewSrc = computed(() => {
   return lastestScreenshot.value?.base64;
 });
 
+
+
+
 async function save() {
-  if (!previewSrc.value) {
-    return message.info("需要选择一张缩略图");
-  }
+
 
   // 上传本地贴纸 , 过滤出本地的贴纸
   let localDecals = currentModelController.value.decalControllers.filter(
     (decal) => decal.isLocalResource
   );
 
+
+
   // 只负责把贴纸上传即可
   if (localDecals.length) {
   }
 
-  const thumbnail = base64ToPngFile(previewSrc.value);
+  const thumbnail = currentModelController.value.getScreenShotFile()
 
   const { url } = await uploadToCOS({ file: thumbnail });
+
 
   const params = {
     name: name.value,
@@ -57,17 +83,11 @@ async function save() {
     meta: {
       modelInfo: currentModelController.value.exportTo1stf(),
     },
-    uploader_id: loginStore.userInfo.id,
+    uploaderId: loginStore.userInfo.id,
   };
 
   await createCustomModelApi(params);
   message.success("上传成功");
 }
 </script>
-<style lang="less" scoped>
-.designiy-save-model {
-  width: 800px;
-  height: 400px;
-  padding: 1rem;
-}
-</style>
+<style lang="less" scoped></style>

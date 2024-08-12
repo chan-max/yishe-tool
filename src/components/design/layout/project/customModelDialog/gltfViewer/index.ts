@@ -162,7 +162,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         }
 
         loading.value = true;
-        var baseModel = await getProductModelById(model.baseModelId)
+        var baseModel = model.fetchResult || await getProductModelById(model.baseModelId)
 
         if (props.transparent) {
             renderer.setClearColor(null, 0);
@@ -264,10 +264,9 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                         return resolve(void 0);
                     }
 
-                    const sticker = await await getStickerByIdApi(id)
+                    const sticker = decal.fetchResult || await getStickerByIdApi(id)
 
                     var { thumbnail } = sticker
-
 
                     position = new Vector3(position.x, position.y, position.z);
 
@@ -299,8 +298,9 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     */
 
                     let url = Utils.formatUrl(thumbnail, { nocache: true })
+                    console.warn('gltfviewer load sticker')
                     const texture = await textureLoader.loadAsync(url);
-              
+
 
                     const material = new MeshPhongMaterial({
                         map: texture,

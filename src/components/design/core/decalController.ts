@@ -244,7 +244,7 @@ export class DecalController {
 
     raycaster.setFromCamera(this.currentMousePosition, currentModelController.value.camera);
 
-    
+
 
     const intersects = raycaster.intersectObject(this.parentMesh, true);
 
@@ -404,7 +404,6 @@ export class DecalController {
 
 
     return {
-      type: this.info.type,
       id: this.info.id,
       position,
       rotation,

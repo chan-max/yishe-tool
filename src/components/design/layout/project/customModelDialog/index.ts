@@ -3,10 +3,9 @@ import { Modal } from "ant-design-vue"
 import component from './index.vue'
 import { ref } from 'vue'
 
-export const openCustomModelDetailModal = () => {
-    Modal.info({
+import Api from '@/api'
 
-    })
+export const openCustomModelDetailModal = () => {
 }
 
 
@@ -17,7 +16,14 @@ const detailInfo = ref()
 export function useCustomModelDetailDialog() {
 
 
-    function open(info) {
+    async function open(info) {
+
+
+        /*
+            这里需要处理 模型信息 ，将所需要的资源直接请求回来，用于渲染
+        */
+
+        info.meta.modelInfo = await resolveModelInfo(info.meta.modelInfo)
         showDetailModal.value = true
         detailInfo.value = info
     }
@@ -32,4 +38,19 @@ export function useCustomModelDetailDialog() {
 }
 
 
+async function resolveModelInfo(modelInfo) {
+    await Promise.all([
+        new Promise(async (resolve, reject) => {
+            modelInfo.fetchResult = await Api.getProductModelById(modelInfo.baseModelId)
+            resolve(void 0)
+        }),
+        ...modelInfo.decals ? modelInfo.decals.map(async (decal) => {
+            return new Promise(async (resolve) => {
+                decal.fetchResult = await Api.getStickerByIdApi(decal.id)
+                resolve(void 0)
+            })
+        }) : []
+    ])
 
+    return modelInfo
+}

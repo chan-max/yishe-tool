@@ -46,8 +46,8 @@ import { useCustomModelDetailDialog } from '../customModelDialog/index.ts'
 const { component: modelDetailDialog, open } = useCustomModelDetailDialog()
 
 
-function openDetail(item) {
-    open(item)
+function openDetail(modelInfo) {
+    open(modelInfo)
 }
 
 // 列表展示几列

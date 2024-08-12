@@ -11,7 +11,6 @@
                         {{ activeFilter ? activeFilter.label : '未使用滤镜' }}
                     </el-button>
                 </template>
-
                 <div style="width: 720px;">
                     <template v-if="activeTab == Tab.BuiltIn">
                         <el-row style="row-gap: 1rem">
@@ -36,11 +35,10 @@
                                                     <div class="flex flex-col justify-center filter-item"
                                                         :class="{ checked: activeFilter?.filterName == item.filterName }"
                                                         @click="useCurrentFiter(item)">
-                                                        <div class="img">
-                                                            <desimage src="/svgFilter/preview.jpeg"
-                                                                :style="{ filter: `url(#${item.filterName})` }"></desimage>
+                                                        <div class="preview-box">
+                                                            <desimage :src="SvgFilterResource.NORMAL_PREVIEW_IMAGE_URL"
+                                                                :style="{ filter: `url( #${item.filterName})` }"></desimage>
                                                         </div>
-
                                                         <div style="text-align: center;" class="text-ellipsis"> {{
                                                             item.label }}
                                                         </div>
@@ -203,7 +201,8 @@ import {
     addSvgFilterEffect,
     SvgFilterEffects,
     SvgFilterEffectDisplayLabelMap,
-    FeMorphologyOperatorOptions
+    FeMorphologyOperatorOptions,
+    SvgFilterResource
 } from "@/components/design/layout/canvas/children/svgFilter/index";
 import { ref } from "vue";
 import colorPicker from "@/components/design/components/colorPicker.vue";
@@ -211,13 +210,13 @@ import { StopOutlined } from '@ant-design/icons-vue';
 import { Switch } from '@element-plus/icons-vue'
 import desimage from "@/components/design/components/image.vue";
 import { SvgFilterCategoryOptions, SvgFilterCategory, SvgFilterCustomEffectType, SvgFilteCustomEffect } from "@/components/design/layout/canvas/children/svgFilter/builtIn/index";
-
+import { useLocalStorage } from '@vueuse/core'
 
 const activeFilter = defineModel({
     default: null
 });
 
-const activeCategory = ref(SvgFilterCategory.Normal);
+const activeCategory = useLocalStorage('_1s_svgFilterActiveCategory',SvgFilterCategory.Normal);
 
 const props = defineProps({
     tooltip: {
@@ -231,7 +230,9 @@ enum Tab {
     BuiltIn, // 内置滤镜
     Custom // 内置
 }
-const activeTab = ref(Tab.BuiltIn)
+
+
+const activeTab = useLocalStorage('_1s_svgFilterModeTab', Tab.BuiltIn)
 
 
 /*
@@ -268,6 +269,7 @@ function useCurrentFiter(f: SvgFilterCustomEffectType) {
 }
 
 
+
 :deep(.el-tabs__nav-wrap::after) {
     display: none;
 }
@@ -282,19 +284,21 @@ function useCurrentFiter(f: SvgFilterCustomEffectType) {
 }
 
 :deep(.el-tabs__item.is-active) {
-    color: rgba(0, 0, 0, .9);
+    color: rgba(0, 0, 0, .8);
 }
+
+
 
 .filter-item {
 
     row-gap: 1rem;
 
-    .img {
+    .preview-box {
         overflow: hidden;
     }
 
     &.checked {
-        .img {
+        .preview-box {
             box-shadow: rgba(115, 0, 255, .6) 0px 0px 0px 2px,
                 rgba(115, 0, 255, .4) 0px 0px 0px 6px,
                 rgba(115, 0, 255, .2) 0px 0px 0px 9px,

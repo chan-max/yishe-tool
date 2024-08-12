@@ -12,8 +12,6 @@ import { SvgFilterInput } from '../effect'
 
 export function createMosaicFilter() {
 
-
-
     // return <filter id="mosaic">
     //     <feFlood x="4" y="4" height="2" width="2" />
     //     <feComposite width="8" height="8" />
@@ -22,6 +20,7 @@ export function createMosaicFilter() {
     //     <feMorphology operator="dilate" radius="4" />
     // </filter>
 
+    
 
     let floodOptions = createFeFloodDefaultOptions()
     floodOptions.x.value = 2
@@ -63,6 +62,5 @@ export function createMosaicFilter() {
         createFeComposite(compositeOptions2),
         createFeMorphology(morphologyOptions)
     ])
-
 }
 

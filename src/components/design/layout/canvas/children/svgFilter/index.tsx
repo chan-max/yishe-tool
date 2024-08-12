@@ -17,7 +17,16 @@ import { createFeFlood, createFeFloodDefaultOptions } from './effect/flood'
 */
 
 
+export enum SvgFilterResource {
+    // 对于普通效果的例图
+    NORMAL_PREVIEW_IMAGE_URL = '/svgFilter/preview.jpeg'
+}
 
+
+
+/*
+    标准滤镜类型
+*/
 export enum SvgFilterEffects {
     DROP_SHADOW = 'drop-shadow',
     GAUSSIAN_BLUR = 'gaussian-blur',
@@ -29,6 +38,7 @@ export enum SvgFilterEffects {
     Tile = 'tile'
 }
 
+/**/
 export const SvgFilterEffectDisplayLabelMap = {
     [SvgFilterEffects.DROP_SHADOW]: '投影 (feDropShadow)',
     [SvgFilterEffects.GAUSSIAN_BLUR]: '模糊 (feGaussianBlur)',

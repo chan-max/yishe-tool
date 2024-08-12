@@ -7,6 +7,9 @@ export const enum SvgFilterCategory {
     /** 基本类滤镜 */
     Normal = 'normal',
 
+    /* 纯色滤镜 */
+    PureColor = 'pure-color',
+
     /** 调整类滤镜 */
     Adjustment = 'adjustment',
 
@@ -55,7 +58,7 @@ export enum SvgFilteCustomEffect {
 
 import { createDefaultFilter } from './default'
 import { createMosaicFilter } from './mosaic'
-
+import { createPureColorMatrixFilterRender, BlackAndWhiteMatrix, vintage } from './pureColor'
 
 
 
@@ -75,6 +78,24 @@ export const SvgFilterCategoryOptions = [
                 label: '马赛克效果',
                 filterName: SvgFilteCustomEffect.Mosaic,
                 render: createMosaicFilter
+            },
+        ]
+    },
+    {
+        label: '纯颜色',
+        value: SvgFilterCategory.PureColor,
+        children: [
+            {
+                category: SvgFilterCategory.PureColor,
+                label: '黑白',
+                filterName: 'blackWhite',
+                render: createPureColorMatrixFilterRender('blackWhite', BlackAndWhiteMatrix)
+            },
+            {
+                category: SvgFilterCategory.PureColor,
+                label: '复古',
+                filterName: 'vintage',
+                render: vintage
             },
         ]
     },
@@ -118,7 +139,6 @@ export const SvgFilterCategoryOptions = [
 
 
 export const BuiltInSvgFilterRenderList = SvgFilterCategoryOptions.reduce((res, item) => {
-
     if (item.children) {
         return res.concat(item.children)
     } else {

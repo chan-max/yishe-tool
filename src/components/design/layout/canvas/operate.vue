@@ -381,7 +381,7 @@ import operateItemObjectFit from "@/components/design/layout/canvas/operate/obje
 import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue';
 
 import {
-  updatecanvasStickerOptionsUnit
+  updateCanvasStickerOptionsUnit
 } from './helper'
 
 import {
@@ -399,7 +399,7 @@ import {
 
 
 function absoluteUnitChange(unit) {
-  updatecanvasStickerOptionsUnit(unit)
+  updateCanvasStickerOptionsUnit(unit)
 }
 
 const canvasCollapseActives = ref(["1", "2", "3", "4"])

@@ -1,16 +1,14 @@
 <template>
-    <el-dialog v-bind="$attrs" width="960px" title="选择图片">
+    <el-dialog v-bind="$attrs" width="960px" title="选择图片" @open="open">
         <div class="model">
             <scrollbar>
                 <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
                     <el-row style="row-gap: 1rem;padding: 20px;">
                         <el-col :span="24 / column" v-for="item in  list" align="center">
-
                             <div @click="useAsCanvasImage(item)">
-                                <desimage class="img" padding="5%" :src="item.thumbnail">
+                                <desimage class="img" :src="item.thumbnail">
                                 </desimage>
                             </div>
-
                         </el-col>
                     </el-row>
                     <loadingBottom v-if="loading"></loadingBottom>
@@ -69,16 +67,21 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
         return getStickerListApi({
             ...params,
             pageSize: 20,
-            type:'image'
+            type: 'image'
         });
     },
     {
+        immediate: false,
         forEach(item) {
             item.thumbnail = Utils.formatUrl(item.thumbnail)
             item.url = Utils.formatUrl(item.url)
         },
     }
 );
+
+function open() {
+    getList()
+}
 
 </script>
 
@@ -91,8 +94,8 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
 }
 
 .img {
-    width: 100px!important;
-    height: 100px!important;
+    width: 100px !important;
+    height: 100px !important;
     background: #f1f1f1;
 }
 </style>

@@ -6,7 +6,7 @@ import { canvasStickerOptions } from "./index"
 /*
     更新所有子元素的单位值
 */
-export function updatecanvasStickerOptionsUnit(currentUnit) {
+export function updateCanvasStickerOptionsUnit(currentUnit) {
 
 
     // const unitKeys = [

@@ -6,7 +6,7 @@
         <template #name> {{ label }} </template>
         <template #content>
             <template v-if="model">
-                <el-popover placement="right" popper-class="el-popover-operation">
+                <el-popover placement="right" popper-class="el-popover-operation" width="240">
                     <template #reference>
                         <div class="flex items-center">
                             <div class="text-ellipsis" style="font-size:1rem;max-width: 180px;">已引用图片 : {{ model.name }}
@@ -21,14 +21,15 @@
                                 </desimage>
                             </div>
                         </el-col>
+
                         <el-col :span="24">
-                            <el-button @click="remove" size="small" :icon="Close" style="width:100%;">
-                                移除图片
+                            <el-button @click="syncCanvasSize" size="small" style="width:100%;">
+                                将画布尺寸设为该图片尺寸
                             </el-button>
                         </el-col>
                         <el-col :span="24">
-                            <el-button @click="syncCanvasSize" size="small" style="width:100%;">
-                                同步到主画布尺寸
+                            <el-button @click="remove" size="small" type="danger" :icon="Close" style="width:100%;">
+                                移除图片
                             </el-button>
                         </el-col>
                     </el-row>
@@ -52,7 +53,7 @@ import desimage from "@/components/design/components/image.vue";
 import modal from './modal.vue';
 
 import {
-    updatecanvasStickerOptionsUnit
+    updateCanvasStickerOptionsUnit
 } from '@/components/design/layout/canvas/helper'
 
 import {
@@ -94,13 +95,14 @@ function imgLoad() {
 */
 
 const imgRef = ref()
+
 function syncCanvasSize() {
     let { width, height } = imgRef.value.getNaturalSize()
 
 
     canvasStickerOptions.value.width = width
     canvasStickerOptions.value.height = height
-    updatecanvasStickerOptionsUnit('px')
+    updateCanvasStickerOptionsUnit('px')
 }
 
 </script> 

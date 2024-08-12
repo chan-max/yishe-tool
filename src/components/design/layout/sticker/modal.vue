@@ -2,7 +2,7 @@
     <div class="model">
         <scrollbar>
             <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
-                <el-row style="row-gap: 1em;padding: 20px;" >
+                <el-row style="row-gap: 1em;padding: 20px;">
                     <el-col :span="24 / column" v-for="item in  list" align="center">
                         <a-dropdown arrow placement="bottom">
                             <div>
@@ -95,6 +95,6 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
 .img {
     width: 100px;
     height: 100px;
-    background:#f1f1f1;
+    background: #f1f1f1;
 }
 </style>

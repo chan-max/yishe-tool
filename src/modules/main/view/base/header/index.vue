@@ -63,6 +63,7 @@ const menuOptions = [{}];
   position: fixed;
   top: 0;
   transition: all 0.5s;
+  border-bottom: 1px solid #eee;
 
   &:hover {
     background-color: #fff;

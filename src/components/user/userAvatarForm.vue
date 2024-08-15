@@ -12,10 +12,7 @@
   <div class="user-avatar-form">
     <div class="flex" style="padding: 10px 0; border-bottom: 2px solid #f8f8f8">
       <el-avatar style="flex-shrink: 0" shape="circle" :src="avatar" />
-      <div
-        style="margin-left: 1em; flex-direction: column; flex: 1"
-        class="flex justify-around"
-      >
+      <div style="margin-left: 1em; flex-direction: column; flex: 1" class="flex justify-around">
         <div class="font-bold">{{ userInfo.name || "--" }}</div>
         <div style="overflow: hidden; font-size: 1em">
           {{ userInfo.email || "--" }}
@@ -23,7 +20,7 @@
       </div>
     </div>
     <div class="user-avatar-form-items">
-      <div class="user-avatar-form-item">
+      <div @click="goUpdate" class="user-avatar-form-item">
         <icon-user></icon-user>
         个人信息
       </div>
@@ -46,13 +43,18 @@
 import { useLoginStatusStore } from "@/store/stores/login";
 import { doLogout } from "@/store/stores/loginAction";
 import { computed, ref, onMounted, watchEffect } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import iconLogout from "@/icon/user/logout.svg?component";
 import iconUser from "@/icon/user/user.svg?component";
 import iconAdmin from "@/icon/user/admin.svg?component";
 import iconSaved from "@/icon/user/saved.svg?component";
+import { Modal } from 'ant-design-vue'
+
 
 let route = useRoute();
+let router = useRouter()
+
+
 
 // 顶部头像
 const loginStore = useLoginStatusStore();
@@ -60,15 +62,38 @@ const loginStore = useLoginStatusStore();
 const avatar = computed(() => {
   const loginStore = useLoginStatusStore();
   // 默认头像
-  return loginStore.userInfo?.preview_avatar || "/defaultAvatar/avatar3.png";
+  return loginStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
 });
 
 const userInfo = computed(() => {
   return loginStore.userInfo || {};
 });
 
-function logout(params) {
-  doLogout();
+
+function goUpdate() {
+  router.push({
+    name: 'Update'
+  })
+}
+
+async function logout(params) {
+
+  await Modal.confirm({
+    cancelText: '取消',
+    okText: '确定',
+    content: '确认要退出吗？',
+    // cancelButtonProps: {
+    //   size: 'small'
+    // },
+    // okButtonProps: {
+    //   size: 'small'
+    // },
+    onOk: () => {
+      doLogout();
+    }
+  })
+
+
 }
 </script>
 
@@ -92,6 +117,7 @@ function logout(params) {
   column-gap: 12px;
   align-items: center;
   font-size: 12px;
+
   svg {
     width: 14px;
     height: 14px;

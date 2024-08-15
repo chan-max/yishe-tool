@@ -1,5 +1,7 @@
 import JSEncrypt from 'jsencrypt'
-// 密钥对生成 http://web.chacuo.net/netrsakeypair
+
+import CryptoJS from 'crypto-js'
+
 
 const publicKey = ``
 const privateKey = ``
@@ -20,6 +22,21 @@ export const decrypt = (txt: string) => {
 }
 
 
+
+
+function symmetricDecrypt(encryptedMessage, secretKey) {
+    return CryptoJS.AES.decrypt(encryptedMessage, secretKey).toString(CryptoJS.enc.Utf8);
+}
+
+function symmetricEncrypt(encryptedMessage, secretKey) {
+    return CryptoJS.AES.encrypt(encryptedMessage, secretKey).toString();
+}
+
 export class Encrypt {
+    CryptoJS = CryptoJS
+
+    symmetricDecrypt = symmetricDecrypt
+    symmetricEncrypt = symmetricEncrypt
+
 }
 

@@ -30,6 +30,9 @@ import legacy from '@vitejs/plugin-legacy';
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import svgLoader from 'vite-svg-loader'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import AutoImport from "unplugin-auto-import/vite";
+
+
 
 export default defineConfig((config: any) => {
 
@@ -73,6 +76,12 @@ export default defineConfig((config: any) => {
       }),
       svgLoader(),
       vueJsx({
+      }),
+
+      // 自动引入
+      AutoImport({
+        imports: ["vue", "vue-router"],
+        dts: true
       }),
     ],
     base: isApp ? './' : '/', // 普通路径与app路径处理方式不同

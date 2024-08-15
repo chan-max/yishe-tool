@@ -20,7 +20,7 @@
         <ion-thumbnail slot="start" style="width: 20px; height: 20px">
           <img
             alt="avatar"
-            :src="item.t_user?.preview_avatar || '/mobileDefaultAvatar.svg'"
+            :src="item.t_user?.avatar || '/mobileDefaultAvatar.svg'"
           />
         </ion-thumbnail>
         {{ item.t_user?.name || "未命名" }}

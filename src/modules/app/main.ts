@@ -53,7 +53,7 @@ import {toastController} from "@ionic/vue";
 
 import { createPinia } from 'pinia'
 
-import { syncUserInfoToLocal } from '@/store/stores/login.ts'
+
 import Api from '@/api'
 
 
@@ -120,7 +120,6 @@ import { initWebsocket } from './helper/websocket';
 
 router.isReady().then(async () => {
   // 将登录信息同步到本地
-  syncUserInfoToLocal()
   const configStore = useConfigStore()
   const config =  await getBasicConfig()
   configStore.$patch(config)

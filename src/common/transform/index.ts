@@ -46,16 +46,19 @@ export async function imgToFile(img) {
 // }
 
 export const createImgObjectURL = async (img) => {
-    return URL.createObjectURL(await imgToFile(img))
+    return URL.createObjectURL(await imgToFile(img) as Blob)
 }
 
 
 export const canvasToBase64 = (canvas) => canvas.toDataURL("image/png")
 
-
 /*
  下载base64为文件
+  ?response-content-type=application/octet-stream'
 */
+
+
+
 export async function downloadByFile(file) {
     let a = document.createElement('a')
     a.href = URL.createObjectURL(file)

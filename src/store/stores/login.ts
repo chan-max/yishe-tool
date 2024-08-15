@@ -9,27 +9,35 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
  */
 import { getLocalUserInfo, updateLocalUserInfo } from "@/store/stores/loginAction";
+import { useLocalStorage } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { reactive, ref, watch, toRaw, isReactive, isRef, unref } from "vue";
+import Api from '@/api'
+import { userInfo } from "os";
+
 
 export const useLoginStatusStore = defineStore("login_status", () => {
+
   const isLogin = ref(false);
   const loginTime = ref();
   const userInfo = ref();
-  const token = ref();
+  const token = useLocalStorage('token', '');
   const once = ref();
   const isAdmin = ref(false);
-  // 初始化用户登录状态
-  const localUserInfo = getLocalUserInfo();
-  if (localUserInfo) {
-    // 已经登录
-    isLogin.value = localUserInfo && localUserInfo.isLogin
-    userInfo.value = localUserInfo.userInfo
-    loginTime.value = localUserInfo.loginTime
-    token.value = localUserInfo.token
-    once.value = localUserInfo.once
-    isAdmin.value = localUserInfo.isAdmin
+
+
+  async function getUserInfo() {
+    const _userInfo = await Api.getUserInfo()
+    if (_userInfo) {
+      userInfo.value = _userInfo
+      isLogin.value = true
+    } else {
+      isLogin.value = false
+    }
   }
+
+
+  // getUserInfo()改为在启动程序时调用
 
 
   function logout() {
@@ -45,18 +53,25 @@ export const useLoginStatusStore = defineStore("login_status", () => {
     token,
     once,
     isAdmin,
-    logout
+    logout,
+    getUserInfo
   };
 });
 
+
+
+
 // 同步用户信息到本地
-export function syncUserInfoToLocal() {
-  const loginStore = useLoginStatusStore()
-  // 同步登录信息到本地
-  watch(loginStore.$state, () => {
-    updateLocalUserInfo(deepToRaw(loginStore.$state))
-  })
-}
+// export function syncUserInfoToLocal() {
+//   const loginStore = useLoginStatusStore()
+//   // 同步登录信息到本地
+//   watch(loginStore.$state, () => {
+//     updateLocalUserInfo(deepToRaw(loginStore.$state))
+//   })
+// }
+
+
+
 
 function deepToRaw(data) {
   if (isRef(data)) {

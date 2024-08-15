@@ -42,7 +42,7 @@ export function formatUrl(url, options: UrlOptions = {
     url = url.trim();
     url = url.startsWith('http') ? url : 'https://' + url
 
-    if(options.nocache){
+    if (options.nocache) {
         url += '?' + new Date().getTime()
     }
 
@@ -113,8 +113,15 @@ import { deepUnref } from './vue'
 import transform from './transform/index'
 import logger from './logger'
 import { Type } from './type'
+import { Encrypt } from './encrypt.ts'
+
 
 class Utils {
+
+    // 加密相关
+    encrypt = new Encrypt()
+
+    
 
     IN2CM = 2.539999918
 

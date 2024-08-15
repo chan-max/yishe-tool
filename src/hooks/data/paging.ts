@@ -64,7 +64,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
 
         try {
- 
+
             if (currentPage.value >= totalPage.value) {
                 return
             }
@@ -94,8 +94,11 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
                 res.list.forEach(options.forEach)
             }
 
+
             if (isRef(list)) {
                 res.list.forEach((item) => {
+
+      
                     (list.value as any).push(item)
                 })
             } else if (isReactive(list)) {

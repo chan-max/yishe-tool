@@ -4,13 +4,13 @@
  * @LastEditors: chan-max 2651308363@qq.com
  * @LastEditTime: 2024-02-13 18:31:14
  * @FilePath: /yishe/src/components/user/userAvatar.vue
- * @Description: 
+ * @Description:  用户相关操作
  * 
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
   <div class="user-avatar">
-    <el-popover placement="bottom-start" trigger="click" width="auto">
+    <el-popover placement="bottom-start" trigger="hover" width="auto">
       <template #reference>
         <el-avatar shape="circle" :src="avatar" />
       </template>
@@ -28,11 +28,12 @@ import userAvatarForm from "./userAvatarForm.vue";
 let route = useRoute();
 
 // 顶部头像
-const loginStatusStore = useLoginStatusStore();
+const loginStore = useLoginStatusStore();
+
+
 const avatar = computed(() => {
-  const loginStatusStore = useLoginStatusStore();
-  // 默认头像
-  return loginStatusStore.userInfo?.preview_avatar || "/defaultAvatar/avatar3.png";
+  const loginStore = useLoginStatusStore();
+  return loginStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
 });
 </script>
 <style lang="less" scoped>
@@ -41,6 +42,7 @@ const avatar = computed(() => {
   border-radius: 50%;
   height: 36px;
   width: 36px;
+
   .el-avatar {
     height: 100%;
     width: 100%;

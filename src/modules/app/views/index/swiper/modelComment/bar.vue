@@ -11,7 +11,7 @@
 <template>
     <div class="bar">
         <div class="avatar">
-            <avatar style="width: 30px; height: 30px" :src="commentInfo.t_user.preview_avatar">
+            <avatar style="width: 30px; height: 30px" :src="commentInfo.t_user.avatar">
             </avatar>
         </div>
         <div class="main">

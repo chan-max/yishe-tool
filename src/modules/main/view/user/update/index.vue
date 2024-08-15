@@ -4,65 +4,34 @@
             <div style="font-size: 16px; color: #666; text-align: left; padding: 20px 0px">
                 更新个人信息
             </div>
-            <el-form :model="updateForm" ref="form" :rules="rules">
-                <el-form-item prop="password">
-                    <el-input placeholder="请输入密码" v-model="updateForm.password" type="password">
-                        <template #prefix>
-                            <el-icon>
-                                <Lock />
-                            </el-icon>
-                        </template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item prop="repassword">
-                    <el-input placeholder="请再次确认密码" v-model="updateForm.repassword" type="password">
-                        <template #prefix>
-                            <el-icon>
-                                <Lock />
-                            </el-icon>
-                        </template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item prop="email">
-                    <el-input placeholder="请输入邮箱" v-model="updateForm.email">
-                        <template #prefix>
-                            <el-icon>
-                                <Message />
-                            </el-icon>
-                        </template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item prop="validateCode">
-                    <div class="signup-validateCode">
-                        <el-input placeholder="请输入邮箱验证码" v-model="updateForm.validateCode">
-                            <template #prefix>
-                                <el-icon>
-                                    <Bell />
+            <el-form :model="form" ref="formRef" :rules="rules">
+                <el-form-item prop="avatar">
+                    <div class="w-full flex justify-center">
+                        <el-upload ref="upload" :show-file-list="false" :auto-upload="false" :on-change="handleChange">
+                            <div class="flex justify-center items-center"
+                                style="width:120px;height:120px; border-radius: 6px;overflow:hidden;  border: 1px dashed #ddd;">
+                                <img v-if="imageUrl" :src="imageUrl" class="w-full h-full"
+                                    style="border-radius: 6px;width:100px;height:100px;" />
+                                <el-icon v-else class="avatar-uploader-icon">
+                                    <Plus />
                                 </el-icon>
-                            </template>
-                        </el-input>
-                        <el-button @click="sendCode">
-                            <span style="font-size: 12px; font-weight: 400"> 发送验证码 </span>
-                        </el-button>
+                            </div>
+                        </el-upload>
                     </div>
                 </el-form-item>
+
                 <el-form-item>
-                    <el-button style="width: 100%" type="primary" @click="submit(form)">
+                    <el-button style="width: 100%" type="primary" @click="submit(form)" :loading="loading">
                         修 改
                     </el-button>
                 </el-form-item>
             </el-form>
-            <el-divider>
-                <div class="signup-link" @click="$router.push({ name: 'Login' })">
-                    已有账号？去登录
-                </div>
-            </el-divider>
         </div>
     </div>
 </template>
   
 <script setup>
-import { reactive, toRaw, ref } from "vue";
+import { reactive, toRaw, ref, onBeforeMount, shallowRef } from "vue";
 import { sendEmail, register } from "@/api/index";
 import { ResponseStatusCodeEnum } from "@common/statusCode.js";
 import { message } from "ant-design-vue";
@@ -76,18 +45,39 @@ import {
     Bell,
 } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
+import { ElMessage } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue'
+import { useLoginStatusStore } from "@/store/stores/login";
+import { ApiFilled } from "@ant-design/icons-vue";
+import Api from '@/api'
 
-const router = useRouter();
+const router = useRouter()
 
-const updateForm = reactive({
-    account: "",
-    password: "",
-    email: "",
-    repassword: "",
-    validateCode: "",
-});
+const loginStore = useLoginStatusStore()
 
-const form = ref();
+onBeforeMount(() => {
+    if (!loginStore.isLogin) {
+        router.replace({
+            name: 'Home'
+        })
+    }
+})
+
+const imageUrl = ref('')
+
+const upload = ref()
+
+
+
+// 当前选择的头像文件
+const avatarFile = shallowRef()
+const handleChange = (file) => {
+    avatarFile.value = file.raw
+    imageUrl.value = URL.createObjectURL(file.raw)
+}
+
+
+const form = ref({})
 
 const rules = reactive({
     account: [
@@ -121,7 +111,7 @@ const rules = reactive({
                     return false;
                 } else {
                     form.message = "两次密码输入不一致";
-                    return val === updateForm.password;
+                    return val === form.password;
                 }
             },
             trigger: ["blur"],
@@ -134,32 +124,33 @@ const rules = reactive({
     },
 });
 
-async function sendCode() {
-    form.value.validateField("email", (v) => {
-        if (!v) {
-            return;
-        }
-        // 发送验证码
-        sendEmail({ email: updateForm.email });
-    });
-}
 
+
+const formRef = ref()
+
+const loading = ref(false)
 async function submit() {
-    const validateRes = await form.value.validate(() => { });
+    const validateRes = await formRef.value.validate(() => { });
     if (!validateRes) {
         return;
     }
 
-    var formData = new FormData();
+    loading.value = true
+    // 选择了新头像
+    if (avatarFile.value) {
+        let { url } = await Api.uploadToCOS({ file: avatarFile.value })
+        form.value.avatar = url
+    }
 
-    formData.append("account", updateForm.account);
-    formData.append("email", updateForm.email);
-    formData.append("password", updateForm.password);
-    formData.append("validateCode", updateForm.validateCode);
+    try {
+        await Api.updateUserInfo({
+            ...form.value
+        })
+        message.success('信息更新成功')
 
-    await register(formData);
-    message.success("注册成功！");
-    router.replace({ name: "Login" });
+    } finally {
+        loading.value = false
+    }
 }
 </script>
 <style>

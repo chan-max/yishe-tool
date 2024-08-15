@@ -31,7 +31,7 @@ export const getModelComment = (router, sequelize, app, redis) => {
     
     data.list.forEach((item) => {
       item.t_user.setDataValue(
-        "preview_avatar",
+        "avatar",
         ctx.relativePathToPreviewPath(item.t_user.avatar)
       );
     });

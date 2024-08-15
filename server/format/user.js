@@ -3,7 +3,7 @@
 // 处理用户信息
 export function formatUserInfo(ctx, userInfo) {
     userInfo.setDataValue(
-        "preview_avatar",
+        "avatar",
         ctx.relativePathToPreviewPath(userInfo.avatar)
     );
 

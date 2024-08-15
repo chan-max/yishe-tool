@@ -34,9 +34,9 @@
           </ion-tab-button>
           <ion-tab-button tab="tab5" href="/home/user">
             <avatar
-              v-if="loginStore.isLogin && loginStore.userInfo.preview_avatar"
+              v-if="loginStore.isLogin && loginStore.userInfo.avatar"
               class="avatar"
-              :src="loginStore.userInfo?.preview_avatar"
+              :src="loginStore.userInfo?.avatar"
               style="border: 1px solid rgba(105, 0, 255, 1)"
             >
             </avatar>

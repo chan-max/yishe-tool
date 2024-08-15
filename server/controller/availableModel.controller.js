@@ -70,7 +70,7 @@ export const availableModelController = ({ router, app, sequelize, redis, socket
 
       // 用户头像
       item.t_user?.setDataValue(
-        "preview_avatar",
+        "avatar",
         ctx.relativePathToPreviewPath(item.t_user.avatar)
       );
     });
@@ -157,7 +157,7 @@ export const availableModelController = ({ router, app, sequelize, redis, socket
 
       // 用户头像
       item.t_user?.setDataValue(
-        "preview_avatar",
+        "avatar",
         ctx.relativePathToPreviewPath(item.t_user.avatar)
       );
     });

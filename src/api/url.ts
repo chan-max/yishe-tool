@@ -62,7 +62,7 @@ export enum Url {
     GET_USER_LIST = '/getUserList',
 
     // 更新用户信息
-    UPDATE_USER_INFO = '/updateUserInfo',
+    UPDATE_USER_INFO = '/api/user/update',
 
     CREATE_TEXT_STICKER = '/uploadTextSticker',
 

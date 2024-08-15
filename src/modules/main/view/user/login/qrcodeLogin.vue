@@ -22,9 +22,9 @@ import { loginType, LoginType } from "./index.tsx";
 import { QRCode } from "easyqrcodejs";
 import { UAParser } from "ua-parser-js";
 import { requestQRCodeLoginInfo } from "@/api";
-import crypto from "crypto";
 
 const qrcode = ref();
+
 
 onMounted(async () => {
   const parser = new UAParser();
@@ -32,6 +32,7 @@ onMounted(async () => {
   const info = {
     os: result.os.name,
     browser: result.browser.name,
+
     time: new Date(),
     location: "",
   };

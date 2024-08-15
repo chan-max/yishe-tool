@@ -39,7 +39,7 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item prop="email">
+        <!-- <el-form-item prop="email">
           <el-input placeholder="请输入邮箱" v-model="signupForm.email">
             <template #prefix>
               <el-icon>
@@ -61,9 +61,9 @@
               <span style="font-size: 12px; font-weight: 400"> 发送验证码 </span>
             </el-button>
           </div>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
-          <el-button style="width: 100%" type="primary" @click="submit(form)">
+          <el-button style="width: 100%" type="primary" @click="submit(form)" :loading="loading">
             注 册
           </el-button>
         </el-form-item>
@@ -92,6 +92,7 @@ import {
   Bell,
 } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
+import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
 
 const router = useRouter();
 
@@ -160,22 +161,30 @@ async function sendCode() {
   });
 }
 
+const loading = ref(false)
 async function submit() {
   const validateRes = await form.value.validate(() => { });
   if (!validateRes) {
     return;
   }
 
-  var formData = new FormData();
+  try {
+    loading.value = true
+    var formData = new FormData();
 
-  formData.append("account", signupForm.account);
-  formData.append("email", signupForm.email);
-  formData.append("password", signupForm.password);
-  formData.append("validateCode", signupForm.validateCode);
+    formData.append("account", signupForm.account);
+    formData.append("email", signupForm.email);
+    formData.append("password", signupForm.password);
+    formData.append("validateCode", signupForm.validateCode);
 
-  await register(formData);
-  message.success("注册成功！");
-  router.replace({ name: "Login" });
+    await register(formData)
+
+    message.success("注册成功！");
+    router.replace({ name: "Home" });
+    openLoginDialog()
+  } catch (e) {
+    loading.value = false
+  }
 }
 </script>
 <style>

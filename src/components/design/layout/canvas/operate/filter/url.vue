@@ -35,7 +35,7 @@
                                                     <div class="flex flex-col justify-center filter-item"
                                                         :class="{ checked: activeFilter?.filterName == item.filterName }"
                                                         @click="useCurrentFiter(item)">
-                                                        <div class="preview-box">
+                                                        <div class="preview-box flex items-center justify-center">
                                                             <desimage :src="SvgFilterResource.NORMAL_PREVIEW_IMAGE_URL"
                                                                 :style="{ filter: `url( #${item.filterName})` }"></desimage>
                                                         </div>
@@ -189,6 +189,7 @@
                         </el-col>
                     </el-row>
                 </div>
+                
             </el-popover>
         </template>
     </operate-form-item>
@@ -216,7 +217,7 @@ const activeFilter = defineModel({
     default: null
 });
 
-const activeCategory = useLocalStorage('_1s_svgFilterActiveCategory',SvgFilterCategory.Normal);
+const activeCategory = useLocalStorage('_1s_svgFilterActiveCategory', SvgFilterCategory.Normal);
 
 const props = defineProps({
     tooltip: {
@@ -253,10 +254,10 @@ function removeAll() {
 }
 
 
-function useCurrentFiter(f: SvgFilterCustomEffectType) {
+function useCurrentFiter(effect: SvgFilterCustomEffectType) {
     activeFilter.value = {
-        filterName: f.filterName,
-        label: f.label
+        filterName: effect.filterName,
+        label: effect.label
     }
 }
 
@@ -295,6 +296,8 @@ function useCurrentFiter(f: SvgFilterCustomEffectType) {
 
     .preview-box {
         overflow: hidden;
+        transition: .2s;
+        border-radius: .4rem;
     }
 
     &.checked {

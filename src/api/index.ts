@@ -1,5 +1,4 @@
 
-
 import { apiInstance, source } from "./apiInstance";
 import { deleteCOSFile, uploadToCOS } from "./cos";
 import { Url } from "./url";
@@ -23,11 +22,7 @@ export async function fetchFile(url, filename = String(new Date().getTime())) {
 }
 
 // 注册 ，账号密码手机号
-export const register = (data: any) =>
-  new Promise(async (resolve, reject) => {
-    let res = await apiInstance.post(Url.SINGUP, data);
-    resolve(res.data);
-  });
+export const register = (data: any) => apiInstance.post(Url.SINGUP, data);
 
 // 登录
 export const login = (data) =>
@@ -40,11 +35,25 @@ export const login = (data) =>
     }
   });
 
+//  更新用户信息
+
+const updateUserInfo = (data) => apiInstance.post(Url.UPDATE_USER_INFO, data)
+
+const getUserInfo = async (data) => {
+  const res = await apiInstance.post('/api/user/getUserInfo', data)
+
+  return res.data.data
+}
+
+
+
 // 根据图片id来查询图片
 export const logout = () => new Promise(async (resolve, reject) => {
   const data = await apiInstance.post('/api/user/logout')
   resolve(null)
 })
+
+
 
 
 // 获取首页展示栏模型
@@ -129,9 +138,6 @@ export const getUserList = (params?: any) =>
     resolve(res.data.data);
   });
 
-
-// 更新用户信息
-export const updateUserInfo = (params) => apiInstance.post(Url.UPDATE_USER_INFO, params)
 
 
 // 上传文字贴纸
@@ -444,6 +450,13 @@ class Api {
   getProductModelById = getProductModelById
 
   getStickerByIdApi = getStickerByIdApi
+
+
+  updateUserInfo = updateUserInfo
+
+  getUserInfo = getUserInfo
+
+  getStickerListApi = getStickerListApi
 }
 
 export default new Api()

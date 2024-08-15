@@ -54,7 +54,7 @@ const router = useIonRouter();
 const loginStore = useLoginStatusStore();
 
 const avatar = computed(() => {
-  return loginStore.userInfo?.preview_avatar || "/mobileDefaultAvatar.svg";
+  return loginStore.userInfo?.avatar || "/mobileDefaultAvatar.svg";
 });
 </script>
 

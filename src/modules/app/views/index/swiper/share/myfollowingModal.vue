@@ -6,7 +6,7 @@
         <ion-content>
             <div style="padding: 16px;">
                 <div v-for="item in list" class="item">
-                    <cr-avatar style="width: 32px;height:32px;" :src="item.user_info.preview_avatar"></cr-avatar>
+                    <cr-avatar style="width: 32px;height:32px;" :src="item.user_info.avatar"></cr-avatar>
                     <div style="font-size: 18px;"> {{ item.user_info.name }} </div>
                     <div style="flex:1;"></div>
                     <div slot="end" @click="share(item)"> 转发 </div>

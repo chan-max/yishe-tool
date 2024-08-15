@@ -69,6 +69,12 @@ export const SvgFilterCategoryOptions = [
         children: [
             {
                 category: SvgFilterCategory.Normal,
+                label: '测试',
+                filterName: 'test',
+                render: () => { }
+            },
+            {
+                category: SvgFilterCategory.Normal,
                 label: '默认 (原始图)',
                 filterName: SvgFilteCustomEffect.Default,
                 render: createDefaultFilter

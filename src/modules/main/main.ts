@@ -34,7 +34,7 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'element-plus/dist/index.css'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { syncUserInfoToLocal } from '@/store/stores/login.ts'
+
 import App from './App.vue'
 import 'element-plus/dist/index.css'
 import '@/style/cover-elementplus.scss'
@@ -60,8 +60,6 @@ const pinia = createPinia()
 
 app.use(pinia)
 
-syncUserInfoToLocal()
-
 app.use(VueVirtualScroller)
 
 app.use(Antd)
@@ -76,17 +74,21 @@ app.config.globalProperties.__DEV__ = import.meta.env.DEV
 
 
 import { useConfigStore } from '@/store/stores/config.ts';
-
+import { useLoginStatusStore } from '@/store/stores/login';
 
 async function setup() {
+
+    const loginStore = useLoginStatusStore()
+    const configStore = useConfigStore()
+
     Api.getBasicConfig().then((res) => {
-        const configStore = useConfigStore()
         configStore.$patch(res)
+        app.mount('#app')
     }).catch(() => {
         console.warn('basic config load error')
-    }).finally(() => {
-        app.mount('#app')
     })
+
+    loginStore.getUserInfo()
 }
 
 

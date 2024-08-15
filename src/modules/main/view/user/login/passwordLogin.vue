@@ -43,18 +43,12 @@
       </el-form-item>
     </el-form>
     <div style="display: flex; justify-content: space-between">
-      <!-- <div class="login-type">
-        仅此次登陆
-        <input type="checkbox" v-model="isOnce" />
-      </div> -->
-      <div></div>
-      <div class="login-link" @click="">忘记密码？</div>
-    </div>
-    <el-divider>
       <div class="login-link" @click="signup">
         没有账号？去注册
       </div>
-    </el-divider>
+      <div></div>
+      <div class="login-link" @click="">忘记密码？</div>
+    </div>
   </div>
 </template>
 

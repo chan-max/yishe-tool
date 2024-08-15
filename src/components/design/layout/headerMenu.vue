@@ -49,7 +49,7 @@
           <div style="text-align: right;height:24px;line-height: 24px;">{{ displayDate }}</div>
         </el-col>
         <el-col :span="24">
-          <el-button size="small" class="w-full" plain>
+          <el-button size="small" class="w-full" type="primary" plain>
             另存到工作台
           </el-button>
         </el-col>

@@ -281,8 +281,11 @@ export class ModelController extends Base {
         }
         this.initCanvasContainer(target);
         this.initBasicLight()
-        this.setBgColor('#eee')
 
+
+
+        // 先不设置 bg ，需要保留无背景
+        this.setBgColor('#eee',0)
 
         if (currentOperatingBaseModelInfo.value?.url) {
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);

@@ -138,7 +138,7 @@ export const loginHook = (router, sequelize) => router.post('/login', async (ctx
   }
 
 
-  user.setDataValue('preview_avatar', ctx.relativePathToPreviewPath(user.avatar))
+  user.setDataValue('avatar', ctx.relativePathToPreviewPath(user.avatar))
 
 
   // 登录成功，签发token

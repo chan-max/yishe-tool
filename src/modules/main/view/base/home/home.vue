@@ -12,11 +12,11 @@
   <div class="home">
     <banner></banner>
 
-    <product></product>
+    <!-- <product></product> -->
 
-    <carousel style="padding: 36px 6vw"></carousel>
+    <!-- <carousel style="padding: 36px 6vw"></carousel>
 
-    <resource style="width: 92%"></resource>
+    <resource style="width: 92%"></resource> -->
 
     <!-- <operate></operate> -->
 
@@ -58,6 +58,7 @@ onMounted(async () => {
   align-items: center;
   overflow-y: auto;
   overflow-x: hidden;
+
   * {
     flex-shrink: 0;
   }

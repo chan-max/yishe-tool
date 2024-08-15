@@ -54,7 +54,7 @@ const postGetMyCommunicationList = ({ router, app, sequelize, redis }) => router
         return {
             title: isInitiatedByMe ? item.receiver_info.name : item.initiator_info.name,
             label: '最新的消息', // 查询最新消息
-            avatar: isInitiatedByMe ? item.receiver_info.getDataValue('preview_avatar') : item.initiator_info.getDataValue('preview_avatar'),
+            avatar: isInitiatedByMe ? item.receiver_info.getDataValue('avatar') : item.initiator_info.getDataValue('avatar'),
             communicationId: item.id
         }
     })

@@ -35,7 +35,7 @@
     <div class="menu-top">
       <cr-avatar
         style="width: 36px; height: 36px; border: 1.2px solid #fff"
-        :src="availableModelInfo.t_user.preview_avatar"
+        :src="availableModelInfo.t_user.avatar"
         class="avatar-border"
       >
       </cr-avatar>

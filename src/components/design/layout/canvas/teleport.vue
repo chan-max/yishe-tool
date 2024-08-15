@@ -29,6 +29,8 @@ import { useLoadingOptions } from "@/components/loading/index.tsx";
 import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled, FullScreen } from '@element-plus/icons-vue'
 import { showCanvasLayout } from '@/components/design/store.ts';
 import panzoom from 'panzoom'
+import Panzoom from '@panzoom/panzoom'
+
 
 const panzoomRef = ref()
 
@@ -42,12 +44,22 @@ const loading = computed(() => {
 
 let canvass = canvasController.getRender();
 
-watch(panzoomRef, () => {
-    if (panzoomRef.value) {
-        panzoom(panzoomRef.value, {
-            smoothScroll: false
-        })
+onMounted(() => {
+    if (!panzoomRef.value) {
+        return
     }
+    panzoom(panzoomRef.value, {
+        smoothScroll: false,
+        maxZoom:2,
+        minZoom:.5
+    })
+
+    // // 当缩放尺寸过小，会导致子元素不显示
+    // const panzoom = Panzoom(panzoomRef.value, {
+    //     maxScale: 5
+    // })
+    // panzoomRef.value.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
+
 })
 
 </script>

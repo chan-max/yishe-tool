@@ -155,16 +155,15 @@ const menuOptions = ref([
   align-items: center;
 }
 .menu-item {
-  font-size: 12px;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  column-gap: 5px;
+  column-gap: .5rem;
   text-wrap: nowrap;
   cursor: pointer;
   color: #666;
   font-weight: 400;
-  border-bottom: 2px solid transparent;
   border-bottom: 1px solid transparent;
   transition: all 0.2s;
 }

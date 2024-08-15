@@ -23,7 +23,7 @@ import { useLoginStatusStore } from "@/store/stores/login.ts";
 const loginStatusStore = useLoginStatusStore();
 
 const avatar = computed(() => {
-  return loginStatusStore.userInfo?.preview_avatar || "/defaultAvatar/avatar3.png";
+  return loginStatusStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
 });
 
 </script>

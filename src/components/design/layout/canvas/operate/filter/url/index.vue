@@ -226,8 +226,10 @@ import colorPicker from "@/components/design/components/colorPicker.vue";
 import { StopOutlined } from '@ant-design/icons-vue';
 import { Switch } from '@element-plus/icons-vue'
 import desimage from "@/components/design/components/image.vue";
-import { SvgFilterCategoryOptions, SvgFilterCustomEffectType, SvgFilterCategory } from "@/components/design/layout/canvas/children/svgFilter/builtIn/index";
+import { SvgFilterCategoryOptions, SvgFilterCustomEffectType, } from "@/components/design/layout/canvas/children/svgFilter/builtIn/index";
 import { useLocalStorage } from '@vueuse/core'
+import { SvgFilterCategory } from '@/types/filter.ts'
+
 
 const model = defineModel({
     default: null
@@ -367,7 +369,7 @@ function useCurrentFiter(effect: SvgFilterCustomEffectType) {
 
     .preview-box {
         overflow: hidden;
-        transition: .2s;
+        transition: .1s;
         border-radius: .4rem;
         cursor: pointer;
     }

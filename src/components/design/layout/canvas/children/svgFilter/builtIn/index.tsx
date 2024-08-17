@@ -1,46 +1,9 @@
+import { SvgFilterCategory } from '@/types/filter.ts'
+
 
 /* 
     自定义的滤镜效果
 */
-
-
-
-/* 滤镜分类 */
-export enum SvgFilterCategory {
-
-    /** 基本类滤镜 */
-    Normal = 'normal',
-
-    /* 纯色滤镜 */
-    PureColor = 'pure-color',
-
-    /** 调整类滤镜 */
-    Adjustment = 'adjustment',
-
-    /** 颜色效果类滤镜 */
-    ColorEffect = 'colorEffect',
-
-    /** 锐化和模糊类滤镜 */
-    SharpenBlur = 'sharpenBlur',
-
-    /** 扭曲和变形类滤镜 */
-    Distortion = 'distortion',
-
-    /** 纹理和艺术效果类滤镜 */
-    TextureArt = 'textureArt',
-
-    /** 边缘和轮廓类滤镜 */
-    EdgeDetection = 'edgeDetection',
-
-    /** 噪点和纹理类滤镜 */
-    NoiseTexture = 'noiseTexture',
-
-    /** 光照效果类滤镜 */
-    LightingEffect = 'lightingEffect',
-
-    /** 特殊效果类滤镜 */
-    SpecialEffect = 'specialEffect'
-}
 
 export type SvgFilterCustomEffectType = {
     category: SvgFilterCategory,
@@ -64,7 +27,9 @@ import { createMosaicFilter } from './mosaic'
 import { createPureColorMatrixFilterRender, BlackAndWhiteMatrix, vintage } from './pureColor'
 import {
     twisted,
-    line
+    line,
+    maorongrong,
+    huichenkeli
 } from './strange.tsx'
 import { neonLightsText } from './text.tsx'
 
@@ -118,6 +83,8 @@ export const SvgFilterCategoryOptions = [
         label: '特殊效果',
         value: SvgFilterCategory.SpecialEffect,
         children: [
+            maorongrong,
+            huichenkeli,
             {
                 category: SvgFilterCategory.SpecialEffect,
                 filterLabel: '扭曲',

@@ -1,6 +1,5 @@
 
-
-
+import { SvgFilterCategory } from '@/types/filter.ts'
 /**
  * @description 简易的扭曲效果
 */
@@ -49,4 +48,40 @@ export const line = ({
     一层毛茸茸的效果
 */
 export const maorongrong = {
+    category: SvgFilterCategory.SpecialEffect,
+    filterLabel: '毛茸茸',
+    filterId: 'maorongrong',
+    displayRender: null,
+    render: ({
+        filterId
+    }) => {
+        return <filter id={filterId} x="0%" y="0%" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.04" result="fluffyNoise" numOctaves="5" />
+            <feColorMatrix in="fluffyNoise" type="matrix" values=".33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 1 0" />
+            <feComposite operator="in" in2="SourceGraphic" result="monoFluffyNoise" />
+            <feBlend in="SourceGraphic" in2="monoFluffyNoise" mode="screen" />
+        </filter>
+    }
+}
+
+
+
+/*
+    灰尘颗粒
+*/
+export const huichenkeli = {
+    category: SvgFilterCategory.SpecialEffect,
+    filterLabel: '灰尘颗粒',
+    filterId: 'huichenkeli',
+    displayRender: null,
+    render: ({
+        filterId
+    }) => {
+        return <filter id={filterId}>
+            <feTurbulence baseFrequency="0.60,0.90" result="colorNoise" />
+            <feColorMatrix in="colorNoise" type="matrix" values=".33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 1 0" />
+            <feComposite operator="in" in2="SourceGraphic" result="monoNoise" />
+            <feBlend in="SourceGraphic" in2="monoNoise" mode="multiply" />
+        </filter>
+    }
 }

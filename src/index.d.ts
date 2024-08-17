@@ -10,5 +10,5 @@ interface Window {
 }
 
 declare enum Typess{
-    a
+    a = 666
 }

@@ -8,3 +8,7 @@ interface Window {
     mc: any;
     utils: any
 }
+
+declare enum Typess{
+    a
+}

@@ -9,8 +9,6 @@ import { computed } from 'vue'
 import canvasTeleport from '@/components/design/layout/canvas/teleport.vue'
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 
-
-
 </script>
 
 <style scoped>

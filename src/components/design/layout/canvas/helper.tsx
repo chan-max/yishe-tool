@@ -512,6 +512,11 @@ export function parseTextShadowOptionsToCSS(textShadowOption) {
 */
 
 export function createFilterFromOptions(options) {
+
+    let url = (options.filterUrl.isCompositeFilter ?
+        `url(#${options.filterUrl?.filterChildren.map((item) => item.filterId).join('-')})` : `url(#${options.filterUrl?.filterId})`)
+
+
     return [
         `blur(${formatToNativeSizeString(options.filterBlur)})`,
         `brightness(${options.filterBrightness}%)`,
@@ -522,7 +527,7 @@ export function createFilterFromOptions(options) {
         `invert(${options.filterInvert}%)`,
         `opacity(${options.filterOpacity}%)`,
         `saturate(${options.filterSaturate}%)`,
-        options.filterUrl && `url(#${options.filterUrl?.filterName})`
+        url
     ].filter(Boolean).join(' ')
 }
 

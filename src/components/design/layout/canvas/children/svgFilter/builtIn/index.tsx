@@ -1,8 +1,12 @@
 
-/*
-    内置svg 滤镜分组
+/* 
+    自定义的滤镜效果
 */
-export const enum SvgFilterCategory {
+
+
+
+/* 滤镜分类 */
+export enum SvgFilterCategory {
 
     /** 基本类滤镜 */
     Normal = 'normal',
@@ -38,15 +42,12 @@ export const enum SvgFilterCategory {
     SpecialEffect = 'specialEffect'
 }
 
-/* 
-    自定义的滤镜效果
-*/
-
 export type SvgFilterCustomEffectType = {
     category: SvgFilterCategory,
-    label: string,
-    filterName: SvgFilteCustomEffect,
-    render: Function
+    filterLabel: string,
+    filterId: SvgFilteCustomEffect,
+    render: Function,
+    displayRender?: Function,
 }
 
 
@@ -56,10 +57,16 @@ export enum SvgFilteCustomEffect {
     Mosaic = 'mosaic' // 马赛克笑过
 }
 
+
+
 import { createDefaultFilter } from './default'
 import { createMosaicFilter } from './mosaic'
 import { createPureColorMatrixFilterRender, BlackAndWhiteMatrix, vintage } from './pureColor'
-
+import {
+    twisted,
+    line
+} from './strange.tsx'
+import { neonLightsText } from './text.tsx'
 
 
 export const SvgFilterCategoryOptions = [
@@ -69,20 +76,22 @@ export const SvgFilterCategoryOptions = [
         children: [
             {
                 category: SvgFilterCategory.Normal,
-                label: '测试',
-                filterName: 'test',
-                render: () => { }
+                filterLabel: '测试',
+                filterId: 'test',
+                render: () => {
+                    return
+                }
             },
             {
                 category: SvgFilterCategory.Normal,
-                label: '默认 (原始图)',
-                filterName: SvgFilteCustomEffect.Default,
+                filterLabel: '默认 (原始图)',
+                filterId: SvgFilteCustomEffect.Default,
                 render: createDefaultFilter
             },
             {
                 category: SvgFilterCategory.Normal,
-                label: '马赛克效果',
-                filterName: SvgFilteCustomEffect.Mosaic,
+                filterLabel: '马赛克效果',
+                filterId: SvgFilteCustomEffect.Mosaic,
                 render: createMosaicFilter
             },
         ]
@@ -93,54 +102,51 @@ export const SvgFilterCategoryOptions = [
         children: [
             {
                 category: SvgFilterCategory.PureColor,
-                label: '黑白',
-                filterName: 'blackWhite',
+                filterLabel: '黑白',
+                filterId: 'blackWhite',
                 render: createPureColorMatrixFilterRender('blackWhite', BlackAndWhiteMatrix)
             },
             {
                 category: SvgFilterCategory.PureColor,
-                label: '复古',
-                filterName: 'vintage',
+                filterLabel: '复古',
+                filterId: 'vintage',
                 render: vintage
             },
         ]
     },
     {
-        label: '调整类滤镜',
-        value: SvgFilterCategory.Adjustment
+        label: '特殊效果',
+        value: SvgFilterCategory.SpecialEffect,
+        children: [
+            {
+                category: SvgFilterCategory.SpecialEffect,
+                filterLabel: '扭曲',
+                filterId: 'twisted',
+                render: twisted
+            },
+            {
+                category: SvgFilterCategory.SpecialEffect,
+                filterLabel: '彩色网格线',
+                filterId: 'line',
+                render: line
+            },
+        ]
     },
     {
-        label: '颜色效果类滤镜',
-        value: SvgFilterCategory.ColorEffect
+        label: '文字使用',
+        value: SvgFilterCategory.Text,
+        children: [
+            {
+                category: SvgFilterCategory.Text,
+                filterLabel: '霓虹灯边缘',
+                filterId: 'neonLightsText',
+                render: neonLightsText,
+                displayRender: () => {
+                    return <span style="font-size:1.5rem;"> 霓虹灯边缘 </span>
+                }
+            },
+        ]
     },
-    {
-        label: '锐化和模糊类滤镜',
-        value: SvgFilterCategory.SharpenBlur
-    },
-    {
-        label: '扭曲和变形类滤镜',
-        value: SvgFilterCategory.Distortion
-    },
-    {
-        label: '纹理和艺术效果类滤镜',
-        value: SvgFilterCategory.TextureArt
-    },
-    {
-        label: '边缘和轮廓类滤镜',
-        value: SvgFilterCategory.EdgeDetection
-    },
-    {
-        label: '噪点和纹理类滤镜',
-        value: SvgFilterCategory.NoiseTexture
-    },
-    {
-        label: '光照效果类滤镜',
-        value: SvgFilterCategory.LightingEffect
-    },
-    {
-        label: '特殊效果类滤镜',
-        value: SvgFilterCategory.SpecialEffect
-    }
 ]
 
 

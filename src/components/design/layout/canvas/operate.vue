@@ -18,7 +18,7 @@
               <el-col :span="24">
                 <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
               </el-col>
-                <!-- <operateItemSwitch label="显示真实大小" v-model="canvasStickerOptions.showCanvasRealSize"></operateItemSwitch> -->
+              <!-- <operateItemSwitch label="显示真实大小" v-model="canvasStickerOptions.showCanvasRealSize"></operateItemSwitch> -->
               <el-col :span="24">
                 <operateItemColor label="辅助背景颜色" tooltip="用于辅助画布中的元素，不会对实际画布产生影响" type="pure"
                   v-model="canvasStickerOptions.supportBackgroundColor"></operateItemColor>
@@ -402,11 +402,11 @@ function absoluteUnitChange(unit) {
   updateCanvasStickerOptionsUnit(unit)
 }
 
-const canvasCollapseActives = ref(["1", "2", "3", "4"])
-const textCollapseActives = ref(["1", "2", "3", "4"]);
-const qrcodeCollapseActives = ref(["1", "2", "3", "4"]);
-const imageCollapseActives = ref(["1", "2", "3", "4"]);
-const rawCanvasCollapseActives = ref(["1", "2", "3", "4"]);
+const canvasCollapseActives = ref(["1", "2", "3", "4", '5'])
+const textCollapseActives = ref(["1", "2", "3", "4", '5']);
+const qrcodeCollapseActives = ref(["1", "2", "3", "4", '5']);
+const imageCollapseActives = ref(["1", "2", "3", "4", '5']);
+const rawCanvasCollapseActives = ref(["1", "2", "3", "4", '5']);
 
 function remove(index) {
   removeCavnasChild(index);

@@ -88,7 +88,9 @@ async function setup() {
         console.warn('basic config load error')
     })
 
-    loginStore.getUserInfo()
+    if (loginStore.isLogin) {
+        loginStore.getUserInfo()
+    }
 }
 
 

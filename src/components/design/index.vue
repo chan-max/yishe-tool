@@ -20,8 +20,9 @@ import { usePreventScreenResize } from "./composition/preventScreenResize";
 import { useRoute } from "vue-router";
 import { onBeforeMount, onMounted,ref } from "vue";
 import { getModelById } from "@/api";
+import {useStats} from '@/common/use/stats'
 
-
+// useStats()
 
 
 // 阻止缩放屏幕影响使用体验

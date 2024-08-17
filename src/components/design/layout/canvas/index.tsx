@@ -191,9 +191,6 @@ export function updateRenderingCanvas() {
     currentCanvasControllerInstance.value?.updateRenderingCanvas()
 }
 
-
-
-
 function createCanvasChild(options) {
     if (!canvasChildRenderMap[options.type]) {
         return
@@ -207,9 +204,7 @@ export const renderingLoading = ref(false)
 
 export class CanvasController {
 
-
     target = null
-
 
     constructor(params) {
         currentCanvasControllerInstance.value = this
@@ -267,10 +262,6 @@ export class CanvasController {
         return this.canvasEl.toDataURL('image/png')
     }
 
-
-
-
-
     drawImage(img) {
         if (!this.ctx) {
             return
@@ -281,6 +272,7 @@ export class CanvasController {
 
     // 需要组件渲染后再更新
     async updateRenderingCanvas() {
+
         this.loading.value = true
         renderingLoading.value = true
         clearTimeout(this.updateWorker);
@@ -311,6 +303,8 @@ export class CanvasController {
     updateWorker = null; // 更新任务
     updateWorkDelay = 999; // 更新延迟
 
+
+
     async updateRenderingCanvasJob() {
         if (!this.el) {
             return
@@ -318,7 +312,6 @@ export class CanvasController {
 
         async function update() {
 
-            console.log('update')
             try {
                 this.base64 = await toPng(this.el)
             } catch (e) {

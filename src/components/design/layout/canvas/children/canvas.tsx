@@ -2,7 +2,7 @@ import { defineComponent, onUpdated, ref, watch } from 'vue'
 import { canvasStickerOptions, currentCanvasControllerInstance, showMainCanvas } from '@/components/design/layout/canvas'
 import { createFilterFromOptions, formatSizeOptionToPixelValue, } from '../helper'
 import { createFilterDefaultOptions } from './defaultOptions.tsx'
-import { SvgFilter } from './svgFilter/index.tsx'
+import { SvgFilterComponent, SvgFilterStyleComponent } from './svgFilter/index.tsx'
 import { updateRenderingCanvas } from '../index.tsx'
 
 /*
@@ -105,10 +105,10 @@ export const Canvas = defineComponent({
                 {/* 转换的元素 */}
                 <div id={currentCanvasControllerInstance.value?.rawId} style={style} ref={rawElRef}>
                     {/* svg过滤器 */}
-                    <SvgFilter></SvgFilter>
+                    <SvgFilterComponent></SvgFilterComponent>
+                    <SvgFilterStyleComponent></SvgFilterStyleComponent>
                     {ctx.slots.default()}
                 </div>
-
 
                 {/* 真实的画布 */}
                 <canvas id={currentCanvasControllerInstance.value?.canvasId} style={canvasStyle} width={pxWidth} height={pxHeight}></canvas>

@@ -6,8 +6,8 @@ export const createBasicDefaultOptions = () => {
     return {
 
         // 用于统计当前元素的宽高，供其他功能使用
-        targetComputedWidth:null,
-        targetComputedHeight:null,
+        targetComputedWidth: null,
+        targetComputedHeight: null,
     }
 }
 
@@ -25,7 +25,11 @@ export const createFilterDefaultOptions = (blurUnit = 'px') => {
         filterOpacity: 100, // 透明度
         filterSaturate: 100, // 饱和度
         filterSepia: 0, // 褐色
-        filterUrl: null
+        filterUrl: {
+            isCompositeFilter: false,         ///是否为复合滤镜
+            filterId: '', // 使用的滤镜名称
+            filterChildren: [], // 复合滤镜时使用的滤镜名称 ， 对于复合滤镜 采用 字符串拼接作为复合滤镜名称
+        }
     }
 }
 

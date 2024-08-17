@@ -63,9 +63,20 @@
                 </template>
             </el-dropdown>
 
-            <el-button link plain>
-                更多
-            </el-button>
+
+
+            <el-dropdown>
+                <el-button link plain>
+                    更多
+                </el-button>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item @click="removeAllChildren"> 移除所有子元素 </el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
+
+
             <div style="flex:1;"></div>
             <addPopover>
                 <el-button type="primary" link>
@@ -227,6 +238,10 @@ async function submit() {
     }
 }
 
+
+function removeAllChildren() {
+    canvasStickerOptions.value.children = [canvasStickerOptions.value.children[0]]
+}
 </script>
 
 <style lang="less" scoped>

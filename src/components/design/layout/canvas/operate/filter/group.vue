@@ -48,7 +48,7 @@ import operateItemFilterOpacity from "@/components/design/layout/canvas/operate/
 import operateItemFilterSaturate from "@/components/design/layout/canvas/operate/filter/saturate.vue";
 import operateItemFilterSepia from "@/components/design/layout/canvas/operate/filter/sepia.vue";
 import operateItemFilterHueRotate from "@/components/design/layout/canvas/operate/filter/hueRotate.vue";
-import operateItemFilterUrl from "@/components/design/layout/canvas/operate/filter/url.vue";
+import operateItemFilterUrl from "@/components/design/layout/canvas/operate/filter/url/index.vue";
 
 const model = defineModel({
     default: {} as any

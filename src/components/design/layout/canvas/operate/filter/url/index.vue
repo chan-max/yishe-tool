@@ -8,10 +8,10 @@
             <el-popover width="auto" trigger="click" :visible="showPopover" popper-class="el-popover-operation">
                 <template #reference>
                     <el-button link size="small" @click="showPopover = !showPopover">
-                        {{ activeFilter ? activeFilter.label : '未使用滤镜' }}
+                        {{ modelLabel }}
                     </el-button>
                 </template>
-                <div style="width: 720px;">
+                <div style="width: 760px;">
                     <template v-if="activeTab == Tab.BuiltIn">
                         <el-row style="row-gap: 1rem">
                             <el-col :span="1">
@@ -30,18 +30,27 @@
                                     <el-tab-pane v-for="category in SvgFilterCategoryOptions" :name="category.value"
                                         :label="category.label">
                                         <el-scrollbar height="360px">
-                                            <el-row :gutter="16" style="row-gap:.6rem;margin:1rem;">
+                                            <el-row style="row-gap:.6rem;margin:1rem;">
                                                 <el-col v-for="item in category.children" :span="4">
-                                                    <div class="flex flex-col justify-center filter-item"
-                                                        :class="{ checked: activeFilter?.filterName == item.filterName }"
+                                                    <div class="flex flex-col justify-center items-center filter-item"
+                                                        :class="{ checked: filterIsChecked(item) }"
                                                         @click="useCurrentFiter(item)">
-                                                        <div class="preview-box flex items-center justify-center">
-                                                            <desimage :src="SvgFilterResource.NORMAL_PREVIEW_IMAGE_URL"
-                                                                :style="{ filter: `url( #${item.filterName})` }"></desimage>
+                                                        <div class="preview-box" style="width:100px;height:100px;">
+                                                            <div class="w-full h-full flex justify-center items-center"
+                                                                :style="{ filter: `url( #${item.filterId})` }">
+                                                                <template v-if="item.displayRender">
+                                                                    <component :is="item.displayRender"></component>
+                                                                </template>
+                                                                <template v-else>
+                                                                    <desimage
+                                                                        :src="SvgFilterResource.NORMAL_PREVIEW_IMAGE_URL">
+                                                                    </desimage>
+                                                                </template>
+                                                            </div>
                                                         </div>
                                                         <div style="text-align: center;" class="text-ellipsis"> {{
-                                                            item.label }}
-                                                        </div>
+                                                            item.filterLabel
+                                                        }}</div>
                                                     </div>
                                                 </el-col>
                                             </el-row>
@@ -160,27 +169,35 @@
                         </el-row>
                     </template>
 
-
                     <el-row style="margin-top:1rem">
                         <el-col :span="24">
-                            <div class="flex toolbar">
-                                <el-button v-if="activeTab == Tab.BuiltIn" :icon="Switch" size="small"
-                                    @click="activeTab = Tab.Custom"> 使用自定义高级滤镜 </el-button>
-                                <el-button v-if="activeTab == Tab.Custom" :icon="Switch" size="small"
-                                    @click="activeTab = Tab.BuiltIn"> 使用内置滤镜 </el-button>
-
-                                <el-dropdown v-if="activeTab == Tab.Custom">
-                                    <el-button style="margin-left: 1rem;" size="small" type="primary" plain> 添加滤镜特效
+                            <div class="flex toolbar items-center" style="column-gap: 1rem;">
+                                <template v-if="activeTab == Tab.BuiltIn">
+                                    <el-button :icon="Switch" size="small" @click="activeTab = Tab.Custom"> 使用自定义高级滤镜
                                     </el-button>
-                                    <template #dropdown>
-                                        <el-dropdown-menu>
-                                            <el-dropdown-item v-for="item in SvgFilterEffects"
-                                                @click="addSvgFilterEffect(item)">
-                                                {{ SvgFilterEffectDisplayLabelMap[item] }}
-                                            </el-dropdown-item>
-                                        </el-dropdown-menu>
-                                    </template>
-                                </el-dropdown>
+
+                                    <el-tooltip content="开始组合滤镜时，可以为同一元素使用多种滤镜" placement="bottom">
+                                        <el-switch inline-prompt v-model="model.isCompositeFilter" active-text="组合滤镜"
+                                            inactive-text="单滤镜" />
+                                    </el-tooltip>
+                                </template>
+                                <template v-if="activeTab == Tab.Custom">
+                                    <el-button :icon="Switch" size="small" @click="activeTab = Tab.BuiltIn"> 使用内置滤镜
+                                    </el-button>
+
+                                    <el-dropdown>
+                                        <el-button style="margin-left: 1rem;" size="small" type="primary" plain> 添加滤镜特效
+                                        </el-button>
+                                        <template #dropdown>
+                                            <el-dropdown-menu>
+                                                <el-dropdown-item v-for="item in SvgFilterEffects"
+                                                    @click="addSvgFilterEffect(item)">
+                                                    {{ SvgFilterEffectDisplayLabelMap[item] }}
+                                                </el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </template>
+                                    </el-dropdown>
+                                </template>
 
                                 <div style="flex:1;"></div>
 
@@ -189,7 +206,6 @@
                         </el-col>
                     </el-row>
                 </div>
-                
             </el-popover>
         </template>
     </operate-form-item>
@@ -205,17 +221,25 @@ import {
     FeMorphologyOperatorOptions,
     SvgFilterResource
 } from "@/components/design/layout/canvas/children/svgFilter/index";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import colorPicker from "@/components/design/components/colorPicker.vue";
 import { StopOutlined } from '@ant-design/icons-vue';
 import { Switch } from '@element-plus/icons-vue'
 import desimage from "@/components/design/components/image.vue";
-import { SvgFilterCategoryOptions, SvgFilterCategory, SvgFilterCustomEffectType, SvgFilteCustomEffect } from "@/components/design/layout/canvas/children/svgFilter/builtIn/index";
+import { SvgFilterCategoryOptions, SvgFilterCustomEffectType, SvgFilterCategory } from "@/components/design/layout/canvas/children/svgFilter/builtIn/index";
 import { useLocalStorage } from '@vueuse/core'
 
-const activeFilter = defineModel({
+const model = defineModel({
     default: null
 });
+
+type FilterModel = {
+    filterId: string,
+    isCompositeFilter: boolean
+}
+
+
+
 
 const activeCategory = useLocalStorage('_1s_svgFilterActiveCategory', SvgFilterCategory.Normal);
 
@@ -224,6 +248,8 @@ const props = defineProps({
         default: "",
     },
 });
+
+
 
 
 
@@ -236,11 +262,16 @@ enum Tab {
 const activeTab = useLocalStorage('_1s_svgFilterModeTab', Tab.BuiltIn)
 
 
+
+
+
 /*
     移除当前滤镜 , 设为默认原始
 */
 function removeCurrentFilter() {
-    activeFilter.value = null
+    model.value.filterId = null
+    model.value.filterLabel = null
+    model.value.filterChildren = []
 }
 
 const showPopover = ref(false);
@@ -253,11 +284,49 @@ function removeAll() {
     canvasStickerOptions.value.svgFilter.children = []
 }
 
+// 标签明显
+const modelLabel = computed(() => {
+
+    if (model.value.isCompositeFilter) {
+        return model.value.filterChildren.length > 0 ? model.value.filterChildren.map((item) => item.filterLabel).join(",") : '未使用滤镜'
+    } else {
+        return model.value.filterLabel || '未使用滤镜'
+    }
+})
+// 当前滤镜是否在使用中
+function filterIsChecked(effect) {
+
+    let filterId = effect.filterId
+
+    if (model.value?.isCompositeFilter) {
+        return model.value.filterChildren.find((item) => item.filterId == filterId)
+    } else {
+        return model.value?.filterId == filterId
+    }
+}
 
 function useCurrentFiter(effect: SvgFilterCustomEffectType) {
-    activeFilter.value = {
-        filterName: effect.filterName,
-        label: effect.label
+    // 使用或取消使用
+
+    let { filterId, filterLabel } = effect
+    let filterChildren = model.value.filterChildren
+
+    if (model.value.isCompositeFilter) {
+
+        let find = filterChildren.find((child) => child.filterId == filterId)
+
+        if (find) {
+            // 移除
+            filterChildren.splice(filterChildren.indexOf(find), 1)
+        } else {
+            filterChildren.push({
+                filterId: filterId,
+                filterLabel: filterLabel
+            })
+        }
+    } else {
+        model.value.filterId = filterId
+        model.value.filterLabel = filterLabel
     }
 }
 
@@ -288,7 +357,9 @@ function useCurrentFiter(effect: SvgFilterCustomEffectType) {
     color: rgba(0, 0, 0, .8);
 }
 
-
+:deep(.el-tabs__header) {
+    margin: 0 15px 15px 15px;
+}
 
 .filter-item {
 
@@ -298,6 +369,7 @@ function useCurrentFiter(effect: SvgFilterCustomEffectType) {
         overflow: hidden;
         transition: .2s;
         border-radius: .4rem;
+        cursor: pointer;
     }
 
     &.checked {

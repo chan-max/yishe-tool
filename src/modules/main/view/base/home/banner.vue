@@ -4,7 +4,7 @@
     <div style="z-index: 2;" class="title">开放式设计 & 交易平台
     </div>
     <div style="z-index: 2;" class="subtitle">开放式设计 & 交易平台</div>
-    <div class="bar" style="z-index: 2;">
+    <div class="bar" style="z-index: 999;">
       <el-button size="large" type="primary" round @click="$router.push({ name: 'Design' })">
         在线工具
       </el-button>
@@ -97,7 +97,7 @@ watch([width, height], useDebounceFn(() => {
   width: 100vw;
   height: 100vh;
   // background-color: #161616;
-  background-color:rgb(245, 245, 247);
+  background-color:#f5f5f7;
   padding-top: 32vh;
   position: relative;
   overflow: hidden;
@@ -106,13 +106,14 @@ watch([width, height], useDebounceFn(() => {
 
 .title {
   font-size: 5em;
-  color: #555;
+  // color: #6e6e73;
+  color:#1E201E;
   font-weight: bold;
 }
 
 .subtitle {
   font-size: 2em;
-  color: #555;
+  color: #6e6e73;
   font-weight: 300;
 }
 

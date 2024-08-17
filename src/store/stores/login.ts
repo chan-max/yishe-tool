@@ -26,6 +26,10 @@ export const useLoginStatusStore = defineStore("login_status", () => {
   const isAdmin = ref(false);
 
 
+  if (token.value) {
+    isLogin.value = true
+  }
+
   async function getUserInfo() {
     const _userInfo = await Api.getUserInfo()
     if (_userInfo) {

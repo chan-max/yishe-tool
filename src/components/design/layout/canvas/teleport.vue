@@ -1,5 +1,5 @@
 <template>
-    <div id="basic-canvas-canvas-container" v-if="showMainCanvas && showCanvasLayout">
+    <div id="basic-canvas-canvas-container" v-if="show">
         <div ref="panzoomRef">
             <canvass></canvass>
         </div>
@@ -23,13 +23,13 @@
 </template>
   
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, watch,nextTick } from 'vue'
 import { CanvasController, showMainCanvas, canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled, FullScreen } from '@element-plus/icons-vue'
 import { showCanvasLayout } from '@/components/design/store.ts';
 import panzoom from 'panzoom'
-import Panzoom from '@panzoom/panzoom'
+import Utils from '@/common/utils'
 
 
 const panzoomRef = ref()
@@ -44,23 +44,33 @@ const loading = computed(() => {
 
 let canvass = canvasController.getRender();
 
-onMounted(() => {
-    if (!panzoomRef.value) {
-        return
-    }
-    panzoom(panzoomRef.value, {
-        smoothScroll: false,
-        maxZoom:2,
-        minZoom:.5
-    })
-
-    // // 当缩放尺寸过小，会导致子元素不显示
-    // const panzoom = Panzoom(panzoomRef.value, {
-    //     maxScale: 5
-    // })
-    // panzoomRef.value.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
-
+let show = computed(() => {
+    return showMainCanvas.value && showCanvasLayout.value
 })
+
+watch(show, async (val) => {
+
+    await Utils.sleep(33)
+
+    if (val && panzoomRef.value) {
+        panzoom(panzoomRef.value, {
+            smoothScroll: false,
+            maxZoom: 2,
+            minZoom: .5
+        })
+
+        // // 当缩放尺寸过小，会导致子元素不显示
+        // const panzoom = Panzoom(panzoomRef.value, {
+        //     maxScale: 5
+        // })
+        // panzoomRef.value.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
+
+    }
+},{
+    immediate: true,
+})
+
+
 
 </script>
   

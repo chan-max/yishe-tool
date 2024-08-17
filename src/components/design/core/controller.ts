@@ -48,6 +48,8 @@ import {
     currentOperatingBaseModelInfo,
 } from "@/components/design/store.ts";
 
+import Utils from '@/common/utils'
+
 
 const mixins = [
     _1stfExporterMixin,
@@ -285,7 +287,7 @@ export class ModelController extends Base {
 
 
         // 先不设置 bg ，需要保留无背景
-        this.setBgColor('#eee',0)
+        this.setBgColor('#eee', 0)
 
         if (currentOperatingBaseModelInfo.value?.url) {
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);
@@ -346,12 +348,16 @@ export class ModelController extends Base {
     }
 
     public async setMainModel(url: any) {
+
+
         // if(this.gltf){
         //     return message.info('当前控制台中存在模型，请先清理')
         // }
 
         this.removeMainModel();
         this.removeDecals()
+
+
 
         this.callHook(this.meta.onMainModelLoading)
 
@@ -363,21 +369,63 @@ export class ModelController extends Base {
             return
         }
 
-        this.baseModelUrl = url;
         this.initModelPosition();
-        this.scene.add(this.gltf.scene);
+
+
+     
         this.mesh = this.findMainMesh(this.gltf);
         this.initialCameraPosition.copy(this.camera.position);
 
+        
+        // 这个顺序很重要
+        this.scene.add(this.gltf.scene);
+
         this.doOpenAnimation()
     }
+
+
+    clearAllMeshes(scene) {
+        // 创建一个数组来存储要删除的网格
+        const meshesToRemove = [];
+
+        // 遍历场景中的所有对象
+        scene.traverse((object) => {
+            if (object.isMesh) {
+                // 将网格添加到待删除数组
+                meshesToRemove.push(object);
+            }
+        });
+
+        // 遍历待删除数组，释放内存并从场景中移除
+        meshesToRemove.forEach((mesh) => {
+            // 释放几何体和材质
+            if (mesh.geometry) {
+                mesh.geometry.dispose();
+            }
+            if (mesh.material) {
+                if (Array.isArray(mesh.material)) {
+                    mesh.material.forEach(material => {
+                        material.dispose();
+                    });
+                } else {
+                    mesh.material.dispose();
+                }
+            }
+            // 从场景中移除网格对象
+            scene.remove(mesh);
+        });
+    }
+
 
     // 移除主模型
     public removeMainModel() {
         if (!this.gltf) {
             return;
         }
+
+
         this.scene.remove(this.gltf.scene);
+        this.clearAllMeshes(this.scene)
         this.mesh = null;
         this.gltf = null;
     }

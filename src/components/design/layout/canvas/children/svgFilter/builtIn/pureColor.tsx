@@ -20,9 +20,9 @@ export const BlackAndWhiteMatrix = `
     用于构建纯色的滤镜渲染
 */
 
-export function createPureColorMatrixFilterRender(filterName, matrix) {
+export function createPureColorMatrixFilterRender(filterId, matrix) {
     return () => {
-        return <filter id={filterName}>
+        return <filter id={filterId}>
             <feColorMatrix
                 type="matrix"
                 values={matrix} />

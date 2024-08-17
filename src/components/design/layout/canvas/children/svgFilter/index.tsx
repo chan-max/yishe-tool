@@ -214,7 +214,63 @@ export function createFilter(props, children) {
 
 import { BuiltInSvgFilterRenderList } from './builtIn'
 
-export function SvgFilter(props) {
+
+
+/**
+ * 
+ * @description every svg filter has its own classname for dom element , in order to support multiple filters in one element
+ *  but it doesnt work because only one filter css property support
+ */
+export const SvgFilterStyleComponent = () => {
+    return <style>
+        {
+        }
+    </style>
+}
+
+
+/** 
+ * @description 创建子元素的组合滤镜
+ * 
+*/
+
+function SvgChildCompositeFilterComponent({
+    filterId
+}) {
+
+    let compositeChildren = canvasStickerOptions.value.children.filter((child) => {
+        let url = child.filter.filterUrl
+        return url.isCompositeFilter && url.filterChildren.length
+    })
+
+
+
+    const filters = compositeChildren.map((child) => {
+        let filterIds = child.filter.filterUrl.filterChildren.map((item) => item.filterId)
+        let filterIdStr = filterIds.join('-')
+
+        let mergeNodes = filterIds.map((name) => {
+            return <feMergeNode in={name} />
+        })
+
+        return <filter id={filterIdStr}>
+            <feMerge>
+                {
+                    mergeNodes
+                }
+            </feMerge>
+        </filter>
+    })
+
+
+    return filters
+}
+
+
+/*
+    定义所有的内置滤镜
+*/
+export function SvgFilterComponent(props) {
     return <svg id="filter-container-id" height="0" width="0">
         <defs>
             <filter id="rendering-filter" x="0" y="0">
@@ -225,9 +281,17 @@ export function SvgFilter(props) {
             {/* 各种内置滤镜 */}
             {
                 BuiltInSvgFilterRenderList.map((opt) => {
-                    return opt.render()
+
+                    // 这里可以写滤镜的参数配置
+                    const options = {}
+
+                    return opt.render({
+                        filterId: opt.filterId,
+                        ...options
+                    })
                 })
             }
+            <SvgChildCompositeFilterComponent></SvgChildCompositeFilterComponent>
         </defs>
     </svg>
 }

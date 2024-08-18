@@ -97,7 +97,7 @@ watch([width, height], useDebounceFn(() => {
   width: 100vw;
   height: 100vh;
   // background-color: #161616;
-  background-color:#f5f5f7;
+  background-color: #f5f5f7;
   padding-top: 32vh;
   position: relative;
   overflow: hidden;
@@ -105,10 +105,21 @@ watch([width, height], useDebounceFn(() => {
 }
 
 .title {
-  font-size: 5em;
+  font-size: 6rem;
   // color: #6e6e73;
-  color:#1E201E;
+  // color: #1E201E;
+  color: transparent;
   font-weight: bold;
+
+
+  --c1: #1E201E;
+  --c2: #333;
+
+
+  background: linear-gradient(60deg,
+      var(--c1),
+      var(--c2));
+  background-clip: text;
 }
 
 .subtitle {

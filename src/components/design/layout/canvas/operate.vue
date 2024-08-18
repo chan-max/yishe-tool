@@ -435,7 +435,7 @@ function fontLoad() {
 
 .operate-form-item,
 .el-popover-operation {
-  --el-text-color-placeholder: #222;
+  // --el-text-color-placeholder: #222;
   --el-border-radius-base: 6px;
 
 

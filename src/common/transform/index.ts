@@ -80,7 +80,7 @@ export function svgToBase64(svg) {
 
     }
 
-    var base64 = btoa(unescape(encodeURIComponent(svg)));
+    var base64 = btoa(encodeURIComponent(svg));
     return `data:image/svg+xml;base64,${base64}`;
 }
 
@@ -144,6 +144,11 @@ export const imageDataToFile = (imageData) => {
 
 
 
+export const svgStringToUrl = (svg: string) => {
+    const encodedSvg = encodeURIComponent(svg);
+    return `data:image/svg+xml;,${encodedSvg}`;
+}
+
 
 
 class Transform {
@@ -152,7 +157,13 @@ class Transform {
     imgToFile = imgToFile
 
     createImgObjectURL = createImgObjectURL
+
+
+    // svg 字符串 转为可预览的路径
+    svgStringToUrl = svgStringToUrl
 }
+
+
 
 
 

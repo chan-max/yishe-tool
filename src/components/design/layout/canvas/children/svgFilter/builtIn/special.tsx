@@ -85,3 +85,58 @@ export const huichenkeli = {
         </filter>
     }
 }
+
+
+/*
+    x 光效果
+*/
+export const xRays = {
+    category: SvgFilterCategory.SpecialEffect,
+    filterLabel: 'x光效果',
+    filterId: 'x-rays',
+    displayRender: null,
+    render: ({
+        filterId
+    }) => {
+        return <filter id={filterId} x="-10%" y="-10%" width="120%" height="120%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feColorMatrix type="matrix" values=".33 .33 .33 0 0
+            .33 .33 .33 0 0
+            .33 .33 .33 0 0
+            0 0 0 1 0" in="SourceGraphic" result="colormatrix" />
+            <feComponentTransfer in="colormatrix" result="componentTransfer">
+                <feFuncR type="table" tableValues="0.98 0.3 0.25" />
+                <feFuncG type="table" tableValues="1 0.44 0.24" />
+                <feFuncB type="table" tableValues="0.91 0.62 0.39" />
+                <feFuncA type="table" tableValues="0 1" />
+            </feComponentTransfer>
+            <feBlend mode="normal" in="componentTransfer" in2="SourceGraphic" result="blend" />
+        </filter>
+    }
+}
+
+/*
+   热 x 光效果
+*/
+export const xRaysWarm = {
+    category: SvgFilterCategory.SpecialEffect,
+    filterLabel: '热x光效果',
+    filterId: 'x-rays-wram',
+    displayRender: null,
+    render: ({
+        filterId
+    }) => {
+        return 	<filter id={filterId} x="-10%" y="-10%" width="120%" height="120%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values=".33 .33 .33 0 0
+            .33 .33 .33 0 0
+            .33 .33 .33 0 0
+            0 0 0 1 0" in="SourceGraphic" result="colormatrix"/>
+        <feComponentTransfer in="colormatrix" result="componentTransfer">
+            <feFuncR type="table" tableValues="0.98 0.75 0.51"/>
+            <feFuncG type="table" tableValues="1 0.45 0.11"/>
+            <feFuncB type="table" tableValues="0.91 0.39 0.29"/>
+            <feFuncA type="table" tableValues="0 1"/>
+        </feComponentTransfer>
+        <feBlend mode="normal" in="componentTransfer" in2="SourceGraphic" result="blend"/>
+    </filter>
+    }
+}

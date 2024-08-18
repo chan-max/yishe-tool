@@ -14,8 +14,9 @@
                 <div style="width: 760px;">
                     <template v-if="activeTab == Tab.BuiltIn">
                         <el-row style="row-gap: 1rem">
-                            <el-col :span="1">
-                                <div style="height:40px;" class="flex items-center justify-center">
+                            <el-col :span="24">
+                                <div class="w-full flex justify-between items-center" style="padding:0 1rem;height:48px;">
+                                    <el-input v-model="searchInput" style="width:240px;" placeholder="关键字搜索"></el-input>
                                     <el-tooltip content="禁用滤镜效果" placement="top">
                                         <el-button link @click="removeCurrentFilter">
                                             <el-icon size="14">
@@ -24,14 +25,13 @@
                                         </el-button>
                                     </el-tooltip>
                                 </div>
-                            </el-col>
-                            <el-col :span="23">
                                 <el-tabs v-model="activeCategory">
                                     <el-tab-pane v-for="category in SvgFilterCategoryOptions" :name="category.value"
                                         :label="category.label">
                                         <el-scrollbar height="360px">
-                                            <el-row style="row-gap:.6rem;margin:1rem;">
-                                                <el-col v-for="item in category.children" :span="4">
+                                            <el-row v-if="withSearchFilter(category.children).length"
+                                                style="row-gap:.6rem;margin:1rem;">
+                                                <el-col v-for="item in withSearchFilter(category.children)" :span="4">
                                                     <div class="flex flex-col justify-center items-center filter-item"
                                                         :class="{ checked: filterIsChecked(item) }"
                                                         @click="useCurrentFiter(item)">
@@ -54,6 +54,8 @@
                                                     </div>
                                                 </el-col>
                                             </el-row>
+                                            <el-empty v-else @click="searchInput = ''" class="cursor-pointer" description="无结果" :image="emptyImage" :image-size="64">
+                                            </el-empty>
                                         </el-scrollbar>
                                     </el-tab-pane>
                                 </el-tabs>
@@ -169,9 +171,9 @@
                         </el-row>
                     </template>
 
-                    <el-row style="margin-top:1rem">
+                    <el-row>
                         <el-col :span="24">
-                            <div class="flex toolbar items-center" style="column-gap: 1rem;">
+                            <div class="flex toolbar items-center" style="column-gap: 1rem;height:48px;">
                                 <template v-if="activeTab == Tab.BuiltIn">
                                     <el-button :icon="Switch" size="small" @click="activeTab = Tab.Custom"> 使用自定义高级滤镜
                                     </el-button>
@@ -229,19 +231,34 @@ import desimage from "@/components/design/components/image.vue";
 import { SvgFilterCategoryOptions, SvgFilterCustomEffectType, } from "@/components/design/layout/canvas/children/svgFilter/builtIn/index";
 import { useLocalStorage } from '@vueuse/core'
 import { SvgFilterCategory } from '@/types/filter.ts'
-
+import Utils from '@/common/utils'
+import { GlobalConst } from '@/types/index.ts'
 
 const model = defineModel({
     default: null
 });
+
 
 type FilterModel = {
     filterId: string,
     isCompositeFilter: boolean
 }
 
+const emptyImage = computed(() => {
+    return Utils.transform.svgStringToUrl(GlobalConst.EMPTY_PLACEHOLDER_URL)
+})
 
+const searchInput = ref()
 
+function withSearchFilter(children) {
+    return children.filter((child) => {
+
+        if (searchInput.value) {
+            return child.filterLabel.includes(searchInput.value)
+        }
+        return true
+    })
+}
 
 const activeCategory = useLocalStorage('_1s_svgFilterActiveCategory', SvgFilterCategory.Normal);
 

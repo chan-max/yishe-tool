@@ -29,8 +29,9 @@ import {
     twisted,
     line,
     maorongrong,
-    huichenkeli
-} from './strange.tsx'
+    huichenkeli,
+    xRays,xRaysWarm,
+} from './special.tsx'
 import { neonLightsText } from './text.tsx'
 
 
@@ -85,6 +86,8 @@ export const SvgFilterCategoryOptions = [
         children: [
             maorongrong,
             huichenkeli,
+            xRays,
+            xRaysWarm,
             {
                 category: SvgFilterCategory.SpecialEffect,
                 filterLabel: '扭曲',

@@ -160,6 +160,7 @@
     "unplugin-auto-import": "^0.18.2",
     "unplugin-vue-components": "^0.25.2",
     "vite": "^5.0.0",
+    "vite-plugin-obfuscator": "^1.0.5",
     "vite-plugin-qrcode": "^0.2.2",
     "vite-plugin-svg-icons": "^2.0.1",
     "vite-svg-loader": "^5.1.0",

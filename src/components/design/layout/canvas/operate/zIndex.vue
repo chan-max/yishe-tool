@@ -29,8 +29,9 @@ const props = defineProps({
 // 设置为最顶层的zIndex
 function setTopZIndex() {
     let maxZIndex = getCanvasTopZIndexChild()?.zIndex || 0
-    
-    if (maxZIndex >= (currentOperatingCanvasChild.value.zIndex || 0)) {
+
+
+    if (maxZIndex > (currentOperatingCanvasChild.value.zIndex || 0)) {
         currentOperatingCanvasChild.value.zIndex = maxZIndex + 1
     }
 }

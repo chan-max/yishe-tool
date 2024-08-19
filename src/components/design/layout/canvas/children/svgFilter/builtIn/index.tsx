@@ -1,4 +1,4 @@
-import { SvgFilterCategory } from '@/types/filter.ts'
+import { SvgFilterCategory } from '@/types/filter'
 
 
 /* 
@@ -30,9 +30,14 @@ import {
     line,
     maorongrong,
     huichenkeli,
-    xRays,xRaysWarm,
+    xRays, 
+    xRaysWarm,
+    noise,
+    yuzhouxingguang,
+    heibaixiangsu
 } from './special.tsx'
-import { neonLightsText } from './text.tsx'
+import { neonLightsText,xingguang,saibopengke,xiuxibanban,waiwainiuniu } from './text.tsx'
+
 
 
 export const SvgFilterCategoryOptions = [
@@ -40,14 +45,6 @@ export const SvgFilterCategoryOptions = [
         label: '常用',
         value: SvgFilterCategory.Normal,
         children: [
-            {
-                category: SvgFilterCategory.Normal,
-                filterLabel: '测试',
-                filterId: 'test',
-                render: () => {
-                    return
-                }
-            },
             {
                 category: SvgFilterCategory.Normal,
                 filterLabel: '默认 (原始图)',
@@ -84,37 +81,26 @@ export const SvgFilterCategoryOptions = [
         label: '特殊效果',
         value: SvgFilterCategory.SpecialEffect,
         children: [
+            twisted,
             maorongrong,
             huichenkeli,
             xRays,
             xRaysWarm,
-            {
-                category: SvgFilterCategory.SpecialEffect,
-                filterLabel: '扭曲',
-                filterId: 'twisted',
-                render: twisted
-            },
-            {
-                category: SvgFilterCategory.SpecialEffect,
-                filterLabel: '彩色网格线',
-                filterId: 'line',
-                render: line
-            },
+            noise,
+            line,
+            yuzhouxingguang,
+            heibaixiangsu
         ]
     },
     {
-        label: '文字使用',
+        label: '文字适用',
         value: SvgFilterCategory.Text,
         children: [
-            {
-                category: SvgFilterCategory.Text,
-                filterLabel: '霓虹灯边缘',
-                filterId: 'neonLightsText',
-                render: neonLightsText,
-                displayRender: () => {
-                    return <span style="font-size:1.5rem;"> 霓虹灯边缘 </span>
-                }
-            },
+            xingguang,
+            neonLightsText,
+            saibopengke,
+            xiuxibanban,
+            waiwainiuniu
         ]
     },
 ]

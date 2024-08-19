@@ -382,7 +382,7 @@ import operateItemCommonGroup from '@/components/design/layout/canvas/operate/co
 
 import {
   updateCanvasStickerOptionsUnit
-} from './helper'
+} from '../helper'
 
 import {
   CanvasController,
@@ -394,7 +394,7 @@ import {
   showMainCanvas,
   currentOperatingCanvasChild,
   CanvasChildType,
-} from "./index.tsx";
+} from "../index.tsx";
 
 
 

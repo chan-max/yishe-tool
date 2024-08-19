@@ -273,6 +273,7 @@ function SvgChildCompositeFilterComponent({
 export function SvgFilterComponent(props) {
     return <svg id="filter-container-id" height="0" width="0">
         <defs>
+            {/* 这里会改为每个元素有一个单独的 */}
             <filter id="rendering-filter" x="0" y="0">
                 {canvasStickerOptions.value.svgFilter.children.map((child) => {
                     return SvgFilterDOMCreatorMap[child.type]?.call(null, child)

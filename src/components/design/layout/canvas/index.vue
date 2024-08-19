@@ -106,7 +106,7 @@
             </div>
         </div>
         <div class="operate">
-            <operate></operate>
+            <operateLayout></operateLayout>
         </div>
     </div>
 </template>
@@ -125,7 +125,7 @@ import {
     renderingLoading
 } from "./index.tsx";
 
-import operate from './operate.vue';
+import operateLayout from './operateLayout/index.vue';
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 
 import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled, FullScreen } from '@element-plus/icons-vue'

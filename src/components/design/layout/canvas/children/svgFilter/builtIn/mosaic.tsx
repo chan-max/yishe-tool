@@ -1,4 +1,4 @@
-import { SvgFilteCustomEffect } from ".";
+
 import { createFilter } from "..";
 import { canvasStickerOptions } from "../../..";
 import { createFeFlood, createFeFloodDefaultOptions } from "../effect/flood";
@@ -20,7 +20,7 @@ export function createMosaicFilter() {
     //     <feMorphology operator="dilate" radius="4" />
     // </filter>
 
-    
+
 
     let floodOptions = createFeFloodDefaultOptions()
     floodOptions.x.value = 2
@@ -55,7 +55,7 @@ export function createMosaicFilter() {
     morphologyOptions.operator = FeMorphologyOperator.DILATE
 
 
-    return createFilter({ id: SvgFilteCustomEffect.Mosaic }, [
+    return createFilter({ id: 'mosaic' }, [
         createFeFlood(floodOptions),
         createFeComposite(compositeOptions),
         createFeTile(tileOptions),

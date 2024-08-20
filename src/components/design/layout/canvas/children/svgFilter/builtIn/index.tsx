@@ -8,17 +8,13 @@ import { SvgFilterCategory } from '@/types/filter'
 export type SvgFilterCustomEffectType = {
     category: SvgFilterCategory,
     filterLabel: string,
-    filterId: SvgFilteCustomEffect,
+    filterId: string,
+    disabled?: boolean,
     render: Function,
     displayRender?: Function,
 }
 
 
-export enum SvgFilteCustomEffect {
-    Default = 'default', // 默认无任何效果,
-    Old = 'old',
-    Mosaic = 'mosaic' // 马赛克笑过
-}
 
 
 
@@ -30,14 +26,24 @@ import {
     line,
     maorongrong,
     huichenkeli,
-    xRays, 
+    xRays,
     xRaysWarm,
     noise,
     yuzhouxingguang,
-    heibaixiangsu
+    heibaixiangsu,
+    xiaobolang,
+    qiangzhi,
+    caiseguang,
+    caiseguangwen,
+    shenseguangwen,
+    shuguangwen,
+    huichen,
+    yuanxingshitouwenli,
+    shuibowen,
+    yanwu
 } from './special.tsx'
-import { neonLightsText,xingguang,saibopengke,xiuxibanban,waiwainiuniu } from './text.tsx'
-
+import { neonLightsText, xingguang, saibopengke, xiuxibanban, waiwainiuniu,xuankumoshui } from './text.tsx'
+import {baisebowenqiangzhi,xingkong,muwen,nainiu,micai} from './pureBackground.tsx'
 
 
 export const SvgFilterCategoryOptions = [
@@ -48,13 +54,13 @@ export const SvgFilterCategoryOptions = [
             {
                 category: SvgFilterCategory.Normal,
                 filterLabel: '默认 (原始图)',
-                filterId: SvgFilteCustomEffect.Default,
+                filterId: 'default',
                 render: createDefaultFilter
             },
             {
                 category: SvgFilterCategory.Normal,
                 filterLabel: '马赛克效果',
-                filterId: SvgFilteCustomEffect.Mosaic,
+                filterId: 'mosaic',
                 render: createMosaicFilter
             },
         ]
@@ -89,7 +95,17 @@ export const SvgFilterCategoryOptions = [
             noise,
             line,
             yuzhouxingguang,
-            heibaixiangsu
+            heibaixiangsu,
+            xiaobolang,
+            qiangzhi,
+            caiseguang,
+            caiseguangwen,
+            shenseguangwen,
+            shuguangwen,
+            huichen,
+            yuanxingshitouwenli,
+            shuibowen,
+            yanwu
         ]
     },
     {
@@ -100,15 +116,27 @@ export const SvgFilterCategoryOptions = [
             neonLightsText,
             saibopengke,
             xiuxibanban,
-            waiwainiuniu
+            waiwainiuniu,
+            xuankumoshui
         ]
     },
+    {
+        label: '纯背景',
+        value: SvgFilterCategory.PureBackground,
+        children: [
+            baisebowenqiangzhi,
+            xingkong,
+            muwen,
+            nainiu,
+            micai
+        ]
+    }
 ]
 
 
 export const BuiltInSvgFilterRenderList = SvgFilterCategoryOptions.reduce((res, item) => {
     if (item.children) {
-        return res.concat(item.children)
+        return res.concat(item.children.filter((c) => !c.disabled))
     } else {
         return res
     }

@@ -340,6 +340,7 @@ export class CanvasController {
 
         try {
             await update.call(this)
+            console.warn('画布渲染成功')
         } catch (e) {
             console.error('画布渲染：存在丢失的元素')
             this.loading.value = false

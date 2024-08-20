@@ -48,7 +48,7 @@
                                                                 </template>
                                                             </div>
                                                         </div>
-                                                        <div style="text-align: center;" class="text-ellipsis"> {{
+                                                        <div style="text-align: center;height:16px;line-height:16px;" class="text-ellipsis"> {{
                                                             item.filterLabel
                                                         }}</div>
                                                     </div>
@@ -312,6 +312,8 @@ const modelLabel = computed(() => {
         return model.value.filterLabel || '未使用滤镜'
     }
 })
+
+
 // 当前滤镜是否在使用中
 function filterIsChecked(effect) {
 
@@ -377,11 +379,11 @@ function useCurrentFiter(effect: SvgFilterCustomEffectType) {
 }
 
 :deep(.el-tabs__header) {
-    margin: 0 15px 15px 15px;
+    margin: 0  15px;
 }
 
 .filter-item {
-
+    margin: 1rem 0;
     row-gap: 1rem;
 
     .preview-box {
@@ -389,7 +391,7 @@ function useCurrentFiter(effect: SvgFilterCustomEffectType) {
         transition: .1s;
         border-radius: .4rem;
         cursor: pointer;
-        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.04) 0px 0px 0px 1px;
     }
 
     &.checked {

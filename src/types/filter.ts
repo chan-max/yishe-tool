@@ -15,6 +15,9 @@ export enum SvgFilterCategory {
     Text = 'text',
 
 
+    /**  纯背景 */
+    PureBackground = 'pure-background',
+
     /* 自定义 */
     Custom = 'custom'
 }

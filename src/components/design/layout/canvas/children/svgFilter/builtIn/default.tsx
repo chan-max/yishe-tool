@@ -1,5 +1,5 @@
 
-import { SvgFilteCustomEffect } from ".";
+
 import { createFilter } from "..";
 
 
@@ -8,6 +8,6 @@ import { createFilter } from "..";
 */
 
 export function createDefaultFilter() {
-    return createFilter({ id: SvgFilteCustomEffect.Default }, [])
+    return createFilter({ id: 'default' }, [])
 }
 

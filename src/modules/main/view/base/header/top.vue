@@ -22,15 +22,6 @@ import iconHomepageshop from "@/icon/web/homepageshop.svg?component";
 import iconHomepagecontact from "@/icon/web/homepagecontact.svg?component";
 import iconHomepagesearch from "@/icon/web/homepagesearch.svg?component";
 
-const { t, locale, global } = useI18n();
-
-function toggleLanguage() {
-  if (locale.value == "en") {
-    locale.value = "cn";
-  } else {
-    locale.value = "en";
-  }
-}
 
 function openUpload(){
   

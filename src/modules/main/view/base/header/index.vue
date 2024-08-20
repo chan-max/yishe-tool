@@ -18,6 +18,18 @@
     <des-menu></des-menu>
     <div style="flex: 1"></div>
     <div class="right flex justify-end">
+
+      <el-dropdown placement="bottom" size="small" trigger="click">
+        <el-button size="small" link> 
+          <span style="font-weight: bold;font-size: 1rem;"> {{ language }} </span>
+        </el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item  v-for="lang in LanguageOptions" @click="changeLanguage(lang.value)">{{lang.label}}</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+
       <template v-if="loginStatusStore.isLogin">
         <user-avatar />
       </template>
@@ -41,7 +53,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import desMenu from "./menu.vue";
 import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
-
+import {LanguageOptions, changeLanguage ,language } from '@/i18n'
 
 
 const loginStatusStore = useLoginStatusStore();
@@ -90,6 +102,7 @@ const menuOptions = [{}];
   display: flex;
   align-items: center;
   overflow: hidden;
+  column-gap: 1rem;
   //   padding-top: 12px;
 }
 

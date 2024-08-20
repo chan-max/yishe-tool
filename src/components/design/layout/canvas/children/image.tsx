@@ -57,12 +57,16 @@ export const Image = defineComponent({
         // 图片是否加载失败
         let loadError = ref(false)
 
+        let loading = ref(true)
+
         function onLoad() {
             loadError.value = false
+            loading.value = false
         }
 
         function onError() {
             loadError.value = true
+            loading.value = false
         }
 
         return () => {
@@ -99,11 +103,13 @@ export const Image = defineComponent({
 
             return <div style={containerStyle}>
                 {
-                    !imgUrl.value
-                        ? '未选择图片'
-                        : loadError.value
-                            ? '图片加载失败'
-                            : <img ref={targetRef} onLoad={onLoad} onError={onError} src={imgUrl.value} style={style}></img>
+                    loading.value ?
+                        '图片加载中' :
+                        !imgUrl.value
+                            ? '未选择图片'
+                            : loadError.value
+                                ? '图片加载失败'
+                                : <img ref={targetRef} onLoad={onLoad} onError={onError} src={imgUrl.value} style={style}></img>
                 }
 
             </div>

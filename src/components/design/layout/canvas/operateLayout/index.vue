@@ -170,24 +170,18 @@
         </el-collapse>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.BACKGROUHND">
-        <el-row :gutter="24" align="middle">
-          <el-col :span="24">
+        <el-collapse v-model="backgroundCollapseActives">
+          <el-collapse-item name="1" title="背景属性">
             <operateItemSize label="背景尺寸" v-model:width="currentOperatingCanvasChild.width"
               v-model:height="currentOperatingCanvasChild.height">
             </operateItemSize>
-          </el-col>
-          <el-col :span="24">
-            <operateItemPosition v-model="currentOperatingCanvasChild.position"></operateItemPosition>
-          </el-col>
-          <el-col :span="24">
             <operateItemBackgroundColor v-model="currentOperatingCanvasChild.backgroundColor">
             </operateItemBackgroundColor>
-          </el-col>
-          <el-col :span="24">
-            <operateItemZindex v-model="currentOperatingCanvasChild.zIndex">
-            </operateItemZindex>
-          </el-col>
-        </el-row>
+          </el-collapse-item>
+          <el-collapse-item name="2" title="通用属性">
+            <operateItemCommonGroup v-model="currentOperatingCanvasChild"></operateItemCommonGroup>
+          </el-collapse-item>
+        </el-collapse>
       </template>
       <template v-if="currentOperatingCanvasChild.type == CanvasChildType.QRCODE">
         <el-collapse v-model="qrcodeCollapseActives">
@@ -408,13 +402,19 @@ const qrcodeCollapseActives = ref(["1", "2", "3", "4", '5']);
 const imageCollapseActives = ref(["1", "2", "3", "4", '5']);
 const rawCanvasCollapseActives = ref(["1", "2", "3", "4", '5']);
 
+const backgroundCollapseActives = ref(["1", "2", "3", "4", '5'])
+
 function remove(index) {
   removeCavnasChild(index);
 }
 
 function fontLoad() {
-  currentCanvasControllerInstance.value.updateRenderingCanvas();
+  if(currentCanvasControllerInstance.value){
+    currentCanvasControllerInstance.value.updateRenderingCanvas();
+  }
 }
+
+
 </script>
 <style lang="less">
 .el-input--small {

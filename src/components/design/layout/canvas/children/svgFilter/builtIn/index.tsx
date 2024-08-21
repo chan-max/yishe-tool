@@ -43,7 +43,7 @@ import {
     yanwu
 } from './special.tsx'
 import { neonLightsText, xingguang, saibopengke, xiuxibanban, waiwainiuniu,xuankumoshui } from './text.tsx'
-import {baisebowenqiangzhi,xingkong,muwen,nainiu,micai} from './pureBackground.tsx'
+import {baisebowenqiangzhi,xingkong,muwen,nainiu,micai,fensejiandan} from './pureBackground.tsx'
 
 
 export const SvgFilterCategoryOptions = [
@@ -117,7 +117,8 @@ export const SvgFilterCategoryOptions = [
             saibopengke,
             xiuxibanban,
             waiwainiuniu,
-            xuankumoshui
+            xuankumoshui,
+            
         ]
     },
     {
@@ -128,7 +129,8 @@ export const SvgFilterCategoryOptions = [
             xingkong,
             muwen,
             nainiu,
-            micai
+            micai,
+            fensejiandan
         ]
     }
 ]

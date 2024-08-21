@@ -1,8 +1,8 @@
-import { canvasStickerOptions } from '../index.tsx'
+import { canvasStickerOptions,updateRenderingCanvas } from '../index.tsx'
 import { getPositionInfoFromOptions, formatToNativeSizeString } from '../helper.tsx'
 import { defineComponent, ref, onUpdated, onMounted } from 'vue'
 import Utils from '@/common/utils'
-
+import { createFilterDefaultOptions, createTransformDefaultOptions, createPositionDefaultOptions ,createBasicDefaultOptions} from "./defaultOptions.tsx";
 /*
 */
 
@@ -10,35 +10,9 @@ export const createDefaultCanvasChildBackgroundOptions = () => {
     const canvasUnit = canvasStickerOptions.value.unit
     return {
         type: 'background',
-        position: {
-            center: true,
-            verticalCenter: true,
-            horizontalCenter: true,
-            top: {
-                value: 0,
-                unit: canvasUnit
-            },
-            left: {
-                value: 0,
-                unit: canvasUnit
-            },
-            bottom: {
-                value: 0,
-                unit: canvasUnit
-            },
-            right: {
-                value: 0,
-                unit: canvasUnit
-            }
-        },
-        scaleX: 1,
-        scaleY: 1,
-        scaleZ: 1,
-        rotateX: 0,
-        rotateY: 0,
-        rotateZ: 0,
-        skewX: 0,
-        skewY: 0,
+        ...createBasicDefaultOptions(),
+        position: createPositionDefaultOptions(canvasUnit),
+
         width: {
             value: 100,
             unit: 'vw'
@@ -51,6 +25,9 @@ export const createDefaultCanvasChildBackgroundOptions = () => {
             color: '#000',
             type: 'pure'
         },
+        transform: createTransformDefaultOptions(canvasUnit),
+        filter: createFilterDefaultOptions(canvasUnit),
+        zIndex:0,
     }
 }
 
@@ -63,7 +40,6 @@ export const Background = defineComponent({
         const options = props.options
 
         const targetEl = ref()
-
 
         function setTargetSize() {
             props.options.targetComputedWidth = Utils.getComputedWidth(targetEl.value)
@@ -114,5 +90,5 @@ export const Background = defineComponent({
 })
 
 export function createCanvasChildBackground(options) {
-    return <Background options={options}></Background>
+    return <Background options={options} onVnodeUpdated={updateRenderingCanvas} onVnodeMounted={updateRenderingCanvas}></Background>
 }

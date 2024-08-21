@@ -62,8 +62,10 @@ export const canvasStickerOptions = ref({
 
 // 获取子元素最高层级的元素，而不是获取该层级 ， 有多个返回第一个
 export function getCanvasTopZIndexChild() {
-    const maxIndex = Math.max(...canvasStickerOptions.value.children.map((item: any) => item.zIndex).filter(Boolean));
-    let maxChild: any = canvasStickerOptions.value.children.find((item: any) => item.zIndex === maxIndex);
+    let children = canvasStickerOptions.value.children
+
+    const maxIndex = Math.max(...children.map((item: any) => item.zIndex).filter(Boolean));
+    let maxChild: any = children.find((item: any) => item.zIndex == maxIndex);
 
     return maxChild
 }

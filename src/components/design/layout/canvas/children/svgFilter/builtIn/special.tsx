@@ -328,7 +328,7 @@ export const qiangzhi = {
         filterId
     }) => {
         return <filter id={filterId} x='0%' y='0%' width='100%' height='100%'>
-            <feTurbulence type='turbulance' baseFrequency="0.2" result="NOISE" numOctaves="30" />
+            <feTurbulence type='turbulence' baseFrequency="0.2" result="NOISE" numOctaves="30" />
             <feDisplacementMap in="SourceGraphic" in2="NOISE" scale="20" xChannelSelector="R" yChannelSelector="R"></feDisplacementMap>
         </filter>
     }

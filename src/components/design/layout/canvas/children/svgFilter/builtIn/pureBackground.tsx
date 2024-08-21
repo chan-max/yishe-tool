@@ -94,17 +94,17 @@ export const micai = {
         filterId
     }) => {
         return <filter id={filterId}>
-        <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3"/>
-        <feComponentTransfer>
-            <feFuncR type="discrete" tableValues="0 0 1"/>
-            <feFuncG type="discrete" tableValues="0 0 0 1 1"/>
-            <feFuncB type="discrete" tableValues="0 1"/>
-        </feComponentTransfer>
-        <feColorMatrix values="1  0 0 0 0
+            <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" />
+            <feComponentTransfer>
+                <feFuncR type="discrete" tableValues="0 0 1" />
+                <feFuncG type="discrete" tableValues="0 0 0 1 1" />
+                <feFuncB type="discrete" tableValues="0 1" />
+            </feComponentTransfer>
+            <feColorMatrix values="1  0 0 0 0
                               -1  1 0 0 0
                               -1 -1 1 0 0
                                0  0 0 0 1"/>
-        <feColorMatrix values="-.08  .42  .09 0 .08
+            <feColorMatrix values="-.08  .42  .09 0 .08
                                -.17  .35 -.08 0 .17
                                -.08  .15 -.04 0 .08
                                 0    0     0    0 1"/>
@@ -115,6 +115,31 @@ export const micai = {
 
 
 
+/**
+ * @description 粉色煎蛋
+*/
 
+export const fensejiandan = {
+    category: SvgFilterCategory.SpecialEffect,
+    filterLabel: '粉色煎蛋',
+    filterId: 'fensejiandan',
+    displayRender: null,
+    render: ({
+        filterId
+    }) => {
+        return <>
+            <filter id={filterId}>
+                <feTurbulence type="fractalNoise" baseFrequency="0.03" />
+                <feDisplacementMap in="SourceGraphic" scale="35" />
+                <feComposite in="SourceGraphic" operator="atop" />
+            </filter>
+            <pattern id="pattern" width="142" height="82" patternUnits="userSpaceOnUse">
+                <path d="M9 41a17 17 0 1 1 0 1zM80 0a17 17 0 1 0 0 -1m0 82a17 17 0 1 1 0 1z" fill="#ea3" stroke="#fff" stroke-width="16" />
+            </pattern>
+            <rect width="100%" height="100%" fill="pink" />
+            <rect x="-10%" y="-10%" width="120%" height="120%" fill="url(#pattern)" filter={`url(#${filterId})`} />
+        </>
+    }
+}
 
 

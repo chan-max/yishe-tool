@@ -1,12 +1,45 @@
 <template>
-  <el-scrollbar>
-    <div class="canvas-operate-form" style="margin: 1rem">
-      <component :is="CanvasChildOperationComponentMap[currentOperatingCanvasChild.type]"></component>
-    </div>
-  </el-scrollbar>
+        <el-collapse v-model="canvasCollapseActives">
+          <el-collapse-item name="1" title="画布配置">
+            <el-row align="middle">
+              <el-col :span="24">
+                <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasStickerOptions.width"
+                  v-model:height="canvasStickerOptions.height">
+                </operateItemAbsoluteSize>
+              </el-col>
+              <el-col :span="24">
+                <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位"
+                  v-model="canvasStickerOptions.unit">
+                </operateItemAbsoluteUnitSelect>
+              </el-col>
+              <el-col :span="24">
+                <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
+              </el-col>
+              <!-- <operateItemSwitch label="显示真实大小" v-model="canvasStickerOptions.showCanvasRealSize"></operateItemSwitch> -->
+              <el-col :span="24">
+                <operateItemColor label="辅助背景颜色" tooltip="用于辅助画布中的元素，不会对实际画布产生影响" type="pure"
+                  v-model="canvasStickerOptions.supportBackgroundColor"></operateItemColor>
+              </el-col>
+            </el-row>
+          </el-collapse-item>
+          <el-collapse-item name="2" title="画布属性">
+            <el-row>
+              <el-col :span="24">
+                <operateItemColor label="画布背景颜色" tooltip="画布背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
+                </operateItemColor>
+              </el-col>
+              <el-col :span="24">
+                <a-alert message="我们更希望你使用一个新的背景元素，而不是直接更改画布的背景颜色或其他效果，虽然最终实现的效果相同" banner closable />
+              </el-col>
+            </el-row>
+          </el-collapse-item>
+          <el-collapse-item name="4" title="画布滤镜效果">
+            <operateItemFilterGroup v-model="currentOperatingCanvasChild.filter"></operateItemFilterGroup>
+          </el-collapse-item>
+        </el-collapse>
 </template>
-
-<script setup lang="ts">
+    
+<script setup lang='ts'>
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 
 import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
@@ -41,111 +74,32 @@ import operateItemFilterGroup from "@/components/design/layout/canvas/operate/fi
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
 import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue';
 
-
 import {
-  updateCanvasStickerOptionsUnit
+    updateCanvasStickerOptionsUnit
 } from '../helper'
 
 import {
-  CanvasController,
-  canvasStickerOptions,
-  addCanvasChild,
-  removeCavnasChild,
-  currentOperatingCanvasChildIndex,
-  currentCanvasControllerInstance,
-  showMainCanvas,
-  currentOperatingCanvasChild,
-  CanvasChildType,
-  updateRenderingCanvas
+    CanvasController,
+    canvasStickerOptions,
+    addCanvasChild,
+    removeCavnasChild,
+    currentOperatingCanvasChildIndex,
+    currentCanvasControllerInstance,
+    showMainCanvas,
+    currentOperatingCanvasChild,
+    CanvasChildType,
+    updateRenderingCanvas
 } from "../index.tsx";
 
-import backgroundLayout from './background.vue'
-import canvasLayout from './canvas.vue'
-import textLayout from './canvas.vue'
-import imageLayout from './image.vue'
-import rawCanvasLayout from './rawCanvas.vue'
-import qrcodeLayout from './qrcode.vue'
-import rectLayout from './rect.vue'
-import ellipseLayout from './ellipse.vue'
+
+const canvasCollapseActives = ref(["1", "2", "3", "4", '5'])
 
 
-const CanvasChildOperationComponentMap = {
-  [CanvasChildType.BACKGROUHND]: backgroundLayout,
-  [CanvasChildType.CANVAS]: canvasLayout,
-  [CanvasChildType.TEXT]: textLayout,
-  [CanvasChildType.IMAGE]: imageLayout,
-  [CanvasChildType.RAW_CANVAS]: rawCanvasLayout,
-  [CanvasChildType.QRCODE]: qrcodeLayout,
-  [CanvasChildType.RECT]: rectLayout,
-  [CanvasChildType.ELLIPSE]: ellipseLayout
-}
-
-
-
-
-function remove(index) {
-  removeCavnasChild(index);
-}
-
-function fontLoad() {
-  updateRenderingCanvas()
+function absoluteUnitChange(unit) {
+  updateCanvasStickerOptionsUnit(unit)
 }
 
 
 </script>
-<style lang="less">
-.el-input--small {
-  input::-webkit-textfield-decoration-container {
-    height: 16px;
-  }
-}
-
-.el-alert__title {
-  font-size: 1.2rem !important;
-  line-height: 1.4rem !important;
-}
-
-.el-alert__description {
-  font-size: 1rem !important;
-  line-height: 1.2rem;
-}
-
-.operate-form-item,
-.el-popover-operation {
-  // --el-text-color-placeholder: #222;
-  --el-border-radius-base: 6px;
-
-
-  .el-input__wrapper,
-  .el-select__wrapper,
-  .el-textarea__inner {
-    background-color: #f6f6f6;
-    color: #000;
-
-    &:hover {
-      // box-shadow: #6900ffdd 0px 0px 0px 1px;
-    }
-
-
-  }
-
-  .el-input,
-  .el-select,
-  .el-textarea {
-    --el-border-color: rgba(0, 0, 0, 0) !important;
-  }
-
-}
-</style>
-<style scoped>
-:deep(.el-scrollbar__bar.is-vertical) {
-  width: 4px;
-}
-
-
-
-:deep(.el-collapse-item__header) {
-  font-size: 1rem;
-  margin-left: 0.5em;
-}
-</style>
+    
+<style></style>

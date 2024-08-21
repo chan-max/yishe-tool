@@ -10,7 +10,7 @@ export const createDefaultCanvasChildRawCanvasOptions = () => {
     const canvasUnit = canvasStickerOptions.value.unit
 
     return {
-        type: CanvasChildType.ROW_CANVAS,
+        type: CanvasChildType.RAW_CANVAS,
         position: createPositionDefaultOptions(canvasUnit),
         width: {
             value: 100,

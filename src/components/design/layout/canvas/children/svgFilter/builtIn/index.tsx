@@ -43,7 +43,7 @@ import {
     yanwu
 } from './special.tsx'
 import { neonLightsText, xingguang, saibopengke, xiuxibanban, waiwainiuniu,xuankumoshui } from './text.tsx'
-import {baisebowenqiangzhi,xingkong,muwen,nainiu,micai,fensejiandan} from './pureBackground.tsx'
+
 
 
 export const SvgFilterCategoryOptions = [
@@ -121,18 +121,6 @@ export const SvgFilterCategoryOptions = [
             
         ]
     },
-    {
-        label: '纯背景',
-        value: SvgFilterCategory.PureBackground,
-        children: [
-            baisebowenqiangzhi,
-            xingkong,
-            muwen,
-            nainiu,
-            micai,
-            fensejiandan
-        ]
-    }
 ]
 
 

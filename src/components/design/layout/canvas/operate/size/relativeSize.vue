@@ -6,7 +6,7 @@
         <template #name> {{ label }} </template>
         <template #content>
             <span style="font-size: 1rem;">宽</span>
-            <el-popover trigger="hover" width="200" popper-class="el-popover-operation">
+            <el-popover trigger="hover" width="160" popper-class="el-popover-operation">
                 <template #reference>
                     <el-input type="number" style="width: 80px" size="small" v-model="width.value" step="10" min="0"
                         placeholder="宽">
@@ -28,7 +28,7 @@
 
             <span style="font-size: 1rem;">高</span>
 
-            <el-popover trigger="hover" width="200" popper-class="el-popover-operation">
+            <el-popover trigger="hover" width="160" popper-class="el-popover-operation">
                 <template #reference>
                     <el-input type="number" style="width: 80px" size="small" v-model="height.value" step="10"
                         placeholder="高" min="0">

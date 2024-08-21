@@ -1,10 +1,14 @@
-import { canvasStickerOptions,updateRenderingCanvas } from '../index.tsx'
-import { getPositionInfoFromOptions, formatToNativeSizeString } from '../helper.tsx'
+import { canvasStickerOptions, updateRenderingCanvas } from '../../index.tsx'
+import { getPositionInfoFromOptions, formatToNativeSizeString, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, createFilterFromOptions, createTransformString } from '../../helper.tsx'
 import { defineComponent, ref, onUpdated, onMounted } from 'vue'
 import Utils from '@/common/utils'
-import { createFilterDefaultOptions, createTransformDefaultOptions, createPositionDefaultOptions ,createBasicDefaultOptions} from "./defaultOptions.tsx";
-/*
+import { createFilterDefaultOptions, createTransformDefaultOptions, createPositionDefaultOptions, createBasicDefaultOptions } from "../defaultOptions.tsx";
+
+import { queryCustomBackgroundById } from './builtIn/index.ts'
+
+/**
 */
+
 
 export const createDefaultCanvasChildBackgroundOptions = () => {
     const canvasUnit = canvasStickerOptions.value.unit
@@ -27,7 +31,11 @@ export const createDefaultCanvasChildBackgroundOptions = () => {
         },
         transform: createTransformDefaultOptions(canvasUnit),
         filter: createFilterDefaultOptions(canvasUnit),
-        zIndex:0,
+        zIndex: 0,
+        customBackground: {
+            id: '',
+            label: ''
+        }
     }
 }
 
@@ -37,7 +45,6 @@ export const Background = defineComponent({
     },
     setup(props, ctx) {
 
-        const options = props.options
 
         const targetEl = ref()
 
@@ -68,22 +75,32 @@ export const Background = defineComponent({
             }
 
 
-
             const style = {
                 width: formatToNativeSizeString(props.options.width),
                 height: formatToNativeSizeString(props.options.height),
                 background: props.options.backgroundColor.color,
                 flexShrink: 0,
+                transform: createTransformString(props.options.transform),
+                filter: createFilterFromOptions(props.options.filter),
                 ..._style
             }
 
-            if (props.options.backgroundImage) {
-                style.backgroundImage = `url(${props.options.backgroundImage.url})`
+            var renderSlot
+
+
+            if (props.options.customBackground.id) {
+                // 根据背景id寻找背景
+                let customeBackground = queryCustomBackgroundById(props.options.customBackground.id)
+                if (customeBackground.renderSlot) {
+                    renderSlot = customeBackground.renderSlot()
+                }
             }
 
 
             return <div style={containerStyle}>
-                <div ref={targetEl} style={style}></div>
+                <div ref={targetEl} style={style}>
+                    {renderSlot}
+                </div>
             </div>
         }
     }

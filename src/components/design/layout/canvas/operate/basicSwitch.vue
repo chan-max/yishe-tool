@@ -14,7 +14,7 @@ const model = defineModel({})
 
 const props = defineProps({
     label: {
-
+        default:'开关'
     }
 })
 

@@ -6,7 +6,7 @@ import { waitImage } from '@/common'
 import { createCanvasChildSvg } from './children/svg/svg.tsx'
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { createCanvasChildText, createDefaultCanvasChildTextOptions } from './children/text/text.tsx'
-import { createCanvasChildBackground, createDefaultCanvasChildBackgroundOptions } from './children/background.tsx'
+import { createCanvasChildBackground, createDefaultCanvasChildBackgroundOptions } from './children/background/index.tsx'
 import { createDefaultCanvasChildQrcodeOptions, createCanvasChildQrcode, } from './children/qrcode.tsx'
 import {
     createDefaultCanvasChildSvgRectOptions,
@@ -87,7 +87,7 @@ export enum CanvasChildType {
     RECT = 'rect',
     ELLIPSE = 'ellipse',
 
-    ROW_CANVAS = 'rawCanvas',
+    RAW_CANVAS = 'rawCanvas',
 }
 
 
@@ -99,7 +99,7 @@ export const canvasChildLabelMap = {
     [CanvasChildType.QRCODE]: '二维码',
     [CanvasChildType.RECT]: '矩形',
     [CanvasChildType.ELLIPSE]: '圆和椭圆',
-    [CanvasChildType.ROW_CANVAS]: '原生画布'
+    [CanvasChildType.RAW_CANVAS]: '原生画布'
 }
 
 export const canvasChildDefaultOptionsMap = {
@@ -110,7 +110,7 @@ export const canvasChildDefaultOptionsMap = {
     [CanvasChildType.QRCODE]: createDefaultCanvasChildQrcodeOptions,
     [CanvasChildType.RECT]: createDefaultCanvasChildSvgRectOptions,
     [CanvasChildType.ELLIPSE]: createDefaultCanvasChildSvgEllipseOptions,
-    [CanvasChildType.ROW_CANVAS]: createDefaultCanvasChildRawCanvasOptions
+    [CanvasChildType.RAW_CANVAS]: createDefaultCanvasChildRawCanvasOptions
 }
 
 export const canvasChildRenderMap = {
@@ -121,7 +121,7 @@ export const canvasChildRenderMap = {
     [CanvasChildType.QRCODE]: createCanvasChildQrcode,
     [CanvasChildType.RECT]: createCanvasChildRect,
     [CanvasChildType.ELLIPSE]: createCanvasChildEllipse,
-    [CanvasChildType.ROW_CANVAS]: createCanvasChildRawCanvas
+    [CanvasChildType.RAW_CANVAS]: createCanvasChildRawCanvas
 }
 
 

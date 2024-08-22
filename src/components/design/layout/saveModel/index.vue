@@ -66,7 +66,7 @@ async function save() {
     (decal) => decal.isLocalResource
   );
 
-
+  
 
   // 只负责把贴纸上传即可
   if (localDecals.length) {

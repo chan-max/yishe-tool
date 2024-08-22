@@ -14,7 +14,7 @@ export type CustomBackgroundType = {
 }
 
 
-import { heixian, honhsemubu ,fensejiandan ,peigenpisa,xiguapi,xiaomifeng,baisebowenqiangzhi,xingkong,muwen,nainiu,micai} from './special.tsx'
+import { heixian, honhsemubu, fensejiandan, peigenpisa, xiguapi, xiaomifeng, baisebowenqiangzhi, xingkong, muwen, nainiu, micai, banmawen } from './special.tsx'
 
 export const CustomBackgroundCategoryOptions = [
     {
@@ -38,7 +38,8 @@ export const CustomBackgroundCategoryOptions = [
             xingkong,
             muwen,
             nainiu,
-            micai
+            micai,
+            banmawen
         ]
     }
 ]

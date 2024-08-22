@@ -212,6 +212,7 @@ export class CanvasController {
         currentCanvasControllerInstance.value = this
         // this.updateRenderingCanvas = useDebounceFn(this.updateRenderingCanvas, 666).bind(this)
         this.maxDisplaySize = params.max
+        window.cc = this
     }
 
     // 保存最近的画布base64 格式
@@ -274,50 +275,57 @@ export class CanvasController {
 
     // 需要组件渲染后再更新
     async updateRenderingCanvas() {
+        // this.loading.value = true
+        // renderingLoading.value = true
+        // clearTimeout(this.updateWorker);
+        // this.updateWorker = setTimeout(() => {
+        //     this.addTask(this.updateRenderingCanvasJob);
+        // }, this.updateWorkDelay);
 
         this.loading.value = true
         renderingLoading.value = true
-        clearTimeout(this.updateWorker);
-        this.updateWorker = setTimeout(() => {
-            this.addTask(this.updateRenderingCanvasJob);
-        }, this.updateWorkDelay);
-    }
 
-    addTask(task) {
-        this.updateQueue.push(task);
-        this.run();
-    }
-
-    run() {
-        if (!this.isUpdating && this.updateQueue.length) {
-            this.isUpdating = true;
-            const task = this.updateQueue.shift();
-            task.call(this).then(() => {
-                this.isUpdating = false;
-                this.run();
-            });
-        }
+        this.debouncedUpdateJob()
     }
 
 
-    updateQueue = []; // 画布更新队列
-    isUpdating = false; // 是否正在更新
-    updateWorker = null; // 更新任务
-    updateWorkDelay = 999; // 更新延迟
+    // addTask(task) {
+    //     this.updateQueue.push(task);
+    //     this.run();
+    // }
+
+    // run() {
+    //     if (!this.isUpdating && this.updateQueue.length) {
+    //         this.isUpdating = true;
+    //         const task = this.updateQueue.shift();
+    //         task.call(this).then(() => {
+    //             this.isUpdating = false;
+    //             this.run();
+    //         });
+    //     }
+    // }
 
 
+    // updateQueue = []; // 画布更新队列
+    // isUpdating = false; // 是否正在更新
+    // updateWorker = null; // 更新任务
+    // updateWorkDelay = 999; // 更新延迟
+
+    debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this), 666)
 
     async updateRenderingCanvasJob() {
         if (!this.el) {
             return
         }
 
+
         async function update() {
+            console.log('start generate sticker')
 
             try {
                 this.base64 = await toPng(this.el)
             } catch (e) {
-                return
+                throw Error('元素转换失败', e.message)
             }
 
 
@@ -331,11 +339,13 @@ export class CanvasController {
             this.drawImage(img)
             await nextTick()
             document.body.removeChild(img)
+
             this.loading.value = false
             renderingLoading.value = false
 
             if (!showMainCanvas.value) {
-                this.initDraggable(this.base64)
+                await Utils.sleep(99)
+                this.initDraggable()
             }
         }
 
@@ -350,19 +360,30 @@ export class CanvasController {
         }
     }
 
+
+
+
+    /*
+        初始化拖拽
+    */
+
+
+
     initDraggable() {
         let self = this
+
+        let base64 = this.base64
         initDraggableElement(
             this.el,
             () => {
-
                 currentModelController.value.stickToMousePosition({
                     isLocalResource: true,
-                    base64: self.base64,
+                    base64: currentCanvasControllerInstance.value.base64,
                     data: Utils.clone(canvasStickerOptions.value),
                 })
             },
-            () => self.base64
+
+            () => base64
         )
     }
 

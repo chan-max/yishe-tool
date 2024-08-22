@@ -61,7 +61,7 @@ import {
 
 import backgroundLayout from './background.vue'
 import canvasLayout from './canvas.vue'
-import textLayout from './canvas.vue'
+import textLayout from './text.vue'
 import imageLayout from './image.vue'
 import rawCanvasLayout from './rawCanvas.vue'
 import qrcodeLayout from './qrcode.vue'
@@ -87,9 +87,6 @@ function remove(index) {
   removeCavnasChild(index);
 }
 
-function fontLoad() {
-  updateRenderingCanvas()
-}
 
 
 </script>

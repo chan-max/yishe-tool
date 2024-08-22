@@ -217,10 +217,10 @@ export const nainiu = {
 
 
 export const micai = {
-    label: '迷彩·',
+    label: '迷彩',
     id: 'micai',
     renderSlot: () => {
-        return <svg  style="width:100%;height:100%">
+        return <svg style="width:100%;height:100%">
             <filter id="micai">
                 <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" />
                 <feComponentTransfer>
@@ -238,6 +238,28 @@ export const micai = {
                                 0    0     0    0 1"/>
             </filter>
             <rect x="-10%" y="-10%" width="120%" height="120%" filter="url(#micai)" />
+        </svg>
+
+    }
+}
+
+
+
+export const banmawen = {
+    label: '斑马纹',
+    id: 'banmawen',
+    renderSlot: () => {
+        return <svg xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+            <linearGradient id="banmawen-gradient" x2="50" spreadMethod="reflect" gradientUnits="userSpaceOnUse">
+                <stop offset="50%" />
+                <stop stop-color="#fff" />
+            </linearGradient>
+            <filter id="banmawen">
+                <feTurbulence baseFrequency=".005" numOctaves="5" />
+                <feGaussianBlur stdDeviation="1" />
+                <feDisplacementMap in="SourceGraphic" scale="40" />
+            </filter>
+            <rect x="-10%" y="-10%" width="120%" height="120%" fill="url(#banmawen-gradient)" filter="url(#banmawen)" />
         </svg>
 
     }

@@ -63,11 +63,9 @@ export class DecalController {
 
   constructor(info: any) {
 
-
     this.state.id = this.id.value = v4()
     this.state.isLocalResource = info.isLocalResource
     this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64
-
 
     this.context = this
     this.info = info
@@ -80,6 +78,7 @@ export class DecalController {
     }
 
     this.img = info.img
+
   }
 
   // 确认添加该贴纸到场景
@@ -153,7 +152,7 @@ export class DecalController {
   info = null
 
   async initTexture() {
-
+    console.warn('初始化新材质')
     // 初始化材质
 
     const basicTextureOptions = {
@@ -184,14 +183,12 @@ export class DecalController {
     if (this.info.isLocalResource) {
       const image = new Image();
       image.src = this.info.base64;
-
       // 创建纹理
+
       texture = new Texture(image);
       image.onload = function () {
         texture.needsUpdate = true; // 更新纹理
       };
-
-
     } else {
       texture = await textureLoader.loadAsync(this.img?.src || this.info.src || this.info.thumbnail)
     }

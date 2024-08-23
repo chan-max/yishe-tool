@@ -42,7 +42,7 @@ import {
     shuibowen,
     yanwu
 } from './special.tsx'
-import { neonLightsText, xingguang, saibopengke, xiuxibanban, waiwainiuniu,xuankumoshui } from './text.tsx'
+import { neonLightsText, xingguang, saibopengke, xiuxibanban, waiwainiuniu, xuankumoshui } from './text.tsx'
 
 
 
@@ -52,13 +52,11 @@ export const SvgFilterCategoryOptions = [
         value: SvgFilterCategory.Normal,
         children: [
             {
-                category: SvgFilterCategory.Normal,
                 filterLabel: '默认 (原始图)',
                 filterId: 'default',
                 render: createDefaultFilter
             },
             {
-                category: SvgFilterCategory.Normal,
                 filterLabel: '马赛克效果',
                 filterId: 'mosaic',
                 render: createMosaicFilter
@@ -70,13 +68,11 @@ export const SvgFilterCategoryOptions = [
         value: SvgFilterCategory.PureColor,
         children: [
             {
-                category: SvgFilterCategory.PureColor,
                 filterLabel: '黑白',
                 filterId: 'blackWhite',
                 render: createPureColorMatrixFilterRender('blackWhite', BlackAndWhiteMatrix)
             },
             {
-                category: SvgFilterCategory.PureColor,
                 filterLabel: '复古',
                 filterId: 'vintage',
                 render: vintage
@@ -118,7 +114,6 @@ export const SvgFilterCategoryOptions = [
             xiuxibanban,
             waiwainiuniu,
             xuankumoshui,
-            
         ]
     },
 ]
@@ -126,7 +121,8 @@ export const SvgFilterCategoryOptions = [
 
 export const BuiltInSvgFilterRenderList = SvgFilterCategoryOptions.reduce((res, item) => {
     if (item.children) {
-        return res.concat(item.children.filter((c) => !c.disabled))
+        let usable = (item.children as any).filter((c) => !c.disabled)
+        return res.concat(usable)
     } else {
         return res
     }

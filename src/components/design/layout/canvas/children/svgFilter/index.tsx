@@ -234,9 +234,7 @@ export const SvgFilterStyleComponent = () => {
  * 
 */
 
-function SvgChildCompositeFilterComponent({
-    filterId
-}) {
+function SvgChildCompositeFilterComponent() {
 
     let compositeChildren = canvasStickerOptions.value.children.filter((child) => {
         let url = child.filter.filterUrl
@@ -263,7 +261,9 @@ function SvgChildCompositeFilterComponent({
     })
 
 
-    return filters
+    return <>
+        {filters}
+    </>
 }
 
 
@@ -296,3 +296,5 @@ export function SvgFilterComponent(props) {
         </defs>
     </svg>
 }
+
+

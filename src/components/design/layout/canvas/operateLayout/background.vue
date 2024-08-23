@@ -19,6 +19,8 @@
         </el-collapse-item>
         <operateItemBuiltInBackground v-model="currentOperatingCanvasChild.customBackground">
         </operateItemBuiltInBackground>
+
+        <operateItemClipPath></operateItemClipPath>
     </el-collapse>
 </template>
     
@@ -57,7 +59,7 @@ import operateItemFilterGroup from "@/components/design/layout/canvas/operate/fi
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
 import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue';
 import operateItemBuiltInBackground from '@/components/design/layout/canvas/operate/builtInBackground/index.vue';
-
+import operateItemClipPath from '@/components/design/layout/canvas/operate/clipPath/index.vue';
 
 
 import {

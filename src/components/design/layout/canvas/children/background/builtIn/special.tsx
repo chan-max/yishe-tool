@@ -264,3 +264,34 @@ export const banmawen = {
 
     }
 }
+
+
+
+
+export const lvyincaodi = {
+    label: '绿茵草地',
+    id: 'lvyincaodi',
+    renderSlot: () => {
+        return <svg xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+            <pattern id="lvyincaodi-pattern" width=".1" height=".1">
+                <rect width="5%" height="99%" />
+            </pattern>
+            <filter id="lvyincaodi">
+                <feTurbulence type="fractalNoise" baseFrequency=".8" />
+                <feMorphology operator="dilate" radius="1" />
+                <feConvolveMatrix kernelMatrix="1 1 1
+                                            -8 1 1
+                                            1 1 1" preserveAlpha="true" />
+                <feBlend in2="SourceGraphic" />
+                <feMorphology operator="dilate" radius=".1 2" />
+                <feColorMatrix values=".05 0 0 0 0
+                                   .3 0 .1 -.1 .1
+                                   0 0 0 0 0
+                                   0 0 0 0 1"/>
+            </filter>
+            <rect width="100%" height="100%" fill="url(#lvyincaodi-pattern)" filter="url(#lvyincaodi)" />
+        </svg>
+    }
+}
+
+

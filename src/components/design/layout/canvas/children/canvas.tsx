@@ -4,6 +4,7 @@ import { createFilterFromOptions, formatSizeOptionToPixelValue, } from '../helpe
 import { createFilterDefaultOptions } from './defaultOptions.tsx'
 import { SvgFilterComponent, SvgFilterStyleComponent } from './svgFilter/index.tsx'
 import { updateRenderingCanvas } from '../index.tsx'
+import { SvgClipPathComponent } from '@/components/design/layout/canvas/children/svg/clipPath/index.tsx'
 
 /*
     用于辅助观察的网格背景
@@ -18,6 +19,8 @@ export function createPngBackgroundStyle(scale = 1, cellWidth = 10) {
         backgroundSize: `${2 * size}px ${2 * size}px!important`,
     }
 }
+
+
 
 export function createDefaultCanvasChildcanvasStickerOptions() {
     return {
@@ -92,6 +95,9 @@ export const Canvas = defineComponent({
                 background: props.options.backgroundColor.color,
             }
 
+            /**
+             * canvas 画布仅作为隐藏的存在
+            */
             const canvasStyle: any = {
                 position: "absolute",
                 top: 0,
@@ -107,6 +113,10 @@ export const Canvas = defineComponent({
                     {/* svg过滤器 */}
                     <SvgFilterComponent></SvgFilterComponent>
                     <SvgFilterStyleComponent></SvgFilterStyleComponent>
+
+                    {/* 裁剪 */}
+                    <SvgClipPathComponent></SvgClipPathComponent>
+
                     {ctx.slots.default()}
                 </div>
 

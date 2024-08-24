@@ -179,7 +179,7 @@
                                     </el-button>
 
                                     <el-tooltip content="开始组合滤镜时，可以为同一元素使用多种滤镜" placement="bottom">
-                                        <el-switch inline-prompt v-model="model.isCompositeFilter" active-text="组合滤镜"
+                                        <el-switch inline-prompt v-model="model.isCompositeFilter" disabled active-text="组合滤镜"
                                             inactive-text="单滤镜" />
                                     </el-tooltip>
                                 </template>

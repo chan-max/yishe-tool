@@ -21,12 +21,11 @@
                 cursor: isDragging ? 'grabbing' : 'grab',
                 fontSize: Math.min(targetWidth, targetHeight) / 4 + 'px'
             }" @mousedown="startDrag">
-            
             </div>
         </div>
     </div>
 </template>
-  
+
 <script setup lang="tsx">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { createPngBackgroundStyle } from '@/components/design/layout/canvas/children/canvas.tsx'

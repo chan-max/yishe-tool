@@ -80,7 +80,6 @@
           </el-row>
 
           <div v-if="active == 'drag'">
-
             <dragger ref="draggerRef" v-bind="draggerAttrs" v-model="draggerValue" @init="draggerInit"
               @drag="draggerDrag">
             </dragger>
@@ -142,27 +141,24 @@ const draggerValue = ref({
 })
 
 const draggerAttrs = computed(() => {
-
   // 计算 宽高，子元素宽高 缩放尺寸
-  const cw = formatSizeOptionToPixelValue({
+  const containerWidth = formatSizeOptionToPixelValue({
     value: canvasStickerOptions.value.width,
     unit: canvasStickerOptions.value.unit
   })
 
-  const ch = formatSizeOptionToPixelValue({
+  const containerHeight = formatSizeOptionToPixelValue({
     value: canvasStickerOptions.value.height,
     unit: canvasStickerOptions.value.unit
   })
 
   // 控制拖拽板的大小
-  let scale = 240 / Math.max(cw, ch)
-
-
+  let scale = 240 / Math.max(containerWidth, containerHeight)
 
   return {
     scale: scale,
-    containerWidth: cw,
-    containerHeight: ch,
+    containerWidth: containerWidth,
+    containerHeight: containerHeight,
     targetWidth: currentOperatingCanvasChild.value.targetComputedWidth,
     targetHeight: currentOperatingCanvasChild.value.targetComputedHeight,
   }
@@ -198,8 +194,6 @@ function draggerDrag(pos) {
     top = y
     left = x
   }
-
-
 
   if (canvasUnit == 'cm') {
     top = Utils.pxToCM(y)

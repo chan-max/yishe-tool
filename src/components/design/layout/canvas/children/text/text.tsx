@@ -140,7 +140,6 @@ export const Text = defineComponent({
                 textShadow: parseTextShadowOptionsToCSS(props.options.textShadow),
                 textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color,
                 perspective: formatToNativeSizeString(props.options.transform.perspective),
-
                 // 用于显示换行
                 whiteSpace: 'pre-line',
                 textWrap: 'nowrap',

@@ -6,6 +6,8 @@ import { createFilterDefaultOptions, createTransformDefaultOptions, createPositi
 
 import { queryCustomBackgroundById } from './builtIn/index.ts'
 
+import { onBeforeReturnRender } from '../commonHooks.ts';
+
 /**
 */
 
@@ -35,7 +37,8 @@ export const createDefaultCanvasChildBackgroundOptions = () => {
         customBackground: {
             id: '',
             label: ''
-        }
+        },
+        clipPath:null
     }
 }
 
@@ -44,7 +47,6 @@ export const Background = defineComponent({
         options: null
     },
     setup(props, ctx) {
-
 
         const targetEl = ref()
 
@@ -74,7 +76,6 @@ export const Background = defineComponent({
                 ..._containerStyle
             }
 
-
             const style = {
                 width: formatToNativeSizeString(props.options.width),
                 height: formatToNativeSizeString(props.options.height),
@@ -95,6 +96,12 @@ export const Background = defineComponent({
                     renderSlot = customeBackground.renderSlot()
                 }
             }
+
+
+            onBeforeReturnRender({
+                style,
+                options: props.options
+            })
 
 
             return <div style={containerStyle}>

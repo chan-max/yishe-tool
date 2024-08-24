@@ -114,6 +114,7 @@ import transform from './transform/index'
 import logger from './logger'
 import { Type } from './type'
 import { Encrypt } from './encrypt.ts'
+import { Color } from './color.ts'
 
 
 class Utils {
@@ -121,7 +122,7 @@ class Utils {
     // 加密相关
     encrypt = new Encrypt()
 
-    
+    color = new Color()
 
     IN2CM = 2.539999918
 

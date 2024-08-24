@@ -19,6 +19,8 @@ export function buildURL(address, query) {
 }
 
 
+
+
 export const cache = (fn: Function) => {
   const cache = Object.create(null);
   return ((key: string) => {

@@ -1,42 +1,43 @@
 <template>
-        <el-collapse v-model="canvasCollapseActives">
-          <el-collapse-item name="1" title="画布配置">
-            <el-row align="middle">
-              <el-col :span="24">
-                <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasStickerOptions.width"
-                  v-model:height="canvasStickerOptions.height">
-                </operateItemAbsoluteSize>
-              </el-col>
-              <el-col :span="24">
-                <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位"
-                  v-model="canvasStickerOptions.unit">
-                </operateItemAbsoluteUnitSelect>
-              </el-col>
-              <el-col :span="24">
-                <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
-              </el-col>
-              <!-- <operateItemSwitch label="显示真实大小" v-model="canvasStickerOptions.showCanvasRealSize"></operateItemSwitch> -->
-              <el-col :span="24">
-                <operateItemColor label="辅助背景颜色" tooltip="用于辅助画布中的元素，不会对实际画布产生影响" type="pure"
-                  v-model="canvasStickerOptions.supportBackgroundColor"></operateItemColor>
-              </el-col>
-            </el-row>
-          </el-collapse-item>
-          <el-collapse-item name="2" title="画布属性">
-            <el-row>
-              <el-col :span="24">
-                <operateItemColor label="画布背景颜色" tooltip="画布背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
-                </operateItemColor>
-              </el-col>
-              <el-col :span="24">
-                <a-alert message="我们更希望你使用一个新的背景元素，而不是直接更改画布的背景颜色或其他效果，虽然最终实现的效果相同" banner closable />
-              </el-col>
-            </el-row>
-          </el-collapse-item>
-          <el-collapse-item name="4" title="画布滤镜效果">
-            <operateItemFilterGroup v-model="currentOperatingCanvasChild.filter"></operateItemFilterGroup>
-          </el-collapse-item>
-        </el-collapse>
+  <el-collapse v-model="canvasCollapseActives">
+    <el-collapse-item name="1" title="画布配置">
+      <el-row align="middle">
+        <el-col :span="24">
+          <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasStickerOptions.width"
+            v-model:height="canvasStickerOptions.height">
+          </operateItemAbsoluteSize>
+        </el-col>
+        <el-col :span="24">
+          <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位" v-model="canvasStickerOptions.unit">
+          </operateItemAbsoluteUnitSelect>
+        </el-col>
+        <el-col :span="24">
+          <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
+        </el-col>
+        <!-- <operateItemSwitch label="显示真实大小" v-model="canvasStickerOptions.showCanvasRealSize"></operateItemSwitch> -->
+        <el-col :span="24">
+          <operateItemColor label="辅助背景颜色" tooltip="用于辅助画布中的元素，不会对实际画布产生影响" type="pure"
+            v-model="canvasStickerOptions.supportBackgroundColor"></operateItemColor>
+        </el-col>
+      </el-row>
+    </el-collapse-item>
+    <el-collapse-item name="2" title="画布属性">
+      <el-row>
+        <el-col :span="24">
+          <operateItemColor label="画布背景颜色" tooltip="画布背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
+          </operateItemColor>
+        </el-col>
+        <el-col :span="24">
+          <a-alert message="我们更希望你使用一个新的背景元素，而不是直接更改画布的背景颜色或其他效果，虽然最终实现的效果相同" banner closable />
+        </el-col>
+      </el-row>
+    </el-collapse-item>
+    <el-collapse-item name="4" title="画布滤镜效果">
+      <operateItemFilterGroup v-model="currentOperatingCanvasChild.filter"></operateItemFilterGroup>
+    </el-collapse-item>
+    <operateItemClipPath v-model="currentOperatingCanvasChild.clipPath"></operateItemClipPath>
+  </el-collapse>
+
 </template>
     
 <script setup lang='ts'>
@@ -73,22 +74,23 @@ import operateItemTextStroke from "@/components/design/layout/canvas/operate/tex
 import operateItemFilterGroup from "@/components/design/layout/canvas/operate/filter/group.vue";
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
 import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue';
+import operateItemClipPath from '@/components/design/layout/canvas/operate/clipPath/index.vue';
 
 import {
-    updateCanvasStickerOptionsUnit
+  updateCanvasStickerOptionsUnit
 } from '../helper'
 
 import {
-    CanvasController,
-    canvasStickerOptions,
-    addCanvasChild,
-    removeCavnasChild,
-    currentOperatingCanvasChildIndex,
-    currentCanvasControllerInstance,
-    showMainCanvas,
-    currentOperatingCanvasChild,
-    CanvasChildType,
-    updateRenderingCanvas
+  CanvasController,
+  canvasStickerOptions,
+  addCanvasChild,
+  removeCavnasChild,
+  currentOperatingCanvasChildIndex,
+  currentCanvasControllerInstance,
+  showMainCanvas,
+  currentOperatingCanvasChild,
+  CanvasChildType,
+  updateRenderingCanvas
 } from "../index.tsx";
 
 

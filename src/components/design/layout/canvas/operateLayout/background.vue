@@ -20,7 +20,7 @@
         <operateItemBuiltInBackground v-model="currentOperatingCanvasChild.customBackground">
         </operateItemBuiltInBackground>
 
-        <operateItemClipPath></operateItemClipPath>
+        <operateItemClipPath v-model="currentOperatingCanvasChild.clipPath"></operateItemClipPath>
     </el-collapse>
 </template>
     

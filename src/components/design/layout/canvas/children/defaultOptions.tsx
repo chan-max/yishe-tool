@@ -34,6 +34,11 @@ export const createFilterDefaultOptions = (blurUnit = 'px') => {
 }
 
 
+export const createClipPathDefaultOptions = () => {
+    
+}
+
+
 export const createTransformDefaultOptions = (translateUnit = 'px') => {
     return {
         translateX: {

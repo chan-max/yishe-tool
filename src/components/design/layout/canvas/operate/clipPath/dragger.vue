@@ -1,16 +1,58 @@
 <template>
-    <div style="width:240px;height:240px;" ref="draggerContainerRef">
-        <div ref="draggerRef" style="width:20px;height:20px;background:red;">dafd</div>
+    <div :style="{ width: size + 'px', height: size + 'px' }" class="flex items-center justify-center">
+        <div ref="draggerContainerRef" :style="containerStyle">
+            <div ref="draggerRef" style="width:20px;height:20px;background:red;">dafd</div>
+        </div>
     </div>
 </template>
     
-<script setup lang='ts'>
-import { ref, onMounted } from 'vue'
+<script setup lang='tsx'>
+import { ref, onMounted, computed } from 'vue'
 import Draggabilly from 'draggabilly'
+import { getPositionInfoFromOptions, getPositionLabelFromOptions, formatSizeOptionToPixelValue } from "@/components/design/layout/canvas/helper.tsx";
+import { canvasStickerOptions, currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 
 const draggerContainerRef = ref()
-
 const draggerRef = ref()
+
+/**
+ * @description 由于裁剪是相对于当前元素的，所以不需要显示容器大小作为辅助
+*/
+
+
+type ClipPathModelType = {
+
+}
+
+const size = ref(280)
+
+const containerStyle = computed(() => {
+
+    if (!currentOperatingCanvasChild.value) {
+        return
+    }
+
+    let operatingChildWidth = currentOperatingCanvasChild.value.targetComputedWidth
+    let operatingChildHeight = currentOperatingCanvasChild.value.targetComputedHeight
+
+    let aspect = operatingChildWidth / operatingChildHeight
+
+    if (aspect > 1) {
+        return {
+            background: 'rgba(155,0,255,0.3)',
+            width: size.value + 'px',
+            height: size.value / aspect + 'px'
+        }
+    } else {
+        return {
+            background: 'rgba(155,0,255,0.3)',
+            width: size.value * aspect + 'px',
+            height: size.value + 'px',
+        }
+    }
+})
+
+
 
 onMounted(() => {
     var draggie: any = new Draggabilly(draggerRef.value, {
@@ -37,6 +79,7 @@ onMounted(() => {
     })
 })
 
+
+
 </script>
-    
 <style></style>

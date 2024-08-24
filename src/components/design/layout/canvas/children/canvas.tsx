@@ -6,6 +6,8 @@ import { SvgFilterComponent, SvgFilterStyleComponent } from './svgFilter/index.t
 import { updateRenderingCanvas } from '../index.tsx'
 import { SvgClipPathComponent } from '@/components/design/layout/canvas/children/svg/clipPath/index.tsx'
 
+import { onBeforeReturnRender, onSetup } from './commonHooks.ts'
+
 /*
     用于辅助观察的网格背景
 */
@@ -30,6 +32,7 @@ export function createDefaultCanvasChildcanvasStickerOptions() {
         backgroundColor: {
             color: 'rgba(0,0,0,0)'
         },
+        clipPath: null,
     }
 }
 
@@ -47,8 +50,15 @@ export const Canvas = defineComponent({
 
         onUpdated(updateRenderingCanvas)
 
-
         const rawElRef = ref()
+
+
+        onSetup({
+            targetEl: rawElRef,
+            options: props.options,
+            props: props
+        })
+
 
         return () => {
 
@@ -106,8 +116,13 @@ export const Canvas = defineComponent({
                 display: 'none',
             }
 
-            return <div style={containerStyle}>
 
+            onBeforeReturnRender({
+                style,
+                options: props.options
+            })
+
+            return <div style={containerStyle}>
                 {/* 转换的元素 */}
                 <div id={currentCanvasControllerInstance.value?.rawId} style={style} ref={rawElRef}>
                     {/* svg过滤器 */}
@@ -119,7 +134,6 @@ export const Canvas = defineComponent({
 
                     {ctx.slots.default()}
                 </div>
-
                 {/* 真实的画布 */}
                 <canvas id={currentCanvasControllerInstance.value?.canvasId} style={canvasStyle} width={pxWidth} height={pxHeight}></canvas>
             </div>

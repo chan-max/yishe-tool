@@ -5,13 +5,12 @@
         </template>
         <template #name> 元素裁剪 </template>
         <template #content>
-            <el-popover width="auto" :visible="showPopover" :persistent="false">
+            <el-popover width="auto" :visible="showPopover" :persistent="false" ref="popperRef">
                 <template #reference>
                     <el-button link @click="showPopover = !showPopover">
                         {{ label }}
                     </el-button>
                 </template>
-
                 <div>
                     <template v-if="activeTab == Tab.Custom">
                         <dragger></dragger>
@@ -37,7 +36,8 @@
                     </template>
 
                     <div class="flex items-center" style="margin-top:1rem;">
-                        <el-button v-if="activeTab == Tab.BuiltIn" @click="activeTab = Tab.Custom" size="small"> 自定义裁剪 </el-button>
+                        <el-button v-if="activeTab == Tab.BuiltIn" @click="activeTab = Tab.Custom" size="small"> 自定义裁剪
+                        </el-button>
                         <el-button v-else @click="activeTab = Tab.BuiltIn" size="small"> 使用内置裁剪 </el-button>
                         <div style="flex:1;"></div>
                         <el-button @click="remove" size="small" type="danger" plain> 不使用裁剪 </el-button>
@@ -56,6 +56,12 @@ import Utils from '@/common/utils'
 import { builtInClipPathList } from '@/components/design/layout/canvas/children/svg/clipPath/index.tsx'
 // 通用的颜色操作
 import { useLocalStorage } from '@vueuse/core'
+
+const popperRef = ref()
+
+// onUpdated(() => {
+//     popperRef.value.popperRef?.popperInstanceRef?.update();
+// })
 
 type ClipPathModelValue = {
     id: string, // 唯一id

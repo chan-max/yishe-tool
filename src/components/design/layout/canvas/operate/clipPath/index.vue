@@ -17,12 +17,12 @@
                     </template>
                     <template v-if="activeTab == Tab.BuiltIn">
                         <el-row>
-                            <el-col :span="24" style="height:300px;width:480px;overflow:auto;">
+                            <el-col :span="24" style="height:300px;width:480px;overflow:auto;padding:1rem;">
                                 <el-row class="w-full">
                                     <el-col :span="4" v-for="item in builtInClipPathList">
                                         <div class="flex flex-col items-center preview-item"
                                             :class="{ checked: isChecked(item) }" @click="useCurrent(item)">
-                                            <div style="width:48px;height:48px;" class="preview-box">
+                                            <div style="width:36px;height:36px;" class="preview-box">
                                                 <div style="width:100%;height:100%;" :style="createPreviewBoxStyle(item)">
                                                 </div>
                                             </div>

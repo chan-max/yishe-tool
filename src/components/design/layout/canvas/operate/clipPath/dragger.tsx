@@ -68,9 +68,16 @@ class DragPoint {
             top
         }
 
+        let { width, height } = dragConfigStyle.value
+
+        this.percentPosition.value = {
+            left: left / width * 100,
+            top: top / height * 100,
+        }
+
         await Utils.sleep(0)
-        this.ref.value.style.top = top
-        this.ref.value.style.left = left
+        this.ref.value.style.top = top + 'px'
+        this.ref.value.style.left = left + 'px'
     }
 
     initDraggPoint() {
@@ -252,6 +259,7 @@ function circleSetupMixin() {
 
         circleCenter.initDraggPoint()
         circlePoint.initDraggPoint()
+        
         circleCenter.setInitialPosition({
             left: '100',
             top: '100',
@@ -261,7 +269,9 @@ function circleSetupMixin() {
             top: '10'
         })
 
+
         watch([circleCenter.percentPosition, circlePoint.percentPosition], () => {
+
             clipPathCssValue.value = getClipPathCircleByPosition(circleCenter.percentPosition.value, circlePoint.percentPosition.value)
         }, {
             immediate: true,

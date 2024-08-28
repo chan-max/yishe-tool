@@ -40,12 +40,15 @@ function processCalcComputedSize(payload) {
 /**
  * 处理裁剪路径
 */
+
+import { getClipPathCircleByPercentPosition } from '@/components/design/layout/canvas/operate/clipPath/dragger.tsx'
 function processClipPath(payload) {
     let { style, options } = payload
 
     if (!options.clipPath) {
         return
     }
+
 
     if (options.clipPath.type == 'css') {
         style.clipPath = options.clipPath.cssValue
@@ -55,4 +58,16 @@ function processClipPath(payload) {
         style.clipPath = `url(#${options.clipPath.url})`
     }
 
+    // 自定义的裁剪
+    if (options.clipPath.type == 'customCircle') {
+
+    }
+
+    if (options.clipPath.type == 'customCircle') {
+
+    }
+
+    if (options.clipPath.type == 'customCircle') {
+        style.clipPath = getClipPathCircleByPercentPosition(options.clipPath)
+    }
 }

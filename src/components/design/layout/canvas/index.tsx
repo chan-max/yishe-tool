@@ -318,6 +318,9 @@ export class CanvasController {
             return
         }
 
+        // 暂时先不更新
+        return 
+
 
         async function update() {
             console.log('start generate sticker')

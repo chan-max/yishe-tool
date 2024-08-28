@@ -13,7 +13,7 @@
                 </template>
                 <div>
                     <template v-if="activeTab == Tab.Custom">
-                        <dragger></dragger>
+                        <Dragger @change="customChange"></Dragger>
                     </template>
                     <template v-if="activeTab == Tab.BuiltIn">
                         <el-row>
@@ -39,7 +39,7 @@
                         <el-button v-if="activeTab == Tab.BuiltIn" @click="activeTab = Tab.Custom" size="small"> 自定义裁剪
                         </el-button>
                         <el-button v-else @click="activeTab = Tab.BuiltIn" size="small"> 使用内置裁剪 </el-button>
-                        <div style="flex:1;"></div>
+                        <div style="flex:1;min-width: 1rem;"></div>
                         <el-button @click="remove" size="small" type="danger" plain> 不使用裁剪 </el-button>
                         <el-button @click="showPopover = false" size="small" type="danger"> 关闭 </el-button>
                     </div>
@@ -51,25 +51,25 @@
   
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/clip-path.svg?component";
-import dragger from './dragger.vue'
+import { Dragger } from './dragger.tsx'
 import Utils from '@/common/utils'
 import { builtInClipPathList } from '@/components/design/layout/canvas/children/svg/clipPath/index.tsx'
 // 通用的颜色操作
 import { useLocalStorage } from '@vueuse/core'
+import { computed, ref } from 'vue'
 
 const popperRef = ref()
 
-// onUpdated(() => {
-//     popperRef.value.popperRef?.popperInstanceRef?.update();
-// })
-
-type ClipPathModelValue = {
-    id: string, // 唯一id
-    label: string // 标签
-    cssValue: string, // 直接用于css 的属性值
-    isCustom: boolean, // 是否使用自定义裁剪
+/**
+ * @description 自定义的裁剪
+*/
+function customChange(modelValue) {
+    model.value = modelValue
 }
 
+
+const props = defineProps({
+})
 
 enum Tab {
     BuiltIn = 'builtIn',
@@ -118,8 +118,6 @@ const model = defineModel({
     default: null
 });
 
-const props = defineProps({
-})
 
 </script>
   

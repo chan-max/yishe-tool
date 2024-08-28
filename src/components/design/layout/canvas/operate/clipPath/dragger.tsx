@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, watch, nextTick, defineComponent } from 'vue'
+import { ref, computed, onMounted, watch, nextTick, defineComponent, defineEmits } from 'vue'
 import { getPositionInfoFromOptions, getPositionLabelFromOptions, formatSizeOptionToPixelValue } from "@/components/design/layout/canvas/helper.tsx";
 import { canvasStickerOptions, currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 import Draggabilly from 'draggabilly'
@@ -20,7 +20,7 @@ export enum CustomClipPathType {
 
 
 
-const activeCustomClipPathType = ref(CustomClipPathType.Circle)
+const activeCustomClipPathType = ref(CustomClipPathType.Ellipse)
 
 
 class DragPoint {
@@ -32,11 +32,12 @@ class DragPoint {
     color = Utils.color.randomColor({
         format: 'rgba',
         alpha: 1,
-        luminosity: 'dark',
+        luminosity: 'light',
     })
 
     isDragging = ref(false)
 
+    axis = null
 
     // 像素的位置
     position = ref({
@@ -68,13 +69,6 @@ class DragPoint {
             top
         }
 
-        let { width, height } = dragConfigStyle.value
-
-        this.percentPosition.value = {
-            left: left / width * 100,
-            top: top / height * 100,
-        }
-
         await Utils.sleep(0)
         this.ref.value.style.top = top + 'px'
         this.ref.value.style.left = left + 'px'
@@ -84,8 +78,9 @@ class DragPoint {
         if (!this.ref.value || !dragContainerRef.value) {
             return
         }
-        var draggie: any = new Draggabilly(this.ref.value, {
+        var draggie = new Draggabilly(this.ref.value, {
             containment: true,
+            axis: this.axis
         });
 
 
@@ -100,21 +95,8 @@ class DragPoint {
             var relativeX = draggableRect.left - containerRect.left
             var relativeY = draggableRect.top - containerRect.top
 
-
-
-
-            // 计算百分比位置
-            var percentX = (relativeX / (containerRect.width - draggableRect.width)) * 100;
-            var percentY = (relativeY / (containerRect.height - draggableRect.height)) * 100;
-
-            // 输出百分比位置
-
-            this.percentPosition.value.left = Number(percentX.toFixed(2))
-            this.percentPosition.value.top = Number(percentY.toFixed(2))
             this.position.value.left = Number(relativeX.toFixed(2))
             this.position.value.top = Number(relativeY.toFixed(2))
-
-
 
             if (typeof this.onPositionChange == 'function') {
                 typeof this.onPositionChange.call(this)
@@ -157,9 +139,20 @@ const dragContainerRef = ref()
 */
 
 export const Dragger = defineComponent({
-    setup() {
+    setup(props, ctx) {
 
-        const { isDragging, clipPathCssValue, slot } = circleSetupMixin()
+
+        let mixins = {
+            [CustomClipPathType.Circle]: circleSetupMixin,
+            [CustomClipPathType.Ellipse]: ellipseSetupMixin,
+            [CustomClipPathType.Polgyon]: polgyonSetupMixin,
+        }
+
+
+        const { isDragging, clipPathCssValue, slot } = mixins[activeCustomClipPathType.value].call(null, props, ctx)
+
+
+
 
         return () => {
 
@@ -168,16 +161,16 @@ export const Dragger = defineComponent({
             } = dragConfigStyle.value
 
 
-            return <div ref={dragContainerRef} style={{ width: containerWidth + 'px', height: containerHeight + 'px', cursor: isDragging.value ? 'grabbing' : 'grab', }} class="flex items-center justify-center relative" >
-
-
-                <div style={{ width, height, background: `#f9f9f9`, }}>
-                    <div style={{ width: width + 'px', height: height + 'px', background: `rgba(115,0,255,.1)`, clipPath: clipPathCssValue.value }}>
+            return <div class="flex items-center justify-center w-full h-full">
+                <div class="flex items-center justify-center relative" ref={dragContainerRef} style={{ width: containerWidth + 'px', height: containerHeight + 'px', cursor: isDragging.value ? 'grabbing' : 'grab', }}  >
+                    <div style={{ width, height, }} class='png-background'>
+                        <div style={{ width: width + 'px', height: height + 'px', background: `rgba(115,0,255,.2)`, clipPath: clipPathCssValue.value }}>
+                        </div>
                     </div>
+                    <>
+                        {slot()}
+                    </>
                 </div>
-                <>
-                    {slot()}
-                </>
             </div>
         }
     }
@@ -228,7 +221,7 @@ const dragConfigStyle = computed(() => {
 
 
 
-function circleSetupMixin() {
+function circleSetupMixin(props, ctx) {
     // 可推拽的点
 
     var circleCenter
@@ -259,7 +252,7 @@ function circleSetupMixin() {
 
         circleCenter.initDraggPoint()
         circlePoint.initDraggPoint()
-        
+
         circleCenter.setInitialPosition({
             left: '100',
             top: '100',
@@ -270,11 +263,33 @@ function circleSetupMixin() {
         })
 
 
-        watch([circleCenter.percentPosition, circlePoint.percentPosition], () => {
+        watch([circleCenter.position, circlePoint.position], () => {
 
-            clipPathCssValue.value = getClipPathCircleByPosition(circleCenter.percentPosition.value, circlePoint.percentPosition.value)
+            let { width, height } = dragConfigStyle.value
+
+
+            let centerLeft = circleCenter.position.value.left / width
+            let centerTop = circleCenter.position.value.top / height
+            let pointLeft = circlePoint.position.value.left / width
+            let pointTop = circlePoint.position.value.top / height
+
+            // 这里转换为百分比
+            clipPathCssValue.value = getClipPathCircleByPercentPosition({ centerLeft, centerTop, pointLeft, pointTop })
+
+            // 保存裁剪路径的时候始终保存百分比
+
+            let clipPathModelValue = {
+                type: 'customCircle',
+                centerLeft,
+                centerTop,
+                pointLeft,
+                pointTop
+            }
+
+            ctx.emit('change', clipPathModelValue)
+
         }, {
-            immediate: true,
+            // immediate: true, 不在使用watch初始化
             deep: true,
         })
     })
@@ -295,17 +310,115 @@ function circleSetupMixin() {
 }
 
 
-function getClipPathCircleByPosition(center, point) {
 
-    if (!center || !point) {
-        return null
+
+
+function ellipseSetupMixin(props, ctx) {
+
+    var ellipseCenter
+    var ellipseHorizontal
+    var ellipseVertical
+    var clipPathCssValue = ref()
+
+
+    ellipseCenter = new DragPoint()
+    ellipseCenter.type = CustomClipPathType.Circle
+    ellipseHorizontal = new DragPoint()
+    ellipseHorizontal.type = CustomClipPathType.Circle
+    ellipseHorizontal.axis = 'x'
+    ellipseVertical = new DragPoint()
+    ellipseVertical.type = CustomClipPathType.Circle
+    ellipseVertical.axis = 'y'
+
+    // 设置点的初始位置
+
+
+    // 
+    const isDragging = computed(() => {
+        return ellipseCenter.isDragging.value || ellipseHorizontal.isDragging.value || ellipseVertical.isDragging.value
+    })
+
+    onMounted(() => {
+
+        let { width, height, containerWidth, containerHeight } = dragConfigStyle.value
+
+        ellipseCenter.initDraggPoint()
+        ellipseHorizontal.initDraggPoint()
+        ellipseVertical.initDraggPoint()
+
+        ellipseCenter.setInitialPosition({
+            left: 0,
+            top: 0,
+        })
+        ellipseHorizontal.setInitialPosition({
+            left: 0,
+            top: 0
+        })
+
+        ellipseVertical.setInitialPosition({
+            left: 0,
+            top: 0
+        })
+
+
+        watch([ellipseCenter.position, ellipseHorizontal.position, ellipseVertical.position], () => {
+
+            // let { width, height } = dragConfigStyle.value
+
+
+            // let centerLeft = circleCenter.position.value.left / width
+            // let centerTop = circleCenter.position.value.top / height
+            // let pointLeft = circlePoint.position.value.left / width
+            // let pointTop = circlePoint.position.value.top / height
+
+            // // 这里转换为百分比
+            // clipPathCssValue.value = getClipPathCircleByPercentPosition({ centerLeft, centerTop, pointLeft, pointTop })
+
+            // // 保存裁剪路径的时候始终保存百分比
+
+            // let clipPathModelValue = {
+            //     type: 'customEllipse',
+            //     centerLeft,
+            //     centerTop,
+            //     pointLeft,
+            //     pointTop
+            // }
+
+            // ctx.emit('change', clipPathModelValue)
+
+        }, {
+            // immediate: true, 不在使用watch初始化
+            deep: true,
+        })
+    })
+
+
+
+    return {
+        isDragging,
+        clipPathCssValue,
+
+        slot: () => {
+            return <>
+                {ellipseCenter.render()}
+                {ellipseHorizontal.render()}
+                {ellipseVertical.render()}
+            </>
+        }
     }
+}
 
-    // 解析百分比坐标
-    const centerLeft = parseFloat(center.left) / 100; // 圆心的 left 坐标（百分比转为小数）
-    const centerTop = parseFloat(center.top) / 100;   // 圆心的 top 坐标（百分比转为小数）
-    const pointLeft = parseFloat(point.left) / 100;   // 圆上点的 left 坐标（百分比转为小数）
-    const pointTop = parseFloat(point.top) / 100;     // 圆上点的 top 坐标（百分比转为小数）
+function polgyonSetupMixin() {
+
+}
+
+
+export function getClipPathCircleByPercentPosition({ centerLeft, centerTop, pointLeft, pointTop }) {
+
+    // if (!centerLeft || !centerTop || !pointLeft || !pointTop) {
+    //     return null
+    // }
+
 
     const radius = Math.sqrt(Math.pow(pointLeft - centerLeft, 2) + Math.pow(pointTop - centerTop, 2));
 

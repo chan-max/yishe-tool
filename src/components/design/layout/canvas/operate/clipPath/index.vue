@@ -5,7 +5,8 @@
         </template>
         <template #name> 元素裁剪 </template>
         <template #content>
-            <el-popover width="auto" :visible="showPopover" :persistent="false" ref="popperRef">
+            <el-popover width="auto" :visible="showPopover" :persistent="false" ref="popperRef"
+                popper-class="el-popover-operation">
                 <template #reference>
                     <el-button link @click="showPopover = !showPopover">
                         {{ label }}
@@ -16,23 +17,36 @@
                         <Dragger @change="customChange"></Dragger>
                     </template>
                     <template v-if="activeTab == Tab.BuiltIn">
-                        <el-row>
-                            <el-col :span="24" style="height:300px;width:480px;overflow:auto;padding:1rem;">
-                                <el-row class="w-full">
-                                    <el-col :span="4" v-for="item in builtInClipPathList">
-                                        <div class="flex flex-col items-center preview-item"
-                                            :class="{ checked: isChecked(item) }" @click="useCurrent(item)">
-                                            <div style="width:36px;height:36px;" class="preview-box">
-                                                <div style="width:100%;height:100%;" :style="createPreviewBoxStyle(item)">
-                                                </div>
-                                            </div>
-                                            <div class="label"> {{
-                                                item.label }} </div>
-                                        </div>
-                                    </el-col>
-                                </el-row>
+                        <!-- <el-row>
+                            <el-col :span="24">
+                                <div style="height:64px;padding:0 2rem;" class="flex items-center">
+                                    <el-input style="width:188px;" placeholder="关键字搜索"></el-input>
+                                    <div style="flex:1"></div>
+                                </div>
                             </el-col>
+                        </el-row> -->
+                        <el-row>
+                            <el-scrollbar height="300px">
+                                <el-col :span="24" style="width:480px;padding:1rem 2rem;">
+                                    <el-row class="w-full">
+                                        <el-col :span="4" v-for="item in builtInClipPathList">
+                                            <div class="flex flex-col items-center preview-item"
+                                                :class="{ checked: isChecked(item) }" @click="useCurrent(item)">
+                                                <div style="width:36px;height:36px;" class="preview-box">
+                                                    <div style="width:100%;height:100%;"
+                                                        :style="createPreviewBoxStyle(item)">
+                                                    </div>
+                                                </div>
+                                                <div class="label"> {{
+                                                    item.label }} </div>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
+                                </el-col>
+                            </el-scrollbar>
                         </el-row>
+
+
                     </template>
 
                     <div class="flex items-center" style="margin-top:1rem;">
@@ -78,6 +92,8 @@ enum Tab {
 
 const activeTab = useLocalStorage('_1s_clipPathActiveTab', Tab.BuiltIn)
 
+const showPopover = useLocalStorage('_1s_clipPathShowPopover', false)
+
 
 const label = computed(() => {
 
@@ -98,7 +114,6 @@ function createPreviewBoxStyle(item) {
     return { clipPath: item.type == 'css' ? item.cssValue : `url(#${item.url})`, background: item.previewBackground }
 }
 
-const showPopover = ref(false)
 
 function isChecked(item) {
     return item.id == model.value?.id

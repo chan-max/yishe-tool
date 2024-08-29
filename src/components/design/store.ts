@@ -469,10 +469,10 @@ export function startSyncDesignStorage() {
 
     }, 999)
 
+
+
     designStore.$subscribe((mutation, state) => {
-
         syncState.value.loading = true
-
         sync(state)
     })
 }

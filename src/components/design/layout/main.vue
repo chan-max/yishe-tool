@@ -246,10 +246,13 @@ const modelController = new ModelController();
 
 onMounted(async () => {
   modelController.render(mountContainer.value);
-
   await Utils.sleep(1200);
   isFirstPageLoading.value = false;
+});
 
+initAction()
+ 
+async function initAction() {
   // 提示用户登录
   if (!loginStore.isLogin) {
     await Modal.confirm({
@@ -300,7 +303,7 @@ onMounted(async () => {
       开启实时同步更新
     */
   }
-});
+}
 
 /**
  * 画布右键菜单
@@ -346,7 +349,8 @@ function onContextMenu(e) {
 }
 
 #layout-header {
-  border-bottom: 1px solid #f6f6f6;
+  z-index:11;
+  box-shadow: rgba(215, 215, 215, 0.9) 0px 0px 16px;
 }
 
 #threejs-canvas {

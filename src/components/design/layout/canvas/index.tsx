@@ -319,6 +319,8 @@ export class CanvasController {
         }
 
         // 暂时先不更新
+        this.loading.value = false
+        renderingLoading.value = false
         return 
 
 

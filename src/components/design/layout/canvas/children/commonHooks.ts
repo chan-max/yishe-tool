@@ -41,7 +41,7 @@ function processCalcComputedSize(payload) {
  * 处理裁剪路径
 */
 
-import { getClipPathCircleByPercentPosition } from '@/components/design/layout/canvas/operate/clipPath/dragger.tsx'
+import { getClipPathCircleByPercentPosition, getClipPathEllipseByPercentPosition } from '@/components/design/layout/canvas/operate/clipPath/dragger.tsx'
 function processClipPath(payload) {
     let { style, options } = payload
 
@@ -63,11 +63,12 @@ function processClipPath(payload) {
 
     }
 
-    if (options.clipPath.type == 'customCircle') {
-
+    if (options.clipPath.type == 'customEllipse') {
+        style.clipPath = getClipPathEllipseByPercentPosition(options.clipPath)
     }
 
     if (options.clipPath.type == 'customCircle') {
         style.clipPath = getClipPathCircleByPercentPosition(options.clipPath)
+    
     }
 }

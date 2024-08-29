@@ -5,6 +5,7 @@ import Draggabilly from 'draggabilly'
 import './dragger.less'
 import Utils from '@/common/utils'
 
+
 /**
  * 自定义裁剪路径的类型 
 */
@@ -13,14 +14,14 @@ import Utils from '@/common/utils'
 export enum CustomClipPathType {
     Circle = 'circle', // 普通圆形，需要两个点
     Ellipse = 'ellipse', // 需要三个点
-    Polgyon = 'polgyon', // 普通多边形
+    Polygon = 'polygon', // 普通多边形
     SvgClipPath = 'svg-clip-path', // 使用svg的高级路径
 }
 
 
 
 
-const activeCustomClipPathType = ref(CustomClipPathType.Ellipse)
+const activeCustomClipPathType = ref(CustomClipPathType.Circle)
 
 
 class DragPoint {
@@ -45,10 +46,6 @@ class DragPoint {
         left: 0
     })
 
-    percentPosition = ref({
-        top: 0,
-        left: 0
-    })
 
     constructor() {
     }
@@ -68,11 +65,10 @@ class DragPoint {
             left,
             top
         }
-
-        await Utils.sleep(0)
-        this.ref.value.style.top = top + 'px'
-        this.ref.value.style.left = left + 'px'
+        this.ref.value.style.top = this.position.value.top + 'px'
+        this.ref.value.style.left = this.position.value.left + 'px'
     }
+
 
     initDraggPoint() {
         if (!this.ref.value || !dragContainerRef.value) {
@@ -138,20 +134,24 @@ const dragContainerRef = ref()
  * @description 
 */
 
+let mixins = {
+    [CustomClipPathType.Circle]: circleSetupMixin,
+    [CustomClipPathType.Ellipse]: ellipseSetupMixin,
+    [CustomClipPathType.Polygon]: polygonSetupMixin,
+}
+
 export const Dragger = defineComponent({
     setup(props, ctx) {
 
-
-        let mixins = {
-            [CustomClipPathType.Circle]: circleSetupMixin,
-            [CustomClipPathType.Ellipse]: ellipseSetupMixin,
-            [CustomClipPathType.Polgyon]: polgyonSetupMixin,
-        }
-
-
         const { isDragging, clipPathCssValue, slot } = mixins[activeCustomClipPathType.value].call(null, props, ctx)
 
+        /**
+         * @description 应该在初始化时和 更新路径时都触发，更新时增加锁
+        */
 
+        watch(currentOperatingCanvasChild.value.clipPath, () => {
+            debugger
+        })
 
 
         return () => {
@@ -188,8 +188,6 @@ const dragPointSize = ref(20)
 */
 const size = ref(300)
 
-
-
 const dragConfigStyle = computed(() => {
 
     if (!currentOperatingCanvasChild.value) {
@@ -220,9 +218,10 @@ const dragConfigStyle = computed(() => {
 })
 
 
-
 function circleSetupMixin(props, ctx) {
     // 可推拽的点
+
+
 
     var circleCenter
     var circlePoint
@@ -268,10 +267,10 @@ function circleSetupMixin(props, ctx) {
             let { width, height } = dragConfigStyle.value
 
 
-            let centerLeft = circleCenter.position.value.left / width
-            let centerTop = circleCenter.position.value.top / height
-            let pointLeft = circlePoint.position.value.left / width
-            let pointTop = circlePoint.position.value.top / height
+            let centerLeft = circleCenter.position.value.left / width * 100
+            let centerTop = circleCenter.position.value.top / height * 100
+            let pointLeft = circlePoint.position.value.left / width * 100
+            let pointTop = circlePoint.position.value.top / height * 100
 
             // 这里转换为百分比
             clipPathCssValue.value = getClipPathCircleByPercentPosition({ centerLeft, centerTop, pointLeft, pointTop })
@@ -311,8 +310,6 @@ function circleSetupMixin(props, ctx) {
 
 
 
-
-
 function ellipseSetupMixin(props, ctx) {
 
     var ellipseCenter
@@ -333,7 +330,6 @@ function ellipseSetupMixin(props, ctx) {
     // 设置点的初始位置
 
 
-    // 
     const isDragging = computed(() => {
         return ellipseCenter.isDragging.value || ellipseHorizontal.isDragging.value || ellipseVertical.isDragging.value
     })
@@ -354,37 +350,42 @@ function ellipseSetupMixin(props, ctx) {
             left: 0,
             top: 0
         })
-
         ellipseVertical.setInitialPosition({
             left: 0,
             top: 0
         })
 
+        watch(ellipseCenter.position, () => {
+            let { top, left } = ellipseCenter.position.value
+            ellipseHorizontal.draggie.setPosition(ellipseHorizontal.position.value.left, top)
+            ellipseVertical.draggie.setPosition(left, ellipseVertical.position.value.top)
+        }, {
+            deep: true
+        })
 
         watch([ellipseCenter.position, ellipseHorizontal.position, ellipseVertical.position], () => {
 
-            // let { width, height } = dragConfigStyle.value
+            let { width, height } = dragConfigStyle.value
+
+            let centerLeft = ellipseCenter.position.value.left / width * 100
+            let centerTop = ellipseCenter.position.value.top / height * 100
+            let xPointLeft = ellipseHorizontal.position.value.left / width * 100
+            let xPointTop = ellipseHorizontal.position.value.top / width * 100
+            let yPointTop = ellipseVertical.position.value.top / height * 100
+            let yPointLeft = ellipseVertical.position.value.left / height * 100
+            // 这里转换为百分比
+            clipPathCssValue.value = getClipPathEllipseByPercentPosition({ centerLeft, centerTop, xPointLeft, yPointTop, xPointTop, yPointLeft })
+
+            // 保存裁剪路径的时候始终保存百分比
+
+            let clipPathModelValue = {
+                type: 'customEllipse',
+                centerLeft, centerTop, xPointLeft, yPointTop, xPointTop, yPointLeft
+            }
 
 
-            // let centerLeft = circleCenter.position.value.left / width
-            // let centerTop = circleCenter.position.value.top / height
-            // let pointLeft = circlePoint.position.value.left / width
-            // let pointTop = circlePoint.position.value.top / height
 
-            // // 这里转换为百分比
-            // clipPathCssValue.value = getClipPathCircleByPercentPosition({ centerLeft, centerTop, pointLeft, pointTop })
-
-            // // 保存裁剪路径的时候始终保存百分比
-
-            // let clipPathModelValue = {
-            //     type: 'customEllipse',
-            //     centerLeft,
-            //     centerTop,
-            //     pointLeft,
-            //     pointTop
-            // }
-
-            // ctx.emit('change', clipPathModelValue)
+            ctx.emit('change', clipPathModelValue)
 
         }, {
             // immediate: true, 不在使用watch初始化
@@ -393,11 +394,9 @@ function ellipseSetupMixin(props, ctx) {
     })
 
 
-
     return {
         isDragging,
         clipPathCssValue,
-
         slot: () => {
             return <>
                 {ellipseCenter.render()}
@@ -408,19 +407,111 @@ function ellipseSetupMixin(props, ctx) {
     }
 }
 
-function polgyonSetupMixin() {
+function polygonSetupMixin(props, ctx) {
 
+    var clipPathCssValue = ref()
+
+    var points = ref([
+
+    ])
+
+    // 设置点的初始位置
+
+
+    const isDragging = computed(() => {
+        return points.value.some((p) => p.isDragging.value);
+    })
+
+    onMounted(() => {
+
+        let { width, height, containerWidth, containerHeight } = dragConfigStyle.value
+        // 挂载后再生成拖拽点
+
+
+
+        if (!points.value.length) {
+            // 如果没有点则加入默认点 , 默认加入一个三角形
+            let defaultPositons = [
+                {
+                    top: 0,
+                    left: width / 2
+                },
+                {
+                    top: height,
+                    left: 0
+                },
+                {
+                    top: height,
+                    left: width
+                },
+            ]
+        }
+
+
+
+
+        watch(points, () => {
+
+            let { width, height } = dragConfigStyle.value
+
+            let centerLeft = ellipseCenter.position.value.left / width * 100
+            let centerTop = ellipseCenter.position.value.top / height * 100
+            let xPointLeft = ellipseHorizontal.position.value.left / width * 100
+            let xPointTop = ellipseHorizontal.position.value.top / width * 100
+            let yPointTop = ellipseVertical.position.value.top / height * 100
+            let yPointLeft = ellipseVertical.position.value.left / height * 100
+            // 这里转换为百分比
+            clipPathCssValue.value = getClipPathEllipseByPercentPosition({ centerLeft, centerTop, xPointLeft, yPointTop, xPointTop, yPointLeft })
+
+            // 保存裁剪路径的时候始终保存百分比
+
+            let clipPathModelValue = {
+                type: 'customPolygon',
+                centerLeft, centerTop, xPointLeft, yPointTop, xPointTop, yPointLeft
+            }
+
+            ctx.emit('change', clipPathModelValue)
+
+        }, {
+            // immediate: true, 不在使用watch初始化
+            deep: true,
+        })
+    })
+
+
+    return {
+        isDragging,
+        clipPathCssValue,
+        slot: () => {
+            return <>
+                {
+                    points.value.map((p) => p.render())
+                }
+            </>
+        }
+    }
 }
 
 
 export function getClipPathCircleByPercentPosition({ centerLeft, centerTop, pointLeft, pointTop }) {
 
-    // if (!centerLeft || !centerTop || !pointLeft || !pointTop) {
-    //     return null
-    // }
-
-
     const radius = Math.sqrt(Math.pow(pointLeft - centerLeft, 2) + Math.pow(pointTop - centerTop, 2));
 
-    return `circle(${radius * 100}% at ${centerLeft * 100}% ${centerTop * 100}%)`;
+    return `circle(${radius}% at ${centerLeft}% ${centerTop}%)`;
 }
+
+
+export function getClipPathEllipseByPercentPosition({ centerLeft, centerTop, xPointLeft, xPointTop, yPointLeft, yPointTop, }) {
+
+    return `ellipse(${Math.abs(xPointLeft - centerLeft)}% ${Math.abs(yPointTop - centerTop)}% at ${centerLeft}% ${centerTop}%)`
+}
+
+
+
+export function getClipPathPolygonByPercentPosition({ points }) {
+    return `polygon(${points.map((p) => {
+        return `${p.left} ${p.top}`
+    }).join(',')})`
+}
+
+

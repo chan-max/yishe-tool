@@ -69,6 +69,9 @@ export const Image = defineComponent({
             loading.value = false
         }
 
+
+
+
         return () => {
 
             const {
@@ -100,18 +103,15 @@ export const Image = defineComponent({
             }
 
 
+            const imgDiaplay = computed(() => {
+                return true
+            })
+
 
             return <div style={containerStyle}>
-                {
-                    loading.value ?
-                        '图片加载中' :
-                        !imgUrl.value
-                            ? '未选择图片'
-                            : loadError.value
-                                ? '图片加载失败'
-                                : <img ref={targetRef} onLoad={onLoad} onError={onError} src={imgUrl.value} style={style}></img>
-                }
-
+                {!imgUrl.value && '未选择图片'}
+                {loadError.value && '图片加载失败'}
+                {<img ref={targetRef} onLoad={onLoad} onError={onError} src={imgUrl.value} style={{ ...style, display: imgDiaplay.value }}></img>}
             </div>
         }
     }

@@ -185,8 +185,16 @@ const squareDiamond = {
     type: CustomClipPathType.CSS,
     id: 'square-diamond',
     label: '方形钻石',
-    cssValue :`polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)`
+    cssValue: `polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)`
 }
+
+const heart = {
+    type: CustomClipPathType.URL,
+    id: 'heart',
+    label: '心形',
+    url: 'heart'
+}
+
 
 
 export const builtInClipPathList = [
@@ -208,7 +216,8 @@ export const builtInClipPathList = [
     leftArrow,
     rightArrow,
     diamond,
-    squareDiamond
+    squareDiamond,
+    heart
 ]
 
 
@@ -240,14 +249,82 @@ export function createCircleClipPath() {
 
 
 
-export const SvgClipPathComponent = () => {
-    return <>
-        <svg id="define-clippath" width="0" height="0">
-            <defs>
-            </defs>
-        </svg>
-    </>
+import {
+    SVGPathData,
+    SVGPathDataTransformer,
+    SVGPathDataParser,
+    encodeSVGPath
+} from 'svg-pathdata';
+
+
+
+
+
+
+const parser = new SVGPathDataParser();
+
+
+/**
+ * 心形路径
+*/
+const headerPathString = transformSvgPathStringToRelativePathString(`
+M12 4.248c-3.148-5.402-12-3.825-12 2.944 0 4.661 5.571 9.427 12 15.808 6.43-6.381 12-11.147 12-15.808 0-6.792-8.875-8.306-12-2.944z
+`, 24)
+
+
+
+/**
+ * @description 将一个绝对单位的路径转换为 相对于 元素宽高百分比的路径 
+ * @params 
+*/
+export function transformSvgPathStringToRelativePathString(pathString: string, boxWidth: number, boxHeight: number = boxWidth): string {
+    if (!boxWidth) {
+        return
+    }
+
+    let xKeys = ['x', 'x1', 'x2']
+
+    let yKeys = ['y', 'y1', 'y2']
+
+    let pathAst = parser.parse(pathString)
+
+    pathAst.forEach(ast => {
+        for (let key in ast) {
+
+            if (xKeys.includes(key)) {
+                ast[key] = ast[key] / boxWidth
+            }
+
+            if (yKeys.includes(key)) {
+
+                ast[key] = ast[key] / boxHeight
+            }
+
+        }
+    });
+
+
+    var str = encodeSVGPath(pathAst)
+
+    console.log(str)
+    return str
 }
 
 
 
+
+
+/**
+ * 定义画布中的所有svg裁剪路径
+*/
+export const SvgClipPathComponent = () => {
+    return <>
+        <svg id="define-clip-path" width="0" height="0">
+            <defs>
+                <clipPath id="heart" clipPathUnits="objectBoundingBox">
+                    <path d={headerPathString} />
+                </clipPath>
+            </defs>
+        </svg>
+    </>
+}

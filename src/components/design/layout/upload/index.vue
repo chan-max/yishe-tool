@@ -2,8 +2,8 @@
   <div class="container">
     <div v-if="uploadTabType == 'local'">
       <el-upload ref="uploadRef" style="padding: 0" :disabled="!loginStore.isLogin" v-model:file-list="fileList" drag
-        :auto-upload="false" :multiple="false" v-bind="$attrs" :on-change="fileListChange" :limit="1"
-        :on-exceed="handleExceed" accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff,font/otf">
+        :before-remove="beforeRemove" :auto-upload="false" :multiple="false" v-bind="$attrs" :on-change="fileListChange"
+        :limit="1" :on-exceed="handleExceed" accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff,font/otf">
         <div class="placeholder">
           <icon-file-upload></icon-file-upload>
           <div>点击或拖拽上传</div>
@@ -38,7 +38,7 @@
                 </el-icon></el-button>
             </div>
             <div class="file-bar-name">
-              <el-input v-model="file.customName" placeholder="资源名称" />
+              <el-input  v-model="file.customName" placeholder="资源名称" />
             </div>
             <div class="file-bar-description">
               <el-input v-model="file.description" placeholder="文件描述" type="textarea"
@@ -193,6 +193,13 @@ function removeFile(file) {
   fileList.value.splice(fileList.value.indexOf(file), 1);
 }
 
+
+/**
+ * @description 防止删除键将选中的文件删除
+*/
+function beforeRemove() {
+  return window.event.keyCode !== 8
+}
 
 const loading = ref(false);
 

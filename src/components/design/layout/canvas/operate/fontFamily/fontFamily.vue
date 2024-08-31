@@ -12,7 +12,7 @@
                 </template>
 
                 <template #empty>
-                    无相关字体
+                    <span style="font-size:1rem;"> 无相关字体 , 去上传</span>
                 </template>
                 <!-- <el-option-group label="网络字体"> -->
                 <template v-for="item in list" :key="item.id">

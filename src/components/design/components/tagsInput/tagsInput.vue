@@ -7,6 +7,7 @@
           @on-tags-changed="handleInput" />
       </template>
       <div class="tags-input-tags">
+        <a-alert v-if="showAlert" style="width:100%" message="点击变标签可以自动添加到输入框中" type="info" close-text="不再提示" @close="showAlert = false"/>
         <a-tag :bordered="false" v-for="(tag, index) in autocompleteTags" @click="handleSelect(tag)">
           {{ tag.name }}
         </a-tag>
@@ -18,8 +19,10 @@
 <script setup>
 import { defineComponent, ref } from "vue";
 import Vue3TagsInput from "vue3-tags-input";
+import {useLocalStorage} from '@vueuse/core'
 
 const props = defineProps({
+  // 内置的提示框
   autocompleteTags: {
     default: null,
   },
@@ -31,10 +34,8 @@ const props = defineProps({
   },
 });
 
-function mergeArrays(arr1, arr2) {
-  return [...Object.assign([], arr1, arr2)];
-}
 
+const showAlert = useLocalStorage('_1s_showAutoCompleteTip',true)
 
 // 所有的 tags
 const tags = ref([]);
@@ -43,11 +44,9 @@ const popperRef = ref();
 
 
 const handleSelect = (tag) => {
-
   if (!tags.value.includes(tag.name)) {
     tags.value.push(tag.name)
   }
-
   emitModel()
 };
 

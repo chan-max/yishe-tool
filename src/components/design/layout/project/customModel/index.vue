@@ -4,7 +4,8 @@
             <el-col :span="24 / column" v-for="item in  list" align="center">
                 <div @click="openDetail(item)" style="width:100%;height:100%;flex-shrink: 0;"
                     class="flex flex-col items-center justify-center">
-                    <desimage padding="5%" :src="item.thumbnail"
+                    <desimage padding="0%" :src="item.thumbnail"
+                        fit="cover"
                         style="background:#f6f6f6!important;width:160px;height:160px;">
                     </desimage>
                     <div class="bar"></div>

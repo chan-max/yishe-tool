@@ -277,6 +277,9 @@ M12 4.248c-3.148-5.402-12-3.825-12 2.944 0 4.661 5.571 9.427 12 15.808 6.43-6.38
  * @description 将一个绝对单位的路径转换为 相对于 元素宽高百分比的路径 
  * @params 
 */
+
+
+
 export function transformSvgPathStringToRelativePathString(pathString: string, boxWidth: number, boxHeight: number = boxWidth): string {
     if (!boxWidth) {
         return
@@ -294,19 +297,15 @@ export function transformSvgPathStringToRelativePathString(pathString: string, b
             if (xKeys.includes(key)) {
                 ast[key] = ast[key] / boxWidth
             }
-
             if (yKeys.includes(key)) {
-
                 ast[key] = ast[key] / boxHeight
             }
-
         }
     });
 
 
     var str = encodeSVGPath(pathAst)
 
-    console.log(str)
     return str
 }
 

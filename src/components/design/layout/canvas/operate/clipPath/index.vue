@@ -45,14 +45,12 @@
                                 </el-col>
                             </el-scrollbar>
                         </el-row>
-
-
                     </template>
 
                     <div class="flex items-center" style="margin-top:1rem;">
-                        <el-button v-if="activeTab == Tab.BuiltIn" @click="activeTab = Tab.Custom" size="small"> 自定义裁剪
+                        <!-- <el-button v-if="activeTab == Tab.BuiltIn" @click="activeTab = Tab.Custom" size="small"> 自定义裁剪
                         </el-button>
-                        <el-button v-else @click="activeTab = Tab.BuiltIn" size="small"> 使用内置裁剪 </el-button>
+                        <el-button v-else @click="activeTab = Tab.BuiltIn" size="small"> 使用内置裁剪 </el-button> -->
                         <div style="flex:1;min-width: 1rem;"></div>
                         <el-button @click="remove" size="small" type="danger" plain> 不使用裁剪 </el-button>
                         <el-button @click="showPopover = false" size="small" type="danger"> 关闭 </el-button>

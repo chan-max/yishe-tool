@@ -251,7 +251,7 @@ onMounted(async () => {
 });
 
 initAction()
- 
+
 async function initAction() {
   // 提示用户登录
   if (!loginStore.isLogin) {
@@ -290,14 +290,10 @@ async function initAction() {
     });
 
     if (!Utils.isEmptyObject(data)) {
-      // 存在用户数据，需要同步
-
-      // for (let key in data) {
-      //   des[key] = data[key];
-      // }
       des.$patch(data);
       lastModifiedTime.value = data.lastModifiedTime;
     }
+
     startSyncDesignStorage();
     /*
       开启实时同步更新
@@ -349,7 +345,7 @@ function onContextMenu(e) {
 }
 
 #layout-header {
-  z-index:11;
+  z-index: 11;
   box-shadow: rgba(215, 215, 215, 0.9) 0px 0px 16px;
 }
 

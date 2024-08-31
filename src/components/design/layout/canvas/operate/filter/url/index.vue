@@ -19,7 +19,7 @@
                                     <el-input v-model="searchInput" style="width:240px;" placeholder="关键字搜索"></el-input>
                                     <el-tooltip content="禁用滤镜效果" placement="top">
                                         <el-button link @click="removeCurrentFilter">
-                                            <el-icon size="14">
+                                            <el-icon size="16">
                                                 <StopOutlined />
                                             </el-icon>
                                         </el-button>

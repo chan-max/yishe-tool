@@ -5,9 +5,14 @@
         </template>
         <template #name> 个性字体</template>
         <template #content>
-            <el-select v-model="model" size="small" filterable clearable :filter-method="filter" style="width:180px">
+            <el-select v-model="model" size="small" placeholder="请选择" filterable clearable remote
+                :remote-method="remoteMethod" style="width:120px" :loading="loading">
                 <template #label="{ label }">
                     {{ model.name }}
+                </template>
+
+                <template #empty>
+                    无相关字体
                 </template>
                 <!-- <el-option-group label="网络字体"> -->
                 <template v-for="item in list" :key="item.id">
@@ -17,6 +22,9 @@
                 </template>
                 <!-- </el-option-group> -->
             </el-select>
+            <el-button size="small">
+                字体库
+            </el-button>
         </template>
     </operate-form-item>
 </template>
@@ -24,23 +32,18 @@
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/font-family.svg?component";
 import { ref, onBeforeMount, watch } from "vue";
-import { getFontListApi, fetchFile } from "@/api";
+import { getFontListApi } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/design/components/image.vue";
-import { cacheFontFamily } from "@/components/design/store";
-import { message } from "ant-design-vue";
 import Utils from '@/common/utils'
-import { initFontFamilyInfo, initFontFamilyInfoWithMessage } from './index.ts'
+import { initFontFamilyInfoWithMessage } from './index.ts'
 
 const model = defineModel({});
 
+/**
+ * */
 const emits = defineEmits(['font-load'])
 
-function filter(key) {
-    list.value?.forEach((item) => {
-        item.hide = !item.name.includes(key)
-    });
-}
 
 watch(model, async () => {
     let info: any = model.value;
@@ -57,14 +60,24 @@ watch(model, async () => {
 });
 
 
+
+function remoteMethod(val) {
+    reset()
+    getList({
+        match: val
+    })
+}
+
 // 字体列表
-const { list, getList } = usePaging(
+const { list, getList, reset, loading } = usePaging(
     (params) => {
         return getFontListApi({
             ...params,
+            pageSize: 999,
         });
     },
     {
+        immediate: false,
         forEach(item) {
             item.thumbnail = Utils.formatUrl(item.thumbnail)
             item.url = Utils.formatUrl(item.url)

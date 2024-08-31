@@ -1,9 +1,8 @@
 
 import { fetchFile } from "@/api";
-import { cacheFontFamily,  } from "@/components/design/store";
-
+import { cacheFontFamily, } from "@/components/design/store";
+import { filesize } from 'filesize'
 const cacheFontFamilyLoadingMap = {
-
 }
 
 import { message } from "ant-design-vue";
@@ -26,12 +25,15 @@ export async function initFontFamilyInfo(info) {
 
     try {
         cacheFontFamilyLoadingMap[id] = true
+        /**
+         *  使用加载文件的方式加载可以记住进度
+        */
         file = await fetchFile(url);
     } catch (e) {
         cacheFontFamilyLoadingMap[id] = false
         throw new Error('')
     }
-    
+
 
 
     const fontStyle = document.createElement("style");
@@ -56,7 +58,7 @@ export async function initFontFamilyInfo(info) {
 
 export async function initFontFamilyInfoWithMessage(info) {
 
-    const { url, id, name } = info;
+    const { url, id, name, size } = info;
     try {
         // 存在缓存
         if (cacheFontFamily.value[id]) {
@@ -68,19 +70,19 @@ export async function initFontFamilyInfoWithMessage(info) {
         }
 
         message.loading({
-            content: `正在加载字体${name}`,
-            key: "loadfont",
+            content: `正在加载字体 ${name} ${size ? filesize(Number(size)) : '未知尺寸'}`,
+            key: `loadfont-${id}`,
             duration: 0,
         });
         await initFontFamilyInfo(info)
     } catch (e) {
         return message.error({
             content: `字体${name}加载失败`,
-            key: "loadfont",
+            key: `loadfont-${id}`,
         })
     }
     message.success({
-        content: `字体加载成功`,
-        key: "loadfont",
+        content: `字体${name}加载成功`,
+        key: `loadfont-${id}`,
     });
 }

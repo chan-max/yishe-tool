@@ -23,6 +23,8 @@ export const getCOS = () => {
     return _cos
 }
 
+
+
 export async function uploadToCOS({
     file,
     key = new Date().getTime(),

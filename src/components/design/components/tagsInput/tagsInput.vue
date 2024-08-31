@@ -80,9 +80,15 @@ function customValidate(value) {
   border: 1px solid #dcdfe6 !important;
 }
 
+.v3ti {
+  input::placeholder {
+    color: #a8abb2;
+  }
+}
+
 .v3ti-new-tag {
   font-size: 1rem;
-  height: 20px !important;
+  height: 24px !important;
   min-width: 160px !important;
 }
 

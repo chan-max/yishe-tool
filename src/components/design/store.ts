@@ -422,11 +422,19 @@ export const useDesignStore = defineStore('_1s_design', () => {
 })
 
 
+
 const designStore = useDesignStore();
 
 
+
+
+/*
+ 单独记录时间
+*/
 designStore.$subscribe((mutation, state) => {
     lastModifiedTime.value = new Date()
+}, {
+    deep: true
 })
 
 /*
@@ -474,7 +482,10 @@ export function startSyncDesignStorage() {
     designStore.$subscribe((mutation, state) => {
         syncState.value.loading = true
         sync(state)
+    }, {
+        deep: true,
     })
+
 }
 
 

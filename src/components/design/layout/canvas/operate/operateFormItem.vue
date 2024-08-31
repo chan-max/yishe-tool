@@ -85,5 +85,6 @@ const props = defineProps({
   flex: 1;
   padding-right: .5rem;
   column-gap: 1rem;
+  font-size: 1rem;
 }
 </style>

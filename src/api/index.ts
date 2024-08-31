@@ -4,19 +4,30 @@ import { deleteCOSFile, uploadToCOS } from "./cos";
 import { Url } from "./url";
 export { uploadToCOS, deleteCOSFile } from './cos'
 
+interface FetchFileOptions {
+  filename: string  // 请求的文件名
+}
 
 
-export async function fetchFile(url, filename = String(new Date().getTime())) {
-  const response = await fetch(url);
+/**
+ * @description 根据一个地址 请求文件
+*/
+export async function fetchFile(url, options) {
+  const response = await fetch(url, options as RequestInit);
 
-  if (!response.ok) {
-    throw new Error("文件请求失败");
+  var { filename }: any = {
+    ...{
+      filename: String(new Date().getTime())
+    },
+    ...options
   }
 
-  // 这将会返回一个 Blob 对象，其实就是 File 的父类。
+  if (!response.ok) {
+    throw new Error("file request failed");
+  }
+
   const blob = await response.blob();
 
-  // 你可以将 blob 直接返回，或者转换为 File 对象。如果需要转换为 File，必须提供文件名。
   const file = new File([blob], filename);
   return file;
 }

@@ -13,8 +13,8 @@
     <!-- <div class="designiy-header-menu">
       <header-menu-dropdown />
     </div> -->
-    <div class="designiy-header-logo" style="margin:0 12px;">
-      <img src="logo.png" style="height: 24px" object-fit="contain" />
+    <div class="designiy-header-logo flex items-center justify-center" style="width:64px;height:100%" >
+      <img src="logo.svg" style="height: 36px" object-fit="contain" />
     </div>
 
 

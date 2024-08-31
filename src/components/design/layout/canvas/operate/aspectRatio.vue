@@ -51,7 +51,12 @@ const aspectRatioOptions = ref([
     {
         label: '16 : 9',
         value: 16 / 9
-    }
+    },
+    {
+        label: '国旗',
+        value: 19 / 10
+    },
+
 ])
 
 

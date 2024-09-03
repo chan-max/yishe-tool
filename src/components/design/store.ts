@@ -393,6 +393,13 @@ import { showMainCanvas } from "@/components/design/layout/canvas/index.tsx";
 export const storageName = ref('')
 
 
+
+/**
+ * @define 当前工作台添加的本地文件。可以使用或上传
+*/
+
+export const currentWorkspaceLocalFiles = ref([])
+
 /*
     最近更新时间
 */

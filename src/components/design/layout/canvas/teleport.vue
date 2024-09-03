@@ -6,6 +6,15 @@
 
         <div class="top-menu-containter">
             <div class="top-menu">
+                <a-button type="primary" round ghost size="small">
+                    <template #icon>
+                        <FolderOpenOutlined/>
+                    </template>
+                    <span class="font-bold"> 本地文件 </span>
+                </a-button>
+
+                <a-button type="primary" loading ghost size="small"/>
+
                 <div style="flex:1;"></div>
                 <div v-if="loading" class="italic font-bold"> 正在渲染贴纸... </div>
                 <div>
@@ -13,13 +22,12 @@
                         canvasStickerOptions.unit }}
                 </div>
                 <el-button type="danger" link @click="showMainCanvas = false">
-                    <el-icon size="24">
+                    <el-icon size="20">
                         <CircleCloseFilled></CircleCloseFilled>
                     </el-icon>
                 </el-button>
             </div>
         </div>
-
     </div>
 </template>
   
@@ -31,7 +39,7 @@ import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled, 
 import { showCanvasLayout } from '@/components/design/store.ts';
 import panzoom from 'panzoom'
 import Utils from '@/common/utils'
-
+import {FolderOpenOutlined} from '@ant-design/icons-vue'
 
 const panzoomRef = ref()
 
@@ -104,14 +112,14 @@ watch(show, async (val) => {
 
 .top-menu {
     background-color: #fff;
-    border-radius: 16px;
+    border-radius: 8px;
     box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
     margin: 1rem;
     display: flex;
-    width:90%;
-    min-width:480px;
-    flex-shrink:0;
     align-items: center;
+    width: 96%;
+    min-width: 480px;
+    flex-shrink: 0;
     column-gap: 2rem;
     padding: 1rem 2rem;
 }

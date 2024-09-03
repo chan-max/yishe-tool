@@ -114,7 +114,7 @@
                 <menu-item>
                   <template #title> 字体列表 </template>
                   <template #suffix>
-                    <el-switch v-model="showFontList" size="small" />
+                    <el-switch v-model="showFontModal" size="small" />
                   </template>
                 </menu-item>
               </menu-main>
@@ -165,7 +165,7 @@ import {
   showBaseModelSelect,
   showDecalControl,
   showFontUpload,
-  showFontList,
+  showFontModal,
   showHeader,
   showSubHeader,
   showLeftMenu,

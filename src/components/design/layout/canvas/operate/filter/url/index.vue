@@ -227,7 +227,7 @@ import { ref, computed } from "vue";
 import colorPicker from "@/components/design/components/colorPicker.vue";
 import { StopOutlined } from '@ant-design/icons-vue';
 import { Switch } from '@element-plus/icons-vue'
-import desimage from "@/components/design/components/image.vue";
+import desimage from "@/components/image.vue";
 import { SvgFilterCategoryOptions, SvgFilterCustomEffectType, } from "@/components/design/layout/canvas/children/svgFilter/builtIn/index";
 import { useLocalStorage } from '@vueuse/core'
 import { SvgFilterCategory } from '@/types/filter.ts'

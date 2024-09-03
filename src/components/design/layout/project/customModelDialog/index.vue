@@ -38,7 +38,7 @@
 import { useCustomModelDetailDialog } from './index.ts'
 import gltfViewer from './gltfViewer/index.vue';
 import { UserOutlined } from '@ant-design/icons-vue'
-import desimage from "@/components/design/components/image.vue";
+import desimage from "@/components/image.vue";
 
 
 const { show, detailInfo } = useCustomModelDetailDialog()

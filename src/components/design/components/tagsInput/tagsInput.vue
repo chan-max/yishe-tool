@@ -34,6 +34,7 @@ const props = defineProps({
   },
 });
 
+const model = defineModel({})
 
 const showAlert = useLocalStorage('_1s_showAutoCompleteTip',true)
 

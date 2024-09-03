@@ -111,7 +111,7 @@ import iconWritingMode from "@/components/design/assets/icon/writing-mode.svg?co
 import iconBorderWidth from "@/components/design/assets/icon/border-width.svg?component";
 import iconBorderStyle from "@/components/design/assets/icon/border-style.svg?component";
 import iconBorderColor from "@/components/design/assets/icon/border-color.svg?component";
-import { operatingTextStickerOptions, showFontList } from "../../store";
+import { operatingTextStickerOptions, showFontModal } from "../../store";
 import operateItemTextContent from '@/components/design/layout/canvas/operate/textContent.vue'
 import operateItemFontSize from '@/components/design/layout/canvas/operate/fontSize.vue'
 import operateItemFontWeight from '@/components/design/layout/canvas/operate/fontWeight.vue'

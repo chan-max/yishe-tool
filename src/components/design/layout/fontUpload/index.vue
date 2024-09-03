@@ -74,7 +74,7 @@ watch(files, async (files) => {
   const fontStyles = document.createElement("style");
   fontStyles.innerHTML = `
       @font-face {
-          font-family: font${fontId};
+          font-family: font_${fontId};
           src: url(${URL.createObjectURL(file.raw)}); /* 替换为实际的字体文件相对路径 */
       }
     `;

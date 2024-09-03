@@ -116,7 +116,7 @@
     </el-tooltip> -->
 
     <el-tooltip :hide-after="0" content="字体" placement="right">
-      <div class="menu-bar-item" @click="showFontList = true">
+      <div class="menu-bar-item" @click="showFontModal = true">
         <div class="menu-bar-item-icon"><icon-font></icon-font></div>
         <span>字体</span>
       </div>
@@ -174,7 +174,7 @@ import {
   showTextSticker,
   showWorkspace,
   showCustomTextSticker,
-  showFontList,
+  showFontModal,
   showDecoration,
   showSticker,
   showQrcode,
@@ -210,7 +210,7 @@ import iconCanvas from '@/components/design/assets/icon/canvas.svg?component'
 import iconProject from '@/components/design/assets/icon/project.svg?component'
 import Utils from '@/common/utils'
 
-import desimage from "@/components/design/components/image.vue";
+import desimage from "@/components/image.vue";
 </script>
 <style lang="less">
 .menu-bar {

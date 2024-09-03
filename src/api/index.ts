@@ -334,7 +334,7 @@ export const uploadFile = (params) => new Promise(async (resolve, reject) => {
     ...params,
     thumbnail: params.thumbnail,
     name: params.name,
-    type: params.name.split(".").pop(),
+    type: params.type,
     size: params.size,
     meta: params.meta || {},
   }

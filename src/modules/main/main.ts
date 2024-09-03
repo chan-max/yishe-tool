@@ -46,13 +46,14 @@ import "v3-infinite-loading/lib/style.css"; //required if you're not going to ov
 import Api from '@/api'
 
 import '@/style/cover-antdesign.less'
-
-import { createMetaManager } from 'vue-meta'
+import { s1Plugin } from '@/components/export.ts'
 
 // pc 端专有的拦截器
 apiInstance.interceptors.response.use(defaultResponseInterceptors);
 
 const app = createApp(App)
+
+app.use(s1Plugin)
 
 app.component("InfiniteLoading", InfiniteLoading);
 

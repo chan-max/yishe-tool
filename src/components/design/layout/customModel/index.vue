@@ -28,7 +28,7 @@ import { ref, onBeforeMount } from "vue";
 import { Search, ArrowRightBold } from "@element-plus/icons-vue";
 import { getCustomModelListApi } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
-import desimage from "@/components/design/components/image.vue";
+import desimage from "@/components/image.vue";
 import popover from "./popover.vue";
 import gltfViewer from '@/components/model/gltfViewer/index.vue';
 

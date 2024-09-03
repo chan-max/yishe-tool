@@ -49,7 +49,7 @@ import { ref } from 'vue'
 import icon from "@/components/design/assets/icon/background-image.svg?component";
 import { showSticker, viewDisplayController } from "@/components/design/store";
 import { Close } from '@element-plus/icons-vue'
-import desimage from "@/components/design/components/image.vue";
+import desimage from "@/components/image.vue";
 import modal from './modal.vue';
 
 import {

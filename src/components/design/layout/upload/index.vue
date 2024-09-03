@@ -38,7 +38,7 @@
                 </el-icon></el-button>
             </div>
             <div class="file-bar-name">
-              <el-input  v-model="file.customName" placeholder="资源名称" />
+              <el-input v-model="file.customName" placeholder="资源名称" @keydown. />
             </div>
             <div class="file-bar-description">
               <el-input v-model="file.description" placeholder="文件描述" type="textarea"
@@ -99,7 +99,7 @@ import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { fontAutoplacementTags, imageAutoplacementTags } from '@/components/design/components/tagsInput/index.ts'
 
 import { htmlToPngFile } from '@/common/transform'
-import desimage from '@/components/design/components/image.vue';
+import desimage from '@/components/image.vue';
 import { createFontThumbnail } from '@/components/design/utils/utils'
 import { toPng } from "html-to-image";
 import Utils from '@/common/utils'
@@ -198,6 +198,7 @@ function removeFile(file) {
  * @description 防止删除键将选中的文件删除
 */
 function beforeRemove() {
+  return false
   return window.event.keyCode !== 8
 }
 
@@ -239,13 +240,14 @@ async function uploadSingleFile(file) {
 
     const params = {
       url: fileUrl,
-      name: file.raw.name,
+      name: file.customName || file.raw.name,
       size: file.size,
       keywords,
       thumbnail: thumbnailUrl,
       description: file.description,
       isPublic: file.isPublic,
-      uploaderId: loginStore.userInfo.id
+      uploaderId: loginStore.userInfo.id,
+      type: file.name.split(".").pop()
     };
 
     await uploadFile(params);
@@ -280,7 +282,7 @@ async function doUpload() {
 
 <style lang="less" scoped>
 .container {
-  padding: 1em;
+  padding: 1rem;
   width: 600px;
 }
 

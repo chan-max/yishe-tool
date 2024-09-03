@@ -60,7 +60,7 @@ import {
   currentOperatingBaseModelInfo,
   showModelInfo,
 } from "../../store.ts";
-import desimage from "@/components/design/components/image.vue";
+import desimage from "@/components/image.vue";
 
 const models = ref([]);
 

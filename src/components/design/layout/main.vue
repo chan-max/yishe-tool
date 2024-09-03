@@ -63,13 +63,12 @@
     <font-upload></font-upload>
   </diydialog>
 
+
   <diydialog title="设置场景" :show="showSceneControl" @close="showSceneControl = false">
     <scene-control></scene-control>
   </diydialog>
 
-  <diydialog :show="showFontList" title="字体" @close="showFontList = false" :animation="basicContainerAnimation">
-    <font-list></font-list>
-  </diydialog>
+  <fontModal></fontModal>
 
   <diydialog :show="viewDisplayController.showStickerModal" title="贴纸"
     @close="viewDisplayController.showStickerModal = false" :animation="basicContainerAnimation">
@@ -111,7 +110,7 @@ import {
   showImageUplaod,
   showCustomTextSticker,
   showFontUpload,
-  showFontList,
+  showFontModal,
   showModelInfo,
   showDecalList,
   showHeader,
@@ -146,7 +145,7 @@ import decalControl from "./decalControl/index.vue";
 import imageUpload from "./imageUpload/index.vue";
 import customTextSticker from "./customTextSticker/index.vue";
 import fontUpload from "./fontUpload/index.vue";
-import fontList from "./fontList/index.vue";
+import fontModal from "./font/index.vue";
 import subHeaderMenu from "./subHeaderMenu/index.vue";
 import modelInfo from "./modelInfo/index.vue";
 import decalList from "./decalList/index.vue";

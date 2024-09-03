@@ -172,7 +172,7 @@ export const barCodeOptions = ref({
 })
 
 // 是否展示字体列表
-export const showFontList = ref(false)
+export const showFontModal = ref(false)
 
 // 是否展示贴纸
 export const showSticker = ref(false)

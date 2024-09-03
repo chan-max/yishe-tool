@@ -4,26 +4,27 @@
             <canvass></canvass>
         </div>
 
-        <div class="top-menu">
-            <div style="flex:1;"></div>
-            <div v-if="loading" class="italic font-bold"> 正在渲染贴纸... </div>
-            <div>
-                宽 {{ canvasStickerOptions.width }}{{ canvasStickerOptions.unit }} 高 {{ canvasStickerOptions.height }}{{
-                    canvasStickerOptions.unit }}
+        <div class="top-menu-containter">
+            <div class="top-menu">
+                <div style="flex:1;"></div>
+                <div v-if="loading" class="italic font-bold"> 正在渲染贴纸... </div>
+                <div>
+                    宽 {{ canvasStickerOptions.width }}{{ canvasStickerOptions.unit }} 高 {{ canvasStickerOptions.height }}{{
+                        canvasStickerOptions.unit }}
+                </div>
+                <el-button type="danger" link @click="showMainCanvas = false">
+                    <el-icon size="24">
+                        <CircleCloseFilled></CircleCloseFilled>
+                    </el-icon>
+                </el-button>
             </div>
-            <el-button type="danger" link @click="showMainCanvas = false">
-                <el-icon size="18">
-                    <CircleCloseFilled></CircleCloseFilled>
-                </el-icon>
-            </el-button>
         </div>
-        <div class="bottom-menu">
-        </div>
+
     </div>
 </template>
   
 <script setup lang="ts">
-import { computed, ref, onMounted, watch,nextTick } from 'vue'
+import { computed, ref, onMounted, watch, nextTick } from 'vue'
 import { CanvasController, showMainCanvas, canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import { Delete, Plus, DeleteFilled, CircleCloseFilled, Link, CirclePlusFilled, FullScreen } from '@element-plus/icons-vue'
@@ -66,7 +67,7 @@ watch(show, async (val) => {
         // panzoomRef.value.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
 
     }
-},{
+}, {
     immediate: true,
 })
 
@@ -84,32 +85,35 @@ watch(show, async (val) => {
     background: #eee;
     border: 1px solid #eee;
     position: relative;
-    overflow: auto;
+    overflow: hidden;
 
     * {
         flex-shrink: 0;
     }
 }
 
-.top-menu,
-.bottom-menu {
+.top-menu-containter {
     position: absolute;
-
     right: 0;
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    column-gap: 2rem;
-}
-
-.top-menu {
+    justify-content: center;
     top: 0;
 }
 
-.bottom-menu {
-    bottom: 0;
+.top-menu {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+    margin: 1rem;
+    display: flex;
+    width:90%;
+    min-width:480px;
+    flex-shrink:0;
+    align-items: center;
+    column-gap: 2rem;
+    padding: 1rem 2rem;
 }
 </style>
   

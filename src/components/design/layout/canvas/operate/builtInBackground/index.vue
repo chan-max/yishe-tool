@@ -83,7 +83,7 @@ import { ref, computed, h } from "vue";
 import colorPicker from "@/components/design/components/colorPicker.vue";
 import { StopOutlined } from '@ant-design/icons-vue';
 import { Switch } from '@element-plus/icons-vue'
-import desimage from "@/components/design/components/image.vue";
+import desimage from "@/components/image.vue";
 import { CustomBackgroundCategoryOptions } from "@/components/design/layout/canvas/children/background/builtIn/index";
 import { useLocalStorage } from '@vueuse/core'
 import { SvgFilterCategory } from '@/types/filter.ts'

@@ -31,7 +31,7 @@
 <script setup>
 import { defineProps, ref } from "vue";
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
-import desimage from "@/components/design/components/image.vue";
+import desimage from "@/components/image.vue";
 
 function getAvatar(model) {
   return model.uploader.avatar

@@ -5,7 +5,7 @@ import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watc
 import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistancePoint } from './calc.tsx'
 import { tify, sify } from 'chinese-conv';
 import { createFilterDefaultOptions, createTransformDefaultOptions, createPositionDefaultOptions } from "../defaultOptions.tsx";
-import { initFontFamilyInfoWithMessage } from '@/components/design/layout/canvas/operate/fontFamily/index.ts'
+import { fetchFontFaceWithMessage } from '@/components/design/layout/canvas/operate/fontFamily/index.ts'
 import Utils from "@/common/utils.ts";
 
 export interface TextCanvasChildOptions {
@@ -150,7 +150,7 @@ export const Text = defineComponent({
             if (props.options.fontFamilyInfo) {
                 style.fontFamily = `font_${props.options.fontFamilyInfo.id}`
                 // 由于不确定字体是否加载，需要初始化一下
-                initFontFamilyInfoWithMessage(props.options.fontFamilyInfo)
+                fetchFontFaceWithMessage(props.options.fontFamilyInfo)
             }
 
             // 处理文字颜色

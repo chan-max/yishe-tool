@@ -71,7 +71,7 @@
               <template #content>
                 <template v-if="operatingTextStickerOptions.fontFamilyInfo">
                   <el-image
-                    @click="showFontList = true"
+                    @click="showFontModal = true"
                     style="background: #f3f4f6; border-radius: 0.2em; height: 2.4em"
                     fit="contain"
                     :src="
@@ -79,7 +79,7 @@
                     "
                   ></el-image>
                 </template>
-                <div v-else @click="showFontList = true">暂未选择</div>
+                <div v-else @click="showFontModal = true">暂未选择</div>
               </template>
             </operate-form-item>
           </el-col>
@@ -220,7 +220,7 @@ import iconBorderWidth from "@/components/design/assets/icon/border-width.svg?co
 import iconBorderStyle from "@/components/design/assets/icon/border-style.svg?component";
 import iconBorderColor from "@/components/design/assets/icon/border-color.svg?component";
 
-import { operatingTextStickerOptions, showFontList } from "../../store";
+import { operatingTextStickerOptions, showFontModal } from "../../store";
 
 const r = ref()
 

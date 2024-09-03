@@ -8,9 +8,11 @@ const cacheFontFamilyLoadingMap = {
 import { message } from "ant-design-vue";
 
 // 加载字体
-export async function initFontFamilyInfo(info) {
 
-    var file
+
+export async function fetchFontFace(info) {
+
+    // var file
 
     const { url, id, name } = info;
 
@@ -28,35 +30,45 @@ export async function initFontFamilyInfo(info) {
         /**
          *  使用加载文件的方式加载可以记住进度
         */
-        file = await fetchFile(url);
+        // file = await fetchFile(url);
+
+        const font = new FontFace(`font_${id}`, `url(${url})`);
+
+        const loadedFont = await font.load()
+
+        document.fonts.add(loadedFont);
+
     } catch (e) {
         cacheFontFamilyLoadingMap[id] = false
-        throw new Error('')
+        throw new Error('font load error')
     }
 
 
 
-    const fontStyle = document.createElement("style");
-    const fontId = `font_${id}`;
-    fontStyle.innerHTML = `
-                @font-face {
-                    font-family: ${fontId};
-                    src: url(${URL.createObjectURL(file)}); 
-                }
-    `;
+    // const fontStyle = document.createElement("style");
+    // const fontId = `font_${id}`;
+    // fontStyle.innerHTML = `
+    //             @font-face {
+    //                 font-family: ${fontId};
+    //                 src: url(${URL.createObjectURL(file)}); 
+    //             }
+    // `;
 
 
-    document.head.appendChild(fontStyle);
-    fontStyle.setAttribute("font_id", fontId);
+    // document.head.appendChild(fontStyle);
+    // fontStyle.setAttribute("font_id", fontId);
 
-    cacheFontFamily.value[id] = fontStyle;
+    // cacheFontFamily.value[id] = fontStyle;
+
+
+    cacheFontFamily.value[id] = true; // 标记该字体为加载过
     cacheFontFamilyLoadingMap[id] = false
 }
 
 
 
 
-export async function initFontFamilyInfoWithMessage(info) {
+export async function fetchFontFaceWithMessage(info) {
 
     const { url, id, name, size } = info;
     try {
@@ -70,11 +82,11 @@ export async function initFontFamilyInfoWithMessage(info) {
         }
 
         message.loading({
-            content: `正在加载字体 ${name} ${size ? filesize(Number(size)) : '未知尺寸'}`,
+            content: `正在加载字体 ${name}`,
             key: `loadfont-${id}`,
             duration: 0,
         });
-        await initFontFamilyInfo(info)
+        await fetchFontFace(info)
     } catch (e) {
         return message.error({
             content: `字体${name}加载失败`,

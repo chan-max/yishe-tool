@@ -71,7 +71,7 @@ import { MoreFilled, CloseBold, Edit, EditPen } from "@element-plus/icons-vue";
 import iconSetting from "./setting.svg";
 import iconDelete from "./remove.svg";
 import iconMore from "./more.svg";
-import desimage from '@/components/design/components/image.vue'
+import desimage from '@/components/image.vue'
 
 
 function formatDate(date) {

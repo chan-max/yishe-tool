@@ -5,17 +5,9 @@
         </template>
         <template #name> 宽高比 </template>
         <template #content>
-            <el-popover popper-class="el-popover-operation">
-                <template #reference>
-                    <el-input size="small" style="width:164px;" v-model="model"  min=".1" max="10"
-                        step=".1"></el-input>
-                </template>
-                <div style="display:flex;gap:1em;flex-wrap:wrap;">
-                    <el-tag style="cursor:pointer" v-for="item in aspectRatioOptions" @click="model = item.value">{{
-                        item.label }}</el-tag>
-                    <div style="flex:1"></div>
-                </div>
-            </el-popover>
+            <el-select v-model="model" placeholder="设置当前宽高比" @change="$emit('change', model)" style="width:120px;">
+                <el-option v-for="item in aspectRatioOptions" :value="item.value" :label="item.label"></el-option>
+            </el-select>
         </template>
     </operate-form-item>
 </template>
@@ -30,7 +22,7 @@ const model = defineModel({ default: '' })
 const aspectRatioOptions = ref([
     {
         label: '等宽高(1 : 1)',
-        value: '1'
+        value: 1
     },
     {
         label: '16 : 9',
@@ -53,7 +45,7 @@ const aspectRatioOptions = ref([
         value: 16 / 9
     },
     {
-        label: '国旗',
+        label: '国旗 19 / 10',
         value: 19 / 10
     },
 

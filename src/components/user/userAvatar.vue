@@ -10,7 +10,7 @@
 -->
 <template>
   <div class="user-avatar">
-    <el-popover placement="bottom-start" trigger="hover" width="auto">
+    <el-popover placement="bottom-start" trigger="hover" width="auto" hide-after="0">
       <template #reference>
         <el-avatar shape="circle" :src="avatar" />
       </template>

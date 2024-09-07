@@ -1,5 +1,5 @@
 import { ref, computed, shallowRef, nextTick, watch, defineAsyncComponent, defineComponent } from 'vue'
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
+import { toPng, toJpeg, toBlob, toPixelData, toSvg, toCanvas } from "html-to-image";
 import { htmlToPngFile, downloadByFile } from '@/common/transform'
 import { useDebounceFn } from '@vueuse/core'
 import { waitImage } from '@/common'
@@ -18,6 +18,7 @@ import {
     createCanvasChildImage,
     createDefaultCanvasChildImageOptions
 } from './children/image.tsx'
+
 
 
 import { createCanvasChildRawCanvas, createDefaultCanvasChildRawCanvasOptions } from './children/rawCanvas.tsx'
@@ -74,21 +75,17 @@ export function getCanvasChildTopZIndex() {
     return getCanvasTopZIndexChild()?.zIndex || 0
 }
 
-
-
-
-
-export enum CanvasChildType {
-    CANVAS = 'canvas', // 画布
-    TEXT = 'text',
-    BACKGROUHND = 'background',
-    IMAGE = 'image',
-    QRCODE = 'qrcode',
-    RECT = 'rect',
-    ELLIPSE = 'ellipse',
-
-    RAW_CANVAS = 'rawCanvas',
+export const CanvasChildType = {
+    CANVAS: 'canvas', // 画布
+    TEXT: 'text',
+    BACKGROUHND: 'background',
+    IMAGE: 'image',
+    QRCODE: 'qrcode',
+    RECT: 'rect',
+    ELLIPSE: 'ellipse',
+    RAW_CANVAS: 'rawCanvas',
 }
+
 
 
 export const canvasChildLabelMap = {
@@ -125,15 +122,6 @@ export const canvasChildRenderMap = {
 }
 
 
-interface CanvasChild {
-    type: CanvasChildType
-}
-
-interface canvasStickerOptions {
-    width: number | string,
-    height: number | string,
-    children: CanvasChild[],
-}
 
 
 
@@ -311,39 +299,44 @@ export class CanvasController {
     // updateWorker = null; // 更新任务
     // updateWorkDelay = 999; // 更新延迟
 
-    debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this), 666)
+    debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this), 999)
 
     async updateRenderingCanvasJob() {
         if (!this.el) {
             return
         }
 
-        // 暂时先不更新
-        this.loading.value = false
-        renderingLoading.value = false
-        return 
+        // // 暂时先不更新
+        // this.loading.value = false
+        // renderingLoading.value = false
+        // return
 
 
         async function update() {
-            console.log('start generate sticker')
 
             try {
-                this.base64 = await toPng(this.el)
+                // this.base64 = await toPng(this.el)
+                let _canvas = await toCanvas(this.el)
+                let _ctx = _canvas.getContext('2d')
+                const imageData = _ctx.getImageData(0, 0, _canvas.width, _canvas.height);
+
+                this.ctx.putImageData(imageData, 0, 0);
+                this.base64 = _canvas.toDataURL('image/png')
             } catch (e) {
                 throw Error('元素转换失败', e.message)
             }
 
 
-            let img = document.createElement('img')
-            img.width = canvasStickerOptions.value.width
-            img.height = canvasStickerOptions.value.height
-            document.body.appendChild(img)
-            img.src = this.base64
-            await waitImage(img)
-            this.clearCanvas()
-            this.drawImage(img)
-            await nextTick()
-            document.body.removeChild(img)
+            // let img = document.createElement('img')
+            // img.width = canvasStickerOptions.value.width
+            // img.height = canvasStickerOptions.value.height
+            // document.body.appendChild(img)
+            // img.src = this.base64
+            // await waitImage(img)
+            // this.clearCanvas()
+            // this.drawImage(img)
+            // await nextTick()
+            // document.body.removeChild(img)
 
             this.loading.value = false
             renderingLoading.value = false

@@ -15,10 +15,10 @@ const routes = [
     path: "/",
     name: "Home",
     component: () => import('./view/base/home/home.vue'),
-    meta:{
-      header:true,
-      footer:true,
-      auth:false
+    meta: {
+      header: true,
+      footer: true,
+      auth: false
     }
   },
   {
@@ -139,8 +139,8 @@ const routes = [
     path: "/market",
     name: "Market",
     component: () => import("./view/market/index.vue"),
-    meta:{
-      header:true
+    meta: {
+      header: true
     }
   },
   {

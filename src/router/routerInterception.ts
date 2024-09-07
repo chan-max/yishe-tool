@@ -15,18 +15,18 @@ export const blockLoginPage = (router) => {
 export const blockAdminPage = (router) => {
   router.beforeEach((to, from, next) => {
     let loginStatusStore = useLoginStatusStore();
-    if (to.name === "Admin" && !loginStatusStore.isAdmin) {
+    if (to.name === "Admin" && !loginStatusStore.userInfo?.isAdmin) {
       next({ name: "Home" });
     } else {
       next();
-    } 
+    }
   });
-};
+}; 
 
 
 export const initDocumentTitle = (router) => {
-  router.beforeEach((to,from,next) => {
-    document.title  =  to.meta.title ?  '1s 衣设网- ' +  to.meta.title : '1s 衣设网'
+  router.beforeEach((to, from, next) => {
+    document.title = to.meta.title ? '1s 衣设网- ' + to.meta.title : '1s 衣设网'
     next()
   })
 }

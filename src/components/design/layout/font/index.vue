@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="showFontModal" title="字体库" width="1080px" class="font-a-modal" @ok="handleOk" :footer="null" :centered="true" >
+  <a-modal v-model:open="showFontModal" title="字体库" width="auto" class="font-a-modal" @ok="handleOk" :footer="null" :centered="true" >
     <page></page>
   </a-modal>
 </template>
@@ -10,10 +10,10 @@ import { operatingTextStickerOptions, showFontModal } from "../../store.ts";
 import { usePaging } from "@/hooks/data/paging.ts";
 import Utils from '@/common/utils'
 import page from './page.vue'
-
+ 
 </script>
 <style lang="less">
 .font-a-modal {
-  min-width: 1080px;
+  overflow:hidden;
 }
 </style>

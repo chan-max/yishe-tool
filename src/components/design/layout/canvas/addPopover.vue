@@ -26,7 +26,6 @@ import {
     removeCavnasChild,
     currentOperatingCanvasChild,
     showMainCanvas,
-    CanvasChildType
 } from "./index.tsx";
 
 

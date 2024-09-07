@@ -140,6 +140,7 @@ declare module 'vue' {
     TextShadow: typeof import('./src/components/design/layout/canvas/operate/text-shadow/index.vue')['default']
     TextSticker: typeof import('./src/components/design/layout/textSticker/index.vue')['default']
     TextStroke: typeof import('./src/components/design/layout/canvas/operate/text/textStroke.vue')['default']
+    ThreeCanvasTopBar: typeof import('./src/components/design/layout/threeCanvasTopBar/index.vue')['default']
     TopBar: typeof import('./src/components/design/layout/topBar/index.vue')['default']
     Translate: typeof import('./src/components/design/layout/canvas/operate/transform/translate.vue')['default']
     Unit: typeof import('./src/components/design/layout/canvas/operate/unit.vue')['default']

@@ -214,13 +214,13 @@ import desimage from "@/components/image.vue";
 </script>
 <style lang="less">
 .menu-bar {
-  width: 64px;
+  width: 72px;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   border-radius: 2px;
-  row-gap: 16px;
+  row-gap: 4px;
   overflow: auto;
   // direction: rtl;
   background: var(--1s-left-menu-background-color);
@@ -229,8 +229,8 @@ import desimage from "@/components/image.vue";
 }
 
 .menu-bar-item {
-  width: 50px;
-  height: 50px;
+  width: 64px;
+  height: 64px;
   display: flex;
   border-radius: 14px;
   display: flex;
@@ -239,7 +239,7 @@ import desimage from "@/components/image.vue";
   align-items: center;
   cursor: pointer;
   flex-shrink: 0;
-  color: var(--1s-icon-color);
+  color: #222;
 
   .menu-bar-item-icon {
     flex-shrink: 0;

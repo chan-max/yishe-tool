@@ -13,7 +13,7 @@
     <!-- <div class="designiy-header-menu">
       <header-menu-dropdown />
     </div> -->
-    <div class="designiy-header-logo flex items-center justify-center" style="width:64px;height:100%" >
+    <div class="designiy-header-logo flex items-center justify-center" style="width:72px;height:100%" >
       <img src="logo.svg" style="height: 36px" object-fit="contain" />
     </div>
 
@@ -122,6 +122,7 @@ function login() {
   align-items: center;
   column-gap: 1rem;
   padding-right: 1rem;
+  // background: #1d1d1d;
 }
 
 

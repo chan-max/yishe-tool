@@ -100,7 +100,7 @@ function aspectRatioChange(asepctRatio) {
   /**
    * 分为基于宽度或高度
   */
-  canvasStickerOptions.value.height =  canvasStickerOptions.value.width / asepctRatio
+  canvasStickerOptions.value.height =  Number((canvasStickerOptions.value.width / asepctRatio).toFixed(2))
 }
 
 

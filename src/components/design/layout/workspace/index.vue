@@ -62,7 +62,7 @@ import {
   currentOperatingDecalController,
   showDecalControl,
   viewDisplayController,
-showWorkspace
+  showWorkspace
 } from "../../store";
 import { computed, ref } from "vue";
 import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
@@ -88,7 +88,10 @@ function decalItemClick(decal) {
 }
 
 function isCurrent(decal) {
-  return decal.id.value == currentOperatingDecalController.value.id.value
+  if (!currentOperatingDecalController.value) {
+    return false
+  }
+  return decal.id.value == currentOperatingDecalController.value?.id.value
 }
 
 function setting(decal) {
@@ -145,7 +148,7 @@ function removeDecal(decal) {
   background-color: #f9f9f9;
   column-gap: 1rem;
   padding: 1rem;
-  border-radius: 1rem;
+  border-radius: .4rem;
   transition: all 0.2s;
 
   &:hover {

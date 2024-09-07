@@ -57,7 +57,7 @@ export const RawCanvas = defineComponent({
             }
 
 
-            
+
         })
 
 
@@ -125,7 +125,7 @@ function createFireEffect(context) {
         this.opacity = 1;
     }
 
-    Particle.prototype.update = function() {
+    Particle.prototype.update = function () {
         this.x += this.speedX;
         this.y += this.speedY;
         this.size *= 0.95;
@@ -133,7 +133,7 @@ function createFireEffect(context) {
         if (this.opacity < 0) this.opacity = 0;
     };
 
-    Particle.prototype.draw = function() {
+    Particle.prototype.draw = function () {
         context.globalAlpha = this.opacity;
         context.fillStyle = this.color;
         context.beginPath();
@@ -161,13 +161,13 @@ function createFireEffect(context) {
         requestAnimationFrame(animate);
     }
 
-    canvas.addEventListener('mousemove', function(event) {
+    canvas.addEventListener('mousemove', function (event) {
         createParticles(event.clientX, event.clientY);
     });
 
     animate();
 }
- 
+
 
 
 

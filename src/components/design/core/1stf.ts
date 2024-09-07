@@ -7,6 +7,7 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
       return decal.export()
     }).filter(Boolean);
      
+
     return {
       baseModelId: currentOperatingBaseModelInfo.value.id,
       decals,

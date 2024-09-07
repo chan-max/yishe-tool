@@ -78,6 +78,13 @@ export const showTextSticker = ref(false)
 
 // 是否展示工作台窗口
 export const showWorkspace = ref(true)
+watch(showWorkspace, (value) => {
+    if (value) {
+        clearRightLayout()
+        showWorkspace.value = true
+    }
+})
+
 
 
 
@@ -85,7 +92,7 @@ export const showWorkspace = ref(true)
 export const showDecalControl = ref(false)
 watch(showDecalControl, (value) => {
     if (value) {
-        clearRightLayout()
+        clearLeftLayout()
         showDecalControl.value = true
     }
 })
@@ -185,13 +192,15 @@ watch(showSticker, async (value) => {
 
 
 // 是否展示已使用的贴纸列表
-export const showDecalList = ref(false)
-watch(showDecalList, async (value) => {
+export const showDecalList = useLocalStorage('_1s_showDecalList', false)
+watch(showDecalList, (value) => {
     if (value) {
         clearRightLayout()
         showDecalList.value = true
     }
 })
+
+
 
 // 展示徽章
 export const showStamp = ref(false)
@@ -226,6 +235,7 @@ export function clearLeftLayout() {
     showSvgCanvas.value = false
     showCanvasLayout.value = false
     showSticker.value = false
+    showDecalControl.value = false
 }
 
 // 清空右侧布局
@@ -233,7 +243,7 @@ export function clearRightLayout() {
     showDecalList.value = false
     showModelInfo.value = false
     showWorkspace.value = false
-    showDecalControl.value = false
+
 }
 
 
@@ -369,8 +379,6 @@ export const svgCanvasSyncMainCanvas = ref(false)
 export const viewDisplayController = ref({
     showStickerModal: false, // 贴纸模态，主要用于交互操作
     showProject: false, // 是否展示我的项目
-
-
 
     // 是否展示贴纸 
     showDecalControl: false

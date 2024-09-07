@@ -58,12 +58,18 @@ const mixins = [
 
 export class ModelController extends Base {
 
-    // 模式
+    // 模式 , 暂时不支持 mb
     mode = 'pc' // pc 或 mb
 
     // 元数据
-
     meta: any = meta
+
+    /**
+     *  用于保存当前所有状态的仓库
+    */
+    store = ref({
+        currentOperatingBaseModelInfo: null // 当前操作的模型信息
+    })
 
     // 场景
     public scene: Scene = new Scene();
@@ -372,11 +378,11 @@ export class ModelController extends Base {
         this.initModelPosition();
 
 
-     
+
         this.mesh = this.findMainMesh(this.gltf);
         this.initialCameraPosition.copy(this.camera.position);
 
-        
+
         // 这个顺序很重要
         this.scene.add(this.gltf.scene);
 
@@ -701,10 +707,9 @@ export class ModelController extends Base {
 
 
 
+    // 打开模型的动画
     doOpenAnimation() {
-
         this.camera.position.set(2 * Math.random(), 2 * Math.random(), 2 * Math.random())
-
         gsap.to(this.camera.position, {
             x: 0,
             y: 0,
@@ -716,12 +721,6 @@ export class ModelController extends Base {
             }
         });
     }
-}
-
-// 当前工作台的操作类型
-export const enum DesignType {
-    NEW = 'new', /// 创建全新的模型
-    EDIT = 'edit', // 编辑模型
 }
 
 

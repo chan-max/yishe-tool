@@ -63,13 +63,16 @@ async function save() {
 
   // 上传本地贴纸 , 过滤出本地的贴纸
   let localDecals = currentModelController.value.decalControllers.filter(
-    (decal) => decal.isLocalResource
+    (decal) => decal.state.isLocalResource
   );
 
   
 
+
   // 只负责把贴纸上传即可
   if (localDecals.length) {
+
+    return
   }
 
   const thumbnail = currentModelController.value.getScreenShotFile()

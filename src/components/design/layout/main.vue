@@ -22,10 +22,20 @@
       </div>
 
       <div id="layout-canvas">
+
         <screenshot ref="screenshotInstance"></screenshot>
+
+        <div v-show="showThreeCanvas" style="position:absolute;top:0;left:0;z-index:2;width: 100%;"
+          class="flex justify-center">
+          <threeCanvasTopBar></threeCanvasTopBar>
+        </div>
+
         <div v-show="showThreeCanvas" @contextmenu="onContextMenu" id="threejs-canvas" style="width: 100%; height: 100%"
           ref="mountContainer"></div>
-        <basic-canvas v-show="showBasicCanvas" style="width: 100%; height: 100%; z-index: 1"
+
+
+
+        <basic-canvas v-show="showBasicCanvas" style="width: 100%; height: 100%; z-index: 3"
           ref="basicCanvasRef"></basic-canvas>
 
 
@@ -40,7 +50,7 @@
 
       </div>
 
-      <div id="layout-right" style="display: flex">
+      <div id="layout-right" style="display: flex" v-if="rightComponent">
         <div style="height: 100%">
           <component :is="rightComponent"></component>
         </div>
@@ -178,6 +188,8 @@ import {
   showLoginFormModal,
 } from "@/modules/main/view/user/login/index.tsx";
 
+import threeCanvasTopBar from './threeCanvasTopBar/index.vue'
+
 const router = useRouter();
 const loginStore = useLoginStatusStore();
 
@@ -201,37 +213,33 @@ const basicContainerAnimation = ref({
 const basicCanvasRef = ref();
 
 const leftComponent = computed(() => {
-  return showImageSticker.value
-    ? imageSticker
-    : showTextSticker.value
-      ? textSticker
-      : showCustomTextSticker.value
-        ? customTextSticker
-        : showSticker.value
-          ? sticker
-          : showQrcode.value
-            ? qrcode
-            : showStamp.value
-              ? stamp
-              : showCustomModel.value
-                ? customModel
-                : showSvgCanvas.value
-                  ? svgCanvas
-                  : showCanvasLayout.value
-                    ? canvasLayout
-                    : null;
+
+  if (showDecalControl.value) {
+    return decalControl
+  }
+
+  if (showCanvasLayout.value) {
+    return canvasLayout
+  }
+
+  if (showSticker.value) {
+    return sticker
+  }
+
 });
 
+
 const rightComponent = computed(() => {
-  return showWorkspace.value
-    ? workspace
-    : showModelInfo.value
-      ? modelInfo
-      : showDecalControl.value
-        ? decalControl
-        : showDecalList.value
-          ? decalList
-          : null;
+
+  if (showWorkspace.value) {
+    return workspace
+  }
+
+  if (showDecalList.value) {
+    return decalList
+  }
+
+
 });
 
 // 挂载容器
@@ -345,7 +353,7 @@ function onContextMenu(e) {
 
 #layout-header {
   z-index: 11;
-  box-shadow: rgba(215, 215, 215, 0.9) 0px 0px 16px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
 }
 
 #threejs-canvas {
@@ -368,7 +376,7 @@ function onContextMenu(e) {
 }
 
 #layout-right {
-  box-shadow: -1px 0px 0px 0px rgba(0, 0, 0, 0.1);
-  border-left: 1px solid #eee;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+  z-index: 4;
 }
 </style>

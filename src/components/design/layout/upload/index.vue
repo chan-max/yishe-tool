@@ -25,11 +25,8 @@
               <el-icon v-if="Utils.type.isFontName(file.name)" size="3.2rem">
                 <component :is="fileTypeIcons[getFileSuffix(file.name)]"></component>
               </el-icon>
-              <div v-if="Utils.type.isImageName(file.name)" style="font-size: 1.2rem">{{ file.name }}</div>
-              <div v-if="Utils.type.isFontName(file.name)" style="font-size: 1.6em;"
-                @vue:mounted="initFontFamily(file, $event)">
-                {{ file.name }}
-              </div>
+              <div style="font-size: 1.2rem">{{ file.name }}</div>
+
               <div style="flex: 1"></div>
               <div> {{ file.displaySize }} </div>
               <a-switch v-model:checked="file.isPublic" checked-children="公开" un-checked-children="私密" />
@@ -37,17 +34,32 @@
                   <CircleCloseFilled />
                 </el-icon></el-button>
             </div>
+
             <div class="file-bar-name">
-              <el-input v-model="file.customName" placeholder="资源名称" @keydown. />
+              <el-input v-model="file.customName" placeholder="资源名称" />
             </div>
+
             <div class="file-bar-description">
               <el-input v-model="file.description" placeholder="文件描述" type="textarea"
                 :auto-size="{ minRows: 2, maxRows: 5 }" />
             </div>
+
+
             <div class="file-bar-tags">
               <tags-input v-model="file.tags"
                 :autocompleteTags="Utils.type.isFontName(file.name) ? fontAutoplacementTags : imageAutoplacementTags"></tags-input>
             </div>
+
+            <template v-if="Utils.type.isFontName(file.name)">
+                <div class="flex items-center justify-center" style="padding:20px;">
+                  <div class="file-bar-font-preview" ref="fileBarFontPreviewRef" contenteditable="true"
+                    @vue:mounted="initFontFamily(file, $event)">
+                    {{ file.name }}
+                  </div>
+                </div>
+                <a-alert message="该图片会作为字体预览图，并且可以手动调整内容" type="info" />
+            </template>
+
           </div>
         </template>
       </el-upload>
@@ -186,6 +198,8 @@ function initFontFamily(file, e) {
   file.el = el;
 }
 
+
+
 // 文件列表
 const fileList = ref([]);
 
@@ -199,10 +213,12 @@ function removeFile(file) {
 */
 function beforeRemove() {
   return false
-  return window.event.keyCode !== 8
 }
 
 const loading = ref(false);
+
+
+const fileBarFontPreviewRef = ref()
 
 async function uploadSingleFile(file) {
 
@@ -228,9 +244,7 @@ async function uploadSingleFile(file) {
   if (Utils.type.isFontName(file.name)) {
     /* 需要生成缩略图 */
 
-    const png = await createFontThumbnail({
-      file: file.raw,
-    })
+    const png = await htmlToPngFile(fileBarFontPreviewRef.value)
 
     const { url: thumbnailUrl } = await uploadToCOS({
       file: png
@@ -336,7 +350,6 @@ async function doUpload() {
 .file-bar {
   border-radius: 4px;
   padding: 1em 1em;
-  border: 1px solid #eee;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -380,5 +393,15 @@ async function doUpload() {
 :deep(.el-upload-list__item:hover) {
   // background-color: #fafafa;
   background-color: transparent;
+}
+
+
+.file-bar-font-preview {
+  min-width: 100px;
+  font-size: 48px;
+  line-height: 64px;
+  color: #000;
+  background: transparent;
+  padding: 0;
 }
 </style>

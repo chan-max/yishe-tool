@@ -16,7 +16,7 @@ import { Ref, computed, isReactive, isRef, ref } from 'vue'
 
 
 
-export const usePaging = (getListFn: (params: any) => Promise<any>, options: any) => {
+export const usePaging = (getListFn: (params: any) => Promise<any>, options: any = {}) => {
 
     options = {
         immediate: true,

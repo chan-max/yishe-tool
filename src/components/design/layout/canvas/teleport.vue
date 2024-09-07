@@ -13,7 +13,7 @@
                     <span class="font-bold"> 本地文件 </span>
                 </a-button>
 
-                <a-button type="primary" loading ghost size="small"/>
+                <!-- <a-button type="primary" loading ghost size="small"/> -->
 
                 <div style="flex:1;"></div>
                 <div v-if="loading" class="italic font-bold"> 正在渲染贴纸... </div>
@@ -94,34 +94,29 @@ watch(show, async (val) => {
     border: 1px solid #eee;
     position: relative;
     overflow: hidden;
-
-    * {
-        flex-shrink: 0;
-    }
 }
 
 .top-menu-containter {
     position: absolute;
     right: 0;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     top: 0;
+    display:flex;
+    justify-content: center;
 }
 
 .top-menu {
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 6px;
     box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
-    margin: 1rem;
     display: flex;
     align-items: center;
-    width: 96%;
+    width: 100%;
     min-width: 480px;
-    flex-shrink: 0;
+    height: 40px;
     column-gap: 2rem;
-    padding: 1rem 2rem;
+    margin: 1rem;
+    padding: 0 1rem;
 }
 </style>
   

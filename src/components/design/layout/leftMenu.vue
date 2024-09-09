@@ -260,6 +260,7 @@ import desimage from "@/components/image.vue";
     max-width: 50px;
     font-weight: 900;
     color: #666;
+    line-height: 16px;
   }
 
   &:hover {

@@ -544,19 +544,6 @@ export class ModelController extends Base {
         await decal.stickToMousePosition(cb)
     }
 
-
-
-    // 添加贴纸
-    async addSticker(stickerInfo) {
-        this.callHook(this.meta.onStickerBeforeCreate)
-        const decal = new DecalController({
-            ...stickerInfo,
-            src: stickerInfo.thumbnail
-        })
-        await decal.stickToRandomPosition()
-        this.callHook(this.meta.onStickerCreated)
-    }
-
     // 添加延迟点击贴纸
     addClickDelaySticker(stickerInfo) {
         isUsingClickDelaySticker.value = true

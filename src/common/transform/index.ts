@@ -161,6 +161,8 @@ class Transform {
 
     // svg 字符串 转为可预览的路径
     svgStringToUrl = svgStringToUrl
+
+    base64ToPngFile = base64ToPngFile
 }
 
 

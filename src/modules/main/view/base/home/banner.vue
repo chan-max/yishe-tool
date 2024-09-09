@@ -44,7 +44,7 @@ const danmus = computed(() => {
 
 const { list: CustomModelList, getList: getCustomModelList, } = usePaging(
   (params) => {
-    return Api.getCustomModelListApi({
+    return Api.getCustomModelList({
       ...params,
       pageSize: 20,
       myUploads: false,
@@ -61,7 +61,7 @@ const { list: CustomModelList, getList: getCustomModelList, } = usePaging(
 
 const { list: StickerList, getList: getStickerList, } = usePaging(
   (params) => {
-    return Api.getStickerListApi({
+    return Api.getStickerList({
       ...params,
       pageSize: 20,
       myUploads: false,

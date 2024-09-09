@@ -33,7 +33,7 @@ import { getProductModelListApi } from "@/api";
 import { onBeforeMount } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";
-import { getStickerListApi } from "@/api";
+import { getStickerList } from "@/api";
 import {currentModelController} from '@/components/design/store'
 
 

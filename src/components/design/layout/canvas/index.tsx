@@ -377,10 +377,10 @@ export class CanvasController {
                 currentModelController.value.stickToMousePosition({
                     isLocalResource: true,
                     base64: currentCanvasControllerInstance.value.base64,
-                    data: Utils.clone(canvasStickerOptions.value),
+                    data: Utils.clone(canvasStickerOptions.value), // 用来保存当且贴纸的所有信息
                 })
             },
-
+            
             () => base64
         )
     }

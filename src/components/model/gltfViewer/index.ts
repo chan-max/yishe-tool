@@ -49,7 +49,7 @@ import {
 } from "vue";
 
 import {
-    getStickerByIdApi,
+    getStickerById,
     getProductModelById,
     getTextStickerById,
 } from "@/api";
@@ -252,7 +252,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                         return resolve();
                     }
 
-                    const sticker = await await getStickerByIdApi(id)
+                    const sticker = await await getStickerById(id)
 
                     var {thumbnail} = sticker
 

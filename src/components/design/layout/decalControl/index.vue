@@ -1,6 +1,6 @@
 <template>
   <div class="designiy-decal-control">
-    <decal-main/>
+    <decal-main />
   </div>
 </template>
 <script setup>
@@ -13,9 +13,9 @@ import decalMain from './main.vue';
 </script>
 <style lang="less">
 .designiy-decal-control {
-  width: 360px;
+  width: 340px;
   display: flex;
   flex-direction: column;
-  height:100%;
+  height: 100%;
 }
 </style>

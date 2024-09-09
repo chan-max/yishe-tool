@@ -48,6 +48,10 @@ import Api from '@/api'
 import '@/style/cover-antdesign.less'
 import { s1Plugin } from '@/components/export.ts'
 
+
+// 引入注册组件
+import 'virtual:svg-icons-register'
+
 // pc 端专有的拦截器
 apiInstance.interceptors.response.use(defaultResponseInterceptors);
 

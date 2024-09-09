@@ -16,7 +16,7 @@
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
 import { Search, ArrowRightBold, Operation, ArrowRight } from "@element-plus/icons-vue";
-import { getStickerListApi } from "@/api";
+import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 

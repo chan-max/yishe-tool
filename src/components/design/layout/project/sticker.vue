@@ -22,7 +22,8 @@
                                         <el-button size="small" link @click="useSticker(item)"> 在工作台使用 </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button type="danger" size="small" link>删除</el-button>
+                                        <el-button type="danger" size="small" link
+                                            @click="deleteSticker(item)">删除</el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-button size="small" link> 发布 </el-button>
@@ -45,7 +46,7 @@
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
 import { Search, ArrowRightBold, Operation, ArrowRight, MoreFilled } from "@element-plus/icons-vue";
-import { getStickerListApi } from "@/api";
+import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 import { MoreOutlined } from '@ant-design/icons-vue'
@@ -65,6 +66,7 @@ import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/i
 import Utils from '@/common/utils'
 import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
 import { message } from "ant-design-vue";
+import Api from '@/api'
 
 
 // 列表展示几列
@@ -74,18 +76,13 @@ const loadingOptions = useLoadingOptions({});
 
 const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPage, currentPage, totalPage, } = usePaging(
     (params) => {
-        return getStickerListApi({
+        return getStickerList({
             ...params,
             pageSize: 20,
-            type: 'composition',
             myUploads: true
         });
     },
     {
-        forEach(item) {
-            item.thumbnail = Utils.formatUrl(item.thumbnail)
-            item.url = Utils.formatUrl(item.url)
-        },
     }
 );
 
@@ -93,6 +90,14 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPa
 function useSticker(item) {
     canvasStickerOptions.value = item.meta.data
     message.success('引用成功')
+}
+
+async function deleteSticker(item) {
+    debugger
+    await Api.deleteSticker(item.id)
+    reset()
+    await getList()
+    message.success('删除成功')
 }
 
 </script>
@@ -116,7 +121,7 @@ function useSticker(item) {
     font-weight: bold;
 }
 
-.endofpage{
+.endofpage {
     width: 100%;
     text-align: center;
     height: 36px;

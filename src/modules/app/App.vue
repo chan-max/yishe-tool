@@ -39,16 +39,6 @@ const loginStore = useLoginStatusStore();
 </script>
 <style lang="less">
 
-
-
-@font-face{
-    font-family: 'alimama';
-    src : url('/public/fonts/AlimamaFangYuanTiVF-Thin.ttf');
-}
-
-// *{
-//   font-family: alimama;
-// }
 </style>
 
 

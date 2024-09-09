@@ -2,12 +2,18 @@ import { ModelController } from "./controller";
 import { canvasBgColor, currentOperatingBaseModelInfo, isDarkMode, canvasBgOpacity } from '../store';
 
 export const _1stfExporterMixin = (modelController: ModelController) => {
-  modelController.exportTo1stf = () => {
-    const decals = modelController.decalControllers.map((decal: any) => {
-      return decal.export()
-    }).filter(Boolean);
-     
 
+  modelController.exportTo1stf = async () => {
+
+    // const decals = modelController.decalControllers.map((decal: any) => {
+    //   return decal.export()
+    // }).filter(Boolean);
+
+    const decals = await Promise.all(
+      modelController.decalControllers.map((decal) => decal.export())
+    )
+
+      
     return {
       baseModelId: currentOperatingBaseModelInfo.value.id,
       decals,

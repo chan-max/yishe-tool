@@ -63,7 +63,7 @@ function load(e, info) {
     currentModelController.value.stickToMousePosition({
       img: img,
       type: "image",
-      local: false,
+      isLocalResource: false,
       src: src,
       ...info,
       base64: base64,

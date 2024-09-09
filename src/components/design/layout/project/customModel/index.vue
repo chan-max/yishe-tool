@@ -21,7 +21,7 @@
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
 import { Search, ArrowRightBold, Operation, ArrowRight } from "@element-plus/icons-vue";
-import { getStickerListApi } from "@/api";
+import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 
@@ -58,17 +58,13 @@ const loadingOptions = useLoadingOptions({});
 
 const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePaging(
     (params) => {
-        return Api.getCustomModelListApi({
+        return Api.getCustomModelList({
             ...params,
             pageSize: 20,
             myUploads: true
         });
     },
     {
-        forEach(item) {
-            item.thumbnail = Utils.formatUrl(item.thumbnail)
-            item.url = Utils.formatUrl(item.url)
-        },
     }
 );
 

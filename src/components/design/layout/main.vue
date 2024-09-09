@@ -9,7 +9,7 @@
     </div>
 
     <div id="layout-body" style="display: flex; height: calc(100% - var(--1s-header-height))">
-      <div id="layout-left-menu" style="height: 100%; border-right: 2px solid #f6f6f6">
+      <div id="layout-left-menu" style="height: 100%; border-right: 1px solid #f3f3f3">
         <left-menu v-if="showLeftMenu"></left-menu>
       </div>
 

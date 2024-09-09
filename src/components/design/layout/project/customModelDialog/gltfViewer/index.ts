@@ -51,7 +51,7 @@ import {
 } from "vue";
 
 import {
-    getStickerByIdApi,
+    getStickerById,
     getProductModelById,
     getTextStickerById,
 } from "@/api";
@@ -119,8 +119,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         alpha: true, // 透明背景
     });
 
-    window.renderer = renderer
-
     renderer.setPixelRatio(window.devicePixelRatio)
 
     const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
@@ -138,6 +136,8 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     controller.enableDamping = true;
     controller.dampingFactor = .1;
     controller.autoRotate = true
+
+    
 
     controller.addEventListener('start', function () {
         emits('dragStart')
@@ -264,7 +264,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                         return resolve(void 0);
                     }
 
-                    const sticker = decal.fetchResult || await getStickerByIdApi(id)
+                    const sticker = decal.fetchResult || await getStickerById(id)
 
                     var { thumbnail } = sticker
 

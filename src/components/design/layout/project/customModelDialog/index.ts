@@ -38,6 +38,10 @@ export function useCustomModelDetailDialog() {
 }
 
 
+
+/**
+ * 获取模型的远程资源
+*/
 async function resolveModelInfo(modelInfo) {
     await Promise.all([
         new Promise(async (resolve, reject) => {
@@ -46,7 +50,7 @@ async function resolveModelInfo(modelInfo) {
         }),
         ...modelInfo.decals ? modelInfo.decals.map(async (decal) => {
             return new Promise(async (resolve) => {
-                decal.fetchResult = await Api.getStickerByIdApi(decal.id)
+                decal.fetchResult = await Api.getStickerById(decal.id)
                 resolve(void 0)
             })
         }) : []

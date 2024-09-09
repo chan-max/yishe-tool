@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed" style="height:calc(100vh - 160px);bottom:24px; right:24px;">
+  <div class="fixed" style="height:calc(100vh - 160px);bottom:12px; right:12px;">
 
     <div v-if="!decals.length" style="text-align: center;">无贴纸</div>
 
@@ -17,16 +17,19 @@
       <div class="scroller  flex flex-col hide-scrollbar items-center" ref="scrollRef"
         :class="{ 'gradient-top': !arrivedState.top && arrivedState.bottom, 'gradient-bottom': !arrivedState.bottom && arrivedState.top, 'gradient-both': !arrivedState.bottom && !arrivedState.top }"
         style="height:100%;overflow:auto;">
-        <template v-for="i in decals">
-          <div class="item">
-            <s1-image :src="i.state.url"></s1-image>
+        <template v-for="item in decals">
+          <div class="item" @click="decalClick(item)">
+
+            <el-tooltip content="该贴纸还未上传" placement="top">
+              <el-button v-if="item.state.isLocalResource"  @click="unUpload" style="position:absolute;top:4px;right:4px;z-index:99;" link>
+                <s1-icon name="un-upload" size="16"></s1-icon>
+              </el-button>
+            </el-tooltip>
+            <s1-image :src="item.state.url"></s1-image>
           </div>
         </template>
       </div>
     </div>
-
-
-
 
     <div style="height: 64px;" class="flex items-center justify-center">
       <el-button :icon="CloseBold" circle @click="showDecalList = false"></el-button>
@@ -34,14 +37,17 @@
   </div>
 </template>
 <script setup>
-import { currentOperatingBaseModelInfo, currentModelController,showDecalList } from "../../store";
+import { currentOperatingBaseModelInfo, currentModelController, showDecalList, currentOperatingDecalController, showDecalControl } from "../../store";
 import { computed, reactive } from "vue";
 import { useScroll } from '@vueuse/core'
-import { Plus, Close, ArrowUpBold, ArrowDownBold,CloseBold } from '@element-plus/icons-vue'
+import { Plus, Close, ArrowUpBold, ArrowDownBold, CloseBold } from '@element-plus/icons-vue'
+import unUploadIcon from '@/icon/un-upload.svg?component'
 
 const scrollRef = ref()
 
-const { x, y, isScrolling, arrivedState, directions } = useScroll(scrollRef)
+const { x, y, isScrolling, arrivedState, directions } = useScroll(scrollRef, {
+  behavior: 'smooth'
+})
 
 function goTop() {
   y.value = 0
@@ -51,6 +57,15 @@ function goBottom() {
   y.value = 999999
 }
 
+
+function decalClick(item) {
+  currentOperatingDecalController.value = item
+  showDecalControl.value = true
+}
+
+function unUpload() {
+  debugger
+}
 
 
 const decals = computed(() => {
@@ -103,6 +118,7 @@ const decals = computed(() => {
   border-radius: 8px;
   border: 2px solid #eee;
   transition: all .3s;
+  position: relative;
 
   &:hover {
     border-color: #aaa;

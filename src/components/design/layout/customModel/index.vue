@@ -26,7 +26,7 @@
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
 import { Search, ArrowRightBold } from "@element-plus/icons-vue";
-import { getCustomModelListApi } from "@/api";
+import { getCustomModelList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 import popover from "./popover.vue";
@@ -34,7 +34,7 @@ import gltfViewer from '@/components/model/gltfViewer/index.vue';
 
 
 const { list, getList } = usePaging((params) => {
-  return getCustomModelListApi({
+  return getCustomModelList({
     ...params,
     pageSize: 10,
   });

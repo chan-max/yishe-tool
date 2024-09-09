@@ -37,7 +37,7 @@ import { close, checkmarkDoneOutline, helpCircleOutline } from "ionicons/icons";
 import { getProductModelListApi } from "@/api";
 import { onBeforeMount } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
-import { getStickerListApi } from "@/api";
+import { getStickerList } from "@/api";
 import { useDesignStore, currentOperatingBaseModelInfo, currentModelController } from "@/components/design/store";
 
 

@@ -60,31 +60,28 @@ const previewSrc = computed(() => {
 
 async function save() {
 
-
   // 上传本地贴纸 , 过滤出本地的贴纸
   let localDecals = currentModelController.value.decalControllers.filter(
     (decal) => decal.state.isLocalResource
   );
 
-  
-
 
   // 只负责把贴纸上传即可
   if (localDecals.length) {
-
-    return
+      // 提示存在未上传的贴纸
   }
 
   const thumbnail = currentModelController.value.getScreenShotFile()
 
   const { url } = await uploadToCOS({ file: thumbnail });
 
+  const modelInfo = await currentModelController.value.exportTo1stf()
 
   const params = {
     name: name.value,
     thumbnail: url,
     meta: {
-      modelInfo: currentModelController.value.exportTo1stf(),
+      modelInfo
     },
     uploaderId: loginStore.userInfo.id,
   };

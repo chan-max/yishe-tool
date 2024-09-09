@@ -13,15 +13,15 @@
     <!-- <div class="designiy-header-menu">
       <header-menu-dropdown />
     </div> -->
-    <div class="designiy-header-logo flex items-center justify-center" style="width:72px;height:100%" >
+    <div class="designiy-header-logo flex items-center justify-center" style="width:72px;height:100%">
       <img src="logo.svg" style="height: 36px" object-fit="contain" />
     </div>
 
 
     <el-popover width="240" trigger="click" popper-style="padding:2rem">
       <template #reference>
-        <el-button size="small" link v-if="loginStatusStore.isLogin">
-          {{ storageName || '未命名' }}
+        <el-button link v-if="loginStatusStore.isLogin" class="link">
+          <span style="font-size: 1.1rem;"> {{ storageName || '未命名' }}</span>
           <el-icon size="1rem" style="margin-left: .4rem;">
             <el-tooltip content="正在同步到远程" placement="right" v-if="syncState.loading">
               <LoadingOutlined style="color:var(--el-color-primary)" />
@@ -57,9 +57,10 @@
     </el-popover>
 
     <div style="flex-grow: 1"></div>
-    <div class="flex ">
-      <el-button @click="showSaveModel = true" round> 保存当前模型 </el-button>
-      <el-button @click="showUpload = true" round> 资源上传 </el-button>
+    <div class="flex items-center">
+      <el-button  @click="showUpload = true"  round text bg> 文件上传 </el-button>
+      <el-button type="primary" @click="showSaveModel = true" round> 保存 </el-button>
+      
     </div>
 
     <user-avatar v-if="loginStatusStore.isLogin" />
@@ -122,9 +123,12 @@ function login() {
   align-items: center;
   column-gap: 1rem;
   padding-right: 1rem;
-  // background: #1d1d1d;
+  // background: #121212;
 }
 
+.el-button.link {
+  // --el-button-text-color: #ebebeb;
+}
 
 
 

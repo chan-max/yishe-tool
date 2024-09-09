@@ -17,9 +17,12 @@ import { message } from 'ant-design-vue'
 import { ref, reactive } from 'vue'
 import { v4 } from 'uuid'
 import Utils from '@/common/utils'
-
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { currentModelController, currentOperatingDecalController, showDecalControl } from '../store';
+import { useLoginStatusStore } from "@/store/stores/login";
+
+import Api from '@/api'
+
 
 export interface DecalControllerParams {
   // 定义贴纸的类型
@@ -47,7 +50,15 @@ export class DecalController {
     id: null,
     isLocalResource: false,
     url: null, // 贴纸的路径，用于贴花和展示
-    src: null // 等同于 url
+    src: null, // 等同于 url
+
+    // 外部绑定的 旋转和尺寸值，位置是固定的所以不需要输入
+    modelValueRotate: null,
+    modelValueSize: null,
+
+    size: null,
+    rotation: null,
+    position: null,
   })
 
   id = ref()
@@ -61,9 +72,9 @@ export class DecalController {
   // 更新时间
   updatedAt = new Date()
 
-  constructor(info: any) {
+  constructor(info) {
 
-    this.state.id = this.id.value = v4()
+    this.state.id = this.id.value = (info.id || v4()) // 如果是本地的贴纸，随机分配一个id
     this.state.isLocalResource = info.isLocalResource
     this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64
 
@@ -73,12 +84,11 @@ export class DecalController {
       this.info.src = this.info.thumbnail
     }
 
-    if (this.info.isLocalResource) {
+    if (this.state.isLocalResource) {
       this.info.src = this.info.base64
     }
 
     this.img = info.img
-
   }
 
   // 确认添加该贴纸到场景
@@ -129,11 +139,6 @@ export class DecalController {
   // 保存当前的decal实例
   mesh = null;
 
-  // 是否是本地资源
-  get isLocalResource() {
-    return this.info.local
-  }
-
   // 当前使用的材质信息
 
   // 记录贴花添加时的鼠标位置
@@ -180,7 +185,7 @@ export class DecalController {
     // let objectUrl = await Utils.transform.createImgObjectURL(this.info.img)
     // let base64 = await  Utils.transform.imgToBase64(this.info.img)
 
-    if (this.info.isLocalResource) {
+    if (this.state.isLocalResource) {
       const image = new Image();
       image.src = this.info.base64;
       // 创建纹理
@@ -260,19 +265,19 @@ export class DecalController {
     const position = intersects[0].point;
 
     this._position = position;
+    this.state.position = position;
 
     const copy = intersects[0].face.normal.clone();
 
     copy.transformDirection(this.parentMesh.matrixWorld);
     copy.add(position);
 
-
-
     const helper = new Object3D();
     helper.position.copy(position);
     helper.lookAt(copy);
     let rotation = helper.rotation;
     this._rotation = rotation;
+    this.state.rotation = rotation;
 
     this.create()
 
@@ -286,17 +291,6 @@ export class DecalController {
     message.success({ content: '贴纸添加成功', key: 'sticking' })
   }
 
-  // 在随机位置贴图
-  async stickToRandomPosition() {
-    let { position, rotation } = currentModelController.value.getRandomPosition();
-    this._position = position
-    this._rotation = rotation
-    if (!this.material) {
-      await this.initTexture()
-    }
-    this.create()
-    this.ensureAdd()
-  }
 
 
   // 移除当前贴纸
@@ -321,6 +315,7 @@ export class DecalController {
   // 缩放
   scale(ratio) {
     this._size = ratio
+    this.state.size = ratio
     this.create()
   }
 
@@ -372,14 +367,43 @@ export class DecalController {
   }
 
 
+  // 如果是本地创建的贴纸，则需要上传到远程
+  public async upload() {
+    if (!this.state.isLocalResource) {
+      return Promise.resolve(void 0);
+    }
 
+    let loginStore = useLoginStatusStore()
+
+    const file = Utils.transform.base64ToPngFile(this.info.base64)
+
+    const cos = await Api.uploadToCOS({
+      file: file
+    })
+
+    let data = await Api.createStickerApi({
+      thumbnail: cos.url,
+      type: 'composition',
+      meta: {
+        data: this.info.data
+      },
+      uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null
+    })
+
+
+    this.state.isLocalResource = false
+    this.state.id = data.id
+    return data
+  }
 
   // 导出该信息
-  export() {
+  async export() {
 
     if (!this.position) {
       return
     }
+
+    await this.upload()
 
     const position = {
       x: this.position.x,
@@ -401,7 +425,7 @@ export class DecalController {
 
 
     return {
-      id: this.info.id,
+      id: this.state.id, // 为贴纸的 id
       position,
       rotation,
       size,

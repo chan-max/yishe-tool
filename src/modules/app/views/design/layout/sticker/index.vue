@@ -55,7 +55,7 @@ import { onBeforeMount } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";
 import { showSticker,currentPreviewSticker,showStickerDetail } from "@/modules/app/views/design/store";
-import { getStickerListApi } from "@/api";
+import { getStickerList } from "@/api";
 import stickerDetail from './stickerDetail.vue'
 import chips from './chips.vue'
 
@@ -65,7 +65,7 @@ function didDismiss() {
 
 const { list,getList } = usePaging(
   (params) => {
-    return getStickerListApi({
+    return getStickerList({
       ...params,
       pageSize: 18,
     });

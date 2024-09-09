@@ -133,7 +133,7 @@ export const Text = defineComponent({
                 fontStyle: props.options.italic ? 'italic' : 'normal',
                 lineHeight: props.options.lineHeight + 'em',
                 letterSpacing: props.options.letterSpacing + 'em',
-                fontFamily: null,
+                fontFamily: 'undefined', // 默认设置为一个不存在的字体，防止被本地字体影响  
                 writingMode: props.options.writingMode == 'htb' ? WritingMode.HTB : props.options.writingMode == 'vlr' ? WritingMode.VLR : props.options.writingMode == 'vrl' ? WritingMode.VRL : null,
                 transform: createTransformString(props.options.transform),
                 filter: createFilterFromOptions(props.options.filter),

@@ -31,13 +31,13 @@ import { getModelList } from "@/api/index";
 import { onMounted, ref } from "vue";
 import card from "./card.vue";
 import { useRouter } from "vue-router";
-import { getCustomModelListApi } from "@/api";
+import { getCustomModelList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 
 const router = useRouter();
 
 const { list, getList } = usePaging((params) => {
-  return getCustomModelListApi({
+  return getCustomModelList({
     ...params,
     pageSize: 20,
   });

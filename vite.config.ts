@@ -32,13 +32,14 @@ import svgLoader from 'vite-svg-loader'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from "unplugin-auto-import/vite";
 
-import {viteObfuscateFile} from 'vite-plugin-obfuscator'
-
+import { viteObfuscateFile } from 'vite-plugin-obfuscator'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 export default defineConfig((config: any) => {
 
   const isApp = config.mode === 'app'
   const isServer = config.mode === 'server'
+
 
   const baseBuild = {
     outDir: 'www',
@@ -58,7 +59,7 @@ export default defineConfig((config: any) => {
       input: resolve(__dirname, 'index.html'),
     }
   }
-  
+
   return {
     plugins: [
       alias(),
@@ -141,6 +142,12 @@ export default defineConfig((config: any) => {
         transformObjectKeys: false,
         unicodeEscapeSequence: false
       }),
+      createSvgIconsPlugin({
+        // 指定需要缓存的图标文件夹
+        iconDirs: [path.resolve(process.cwd(), "src/icon")],
+        // 指定symbolId格式
+        symbolId: 'icon-[name]',
+      })
     ],
     base: isApp ? './' : '/', // 普通路径与app路径处理方式不同
     build: isApp ? appBuild : baseBuild,

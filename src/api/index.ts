@@ -354,21 +354,21 @@ export const getProductModelListApi = (data) => new Promise(async (resolve, reje
 
 
 /*
- 获取贴纸列表
-*/
-
-export interface StickerListParams {
-  type: 'image' | 'text' | 'composition'
-}
-
-
-/*
     获取所有贴纸
 */
-export const getStickerListApi = (data) => new Promise(async (resolve, reject) => {
+export const getStickerList = (data) => new Promise(async (resolve, reject) => {
   let res = await apiInstance.post('/api/sticker/page', data)
   resolve(res.data.data)
 })
+
+
+export const deleteSticker = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/sticker/delete', {
+    id:data
+  })
+  resolve(res.data.data)
+})
+
 
 /*
  创建贴纸
@@ -378,6 +378,12 @@ export const createStickerApi = (data) => new Promise(async (resolve, reject) =>
   resolve(res.data.data)
 })
 
+
+
+
+/**
+ * 获取文件列表
+*/
 export const getFileListApi = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post('/api/file/page', params)
   resolve(res.data.data)
@@ -400,7 +406,7 @@ export const getFontListApi = (params) => new Promise(async (resolve, reject) =>
 export const createCustomModelApi = (data) => apiInstance.post(Url.UPLOAD_CUSTOM_MODEL, data);
 
 
-export const getCustomModelListApi = (params) => new Promise(async (resolve, reject) => {
+export const getCustomModelList = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post('/api/custom-model/page', params)
   resolve(res.data.data)
 })
@@ -412,7 +418,7 @@ export const getProductModelById = (id: string) => new Promise(async (resolve, r
   resolve(data.data.data)
 })
 
-export const getStickerByIdApi = (id: string) => new Promise(async (resolve, reject) => {
+export const getStickerById = (id: string) => new Promise(async (resolve, reject) => {
   const data = await apiInstance.get('/api/sticker', { params: { id } })
   resolve(data.data.data)
 })
@@ -421,7 +427,6 @@ class Api {
 
 
   /* 用户相关 */
-
   logout = logout
 
   /*
@@ -455,19 +460,21 @@ class Api {
   // 获取系统通用配置
   getBasicConfig = getBasicConfig
 
-  getCustomModelListApi = getCustomModelListApi
+  getCustomModelList = getCustomModelList
 
 
   getProductModelById = getProductModelById
 
-  getStickerByIdApi = getStickerByIdApi
+  getStickerById = getStickerById
 
 
   updateUserInfo = updateUserInfo
 
   getUserInfo = getUserInfo
 
-  getStickerListApi = getStickerListApi
+  getStickerList = getStickerList
+
+  deleteSticker = deleteSticker
 }
 
 export default new Api()

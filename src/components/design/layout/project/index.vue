@@ -14,7 +14,7 @@
         </a-input>
       </el-row>
       <el-row>
-        <div style="height: calc(600px - 48px); min-width:1020px;overflow: auto;">
+        <div style="height: calc(600px - 64px); min-width:1020px;overflow: auto;">
           <component :is="activeComponent"></component>
         </div>
       </el-row>
@@ -25,7 +25,7 @@
 import { ref, computed, toRaw } from "vue";
 
 import { SearchOutlined } from "@ant-design/icons-vue";
-import tabImage from "./image.vue";
+
 import tabSticker from "./sticker.vue";
 import tabFont from "./tabFont.vue";
 import tabCustomModel from './customModel/index.vue'
@@ -36,8 +36,7 @@ const searchText = ref("");
 enum UserOwnSourceType {
   CUSTOM_MODEL = "customModel",
   STICKER = "sticker",
-  IMAGE = "image",
-  FONT = "_font",
+  FONT = "font",
   COLLECT = "collect",
   LIKED = "liked",
 }
@@ -59,14 +58,9 @@ const tabs = ref([
     component: tabCustomModel,
   },
   {
-    label: "贴纸",
+    label: "贴纸", 
     key: "sticker",
     component: tabSticker,
-  },
-  {
-    label: "图片",
-    key: "image",
-    component: tabImage,
   },
   {
     label: "字体",
@@ -82,6 +76,7 @@ const tabs = ref([
     key: "liked",
   },
 ]);
+
 </script>
 <style lang="less" scoped>
 .item {

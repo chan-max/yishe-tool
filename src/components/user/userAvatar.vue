@@ -40,8 +40,8 @@ const avatar = computed(() => {
 .user-avatar {
   border: 2px solid #ddd;
   border-radius: 50%;
-  height: 36px;
-  width: 36px;
+  height: 32px;
+  width: 32px;
 
   .el-avatar {
     height: 100%;

@@ -115,7 +115,7 @@ import logger from './logger'
 import { Type } from './type'
 import { Encrypt } from './encrypt.ts'
 import { Color } from './color.ts'
-
+import time from './time.ts'
 
 class Utils {
 
@@ -188,6 +188,8 @@ class Utils {
     type = new Type()
 
     transform = transform
+
+    time = time
 }
 
 

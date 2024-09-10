@@ -92,6 +92,11 @@ const tabs = ref([
 }
 
 :deep(.el-tabs__item) {
-  font-weight: 400;
+  font-weight: 300;
+  --el-text-color-primary:#888;
+}
+
+:deep(.el-tabs__item.is-active){
+  font-weight: 900;
 }
 </style>

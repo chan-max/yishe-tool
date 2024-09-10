@@ -1,7 +1,7 @@
 <template>
     <a-modal v-bind="$attrs" v-model:open="show" :footer="null" :centered="true" :destroyOnClose="true"
         style="min-width:1080px;" width="1080px">
-        <el-row style="height:640px;padding:1rem" :gutter="24">
+        <el-row style="height:680px;padding:24px 12px" :gutter="24">
             <el-col :span="16">
                 <el-row style="row-gap: 2rem;">
                     <el-col :span="24">

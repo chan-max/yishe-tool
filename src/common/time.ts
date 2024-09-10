@@ -25,3 +25,10 @@ export function timeout(ms = 0) {
         }, ms);
     })
 }   
+
+
+
+export default {
+    timeago,
+    timeout,
+}

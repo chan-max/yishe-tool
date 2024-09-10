@@ -364,7 +364,7 @@ export const getStickerList = (data) => new Promise(async (resolve, reject) => {
 
 export const deleteSticker = (data) => new Promise(async (resolve, reject) => {
   let res = await apiInstance.post('/api/sticker/delete', {
-    id:data
+    id: data
   })
   resolve(res.data.data)
 })
@@ -400,6 +400,15 @@ export const getFontListApi = (params) => new Promise(async (resolve, reject) =>
 })
 
 
+export const deleteFile = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/file/delete', {
+    id: data
+  })
+  resolve(res.data.data)
+})
+
+
+
 /*
  上传自定义的模型
 */
@@ -410,6 +419,15 @@ export const getCustomModelList = (params) => new Promise(async (resolve, reject
   const res = await apiInstance.post('/api/custom-model/page', params)
   resolve(res.data.data)
 })
+
+export const deleteCustomModel = (id) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/custom-model/delete', {
+    id: id
+  })
+  resolve(res.data.data)
+})
+
+
 
 
 // 根据图片id来查询图片
@@ -475,6 +493,10 @@ class Api {
   getStickerList = getStickerList
 
   deleteSticker = deleteSticker
+
+  deleteFile = deleteFile
+  
+  deleteCustomModel = deleteCustomModel
 }
 
 export default new Api()

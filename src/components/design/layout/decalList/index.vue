@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed" style="height:calc(100vh - 160px);bottom:12px; right:12px;">
+  <div class="fixed" style="height:calc(100vh - 160px);bottom:24px; right:12px;">
 
     <div v-if="!decals.length" style="text-align: center;">无贴纸</div>
 

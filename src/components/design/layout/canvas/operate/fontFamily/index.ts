@@ -16,6 +16,9 @@ export async function fetchFontFace(info) {
 
     const { url, id, name } = info;
 
+
+    let file
+
     // 存在缓存
     if (cacheFontFamily.value[id]) {
         return;
@@ -30,13 +33,15 @@ export async function fetchFontFace(info) {
         /**
          *  使用加载文件的方式加载可以记住进度
         */
-        // file = await fetchFile(url);
+        file = await fetchFile(url);
 
-        const font = new FontFace(`font_${id}`, `url(${url})`);
+        // 使用原生方式 字体导出时会失效
 
-        const loadedFont = await font.load()
+        // const font = new FontFace(`font_${id}`, `url(${url})`);
 
-        document.fonts.add(loadedFont);
+        // const loadedFont = await font.load()
+
+        // document.fonts.add(loadedFont);
 
     } catch (e) {
         cacheFontFamilyLoadingMap[id] = false
@@ -45,28 +50,25 @@ export async function fetchFontFace(info) {
 
 
 
-    // const fontStyle = document.createElement("style");
-    // const fontId = `font_${id}`;
-    // fontStyle.innerHTML = `
-    //             @font-face {
-    //                 font-family: ${fontId};
-    //                 src: url(${URL.createObjectURL(file)}); 
-    //             }
-    // `;
+    const fontStyle = document.createElement("style");
+    const fontId = `font_${id}`;
+    fontStyle.innerHTML = `
+                @font-face {
+                    font-family: ${fontId};
+                    src: url(${URL.createObjectURL(file)}); 
+                }
+    `;
 
 
-    // document.head.appendChild(fontStyle);
-    // fontStyle.setAttribute("font_id", fontId);
+    document.head.appendChild(fontStyle);
+    fontStyle.setAttribute("font_id", fontId);
 
-    // cacheFontFamily.value[id] = fontStyle;
+    cacheFontFamily.value[id] = fontStyle;
 
 
     cacheFontFamily.value[id] = true; // 标记该字体为加载过
     cacheFontFamilyLoadingMap[id] = false
 }
-
-
-
 
 export async function fetchFontFaceWithMessage(info) {
 

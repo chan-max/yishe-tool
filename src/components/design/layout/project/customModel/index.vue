@@ -7,13 +7,13 @@
                         style="background:#f6f6f6!important;width:240px;height:180px;border-radius: 8px;">
                     </desimage>
                     <div class="bar flex items-center justify-between">
-                        <div class="text-ellipsis" style="max-width:80px;"> {{ item.name }} </div>
-                        <div class="public-tag" v-if="!item.isPublic"> 已共享 </div>
+                        <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名' }} </div>
+                        <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
                         <div class="timeage"> {{ Utils.time.timeago(item.updateTime) }} </div>
                         <div style="flex:1;"></div>
                         <a-dropdown trigger="click">
                             <el-button link>
-                                <el-icon  size="12">
+                                <el-icon size="12">
                                     <MoreFilled />
                                 </el-icon>
                             </el-button>
@@ -36,6 +36,11 @@
             </el-col>
         </el-row>
         <loadingBottom v-if="loading"></loadingBottom>
+        <s1-empty v-if="isEmpty">
+            <template #description>
+                暂无模型
+            </template>
+        </s1-empty>
     </div>
 
     <modelDetailDialog></modelDetailDialog>
@@ -81,7 +86,7 @@ const column = ref(4);
 
 const loadingOptions = useLoadingOptions({});
 
-const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePaging(
+const { list, getList, loading, reset, firstLoading, subsequentLoading, isEmpty } = usePaging(
     (params) => {
         return Api.getCustomModelList({
             ...params,

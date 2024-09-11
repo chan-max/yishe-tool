@@ -175,7 +175,7 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
 .bar {
   width: 100%;
   font-size: 1rem;
-  color: #555;
+  color: #666;
   display: flex;
   padding: 0 .5rem;
   justify-content: space-between;

@@ -92,7 +92,7 @@ const tabs = ref([
 }
 
 :deep(.el-tabs__item) {
-  font-weight: 300;
+  font-weight: 400;
   --el-text-color-primary:#888;
 }
 

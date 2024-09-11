@@ -7,8 +7,8 @@
                         style="background:#f6f6f6!important;width:240px;height:180px;border-radius: 8px;">
                     </desimage>
                     <div class="bar flex items-center justify-between">
-                        <div class="text-ellipsis" style="max-width:80px;"> {{ item.name }} </div>
-                        <div class="public-tag" v-if="!item.isPublic"> 已共享 </div>
+                        <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名' }} </div>
+                        <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
                         <div class="timeage"> {{ Utils.time.timeago(item.updateTime) }} </div>
                         <div style="flex:1;"></div>
 

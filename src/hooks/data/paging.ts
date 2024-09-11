@@ -97,8 +97,6 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
             if (isRef(list)) {
                 res.list.forEach((item) => {
-
-      
                     (list.value as any).push(item)
                 })
             } else if (isReactive(list)) {
@@ -131,6 +129,11 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         return (currentPage.value == totalPage.value) && !loading.value
     })
 
+
+    const isEmpty = computed(() => {
+        return total.value == 0 && !loading.value
+    })
+
     return {
         currentPage, // 当前页数
         totalPage, // 总页数
@@ -143,5 +146,6 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         firstLoading, // 首次加载
         subsequentLoading, // 非首次加载
         isLastPage, // 是否到达最后一页
+        isEmpty, // 数据是否为空
     }
 }

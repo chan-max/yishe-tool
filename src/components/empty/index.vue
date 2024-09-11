@@ -1,5 +1,6 @@
 <template>
-    <div class="s1-empty flex items-center justify-center" :class="{ full: full }">
+    <div class="s1-empty flex items-center justify-center" :class="{ full: full }"
+        :style="{ minHeight: minHeight, minWidth: minWidth }">
         <el-empty :image="image" :image-size="82" v-bind="$attrs">
             <slot></slot>
             <template #description>
@@ -16,6 +17,12 @@ const image = '/components/empty.svg'
 const props = defineProps({
     full: {
         default: true
+    },
+    minHeight: {
+        default: null,
+    },
+    minWidth: {
+        default: null,
     }
 })
 

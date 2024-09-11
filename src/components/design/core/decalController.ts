@@ -384,13 +384,14 @@ export class DecalController {
     let data = await Api.createStickerApi({
       thumbnail: cos.url,
       type: 'composition',
+      isPublic: false,
       meta: {
         data: this.info.data
       },
       uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null
     })
 
-
+    
     this.state.isLocalResource = false
     this.state.id = data.id
     return data

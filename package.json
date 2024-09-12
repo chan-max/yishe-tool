@@ -68,6 +68,7 @@
     "esbuild": "^0.20.1",
     "fast-glob": "^3.3.2",
     "file-save": "^0.2.0",
+    "file-saver": "^2.0.5",
     "filesize": "^10.1.4",
     "fontfaceobserver": "^2.3.0",
     "fs": "^0.0.1-security",

@@ -43,6 +43,9 @@ function mounted() {
     return;
   }
 
+  if(props.center){
+    return
+  }
   // 在中间
   let el = dialogRef.value.$el;
   el.style.top =  props.top ||  `calc(50% - ${el.clientHeight / 2}px)`;
@@ -64,6 +67,9 @@ const props = defineProps({
   top: {
     default: null
   },
+  center:{
+    default:true
+  }
 });
 
 const emits = defineEmits(["close"]);

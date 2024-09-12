@@ -7,30 +7,33 @@
                         style="background:#f6f6f6!important;width:240px;height:180px;border-radius: 8px;">
                     </desimage>
                     <div class="bar flex items-center justify-between">
-                        <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名' }} </div>
+                        <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名'  }} </div>
                         <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
-                        <div class="timeage"> {{ Utils.time.timeago(item.updateTime) }} </div>
+                        <div class="timeago"> {{ Utils.time.timeago(item.updateTime) }} </div>
                         <div style="flex:1;"></div>
 
                         <a-dropdown trigger="click">
-                            <el-button link  size="12">
-                                <el-icon>
+                            <el-button  link>
+                                <el-icon size="12">
                                     <MoreFilled />
                                 </el-icon>
                             </el-button>
                             <template #overlay>
                                 <a-menu>
-                                    <a-menu-item>
-                                        <el-button size="small" link @click="useSticker(item)"> 在工作台使用 </el-button>
-                                    </a-menu-item>
                                     <a-menu-item @click="deleteItem(item)">
-                                        <el-button type="danger" size="small" link>删除</el-button>
+                                        <span style="color: var(--el-color-danger);"> 删除</span>
                                     </a-menu-item>
                                     <a-menu-item>
-                                        <el-button size="small" link> 分享给好友 </el-button>
+                                        分享给好友
                                     </a-menu-item>
                                     <a-menu-item>
-                                        <el-button size="small" link> 发布 </el-button>
+                                        发布
+                                    </a-menu-item>
+                                    <a-menu-item @click="downloadFile(item)">
+                                        下载源文件
+                                    </a-menu-item>
+                                    <a-menu-item @click="downloadThumbnail(item)">
+                                        下载缩略图
                                     </a-menu-item>
                                 </a-menu>
                             </template>
@@ -40,17 +43,16 @@
             </el-col>
         </el-row>
         <loadingBottom v-if="loading"></loadingBottom>
-        <div class="endofpage" v-if="isLastPage"> 到底了~ </div>
     </div>
 </template>
 
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
-import { Search, ArrowRightBold, Operation, ArrowRight, MoreFilled } from "@element-plus/icons-vue";
+import { Search, ArrowRightBold, Operation, ArrowRight } from "@element-plus/icons-vue";
 import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
-import { MoreOutlined } from '@ant-design/icons-vue'
+
 import {
     currentModelController,
     showImageUplaod,
@@ -58,54 +60,53 @@ import {
 } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
-
+import { MoreFilled } from "@element-plus/icons-vue";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import scrollbar from "@/components/scrollbar/index.vue";
 
 import { loadingBottom } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 import Utils from '@/common/utils'
-import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
-import { message, Modal } from "ant-design-vue";
-import { s1Confirm } from '@/common/message'
 import Api from '@/api'
-
+import { s1Confirm } from '@/common/message'
+import { message } from 'ant-design-vue'
 
 // 列表展示几列
 const column = ref(4);
 
 const loadingOptions = useLoadingOptions({});
 
-const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPage, currentPage, totalPage, } = usePaging(
+const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePaging(
     (params) => {
-        return getStickerList({
+        return Api.getFileListApi({
             ...params,
             pageSize: 20,
+            type: 'ttf,otf',
             myUploads: true
         });
     },
-    {
-    }
 );
-
-
-function useSticker(item) {
-    canvasStickerOptions.value = item.meta.data
-    message.success('引用成功')
-}
 
 async function deleteItem(item) {
 
     await s1Confirm({
-        content: '确认删除该贴纸吗？'
+        content: '确认删除该字体？'
     })
 
-    await Api.deleteItem(item.id)
+    await Api.deleteFile(item.id)
     reset()
     await getList()
     message.success('删除成功')
 }
 
+
+function downloadFile(item) {
+      Api.downloadCOSFile(item.url)
+}
+
+function downloadThumbnail(item) {
+      Api.downloadCOSFile(item.thumbnail)
+}
 </script>
 
 
@@ -135,7 +136,7 @@ async function deleteItem(item) {
     color: #aaa;
 }
 
-.timeage{
+.timeago{
     font-size: .9rem;
     color: #999;
     font-weight: bold;

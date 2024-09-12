@@ -1,9 +1,9 @@
 <template>
     <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
         <el-row style="row-gap: 8px;width:1000px;">
-            <el-col :span="24 / column" v-for="item in  list" align="center">
+            <el-col :span="24 / column" v-for="item in list" align="center">
                 <div style="width:100%;height:100%;flex-shrink: 0;" class="flex flex-col items-center justify-center">
-                    <desimage @click="openDetail(item)" padding="5%" :src="item.thumbnail"
+                    <desimage padding="5%" :src="item.thumbnail" @click="itemClick(item)"
                         style="background:#f6f6f6!important;width:240px;height:180px;border-radius: 8px;">
                     </desimage>
                     <div class="bar flex items-center justify-between">
@@ -11,22 +11,32 @@
                         <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
                         <div class="timeago"> {{ Utils.time.timeago(item.updateTime) }} </div>
                         <div style="flex:1;"></div>
+
                         <a-dropdown trigger="click">
-                            <el-button link>
-                                <el-icon size="12">
+                            <el-button link size="12">
+                                <el-icon>
                                     <MoreFilled />
                                 </el-icon>
                             </el-button>
                             <template #overlay>
                                 <a-menu>
+                                    <a-menu-item @click="edit(item)">
+                                        编辑
+                                    </a-menu-item>
+                                    <a-menu-item @click="useSticker(item)">
+                                        在工作台使用
+                                    </a-menu-item>
                                     <a-menu-item @click="deleteItem(item)">
-                                        <span style="color:var(-el-color-danger)">删除</span>
+                                        <span style="color:var(--el-color-danger)">删除</span>
                                     </a-menu-item>
                                     <a-menu-item>
                                         分享给好友
                                     </a-menu-item>
                                     <a-menu-item>
                                         发布
+                                    </a-menu-item>
+                                    <a-menu-item v-if="item.type == 'image'" @click="download(item)">
+                                        下载源文件
                                     </a-menu-item>
                                 </a-menu>
                             </template>
@@ -36,23 +46,37 @@
             </el-col>
         </el-row>
         <loadingBottom v-if="loading"></loadingBottom>
-        <s1-empty v-if="isEmpty">
-            <template #description>
-                暂无模型
-            </template>
-        </s1-empty>
+        <div class="endofpage" v-if="isLastPage"> 到底了~ </div>
     </div>
 
-    <modelDetailDialog></modelDetailDialog>
-</template> 
+
+    <a-modal v-model:open="showPreviewModal" :footer="null" :centered="true" :destroyOnClose="true"
+        style="min-width:980px;" width="980px">
+        <div class="flex">
+            <s1-img :src="currentItem.thumbnail" style="width:480px;height:480px;">
+            </s1-img>
+            <div style="padding:24px;row-gap:12px;" class="flex flex-col">
+                <h1> {{ currentItem.name }} </h1>
+                <h6> {{ currentItem.description }} </h6>
+                <h6> {{ currentItem.keywords }} </h6>
+                <h6> {{ currentItem.updateTime }} </h6>
+            </div>
+        </div>
+    </a-modal>
+
+    <a-modal v-model:open="showFormModal" :footer="null" :centered="true" :destroyOnClose="true"
+        style="min-width:980px;" width="980px">
+
+    </a-modal>
+</template>
 
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
-import { Search, ArrowRightBold, Operation, ArrowRight } from "@element-plus/icons-vue";
+import { Search, ArrowRightBold, Operation, ArrowRight, MoreFilled } from "@element-plus/icons-vue";
 import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
-
+import { MoreOutlined } from '@ant-design/icons-vue'
 import {
     currentModelController,
     showImageUplaod,
@@ -60,35 +84,28 @@ import {
 } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
-import { MoreFilled } from "@element-plus/icons-vue";
+
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import scrollbar from "@/components/scrollbar/index.vue";
 
 import { loadingBottom } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 import Utils from '@/common/utils'
-import Api from '@/api'
-
-import { useCustomModelDetailDialog } from '../customModelDialog/index.ts'
+import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
+import { message, Modal } from "ant-design-vue";
 import { s1Confirm } from '@/common/message'
-import { message } from 'ant-design-vue'
+import Api from '@/api'
+import { time } from "console";
 
-
-const { component: modelDetailDialog, open } = useCustomModelDetailDialog()
-
-
-function openDetail(modelInfo) {
-    open(modelInfo)
-}
 
 // 列表展示几列
 const column = ref(4);
 
 const loadingOptions = useLoadingOptions({});
 
-const { list, getList, loading, reset, firstLoading, subsequentLoading, isEmpty } = usePaging(
+const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPage, currentPage, totalPage, } = usePaging(
     (params) => {
-        return Api.getCustomModelList({
+        return getStickerList({
             ...params,
             pageSize: 20,
             myUploads: true
@@ -97,21 +114,50 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading, isEmpty 
 );
 
 
-const showDetailModal = ref()
+function useSticker(item) {
+    canvasStickerOptions.value = item.meta.data
+    message.success('引用成功')
+}
 
 async function deleteItem(item) {
-
     await s1Confirm({
-        content: '确认删除该模型？'
+        content: '确认删除该贴纸吗？'
     })
-
-    await Api.deleteCustomModel(item.id)
+    await Api.deleteItem(item.id)
     reset()
     await getList()
     message.success('删除成功')
 }
 
+function download(item) {
+    Api.downloadCOSFile(item.url)
+}
+
+
+const currentItem = ref({} as any)
+
+
+const showPreviewModal = ref(false)
+
+
+
+function itemClick(item) {
+    currentItem.value = item
+    showPreviewModal.value = true
+}
+
+
+
+const showFormModal = ref(false)
+
+// 编辑
+function edit(item) {
+    currentItem.value = item
+    showFormModal.value = true
+}
 </script>
+
+
 
 <style scoped lang="less">
 .bar {

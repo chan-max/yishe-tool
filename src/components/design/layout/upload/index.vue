@@ -250,7 +250,7 @@ async function uploadSingleFile(file) {
       file: png
     })
 
-    const { url: fileUrl } = await uploadToCOS({ key: new Date().getTime(), file: file.raw })
+    const { url: fileUrl } = await uploadToCOS({ file: file.raw })
 
     const params = {
       url: fileUrl,

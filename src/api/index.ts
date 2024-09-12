@@ -1,8 +1,8 @@
 
 import { apiInstance, source } from "./apiInstance";
-import { deleteCOSFile, uploadToCOS } from "./cos";
+import { deleteCOSFile, downloadCOSFile, uploadToCOS } from "./cos";
 import { Url } from "./url";
-export { uploadToCOS, deleteCOSFile } from './cos'
+export { uploadToCOS, deleteCOSFile, downloadCOSFile } from './cos'
 
 interface FetchFileOptions {
   filename: string  // 请求的文件名
@@ -465,6 +465,7 @@ class Api {
 
   deleteCOSFile = deleteCOSFile
 
+  downloadCOSFile = downloadCOSFile
 
   createStickerApi = createStickerApi
 
@@ -480,11 +481,9 @@ class Api {
 
   getCustomModelList = getCustomModelList
 
-
   getProductModelById = getProductModelById
 
   getStickerById = getStickerById
-
 
   updateUserInfo = updateUserInfo
 
@@ -495,7 +494,7 @@ class Api {
   deleteSticker = deleteSticker
 
   deleteFile = deleteFile
-  
+
   deleteCustomModel = deleteCustomModel
 }
 

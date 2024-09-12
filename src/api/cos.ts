@@ -1,7 +1,7 @@
 
 import COS from 'cos-js-sdk-v5';
 import { useConfigStore } from '@/store/stores/config';
-
+import { saveAs } from 'file-saver';
 
 var _cos
 export const getCOS = () => {
@@ -27,7 +27,7 @@ export const getCOS = () => {
 
 export async function uploadToCOS({
     file,
-    key = new Date().getTime(),
+    key = new Date().getTime() + '_1s_' + file.name,
 }) {
     const cos = getCOS();
     try {
@@ -66,6 +66,25 @@ export function deleteCOSFile(key) {
             }
         });
     });
+}
+
+
+function removeProtocol(url) {
+    if (url.startsWith('http://')) {
+        return url.replace('http://', '')
+    }
+
+    if (url.startsWith('https://')) {
+        return url.replace('https://', '')
+    }
+}
+
+export function downloadCOSFile(key) {
+    let filename = key.split('_1s_')[1]
+    if (!filename) {
+        return
+    }
+    return saveAs(key, filename)
 }
 
 

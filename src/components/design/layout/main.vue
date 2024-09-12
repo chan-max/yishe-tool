@@ -85,7 +85,7 @@
     <sticker-modal></sticker-modal>
   </diydialog>
 
-  <diydialog :show="showUpload" title="资源上传" @close="showUpload = false" :animation="basicContainerAnimation" top="12%">
+  <diydialog :show="showUpload" title="资源上传" @close="showUpload = false" :animation="basicContainerAnimation">
     <upload></upload>
   </diydialog>
 

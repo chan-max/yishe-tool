@@ -6,18 +6,16 @@
       </el-tabs>
     </div>
     <div style="flex-shrink: 0">
-      <el-row style="height: 48px" align="top">
+      <div style="height: 64px" class="flex items-center">
         <a-input v-model:value="searchText" style="width: 240px" placeholder="快速搜索">
           <template #prefix>
             <SearchOutlined />
           </template>
         </a-input>
-      </el-row>
-      <el-row>
-        <div style="height: calc(600px - 64px); min-width:1020px;overflow: auto;">
-          <component :is="activeComponent"></component>
-        </div>
-      </el-row>
+      </div>
+      <div style="height: calc(600px - 64px - 12px); min-width:1020px;overflow: auto;">
+        <component :is="activeComponent"></component>
+      </div>
     </div>
   </div>
 </template>
@@ -26,8 +24,8 @@ import { ref, computed, toRaw } from "vue";
 
 import { SearchOutlined } from "@ant-design/icons-vue";
 
-import tabSticker from "./sticker.vue";
-import tabFont from "./tabFont.vue";
+import tabSticker from "./sticker/index.vue";
+import tabFont from "./font/index.vue";
 import tabCustomModel from './customModel/index.vue'
 import { useLocalStorage } from "@vueuse/core";
 
@@ -41,7 +39,7 @@ enum UserOwnSourceType {
   LIKED = "liked",
 }
 
-const activeKey = useLocalStorage('_1s_projectActiveTab',UserOwnSourceType.STICKER);
+const activeKey = useLocalStorage('_1s_projectActiveTab', UserOwnSourceType.STICKER);
 
 const activeComponent = computed(() => {
   return toRaw(tabs.value.find((item) => item.key == activeKey.value).component);
@@ -49,16 +47,12 @@ const activeComponent = computed(() => {
 
 const tabs = ref([
   {
-    label: "最近",
-    key: "recent",
-  },
-  {
     label: "设计模型",
     key: "customModel",
     component: tabCustomModel,
   },
   {
-    label: "贴纸", 
+    label: "贴纸",
     key: "sticker",
     component: tabSticker,
   },
@@ -66,14 +60,6 @@ const tabs = ref([
     label: "字体",
     key: UserOwnSourceType.FONT,
     component: tabFont,
-  },
-  {
-    label: "我的收藏",
-    key: "collect",
-  },
-  {
-    label: "我的喜欢",
-    key: "liked",
   },
 ]);
 
@@ -93,10 +79,10 @@ const tabs = ref([
 
 :deep(.el-tabs__item) {
   font-weight: 400;
-  --el-text-color-primary:#888;
+  --el-text-color-primary: #888;
 }
 
-:deep(.el-tabs__item.is-active){
+:deep(.el-tabs__item.is-active) {
   font-weight: 900;
 }
 </style>

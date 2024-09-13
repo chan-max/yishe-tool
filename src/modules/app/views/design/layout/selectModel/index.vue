@@ -49,14 +49,14 @@
 <script setup lang="ts">
 import { showSelectModel } from "@/modules/app/views/design/store";
 import { close, checkmarkDoneOutline ,helpCircleOutline} from "ionicons/icons";
-import { getProductModelListApi } from "@/api";
+import { getProductModelList } from "@/api";
 import { onBeforeMount } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";
 
 const { list } = usePaging(
   (params) => {
-    return getProductModelListApi({
+    return getProductModelList({
       ...params,
       pageSize: 999,
     });

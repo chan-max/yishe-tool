@@ -95,12 +95,6 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
       ...stickerQueryParams.value,
     });
   },
-  {
-    forEach(item) {
-      item.thumbnail = Utils.formatUrl(item.thumbnail);
-      item.url = Utils.formatUrl(item.url);
-    },
-  }
 );
 
 </script>

@@ -7,7 +7,8 @@
           @on-tags-changed="handleInput" />
       </template>
       <div class="tags-input-tags">
-        <a-alert v-if="showAlert" style="width:100%" message="点击变标签可以自动添加到输入框中" type="info" close-text="不再提示" @close="showAlert = false"/>
+        <a-alert v-if="showAlert" style="width:100%" message="点击变标签可以自动添加到输入框中" type="info" close-text="不再提示"
+          @close="showAlert = false" />
         <a-tag :bordered="false" v-for="(tag, index) in autocompleteTags" @click="handleSelect(tag)">
           {{ tag.name }}
         </a-tag>
@@ -19,7 +20,7 @@
 <script setup>
 import { defineComponent, ref } from "vue";
 import Vue3TagsInput from "vue3-tags-input";
-import {useLocalStorage} from '@vueuse/core'
+import { useLocalStorage } from '@vueuse/core'
 
 const props = defineProps({
   // 内置的提示框
@@ -32,17 +33,35 @@ const props = defineProps({
   autocompletePlacement: {
     default: 'bottom'
   },
+  string: {
+    default: false, // 已字符串的形式返回 绑定的值
+  }
 });
 
-const model = defineModel({})
+const model = defineModel({
+})
 
-const showAlert = useLocalStorage('_1s_showAutoCompleteTip',true)
 
 // 所有的 tags
 const tags = ref([]);
 
-const popperRef = ref();
+watch(model, (v) => {
+  if (Array.isArray(v)) {
+      tags.value = v
+    }else{
+      if(!v){
+        tags.value = []
+      }else{
+        tags.value = v.split(',')
+      }
+    }
+}, {
+  immediate: true,
+})
 
+const showAlert = useLocalStorage('_1s_showAutoCompleteTip', true)
+
+const popperRef = ref();
 
 const handleSelect = (tag) => {
   if (!tags.value.includes(tag.name)) {
@@ -50,7 +69,6 @@ const handleSelect = (tag) => {
   }
   emitModel()
 };
-
 
 const emits = defineEmits(["update:modelValue"]);
 
@@ -61,7 +79,12 @@ function handleInput(val) {
 
 function emitModel() {
   popperRef.value.popperRef?.popperInstanceRef?.update();
-  emits("update:modelValue", tags.value);
+
+  if (props.string) {
+    emits("update:modelValue", tags.value.join(","));
+  } else {
+    emits("update:modelValue", tags.value);
+  }
 }
 
 // 限制长度

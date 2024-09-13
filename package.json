@@ -6,7 +6,7 @@
   "scripts": {
     "vite": "vite",
     "web:dev": "vite",
-    "build": "vite build",
+    "build": "node --max_old_space_size=1024000 ./node_modules/vite/bin/vite.js build",
     "preview": "vite preview",
     "docs:dev": "vitepress dev docs --port 7788",
     "docs:build": "vitepress build docs",
@@ -53,6 +53,7 @@
     "chinese-conv": "^1.1.0",
     "circletype": "^2.3.0",
     "color": "^4.2.3",
+    "colorthief": "^2.4.0",
     "concurrently": "^8.2.1",
     "config": "^3.3.9",
     "cos-js-sdk-v5": "^1.5.0",

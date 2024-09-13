@@ -347,7 +347,7 @@ export const uploadFile = (params) => new Promise(async (resolve, reject) => {
 /* 
   获取商品模型列表
 */
-export const getProductModelListApi = (data) => new Promise(async (resolve, reject) => {
+export const getProductModelList = (data) => new Promise(async (resolve, reject) => {
   let res = await apiInstance.post('/api/product-model/page', data)
   resolve(res.data.data)
 })
@@ -373,11 +373,15 @@ export const deleteSticker = (data) => new Promise(async (resolve, reject) => {
 /*
  创建贴纸
 */
-export const createStickerApi = (data) => new Promise(async (resolve, reject) => {
+export const createSticker = (data) => new Promise(async (resolve, reject) => {
   let res = await apiInstance.post('/api/sticker/create', data)
   resolve(res.data.data)
 })
 
+export const updateSticker = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/sticker/update', data)
+  resolve(res.data.data)
+})
 
 
 
@@ -388,6 +392,12 @@ export const getFileListApi = (params) => new Promise(async (resolve, reject) =>
   const res = await apiInstance.post('/api/file/page', params)
   resolve(res.data.data)
 })
+
+export const updateFile = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/file/update', data)
+  resolve(res.data.data)
+})
+
 
 
 /* 获取字体列表 */
@@ -467,7 +477,7 @@ class Api {
 
   downloadCOSFile = downloadCOSFile
 
-  createStickerApi = createStickerApi
+  createSticker = createSticker
 
   getFileListApi = getFileListApi
 
@@ -491,11 +501,17 @@ class Api {
 
   getStickerList = getStickerList
 
+  updateSticker = updateSticker
+
   deleteSticker = deleteSticker
 
   deleteFile = deleteFile
 
   deleteCustomModel = deleteCustomModel
+
+  updateFile = updateFile
+
+  getProductModelList = getProductModelList
 }
 
 export default new Api()

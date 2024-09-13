@@ -62,7 +62,6 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
             return;
         }
 
-
         try {
 
             if (currentPage.value >= totalPage.value) {

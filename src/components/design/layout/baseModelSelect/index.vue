@@ -52,7 +52,7 @@
   </div>
 </template>
 <script setup>
-import { getProductModelListApi } from "@/api";
+import { getProductModelList } from "@/api";
 import { onMounted, ref } from "vue";
 import { PayCircleOutlined, FormOutlined } from "@ant-design/icons-vue";
 import {
@@ -67,7 +67,7 @@ const models = ref([]);
 const container = ref();
 
 onMounted(async () => {
-  const res = await getProductModelListApi({
+  const res = await getProductModelList({
     currentPage: 1,
     pageSize: 100,
   });

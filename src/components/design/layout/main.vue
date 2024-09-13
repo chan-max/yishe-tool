@@ -94,7 +94,7 @@
   </diydialog>
 
   <!-- 个人项目弹层 -->
-  <diydialog :show="viewDisplayController.showProject" title="创作项目" @close="viewDisplayController.showProject = false"
+  <diydialog :show="viewDisplayController.showProject" title="创作资源" @close="viewDisplayController.showProject = false"
     :animation="basicContainerAnimation">
     <projectModal></projectModal>
   </diydialog>

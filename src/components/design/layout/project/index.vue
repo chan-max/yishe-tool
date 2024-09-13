@@ -6,14 +6,7 @@
       </el-tabs>
     </div>
     <div style="flex-shrink: 0">
-      <div style="height: 64px" class="flex items-center">
-        <a-input v-model:value="searchText" style="width: 240px" placeholder="快速搜索">
-          <template #prefix>
-            <SearchOutlined />
-          </template>
-        </a-input>
-      </div>
-      <div style="height: calc(600px - 64px - 12px); min-width:1020px;overflow: auto;">
+      <div style="height: calc(600px - 12px); min-width:1020px;overflow: auto;">
         <component :is="activeComponent"></component>
       </div>
     </div>
@@ -24,6 +17,7 @@ import { ref, computed, toRaw } from "vue";
 
 import { SearchOutlined } from "@ant-design/icons-vue";
 
+import tabBaseModel from './baseModel/index.vue'
 import tabSticker from "./sticker/index.vue";
 import tabFont from "./font/index.vue";
 import tabCustomModel from './customModel/index.vue'
@@ -46,6 +40,11 @@ const activeComponent = computed(() => {
 });
 
 const tabs = ref([
+  {
+    label: "基础模型",
+    key: "baseModel",
+    component: tabBaseModel,
+  },
   {
     label: "设计模型",
     key: "customModel",

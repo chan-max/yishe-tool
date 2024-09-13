@@ -381,7 +381,7 @@ export class DecalController {
       file: file
     })
 
-    let data = await Api.createStickerApi({
+    let data = await Api.createSticker({
       thumbnail: cos.url,
       type: 'composition',
       isPublic: false,

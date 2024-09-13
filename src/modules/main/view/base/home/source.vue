@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { ref, onBeforeMount } from "vue";
-import { getProductModelListApi } from "@/api";
+import { getProductModelList } from "@/api";
 import modelCardViewer from "@/components/model/modelCardViewer/index.vue";
 
 const list = ref([]);
@@ -24,7 +24,7 @@ const list = ref([]);
 const showImage = ref(true);
 
 onBeforeMount(async () => {
-  const res = await getProductModelListApi({
+  const res = await getProductModelList({
     currentPage: 1,
     pageSize: 100,
   });

@@ -1,10 +1,10 @@
 <template>
   <div class="menu-bar">
-    <el-tooltip :hide-after="0" content="创作项目" placement="right">
+    <el-tooltip :hide-after="0" content="创作资源" placement="right">
       <div class="menu-bar-item"
         @click="viewDisplayController.showProject = !viewDisplayController.showProject">
         <div class="menu-bar-item-icon"><icon-project></icon-project></div>
-        <span>创作项目</span>
+        <span>创作资源</span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="工作台" placement="right">

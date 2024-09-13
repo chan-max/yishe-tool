@@ -219,7 +219,7 @@ async function submit() {
             file: file
         })
 
-        await Api.createStickerApi({
+        await Api.createSticker({
             thumbnail: cos.url,
             ...stickerInfo.value,
             keywords: stickerInfo.value.keywords.join(','),

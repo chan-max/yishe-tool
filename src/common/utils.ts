@@ -132,6 +132,8 @@ class Utils {
 
     formatUrl = formatUrl
 
+    
+
     isPromise = isPromise
 
 

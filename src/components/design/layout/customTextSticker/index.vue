@@ -26,7 +26,7 @@
 import { ref } from "vue";
 import stickerCanvas from "./canvas.vue";
 import operatingForm from "./operatingForm.vue";
-import { uploadTextSticker, createStickerApi, uploadToCOS } from "@/api";
+import { uploadTextSticker, createSticker, uploadToCOS } from "@/api";
 import { base64 } from "./watch";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import {
@@ -48,7 +48,7 @@ function exportPng() {
 async function upload() {
   let file = await exportTextStickerFile();
   let { url } = await uploadToCOS({ file: file });
-  await createStickerApi({
+  await createSticker({
     url,
     thumbnail: url,
     type: "text",

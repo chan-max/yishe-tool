@@ -58,7 +58,7 @@
 
     <div style="flex-grow: 1"></div>
     <div class="flex items-center">
-      <el-button  @click="showUpload = true"  round text bg> 文件上传 </el-button>
+      <el-button  @click="showUpload = true"  round text bg> 素材上传 </el-button>
       <el-button type="primary" @click="showSaveModel = true" round> 保存 </el-button>
       
     </div>

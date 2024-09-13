@@ -50,7 +50,7 @@
 <script setup lang="ts">
 
 import { close, checkmarkDoneOutline, helpCircleOutline } from "ionicons/icons";
-import { getProductModelListApi } from "@/api";
+import { getProductModelList } from "@/api";
 import { onBeforeMount } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";

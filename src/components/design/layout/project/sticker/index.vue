@@ -11,7 +11,7 @@
                         <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
                         <div class="timeago"> {{ Utils.time.timeago(item.updateTime) }} </div>
                         <div style="flex:1;"></div>
-
+                        
                         <a-dropdown trigger="click">
                             <el-button link size="12">
                                 <el-icon>
@@ -64,9 +64,15 @@
         </div>
     </a-modal>
 
-    <a-modal v-model:open="showFormModal" :footer="null" :centered="true" :destroyOnClose="true"
-        style="min-width:980px;" width="980px">
-
+    <a-modal v-model:open="showFormModal" :centered="true" :destroyOnClose="true" width="540px" title="更新信息" okText="修改"
+        cancelText="取消" @ok="ok" :confirmLoading="submitLoading">
+        <el-form style="padding:24px 12px;">
+            <el-form-item> <el-input v-model="editForm.name"></el-input></el-form-item>
+            <el-form-item> <el-input v-model="editForm.description"></el-input></el-form-item>
+            <el-form-item>
+                <tagsInput v-model="editForm.keywords" :string="true"> </tagsInput>
+            </el-form-item>
+        </el-form>
     </a-modal>
 </template>
 
@@ -95,8 +101,7 @@ import { canvasStickerOptions } from "@/components/design/layout/canvas/index.ts
 import { message, Modal } from "ant-design-vue";
 import { s1Confirm } from '@/common/message'
 import Api from '@/api'
-import { time } from "console";
-
+import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 
 // 列表展示几列
 const column = ref(4);
@@ -150,11 +155,29 @@ function itemClick(item) {
 
 const showFormModal = ref(false)
 
+const submitLoading = ref(false)
+const editForm = ref({} as any)
 // 编辑
 function edit(item) {
-    currentItem.value = item
+    editForm.value = {
+        id: item.id,
+        description: item.description,
+        name: item.name,
+        keywords: item.keywords
+    }
     showFormModal.value = true
 }
+
+async function ok() {
+    submitLoading.value = true
+    let res = await Api.updateSticker(editForm.value)
+    message.success('修改成功')
+    submitLoading.value = false
+    Object.assign(currentItem.value, res);
+    let ind = list.value.indexOf(currentItem.value,)
+    list[ind] = res
+}
+
 </script>
 
 

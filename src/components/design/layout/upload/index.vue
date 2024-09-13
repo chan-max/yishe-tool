@@ -3,7 +3,8 @@
     <div v-if="uploadTabType == 'local'">
       <el-upload ref="uploadRef" style="padding: 0" :disabled="!loginStore.isLogin" v-model:file-list="fileList" drag
         :before-remove="beforeRemove" :auto-upload="false" :multiple="false" v-bind="$attrs" :on-change="fileListChange"
-        :limit="1" :on-exceed="handleExceed" accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff,font/otf">
+        :limit="1" :on-exceed="handleExceed"
+        accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff,font/otf">
         <div class="placeholder">
           <icon-file-upload></icon-file-upload>
           <div>点击或拖拽上传</div>
@@ -51,13 +52,13 @@
             </div>
 
             <template v-if="Utils.type.isFontName(file.name)">
-                <div class="flex items-center justify-center" style="padding:20px;">
-                  <div class="file-bar-font-preview" ref="fileBarFontPreviewRef" contenteditable="true"
-                    @vue:mounted="initFontFamily(file, $event)">
-                    {{ file.name }}
-                  </div>
+              <div class="flex items-center justify-center" style="padding:20px;">
+                <div class="file-bar-font-preview" ref="fileBarFontPreviewRef" contenteditable="true"
+                  @vue:mounted="initFontFamily(file, $event)">
+                  {{ file.name }}
                 </div>
-                <a-alert message="该图片会作为字体预览图，并且可以手动调整内容" type="info" />
+              </div>
+              <a-alert message="该图片会作为字体预览图，并且可以手动调整内容" type="info" />
             </template>
 
           </div>
@@ -91,7 +92,7 @@
 <script setup lang="ts">
 import { ref, toRaw, nextTick } from "vue";
 import { message } from "ant-design-vue";
-import { uploadManyFile, createStickerApi, uploadFile } from "@/api";
+import { uploadManyFile, createSticker, uploadFile } from "@/api";
 import { uploadToCOS } from "@/api/cos";
 import { showUpload } from "@/components/design/store.ts";
 import {
@@ -238,7 +239,7 @@ async function uploadSingleFile(file) {
       isPublic: file.isPublic,
       uploaderId: loginStore.userInfo.id
     };
-    await createStickerApi(params);
+    await createSticker(params);
   }
 
   if (Utils.type.isFontName(file.name)) {

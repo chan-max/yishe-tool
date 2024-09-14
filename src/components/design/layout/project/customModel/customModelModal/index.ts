@@ -9,14 +9,14 @@ export const openCustomModelDetailModal = () => {
 }
 
 
+
 export const showDetailModal = ref(false)
 
 const detailInfo = ref()
 
-export function useCustomModelDetailDialog() {
+export function useCustomModelDetailModal() {
 
     async function open(info) {
-
         /*
             这里需要处理 模型信息 ，将所需要的资源直接请求回来，用于渲染
         */

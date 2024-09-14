@@ -69,13 +69,13 @@ import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/i
 import Utils from '@/common/utils'
 import Api from '@/api'
 
-import { useCustomModelDetailDialog } from '../customModelDialog/index.ts'
 import { s1Confirm } from '@/common/message'
 import { message } from 'ant-design-vue'
 
 
-const { component: modelDetailDialog, open } = useCustomModelDetailDialog()
+import {useCustomModelDetailModal} from '@/components/design/layout/project/customModel/customModelModal'
 
+const {open} = useCustomModelDetailModal()
 
 function openDetail(modelInfo) {
     open(modelInfo)

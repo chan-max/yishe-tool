@@ -1,6 +1,6 @@
 <template>
     <a-modal v-bind="$attrs" v-model:open="show" :footer="null" :centered="true" :destroyOnClose="true"
-        style="min-width:1080px;" width="1080px">
+         width="1080px">
         <el-row style="height:680px;padding:24px 12px" :gutter="24">
             <el-col :span="16">
                 <el-row style="row-gap: 2rem;">
@@ -35,13 +35,13 @@
 </template>
     
 <script setup lang='ts'>
-import { useCustomModelDetailDialog } from './index.ts'
+import { useCustomModelDetailModal } from './index.ts'
 import gltfViewer from './gltfViewer/index.vue';
 import { UserOutlined } from '@ant-design/icons-vue'
 import desimage from "@/components/image.vue";
 
 
-const { show, detailInfo } = useCustomModelDetailDialog()
+const { show, detailInfo } = useCustomModelDetailModal()
 
 </script>
     

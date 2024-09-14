@@ -11,7 +11,7 @@
                         <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
                         <div class="timeago"> {{ Utils.time.timeago(item.updateTime) }} </div>
                         <div style="flex:1;"></div>
-                        
+
                         <a-dropdown trigger="click">
                             <el-button link size="12">
                                 <el-icon>
@@ -50,19 +50,7 @@
     </div>
 
 
-    <a-modal v-model:open="showPreviewModal" :footer="null" :centered="true" :destroyOnClose="true"
-        style="min-width:980px;" width="980px">
-        <div class="flex">
-            <s1-img :src="currentItem.thumbnail" style="width:480px;height:480px;">
-            </s1-img>
-            <div style="padding:24px;row-gap:12px;" class="flex flex-col">
-                <h1> {{ currentItem.name }} </h1>
-                <h6> {{ currentItem.description }} </h6>
-                <h6> {{ currentItem.keywords }} </h6>
-                <h6> {{ currentItem.updateTime }} </h6>
-            </div>
-        </div>
-    </a-modal>
+
 
     <a-modal v-model:open="showFormModal" :centered="true" :destroyOnClose="true" width="540px" title="更新信息" okText="修改"
         cancelText="取消" @ok="ok" :confirmLoading="submitLoading">
@@ -102,6 +90,8 @@ import { message, Modal } from "ant-design-vue";
 import { s1Confirm } from '@/common/message'
 import Api from '@/api'
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
+import { useStickerDetailModal } from './stickerModal.ts'
+
 
 // 列表展示几列
 const column = ref(4);
@@ -138,20 +128,7 @@ function download(item) {
     Api.downloadCOSFile(item.url)
 }
 
-
-const currentItem = ref({} as any)
-
-
-const showPreviewModal = ref(false)
-
-
-
-function itemClick(item) {
-    currentItem.value = item
-    showPreviewModal.value = true
-}
-
-
+const currentItem = ref({})
 
 const showFormModal = ref(false)
 
@@ -177,6 +154,16 @@ async function ok() {
     let ind = list.value.indexOf(currentItem.value,)
     list[ind] = res
 }
+
+
+const { open } = useStickerDetailModal()
+
+function itemClick(item) {
+    currentItem.value = item
+    open(item)
+}
+
+
 
 </script>
 

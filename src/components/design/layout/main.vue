@@ -98,6 +98,12 @@
     :animation="basicContainerAnimation">
     <projectModal></projectModal>
   </diydialog>
+
+
+  <!-- 贴纸详细信息弹层 -->
+  <stickerDetailModal></stickerDetailModal>
+ <!-- 自定义模型弹层 -->
+  <customModelDetailModal></customModelDetailModal>
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -187,6 +193,15 @@ import {
   openLoginDialog,
   showLoginFormModal,
 } from "@/modules/main/view/user/login/index.tsx";
+import {useStickerDetailModal} from '@/components/design/layout/project/sticker/stickerModal'
+
+import {useCustomModelDetailModal} from '@/components/design/layout/project/customModel/customModelModal'
+
+
+const {component:stickerDetailModal} = useStickerDetailModal()
+const { component: customModelDetailModal } = useCustomModelDetailModal()
+
+
 
 import threeCanvasTopBar from './threeCanvasTopBar/index.vue'
 
@@ -195,14 +210,7 @@ const loginStore = useLoginStatusStore();
 
 const des = useDesignStore();
 
-const leftContainerAnimation = ref({
-  "enter-active-class": "animate__animated animate__bounceIn",
-  // "leave-active-class": "animate__animated animate__bounceOut",
-  duration: {
-    enter: 33,
-    leave: 0,
-  },
-});
+
 
 const basicContainerAnimation = ref({
   "enter-active-class": "animate__animated animate__bounceIn",

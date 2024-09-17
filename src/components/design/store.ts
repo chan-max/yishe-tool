@@ -243,7 +243,6 @@ export function clearRightLayout() {
     showDecalList.value = false
     showModelInfo.value = false
     showWorkspace.value = false
-
 }
 
 
@@ -413,6 +412,11 @@ export const currentWorkspaceLocalFiles = ref([])
 */
 export const lastModifiedTime = ref()
 
+
+/**
+ * @define 当前系统 用户在本地选择的文件资源
+*/
+export const localFileListResource = ref([])
 
 
 

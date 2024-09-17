@@ -12,9 +12,9 @@
 
       <a-row>
         <a-col :span="24">
-          <a-image-preview-group v-if="item.meta.details">
+          <a-image-preview-group v-if="item?.meta?.details">
             <div style="width:100%;display:flex;overflow:auto;width:300px;column-gap:4px;row-gap: 4px;">
-              <a-image v-for="img in item.meta.details" :width="36" :height="36" :src="img.url" />
+              <a-image v-for="img in item?.meta?.details" :width="36" :height="36" :src="img.url" />
             </div>
           </a-image-preview-group>
         </a-col>
@@ -33,14 +33,10 @@
         </a-col>
       </a-row>
 
-
-
-
       <div style="flex:1;"></div>
-
       <a-row>
         <a-col :span="24" align="right">
-          <a-statistic title="单件售价" :value="item.price" :precision="2">
+          <a-statistic title="单件售价" :value="item.price || 0" :precision="2">
             <template #prefix>
               <PayCircleOutlined />
             </template>

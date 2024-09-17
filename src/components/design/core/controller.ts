@@ -360,6 +360,8 @@ export class ModelController extends Base {
         //     return message.info('当前控制台中存在模型，请先清理')
         // }
 
+
+
         this.removeMainModel();
         this.removeDecals()
 
@@ -377,15 +379,12 @@ export class ModelController extends Base {
 
         this.initModelPosition();
 
-
-
         this.mesh = this.findMainMesh(this.gltf);
         this.initialCameraPosition.copy(this.camera.position);
 
 
         // 这个顺序很重要
         this.scene.add(this.gltf.scene);
-
         this.doOpenAnimation()
     }
 
@@ -429,6 +428,10 @@ export class ModelController extends Base {
             return;
         }
 
+        const modelToRemove = this.scene.getObjectByName(this.gltf.scene.name);
+        if (modelToRemove) {
+            this.scene.remove(modelToRemove);
+        }
 
         this.scene.remove(this.gltf.scene);
         this.clearAllMeshes(this.scene)

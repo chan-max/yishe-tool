@@ -58,11 +58,39 @@
 
     <div style="flex-grow: 1"></div>
     <div class="flex items-center">
-      <el-button  @click="showUpload = true"  round text bg> 素材上传 </el-button>
-      <el-button type="primary" @click="showSaveModel = true" round> 保存 </el-button>
-      
-    </div>
 
+
+      <a-dropdown>
+        <el-button link class="icon-btn" @click="openFileDialog">
+          <s1-icon name="file-upload-up-arrow" size="16"></s1-icon>
+        </el-button>
+        <template #overlay>
+          <a-menu>
+            <a-sub-menu v-for="item in localFileListResource" :title="item.name" :popupOffset="[0, 0]">
+              <a-menu-item> 详细信息 </a-menu-item>
+              <a-menu-item @click="openUplaodModal(item)"> 在上传窗口打开 </a-menu-item>
+              <a-menu-item @click="remove(item)" style="color:var(--el-color-danger)">
+                移除
+              </a-menu-item>
+            </a-sub-menu>
+            <a-menu-item v-if="!localFileListResource.length" @click="openFileDialog">
+              选取本地文件
+            </a-menu-item>
+            <a-menu-item v-if="localFileListResource.length">
+              全部上传
+            </a-menu-item>
+            <a-menu-item v-if="localFileListResource.length" style="color:var(--el-color-danger)">
+              清空所有
+            </a-menu-item>
+          </a-menu>
+        </template>
+      </a-dropdown>
+
+
+
+      <el-button @click="showUpload = true" round text bg> 素材上传 </el-button>
+      <el-button type="primary" @click="showSaveModel = true" round> 保存 </el-button>
+    </div>
     <user-avatar v-if="loginStatusStore.isLogin" />
     <el-button @click="login" v-else round type="primary">
       登 录
@@ -85,6 +113,8 @@ import {
   syncState
 } from "../store";
 
+
+import { openFileModal } from '@/components/design/layout/upload/index.tsx'
 import { Share } from "@element-plus/icons-vue";
 import userAvatar from "@/components/user/userAvatar.vue";
 import headerMenuDropdown from "./headerMenuDropdown/index.vue";
@@ -94,8 +124,10 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import { useDateFormat, useNow } from '@vueuse/core'
 import { LoadingOutlined, CheckOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
-
+import { useFileDialog } from '@vueuse/core'
 import { openLoginDialog } from '@/modules/main/view/user/login/index.tsx'
+import Utils from '@/common/utils'
+import { localFileListResource } from '@/components/design/store'
 
 const router = useRouter()
 
@@ -106,11 +138,30 @@ const displayDate = useDateFormat(lastModifiedTime, 'YYYY-MM-DD hh:mm:ss')
 const props = defineProps([]);
 
 function login() {
-  // router.push({ name: 'Login', query: { redirectTo: 'Design' } })
   openLoginDialog()
 }
 
+const { open: openFileDialog, reset, onCancel, onChange } = useFileDialog({
+  accept: Utils.const.ImageFontFileAcceptString,
+  multiple: true,
+})
 
+// 本地上传的文件
+
+onChange((fileList) => {
+  localFileListResource.value.push(...fileList)
+  console.log(localFileListResource.value)
+})
+
+function openUplaodModal(file) {
+  openFileModal(file)
+}
+
+
+// 
+function remove(file) {
+
+}
 
 </script>
 
@@ -126,10 +177,9 @@ function login() {
   // background: #121212;
 }
 
-.el-button.link {
-  // --el-button-text-color: #ebebeb;
+.icon-btn {
+  --el-button-text-color: #bbb;
 }
-
 
 
 .designiy-header-menu {

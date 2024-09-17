@@ -16,6 +16,8 @@ declare module 'vue' {
     BaseGltfViewer: typeof import('./src/components/model/baseGltfViewer/index.vue')['default']
     BaseModel: typeof import('./src/components/design/layout/project/baseModel/index.vue')['default']
     BaseModelSelect: typeof import('./src/components/design/layout/baseModelSelect/index.vue')['default']
+    'BaseModelUpload.Modal': typeof import('./src/components/design/layout/project/baseModel/baseModelUpload.Modal.vue')['default']
+    BaseModelUploadModal: typeof import('./src/components/design/layout/project/baseModel/baseModelUploadModal.vue')['default']
     BasicCanvas: typeof import('./src/components/design/layout/basic-canvas/index.vue')['default']
     BasicSwitch: typeof import('./src/components/design/layout/canvas/operate/basicSwitch.vue')['default']
     Blur: typeof import('./src/components/design/layout/canvas/operate/filter/blur.vue')['default']

@@ -3,8 +3,7 @@
     <div v-if="uploadTabType == 'local'">
       <el-upload ref="uploadRef" style="padding: 0" :disabled="!loginStore.isLogin" v-model:file-list="fileList" drag
         :before-remove="beforeRemove" :auto-upload="false" :multiple="false" v-bind="$attrs" :on-change="fileListChange"
-        :limit="1" :on-exceed="handleExceed"
-        accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff,font/otf">
+        :limit="1" :on-exceed="handleExceed" :accept="Utils.const.ImageFontModelFileAcceptString">
         <div class="placeholder">
           <icon-file-upload></icon-file-upload>
           <div>点击或拖拽上传</div>
@@ -13,7 +12,7 @@
           <div class="tip">
             <div>
               支持 jpg,png,svg等图片格式 ，图片格式会自动添加到贴纸中,
-              ttf,woff等字体格式,字体可以在我的字体中查看
+              ttf,woff等字体格式 , glb 等模型格式
             </div>
           </div>
         </template>
@@ -23,9 +22,10 @@
             <div class="file-bar-header">
               <desimage v-if="Utils.type.isImageName(file.name)" @focus="null" :src="file.url"
                 style="height: 3.2rem; width: 3.2rem" fit="contain"></desimage>
-              <el-icon v-if="Utils.type.isFontName(file.name)" size="3.2rem">
+              <el-icon v-else size="3.2rem">
                 <component :is="fileTypeIcons[getFileSuffix(file.name)]"></component>
               </el-icon>
+
               <div style="font-size: 1.2rem">{{ file.name }}</div>
 
               <div style="flex: 1"></div>
@@ -61,6 +61,13 @@
               <a-alert message="该图片会作为字体预览图，并且可以手动调整内容" type="info" />
             </template>
 
+            <template v-if="Utils.type.isModelName(file.name)">
+              <div class="w-full flex justify-center">
+                <base-gltf-viewer ref="baseViewerRef" style="width: 200px; height: 200px;"
+                  :src="objectUrl"></base-gltf-viewer>
+              </div>
+            </template>
+
           </div>
         </template>
       </el-upload>
@@ -92,7 +99,7 @@
 <script setup lang="ts">
 import { ref, toRaw, nextTick } from "vue";
 import { message } from "ant-design-vue";
-import { uploadManyFile, createSticker, uploadFile } from "@/api";
+import Api, { uploadManyFile, createSticker, uploadFile } from "@/api";
 import { uploadToCOS } from "@/api/cos";
 import { showUpload } from "@/components/design/store.ts";
 import {
@@ -119,6 +126,8 @@ import Utils from '@/common/utils'
 import { useLoginStatusStore } from "@/store/stores/login";
 import { filesize } from "filesize";
 import { genFileId } from 'element-plus'
+import { uploadRef } from './index'
+import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
 
 
 const loginStore = useLoginStatusStore()
@@ -132,10 +141,14 @@ const uploadTabType = ref("local");
 /**
  *  @description 如果同时上传多个 ， 会多次调用
  * */
+
+const objectUrl = ref()
+
 function fileListChange(file) {
   // 为文件生成一个预览的路径
   file.url = URL.createObjectURL(file.raw);
   file.displaySize = filesize(file.size)
+  objectUrl.value = URL.createObjectURL(file.raw);
 }
 
 /* 获取文件后缀 */
@@ -157,8 +170,6 @@ const fileTypeIcons = {
  * @description 暂时不支持多个文件上传
 */
 
-const uploadRef = ref()
-
 async function handleExceed(files) {
   uploadRef.value!.clearFiles()
   const file = files[0]
@@ -167,6 +178,9 @@ async function handleExceed(files) {
   file.uid = genFileId()
   uploadRef.value!.handleStart(file)
 }
+
+
+const baseViewerRef = ref()
 
 function close() {
   loading.value = false;
@@ -266,6 +280,32 @@ async function uploadSingleFile(file) {
     };
 
     await uploadFile(params);
+  }
+
+
+  if (Utils.type.isModelName(file.name)) {
+    /* 需要生成缩略图 */
+
+    const png = baseViewerRef.value.getScreenShotFile()
+
+    const { url: thumbnailUrl } = await uploadToCOS({
+      file: png
+    })
+
+    const { url: fileUrl } = await uploadToCOS({ file: file.raw })
+
+    const params = {
+      url: fileUrl,
+      name: file.customName || file.raw.name,
+      size: file.size,
+      keywords,
+      thumbnail: thumbnailUrl,
+      description: file.description,
+      isPublic: file.isPublic,
+      uploaderId: loginStore.userInfo.id,
+    };
+
+    await Api.createProductModel(params);
   }
 }
 

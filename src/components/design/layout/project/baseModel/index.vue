@@ -28,20 +28,8 @@
                                     <a-menu-item @click="edit(item)">
                                         编辑
                                     </a-menu-item>
-                                    <a-menu-item @click="useSticker(item)">
-                                        在工作台使用
-                                    </a-menu-item>
                                     <a-menu-item @click="deleteItem(item)">
                                         <span style="color:var(--el-color-danger)">删除</span>
-                                    </a-menu-item>
-                                    <a-menu-item>
-                                        分享给好友
-                                    </a-menu-item>
-                                    <a-menu-item>
-                                        发布
-                                    </a-menu-item>
-                                    <a-menu-item v-if="item.type == 'image'" @click="download(item)">
-                                        下载源文件
                                     </a-menu-item>
                                 </a-menu>
                             </template>
@@ -84,20 +72,9 @@
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
 import { Search, ArrowRightBold, Operation, ArrowRight, MoreFilled } from "@element-plus/icons-vue";
-import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
-import { MoreOutlined } from '@ant-design/icons-vue'
-import {
-    currentModelController,
-    showImageUplaod,
-    viewDisplayController,
-} from "@/components/design/store";
-import { initDraggableElement } from "@/components/design/utils/draggable";
-import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
-
 import { useLoadingOptions } from "@/components/loading/index.tsx";
-import scrollbar from "@/components/scrollbar/index.vue";
 
 import { loadingBottom } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
@@ -134,9 +111,10 @@ function useSticker(item) {
 
 async function deleteItem(item) {
     await s1Confirm({
-        content: '确认删除该贴纸吗？'
+        content: '确认删除该模型吗？'
     })
-    await Api.deleteItem(item.id)
+
+    await Api.deleteProductModel({id:item.id})
     reset()
     await getList()
     message.success('删除成功')
@@ -178,7 +156,7 @@ function edit(item) {
 
 async function ok() {
     submitLoading.value = true
-    let res = await Api.updateSticker(editForm.value)
+    let res = await Api.updateProductModel(editForm.value)
     message.success('修改成功')
     submitLoading.value = false
     Object.assign(currentItem.value, res);

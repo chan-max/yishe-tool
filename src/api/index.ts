@@ -353,6 +353,21 @@ export const getProductModelList = (data) => new Promise(async (resolve, reject)
 })
 
 
+export const createProductModel = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('api/product-model/create', data)
+  resolve(res.data.data)
+})
+
+export const updateProductModel = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('api/product-model/update', data)
+  resolve(res.data.data)
+})
+
+export const deleteProductModel = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/product-model/delete', data)
+  resolve(res.data.data)
+})
+
 /*
     获取所有贴纸
 */
@@ -512,6 +527,12 @@ class Api {
   updateFile = updateFile
 
   getProductModelList = getProductModelList
+
+  createProductModel = createProductModel
+
+  updateProductModel = updateProductModel
+
+  deleteProductModel = deleteProductModel
 }
 
 export default new Api()

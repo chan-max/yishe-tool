@@ -40,6 +40,7 @@ import {
   AxesHelper,
   Vector2,
 } from "three";
+import utils from "@/common/utils";
 
 const loading = ref(false);
 
@@ -129,7 +130,7 @@ var currentGltf = null;
 async function initModel() {
   var currentMesh = null;
 
-  if(!props.src){
+  if (!props.src) {
     return
   }
 
@@ -199,6 +200,18 @@ async function initModel() {
 }
 
 watch(() => props.src, initModel, { immediate: true });
+
+function getScreenShotFile() {
+  renderer.render(scene, camera); // 截取会出现白图片
+  var base64 = renderer.domElement.toDataURL("image/png"); // base64
+  return utils.transform.base64ToPngFile(base64);
+}
+
+defineExpose({
+  init: (src) => initModel(src),
+  getScreenShotFile
+})
+
 </script>
 <style lang="less" scoped>
 .base-gltf-viewer {

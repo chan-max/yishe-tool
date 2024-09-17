@@ -108,6 +108,8 @@ function clone(obj) {
 }
 
 
+import constModule from './const.ts'
+
 import { deepUnref } from './vue'
 
 import transform from './transform/index'
@@ -192,6 +194,10 @@ class Utils {
     transform = transform
 
     time = time
+
+
+    // 常量相关
+    const = constModule
 }
 
 

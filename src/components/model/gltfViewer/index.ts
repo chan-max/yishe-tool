@@ -249,10 +249,10 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
                     
                     if (!id) {
-                        return resolve();
+                        return resolve(new Error('贴纸不存在'));
                     }
 
-                    const sticker = await await getStickerById(id)
+                    const sticker = await getStickerById(id)
 
                     var {thumbnail} = sticker
 
@@ -292,7 +292,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     resolve(void 0)
                 })
             }))
-
         }
 
 

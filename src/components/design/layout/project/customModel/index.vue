@@ -1,7 +1,7 @@
 <template>
     <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
         <el-row style="row-gap: 8px;width:1000px;">
-            <el-col :span="24 / column" v-for="item in  list" align="center">
+            <el-col :span="24 / column" v-for="item in list" align="center">
                 <div style="width:100%;height:100%;flex-shrink: 0;" class="flex flex-col items-center justify-center">
                     <desimage @click="openDetail(item)" padding="5%" :src="item.thumbnail"
                         style="background:#f6f6f6!important;width:240px;height:180px;border-radius: 8px;">
@@ -19,8 +19,14 @@
                             </el-button>
                             <template #overlay>
                                 <a-menu>
+                                    <a-menu-item @click="workspaceEdit(item)">
+                                        在工作台中编辑
+                                    </a-menu-item>
+                                    <a-menu-item @click="edit(item)">
+                                        编辑
+                                    </a-menu-item>
                                     <a-menu-item @click="deleteItem(item)">
-                                        <span style="color:var(-el-color-danger)">删除</span>
+                                        <span style="color:var(--el-color-danger)">删除</span>
                                     </a-menu-item>
                                     <a-menu-item>
                                         分享给好友
@@ -43,8 +49,17 @@
         </s1-empty>
     </div>
 
-    <modelDetailDialog></modelDetailDialog>
-</template> 
+    <a-modal v-model:open="showFormModal" :centered="true" :destroyOnClose="true" width="540px" title="更新信息" okText="修改"
+        cancelText="取消" @ok="ok" :confirmLoading="submitLoading">
+        <el-form style="padding:24px 12px;">
+            <el-form-item> <el-input v-model="editForm.name"></el-input></el-form-item>
+            <el-form-item> <el-input v-model="editForm.description"></el-input></el-form-item>
+            <el-form-item>
+                <tagsInput v-model="editForm.keywords" :string="true"> </tagsInput>
+            </el-form-item>
+        </el-form>
+    </a-modal>
+</template>
 
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
@@ -73,9 +88,9 @@ import { s1Confirm } from '@/common/message'
 import { message } from 'ant-design-vue'
 
 
-import {useCustomModelDetailModal} from '@/components/design/layout/project/customModel/customModelModal'
+import { useCustomModelDetailModal } from '@/components/design/layout/project/customModel/customModelModal'
 
-const {open} = useCustomModelDetailModal()
+const { open } = useCustomModelDetailModal()
 
 function openDetail(modelInfo) {
     open(modelInfo)
@@ -110,6 +125,46 @@ async function deleteItem(item) {
     await getList()
     message.success('删除成功')
 }
+
+const currentItem = ref({})
+
+const showFormModal = ref(false)
+
+const submitLoading = ref(false)
+const editForm = ref({} as any)
+// 编辑
+function edit(item) {
+    editForm.value = {
+        id: item.id,
+        description: item.description,
+        name: item.name,
+        keywords: item.keywords
+    }
+    currentItem.value = item
+    showFormModal.value = true
+}
+
+async function ok() {
+
+    submitLoading.value = true
+    let res = await Api.updateCustomModel(editForm.value)
+    submitLoading.value = false
+
+    let ind = list.value.indexOf(currentItem.value)
+    list.value[ind] = res
+    message.success('修改成功')
+}
+
+
+/**
+ * 工作台编辑
+*/
+
+function workspaceEdit(item){
+    let modelInfo = item.meta.modelInfo
+    currentModelController.value.useModelInfo(modelInfo)
+}
+
 
 </script>
 

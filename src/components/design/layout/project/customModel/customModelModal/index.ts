@@ -32,7 +32,6 @@ export function useCustomModelDetailModal() {
         component,
         detailInfo
     }
-
 }
 
 

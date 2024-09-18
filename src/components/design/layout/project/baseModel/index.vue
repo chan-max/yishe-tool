@@ -2,7 +2,7 @@
     <div style="height:64px;width:1000px" class="flex items-center">
         <el-input style="width:250px;"></el-input>
         <div style="flex:1;"></div>
-        <el-button  round bg text> 上传新模型 </el-button>
+        <el-button  round bg text @click="uplaodClick"> 上传新模型 </el-button>
     </div>
     <div v-infinite-scroll="inscroll" :infinite-scroll-distance="150" style="height: calc(100% - 64px);">
         <el-row style="row-gap: 8px;width:1000px;">
@@ -84,6 +84,13 @@ import { message, Modal } from "ant-design-vue";
 import { s1Confirm } from '@/common/message'
 import Api from '@/api'
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
+import {showUpload,viewDisplayController} from '@/components/design/store'
+
+
+function uplaodClick(){
+    viewDisplayController.value.showProject = false
+    showUpload.value = true
+}
 
 // 列表展示几列
 const column = ref(4);
@@ -151,6 +158,7 @@ function edit(item) {
         name: item.name,
         keywords: item.keywords
     }
+    currentItem.value = item
     showFormModal.value = true
 }
 
@@ -159,9 +167,8 @@ async function ok() {
     let res = await Api.updateProductModel(editForm.value)
     message.success('修改成功')
     submitLoading.value = false
-    Object.assign(currentItem.value, res);
     let ind = list.value.indexOf(currentItem.value,)
-    list[ind] = res
+    list.value[ind] = res
 }
 
 </script>

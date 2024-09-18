@@ -38,7 +38,7 @@ import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
-import { currentModelController, isUsingClickDelaySticker, clickDelaySticker } from '@/components/design/store'
+import { currentModelController, isUsingClickDelaySticker, clickDelaySticker, viewDisplayController } from '@/components/design/store'
 import { eventMixin } from "./event";
 import { meta } from '../meta'
 import { Base } from './base'
@@ -48,6 +48,8 @@ import {
     currentOperatingBaseModelInfo,
 } from "@/components/design/store.ts";
 
+
+import Api from '@/api'
 import Utils from '@/common/utils'
 
 
@@ -364,8 +366,6 @@ export class ModelController extends Base {
 
         this.removeMainModel();
         this.removeDecals()
-
-
 
         this.callHook(this.meta.onMainModelLoading)
 
@@ -710,6 +710,85 @@ export class ModelController extends Base {
                 this.camera.lookAt(this.scene.position);
             }
         });
+    }
+
+
+
+    /**
+     * 根据模型信息初始化当前场景
+    */
+    async useModelInfo(modelInfo) {
+
+        // 清空当前工作台
+
+        let { baseModelId } = modelInfo
+
+        this.removeMainModel();
+        this.removeDecals()
+
+        var baseModel = await Api.getProductModelById(baseModelId)
+
+        currentOperatingBaseModelInfo.value = baseModel
+
+
+        // 先加载模型在加载贴纸
+        await this.setMainModel(baseModel.url)
+
+        let mesh = this.mesh
+        let scene = this.scene
+        let camera = this.camera
+
+        // 设置摄像机位置
+        if (modelInfo.camera) {
+            camera.position.set(
+                modelInfo.camera.position.x,
+                modelInfo.camera.position.y,
+                modelInfo.camera.position.z
+            );
+            camera.rotation.set(
+                modelInfo.camera.rotation.x,
+                modelInfo.camera.rotation.y,
+                modelInfo.camera.rotation.z
+            );
+            camera.fov = modelInfo.camera.fov;
+            camera.near = modelInfo.camera.near;
+            camera.far = modelInfo.camera.far;
+        }
+
+        // 初始化贴纸
+        if (modelInfo.decals) {
+            await Promise.all(modelInfo.decals.map((decal) => {
+                return new Promise(async (resolve, reject) => {
+
+                    var { id, position, rotation, ruleSize } = decal;
+
+                    if (!id) {
+                        return resolve(new Error('贴纸不存在'));
+                    }
+
+                    const sticker = await Api.getStickerById(id)
+
+                    let decalController = new DecalController(sticker)
+
+                    decalController.state.position = new Vector3(position.x, position.y, position.z)
+                    decalController.state.rotation = new Euler(rotation.x, rotation.y, rotation.z)
+                    decalController.state.ruleSize = ruleSize
+
+                    await decalController.create()
+
+                    decalController.ensureAdd()
+
+                    console.log('sticker init success')
+                    resolve(void 0)
+                })
+            }))
+        }
+
+
+
+        viewDisplayController.value.showProject = false
+        message.success('模型加载成功')
+
     }
 }
 

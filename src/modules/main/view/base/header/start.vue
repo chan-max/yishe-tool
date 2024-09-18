@@ -35,7 +35,7 @@
 
 .title {
   color: #333;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 300;
   padding: 1em 0;
 }

@@ -20,6 +20,7 @@
                             </el-button>
                             <template #overlay>
                                 <a-menu>
+
                                     <a-menu-item @click="edit(item)">
                                         编辑
                                     </a-menu-item>
@@ -143,6 +144,7 @@ function edit(item) {
         keywords: item.keywords
     }
     showFormModal.value = true
+    currentItem.value = item
 }
 
 async function ok() {
@@ -150,9 +152,8 @@ async function ok() {
     let res = await Api.updateSticker(editForm.value)
     message.success('修改成功')
     submitLoading.value = false
-    Object.assign(currentItem.value, res);
     let ind = list.value.indexOf(currentItem.value,)
-    list[ind] = res
+    list.value[ind] = res
 }
 
 

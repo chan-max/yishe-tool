@@ -14,7 +14,7 @@ import {
 
 } from "three";
 import { message } from 'ant-design-vue'
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { v4 } from 'uuid'
 import Utils from '@/common/utils'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
@@ -56,13 +56,13 @@ export class DecalController {
     modelValueRotate: null,
     modelValueSize: null,
 
-    size: null,
+    ruleSize: 0.1,
     rotation: null,
     position: null,
+
   })
 
   id = ref()
-
 
   context = null
 
@@ -72,17 +72,19 @@ export class DecalController {
   // 更新时间
   updatedAt = new Date()
 
-  constructor(info) {
+  constructor(info?) {
+
+    this.context = this
+
+    if (!info) {
+      return
+    }
 
     this.state.id = this.id.value = (info.id || v4()) // 如果是本地的贴纸，随机分配一个id
     this.state.isLocalResource = info.isLocalResource
-    this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64
+    this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64 || info.thumbnail
 
-    this.context = this
     this.info = info
-    if (!this.info.src) {
-      this.info.src = this.info.thumbnail
-    }
 
     if (this.state.isLocalResource) {
       this.info.src = this.info.base64
@@ -109,11 +111,7 @@ export class DecalController {
   // 材质
   material = null;
 
-  // 位置
-  private _position = null
-  get position() {
-    return this._position
-  }
+
 
   // 贴纸尺寸限制
   minSize: number
@@ -122,19 +120,14 @@ export class DecalController {
 
   // 尺寸比 0 - 1 最小尺寸 到最大尺寸
   sizeRatio = 1
+
+
   // 尺寸
+  size = computed(() => {
+    return new Vector3(this.state.ruleSize, this.state.ruleSize / this.imgAspectRatio, this.state.ruleSize);
+  })
 
 
-  _size = 0.1
-  get size() {
-    return new Vector3(this._size, this._size / this.imgAspectRatio, this._size);
-  }
-
-  // 角度
-  private _rotation = null
-  get rotation() {
-    return this._rotation
-  }
 
   // 保存当前的decal实例
   mesh = null;
@@ -208,13 +201,22 @@ export class DecalController {
   }
 
   // 创建该贴纸
-  create() {
+  async create() {
     // 检查是否已创建，并清除旧贴纸
     if (this.mesh) {
       currentModelController.value.scene.remove(this.mesh);
     }
 
-    var decalGeometry = new DecalGeometry(this.parentMesh, this.position, this.rotation, this.size);
+    // 初始化材质
+    if (!this.material) {
+      await this.initTexture()
+    }
+
+    if(!this.parentMesh){
+      return
+    }
+
+    var decalGeometry = new DecalGeometry(this.parentMesh, this.state.position, this.state.rotation, this.size.value);
     this.mesh = new Mesh(decalGeometry, this.material);
     currentModelController.value.scene.add(this.mesh);
   }
@@ -246,8 +248,6 @@ export class DecalController {
 
     raycaster.setFromCamera(this.currentMousePosition, currentModelController.value.camera);
 
-
-
     const intersects = raycaster.intersectObject(this.parentMesh, true);
 
     if (intersects.length == 0) {
@@ -256,15 +256,8 @@ export class DecalController {
       return Promise.reject();
     }
 
-    // 初始化材质
-    if (!this.material) {
-      await this.initTexture()
-    }
-
-
     const position = intersects[0].point;
 
-    this._position = position;
     this.state.position = position;
 
     const copy = intersects[0].face.normal.clone();
@@ -272,12 +265,16 @@ export class DecalController {
     copy.transformDirection(this.parentMesh.matrixWorld);
     copy.add(position);
 
+
+
     const helper = new Object3D();
     helper.position.copy(position);
     helper.lookAt(copy);
     let rotation = helper.rotation;
-    this._rotation = rotation;
+
     this.state.rotation = rotation;
+
+
 
     this.create()
 
@@ -301,7 +298,7 @@ export class DecalController {
 
   // 旋转
   rotate(rotation) {
-    this.rotation.z = rotation;
+    this.state.rotation.z = rotation;
     this.create()
   }
 
@@ -314,8 +311,8 @@ export class DecalController {
 
   // 缩放
   scale(ratio) {
-    this._size = ratio
-    this.state.size = ratio
+    this.state.ruleSize = ratio
+    this.state.ruleSize = ratio
     this.create()
   }
 
@@ -391,7 +388,7 @@ export class DecalController {
       uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null
     })
 
-    
+
     this.state.isLocalResource = false
     this.state.id = data.id
     return data
@@ -400,28 +397,28 @@ export class DecalController {
   // 导出该信息
   async export() {
 
-    if (!this.position) {
+    if (!this.state.position) {
       return
     }
 
     await this.upload()
 
     const position = {
-      x: this.position.x,
-      y: this.position.y,
-      z: this.position.z,
+      x: this.state.position.x,
+      y: this.state.position.y,
+      z: this.state.position.z,
     };
 
     const rotation = {
-      x: this.rotation.x,
-      y: this.rotation.y,
-      z: this.rotation.z,
+      x: this.state.rotation.x,
+      y: this.state.rotation.y,
+      z: this.state.rotation.z,
     };
 
     const size = {
-      x: this.size.x,
-      y: this.size.y,
-      z: this.size.z,
+      x: this.size.value.x,
+      y: this.size.value.y,
+      z: this.size.value.z,
     };
 
 
@@ -430,6 +427,7 @@ export class DecalController {
       position,
       rotation,
       size,
+      ruleSize: this.state.ruleSize
     };
   }
 }

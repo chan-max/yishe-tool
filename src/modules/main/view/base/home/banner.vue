@@ -1,23 +1,30 @@
 <template>
   <div class="banner flex flex-col items-center">
 
-    <div style="z-index: 2;" class="title">开放式设计 & 交易平台
+    <div style="z-index: 3;" class="title animate-gradient-text">开放式设计 & 交易平台
     </div>
-    <div style="z-index: 2;" class="subtitle">开放式设计 & 交易平台</div>
+    <div style="z-index: 3;" class="subtitle">开放式设计 & 交易平台</div>
     <div class="bar" style="z-index: 999;">
-      <el-button size="large" type="primary" round @click="$router.push({ name: 'Design' })">
+      <el-button size="large" type="primary" round @click="$router.push({ name: 'Design' })" class="font-bold">
         在线工具
       </el-button>
-      <el-button size="large" plain round @click="$router.push({ name: 'Market' })"> 逛一逛 </el-button>
+      <el-button size="large" round @click="$router.push({ name: 'Market' })" class="font-bold"> 逛一逛 </el-button>
     </div>
     <!-- <img src="/wave.svg" style="width: 100%;position:absolute;opacity:.3;bottom:-300px"> -->
 
-    <vue-danmaku ref="danmukuRef" :debounce="333" useSlot v-model:danmus="danmus" loop :speeds="66" :top="48" :right="48"
-      isSuspend style="height:90vh; width:100vw;position:absolute;top:10vh;left:0;">
+    <vue-danmaku ref="danmukuRef" :debounce="333" useSlot v-model:danmus="danmus" loop :speeds="66" :top="48"
+      :right="48" isSuspend style="height:90vh; width:100vw;position:absolute;top:10vh;left:0;z-index:2;">
       <template v-slot:dm="{ index, danmu }">
         <img style="width:100px;height:100px;border-radius: 5%;object-fit: contain;" :src="danmu.thumbnail">
       </template>
     </vue-danmaku>
+
+    <div class="background">
+    </div>
+
+    <div class="circles circle-one"></div>
+    <div class="circles circle-two"></div>
+    <div class="circles circle-three"></div>
   </div>
 </template>
 
@@ -102,24 +109,12 @@ watch([width, height], useDebounceFn(() => {
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(2px);
+  user-select: none;
 }
 
 .title {
-  font-size: 6rem;
-  // color: #6e6e73;
-  // color: #1E201E;
-  color: transparent;
+  font-size: 72px;
   font-weight: bold;
-
-
-  --c1: #1E201E;
-  --c2: #333;
-
-
-  background: linear-gradient(60deg,
-      var(--c1),
-      var(--c2));
-  background-clip: text;
 }
 
 .subtitle {
@@ -131,4 +126,52 @@ watch([width, height], useDebounceFn(() => {
 .bar {
   padding: 20px;
 }
+
+
+
+.animate-gradient-text {
+  background-image: linear-gradient(120deg, #1cdce8, #bb77ed, #f34a62);
+  background-size: 200%;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: animated-gradient 5s ease-in-out infinite;
+}
+
+/* Простенька Keyframe анімація */
+@keyframes animated-gradient {
+
+  0%,
+  100% {
+    background-position: 0 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+
+
+.banner {
+  position: relative;
+}
+
+
+
+
+
+.background {
+  height: 100%;
+  width: 100%;
+  backdrop-filter: blur(50px);
+  display: grid;
+  place-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+
 </style>

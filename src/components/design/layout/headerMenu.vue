@@ -59,10 +59,9 @@
     <div style="flex-grow: 1"></div>
     <div class="flex items-center">
 
-
       <a-dropdown>
         <el-button link class="icon-btn" @click="openFileDialog">
-          <s1-icon name="file-upload-up-arrow" size="16"></s1-icon>
+          <s1-icon name="file-upload-up-arrow" :size="16"></s1-icon>
         </el-button>
         <template #overlay>
           <a-menu>

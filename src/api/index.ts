@@ -453,6 +453,11 @@ export const deleteCustomModel = (id) => new Promise(async (resolve, reject) => 
 })
 
 
+export const updateCustomModel = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('api/custom-model/update', data)
+  resolve(res.data.data)
+})
+
 
 
 // 根据图片id来查询图片
@@ -533,6 +538,8 @@ class Api {
   updateProductModel = updateProductModel
 
   deleteProductModel = deleteProductModel
+
+  updateCustomModel = updateCustomModel
 }
 
 export default new Api()

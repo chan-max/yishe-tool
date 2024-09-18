@@ -165,6 +165,7 @@ function edit(item) {
         name: item.name,
         keywords: item.keywords
     }
+    currentItem.value = item
     showFormModal.value = true
 }
 
@@ -173,9 +174,8 @@ async function ok() {
     let res = await Api.updateFile(editForm.value)
     message.success('修改成功')
     submitLoading.value = false
-    Object.assign(currentItem.value, res);
     let ind = list.value.indexOf(currentItem.value,)
-    list[ind] = res
+    list.value[ind] = res
 }
 
 </script>

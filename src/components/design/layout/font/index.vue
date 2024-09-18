@@ -11,6 +11,10 @@ import { usePaging } from "@/hooks/data/paging.ts";
 import Utils from '@/common/utils'
 import page from './page.vue'
  
+function handleOk(){
+  
+}
+
 </script>
 <style lang="less">
 .font-a-modal {

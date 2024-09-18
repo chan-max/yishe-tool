@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-if="currentOperatingDecalController">
-    <s1-img :src="currentOperatingDecalController.state.url" style="width: 320px;height:320px;"></s1-img>
+    <s1-img :src="currentOperatingDecalController.state.src" style="width: 320px;height:320px;"></s1-img>
     <div style="padding:1rem;">
       <h6>旋转角度</h6>
       <el-slider :min="0" :max="100" :step="1" v-model="rotation" size="small" @input="onRotationInput" />

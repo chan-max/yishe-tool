@@ -130,7 +130,8 @@ watch([width, height], useDebounceFn(() => {
 
 
 .animate-gradient-text {
-  background-image: linear-gradient(120deg, #1cdce8, #bb77ed, #f34a62);
+
+  background: radial-gradient(circle at 10% 20%, rgb(0, 0, 0) 0%, rgb(64, 64, 64) 90.2%);
   background-size: 200%;
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;

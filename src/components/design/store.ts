@@ -509,4 +509,6 @@ export function startSyncDesignStorage() {
 
 
 
+export {currentHoveringDecalController} from '@/components/design/core/decalController'
+
 

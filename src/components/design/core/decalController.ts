@@ -14,7 +14,7 @@ import {
 
 } from "three";
 import { message } from 'ant-design-vue'
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed,shallowRef,watch} from 'vue'
 import { v4 } from 'uuid'
 import Utils from '@/common/utils'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
@@ -42,6 +42,14 @@ export interface DecalControllerParams {
 }
 
 
+/**
+ * @declare 当前鼠标正在覆盖的贴花
+*/
+export const currentHoveringDecalController = shallowRef() 
+
+watch(currentHoveringDecalController,(val) => {
+  document.body.style.cursor = val ? 'pointer' : ''
+})
 
 export class DecalController {
 
@@ -60,6 +68,8 @@ export class DecalController {
     rotation: null,
     position: null,
 
+
+    isHover: false // 鼠标是否在覆盖模型上
   })
 
   id = ref()
@@ -95,7 +105,7 @@ export class DecalController {
 
   // 确认添加该贴纸到场景
   ensureAdd() {
-    this.initDecalClickEvent();
+    this.initClickEvent();
     this.initMousemoveEvent();
     currentModelController.value.decalControllers.push(this);
     currentOperatingDecalController.value = this
@@ -212,7 +222,7 @@ export class DecalController {
       await this.initTexture()
     }
 
-    if(!this.parentMesh){
+    if (!this.parentMesh) {
       return
     }
 
@@ -317,7 +327,7 @@ export class DecalController {
   }
 
 
-  private initDecalClickEvent() {
+  private initClickEvent() {
     function decalClick() {
       if (!this.mesh) {
         return
@@ -353,10 +363,23 @@ export class DecalController {
 
       const intersects = raycaster.intersectObject(this.mesh, true)
       const intersect = intersects[0]
+
+
       if (!intersect) {
-        return this.mouseover.value = false
+        this.mouseover.value = false
+        this.state.isHover = false
+
+        if(currentHoveringDecalController.value == this){
+          currentHoveringDecalController.value = null
+        }
+
+        return
       }
+
+
       this.mouseover.value = true
+      this.state.isHover = true
+      currentHoveringDecalController.value = this
     }
 
     // 绑定点击事件

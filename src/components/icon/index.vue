@@ -12,7 +12,6 @@ defineProps({
         default: '',
     },
     size: {
-        type: Number,
         default: 30,
     },
 })

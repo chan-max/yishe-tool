@@ -91,7 +91,6 @@ watch(show, async (val) => {
     align-items: center;
     justify-content: center;
     background: #eee;
-    border: 1px solid #eee;
     position: relative;
     overflow: hidden;
 }
@@ -106,9 +105,9 @@ watch(show, async (val) => {
 }
 
 .top-menu {
-    background-color: #fff;
-    border-radius: 6px;
-    box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+    // background-color: #fff;
+    // border-radius: 6px;
+    // box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
     display: flex;
     align-items: center;
     width: 100%;

@@ -3,7 +3,7 @@
         @close="close"
         width="980px">
         <div class="flex">
-            <s1-img :src="detailInfo.thumbnail" style="width:480px;height:480px;" @load="imgLoad">
+            <s1-img :src="detailInfo.thumbnail" style="width:480px;height:480px;flex-shrink:0;" @load="imgLoad">
             </s1-img>
             <div style="padding:24px;row-gap:12px;" class="flex flex-col">
                 <h1> {{ detailInfo.name }} </h1>

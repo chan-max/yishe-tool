@@ -52,7 +52,7 @@
     <a-modal v-model:open="showPreviewModal" :footer="null" :centered="true" :destroyOnClose="true"
         style="min-width:980px;" width="980px">
         <div class="flex">
-            <s1-img :src="currentItem.thumbnail" style="width:480px;height:480px;">
+            <s1-img :src="currentItem.thumbnail" style="width:480px;height:480px;flex-shrink:0;">
             </s1-img>
             <div style="padding:24px;row-gap:12px;" class="flex flex-col">
                 <h1> {{ currentItem.name }} </h1>

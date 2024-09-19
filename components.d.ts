@@ -37,6 +37,7 @@ declare module 'vue' {
     CustomTextSticker: typeof import('./src/components/design/layout/customTextSticker/index.vue')['default']
     DecalControl: typeof import('./src/components/design/layout/decalControl/index.vue')['default']
     DecalList: typeof import('./src/components/design/layout/decalList/index.vue')['default']
+    DecalTooltip: typeof import('./src/components/design/layout/decalTooltip/index.vue')['default']
     Decoration: typeof import('./src/components/design/layout/decoration/index.vue')['default']
     Design: typeof import('./src/components/design/index.vue')['default']
     Dialog: typeof import('./src/components/design/components/dialog.vue')['default']

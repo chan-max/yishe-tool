@@ -1,6 +1,5 @@
 <template>
-    <a-modal v-bind="$attrs" v-model:open="show" :footer="null" :centered="true" :destroyOnClose="true"
-         width="1080px">
+    <a-modal v-bind="$attrs" v-model:open="show" :footer="null" :centered="true" :destroyOnClose="true" width="1080px">
         <el-row style="height:680px;padding:24px 12px" :gutter="24">
             <el-col :span="16">
                 <el-row style="row-gap: 2rem;">
@@ -33,7 +32,7 @@
         </el-row>
     </a-modal>
 </template>
-    
+
 <script setup lang='ts'>
 import { useCustomModelDetailModal } from './index.ts'
 import gltfViewer from './gltfViewer/index.vue';
@@ -43,5 +42,5 @@ import desimage from "@/components/image.vue";
 const { show, detailInfo } = useCustomModelDetailModal()
 
 </script>
-    
+
 <style></style>

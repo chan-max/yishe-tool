@@ -8,14 +8,21 @@
       <el-slider :min="0" :max="100" :step="1" v-model="size" size="small" @input="onSizeInput" />
       <h6>固定位置</h6>
     </div>
-    <el-button @click="remove" type="primary" round>移除该贴纸</el-button>
+    <el-button @click="remove" type="primary" plain round>移除该贴纸</el-button>
 
-    <div>
-      <el-button v-if="currentOperatingDecalController.state.isLocalResource" @click="upload" type="info" round>该贴纸还未上传 ,
-        点击上传 </el-button>
-    </div>
+    <div> </div>
+    <el-button  v-if="currentOperatingDecalController.state.isLocalResource" @click="upload" type="primary" plain round>该贴纸还未上传 ,
+      点击上传 </el-button>
+
+      <div style="flex:1"> </div>
+
+
+      <el-button  @click="showDecalList = true" type="primary" round>
+      显示贴纸列表 </el-button>
   </div>
-  <s1-empty v-else >
+
+
+  <s1-empty v-else>
     <template #description>
       未选择贴纸
     </template>
@@ -24,7 +31,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from "vue";
-import { currentOperatingDecalController, showWorkspace, showDecalControl } from "../../store";
+import { currentOperatingDecalController, showWorkspace, showDecalControl,showDecalList } from "../../store";
 import { debounce } from "../../utils/utils";
 
 const rotation = ref(0);

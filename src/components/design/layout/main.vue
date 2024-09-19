@@ -23,17 +23,18 @@
 
       <div id="layout-canvas">
 
+        <!-- 截屏组件 -->
         <screenshot ref="screenshotInstance"></screenshot>
 
         <div v-show="showThreeCanvas" style="position:absolute;top:0;left:0;z-index:2;width: 100%;"
           class="flex justify-center">
-          <threeCanvasTopBar></threeCanvasTopBar>
+          <!-- <threeCanvasTopBar></threeCanvasTopBar> -->
         </div>
 
         <div v-show="showThreeCanvas" @contextmenu="onContextMenu" id="threejs-canvas" style="width: 100%; height: 100%"
           ref="mountContainer"></div>
 
-
+        
 
         <basic-canvas v-show="showBasicCanvas" style="width: 100%; height: 100%; z-index: 3"
           ref="basicCanvasRef"></basic-canvas>
@@ -102,8 +103,11 @@
 
   <!-- 贴纸详细信息弹层 -->
   <stickerDetailModal></stickerDetailModal>
- <!-- 自定义模型弹层 -->
+  <!-- 自定义模型弹层 -->
   <customModelDetailModal></customModelDetailModal>
+
+  <!-- 贴纸覆盖时显示的提示框 -->
+  <decalTooltip></decalTooltip>
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -193,12 +197,14 @@ import {
   openLoginDialog,
   showLoginFormModal,
 } from "@/modules/main/view/user/login/index.tsx";
-import {useStickerDetailModal} from '@/components/design/layout/project/sticker/stickerModal'
+import { useStickerDetailModal } from '@/components/design/layout/project/sticker/stickerModal'
 
-import {useCustomModelDetailModal} from '@/components/design/layout/project/customModel/customModelModal'
+import { useCustomModelDetailModal } from '@/components/design/layout/project/customModel/customModelModal'
+import decalTooltip from './decalTooltip/index.vue'
 
 
-const {component:stickerDetailModal} = useStickerDetailModal()
+
+const { component: stickerDetailModal } = useStickerDetailModal()
 const { component: customModelDetailModal } = useCustomModelDetailModal()
 
 

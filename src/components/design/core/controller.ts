@@ -490,19 +490,12 @@ export class ModelController extends Base {
     }
 
     private initMousemoveEvent() {
-        var latest = new Date().getTime();
-        this.canvasContainer.addEventListener("mousemove", (event: any) => {
-            // 确定 点击
-            let now = new Date().getTime()
 
-            // 简易版节流
-            if ((now - latest) < 99) {
-                return
-            }
-
-            latest = now
+        let callback = useDebounceFn( (event: any) => {
             this._onMousemove.forEach((cb: any) => cb.call(this, this));
-        });
+        },11)
+
+        this.canvasContainer.addEventListener("mousemove",callback);
     }
 
     private initClickEvent() {
@@ -737,24 +730,7 @@ export class ModelController extends Base {
         let mesh = this.mesh
         let scene = this.scene
         let camera = this.camera
-
-        // 设置摄像机位置
-        if (modelInfo.camera) {
-            camera.position.set(
-                modelInfo.camera.position.x,
-                modelInfo.camera.position.y,
-                modelInfo.camera.position.z
-            );
-            camera.rotation.set(
-                modelInfo.camera.rotation.x,
-                modelInfo.camera.rotation.y,
-                modelInfo.camera.rotation.z
-            );
-            camera.fov = modelInfo.camera.fov;
-            camera.near = modelInfo.camera.near;
-            camera.far = modelInfo.camera.far;
-        }
-
+        
         // 初始化贴纸
         if (modelInfo.decals) {
             await Promise.all(modelInfo.decals.map((decal) => {

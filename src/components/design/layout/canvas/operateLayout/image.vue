@@ -31,6 +31,8 @@
             </template>
             <operateItemFilterGroup v-model="currentOperatingCanvasChild.filter"></operateItemFilterGroup>
         </el-collapse-item>
+
+        <operateItemClipPath v-model="currentOperatingCanvasChild.clipPath"></operateItemClipPath>
     </el-collapse>
 </template>
     
@@ -68,7 +70,7 @@ import operateItemTextStroke from "@/components/design/layout/canvas/operate/tex
 import operateItemFilterGroup from "@/components/design/layout/canvas/operate/filter/group.vue";
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
 import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue';
-
+import operateItemClipPath from '@/components/design/layout/canvas/operate/clipPath/index.vue';
 
 
 import {
@@ -80,7 +82,6 @@ import {
     canvasStickerOptions,
     addCanvasChild,
     removeCavnasChild,
-    currentOperatingCanvasChildIndex,
     currentCanvasControllerInstance,
     showMainCanvas,
     currentOperatingCanvasChild,

@@ -35,7 +35,7 @@
 
 <script setup lang='ts'>
 import { useCustomModelDetailModal } from './index.ts'
-import gltfViewer from './gltfViewer/index.vue';
+import gltfViewer from '@/components/model/gltfViewer/index.vue';
 import { UserOutlined } from '@ant-design/icons-vue'
 import desimage from "@/components/image.vue";
 

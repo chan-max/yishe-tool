@@ -76,7 +76,6 @@
                 </template>
             </el-dropdown>
 
-
             <div style="flex:1;"></div>
             <addPopover>
                 <el-button type="primary" link>
@@ -86,16 +85,16 @@
         </div>
         <div style="width:100%;padding:1rem;">
             <div style="display:flex;column-gap:10px">
-                <el-select v-model="currentOperatingCanvasChildIndex">
+                <el-select v-model="currentOperatingCanvasChildId">
                     <template #label="{ label }">
                         <div style="font-size:1rem;"> {{ canvasChildLabelMap[currentOperatingCanvasChild.type] }} </div>
                     </template>
                     <el-option class="canvas-child-select-option" v-for="(item, index) in canvasStickerOptions.children"
-                        :value="index" :label="canvasChildLabelMap[item.type]">
+                        :value="item.id" :label="canvasChildLabelMap[item.type]">
                         <div style="display:flex;align-items: center;font-size:1rem;height:100%;">
                             {{ canvasChildLabelMap[item.type] }}
                             <div style="flex:1"></div>
-                            <el-button v-if="!item.undeletable" link type="danger" @click="remove(index)">
+                            <el-button v-if="!item.undeletable" link type="danger" @click="remove(item.id)">
                                 <el-icon size="14">
                                     <CircleCloseFilled></CircleCloseFilled>
                                 </el-icon>
@@ -118,7 +117,7 @@ import {
     addCanvasChild,
     removeCavnasChild,
     CanvasChildType,
-    currentOperatingCanvasChildIndex,
+    currentOperatingCanvasChildId,
     currentOperatingCanvasChild,
     showMainCanvas,
     canvasChildLabelMap,
@@ -197,8 +196,8 @@ function exportTrimmedPng() {
     canvasController.downloadTrimmedPng();
 }
 
-function remove(index) {
-    removeCavnasChild(index)
+function remove(id) {
+    removeCavnasChild(id)
 }
 
 

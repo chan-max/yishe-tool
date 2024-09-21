@@ -9,7 +9,7 @@
                 <el-input style="width:80px;" type="number" v-model="model" size="small" max="999" min="0"
                     step="1"></el-input>
             </el-tooltip>
-            <el-button size="small" @click="setTopZIndex" link> 设为最高 </el-button>
+            <el-button size="small" @click="setTopZIndex"> 设为最高 </el-button>
         </template>
     </operate-form-item>
 </template>
@@ -29,10 +29,14 @@ const props = defineProps({
 
 // 设置为最顶层的zIndex
 function setTopZIndex() {
-    let maxZIndex = getCanvasTopZIndexChild()?.zIndex || 0
+
+    let topChild = getCanvasTopZIndexChild()
+
+    let maxZIndex = topChild?.zIndex || 0
+
     maxZIndex = Number(maxZIndex)
 
-    if (maxZIndex > (currentOperatingCanvasChild.value.zIndex || 0)) {
+    if (maxZIndex >= (currentOperatingCanvasChild.value.zIndex || 0) && (topChild != currentOperatingCanvasChild.value)) {
         currentOperatingCanvasChild.value.zIndex = maxZIndex + 1
     }
 }

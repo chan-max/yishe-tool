@@ -6,7 +6,7 @@ import { SvgFilterComponent, SvgFilterStyleComponent } from './svgFilter/index.t
 import { updateRenderingCanvas } from '../index.tsx'
 import { SvgClipPathComponent } from '@/components/design/layout/canvas/children/svg/clipPath/index.tsx'
 
-import { onBeforeReturnRender, onSetup } from './commonHooks.ts'
+import { onBeforeReturnRender, onCanvasChildSetup } from './commonHooks.ts'
 
 /*
     用于辅助观察的网格背景
@@ -23,9 +23,9 @@ export function createPngBackgroundStyle(scale = 1, cellWidth = 10) {
 }
 
 
-
 export function createDefaultCanvasChildcanvasStickerOptions() {
     return {
+        id: 'canvas_id',
         type: 'canvas',
         undeletable: true, // 不可删除
         filter: createFilterDefaultOptions('px'),
@@ -50,15 +50,14 @@ export const Canvas = defineComponent({
 
         onUpdated(updateRenderingCanvas)
 
-        const rawElRef = ref()
+        const targetElRef = ref()
 
-
-        onSetup({
-            targetEl: rawElRef,
+        onCanvasChildSetup({
+            targetEl: targetElRef,
             options: props.options,
-            props: props
+            props: props,
+            ignoreEvent:true // 忽略
         })
-
 
         return () => {
 
@@ -116,7 +115,6 @@ export const Canvas = defineComponent({
                 display: 'none',
             }
 
-
             onBeforeReturnRender({
                 style,
                 options: props.options
@@ -124,7 +122,7 @@ export const Canvas = defineComponent({
 
             return <div style={containerStyle}>
                 {/* 转换的元素 */}
-                <div id={currentCanvasControllerInstance.value?.rawId} style={style} ref={rawElRef}>
+                <div id={currentCanvasControllerInstance.value?.rawId} style={style} ref={targetElRef}>
                     {/* svg过滤器 */}
                     <SvgFilterComponent></SvgFilterComponent>
                     <SvgFilterStyleComponent></SvgFilterStyleComponent>

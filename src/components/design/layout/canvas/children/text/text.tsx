@@ -7,6 +7,8 @@ import { tify, sify } from 'chinese-conv';
 import { createFilterDefaultOptions, createTransformDefaultOptions, createPositionDefaultOptions } from "../defaultOptions.tsx";
 import { fetchFontFaceWithMessage } from '@/components/design/layout/canvas/operate/fontFamily/index.ts'
 import Utils from "@/common/utils.ts";
+import { defineCanvasChild } from "../define.tsx";
+import { onCanvasChildSetup } from "../commonHooks.ts";
 
 export interface TextCanvasChildOptions {
     center: boolean | null | undefined
@@ -81,12 +83,15 @@ export const Text = defineComponent({
     setup(props, ctx) {
 
         // 文字容器，用于布局
-        const textContainerRef = ref()
+        const targetElRef = ref()
 
-        onUpdated(() => {
-            props.options.targetComputedWidth = Utils.getComputedWidth(textContainerRef.value)
-            props.options.targetComputedHeight = Utils.getComputedHeight(textContainerRef.value)
+        
+        onCanvasChildSetup({
+            targetEl: targetElRef,
+            options: props.options,
+            props: props
         })
+
 
         // 用来包裹文字单元块 ， 需要相对布局
         const roundTextInnerContainerRef = ref()
@@ -121,7 +126,6 @@ export const Text = defineComponent({
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                zIndex: props.options.zIndex,
                 ..._containerStyle
             }
 
@@ -143,6 +147,7 @@ export const Text = defineComponent({
                 // 用于显示换行
                 whiteSpace: 'pre-line',
                 textWrap: 'nowrap',
+                zIndex: props.options.zIndex,
                 ..._style,
             }
 
@@ -216,7 +221,7 @@ export const Text = defineComponent({
             </div>
 
             return <div style={containerStyle} key={key.value}>
-                <div ref={textContainerRef} style={style}>
+                <div ref={targetElRef} style={style}>
                     {props.options.isRoundText ? roundNode : textContent}
                 </div>
             </div>

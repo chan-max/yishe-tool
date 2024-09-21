@@ -1,9 +1,9 @@
 <template>
   <div class="container flex flex-col items-center">
     <div class="svg-canvas">
-      <div :style="{transform:svgCanvasFitTransform}">
+      <div :style="{ transform: svgCanvasFitTransform }">
         <svg-canvas class="png-background" ref="svgCanvasRef" :width="svgCanvasWidth"
-        :height="svgCanvasHeight"></svg-canvas>
+          :height="svgCanvasHeight"></svg-canvas>
       </div>
     </div>
     <div class="header">
@@ -45,7 +45,8 @@
                   <operateItemTextContent v-model="item.textContent"></operateItemTextContent>
                 </el-col>
                 <el-col :span="12">
-                  <operateItemFontSize tooltip="文字大小是相对于画布的宽度，0.1即0.1个画布宽度" v-model="item.fontSize"></operateItemFontSize>
+                  <operateItemFontSize tooltip="文字大小是相对于画布的宽度，0.1即0.1个画布宽度" v-model="item.fontSize">
+                  </operateItemFontSize>
                 </el-col>
                 <el-col :span="12">
                   <operateItemFontWeight v-model="item.fontWeight"></operateItemFontWeight>
@@ -100,8 +101,10 @@ import {
   SvgCanvas,
   addSvgCanvasChild,
 } from "./template";
-import { svgCanvasChildren,  svgCanvasWidth,
-  svgCanvasHeight, } from '@/components/design/store'
+import {
+  svgCanvasChildren, svgCanvasWidth,
+  svgCanvasHeight,
+} from '@/components/design/store'
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import operateFormItem from "@/components/design/layout/canvas/operate/operateFormItem.vue";
 
@@ -129,9 +132,9 @@ const r = ref();
 const actives = ref(["1", "2", "3", "4"]);
 
 const svgCanvasFitTransform = computed(() => {
-    const scale = 300 / Math.max(svgCanvasWidth.value, svgCanvasHeight.value)
-    const transform = `scale(${scale},${scale})`
-    return transform
+  const scale = 300 / Math.max(svgCanvasWidth.value, svgCanvasHeight.value)
+  const transform = `scale(${scale},${scale})`
+  return transform
 })
 
 
@@ -164,7 +167,7 @@ async function exportToSvg() {
 .svg-canvas {
   width: 300px;
   height: 300px;
-  overflow:hidden;
+  overflow: hidden;
   display: flex;
   margin: 10px;
   align-items: center;

@@ -28,6 +28,13 @@
                                     <a-menu-item @click="edit(item)">
                                         编辑
                                     </a-menu-item>
+                                    <a-menu-item>
+                                        选择新的封面图
+                                    </a-menu-item>
+                                    <a-menu-item>
+                                        设置预留点
+                                    </a-menu-item>
+                            
                                     <a-menu-item @click="deleteItem(item)">
                                         <span style="color:var(--el-color-danger)">删除</span>
                                     </a-menu-item>
@@ -56,7 +63,7 @@
             </div>
         </div>
     </a-modal>
-
+ 
     <a-modal v-model:open="showFormModal" :centered="true" :destroyOnClose="true" width="540px" title="更新信息" okText="修改"
         cancelText="取消" @ok="ok" :confirmLoading="submitLoading">
         <el-form style="padding:24px 12px;">

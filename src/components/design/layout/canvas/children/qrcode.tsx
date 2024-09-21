@@ -202,7 +202,6 @@ export const Qrcode = defineComponent({
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                zIndex: props.options.zIndex,
                 ..._containerStyle
             }
 
@@ -222,6 +221,7 @@ export const Qrcode = defineComponent({
                 height: formatToNativeSizeString(props.options.height),
                 flexShrink: 0,
                 background: props.options.backgroundColor.color,
+                zIndex: props.options.zIndex,
                 padding,
                 borderRadius,
                 ..._style,

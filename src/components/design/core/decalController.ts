@@ -14,7 +14,7 @@ import {
 
 } from "three";
 import { message } from 'ant-design-vue'
-import { ref, reactive, computed,shallowRef,watch} from 'vue'
+import { ref, reactive, computed, shallowRef, watch } from 'vue'
 import { v4 } from 'uuid'
 import Utils from '@/common/utils'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
@@ -22,6 +22,7 @@ import { currentModelController, currentOperatingDecalController, showDecalContr
 import { useLoginStatusStore } from "@/store/stores/login";
 
 import Api from '@/api'
+import { useDebounceFn } from "@vueuse/core";
 
 
 export interface DecalControllerParams {
@@ -45,9 +46,9 @@ export interface DecalControllerParams {
 /**
  * @declare 当前鼠标正在覆盖的贴花
 */
-export const currentHoveringDecalController = shallowRef() 
+export const currentHoveringDecalController = shallowRef()
 
-watch(currentHoveringDecalController,(val) => {
+watch(currentHoveringDecalController, (val) => {
   document.body.style.cursor = val ? 'pointer' : ''
 })
 
@@ -63,8 +64,8 @@ export class DecalController {
     // 外部绑定的 旋转和尺寸值，位置是固定的所以不需要输入
     modelValueRotate: null,
     modelValueSize: null,
-
     ruleSize: 0.1,
+
     rotation: null,
     position: null,
 
@@ -84,23 +85,41 @@ export class DecalController {
 
   constructor(info?) {
 
+    // 处理配置
     this.context = this
-
     if (!info) {
       return
     }
-
     this.state.id = this.id.value = (info.id || v4()) // 如果是本地的贴纸，随机分配一个id
     this.state.isLocalResource = info.isLocalResource
     this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64 || info.thumbnail
-
     this.info = info
-
     if (this.state.isLocalResource) {
       this.info.src = this.info.base64
     }
-
     this.img = info.img
+
+
+    // 绑定事件
+    // 0 - 360
+    watch(() => this.state.modelValueRotate, useDebounceFn((value) => {
+      if (!value && value !== 0) {
+        return
+      }
+      this?.rotate((2 * Math.PI * value) / 360);
+    },11), {
+      immediate: true
+    })
+
+    // 0 -  100
+    watch(() => this.state.modelValueSize, useDebounceFn((value) => {
+      if (!value) {
+        return
+      }
+      this?.scale(value / 100);
+    },11), {
+      immediate: true
+    })
   }
 
   // 确认添加该贴纸到场景
@@ -211,11 +230,23 @@ export class DecalController {
   }
 
   // 创建该贴纸
+
+  private isCreating = false
+
   async create() {
+
+    if(this.isCreating){
+      return
+    }
+
     // 检查是否已创建，并清除旧贴纸
     if (this.mesh) {
       currentModelController.value.scene.remove(this.mesh);
     }
+
+    this.isCreating = true
+
+
 
     // 初始化材质
     if (!this.material) {
@@ -228,7 +259,10 @@ export class DecalController {
 
     var decalGeometry = new DecalGeometry(this.parentMesh, this.state.position, this.state.rotation, this.size.value);
     this.mesh = new Mesh(decalGeometry, this.material);
+
     currentModelController.value.scene.add(this.mesh);
+
+    this.isCreating = false
   }
 
   //  销毁该贴纸
@@ -286,7 +320,7 @@ export class DecalController {
 
 
 
-    this.create()
+    await this.create()
 
     this.ensureAdd()
 
@@ -321,7 +355,6 @@ export class DecalController {
 
   // 缩放
   scale(ratio) {
-    this.state.ruleSize = ratio
     this.state.ruleSize = ratio
     this.create()
   }
@@ -369,7 +402,7 @@ export class DecalController {
         this.mouseover.value = false
         this.state.isHover = false
 
-        if(currentHoveringDecalController.value == this){
+        if (currentHoveringDecalController.value == this) {
           currentHoveringDecalController.value = null
         }
 
@@ -448,9 +481,15 @@ export class DecalController {
     return {
       id: this.state.id, // 为贴纸的 id
       position,
-      rotation,
+      /**
+   * 真是数据不再需要
+  */
       size,
-      ruleSize: this.state.ruleSize
+      rotation,
+      ruleSize: this.state.ruleSize,
+
+      modelValueSize: this.state.modelValueSize,
+      modelValueRotate: this.state.modelValueRotate,
     };
   }
 }

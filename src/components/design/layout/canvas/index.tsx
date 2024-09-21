@@ -1,4 +1,4 @@
-import { ref, computed, shallowRef, nextTick, watch, defineAsyncComponent, defineComponent } from 'vue'
+import { ref, computed, shallowRef, nextTick, watch, defineAsyncComponent, defineComponent, shallowReactive } from 'vue'
 import { toPng, toJpeg, toBlob, toPixelData, toSvg, toCanvas } from "html-to-image";
 import { htmlToPngFile, downloadByFile } from '@/common/transform'
 import { useDebounceFn } from '@vueuse/core'
@@ -33,6 +33,7 @@ import Utils from '@/common/utils'
 import { currentModelController } from '@/components/design/store'
 
 import { imageDataToFile } from '@/common/transform'
+import { defineCanvasChild } from './children/define.tsx';
 
 /*
     画布参数
@@ -75,53 +76,68 @@ export function getCanvasChildTopZIndex() {
     return getCanvasTopZIndexChild()?.zIndex || 0
 }
 
+/**
+ * 这里会默认的留一个画布元素
+*/
+
 export const CanvasChildType = {
-    CANVAS: 'canvas', // 画布
-    TEXT: 'text',
-    BACKGROUHND: 'background',
-    IMAGE: 'image',
-    QRCODE: 'qrcode',
-    RECT: 'rect',
-    ELLIPSE: 'ellipse',
-    RAW_CANVAS: 'rawCanvas',
+    canvas: 'canvas', // 画布
 }
 
-
-
 export const canvasChildLabelMap = {
-    [CanvasChildType.CANVAS]: '画布',
-    [CanvasChildType.TEXT]: '文字',
-    [CanvasChildType.BACKGROUHND]: '背景',
-    [CanvasChildType.IMAGE]: '图片',
-    [CanvasChildType.QRCODE]: '二维码',
-    [CanvasChildType.RECT]: '矩形',
-    [CanvasChildType.ELLIPSE]: '圆和椭圆',
-    [CanvasChildType.RAW_CANVAS]: '原生画布'
+    [CanvasChildType.canvas]: '画布',
 }
 
 export const canvasChildDefaultOptionsMap = {
-    [CanvasChildType.CANVAS]: null,
-    [CanvasChildType.TEXT]: createDefaultCanvasChildTextOptions,
-    [CanvasChildType.BACKGROUHND]: createDefaultCanvasChildBackgroundOptions,
-    [CanvasChildType.IMAGE]: createDefaultCanvasChildImageOptions,
-    [CanvasChildType.QRCODE]: createDefaultCanvasChildQrcodeOptions,
-    [CanvasChildType.RECT]: createDefaultCanvasChildSvgRectOptions,
-    [CanvasChildType.ELLIPSE]: createDefaultCanvasChildSvgEllipseOptions,
-    [CanvasChildType.RAW_CANVAS]: createDefaultCanvasChildRawCanvasOptions
+    [CanvasChildType.canvas]: null,
 }
 
 export const canvasChildRenderMap = {
-    [CanvasChildType.CANVAS]: null,
-    [CanvasChildType.TEXT]: createCanvasChildText,
-    [CanvasChildType.BACKGROUHND]: createCanvasChildBackground,
-    [CanvasChildType.IMAGE]: createCanvasChildImage,
-    [CanvasChildType.QRCODE]: createCanvasChildQrcode,
-    [CanvasChildType.RECT]: createCanvasChildRect,
-    [CanvasChildType.ELLIPSE]: createCanvasChildEllipse,
-    [CanvasChildType.RAW_CANVAS]: createCanvasChildRawCanvas
+    [CanvasChildType.canvas]: null,
+}
+
+import backgroundLayout from './operateLayout/background.vue'
+import canvasLayout from './operateLayout/canvas.vue'
+import textLayout from './operateLayout/text.vue'
+import imageLayout from './operateLayout/image.vue'
+import rawCanvasLayout from './operateLayout/rawCanvas.vue'
+import qrcodeLayout from './operateLayout/qrcode.vue'
+import rectLayout from './operateLayout/rect.vue'
+import ellipseLayout from './operateLayout/ellipse.vue'
+
+
+export const CanvasChildOperationComponentMap = {
+    [CanvasChildType.canvas]: canvasLayout
 }
 
 
+
+defineCanvasChild({
+    typeName: 'text',
+    typeKey: 'text',
+    label: '文字',
+    defaultOptionsCreator: createDefaultCanvasChildTextOptions,
+    renderer: createCanvasChildText,
+    operationLayout: textLayout
+})
+
+defineCanvasChild({
+    typeName: 'background',
+    typeKey: 'background',
+    label: '背景',
+    defaultOptionsCreator: createDefaultCanvasChildBackgroundOptions,
+    renderer: createCanvasChildBackground,
+    operationLayout: backgroundLayout
+})
+
+defineCanvasChild({
+    typeName: 'image',
+    typeKey: 'image',
+    label: '图片',
+    defaultOptionsCreator: createDefaultCanvasChildImageOptions,
+    renderer: createCanvasChildImage,
+    operationLayout: imageLayout
+})
 
 
 
@@ -130,46 +146,46 @@ export const canvasChildRenderMap = {
 */
 export const showMainCanvas = ref(true)
 
-
-
-// 添加画布子元素
-
-var canvas_child_id = 0
-
 export function addCanvasChild(options) {
+
     let index = canvasStickerOptions.value.children.length
 
     options = {
+        id: crypto.randomUUID().toString(),
         ...canvasChildDefaultOptionsMap[options.type].call(null),
         ...options,
-        id: canvas_child_id++,
     }
 
     canvasStickerOptions.value.children.push(options)
-    currentOperatingCanvasChildIndex.value = index
+    currentOperatingCanvasChildId.value = options.id
 }
 
-// 当前正在操作的元素
-export const currentOperatingCanvasChildIndex = ref(0)
+
+
+// 当前正在操作的元素id
+export const currentOperatingCanvasChildId = ref('canvas_id')
 
 export const currentOperatingCanvasChild: any = computed(() => {
-    let child = canvasStickerOptions.value.children[currentOperatingCanvasChildIndex.value]
+
+    let child = canvasStickerOptions.value.children.find((c) => c.id == currentOperatingCanvasChildId.value)
 
     if (!child) {
-        currentOperatingCanvasChildIndex.value = 0
+        currentOperatingCanvasChildId.value = canvasStickerOptions.value.children[0].id
         return canvasStickerOptions.value.children[0]
     }
-
     return child
 })
 
-export function removeCavnasChild(index) {
-    if (index == 0) {
+export function removeCavnasChild(id) {
+    if (id == 'canvas_id') {
         return
     }
 
+    let child = canvasStickerOptions.value.children.find(child => child.id == id)
+
+    let index = canvasStickerOptions.value.children.indexOf(child)
+
     canvasStickerOptions.value.children.splice(index, 1)
-    currentOperatingCanvasChildIndex.value = index - 1
 }
 
 
@@ -200,7 +216,6 @@ export class CanvasController {
         currentCanvasControllerInstance.value = this
         // this.updateRenderingCanvas = useDebounceFn(this.updateRenderingCanvas, 666).bind(this)
         this.maxDisplaySize = params.max
-        window.cc = this
     }
 
     // 保存最近的画布base64 格式
@@ -380,7 +395,7 @@ export class CanvasController {
                     data: Utils.clone(canvasStickerOptions.value), // 用来保存当且贴纸的所有信息
                 })
             },
-            
+
             () => base64
         )
     }

@@ -1,4 +1,4 @@
-import { CanvasChildType, canvasChildLabelMap, canvasChildDefaultOptionsMap, canvasChildRenderMap } from '../index.tsx'
+import { CanvasChildType, canvasChildLabelMap, canvasChildDefaultOptionsMap, canvasChildRenderMap,CanvasChildOperationComponentMap } from '../index.tsx'
 
 interface canvasChildDefineOptionsInterface {
 
@@ -8,9 +8,11 @@ interface canvasChildDefineOptionsInterface {
 
     label: string // 元素的名称
 
-    defaultOptions: any // 默认配置
+    defaultOptionsCreator: any // 默认配置生成
 
     renderer: any // 默认的渲染器
+
+    operationLayout?:any //  操作配置
 }
 
 export const defineCanvasChild = (canvasChildDefineOptions: canvasChildDefineOptionsInterface) => {
@@ -18,15 +20,22 @@ export const defineCanvasChild = (canvasChildDefineOptions: canvasChildDefineOpt
         typeName,
         typeKey,
         label,
-        defaultOptions,
+        defaultOptionsCreator,
         renderer,
+        operationLayout
     } = canvasChildDefineOptions
 
     CanvasChildType[typeName] = typeKey
 
     canvasChildLabelMap[typeKey] = label
 
-    canvasChildDefaultOptionsMap[typeKey] = defaultOptions
+    canvasChildDefaultOptionsMap[typeKey] = defaultOptionsCreator
+
 
     canvasChildRenderMap[typeKey] = renderer
-}nde
+    
+    CanvasChildOperationComponentMap[typeKey] = operationLayout
+}
+
+
+

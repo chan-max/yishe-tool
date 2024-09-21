@@ -88,7 +88,7 @@ export class ModelController extends Base {
     // 尺寸侦听器
     public resizeObserver: any;
 
-    // 记录原始摄像机位置
+    // 记录原始摄像机位置 , 正前方
     public defaultCameraPosition = new Vector3(0, 0, 1);
 
     // 天空盒子背景是否随着模型移动
@@ -265,7 +265,7 @@ export class ModelController extends Base {
         // 创建场景、相机和渲染器等...
 
         // 添加环境光
-        const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
+        const ambientLight = new AmbientLight(0xffffff, 0.7); // 设置颜色和强度
         this.scene.add(ambientLight);
 
         // 添加平行光
@@ -279,9 +279,9 @@ export class ModelController extends Base {
         this.scene.add(directionalLight2);
 
         // 添加点光源
-        const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
-        pointLight.position.set(0, 0, 2); // 设置光源位置
-        this.scene.add(pointLight);
+        // const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
+        // pointLight.position.set(0, 0, 2); // 设置光源位置
+        // this.scene.add(pointLight);
     }
 
     // 正式执行渲染
@@ -292,8 +292,6 @@ export class ModelController extends Base {
         this.initCanvasContainer(target);
         this.initBasicLight()
 
-
-
         // 先不设置 bg ，需要保留无背景
         this.setBgColor('#eee', 0)
 
@@ -301,12 +299,11 @@ export class ModelController extends Base {
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);
         }
 
-
         this.execRender();
 
         this.isMounted = true;
     }
-
+    
     // 设置背景颜色
     public setBgColor(color: any, alpha = 1) {
         this.renderer.setClearColor(color, alpha);
@@ -736,7 +733,7 @@ export class ModelController extends Base {
             await Promise.all(modelInfo.decals.map((decal) => {
                 return new Promise(async (resolve, reject) => {
 
-                    var { id, position, rotation, ruleSize } = decal;
+                    var { id, position, rotation, ruleSize,modelValueRotate,modelValueSize } = decal;
 
                     if (!id) {
                         return resolve(new Error('贴纸不存在'));
@@ -749,12 +746,14 @@ export class ModelController extends Base {
                     decalController.state.position = new Vector3(position.x, position.y, position.z)
                     decalController.state.rotation = new Euler(rotation.x, rotation.y, rotation.z)
                     decalController.state.ruleSize = ruleSize
-
+                    decalController.state.ruleSize = ruleSize
+                    decalController.state.modelValueRotate = modelValueRotate
+                    decalController.state.modelValueSize = modelValueSize
+           
                     await decalController.create()
 
                     decalController.ensureAdd()
 
-                    console.log('sticker init success')
                     resolve(void 0)
                 })
             }))

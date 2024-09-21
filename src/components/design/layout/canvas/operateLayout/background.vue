@@ -71,7 +71,6 @@ import {
     canvasStickerOptions,
     addCanvasChild,
     removeCavnasChild,
-    currentOperatingCanvasChildIndex,
     currentCanvasControllerInstance,
     showMainCanvas,
     currentOperatingCanvasChild,

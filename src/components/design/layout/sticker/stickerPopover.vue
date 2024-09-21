@@ -41,7 +41,7 @@
 import { currentModelController,showCanvasLayout } from "@/components/design/store";
 import { getStickerTypeLabel } from './index'
 import { TopRight } from '@element-plus/icons-vue'
-import { addCanvasChild, currentOperatingCanvasChildIndex, canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
+import { addCanvasChild, canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
 
 
 const props = defineProps({
@@ -53,16 +53,7 @@ const props = defineProps({
 
 // 添加背景元素
 function addCanvasBackground() {
-  let child = canvasStickerOptions.value.children[currentOperatingCanvasChildIndex.value]
-  if (child.type = 'background') {
-    child.backgroundImage = props.stickerInfo
-  } else {
-    addCanvasChild({
-      type: 'background',
-      backgroundImage: props.stickerInfo
-    })
-  }
-  showCanvasLayout.value = true
+
 }
 
 function use() {

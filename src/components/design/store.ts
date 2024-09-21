@@ -390,7 +390,7 @@ export const viewDisplayController = ref({
 */
 
 
-import { canvasStickerOptions, currentOperatingCanvasChildIndex } from '@/components/design/layout/canvas/index.tsx'
+import { canvasStickerOptions, currentOperatingCanvasChildId } from '@/components/design/layout/canvas/index.tsx'
 
 import { stickerQueryTags, stickerQueryParams } from "@/components/design/layout/sticker/index.tsx";
 import { showMainCanvas } from "@/components/design/layout/canvas/index.tsx";
@@ -434,7 +434,7 @@ export const useDesignStore = defineStore('_1s_design', () => {
         showCanvasLayout: useLocalStorage('_1s_showCanvasLayout', showCanvasLayout),
         canvasStickerOptions: useLocalStorage('_1s_canvasStickerOptions', canvasStickerOptions),
         stickerQueryTags: useLocalStorage('_1s_stickerQueryTags', stickerQueryTags),
-        currentOperatingCanvasChildIndex: useLocalStorage('_1s_currentOperatingCanvasChildIndex', currentOperatingCanvasChildIndex),
+        currentOperatingCanvasChildId: useLocalStorage('currentOperatingCanvasChildId', currentOperatingCanvasChildId),
         showMainCanvas: useLocalStorage('_1s_showMainCanvas', showMainCanvas),
         viewDisplayController: useLocalStorage('_1s_viewDisplayController', viewDisplayController)
     }

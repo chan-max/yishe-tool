@@ -1,4 +1,4 @@
-import { canvasStickerOptions, currentOperatingCanvasChildIndex } from '@/components/design/layout/canvas/index.tsx'
+import { canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
 import { formatSizeOptionToPixelValue } from '../../../helper'
 import { SvgFilterEffects } from '..'
 

@@ -51,34 +51,17 @@ import {
   canvasStickerOptions,
   addCanvasChild,
   removeCavnasChild,
-  currentOperatingCanvasChildIndex,
   currentCanvasControllerInstance,
   showMainCanvas,
   currentOperatingCanvasChild,
   CanvasChildType,
-  updateRenderingCanvas
+  updateRenderingCanvas,
+  CanvasChildOperationComponentMap
 } from "../index.tsx";
 
-import backgroundLayout from './background.vue'
-import canvasLayout from './canvas.vue'
-import textLayout from './text.vue'
-import imageLayout from './image.vue'
-import rawCanvasLayout from './rawCanvas.vue'
-import qrcodeLayout from './qrcode.vue'
-import rectLayout from './rect.vue'
-import ellipseLayout from './ellipse.vue'
 
 
-const CanvasChildOperationComponentMap = {
-  [CanvasChildType.BACKGROUHND]: backgroundLayout,
-  [CanvasChildType.CANVAS]: canvasLayout,
-  [CanvasChildType.TEXT]: textLayout,
-  [CanvasChildType.IMAGE]: imageLayout,
-  [CanvasChildType.RAW_CANVAS]: rawCanvasLayout,
-  [CanvasChildType.QRCODE]: qrcodeLayout,
-  [CanvasChildType.RECT]: rectLayout,
-  [CanvasChildType.ELLIPSE]: ellipseLayout
-}
+
 
 
 

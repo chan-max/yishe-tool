@@ -3,8 +3,7 @@ import { getPositionInfoFromOptions, formatToNativeSizeString, createFilterFromO
 import { computed, defineComponent, onUpdated, ref } from "vue"
 import { createFilterDefaultOptions, createPositionDefaultOptions, createTransformDefaultOptions } from "./defaultOptions.tsx"
 import Utils from '@/common/utils'
-import { useProps } from "vue"
-
+import { onCanvasChildSetup ,onBeforeReturnRender} from "./commonHooks.ts"
 
 export const createDefaultCanvasChildImageOptions = () => {
 
@@ -42,12 +41,15 @@ export const Image = defineComponent({
     setup(props, ctx) {
 
 
-        const targetRef = ref()
+        const targetElRef = ref()
 
-        onUpdated(() => {
-            props.options.targetComputedWidth = Utils.getComputedWidth(targetRef.value)
-            props.options.targetComputedHeight = Utils.getComputedHeight(targetRef.value)
+
+        onCanvasChildSetup({
+            targetEl: targetElRef,
+            options: props.options,
+            props: props
         })
+
 
         const imgUrl = computed(() => {
             return props.options.imageInfo ? props.options.imageInfo.url : null
@@ -86,7 +88,6 @@ export const Image = defineComponent({
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                zIndex: props.options.zIndex,
                 ..._containerStyle
             }
 
@@ -104,14 +105,21 @@ export const Image = defineComponent({
 
 
             const imgDiaplay = computed(() => {
-                return true
+                if (loading.value || loadError.value || !imgUrl.value) {
+                    return 'none'
+                }
             })
 
+            onBeforeReturnRender({
+                style,
+                options: props.options
+            })
 
             return <div style={containerStyle}>
                 {!imgUrl.value && '未选择图片'}
+                {loading.value && '图片加载中...'}
                 {loadError.value && '图片加载失败'}
-                {<img ref={targetRef} onLoad={onLoad} onError={onError} src={imgUrl.value} style={{ ...style, display: imgDiaplay.value }}></img>}
+                {<img ref={targetElRef} onLoad={onLoad} onError={onError} src={imgUrl.value} style={{ ...style, display: imgDiaplay.value }}></img>}
             </div>
         }
     }

@@ -15,7 +15,7 @@
     <vue-danmaku ref="danmukuRef" :debounce="333" useSlot v-model:danmus="danmus" loop :speeds="66" :top="48"
       :right="48" isSuspend style="height:90vh; width:100vw;position:absolute;top:10vh;left:0;z-index:2;">
       <template v-slot:dm="{ index, danmu }">
-        <img style="width:100px;height:100px;border-radius: 5%;object-fit: contain;" :src="danmu.thumbnail">
+        <el-image style="width:100px;height:100px;border-radius: 5%;object-fit: contain;" :src="danmu.thumbnail" fit="contain"></el-image>
       </template>
     </vue-danmaku>
 
@@ -36,7 +36,7 @@ import Utils from '@/common/utils'
 import _ from 'lodash'
 import { useResizeObserver } from '@vueuse/core'
 import { useWindowSize, useDebounceFn } from '@vueuse/core'
-
+import {ref,computed,watch} from 'vue'
 
 
 
@@ -49,7 +49,7 @@ const danmus = computed(() => {
 
 
 
-const { list: CustomModelList, getList: getCustomModelList, } = usePaging(
+const { list: CustomModelList,} = usePaging(
   (params) => {
     return Api.getCustomModelList({
       ...params,
@@ -57,16 +57,10 @@ const { list: CustomModelList, getList: getCustomModelList, } = usePaging(
       myUploads: false,
       random: true
     });
-  },
-  {
-    forEach(item) {
-      item.thumbnail = Utils.formatUrl(item.thumbnail)
-      item.url = Utils.formatUrl(item.url)
-    },
   }
 );
 
-const { list: StickerList, getList: getStickerList, } = usePaging(
+const { list: StickerList, } = usePaging(
   (params) => {
     return Api.getStickerList({
       ...params,

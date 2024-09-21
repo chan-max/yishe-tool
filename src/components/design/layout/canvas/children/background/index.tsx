@@ -6,7 +6,7 @@ import { createFilterDefaultOptions, createTransformDefaultOptions, createPositi
 
 import { queryCustomBackgroundById } from './builtIn/index.ts'
 
-import { onBeforeReturnRender } from '../commonHooks.ts';
+import { onBeforeReturnRender,onCanvasChildSetup } from '../commonHooks.ts';
 
 /**
 */
@@ -50,13 +50,13 @@ export const Background = defineComponent({
 
         const targetEl = ref()
 
-        function setTargetSize() {
-            props.options.targetComputedWidth = Utils.getComputedWidth(targetEl.value)
-            props.options.targetComputedHeight = Utils.getComputedHeight(targetEl.value)
-        }
 
-        onUpdated(setTargetSize)
-        onMounted(setTargetSize)
+        onCanvasChildSetup({
+            targetEl: targetEl,
+            options: props.options,
+            props: props
+        })
+
 
         return () => {
 
@@ -72,7 +72,6 @@ export const Background = defineComponent({
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                zIndex: props.options.zIndex,
                 ..._containerStyle
             }
 
@@ -83,6 +82,7 @@ export const Background = defineComponent({
                 flexShrink: 0,
                 transform: createTransformString(props.options.transform),
                 filter: createFilterFromOptions(props.options.filter),
+                zIndex: props.options.zIndex,
                 ..._style
             }
 

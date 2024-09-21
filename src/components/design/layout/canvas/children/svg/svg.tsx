@@ -104,7 +104,6 @@ export const Svg = defineComponent({
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                zIndex: props.options.zIndex,
                 ..._containerStyle
             }
 
@@ -115,6 +114,7 @@ export const Svg = defineComponent({
                 width,
                 height,
                 flexShrink: 0,
+                zIndex: props.options.zIndex,
                 ..._style,
             }
 

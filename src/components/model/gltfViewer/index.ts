@@ -11,7 +11,9 @@
 import { gltfLoader } from "@/common/threejsHelper";
 import { format1stf } from "@/api/format";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
-import {formatUrl} from '@/common'
+import Utils from '@/common/utils'
+
+
 import {
     Box3,
     BoxGeometry,
@@ -92,6 +94,8 @@ function initImportedModel(gltf) {
 export const useViewer = (gltfViewerRef, props, emits) => {
     const scene = new Scene();
 
+
+
     function startAnimate() {
         animate.value = true;
     }
@@ -101,7 +105,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     }
 
     // 是否执行动画
-    const animate = ref(true);
+    const animate = ref(false);
 
     const loading = ref(false);
 
@@ -133,6 +137,8 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     controller.dampingFactor = .1;
     controller.autoRotate = true
 
+
+
     controller.addEventListener('start', function () {
         emits('dragStart')
     });
@@ -147,6 +153,8 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
     async function initModel() {
         emits('beforeLoad')
+
+
         const model = format1stf(props.model);
 
         if (!model) {
@@ -154,15 +162,19 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         }
 
         loading.value = true;
-        var baseModel = await getProductModelById(model.baseModelId)
-        
+        var baseModel = model.fetchResult || await getProductModelById(model.baseModelId)
+
         if (props.transparent) {
             renderer.setClearColor(null, 0);
         } else {
             renderer.setClearColor(0xeeeeee, 0);
         }
 
-        let gltf: any = await gltfLoader(formatUrl(baseModel.url));
+
+        let url = Utils.formatUrl(baseModel.url, { nocache: false })
+
+
+        let gltf: any = await gltfLoader(url);
 
         currentMesh = findMainMesh(gltf);
         function findMainMesh(gltf) {
@@ -221,7 +233,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         scene.add(gltf.scene);
 
         // 添加环境光
-        const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
+        const ambientLight = new AmbientLight(0xffffff, 0.7); // 设置颜色和强度
         scene.add(ambientLight);
 
         // 添加平行光
@@ -234,48 +246,57 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         directionalLight2.position.set(-1, -1, -1); // 设置光源位置
         scene.add(directionalLight2);
 
-        // 添加点光源
-        const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
-        pointLight.position.set(0, 0, 2); // 设置光源位置
-        scene.add(pointLight);
-
         // 初始化贴纸
         if (model.decals) {
 
             await Promise.all(model.decals.map((decal) => {
                 return new Promise(async (resolve, reject) => {
 
-                    var { id, position, rotation, size, type } = decal;
+                    var { id, position, rotation, size } = decal;
 
-                    
+
                     if (!id) {
-                        return resolve(new Error('贴纸不存在'));
+                        return resolve(void 0);
                     }
 
-                    const sticker = await getStickerById(id)
+                    const sticker = decal.fetchResult || await getStickerById(id)
 
-                    var {thumbnail} = sticker
-
-
+                    var { thumbnail } = sticker
 
                     position = new Vector3(position.x, position.y, position.z);
 
                     // 判断是否在网格上
                     var raycaster = new Raycaster();
                     raycaster.set(position, new Vector3(0, -1, 0));
+
+
                     // 使用射线投射器检查模型是否与射线相交。
                     var intersects = raycaster.intersectObject(currentMesh);
                     // 如果有交点，那么这个点就在模型上。
                     if (intersects.length <= 0) {
                         console.log("贴花位置错误");
                         resolve(void 0)
-                        return;
+                        // return;
                     }
 
                     rotation = new Euler(rotation.x, rotation.y, rotation.z);
                     size = new Vector3(size.x, size.y, size.z);
+
+
                     const textureLoader = new TextureLoader();
-                    const texture = await textureLoader.loadAsync(formatUrl(thumbnail));
+
+                    /*
+                        there is a strange bug in the texture loader
+                        while use cache it render error
+                        we need to fouce load new url 
+                        we will fix it
+                    */
+
+                    let url = Utils.formatUrl(thumbnail, { nocache: true })
+                    console.warn('gltfviewer load sticker')
+                    const texture = await textureLoader.loadAsync(url);
+
+
                     const material = new MeshPhongMaterial({
                         map: texture,
                         transparent: true,
@@ -292,14 +313,15 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     resolve(void 0)
                 })
             }))
+
         }
 
 
         function render() {
             requestAnimationFrame(render);
             if (animate.value) {
-                controller.autoRotate = true
-                controller.update()
+                // controller.autoRotate = true
+                // controller.update()
             } else {
                 controller.autoRotate = false
             }

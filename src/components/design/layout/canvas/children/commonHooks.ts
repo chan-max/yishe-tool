@@ -1,4 +1,4 @@
-import { onUpdated, onMounted } from 'vue'
+import { onUpdated, onMounted,watch } from 'vue'
 import Utils from '@/common/utils'
 /**
  * @description 用于所有子元素的渲染辅助方法
@@ -14,10 +14,46 @@ export function onBeforeReturnRender(paylaod) {
 
 
 /**
+ * @method 处理当前元素的交互事件
+*/
+
+
+function processBasicElEvent(payload) {
+    let { targetEl,ignoreEvent,options } = payload;
+
+    if(ignoreEvent){
+        return
+    }
+
+    
+    watch(targetEl,(el) => {
+        if(!el){
+            return
+        }
+
+        if(el._EventsReady){
+            return 
+        }
+
+
+        el.style.cursor = 'pointer'
+
+        el.onclick = (e) => {
+            e.stopPropagation();
+            console.log('click')
+            currentOperatingCanvasChildId.value = options.id
+        }
+
+        el._EventsReady = true
+    })
+}
+
+/**
  * 组件初始化时触发
 */
-export function onSetup(payload) {
+export function onCanvasChildSetup(payload) {
     processCalcComputedSize(payload)
+    processBasicElEvent(payload)
 }
 
 
@@ -42,6 +78,8 @@ function processCalcComputedSize(payload) {
 */
 
 import { getClipPathCircleByPercentPosition, getClipPathEllipseByPercentPosition } from '@/components/design/layout/canvas/operate/clipPath/dragger.tsx'
+import { currentOperatingCanvasChildId } from '..';
+import { id } from 'element-plus/es/locale/index';
 function processClipPath(payload) {
     let { style, options } = payload
 
@@ -69,6 +107,6 @@ function processClipPath(payload) {
 
     if (options.clipPath.type == 'customCircle') {
         style.clipPath = getClipPathCircleByPercentPosition(options.clipPath)
-    
+
     }
 }

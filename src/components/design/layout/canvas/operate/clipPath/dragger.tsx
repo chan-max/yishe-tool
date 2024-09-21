@@ -137,7 +137,7 @@ const dragContainerRef = ref()
 let mixins = {
     [CustomClipPathType.Circle]: circleSetupMixin,
     [CustomClipPathType.Ellipse]: ellipseSetupMixin,
-    [CustomClipPathType.Polygon]: polygonSetupMixin,
+    [CustomClipPathType.Polygon]: polygonCanvasChildSetupMixin,
 }
 
 export const Dragger = defineComponent({
@@ -407,7 +407,7 @@ function ellipseSetupMixin(props, ctx) {
     }
 }
 
-function polygonSetupMixin(props, ctx) {
+function polygonCanvasChildSetupMixin(props, ctx) {
 
     var clipPathCssValue = ref()
 

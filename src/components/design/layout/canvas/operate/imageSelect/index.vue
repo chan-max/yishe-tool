@@ -9,7 +9,7 @@
                 <el-popover placement="right" popper-class="el-popover-operation" width="240">
                     <template #reference>
                         <div class="flex items-center">
-                            <div class="text-ellipsis" style="font-size:1rem;max-width: 180px;">已引用图片 : {{ model.name }}
+                            <div class="text-ellipsis" style="font-size:1rem;max-width: 180px;">已引用图片 : {{ model.name || '未命名' }}
                             </div>
                         </div>
                     </template>

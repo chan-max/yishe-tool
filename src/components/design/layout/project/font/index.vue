@@ -1,19 +1,23 @@
 <template>
     <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
         <el-row style="row-gap: 8px;width:1000px;">
-            <el-col :span="24 / column" v-for="item in  list" align="center">
-                <div style="width:100%;height:100%;flex-shrink: 0;" class="flex flex-col items-center justify-center">
-                    <desimage padding="5%" :src="item.thumbnail"  @click="itemClick(item)"
+            <el-col :span="24 / column" v-for="item in list" align="center">
+                <div style="width:100%;height:100%;flex-shrink: 0;"
+                    class="flex flex-col items-center justify-center relative">
+                    <s1-image padding="5%" :src="item.thumbnail" @click="itemClick(item)"
                         style="background:#f6f6f6!important;width:240px;height:180px;border-radius: 8px;">
-                    </desimage>
+
+                        <s1-icon v-if="item.uploader.isAdmin" name="official-badge" style="position: absolute;right:5%;top:5%;opacity:.8;" :size="18"></s1-icon>
+
+                    </s1-image>
                     <div class="bar flex items-center justify-between">
-                        <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名'  }} </div>
+                        <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名' }} </div>
                         <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
                         <div class="timeago"> {{ Utils.time.timeago(item.updateTime) }} </div>
                         <div style="flex:1;"></div>
 
                         <a-dropdown trigger="click">
-                            <el-button  link>
+                            <el-button link>
                                 <el-icon size="12">
                                     <MoreFilled />
                                 </el-icon>
@@ -130,11 +134,11 @@ async function deleteItem(item) {
 
 
 function downloadFile(item) {
-      Api.downloadCOSFile(item.url)
+    Api.downloadCOSFile(item.url)
 }
 
 function downloadThumbnail(item) {
-      Api.downloadCOSFile(item.thumbnail)
+    Api.downloadCOSFile(item.thumbnail)
 }
 
 
@@ -207,7 +211,7 @@ async function ok() {
     color: #aaa;
 }
 
-.timeago{
+.timeago {
     font-size: .9rem;
     color: #999;
     font-weight: bold;

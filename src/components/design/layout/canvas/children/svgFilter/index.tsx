@@ -237,6 +237,11 @@ export const SvgFilterStyleComponent = () => {
 function SvgChildCompositeFilterComponent() {
 
     let compositeChildren = canvasStickerOptions.value.children.filter((child) => {
+
+        if(!child.filter){
+            return
+        }
+
         let url = child.filter.filterUrl
         return url.isCompositeFilter && url.filterChildren.length
     })

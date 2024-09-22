@@ -149,7 +149,7 @@ export const svgStringToUrl = (svg: string) => {
     return `data:image/svg+xml;,${encodedSvg}`;
 }
 
-
+import {transformSvgPathToPngDataUrl} from './svgPathToPng'
 
 class Transform {
     imgToBase64 = imgToBase64
@@ -163,6 +163,8 @@ class Transform {
     svgStringToUrl = svgStringToUrl
 
     base64ToPngFile = base64ToPngFile
+
+    transformSvgPathToPngDataUrl = transformSvgPathToPngDataUrl
 }
 
 

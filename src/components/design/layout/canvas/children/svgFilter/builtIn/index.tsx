@@ -15,12 +15,11 @@ export type SvgFilterCustomEffectType = {
 }
 
 
-
-
-
 import { createDefaultFilter } from './default'
 import { createMosaicFilter } from './mosaic'
-import { createPureColorMatrixFilterRender, BlackAndWhiteMatrix, vintage } from './pureColor'
+import { blackAndWhite, anjinhuang, redStamp} from './pureColor'
+
+
 import {
     twisted,
     line,
@@ -67,16 +66,9 @@ export const SvgFilterCategoryOptions = [
         label: '纯颜色',
         value: SvgFilterCategory.PureColor,
         children: [
-            {
-                filterLabel: '黑白',
-                filterId: 'blackWhite',
-                render: createPureColorMatrixFilterRender('blackWhite', BlackAndWhiteMatrix)
-            },
-            {
-                filterLabel: '复古',
-                filterId: 'vintage',
-                render: vintage
-            },
+            blackAndWhite,
+            anjinhuang,
+            redStamp
         ]
     },
     {
@@ -119,6 +111,11 @@ export const SvgFilterCategoryOptions = [
 ]
 
 
+
+
+/**
+ * 所有的过滤器列表形式
+*/
 export const BuiltInSvgFilterRenderList = SvgFilterCategoryOptions.reduce((res, item) => {
     if (item.children) {
         let usable = (item.children as any).filter((c) => !c.disabled)

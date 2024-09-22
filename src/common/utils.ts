@@ -156,20 +156,10 @@ class Utils {
 
 
     getComputedWidth(el) {
-
-        if (!(el instanceof HTMLElement)) {
-            return 0
-        }
-
         return Number(window.getComputedStyle(el).width.split('px')[0])
     }
 
     getComputedHeight(el) {
-
-        if (!(el instanceof HTMLElement)) {
-            return 0
-        }
-
         return Number(window.getComputedStyle(el).height.split('px')[0])
     }
 

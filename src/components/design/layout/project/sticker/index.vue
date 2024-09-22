@@ -3,9 +3,11 @@
         <el-row style="row-gap: 8px;width:1000px;">
             <el-col :span="24 / column" v-for="item in list" align="center">
                 <div style="width:100%;height:100%;flex-shrink: 0;" class="flex flex-col items-center justify-center">
-                    <desimage padding="5%" :src="item.thumbnail" @click="itemClick(item)"
+                    <s1-img padding="5%" :src="item.thumbnail" @click="itemClick(item)"
                         style="background:#f6f6f6!important;width:240px;height:180px;border-radius: 8px;">
-                    </desimage>
+                        <s1-icon v-if="item.uploader.isAdmin" name="official-badge" style="position: absolute;right:5%;top:5%;opacity:.8;" :size="18"></s1-icon>
+
+                    </s1-img>
                     <div class="bar flex items-center justify-between">
                         <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名' }} </div>
                         <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
@@ -20,12 +22,14 @@
                             </el-button>
                             <template #overlay>
                                 <a-menu>
-
                                     <a-menu-item @click="edit(item)">
                                         编辑
                                     </a-menu-item>
                                     <a-menu-item @click="useSticker(item)">
                                         在工作台使用
+                                    </a-menu-item>
+                                    <a-menu-item @click="setOfficialTemplate(item)">
+                                         设置为样例模版
                                     </a-menu-item>
                                     <a-menu-item @click="deleteItem(item)">
                                         <span style="color:var(--el-color-danger)">删除</span>
@@ -165,7 +169,13 @@ function itemClick(item) {
 }
 
 
+/**
+ * @method 设置为官方模版
+*/
 
+function setOfficialTemplate(item){
+    
+}
 </script>
 
 

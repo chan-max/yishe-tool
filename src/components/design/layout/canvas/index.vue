@@ -35,7 +35,8 @@
                             :autocomplete-width="400" autocompletePlacement="right"></tagsInput>
                     </el-form-item>
                     <el-form-item label="是否共享:">
-                        <a-switch v-model:checked="stickerInfo.isPublic" checked-children="公开" un-checked-children="私密" />
+                        <a-switch v-model:checked="stickerInfo.isPublic" checked-children="公开"
+                            un-checked-children="私密" />
                     </el-form-item>
                     <el-form-item>
                         <div class="flex w-full">
@@ -63,8 +64,6 @@
                 </template>
             </el-dropdown>
 
-
-
             <el-dropdown>
                 <el-button link plain>
                     更多
@@ -73,10 +72,17 @@
                     <el-dropdown-menu>
                         <el-dropdown-item @click="removeAllChildren"> 移除所有子元素 </el-dropdown-item>
                     </el-dropdown-menu>
+                    <el-dropdown-menu>
+                        <el-dropdown-item @click="consoleStikcerOptions"> 在控制台打印贴纸信息 </el-dropdown-item>
+                    </el-dropdown-menu>
                 </template>
             </el-dropdown>
+            <el-button link @click="showOfficialTemplate">
+                <span>官方案例</span>
+            </el-button>
 
             <div style="flex:1;"></div>
+
             <addPopover>
                 <el-button type="primary" link>
                     <span>添加元素</span>
@@ -208,9 +214,7 @@ function remove(id) {
 const loading = ref(false)
 
 async function submit() {
-
     loading.value = true
-
     try {
         const file = await canvasController.toPngFile()
 
@@ -241,6 +245,25 @@ async function submit() {
 function removeAllChildren() {
     canvasStickerOptions.value.children = [canvasStickerOptions.value.children[0]]
 }
+
+
+/**
+ * @method 在控制台打印当前贴纸配置信息
+*/
+function consoleStikcerOptions() {
+    console.log(JSON.parse(JSON.stringify(canvasStickerOptions.value)))
+}
+
+
+
+/**
+ * @method 展示官方案例模版
+*/
+
+function showOfficialTemplate() {
+    
+}
+
 </script>
 
 <style lang="less" scoped>

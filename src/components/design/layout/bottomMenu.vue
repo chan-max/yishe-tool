@@ -1,4 +1,4 @@
- <!--
+<!--
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-19 18:50:06
  * @LastEditors: chan-max jackieontheway666@gmail.com
@@ -58,8 +58,8 @@ async function openEyeDropper() {
   navigator.clipboard.writeText(sRGBHex);
 
   notification.open({
-    placement:'topRight',
-    message:`颜色 ${sRGBHex} 已复制到粘贴板`,
+    placement: 'topRight',
+    message: `颜色 ${sRGBHex} 已复制到粘贴板`,
     // style:`background-color:${sRGBHex}22`
   })
 }

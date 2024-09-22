@@ -1,28 +1,16 @@
-
-
 import { VNode, ref, watchEffect } from 'vue'
 import { canvasStickerOptions, updateRenderingCanvas } from '../../index.tsx'
-
 import { getPositionInfoFromOptions,formatToNativeSizeOption,formatToNativeSizeString, formatSizeOptionToPixelValue, } from '../../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
 import { svgToBase64 } from "@/common/transform/index";
 import { renderToString } from '@vue/server-renderer';
 import cssGradient2SVG from '@/common/transform/svg'
-import { id } from 'element-plus/es/locale/index';
-/*
-    矩形
-    圆形和椭圆边框
-    星星 
-    svg 使用img表现
-*/
-
-
+import { onCanvasChildSetup ,onBeforeReturnRender} from '../commonHooks.ts';
+ 
 
 
 export const createDefaultCanvasChildSvgOptions = () => {
-
     const canvasUnit = canvasStickerOptions.value.unit
-
     return {
         position: {
             center: true,
@@ -79,7 +67,6 @@ export const createDefaultCanvasChildSvgOptions = () => {
             value: 100,
             unit: canvasUnit
         },
-
     }
 }
 
@@ -91,7 +78,19 @@ export const Svg = defineComponent({
         options: null
     },
     setup(props, ctx) {
+
+        const targetElRef = ref()
+
+        onCanvasChildSetup({
+            targetEl: targetElRef,
+            options: props.options,
+            props: props,
+            ignoreEvent: true // 忽略
+        })
+
         return () => {
+
+ 
 
             const {
                 containerStyle: _containerStyle,
@@ -118,13 +117,20 @@ export const Svg = defineComponent({
                 ..._style,
             }
 
+            onBeforeReturnRender({
+                style,
+                options: props.options
+            })
+
             return <div style={containerStyle}>
                 {/* {props.options.svgUrl ? <img onLoad={updateRenderingCanvas} style={style} src={props.options.svgUrl}></img> : null} */}
-                <svg style={style}>  {ctx.slots.default && ctx.slots.default()}</svg>
-            </div>
+                <svg  ref={targetElRef} style={style}>  {ctx.slots.default && ctx.slots.default()}</svg>
+            </div> 
         }
     }
 })
+
+
 
 export function createCanvasChildSvg(options) {
     return <Svg options={options} onVnodeUpdated={updateRenderingCanvas} onVnodeMounted={updateRenderingCanvas}></Svg>
@@ -168,9 +174,7 @@ type SvgGradientNode = {
     node: VNode
 }
 
-const svgGradientCache: Record<string, SvgGradientNode> = {
-
-}
+const svgGradientCache: Record<string, SvgGradientNode> = Object.create(null)
 
 function createSvgGradientCache(colorOption) {
     let id = uid++
@@ -202,6 +206,11 @@ function getSvgGradientRenderFromColorOption(colorOption) {
     return svgGradientCache[colorOption.color].node
 }
 
+
+
+/**
+ * @define 矩形元素
+*/
 export function createCanvasChildRect(options) {
 
     let width = formatSizeOptionToPixelValue(options.width)
@@ -236,8 +245,8 @@ export function createCanvasChildRect(options) {
 
 
 
-/*
-    ellipse
+/**
+ * @define 椭圆
 */
 
 export const createDefaultCanvasChildSvgEllipseOptions = () => {
@@ -299,7 +308,6 @@ export function createCanvasChildEllipse(options) {
     const xRadius = (width - borderWidth) / 2
     const yRadius = (height - borderWidth) / 2
 
-
     return <Svg options={options}>
         {getSvgGradientRenderFromColorOption(options.backgroundColor)}
         {getSvgGradientRenderFromColorOption(options.borderColor)}
@@ -307,10 +315,6 @@ export function createCanvasChildEllipse(options) {
     </Svg>
 }
 
-
-/*
-    start
-*/
 
 
 

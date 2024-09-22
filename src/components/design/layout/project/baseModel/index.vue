@@ -1,6 +1,5 @@
 <template>
     <div style="height:64px;width:1000px" class="flex items-center">
-        <el-input style="width:250px;"></el-input>
         <div style="flex:1;"></div>
         <el-button  round bg text @click="uplaodClick"> 上传新模型 </el-button>
     </div>

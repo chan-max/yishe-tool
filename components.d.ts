@@ -26,6 +26,7 @@ declare module 'vue' {
     BottomMenu: typeof import('./src/components/design/layout/bottomMenu.vue')['default']
     Brightness: typeof import('./src/components/design/layout/canvas/operate/filter/brightness.vue')['default']
     BuiltInBackground: typeof import('./src/components/design/layout/canvas/operate/builtInBackground/index.vue')['default']
+    BuiltInTemplateModal: typeof import('./src/components/design/layout/canvas/builtInTemplate/builtInTemplateModal.vue')['default']
     Canvas: typeof import('./src/components/design/layout/canvas/index.vue')['default']
     ClipPath: typeof import('./src/components/design/layout/canvas/operate/clipPath/index.vue')['default']
     Color: typeof import('./src/components/design/layout/canvas/operate/color/index.vue')['default']

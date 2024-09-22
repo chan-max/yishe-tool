@@ -13,6 +13,11 @@
         </div>
       </template>
     </el-image>
+
+
+    <div class="slot">
+      <slot></slot>
+    </div>
   </div>
 </template>
 <script setup>
@@ -56,7 +61,7 @@ defineExpose({
     // 获取
     let el = elImageRef.value.$el.querySelector('img');
 
-    if(!el.complete){
+    if (!el.complete) {
       return console.warn('img not loaded while get natural size')
     }
 
@@ -72,6 +77,15 @@ defineExpose({
 .img-container {
   width: 100%;
   height: 100%;
+  position: relative;
+}
+
+.slot {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .el-img {

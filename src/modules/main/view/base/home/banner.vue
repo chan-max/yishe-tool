@@ -15,7 +15,8 @@
     <vue-danmaku ref="danmukuRef" :debounce="333" useSlot v-model:danmus="danmus" loop :speeds="66" :top="48"
       :right="48" isSuspend style="height:90vh; width:100vw;position:absolute;top:10vh;left:0;z-index:2;">
       <template v-slot:dm="{ index, danmu }">
-        <el-image style="width:100px;height:100px;border-radius: 5%;object-fit: contain;" :src="danmu.thumbnail" fit="contain"></el-image>
+        <el-image style="width:100px;height:100px;border-radius: 5%;object-fit: contain;" :src="danmu.thumbnail" fit="contain">
+        </el-image>
       </template>
     </vue-danmaku>
 
@@ -37,7 +38,7 @@ import _ from 'lodash'
 import { useResizeObserver } from '@vueuse/core'
 import { useWindowSize, useDebounceFn } from '@vueuse/core'
 import {ref,computed,watch} from 'vue'
-
+import s1Image from '@/components/image.vue'
 
 
 const danmus = computed(() => {

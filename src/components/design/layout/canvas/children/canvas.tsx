@@ -56,7 +56,7 @@ export const Canvas = defineComponent({
             targetEl: targetElRef,
             options: props.options,
             props: props,
-            ignoreEvent:true // 忽略
+            ignoreEvent: true // 忽略
         })
 
         return () => {
@@ -130,7 +130,13 @@ export const Canvas = defineComponent({
                     {/* 裁剪 */}
                     <SvgClipPathComponent></SvgClipPathComponent>
 
+                    {/* 这里把所有的元素放在svg中 */}
+                    <svg style="width:100%;height:100%;">
+                    <foreignObject style="width:100%;height:100%;">
                     {ctx.slots.default()}
+                    </foreignObject>
+                    </svg>
+
                 </div>
                 {/* 真实的画布 */}
                 <canvas id={currentCanvasControllerInstance.value?.canvasId} style={canvasStyle} width={pxWidth} height={pxHeight}></canvas>

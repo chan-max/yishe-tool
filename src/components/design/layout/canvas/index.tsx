@@ -18,7 +18,7 @@ import {
     createCanvasChildImage,
     createDefaultCanvasChildImageOptions
 } from './children/image.tsx'
-
+import { formatSizeOptionToPixelValue } from './helper.tsx';
 
 
 import { createCanvasChildRawCanvas, createDefaultCanvasChildRawCanvasOptions } from './children/rawCanvas.tsx'
@@ -139,6 +139,15 @@ defineCanvasChild({
     operationLayout: imageLayout
 })
 
+
+defineCanvasChild({
+    typeName: 'ellipse',
+    typeKey: 'ellipse',
+    label: '圆和椭圆',
+    defaultOptionsCreator: createDefaultCanvasChildSvgEllipseOptions,
+    renderer: createCanvasChildEllipse,
+    operationLayout: ellipseLayout
+})
 
 
 /*
@@ -268,22 +277,8 @@ export class CanvasController {
         return this.canvasEl.toDataURL('image/png')
     }
 
-    drawImage(img) {
-        if (!this.ctx) {
-            return
-        }
-        img.setAttribute('crossorigin', 'anonymous');
-        this.ctx.drawImage(img, 0, 0, img.width, img.height);
-    }
-
     // 需要组件渲染后再更新
     async updateRenderingCanvas() {
-        // this.loading.value = true
-        // renderingLoading.value = true
-        // clearTimeout(this.updateWorker);
-        // this.updateWorker = setTimeout(() => {
-        //     this.addTask(this.updateRenderingCanvasJob);
-        // }, this.updateWorkDelay);
 
         this.loading.value = true
         renderingLoading.value = true
@@ -292,27 +287,6 @@ export class CanvasController {
     }
 
 
-    // addTask(task) {
-    //     this.updateQueue.push(task);
-    //     this.run();
-    // }
-
-    // run() {
-    //     if (!this.isUpdating && this.updateQueue.length) {
-    //         this.isUpdating = true;
-    //         const task = this.updateQueue.shift();
-    //         task.call(this).then(() => {
-    //             this.isUpdating = false;
-    //             this.run();
-    //         });
-    //     }
-    // }
-
-
-    // updateQueue = []; // 画布更新队列
-    // isUpdating = false; // 是否正在更新
-    // updateWorker = null; // 更新任务
-    // updateWorkDelay = 999; // 更新延迟
 
     debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this), 999)
 
@@ -321,37 +295,35 @@ export class CanvasController {
             return
         }
 
-        // // 暂时先不更新
-        // this.loading.value = false
-        // renderingLoading.value = false
-        // return
-
-
         async function update() {
 
             try {
                 // this.base64 = await toPng(this.el)
-                let _canvas = await toCanvas(this.el)
-                let _ctx = _canvas.getContext('2d')
-                const imageData = _ctx.getImageData(0, 0, _canvas.width, _canvas.height);
 
-                this.ctx.putImageData(imageData, 0, 0);
+                let _canvas = await toCanvas(this.el, {
+                    // 参数不生效
+                })
+
+                document.body.appendChild(_canvas)
+
                 this.base64 = _canvas.toDataURL('image/png')
+
+                let width = Number(formatSizeOptionToPixelValue(canvasStickerOptions.value.width))
+                let height = Number(formatSizeOptionToPixelValue(canvasStickerOptions.value.height))
+
+                // let _ctx = _canvas.getContext('2d')
+                // const imageData = _ctx.getImageData(0, 0, width, height);
+                // this.ctx.putImageData(imageData, 0, 0);
+
+                this.clearCanvas()
+
+                this.ctx.drawImage(_canvas, 0, 0, _canvas.width, _canvas.height, 0, 0, width, height);
+
             } catch (e) {
                 throw Error('元素转换失败', e.message)
             }
 
 
-            // let img = document.createElement('img')
-            // img.width = canvasStickerOptions.value.width
-            // img.height = canvasStickerOptions.value.height
-            // document.body.appendChild(img)
-            // img.src = this.base64
-            // await waitImage(img)
-            // this.clearCanvas()
-            // this.drawImage(img)
-            // await nextTick()
-            // document.body.removeChild(img)
 
             this.loading.value = false
             renderingLoading.value = false

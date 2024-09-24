@@ -12,12 +12,12 @@
                     </desimage>
                     <div class="bar flex items-center justify-between">
                         <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名' }} </div>
-                        <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
+                        <div class="label-tag" v-if="item.isPublic"> 已共享 </div>
                         <div class="timeago"> {{ Utils.time.timeago(item.updateTime) }} </div>
                         <div style="flex:1;"></div>
 
                         <a-dropdown trigger="click">
-                            <el-button link size="12">
+                            <el-button link>
                                 <el-icon>
                                     <MoreFilled />
                                 </el-icon>
@@ -46,6 +46,11 @@
         </el-row>
         <loadingBottom v-if="loading"></loadingBottom>
         <div class="endofpage" v-if="isLastPage"> 到底了~ </div>
+        <s1-empty v-if="isEmpty">
+            <template #description>
+                暂无
+            </template>
+        </s1-empty>
     </div>
 
 
@@ -103,12 +108,12 @@ const column = ref(4);
 
 const loadingOptions = useLoadingOptions({});
 
-const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPage, currentPage, totalPage, } = usePaging(
+const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPage, isEmpty } = usePaging(
     (params) => {
         return Api.getProductModelList({
             ...params,
             pageSize: 99,
-            myUploads: true,
+            // myUploads: true,
         });
     },
 );
@@ -189,11 +194,11 @@ async function ok() {
     column-gap: 1rem;
 }
 
-.public-tag {
+.label-tag {
     background-color: #ccc;
     color: #fff;
     border-radius: 2px;
-    padding: 2px;
+    padding: 1px 2px;
     font-size: .8rem;
     font-weight: bold;
 }

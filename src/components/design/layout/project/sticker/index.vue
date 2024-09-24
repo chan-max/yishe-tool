@@ -10,12 +10,13 @@
                     </s1-img>
                     <div class="bar flex items-center justify-between">
                         <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名' }} </div>
-                        <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
+                        <div class="label-tag" v-if="item.isPublic"> 已共享 </div>
+                        <div class="label-tag" v-if="item.uploader.account == loginStore.userInfo?.account"> 我 </div>
                         <div class="timeago"> {{ Utils.time.timeago(item.updateTime) }} </div>
                         <div style="flex:1;"></div>
 
                         <a-dropdown trigger="click">
-                            <el-button link size="12">
+                            <el-button link>
                                 <el-icon>
                                     <MoreFilled />
                                 </el-icon>
@@ -28,6 +29,9 @@
                                     <a-menu-item @click="useSticker(item)">
                                         在工作台使用
                                     </a-menu-item>
+                                    <!-- <a-menu-item @click="editStickerInWorkspace(item)">
+                                        在工作台中编辑
+                                    </a-menu-item> -->
                                     <a-menu-item @click="setOfficialTemplate(item)">
                                          设置为样例模版
                                     </a-menu-item>
@@ -52,6 +56,11 @@
         </el-row>
         <loadingBottom v-if="loading"></loadingBottom>
         <div class="endofpage" v-if="isLastPage"> 到底了~ </div>
+        <s1-empty v-if="isEmpty">
+            <template #description>
+                暂无模型
+            </template>
+        </s1-empty>
     </div>
 
 
@@ -96,6 +105,8 @@ import { s1Confirm } from '@/common/message'
 import Api from '@/api'
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { useStickerDetailModal } from './stickerModal.ts'
+import { useLoginStatusStore } from "@/store/stores/login";
+const loginStore = useLoginStatusStore()
 
 
 // 列表展示几列
@@ -103,12 +114,12 @@ const column = ref(4);
 
 const loadingOptions = useLoadingOptions({});
 
-const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPage, currentPage, totalPage, } = usePaging(
+const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPage, currentPage, totalPage,isEmpty } = usePaging(
     (params) => {
         return getStickerList({
             ...params,
             pageSize: 20,
-            myUploads: true
+            // myUploads: true
         });
     },
 );
@@ -176,6 +187,14 @@ function itemClick(item) {
 function setOfficialTemplate(item){
     
 }
+
+
+/**
+ * @method 在工作台中编辑
+*/
+function editStickerInWorkspace(item){
+
+}
 </script>
 
 
@@ -188,11 +207,11 @@ function setOfficialTemplate(item){
     column-gap: 1rem;
 }
 
-.public-tag {
+.label-tag {
     background-color: #ccc;
     color: #fff;
     border-radius: 2px;
-    padding: 2px;
+    padding: 1px 2px;
     font-size: .8rem;
     font-weight: bold;
 }

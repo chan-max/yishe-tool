@@ -6,12 +6,7 @@
 
         <div class="top-menu-containter">
             <div class="top-menu">
-                <a-button type="primary" round ghost size="small">
-                    <template #icon>
-                        <FolderOpenOutlined/>
-                    </template>
-                    <span class="font-bold"> 本地文件 </span>
-                </a-button>
+
 
                 <!-- <a-button type="primary" loading ghost size="small"/> -->
 

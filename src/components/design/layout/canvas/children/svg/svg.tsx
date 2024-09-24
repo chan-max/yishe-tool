@@ -1,13 +1,16 @@
 import { VNode, ref, watchEffect } from 'vue'
 import { canvasStickerOptions, updateRenderingCanvas } from '../../index.tsx'
-import { getPositionInfoFromOptions,formatToNativeSizeOption,formatToNativeSizeString, formatSizeOptionToPixelValue, } from '../../helper.tsx'
+import { getPositionInfoFromOptions, formatToNativeSizeOption, formatToNativeSizeString, formatSizeOptionToPixelValue, } from '../../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
 import { svgToBase64 } from "@/common/transform/index";
 import { renderToString } from '@vue/server-renderer';
 import cssGradient2SVG from '@/common/transform/svg'
-import { onCanvasChildSetup ,onBeforeReturnRender} from '../commonHooks.ts';
- 
+import { onCanvasChildSetup, onBeforeReturnRender } from '../commonHooks.ts';
+import { createBasicDefaultOptions,createTransformDefaultOptions ,createFilterDefaultOptions} from '../defaultOptions.tsx'
 
+/**
+ * @description 所有的 svg 矢量元素视为同一种类型，并且其不存在复杂状态，
+*/
 
 export const createDefaultCanvasChildSvgOptions = () => {
     const canvasUnit = canvasStickerOptions.value.unit
@@ -33,32 +36,6 @@ export const createDefaultCanvasChildSvgOptions = () => {
                 unit: canvasUnit
             }
         },
-        padding: {
-            top: {
-                value: 0,
-                unit: canvasUnit
-            },
-            left: {
-                value: 0,
-                unit: canvasUnit
-            },
-            bottom: {
-                value: 0,
-                unit: canvasUnit
-            },
-            right: {
-                value: 0,
-                unit: canvasUnit
-            }
-        },
-        scaleX: 1,
-        scaleY: 1,
-        scaleZ: 1,
-        rotateX: 0,
-        rotateY: 0,
-        rotateZ: 0,
-        skewX: 0,
-        skewY: 0,
         width: {
             value: 100,
             unit: canvasUnit
@@ -67,6 +44,9 @@ export const createDefaultCanvasChildSvgOptions = () => {
             value: 100,
             unit: canvasUnit
         },
+        transform: createTransformDefaultOptions(canvasUnit),
+        filter: createFilterDefaultOptions(canvasUnit),
+        ...createBasicDefaultOptions()
     }
 }
 
@@ -85,12 +65,11 @@ export const Svg = defineComponent({
             targetEl: targetElRef,
             options: props.options,
             props: props,
-            ignoreEvent: true // 忽略
         })
 
         return () => {
 
- 
+
 
             const {
                 containerStyle: _containerStyle,
@@ -119,13 +98,14 @@ export const Svg = defineComponent({
 
             onBeforeReturnRender({
                 style,
+                containerStyle,
                 options: props.options
             })
 
             return <div style={containerStyle}>
                 {/* {props.options.svgUrl ? <img onLoad={updateRenderingCanvas} style={style} src={props.options.svgUrl}></img> : null} */}
-                <svg  ref={targetElRef} style={style}>  {ctx.slots.default && ctx.slots.default()}</svg>
-            </div> 
+                <svg ref={targetElRef} style={style}>  {ctx.slots.default && ctx.slots.default()}</svg>
+            </div>
         }
     }
 })
@@ -218,12 +198,12 @@ export function createCanvasChildRect(options) {
 
     // 像素单位
     const elementRealSize = {
-        width:options.width,
-        height:options.height
+        width: options.width,
+        height: options.height
     }
 
     // 边框尺寸
-    let borderWidth = formatSizeOptionToPixelValue(options.borderWidth,elementRealSize)
+    let borderWidth = formatSizeOptionToPixelValue(options.borderWidth, elementRealSize)
 
 
     const x = borderWidth / 2
@@ -297,9 +277,9 @@ export function createCanvasChildEllipse(options) {
 
 
 
-    let borderWidth = formatSizeOptionToPixelValue(options.borderWidth,{
-        width:options.width,
-        height:options.height,
+    let borderWidth = formatSizeOptionToPixelValue(options.borderWidth, {
+        width: options.width,
+        height: options.height,
     })
 
     const x = (width) / 2

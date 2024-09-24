@@ -12,7 +12,8 @@
                     </s1-image>
                     <div class="bar flex items-center justify-between">
                         <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名' }} </div>
-                        <div class="public-tag" v-if="item.isPublic"> 已共享 </div>
+                        <div class="label-tag" v-if="item.isPublic"> 已共享 </div>
+                        <div class="label-tag" v-if="item.uploader.account == loginStore.userInfo?.account"> 我 </div>
                         <div class="timeago"> {{ Utils.time.timeago(item.updateTime) }} </div>
                         <div style="flex:1;"></div>
 
@@ -25,7 +26,7 @@
                             <template #overlay>
                                 <a-menu>
                                     <a-menu-item @click="edit(item)">
-                                        编辑
+                                        编辑基本信息
                                     </a-menu-item>
                                     <a-menu-item @click="deleteItem(item)">
                                         <span style="color: var(--el-color-danger);"> 删除</span>
@@ -50,8 +51,12 @@
             </el-col>
         </el-row>
         <loadingBottom v-if="loading"></loadingBottom>
+        <s1-empty v-if="isEmpty">
+            <template #description>
+                暂无字体
+            </template>
+        </s1-empty>
     </div>
-
 
     <a-modal v-model:open="showPreviewModal" :footer="null" :centered="true" :destroyOnClose="true"
         style="min-width:980px;" width="980px">
@@ -103,19 +108,20 @@ import Utils from '@/common/utils'
 import Api from '@/api'
 import { s1Confirm } from '@/common/message'
 import { message } from 'ant-design-vue'
-
+import { useLoginStatusStore } from "@/store/stores/login";
+const loginStore = useLoginStatusStore()
 // 列表展示几列
 const column = ref(4);
 
 const loadingOptions = useLoadingOptions({});
 
-const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePaging(
+const { list, getList, loading, reset, isEmpty } = usePaging(
     (params) => {
         return Api.getFileListApi({
             ...params,
             pageSize: 20,
             type: 'ttf,otf',
-            myUploads: true
+            // myUploads: true
         });
     },
 );
@@ -182,6 +188,9 @@ async function ok() {
     list.value[ind] = res
 }
 
+
+
+
 </script>
 
 
@@ -194,11 +203,11 @@ async function ok() {
     column-gap: 1rem;
 }
 
-.public-tag {
+.label-tag {
     background-color: #ccc;
     color: #fff;
     border-radius: 2px;
-    padding: 2px;
+    padding: 1px 2px;
     font-size: .8rem;
     font-weight: bold;
 }

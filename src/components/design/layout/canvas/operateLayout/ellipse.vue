@@ -1,26 +1,26 @@
 <template>
-    <el-row :gutter="24" align="middle">
-        <el-col :span="24">
-            <operateItemSize tooltip="只需设置整体的宽高，半径自动有宽高和边框算出" label="圆形尺寸" v-model:width="currentOperatingCanvasChild.width"
+    <el-collapse v-model="ellapseCollapseActives">
+        <el-collapse-item name="1" title="矩形属性">
+        <operateItemSize tooltip="只需设置整体的宽高，半径自动有宽高和边框算出" label="圆形尺寸" v-model:width="currentOperatingCanvasChild.width"
                 v-model:height="currentOperatingCanvasChild.height">
             </operateItemSize>
-        </el-col>
-        <el-col :span="24">
+
             <operateItemPosition v-model="currentOperatingCanvasChild.position"></operateItemPosition>
-        </el-col>
-        <el-col :span="24">
+
             <operateItemColor label="背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
             </operateItemColor>
-        </el-col>
-        <el-col :span="24">
+
             <operateItemBorderWidth v-model="currentOperatingCanvasChild.borderWidth">
             </operateItemBorderWidth>
-        </el-col>
-        <el-col :span="24">
+
             <operateItemColor label="边框颜色" v-model="currentOperatingCanvasChild.borderColor">
             </operateItemColor>
-        </el-col>
-    </el-row>
+        </el-collapse-item>
+
+        <el-collapse-item name="2" title="通用属性">
+            <operateItemCommonGroup v-model="currentOperatingCanvasChild"></operateItemCommonGroup>
+        </el-collapse-item>
+    </el-collapse>
 </template>
     
 <script setup lang='ts'>
@@ -76,6 +76,7 @@ import {
     updateRenderingCanvas
 } from "../index.tsx";
 
+const ellapseCollapseActives = ref(['1','2'])
 
 </script>
     

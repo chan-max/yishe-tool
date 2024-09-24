@@ -5,7 +5,7 @@
         </template>
         <template #name> 元素倾斜 </template>
         <template #content>
-            <el-tooltip content="用于调整元素倾斜角度" :hide-after="0">
+            <el-tooltip content="用于调整元素倾斜角度" :hide-after="0" placement="top">
                 <div>
                     <el-popover trigger="click" width="180" popper-class="el-popover-operation">
                         <template #reference>

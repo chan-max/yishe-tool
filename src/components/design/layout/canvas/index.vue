@@ -15,41 +15,10 @@
         </div>
 
         <div class="flex" style="width:100%;padding:1rem;padding-top:2rem;column-gap:1rem;">
-
-            <el-popover width="360px" trigger="click" :visible="stickerInfoVisible">
-                <template #reference>
-                    <el-button plain link @click="stickerInfoVisible = true">
-                        <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
-                        上传
-                    </el-button>
-                </template>
-                <el-form label-width="72px" :inline-message="false" :show-message="false" label-position="left">
-                    <el-form-item label="贴纸名称：">
-                        <el-input v-model="stickerInfo.name" size="small"></el-input>
-                    </el-form-item>
-                    <el-form-item label="贴纸描述:">
-                        <el-input type="textarea" v-model="stickerInfo.description" size="small"></el-input>
-                    </el-form-item>
-                    <el-form-item label="关键字:">
-                        <tagsInput v-model="stickerInfo.keywords" :autocomplete-tags="stickerAutoplacementTags"
-                            :autocomplete-width="400" autocompletePlacement="right"></tagsInput>
-                    </el-form-item>
-                    <el-form-item label="是否共享:">
-                        <a-switch v-model:checked="stickerInfo.isPublic" checked-children="公开"
-                            un-checked-children="私密" />
-                    </el-form-item>
-                    <el-form-item>
-                        <div class="flex w-full">
-                            <el-button size="small" type="danger" plain @click="stickerInfoVisible = false">
-                                关闭
-                            </el-button>
-                            <el-button size="small" class="w-full" plain @click="submit" :loading="loading">
-                                保存
-                            </el-button>
-                        </div>
-                    </el-form-item>
-                </el-form>
-            </el-popover>
+            <el-button plain link @click="showUploadModal = true">
+                <CloudUploadOutlined style="font-size:1.2em;margin-right:4px;" />
+                上传
+            </el-button>
 
             <el-dropdown>
                 <el-button link plain>
@@ -77,27 +46,32 @@
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
-            <el-button link @click="showOfficialTemplate">
-                <span>官方案例</span>
-            </el-button>
+
 
             <div style="flex:1;"></div>
-
-            <addPopover>
-                <el-button type="primary" link>
-                    <span>添加元素</span>
+            <div>
+                <el-button link @click="showOfficialTemplate">
+                    <span>模版</span>
                 </el-button>
-            </addPopover>
+                <addPopover>
+                    <el-button type="primary" link>
+                        <span>添加元素</span>
+                    </el-button>
+                </addPopover>
+            </div>
         </div>
+
+
         <div style="width:100%;padding:1rem;">
-            <div style="display:flex;column-gap:10px">
-                <el-select v-model="currentOperatingCanvasChildId">
-                    <template #label="{ label }">
-                        <div style="font-size:1rem;"> {{ canvasChildLabelMap[currentOperatingCanvasChild.type] }} </div>
-                    </template>
-                    <el-option class="canvas-child-select-option" v-for="(item, index) in canvasStickerOptions.children"
-                        :value="item.id" :label="canvasChildLabelMap[item.type]">
-                        <div style="display:flex;align-items: center;font-size:1rem;height:100%;">
+            <el-select v-model="currentOperatingCanvasChildId">
+                <template #label="{ label }">
+                    <div style="font-size:1rem;"> {{ canvasChildLabelMap[currentOperatingCanvasChild.type] }} </div>
+                </template>
+
+                <template v-for="(item, index) in canvasStickerOptions.children">
+                    <el-option class="canvas-child-select-option" :value="item.id" :label="canvasChildLabelMap[item.type]">
+                        <div style="display:flex;align-items: center;font-size:1rem;height:100%;"
+                            @mouseenter="optionMouseenter(item)" @mouseleave="optionMouseleave(item)">
                             {{ canvasChildLabelMap[item.type] }}
                             <div style="flex:1"></div>
                             <el-button v-if="!item.undeletable" link type="danger" @click="remove(item.id)">
@@ -107,12 +81,47 @@
                             </el-button>
                         </div>
                     </el-option>
-                </el-select>
-            </div>
+                </template>
+            </el-select>
         </div>
         <div class="operate">
             <operateLayout></operateLayout>
         </div>
+    </div>
+
+
+    <a-modal v-model:open="showUploadModal" :centered="true" :destroyOnClose="true" width="540px" title="保存" okText="保存"
+        cancelText="取消" @ok="doUpload" :confirmLoading="submitLoading">
+        <el-form label-width="72px" :inline-message="false" :show-message="false" label-position="left">
+            <el-form-item label="贴纸名称：">
+                <el-input v-model="stickerInfo.name"></el-input>
+            </el-form-item>
+            <el-form-item label="贴纸描述:">
+                <el-input type="textarea" v-model="stickerInfo.description"></el-input>
+            </el-form-item>
+            <el-form-item label="关键字:">
+                <tagsInput v-model="stickerInfo.keywords" :autocomplete-tags="stickerAutoplacementTags"
+                    :autocomplete-width="400" autocompletePlacement="right"></tagsInput>
+            </el-form-item>
+            <el-form-item label="是否共享:">
+                <a-switch v-model:checked="stickerInfo.isPublic" checked-children="公开" un-checked-children="私密" />
+            </el-form-item>
+        </el-form>
+    </a-modal>
+
+    <officialTemplateModal></officialTemplateModal>
+
+
+    <!-- 用于辅助查看的元素层 -->
+    <div v-if="currentHoveringStickerId" :style="{
+        position: 'fixed',
+        zIndex:999,
+        top: currentTargetElRect.top + 'px',
+        left: currentTargetElRect.left + 'px',
+        width: currentTargetElRect.width + 'px',
+        height: currentTargetElRect.height + 'px',
+        background: `rgba(115 , 0, 255, 0.2)`
+    }">
     </div>
 </template>
 
@@ -144,20 +153,13 @@ import { message } from "ant-design-vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { stickerAutoplacementTags } from '@/components/design/components/tagsInput/index.ts'
-
+import Utils from '@/common/utils'
+import officialTemplateModal from './officialTemplateModal/index.vue'
 
 const loginStore = useLoginStatusStore()
 
 const canvasContainerRef = ref()
 
-const stickerInfoVisible = ref(false)
-
-const stickerInfo = ref({
-    name: '',
-    description: '',
-    keywords: [],
-    isPublic: false
-})
 
 
 const showDragTip = computed(() => {
@@ -207,14 +209,51 @@ function remove(id) {
 }
 
 
-/*
-    提交该贴纸
+function removeAllChildren() {
+    canvasStickerOptions.value.children = [canvasStickerOptions.value.children[0]]
+}
+
+
+/**
+ * @method 在控制台打印当前贴纸配置信息
+*/
+function consoleStikcerOptions() {
+    console.log(JSON.parse(JSON.stringify(canvasStickerOptions.value)))
+}
+
+
+
+/**
+ * @method 展示设计模板模版
 */
 
-const loading = ref(false)
+import { showOfficialTempalteModal } from "./officialTemplateModal";
+function showOfficialTemplate() {
+    showOfficialTempalteModal.value = true
+}
 
-async function submit() {
-    loading.value = true
+
+/**
+ * @method 处理保存逻辑
+*/
+
+const showUploadModal = ref(false)
+const submitLoading = ref(false)
+
+
+const stickerInfo = ref({
+    name: '',
+    description: '',
+    keywords: [],
+    isPublic: false
+})
+
+
+async function doUpload() {
+    submitLoading.value = true
+
+    // 这里是防止点击后立刻造成卡顿
+
     try {
         const file = await canvasController.toPngFile()
 
@@ -233,35 +272,63 @@ async function submit() {
             uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null
         })
 
-        loading.value = false
+        submitLoading.value = false
+        showUploadModal.value = false
         message.success('保存成功')
     } catch (e) {
-        loading.value = false
+        submitLoading.value = false
         message.error('保存失败')
     }
 }
 
 
-function removeAllChildren() {
-    canvasStickerOptions.value.children = [canvasStickerOptions.value.children[0]]
-}
-
 
 /**
- * @method 在控制台打印当前贴纸配置信息
+ * @method 子元素鼠标覆盖事件
 */
-function consoleStikcerOptions() {
-    console.log(JSON.parse(JSON.stringify(canvasStickerOptions.value)))
+
+// 当前正在覆盖的选择元素
+const currentHoveringStickerId = ref()
+
+const currentTargetElRect = ref({
+    width: 0,
+    height: 0,
+    top: 0,
+    left: 0,
+})
+
+watch(currentHoveringStickerId, (id) => {
+
+    if (!id) {
+        return
+    }
+
+    let targetEl = document.querySelector(`#${id}`)
+
+    if (!targetEl) {
+        return
+    }
+
+    // 为当前元素生成一个遮罩层，替代高亮效果
+
+    const rect = targetEl.getBoundingClientRect();
+
+    currentTargetElRect.value = {
+        width: rect.width,
+        height: rect.height,
+        top: rect.top,
+        left: rect.left,
+    }
+})
+
+function optionMouseenter(item) {
+    currentHoveringStickerId.value = item.id
 }
 
-
-
-/**
- * @method 展示官方案例模版
-*/
-
-function showOfficialTemplate() {
-    
+function optionMouseleave(item) {
+    if (item.id == currentHoveringStickerId.value) {
+        currentHoveringStickerId.value = null
+    }
 }
 
 </script>

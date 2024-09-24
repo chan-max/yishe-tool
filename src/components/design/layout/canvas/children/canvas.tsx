@@ -25,7 +25,7 @@ export function createPngBackgroundStyle(scale = 1, cellWidth = 10) {
 
 export function createDefaultCanvasChildcanvasStickerOptions() {
     return {
-        id: 'canvas_id',
+        id: 'this_is_canvas_id',
         type: 'canvas',
         undeletable: true, // 不可删除
         filter: createFilterDefaultOptions('px'),
@@ -70,8 +70,7 @@ export const Canvas = defineComponent({
                 value: canvasStickerOptions.value.height,
                 unit: canvasStickerOptions.value.unit
             })
-
-
+            
             const transformValue = (showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
 
             let pngBackground = createPngBackgroundStyle(transformValue)

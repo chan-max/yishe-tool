@@ -535,6 +535,10 @@ export function createFilterFromOptions(options) {
 
 export function createTransformString(options) {
 
+    if(!options){
+        return null
+    }
+
     let val = `
     scale3d(${options.scaleX ?? 1}, ${options.scaleY ?? 1},  ${options.scaleZ ?? 1}) 
     rotateX(${options.rotateX ?? 0}deg)

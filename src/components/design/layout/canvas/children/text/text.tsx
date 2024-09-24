@@ -8,7 +8,7 @@ import { createFilterDefaultOptions, createTransformDefaultOptions, createPositi
 import { fetchFontFaceWithMessage } from '@/components/design/layout/canvas/operate/fontFamily/index.ts'
 import Utils from "@/common/utils.ts";
 import { defineCanvasChild } from "../define.tsx";
-import { onCanvasChildSetup } from "../commonHooks.ts";
+import { onCanvasChildSetup,onBeforeReturnRender } from "../commonHooks.ts";
 
 export interface TextCanvasChildOptions {
     center: boolean | null | undefined
@@ -85,7 +85,7 @@ export const Text = defineComponent({
         // 文字容器，用于布局
         const targetElRef = ref()
 
-        
+
         onCanvasChildSetup({
             targetEl: targetElRef,
             options: props.options,
@@ -139,7 +139,6 @@ export const Text = defineComponent({
                 letterSpacing: props.options.letterSpacing + 'em',
                 fontFamily: 'undefined', // 默认设置为一个不存在的字体，防止被本地字体影响  
                 writingMode: props.options.writingMode == 'htb' ? WritingMode.HTB : props.options.writingMode == 'vlr' ? WritingMode.VLR : props.options.writingMode == 'vrl' ? WritingMode.VRL : null,
-                transform: createTransformString(props.options.transform),
                 filter: createFilterFromOptions(props.options.filter),
                 textShadow: parseTextShadowOptionsToCSS(props.options.textShadow),
                 textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color,
@@ -219,6 +218,13 @@ export const Text = defineComponent({
                     return <div style={rowStyle}> {cells} </div>
                 })}
             </div>
+
+
+            onBeforeReturnRender({
+                containerStyle,
+                style,
+                options: props.options
+            })
 
             return <div style={containerStyle} key={key.value}>
                 <div ref={targetElRef} style={style}>

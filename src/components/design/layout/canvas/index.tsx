@@ -150,6 +150,15 @@ defineCanvasChild({
 })
 
 
+defineCanvasChild({
+    typeName: 'rect',
+    typeKey: 'rect',
+    label: '矩形',
+    defaultOptionsCreator: createDefaultCanvasChildSvgRectOptions,
+    renderer: createCanvasChildRect,
+    operationLayout: rectLayout
+})
+
 /*
     是否展示主画布
 */
@@ -157,10 +166,8 @@ export const showMainCanvas = ref(true)
 
 export function addCanvasChild(options) {
 
-    let index = canvasStickerOptions.value.children.length
-
     options = {
-        id: crypto.randomUUID().toString(),
+        id: '_' + String(new Date().getTime()), // 这里要兼容 选择器规范
         ...canvasChildDefaultOptionsMap[options.type].call(null),
         ...options,
     }
@@ -172,7 +179,7 @@ export function addCanvasChild(options) {
 
 
 // 当前正在操作的元素id
-export const currentOperatingCanvasChildId = ref('canvas_id')
+export const currentOperatingCanvasChildId = ref('this_is_canvas_id')
 
 export const currentOperatingCanvasChild: any = computed(() => {
 
@@ -185,15 +192,13 @@ export const currentOperatingCanvasChild: any = computed(() => {
     return child
 })
 
+
+/**
+ * @todo 增加最近删除功能
+*/
 export function removeCavnasChild(id) {
-    if (id == 'canvas_id') {
-        return
-    }
-
     let child = canvasStickerOptions.value.children.find(child => child.id == id)
-
     let index = canvasStickerOptions.value.children.indexOf(child)
-
     canvasStickerOptions.value.children.splice(index, 1)
 }
 

@@ -1,29 +1,29 @@
 <template>
-    <el-row :gutter="24" align="middle">
-        <el-col :span="24">
+    <el-collapse v-model="rectCollapseActives">
+        <el-collapse-item name="1" title="矩形属性">
             <operateItemSize label="矩形尺寸" v-model:width="currentOperatingCanvasChild.width"
                 v-model:height="currentOperatingCanvasChild.height">
             </operateItemSize>
-        </el-col>
-        <el-col :span="24">
+
             <operateItemColor label="背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
             </operateItemColor>
-        </el-col>
-        <el-col :span="24">
+
             <operateItemBorderWidth v-model="currentOperatingCanvasChild.borderWidth">
             </operateItemBorderWidth>
-        </el-col>
-        <el-col :span="24">
+
             <operateItemColor label="边框颜色" v-model="currentOperatingCanvasChild.borderColor">
             </operateItemColor>
-        </el-col>
-        <el-col :span="24">
+
             <operateItemRectBorderRadius v-model="currentOperatingCanvasChild.borderRadius">
             </operateItemRectBorderRadius>
-        </el-col>
-    </el-row>
+        </el-collapse-item>
+
+        <el-collapse-item name="2" title="通用属性">
+            <operateItemCommonGroup v-model="currentOperatingCanvasChild"></operateItemCommonGroup>
+        </el-collapse-item>
+    </el-collapse>
 </template>
-    
+
 <script setup lang='ts'>
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 
@@ -75,7 +75,8 @@ import {
     updateRenderingCanvas
 } from "../index.tsx";
 
+const rectCollapseActives = ref(['1','2'])
 
 </script>
-    
+
 <style></style>

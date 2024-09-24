@@ -5,7 +5,7 @@
         </template>
         <template #name> 尺寸缩放 </template>
         <template #content>
-            <el-tooltip content="用于缩放元素" :hide-after="0">
+            <el-tooltip content="用于缩放元素" :hide-after="0" placement="top">
                 <div>
                     <el-popover trigger="click" width="180" popper-class="el-popover-operation">
                         <template #reference>

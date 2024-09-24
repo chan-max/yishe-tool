@@ -10,6 +10,7 @@
                 <el-popover  width="180" trigger="click" popper-class="el-popover-operation">
                     <template #reference>
                         <el-input size="small"  min="0" step="1"
+                            type="number"
                         style="width:80px;"
                             v-model.number="model.horizontal.value">
                             <template #suffix>
@@ -33,6 +34,7 @@
                 <el-popover  width="180" trigger="click" popper-class="el-popover-operation">
                     <template #reference>
                         <el-input size="small"  min="0" step="1"
+                            type="number"
                             style="width:80px;"
                             v-model.number="model.vertical.value">
                             <template #suffix>

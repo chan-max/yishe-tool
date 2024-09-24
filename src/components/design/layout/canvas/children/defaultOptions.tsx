@@ -35,7 +35,7 @@ export const createFilterDefaultOptions = (blurUnit = 'px') => {
 
 
 export const createClipPathDefaultOptions = () => {
-    
+
 }
 
 

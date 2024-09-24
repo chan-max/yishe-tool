@@ -1,7 +1,7 @@
 # <div align="center">衣设网 (1s.design)</div>
 
 <div align="center">
-**开放式服装设计 & 交易平台**
+**开放式贴纸设计工具**
 </div>
 
 ## <div align="center">简介</div>

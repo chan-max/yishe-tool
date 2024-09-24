@@ -1,9 +1,9 @@
 <template>
   <div class="banner flex flex-col items-center">
 
-    <div style="z-index: 3;" class="title animate-gradient-text">开放式设计 & 交易平台
+    <div style="z-index: 3;" class="title animate-gradient-text">开放式贴纸设计工具
     </div>
-    <div style="z-index: 3;" class="subtitle">开放式设计 & 交易平台</div>
+    <div style="z-index: 3;" class="subtitle">开放式贴纸设计工具</div>
     <div class="bar" style="z-index: 999;">
       <el-button size="large" type="primary" round @click="$router.push({ name: 'Design' })" class="font-bold">
         在线工具

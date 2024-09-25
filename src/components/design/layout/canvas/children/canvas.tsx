@@ -8,6 +8,7 @@ import { SvgClipPathComponent } from '@/components/design/layout/canvas/children
 
 import { onBeforeReturnRender, onCanvasChildSetup } from './commonHooks.ts'
 
+
 /*
     用于辅助观察的网格背景
 */
@@ -70,7 +71,7 @@ export const Canvas = defineComponent({
                 value: canvasStickerOptions.value.height,
                 unit: canvasStickerOptions.value.unit
             })
-            
+
             const transformValue = (showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
 
             let pngBackground = createPngBackgroundStyle(transformValue)
@@ -119,7 +120,7 @@ export const Canvas = defineComponent({
                 options: props.options
             })
 
-            return <div style={containerStyle}>
+            return <div id="this_is_canvas_container_id" style={containerStyle} >
                 {/* 转换的元素 */}
                 <div id={currentCanvasControllerInstance.value?.rawId} style={style} ref={targetElRef}>
                     {/* svg过滤器 */}
@@ -131,14 +132,15 @@ export const Canvas = defineComponent({
 
                     {/* 这里把所有的元素放在svg中 */}
                     <svg style="width:100%;height:100%;">
-                    <foreignObject style="width:100%;height:100%;">
-                    {ctx.slots.default()}
-                    </foreignObject>
+                        <foreignObject style="width:100%;height:100%;">
+                            {ctx.slots.default()}
+                        </foreignObject>
                     </svg>
 
                 </div>
                 {/* 真实的画布 */}
                 <canvas id={currentCanvasControllerInstance.value?.canvasId} style={canvasStyle} width={pxWidth} height={pxHeight}></canvas>
+
             </div>
         }
     }

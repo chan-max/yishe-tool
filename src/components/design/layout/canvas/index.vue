@@ -111,18 +111,7 @@
 
     <officialTemplateModal></officialTemplateModal>
 
-
-    <!-- 用于辅助查看的元素层 -->
-    <div v-if="currentHoveringStickerId" :style="{
-        position: 'fixed',
-        zIndex:999,
-        top: currentTargetElRect.top + 'px',
-        left: currentTargetElRect.left + 'px',
-        width: currentTargetElRect.width + 'px',
-        height: currentTargetElRect.height + 'px',
-        background: `rgba(115 , 0, 255, 0.2)`
-    }">
-    </div>
+    <ChildViewHelperComponent></ChildViewHelperComponent>
 </template>
 
 <script setup lang="tsx">
@@ -155,6 +144,10 @@ import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { stickerAutoplacementTags } from '@/components/design/components/tagsInput/index.ts'
 import Utils from '@/common/utils'
 import officialTemplateModal from './officialTemplateModal/index.vue'
+import { currentFocusingStickerId} from '@/components/design/layout/canvas/components/childViewHelper/index'
+import { ChildViewHelperComponent } from '@/components/design/layout/canvas/components/childViewHelper/index'
+
+
 
 const loginStore = useLoginStatusStore()
 
@@ -287,47 +280,15 @@ async function doUpload() {
  * @method 子元素鼠标覆盖事件
 */
 
-// 当前正在覆盖的选择元素
-const currentHoveringStickerId = ref()
 
-const currentTargetElRect = ref({
-    width: 0,
-    height: 0,
-    top: 0,
-    left: 0,
-})
-
-watch(currentHoveringStickerId, (id) => {
-
-    if (!id) {
-        return
-    }
-
-    let targetEl = document.querySelector(`#${id}`)
-
-    if (!targetEl) {
-        return
-    }
-
-    // 为当前元素生成一个遮罩层，替代高亮效果
-
-    const rect = targetEl.getBoundingClientRect();
-
-    currentTargetElRect.value = {
-        width: rect.width,
-        height: rect.height,
-        top: rect.top,
-        left: rect.left,
-    }
-})
 
 function optionMouseenter(item) {
-    currentHoveringStickerId.value = item.id
+    currentFocusingStickerId.value = item.id
 }
 
 function optionMouseleave(item) {
-    if (item.id == currentHoveringStickerId.value) {
-        currentHoveringStickerId.value = null
+    if (item.id == currentFocusingStickerId.value) {
+        currentFocusingStickerId.value = null
     }
 }
 

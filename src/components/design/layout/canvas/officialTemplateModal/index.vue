@@ -1,13 +1,52 @@
 <template>
-    <a-modal v-bind="$attrs" v-model:open="showOfficialTempalteModal" :footer="null" :centered="true" :destroyOnClose="true" width="1080px" title="模版">
-
+    <a-modal v-bind="$attrs" v-model:open="showOfficialTempalteModal" :footer="null" :centered="true" :destroyOnClose="true"
+        style="min-width:1080px;"
+         title="模版">
+        <div style="padding:1rem;">
+            <a-tabs class="off-template-tab" v-model:activeKey="activeOfficialStickerTab" tab-position="left"
+                :style="{ height: '480px' }">
+                <a-tab-pane v-for="item in officialStickerTemplateOptions" :key="item.value" :tab="item.label">
+                    <div style="height:480px;width:100%; overflow:auto;padding:20px;" v-infinite-scroll="getList" :infinite-scroll-distance="150">
+                        <el-row >
+                            <el-col :span="4" v-for="item in list">
+                                <div style="margin:20px;">
+                                    <s1-img :src="item.thumbnail"></s1-img>
+                                </div>
+                            </el-col>
+                        </el-row>
+                    </div>
+                </a-tab-pane>
+            </a-tabs>
+        </div>
     </a-modal>
 </template>
 
 <script setup lang='ts'>
 import { showOfficialTempalteModal } from './index.tsx'
+import { ref } from 'vue'
+import { officialStickerTemplateOptions } from './index.tsx'
+import { getStickerList } from "@/api";
+import { usePaging } from "@/hooks/data/paging.ts";
+const activeOfficialStickerTab = ref()
+
+
+const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPage, currentPage, totalPage, isEmpty } = usePaging(
+    (params) => {
+        return getStickerList({
+            ...params,
+            pageSize: 20,
+            // group:'cloth'
+        });
+    },
+);
 
 
 </script>
 
-<style></style>
+<style  lang="less">
+.off-template-tab {
+    .ant-tabs-tab {
+        padding-right: 20px !important;
+    }
+}
+</style>

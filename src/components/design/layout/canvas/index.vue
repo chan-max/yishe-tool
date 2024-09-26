@@ -94,17 +94,23 @@
         cancelText="取消" @ok="doUpload" :confirmLoading="submitLoading">
         <el-form label-width="72px" :inline-message="false" :show-message="false" label-position="left">
             <el-form-item label="贴纸名称：">
-                <el-input v-model="stickerInfo.name"></el-input>
+                <el-input v-model="editForm.name" placeholder="贴纸名称"></el-input>
             </el-form-item>
             <el-form-item label="贴纸描述:">
-                <el-input type="textarea" v-model="stickerInfo.description"></el-input>
+                <el-input type="textarea" v-model="editForm.description" placeholder="贴纸描述"></el-input>
             </el-form-item>
             <el-form-item label="关键字:">
-                <tagsInput v-model="stickerInfo.keywords" :autocomplete-tags="stickerAutoplacementTags"
+                <tagsInput v-model="editForm.keywords" :autocomplete-tags="stickerAutoplacementTags"
                     :autocomplete-width="400" autocompletePlacement="right"></tagsInput>
             </el-form-item>
+            <el-form-item label="模版分类:">
+                <el-select v-model="editForm.group" clearable>
+                    <el-option v-for="item in officialStickerTemplateOptions" :label="item.label"
+                        :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item label="是否共享:">
-                <a-switch v-model:checked="stickerInfo.isPublic" checked-children="公开" un-checked-children="私密" />
+                <a-switch v-model:checked="editForm.isPublic" checked-children="公开" un-checked-children="私密" />
             </el-form-item>
         </el-form>
     </a-modal>
@@ -144,9 +150,9 @@ import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { stickerAutoplacementTags } from '@/components/design/components/tagsInput/index.ts'
 import Utils from '@/common/utils'
 import officialTemplateModal from './officialTemplateModal/index.vue'
-import { currentFocusingStickerId} from '@/components/design/layout/canvas/components/childViewHelper/index'
+import { currentFocusingStickerId } from '@/components/design/layout/canvas/components/childViewHelper/index'
 import { ChildViewHelperComponent } from '@/components/design/layout/canvas/components/childViewHelper/index'
-
+import { officialStickerTemplateOptions } from "./officialTemplateModal";
 
 
 const loginStore = useLoginStatusStore()
@@ -234,10 +240,11 @@ const showUploadModal = ref(false)
 const submitLoading = ref(false)
 
 
-const stickerInfo = ref({
+const editForm = ref({
     name: '',
     description: '',
     keywords: [],
+    group: '',
     isPublic: false
 })
 
@@ -256,8 +263,8 @@ async function doUpload() {
 
         await Api.createSticker({
             thumbnail: cos.url,
-            ...stickerInfo.value,
-            keywords: stickerInfo.value.keywords.join(','),
+            ...editForm.value,
+            keywords: editForm.value.keywords.join(','),
             type: 'composition',
             meta: {
                 data: canvasStickerOptions.value

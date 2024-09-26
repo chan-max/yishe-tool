@@ -63,16 +63,27 @@
         </s1-empty>
     </div>
 
-
-
-
     <a-modal v-model:open="showFormModal" :centered="true" :destroyOnClose="true" width="540px" title="更新信息" okText="修改"
         cancelText="取消" @ok="ok" :confirmLoading="submitLoading">
-        <el-form style="padding:24px 12px;">
-            <el-form-item> <el-input v-model="editForm.name"></el-input></el-form-item>
-            <el-form-item> <el-input v-model="editForm.description"></el-input></el-form-item>
-            <el-form-item>
-                <tagsInput v-model="editForm.keywords" :string="true"> </tagsInput>
+        <el-form label-width="72px" :inline-message="false" :show-message="false" label-position="left">
+            <el-form-item label="贴纸名称：">
+                <el-input v-model="editForm.name" placeholder="贴纸名称"></el-input>
+            </el-form-item>
+            <el-form-item label="贴纸描述:">
+                <el-input type="textarea" v-model="editForm.description" placeholder="贴纸描述"></el-input>
+            </el-form-item>
+            <el-form-item label="关键字:">
+                <tagsInput v-model="editForm.keywords" :autocomplete-tags="stickerAutoplacementTags"
+                    :autocomplete-width="400" autocompletePlacement="right"></tagsInput>
+            </el-form-item>
+            <el-form-item label="模版分类:">
+                <el-select v-model="editForm.group" clearable>
+                    <el-option v-for="item in officialStickerTemplateOptions" :label="item.label"
+                        :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="是否共享:">
+                <a-switch v-model:checked="editForm.isPublic" checked-children="公开" un-checked-children="私密" />
             </el-form-item>
         </el-form>
     </a-modal>
@@ -92,7 +103,7 @@ import {
 } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
-
+import { stickerAutoplacementTags } from '@/components/design/components/tagsInput/index.ts'
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import scrollbar from "@/components/scrollbar/index.vue";
 
@@ -106,6 +117,9 @@ import Api from '@/api'
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { useStickerDetailModal } from './stickerModal.ts'
 import { useLoginStatusStore } from "@/store/stores/login";
+import { officialStickerTemplateOptions } from "../../canvas/officialTemplateModal";
+
+
 const loginStore = useLoginStatusStore()
 
 
@@ -167,8 +181,13 @@ async function ok() {
     let res = await Api.updateSticker(editForm.value)
     message.success('修改成功')
     submitLoading.value = false
-    let ind = list.value.indexOf(currentItem.value,)
-    list.value[ind] = res
+    let ind = list.value.indexOf(currentItem.value)
+
+    // 这里可以保存关联的信息
+    list.value[ind] = {
+        ...currentItem.value,
+        ...res
+    }
 }
 
 

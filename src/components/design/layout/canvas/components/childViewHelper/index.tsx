@@ -29,6 +29,10 @@ watch(currentFocusingStickerId, (id) => {
 
     // 为当前元素生成一个遮罩层，替代高亮效果
 
+    /**
+     * @todo 这块可能会根据画布元素的宽高，对其进行裁剪，保证不会超出画布范围
+    */
+
     const rect = targetEl.getBoundingClientRect();
 
     currentTargetElRect.value = {
@@ -41,7 +45,7 @@ watch(currentFocusingStickerId, (id) => {
 
 
 export const ChildViewHelperComponent = () => {
-    return currentFocusingStickerId ? <div style={{
+    return currentFocusingStickerId.value ? <div style={{
         position: 'fixed',
         zIndex: 999,
         top: currentTargetElRect.value.top + 'px',

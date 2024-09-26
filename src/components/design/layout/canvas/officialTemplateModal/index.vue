@@ -6,6 +6,7 @@
             <a-tabs class="off-template-tab" v-model:activeKey="activeOfficialStickerTab" tab-position="left"
                 :style="{ height: '480px' }">
                 <a-tab-pane v-for="item in officialStickerTemplateOptions" :key="item.value" :tab="item.label">
+
                     <div style="height:480px;width:100%; overflow:auto;padding:20px;" v-infinite-scroll="getList" :infinite-scroll-distance="150">
                         <el-row >
                             <el-col :span="4" v-for="item in list">
@@ -47,6 +48,11 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPa
 .off-template-tab {
     .ant-tabs-tab {
         padding-right: 20px !important;
+    }
+
+    .ant-tabs-tab-btn{
+        width: 100%;
+        text-align: right;
     }
 }
 </style>

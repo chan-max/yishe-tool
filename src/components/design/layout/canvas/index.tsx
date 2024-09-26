@@ -257,9 +257,9 @@ export class CanvasController {
     }
 
 
-    canvasId = 'canvas-display-el'
+    canvasId = 'canvas-render-helper-el'
 
-    rawId = 'canvas-raw-el'
+    rawId = 'this_is_canvas_id'
 
     get el() {
         return document.querySelector('#' + this.rawId) as any
@@ -296,23 +296,21 @@ export class CanvasController {
     debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this), 999)
 
     async updateRenderingCanvasJob() {
+
+
         if (!this.el) {
             return
         }
 
         async function update() {
-
             try {
                 // this.base64 = await toPng(this.el)
 
-                let _canvas = await toCanvas(this.el, {
-                    // 参数不生效
-                })
-
-                document.body.appendChild(_canvas)
+                let _canvas = await toCanvas(this.el, {})
 
                 this.base64 = _canvas.toDataURL('image/png')
 
+            
                 let width = Number(formatSizeOptionToPixelValue(canvasStickerOptions.value.width))
                 let height = Number(formatSizeOptionToPixelValue(canvasStickerOptions.value.height))
 
@@ -324,14 +322,12 @@ export class CanvasController {
 
                 this.ctx.drawImage(_canvas, 0, 0, _canvas.width, _canvas.height, 0, 0, width, height);
 
+                this.loading.value = false
+                renderingLoading.value = false
+    
             } catch (e) {
                 throw Error('元素转换失败', e.message)
             }
-
-
-
-            this.loading.value = false
-            renderingLoading.value = false
 
             if (!showMainCanvas.value) {
                 await Utils.sleep(99)

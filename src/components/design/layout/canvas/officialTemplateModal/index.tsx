@@ -47,7 +47,11 @@ export const officialStickerTemplateOptions = [
     },
     {
         label: '店铺牌匾',
-        value:'special'
+        value:'shopSign'
     },
+    {
+        label:'对联',
+        value:'SpringCouplets'
+    }
 ]
 

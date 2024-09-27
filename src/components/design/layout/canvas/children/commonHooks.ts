@@ -76,6 +76,11 @@ export function onCanvasChildSetup(payload) {
 function processCalcComputedSize(payload) {
     const { targetEl, options, props } = payload
     function setTargetSize() {
+
+        if(!targetEl.value){
+            return
+        }
+
         props.options.targetComputedWidth = Utils.getComputedWidth(targetEl.value)
         props.options.targetComputedHeight = Utils.getComputedHeight(targetEl.value)
     }

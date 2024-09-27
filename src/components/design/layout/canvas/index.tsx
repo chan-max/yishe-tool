@@ -159,6 +159,16 @@ defineCanvasChild({
     operationLayout: rectLayout
 })
 
+defineCanvasChild({
+    typeName: 'qrcode',
+    typeKey: 'qrcode',
+    label: '二维码',
+    defaultOptionsCreator: createDefaultCanvasChildQrcodeOptions,
+    renderer: createCanvasChildQrcode,
+    operationLayout: qrcodeLayout
+})
+
+
 /*
     是否展示主画布
 */

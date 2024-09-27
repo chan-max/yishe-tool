@@ -29,6 +29,7 @@
                                     <el-popover placement="right" width="200" trigger="click" :teleported="false" popper-class="el-popover-operation">
                                         <template #reference>
                                             <el-input size="small"  min="0" step="1"
+                                                type="number"
                                                 style="width:80px;height:24px;" v-model.number="model[item.type].value">
                                                 <template #suffix>
                                                     <div style="font-size:1rem;"> {{ model[item.type].unit }}

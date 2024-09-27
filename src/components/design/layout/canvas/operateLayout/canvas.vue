@@ -5,14 +5,13 @@
         v-model:height="canvasStickerOptions.height">
       </operateItemAbsoluteSize>
 
-
       <!-- 不再支持画布单位选择，默认全部使用px -->
       
       <!-- <operateItemAbsoluteUnitSelect @change="absoluteUnitChange" label="画布尺寸单位" v-model="canvasStickerOptions.unit">
       </operateItemAbsoluteUnitSelect> -->
 
       <operateItemSwitch label="在主画布中显示" v-model="showMainCanvas"></operateItemSwitch>
-
+      
       <operateAspectRatio @change="aspectRatioChange"></operateAspectRatio>
 
       <!-- <operateItemSwitch label="显示真实大小" v-model="canvasStickerOptions.showCanvasRealSize"></operateItemSwitch> -->

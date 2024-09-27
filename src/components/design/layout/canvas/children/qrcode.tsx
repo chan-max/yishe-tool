@@ -5,18 +5,20 @@ import { canvasStickerOptions, updateRenderingCanvas } from '../index.tsx'
 import { getPositionInfoFromOptions, formatToNativeSizeString, formatSizeOptionToPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
 
-import { createPositionDefaultOptions } from './defaultOptions.tsx';
+import { createPositionDefaultOptions ,createBasicDefaultOptions,} from './defaultOptions.tsx';
 
 import { parse } from 'gradient-parser'
+import { onCanvasChildSetup,onBeforeReturnRender } from './commonHooks.ts';
 
 import Utils from '@/common/utils'
+
 
 export const createDefaultCanvasChildQrcodeOptions = () => {
 
     const canvasUnit = canvasStickerOptions.value.unit
 
     return {
-        type: 'qrcode',
+        // 支持渐变色和普通颜色
         qrCodeColor: {
             color: '#6900ff',
             type: 'pure'
@@ -81,7 +83,8 @@ export const createDefaultCanvasChildQrcodeOptions = () => {
                 value: 0,
                 unit: canvasUnit,
             }
-        }
+        },
+        ...createBasicDefaultOptions()
     }
 }
 
@@ -120,7 +123,6 @@ function formatToQrcodeGradient(color) {
 
 
 async function createQrcodeUrl(options) {
-
 
     const qrCodeOptions = {
         width: formatSizeOptionToPixelValue(options.width),
@@ -172,15 +174,14 @@ export const Qrcode = defineComponent({
         const qrcodeUrl = ref()
 
 
-        const targetEl = ref()
+        const targetElRef = ref()
 
-        function setTargetSize() {
-            props.options.targetComputedWidth = Utils.getComputedWidth(targetEl.value)
-            props.options.targetComputedHeight = Utils.getComputedHeight(targetEl.value)
-        }
 
-        onUpdated(setTargetSize)
-        onMounted(setTargetSize)
+        onCanvasChildSetup({
+            targetEl: targetElRef,
+            options: props.options,
+            props: props
+        })
 
 
         watchEffect(() => {
@@ -227,8 +228,16 @@ export const Qrcode = defineComponent({
                 ..._style,
             }
 
+
+            onBeforeReturnRender({
+                style,
+                options: props.options
+            })
+
+
+
             return <div style={containerStyle}>
-                {qrcodeUrl.value ? <img ref={targetEl} onLoad={updateRenderingCanvas} style={style} src={qrcodeUrl.value}></img> : null}
+                {qrcodeUrl.value ? <img ref={targetElRef} onLoad={updateRenderingCanvas} style={style} src={qrcodeUrl.value}></img> : null}
             </div>
         }
     }

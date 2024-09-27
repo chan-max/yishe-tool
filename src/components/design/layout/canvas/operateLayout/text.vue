@@ -1,56 +1,41 @@
 <template>
     <el-collapse v-model="textCollapseActives">
         <el-collapse-item name="1" title="文字属性">
-            <el-row align="middle">
-                <el-col :span="24">
-                    <operateItemTextContent v-model="currentOperatingCanvasChild.textContent">
-                    </operateItemTextContent>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemSwitch label="使用繁体字" v-model="currentOperatingCanvasChild.isTraditionalChinese">
-                    </operateItemSwitch>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemFontSize v-model="currentOperatingCanvasChild.fontSize">
-                    </operateItemFontSize>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemFontItalic v-model="currentOperatingCanvasChild.italic"></operateItemFontItalic>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemFontColor v-model="currentOperatingCanvasChild.fontColor">
-                    </operateItemFontColor>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemLineHeight v-model="currentOperatingCanvasChild.lineHeight">
-                    </operateItemLineHeight>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemLetterSpacing v-model="currentOperatingCanvasChild.letterSpacing">
-                    </operateItemLetterSpacing>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemFontFamily v-model="currentOperatingCanvasChild.fontFamilyInfo" @font-load="fontLoad">
-                    </operateItemFontFamily>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemFontWeight v-model="currentOperatingCanvasChild.fontWeight">
-                    </operateItemFontWeight>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemTextShadow v-model="currentOperatingCanvasChild.textShadow">
-                    </operateItemTextShadow>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemWritingMode v-model="currentOperatingCanvasChild.writingMode">
-                    </operateItemWritingMode>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemTextStroke v-model:width="currentOperatingCanvasChild.textStrokeWidth"
-                        v-model:color="currentOperatingCanvasChild.textStrokeColor">
-                    </operateItemTextStroke>
-                </el-col>
-            </el-row>
+            <operateItemTextContent v-model="currentOperatingCanvasChild.textContent">
+            </operateItemTextContent>
+
+            <operateItemSwitch label="使用繁体字" v-model="currentOperatingCanvasChild.isTraditionalChinese">
+            </operateItemSwitch>
+
+            <operateItemFontSize v-model="currentOperatingCanvasChild.fontSize">
+            </operateItemFontSize>
+
+            <operateItemFontItalic v-model="currentOperatingCanvasChild.italic"></operateItemFontItalic>
+
+            <operateItemFontColor v-model="currentOperatingCanvasChild.fontColor">
+            </operateItemFontColor>
+
+            <operateItemLineHeight v-model="currentOperatingCanvasChild.lineHeight">
+            </operateItemLineHeight>
+
+            <operateItemLetterSpacing v-model="currentOperatingCanvasChild.letterSpacing">
+            </operateItemLetterSpacing>
+
+            <operateItemFontFamily v-model="currentOperatingCanvasChild.fontFamilyInfo" @font-load="fontLoad">
+            </operateItemFontFamily>
+
+            <operateItemFontWeight v-model="currentOperatingCanvasChild.fontWeight">
+            </operateItemFontWeight>
+
+            <operateItemTextShadow v-model="currentOperatingCanvasChild.textShadow">
+            </operateItemTextShadow>
+
+            <operateItemWritingMode v-model="currentOperatingCanvasChild.writingMode">
+            </operateItemWritingMode>
+
+            <operateItemTextStroke v-model:width="currentOperatingCanvasChild.textStrokeWidth"
+                v-model:color="currentOperatingCanvasChild.textStrokeColor">
+            </operateItemTextStroke>
         </el-collapse-item>
 
         <el-collapse-item name="2" title="通用属性">
@@ -63,27 +48,20 @@
             <template #title>
                 <div class="title">环形文字</div>
             </template>
-            <el-row :gutter="24" align="middle">
-                <el-col :span="24">
-                    <operateItemSwitch label="使用圆形文字" v-model="currentOperatingCanvasChild.isRoundText">
-                    </operateItemSwitch>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemEllipseTextRadius
-                        v-model:horizontal="currentOperatingCanvasChild.roundTextHorizontalRadius"
-                        v-model:vertical="currentOperatingCanvasChild.roundTextVerticalRadius">
-                    </operateItemEllipseTextRadius>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemRoundTextStartDeg v-model="currentOperatingCanvasChild.roundTextStartDeg">
-                    </operateItemRoundTextStartDeg>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemSwitch label="是否使用逆时针排列" v-model="currentOperatingCanvasChild.isCounterclockwise">
-                    </operateItemSwitch>
-                </el-col>
-            </el-row>
-        </el-collapse-item>
+
+            <operateItemSwitch label="使用圆形文字" v-model="currentOperatingCanvasChild.isRoundText">
+            </operateItemSwitch>
+
+            <operateItemEllipseTextRadius v-model:horizontal="currentOperatingCanvasChild.roundTextHorizontalRadius"
+                v-model:vertical="currentOperatingCanvasChild.roundTextVerticalRadius">
+            </operateItemEllipseTextRadius>
+
+            <operateItemRoundTextStartDeg v-model="currentOperatingCanvasChild.roundTextStartDeg">
+            </operateItemRoundTextStartDeg>
+
+            <operateItemSwitch label="是否使用逆时针排列" v-model="currentOperatingCanvasChild.isCounterclockwise">
+            </operateItemSwitch>
+        </el-collapse-item> 
         <el-collapse-item name="5">
             <template #title>
                 <div class="title">滤镜效果</div>

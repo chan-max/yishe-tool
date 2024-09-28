@@ -55,6 +55,9 @@ export const createDefaultCanvasChildTextOptions = () => {
         roundTextStartDeg: 0,
         isCounterclockwise: false, // 文字是否指向圆心，默认为否
         isPointingToCenter:true, // 是否指向圆心
+        isReverseLetter:false, // 是否将文字旋转180度 ， 可以用于凹凸文字
+
+
         textStrokeWidth: {
             unit: canvasUnit,
             value: 0,
@@ -367,6 +370,11 @@ async function createRoundText(container, innerContainer, options, textContentCe
             item.x = pos.x
             item.y = pos.y
             item.deg = pos.deg
+
+            // 将文字旋转180度
+            if(options.isReverseLetter){
+                item.deg += 180
+            }
 
             if (isCircle) {
                 // 圆

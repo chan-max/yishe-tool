@@ -68,6 +68,10 @@
             <operateItemSwitch label="是否指向圆心" v-model="currentOperatingCanvasChild.isPointingToCenter">
             </operateItemSwitch>
 
+            <operateItemSwitch label="反向文字" v-model="currentOperatingCanvasChild.isReverseLetter">
+            </operateItemSwitch>
+
+
         </el-collapse-item> 
         <el-collapse-item name="5">
             <template #title>

@@ -20,33 +20,42 @@
                 上传
             </el-button>
 
-            <el-dropdown>
-                <el-button link plain>
-                    <LinkOutlined style="font-size:1.2em;margin-right:4px;" />
-                    导出 PNG
-                </el-button>
-                <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item @click="exportPng"> 导出原始图 </el-dropdown-item>
-                        <el-dropdown-item @click="exportTrimmedPng"> 自动去除空白边框 </el-dropdown-item>
-                    </el-dropdown-menu>
+            <a-dropdown arrow placement="bottom">
+                <div>
+                    <el-button link plain>
+                        <LinkOutlined style="font-size:1.2em;margin-right:4px;" />
+                        导出 PNG
+                    </el-button>
+                </div>
+                <template #overlay>
+                    <a-menu>
+                        <a-menu-item @click="exportPng">
+                            导出原始图
+                        </a-menu-item>
+                        <a-menu-item @click="exportTrimmedPng">
+                            自动去除空白边框
+                        </a-menu-item>
+                    </a-menu>
                 </template>
-            </el-dropdown>
+            </a-dropdown>
 
-            <el-dropdown>
-                <el-button link plain>
-                    更多
-                </el-button>
-                <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item @click="removeAllChildren"> 移除所有子元素 </el-dropdown-item>
-                    </el-dropdown-menu>
-                    <el-dropdown-menu>
-                        <el-dropdown-item @click="consoleStikcerOptions"> 在控制台打印贴纸信息 </el-dropdown-item>
-                    </el-dropdown-menu>
+            <a-dropdown arrow placement="bottom">
+                <div>
+                    <el-button link plain>
+                        更多
+                    </el-button>
+                </div>
+                <template #overlay>
+                    <a-menu>
+                        <a-menu-item @click="removeAllChildren">
+                            移除所有子元素
+                        </a-menu-item>
+                        <a-menu-item @click="consoleStikcerOptions">
+                            在控制台打印贴纸信息
+                        </a-menu-item>
+                    </a-menu>
                 </template>
-            </el-dropdown>
-
+            </a-dropdown>
 
             <div style="flex:1;"></div>
             <div>
@@ -209,6 +218,7 @@ function remove(id) {
 
 
 function removeAllChildren() {
+    // 除了画布，其他全移除
     canvasStickerOptions.value.children = [canvasStickerOptions.value.children[0]]
 }
 

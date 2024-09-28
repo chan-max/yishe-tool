@@ -10,7 +10,7 @@ export async function imgToBase64(img) {
     canvas.width = img.naturalWidth;
     // canvas.height = img.height;
     // canvas.width = img.width;
-    
+
     ctx.drawImage(img, 0, 0);
     var base64 = canvas.toDataURL('image/png')
 
@@ -149,7 +149,7 @@ export const svgStringToUrl = (svg: string) => {
     return `data:image/svg+xml;,${encodedSvg}`;
 }
 
-import {transformSvgPathToPngDataUrl} from './svgPathToPng'
+import { transformSvgPathToPngDataUrl } from './svgPathToPng'
 
 class Transform {
     imgToBase64 = imgToBase64

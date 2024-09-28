@@ -61,6 +61,13 @@
 
             <operateItemSwitch label="是否使用逆时针排列" v-model="currentOperatingCanvasChild.isCounterclockwise">
             </operateItemSwitch>
+
+            <operateItemSwitch label="多行时文字是否向外扩张" v-model="currentOperatingCanvasChild.isMultipleLineOutExpand">
+            </operateItemSwitch>
+
+            <operateItemSwitch label="是否指向圆心" v-model="currentOperatingCanvasChild.isPointingToCenter">
+            </operateItemSwitch>
+
         </el-collapse-item> 
         <el-collapse-item name="5">
             <template #title>

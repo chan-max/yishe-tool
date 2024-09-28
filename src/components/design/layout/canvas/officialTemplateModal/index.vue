@@ -11,7 +11,7 @@
                         <el-row>
                             <el-col :span="4" v-for="item in list">
                                 <div style="margin:20px;">
-                                    <s1-img :src="item.thumbnail"></s1-img>
+                                    <s1-img :src="item.thumbnail" style="width:100px;height:100px;"></s1-img>
                                 </div>
                             </el-col>
                         </el-row>

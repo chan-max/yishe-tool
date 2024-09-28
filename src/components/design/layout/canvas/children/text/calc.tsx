@@ -15,15 +15,55 @@ export function getEllipsePos(a, b, angle) {
 }
 
 
+/**
+ * @method 计算椭圆切线的角度值
+*/
+function calculateTangentAngle(a, b, x1, y1) {
+    // 计算切线斜率
+    let k = - (b * b * x1) / (a * a * y1);
+
+    // 法线的斜率
+    let k_normal = (a * a * y1) / (b * b * x1);
+
+    // 使用 Math.atan2 计算法线角度（弧度）
+    let angleNormal = Math.atan2(k_normal, 1); // k_normal 是 y 的变化量，1 是 x 的变化量
+
+    // 将弧度转换为度，并调整为从 y 轴开始的顺时针角度
+
+    let angleFromYAxis = (90 - angleNormal * (180 / Math.PI) + 360) % 360;
+
+
+    if (x1 < 0) {
+        angleFromYAxis += 180
+    }
+
+    return angleFromYAxis; // 返回法线角度值
+}
+
+/**
+ * @method 计算椭圆上点的角度值
+*/
+
+function calculatePositionAngle(a, b, x1, y1) {
+    // 计算从椭圆中心到点的角度（弧度）
+    let angleFromCenter = Math.atan2(y1, x1);
+
+    // 将角度转换为度数，并调整为从y轴正方向开始的顺时针角度
+    let rotationAngle = (90 - angleFromCenter * 180 / Math.PI + 360) % 360;
+    return rotationAngle
+}
+
+
 /*
  椭圆弧长计算太过复杂，使用直线距离代替
 */
-export function findEllipseDistancePoint(a, b, x1, y1, d, isClockwise = true) {
+export function findEllipseDistancePoint(a, b, x1, y1, d, isClockwise = true, isPointingToCenter = false) {
     // 计算椭圆上给定点的参数 t
     let t = Math.atan2(y1 / b, x1 / a);
     if (t < 0) t += 2 * Math.PI;  // 确保 t 在 [0, 2π) 范围内
 
     const direction = isClockwise ? -1 : 1;
+
     const steps = 100;  // 迭代步数
     const stepSize = d / steps;
 
@@ -50,18 +90,20 @@ export function findEllipseDistancePoint(a, b, x1, y1, d, isClockwise = true) {
         if (t < 0) t += 2 * Math.PI;
     }
 
-    // 计算最终点的坐标
+    // 计算最终点的坐标 , 新点的位置
     const x2 = a * Math.cos(t);
     const y2 = b * Math.sin(t);
 
-    // 计算从椭圆中心到点的角度（弧度）
-    let angleFromCenter = Math.atan2(y2, x2);
 
-    // 将角度转换为度数，并调整为从y轴正方向开始的顺时针角度
-    let rotationAngle = (90 - angleFromCenter * 180 / Math.PI + 360) % 360;
+    let angleFromCutAngle = calculateTangentAngle(a, b, x2, y2);
+
+    let angleFromPosition = calculatePositionAngle(a, b, x2, y2);
+
+
+
 
     // 计算文字的旋转角度，使底部指向椭圆中心
-    let textRotation = rotationAngle;
+    let textRotation = isPointingToCenter ? angleFromPosition : angleFromCutAngle
 
     return { x: x2, y: y2, deg: textRotation };
 }

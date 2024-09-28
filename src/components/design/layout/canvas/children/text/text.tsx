@@ -8,7 +8,7 @@ import { createFilterDefaultOptions, createTransformDefaultOptions, createPositi
 import { fetchFontFaceWithMessage } from '@/components/design/layout/canvas/operate/fontFamily/index.ts'
 import Utils from "@/common/utils.ts";
 import { defineCanvasChild } from "../define.tsx";
-import { onCanvasChildSetup,onBeforeReturnRender } from "../commonHooks.ts";
+import { onCanvasChildSetup, onBeforeReturnRender } from "../commonHooks.ts";
 
 export interface TextCanvasChildOptions {
     center: boolean | null | undefined
@@ -43,6 +43,7 @@ export const createDefaultCanvasChildTextOptions = () => {
         textContent: '富与贵，人之所欲也；不以其道得之，不处也',
         writingMode: 'htb',
         isRoundText: false,
+        isMultipleLineOutExpand: false, // 当开启圆形文字并且多行时，是否想向部扩张
         roundTextHorizontalRadius: {
             unit: canvasUnit,
             value: 100,
@@ -53,7 +54,7 @@ export const createDefaultCanvasChildTextOptions = () => {
         },
         roundTextStartDeg: 0,
         isCounterclockwise: false, // 文字是否指向圆心，默认为否
-
+        isPointingToCenter:true, // 是否指向圆心
         textStrokeWidth: {
             unit: canvasUnit,
             value: 0,
@@ -93,7 +94,9 @@ export const Text = defineComponent({
         })
 
 
-        // 用来包裹文字单元块 ， 需要相对布局
+        // 用来包裹文字单元块
+
+        const roundTextContainer = ref()
         const roundTextInnerContainerRef = ref()
 
         // 文字单元格
@@ -104,13 +107,14 @@ export const Text = defineComponent({
 
         watchEffect(() => {
             let el = roundTextInnerContainerRef.value
+            let container = roundTextContainer.value
 
-            if (!el) {
+            if (!el || !container) {
                 return
             }
 
             if (props.options.isRoundText) {
-                createRoundText(el, props.options, textContentCells.value)
+                createRoundText(container, el, props.options, textContentCells.value)
             }
         })
 
@@ -168,7 +172,14 @@ export const Text = defineComponent({
                 }
             }
 
-
+            const textContainerStyle = {
+                background: 'inherit',
+                color: 'inherit',
+                backgroundClip: 'inherit',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }
 
             const innerStyle = {
                 background: 'inherit',
@@ -210,13 +221,15 @@ export const Text = defineComponent({
             })
 
 
-            let roundNode = <div ref={roundTextInnerContainerRef} style={innerStyle}>
-                {textContentCells.value.map((row, rowIndex) => {
-                    const cells = row.map((cell, columnIndex) => {
-                        return <div id={`row-${rowIndex}-col-${columnIndex}`} data-rowIndex={rowIndex} data-columnIndex={columnIndex} style={{ ...cellStyle, ...cell.style }}>{cell.content}</div>
-                    })
-                    return <div style={rowStyle}> {cells} </div>
-                })}
+            let roundNode = <div ref={roundTextContainer} style={textContainerStyle}>
+                <div ref={roundTextInnerContainerRef} style={innerStyle}>
+                    {textContentCells.value.map((row, rowIndex) => {
+                        const cells = row.map((cell, columnIndex) => {
+                            return <div id={`row-${rowIndex}-col-${columnIndex}`} data-rowIndex={rowIndex} data-columnIndex={columnIndex} style={{ ...cellStyle, ...cell.style }}>{cell.content}</div>
+                        })
+                        return <div style={rowStyle}> {cells} </div>
+                    })}
+                </div>
             </div>
 
 
@@ -242,23 +255,29 @@ export const Text = defineComponent({
     起始位置的角度
         - 自适应对称
         - 正上方开始    
-    换行文字已最外行为基准
+    换行文字已最外行为基准 
 */
 
 
-async function createRoundText(innerContainer, options, textContentCells) {
+async function createRoundText(container, innerContainer, options, textContentCells) {
 
-    // innerContainer.style.width = '0px'
-    // innerContainer.style.height = '0px'
     innerContainer.style.position = 'relative'
 
+    // 文字起始角度
     let startDeg = options.roundTextStartDeg
+
     let isCounterclockwise = options.isCounterclockwise
 
+    let isPointingToCenter = options.isPointingToCenter
 
+    // 水平半径
     const horizontalRadius = formatSizeOptionToPixelValue(options.roundTextHorizontalRadius)
+
+    // 垂直半径
     const verticalRadius = formatSizeOptionToPixelValue(options.roundTextVerticalRadius)
 
+    container.style.width = horizontalRadius * 2 + 'px'
+    container.style.height = verticalRadius * 2 + 'px'
 
     let lineHeightPixelValue = formatSizeOptionToPixelValue({
         value: options.lineHeight * options.fontSize.value,
@@ -273,7 +292,6 @@ async function createRoundText(innerContainer, options, textContentCells) {
     let isCircle = horizontalRadius == verticalRadius
 
     // 元素插入页面后再计算真实宽度
-
     textContentCells.forEach((row, rowIndex) => {
         row.forEach((item, columnIndex) => {
             let el = innerContainer.querySelector(`#row-${rowIndex}-col-${columnIndex}`)
@@ -287,6 +305,8 @@ async function createRoundText(innerContainer, options, textContentCells) {
             let height = Utils.getComputedHeight(item.el)
             item.width = width
             item.height = height
+
+            // 元素自己的宽度
             item.rawWidth = width - letterSpacingPixelValue
             /*
               该宽高是包括行高和字间距的
@@ -299,20 +319,35 @@ async function createRoundText(innerContainer, options, textContentCells) {
 
         let rows = textContentCells.length
 
-        // 外侧最小可能的周长
-        const outerMinCircumference = row.reduce((a, b) => {
-            return a + b.width + letterSpacingPixelValue
-        }, 0)
-
-        // 最小允许的半径
-        // minRadius = outerMinCircumference / (2 * Math.PI)
-
         // 弧形的起始坐标
         let startPosition = isCircle ? getRoundPos(horizontalRadius, startDeg) : getEllipsePos(horizontalRadius, verticalRadius, startDeg)
 
+    
+        // 水平和垂直半径 
+        /**
+         *  多行文字时，考虑是向内扩张还是向外扩张
+        */
 
-        const hr = horizontalRadius + (rows - rowIndex) * lineHeightPixelValue
-        const vr = verticalRadius + (rows - rowIndex) * lineHeightPixelValue
+        // 多行文字时向外扩张
+
+        let hr, vr
+
+
+        // 多行时，是否向外扩张
+        if (options.isMultipleLineOutExpand) {
+            hr = horizontalRadius + (rows - rowIndex - 1) * lineHeightPixelValue
+            vr = verticalRadius + (rows - rowIndex - 1) * lineHeightPixelValue
+        } else {
+            hr = horizontalRadius - rowIndex * lineHeightPixelValue
+            vr = verticalRadius - rowIndex * lineHeightPixelValue
+        }
+
+
+        // 文字平均宽
+        let averageWidth = row.reduce((x, y) => {
+            return x + y.width
+        }, 0) / row.length
+
 
         row.forEach((item, index) => {
 
@@ -327,7 +362,7 @@ async function createRoundText(innerContainer, options, textContentCells) {
 
             let pos = isCircle
                 ? findRoundDistancePoint(hr, startPosition.x, startPosition.y, distance, !isCounterclockwise)
-                : findEllipseDistancePoint(hr, vr, startPosition.x, startPosition.y, distance, !isCounterclockwise)
+                : findEllipseDistancePoint(hr, vr, startPosition.x, startPosition.y, distance, !isCounterclockwise ,isPointingToCenter )
 
             item.x = pos.x
             item.y = pos.y
@@ -335,13 +370,16 @@ async function createRoundText(innerContainer, options, textContentCells) {
 
             if (isCircle) {
                 // 圆
-                item.el.style.left = (item.x - (letterSpacingPixelValue) / 2) + 'px'
+                // 这里需要计算一下平均宽度
+                item.el.style.left = (item.x - averageWidth / 2) + 'px'
+
+                // 行高
                 item.el.style.bottom = (item.y - lineHeightPixelValue / 2) + 'px'
                 item.el.style.transform = `rotate(${item.deg}deg)`
             } else {
                 // 椭圆
-                item.el.style.left = (item.x) + 'px'
-                item.el.style.bottom = (item.y) + 'px'
+                item.el.style.left = (item.x - averageWidth / 2) + 'px'
+                item.el.style.bottom = (item.y - lineHeightPixelValue / 2) + 'px'
                 item.el.style.transform = `rotate(${item.deg}deg)`
             }
         })

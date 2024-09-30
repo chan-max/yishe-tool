@@ -7,7 +7,7 @@
                 <a-tab-pane v-for="item in officialStickerTemplateOptions" :key="item.value" :tab="item.label">
                     <div style="height:480px;width:100%; overflow:auto;padding:20px;" v-infinite-scroll="getList"
                         :infinite-scroll-distance="150">
-
+                        
                         <el-row>
                             <el-col :span="4" v-for="item in list">
                                 <div style="margin:20px;">

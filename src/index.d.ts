@@ -14,6 +14,10 @@ interface Window {
     utils: any
 }
 
-declare enum Typess {
-    a = 666
+
+
+
+declare module '*.svg' {
+    const content: any;
+    export default content;
 }

@@ -1,42 +1,45 @@
 <template>
-    <el-collapse v-model="imageCollapseActives">
-        <el-collapse-item name="1" title="基础属性">
-            <template #title>
-                <div class="title">基础属性</div>
-            </template>
-            <el-row :gutter="24" align="middle">
-                <el-col :span="24">
-                    <operateItemImageSelect v-model="currentOperatingCanvasChild.imageInfo">
-                    </operateItemImageSelect>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemSize label="背景尺寸" v-model:width="currentOperatingCanvasChild.width"
-                        v-model:height="currentOperatingCanvasChild.height">
-                    </operateItemSize>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemObjectFit v-model="currentOperatingCanvasChild.objectFit">
-                    </operateItemObjectFit>
-                </el-col>
-            </el-row>
-        </el-collapse-item>
+  <el-collapse v-model="imageCollapseActives">
+    <el-collapse-item name="1" title="基础属性">
+      <template #title>
+        <div class="title">基础属性</div>
+      </template>
+      <operateItemImageSelect v-model="currentOperatingCanvasChild.imageInfo">
+      </operateItemImageSelect>
 
-        <el-collapse-item name="2" title="通用属性">
-            <operateItemCommonGroup v-model="currentOperatingCanvasChild"></operateItemCommonGroup>
-        </el-collapse-item>
+      <operateItemSize
+        label="背景尺寸"
+        v-model:width="currentOperatingCanvasChild.width"
+        v-model:height="currentOperatingCanvasChild.height"
+      >
+      </operateItemSize>
 
-        <el-collapse-item name="4">
-            <template #title>
-                <div class="title">滤镜效果</div>
-            </template>
-            <operateItemFilterGroup v-model="currentOperatingCanvasChild.filter"></operateItemFilterGroup>
-        </el-collapse-item>
+      <operateItemObjectFit v-model="currentOperatingCanvasChild.objectFit">
+      </operateItemObjectFit>
+    </el-collapse-item>
 
-        <operateItemClipPath v-model="currentOperatingCanvasChild.clipPath"></operateItemClipPath>
-    </el-collapse>
+    <el-collapse-item name="2" title="通用属性">
+      <operateItemCommonGroup
+        v-model="currentOperatingCanvasChild"
+      ></operateItemCommonGroup>
+    </el-collapse-item>
+
+    <el-collapse-item name="4">
+      <template #title>
+        <div class="title">滤镜效果</div>
+      </template>
+      <operateItemFilterGroup
+        v-model="currentOperatingCanvasChild.filter"
+      ></operateItemFilterGroup>
+    </el-collapse-item>
+
+    <operateItemClipPath
+      v-model="currentOperatingCanvasChild.clipPath"
+    ></operateItemClipPath>
+  </el-collapse>
 </template>
-    
-<script setup lang='ts'>
+
+<script setup lang="ts">
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 
 import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
@@ -69,29 +72,32 @@ import operateItemEllipseTextRadius from "@/components/design/layout/canvas/oper
 import operateItemTextStroke from "@/components/design/layout/canvas/operate/text/textStroke.vue";
 import operateItemFilterGroup from "@/components/design/layout/canvas/operate/filter/group.vue";
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
-import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue';
-import operateItemClipPath from '@/components/design/layout/canvas/operate/clipPath/index.vue';
+import operateItemCommonGroup from "@/components/design/layout/canvas/operate/commonGroup.vue";
+import operateItemClipPath from "@/components/design/layout/canvas/operate/clipPath/index.vue";
 
-
-import {
-    updateCanvasStickerOptionsUnit
-} from '../helper'
+import { updateCanvasStickerOptionsUnit } from "../helper";
 
 import {
-    CanvasController,
-    canvasStickerOptions,
-    addCanvasChild,
-    removeCavnasChild,
-    currentCanvasControllerInstance,
-    showMainCanvas,
-    currentOperatingCanvasChild,
-    CanvasChildType,
-    updateRenderingCanvas
+  CanvasController,
+  canvasStickerOptions,
+  addCanvasChild,
+  removeCavnasChild,
+  currentCanvasControllerInstance,
+  showMainCanvas,
+  currentOperatingCanvasChild,
+  CanvasChildType,
+  updateRenderingCanvas,
 } from "../index.tsx";
 
+const imageCollapseActives = ref(["1", "2", "3", "4", "5"]);
 
-const imageCollapseActives = ref(["1", "2", "3", "4", '5']);
+// function syncCanvasSize() {
+//   let { width, height } = imgRef.value.getNaturalSize();
 
+//   canvasStickerOptions.value.width = width;
+//   canvasStickerOptions.value.height = height;
+//   updateCanvasStickerOptionsUnit("px");
+// }
 </script>
-    
+
 <style></style>

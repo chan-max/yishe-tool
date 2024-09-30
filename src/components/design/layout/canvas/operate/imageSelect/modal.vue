@@ -54,9 +54,8 @@ function useAsCanvasImage(item) {
     if (item.type != 'image') {
         throw '图片类型才能作为画布图片元素'
     }
-    if (currentOperatingCanvasChild.value.type != 'image') {
-        throw '当前操作的不是图片元素'
-    }
+
+
     currentOperatingCanvasChild.value.imageInfo = item
 
     emits('close')
@@ -72,10 +71,6 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
     },
     {
         immediate: false,
-        forEach(item) {
-            item.thumbnail = Utils.formatUrl(item.thumbnail)
-            item.url = Utils.formatUrl(item.url)
-        },
     }
 );
 

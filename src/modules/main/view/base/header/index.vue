@@ -12,9 +12,12 @@
   <!-- <top></top> -->
   <div ref="headerBar" class="header-bar flex justify-center z-10">
     <div class="left flex items-center">
-      <img class="logo" src="logo.svg" style="width: 32px;height:32px; object-fit: contain; margin-right: 4em"
+      <img class="logo" src="logo.svg" style="width: 32px;height:32px; object-fit: contain;"
         @click="$router.push({ name: 'Design' })" />
     </div>
+
+    <div style="padding:0 24px;font-size: 20px;font-weight: bold;"> 衣设网 </div>
+
     <des-menu></des-menu>
     <div style="flex: 1"></div>
     <div class="right flex justify-end">

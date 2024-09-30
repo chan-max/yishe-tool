@@ -1,7 +1,7 @@
 <template>
   <div class="banner flex flex-col items-center">
 
-    <div style="z-index: 3;" class="title animate-gradient-text">开放式贴纸设计工具
+    <div style="z-index: 3;" class="title animate-gradient-text">开放式服装贴纸设计工具
     </div>
     <div style="z-index: 3;" class="subtitle">开放式贴纸设计工具</div>
     <div class="bar" style="z-index: 999;">
@@ -13,7 +13,7 @@
     <!-- <img src="/wave.svg" style="width: 100%;position:absolute;opacity:.3;bottom:-300px"> -->
 
     <vue-danmaku ref="danmukuRef" :debounce="333" useSlot v-model:danmus="danmus" loop :speeds="66" :top="48"
-      :right="48" isSuspend style="height:90vh; width:100vw;position:absolute;top:10vh;left:0;z-index:2;">
+      :right="48" isSuspend style="height:100vh; width:100vw;position:absolute;top:10vh;left:0;z-index:2;">
       <template v-slot:dm="{ index, danmu }">
         <el-image style="width:100px;height:100px;border-radius: 5%;object-fit: contain;" :src="danmu.thumbnail" fit="contain">
         </el-image>
@@ -105,6 +105,7 @@ watch([width, height], useDebounceFn(() => {
   overflow: hidden;
   backdrop-filter: blur(2px);
   user-select: none;
+  overflow:hidden;
 }
 
 .title {

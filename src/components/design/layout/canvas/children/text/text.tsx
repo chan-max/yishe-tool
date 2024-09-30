@@ -40,7 +40,7 @@ export const createDefaultCanvasChildTextOptions = () => {
         fontWeight: '500',
         lineHeight: 1,
         letterSpacing: 0,
-        textContent: '富与贵，人之所欲也；不以其道得之，不处也',
+        textContent: '小李每天要开心！',
         writingMode: 'htb',
         isRoundText: false,
         isMultipleLineOutExpand: false, // 当开启圆形文字并且多行时，是否想向部扩张
@@ -73,6 +73,8 @@ export const createDefaultCanvasChildTextOptions = () => {
         containerEl: null,
         targetComputedWidth: 0,
         targetComputedHeight: 0,
+
+        imageInfo : null // 文字背景图
     }
 }
 

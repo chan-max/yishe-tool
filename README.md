@@ -1,7 +1,7 @@
 # <div align="center">衣设网 (1s.design)</div>
 
 <div align="center">
-**开放式贴纸设计工具**
+**1s**
 </div>
 
 ## <div align="center">简介</div>

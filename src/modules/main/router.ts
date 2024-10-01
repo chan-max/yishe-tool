@@ -5,6 +5,63 @@ import {
 } from "vue-router";
 
 
+
+export const adminRoute = {
+  path: "/admin",
+  name: "Admin",
+  component: () => import('./view/admin/index.vue'),
+  meta: {
+    header: false,
+    title: '管理系统首页'
+  },
+  children: [
+    {
+      name: "AdminHome",
+      path: "home",
+      component: () => import('./view/admin/view/home.vue'),
+      meta: {
+        title: '管理员首页',
+        header: false,
+      }
+    },
+    {
+      name: "AdminUsers",
+      path: "users",
+      component: () => import('./view/admin/view/home.vue'),
+      meta: {
+        title: '用户管理',
+        header: false,
+      },
+      children: [
+        {
+          name: "AdminManager",
+          path: "manager",
+          component: () => import('./view/admin/view/home.vue'),
+          meta: {
+            title: '管理员管理',
+            header: false,
+          },
+          children: [
+
+          ]
+        },
+        {
+          name: "AdminDepartment",
+          path: "department",
+          component: () => import('./view/admin/view/home.vue'),
+          meta: {
+            title: '部门管理',
+            header: false,
+          },
+          children: [
+
+          ]
+        },
+      ]
+    },
+  ],
+}
+
 const routes = [
   {
     path: "/:catchAll(.*)",
@@ -21,81 +78,7 @@ const routes = [
       auth: false
     }
   },
-  {
-    path: "/admin",
-    name: "Admin",
-    component: () => import('./view/admin/index.vue'),
-    meta: {
-      header: false,
-    },
-    children: [
-      {
-        name: "Admin",
-        path: "",
-        component: () => import('./view/admin/view/home.vue'),
-        meta: {
-          header: false,
-        }
-      },
-      {
-        path: "model",
-        name: "Model",
-        component: () => import("./view/admin/view/model/index/index.vue"),
-        meta: {
-          header: false,
-        }
-      },
-      {
-        path: "model/upload",
-        name: "ModelUpload",
-        component: () => import("./view/admin/view/model/modelUpload.vue"),
-        meta: {
-          header: false,
-        }
-      },
-      {
-        path: "image",
-        name: "Image",
-        component: () => import("./view/admin/view/image/index/index.vue"),
-        meta: {
-          header: false,
-        }
-      },
-      {
-        path: "image/upload",
-        name: "ImageUpload",
-        component: () => import("./view/admin/view/image/imageUpload.vue"),
-        meta: {
-          header: false,
-        }
-      },
 
-      {
-        path: "font",
-        name: "Font",
-        component: () => import("./view/admin/view/font/fontUpload.vue"),
-        meta: {
-          header: false,
-        }
-      },
-      {
-        path: "font/upload",
-        name: "FontUpload",
-        component: () => import("./view/admin/view/font/fontUpload.vue"),
-        meta: {
-          header: false,
-        }
-      },
-      {
-        path: "user",
-        name: "AdminUserManage",
-        component: () => import('./view/admin/view/user/index.vue'),
-        meta: {
-          header: false,
-        }
-      },
-    ],
-  },
   {
     path: "/signup",
     name: "Signup",
@@ -153,8 +136,8 @@ const routes = [
     }
   },
   {
-    path: "/update",
-    name: "Update",
+    path: "/UserProfile",
+    name: "UserProfile",
     component: () => import('./view/user/update/index.vue'),
     meta: {
       header: false
@@ -175,6 +158,7 @@ const routes = [
     name: '1s',
     component: () => import('./view/design/core/index.vue')
   },
+  adminRoute
 ];
 
 

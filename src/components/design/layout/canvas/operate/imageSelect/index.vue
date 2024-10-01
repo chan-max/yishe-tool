@@ -29,8 +29,8 @@
             </el-col>
 
             <el-col :span="24">
-              <div style="display: flex;">
-                <div style="flex:1;"></div>
+              <div style="display: flex">
+                <div style="flex: 1"></div>
                 <el-button @click="remove" size="small" type="danger" :icon="Close">
                   移除
                 </el-button>
@@ -45,7 +45,7 @@
     </template>
   </operate-form-item>
 
-  <modal v-model="dialogShow" @close="dialogShow = false"></modal>
+  <modal v-model="showImageSelectModal" @close="showImageSelectModal = false"></modal>
 </template>
 
 <script setup lang="ts">
@@ -55,12 +55,20 @@ import { showSticker, viewDisplayController } from "@/components/design/store";
 import { Close } from "@element-plus/icons-vue";
 import desimage from "@/components/image.vue";
 import modal from "./modal.vue";
+import { showImageSelectModal } from "./index.tsx";
 
 import { updateCanvasStickerOptionsUnit } from "@/components/design/layout/canvas/helper";
 
 import { canvasStickerOptions } from "@/components/design/layout/canvas/index";
 
 const model = defineModel({});
+
+/*
+    将当前画布尺寸同步为当前图片尺寸，
+    适用于处理单个图片的形式
+*/
+
+const imgRef = ref();
 
 const props = defineProps({
   label: {
@@ -72,10 +80,8 @@ const props = defineProps({
     增加按图片尺寸调整画布尺寸功能
 */
 
-const dialogShow = ref(false);
-
 function select() {
-  dialogShow.value = true;
+  showImageSelectModal.value = true;
 }
 
 function remove() {
@@ -83,15 +89,6 @@ function remove() {
 }
 
 function imgLoad() {}
-
-/*
-    将当前画布尺寸同步为当前图片尺寸，
-    适用于处理单个图片的形式
-*/
-
-const imgRef = ref();
-
-
 </script>
 
 <style></style>

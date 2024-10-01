@@ -253,7 +253,6 @@ const rightComponent = computed(() => {
     return decalList
   }
 
-
 });
 
 // 挂载容器
@@ -289,13 +288,6 @@ async function initAction() {
       ),
       icon: createVNode(ExclamationCircleOutlined),
       onOk() {
-        // router.push({
-        //   name: 'Login',
-        //   query: {
-        //     redirectTo: 'Design'
-        //   }
-        // })
-
         openLoginDialog();
       },
       okText: <div>登录</div>,

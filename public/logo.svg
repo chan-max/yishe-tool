@@ -4,8 +4,8 @@
 	<defs>
 		<linearGradient id="c">
 			<stop offset="35%" stop-color="#6900ff" />
-			<stop offset="40%" stop-color="#f0e5ff" />
-			<stop  offset="100%"  stop-color="#f0e5ff"/>
+			<stop offset="60%" stop-color="#f0e5ff" />
+			<stop  offset="100%"  stop-color="#d80ebd"/>
 		</linearGradient>
 	</defs>
 

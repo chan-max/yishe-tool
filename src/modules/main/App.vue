@@ -9,7 +9,7 @@
  * Copyright (c) 2023 by 1s, All Rights Reserved. 
 -->
 <template>
-  <a-config-provider :theme="antdTheme">
+  <a-config-provider :theme="antdTheme" :locale="antLocale">
     <el-config-provider :locale="elementLocale">
       <header-menu v-if="$route?.meta?.header"></header-menu>
       <div class="app-content">
@@ -33,9 +33,22 @@ import headerMenu from "./view/base/header/index.vue";
 // import footerMenu from "./view/base/footer/index.vue";
 import { theme } from 'ant-design-vue'
 
+import antEn from 'ant-design-vue/es/locale/en_US';
+import antZh from 'ant-design-vue/es/locale/zh_CN';
+
 import { Modal } from 'ant-design-vue'
 import loginForm from '@/modules/main/view/user/login/index.vue'
 import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
+
+
+const antLocale = computed(() => {
+  if (locale.value == "en") {
+    return antEn;
+  } else {
+    return antZh;
+  }
+});
+
 
 
 const { defaultAlgorithm, darkAlgorithm } = theme

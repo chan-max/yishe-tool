@@ -54,8 +54,8 @@ export const createDefaultCanvasChildTextOptions = () => {
         },
         roundTextStartDeg: 0,
         isCounterclockwise: false, // 文字是否指向圆心，默认为否
-        isPointingToCenter:true, // 是否指向圆心
-        isReverseLetter:false, // 是否将文字旋转180度 ， 可以用于凹凸文字
+        isPointingToCenter: true, // 是否指向圆心
+        isReverseLetter: false, // 是否将文字旋转180度 ， 可以用于凹凸文字
 
 
         textStrokeWidth: {
@@ -74,7 +74,7 @@ export const createDefaultCanvasChildTextOptions = () => {
         targetComputedWidth: 0,
         targetComputedHeight: 0,
 
-        imageInfo : null // 文字背景图
+        imageInfo: null // 文字背景图
     }
 }
 
@@ -175,6 +175,13 @@ export const Text = defineComponent({
                 } else {
                     style.color = props.options.fontColor.color;
                 }
+            }
+
+            // 文字背景图
+            if (props.options.imageInfo) {
+                style.background = `url(${props.options.imageInfo.url})`
+                style.backgroundClip = 'text'
+                style.color = 'transparent';
             }
 
             const textContainerStyle = {
@@ -327,7 +334,7 @@ async function createRoundText(container, innerContainer, options, textContentCe
         // 弧形的起始坐标
         let startPosition = isCircle ? getRoundPos(horizontalRadius, startDeg) : getEllipsePos(horizontalRadius, verticalRadius, startDeg)
 
-    
+
         // 水平和垂直半径 
         /**
          *  多行文字时，考虑是向内扩张还是向外扩张
@@ -367,14 +374,14 @@ async function createRoundText(container, innerContainer, options, textContentCe
 
             let pos = isCircle
                 ? findRoundDistancePoint(hr, startPosition.x, startPosition.y, distance, !isCounterclockwise)
-                : findEllipseDistancePoint(hr, vr, startPosition.x, startPosition.y, distance, !isCounterclockwise ,isPointingToCenter )
+                : findEllipseDistancePoint(hr, vr, startPosition.x, startPosition.y, distance, !isCounterclockwise, isPointingToCenter)
 
             item.x = pos.x
             item.y = pos.y
             item.deg = pos.deg
 
             // 将文字旋转180度
-            if(options.isReverseLetter){
+            if (options.isReverseLetter) {
                 item.deg += 180
             }
 

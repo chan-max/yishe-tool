@@ -78,7 +78,7 @@ const menuOptions = [{}];
   justify-content: space-between;
   position: fixed;
   top: 0;
-  transition: all 0.5s;
+  transition: all 0.3s;
   border-bottom: 1px solid #eee;
 
   &:hover {

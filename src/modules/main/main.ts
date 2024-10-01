@@ -80,22 +80,23 @@ app.config.globalProperties.__DEV__ = import.meta.env.DEV
 
 import { useConfigStore } from '@/store/stores/config.ts';
 import { useLoginStatusStore } from '@/store/stores/login';
+import to from 'await-to-js';
+
 
 async function setup() {
 
     const loginStore = useLoginStatusStore()
     const configStore = useConfigStore()
 
-    Api.getBasicConfig().then((res) => {
-        configStore.$patch(res)
-        app.mount('#app')
-    }).catch(() => {
-        console.warn('basic config load error')
-    })
+    const config = await Api.getBasicConfig()
+    configStore.$patch(config)
 
     if (loginStore.isLogin) {
-        loginStore.getUserInfo()
+       let [err,res] =  await to(loginStore.getUserInfo())
     }
+
+    app.mount('#app')
+
 }
 
 

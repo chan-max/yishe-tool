@@ -47,6 +47,7 @@
     "@vueuse/core": "^11.0.3",
     "animate.css": "^4.1.1",
     "ant-design-vue": "4.x",
+    "await-to-js": "^3.0.0",
     "axios": "^1.4.0",
     "bootstrap-icons": "^1.10.3",
     "canvg": "^4.0.2",
@@ -144,6 +145,7 @@
     "vue3-colorpicker": "2.3.0",
     "vue3-danmaku": "^1.6.1",
     "vue3-tags-input": "^1.0.12",
+    "vxe-table": "^4.7.85",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1",
     "yarn": "^1.22.21"

@@ -12,7 +12,10 @@
   <div class="user-avatar-form">
     <div class="flex" style="padding: 10px 0; border-bottom: 2px solid #f8f8f8">
       <el-avatar style="flex-shrink: 0" shape="circle" :src="avatar" />
-      <div style="margin-left: 1em; flex-direction: column; flex: 1" class="flex justify-around">
+      <div
+        style="margin-left: 1em; flex-direction: column; flex: 1"
+        class="flex justify-around"
+      >
         <div class="font-bold">{{ userInfo.name || "--" }}</div>
         <div style="overflow: hidden; font-size: 1em">
           {{ userInfo.email || "--" }}
@@ -28,9 +31,9 @@
         <icon-saved></icon-saved>
         我的收藏
       </div>
-      <div class="user-avatar-form-item">
+      <div class="user-avatar-form-item" @click="router.push({name:'Admin'})">
         <icon-admin></icon-admin>
-        系统管理
+        后台管理系统
       </div>
       <div @click="logout" class="user-avatar-form-item">
         <icon-logout></icon-logout>
@@ -48,13 +51,10 @@ import iconLogout from "@/icon/user/logout.svg?component";
 import iconUser from "@/icon/user/user.svg?component";
 import iconAdmin from "@/icon/user/admin.svg?component";
 import iconSaved from "@/icon/user/saved.svg?component";
-import { Modal } from 'ant-design-vue'
-
+import { Modal } from "ant-design-vue";
 
 let route = useRoute();
-let router = useRouter()
-
-
+let router = useRouter();
 
 // 顶部头像
 const loginStore = useLoginStatusStore();
@@ -69,19 +69,17 @@ const userInfo = computed(() => {
   return loginStore.userInfo || {};
 });
 
-
 function goUpdate() {
   router.push({
-    name: 'Update'
-  })
+    name: "UserProfile",
+  });
 }
 
 async function logout(params) {
-
   await Modal.confirm({
-    cancelText: '取消',
-    okText: '确定',
-    content: '确认要退出吗？',
+    cancelText: "取消",
+    okText: "确定",
+    content: "确认要退出吗？",
     // cancelButtonProps: {
     //   size: 'small'
     // },
@@ -90,10 +88,8 @@ async function logout(params) {
     // },
     onOk: () => {
       doLogout();
-    }
-  })
-
-
+    },
+  });
 }
 </script>
 

@@ -46,8 +46,10 @@
         v-model:color="currentOperatingCanvasChild.textStrokeColor"
       >
       </operateItemTextStroke>
+    </el-collapse-item>
 
-      <operateItemImageSelect label="选择文字背景图" v-model="currentOperatingCanvasChild.imageInfo">
+    <el-collapse-item name="1.5" title="文字背景图">
+        <operateItemImageSelect label="选择文字背景图" v-model="currentOperatingCanvasChild.imageInfo">
       </operateItemImageSelect>
     </el-collapse-item>
 
@@ -163,7 +165,7 @@ import {
   updateRenderingCanvas,
 } from "../index.tsx";
 
-const textCollapseActives = ref(["1", "2", "3", "4", "5"]);
+const textCollapseActives = ref(["1", '1.5',"2", "3", "4", "5"]);
 
 function fontLoad() {
   updateRenderingCanvas();

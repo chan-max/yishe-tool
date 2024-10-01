@@ -110,8 +110,6 @@ export const CanvasChildOperationComponentMap = {
     [CanvasChildType.canvas]: canvasLayout
 }
 
-
-
 defineCanvasChild({
     typeName: 'text',
     typeKey: 'text',

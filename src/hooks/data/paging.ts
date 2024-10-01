@@ -8,7 +8,7 @@
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
  */
-import { Ref, computed, isReactive, isRef, ref } from 'vue'
+import { Ref, computed, isReactive, isRef, ref, watch } from 'vue'
 
 /*
     通用分页逻辑
@@ -21,7 +21,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
     options = {
         immediate: true,
         pageSize: 30,
-        initialList: ref([]),
+        initialList: ref([]) as any,
         callback: null, // 处理每个请求元素的回调
         filter: null, // 请求结果被插入列表前的过滤器，被过滤掉的不会添加到列表中
         forEach: null,
@@ -30,7 +30,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
 
     // 列表数据 , 可用外界传入的参数，也可以自身初始化
-    const list = options.initialList
+    const list = options.initialList as any
     // 当前页数
     const currentPage = ref(0)
     // 总页数
@@ -44,15 +44,30 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
     // 是否正在加载
     const loading = ref(false)
 
+
+    //  是否为单页模式
+    const isSinglePageMode = ref(false)
+
     // 首次加载
     const firstLoading = computed(() => {
         return loading.value && currentPage.value == 1
     })
 
-
+    // 非首次加载
     const subsequentLoading = computed(() => {
         return loading.value && currentPage.value != 1
     })
+
+
+    // 只清空数据
+
+    function resetList() {
+        if (isRef(list)) {
+            list.value = []
+        } else if (isReactive(list)) {
+            list.splice(0, list.length);
+        }
+    }
 
     // 滚动触发器， 当需要加载时触发该方法即可
     async function getList(params = {}) {
@@ -64,11 +79,14 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
         try {
 
-            if (currentPage.value >= totalPage.value) {
-                return
+            // 非单页模式处理
+            if (!isSinglePageMode.value) {
+                currentPage.value++
+                if (currentPage.value >= totalPage.value) {
+                    return
+                }
             }
 
-            currentPage.value++
             loading.value = true
             let res = await getListFn({
                 currentPage: currentPage.value,
@@ -94,21 +112,32 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
             }
 
 
+            if (isSinglePageMode.value) {
+                resetList()
+            }
+
             if (isRef(list)) {
+
                 res.list.forEach((item) => {
                     (list.value as any).push(item)
                 })
+
             } else if (isReactive(list)) {
+
                 res.list.forEach((item) => {
                     list.push(item)
                 })
-            } else {
-                // 未知错误
+
             }
 
-            loading.value = false
+
+
         } catch (e) {
+            console.error('use paging error', e)
+
+        } finally {
             loading.value = false
+            isSinglePageMode.value = false
         }
     }
 
@@ -124,14 +153,35 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         list.value = []
     }
 
+    // 是否在最后一页
     const isLastPage = computed(() => {
         return (currentPage.value == totalPage.value) && !loading.value
     })
 
 
+    // 是否为空数据
     const isEmpty = computed(() => {
         return total.value == 0 && !loading.value
     })
+
+    // 当前页数和尺寸改变时重新加载
+    watch([pageSize, currentPage], () => {
+        if (loading.value) {
+            return;
+        }
+        isSinglePageMode.value = true
+        resetList()
+        getList()
+    })
+
+
+    // 重新请求当前数据
+    async function refresh() {
+        isSinglePageMode.value = true
+        resetList()
+        await getList()
+    }
+
 
     return {
         currentPage, // 当前页数
@@ -146,5 +196,6 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         subsequentLoading, // 非首次加载
         isLastPage, // 是否到达最后一页
         isEmpty, // 数据是否为空
+        refresh,
     }
 }

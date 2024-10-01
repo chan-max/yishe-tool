@@ -48,6 +48,12 @@ import Api from '@/api'
 import '@/style/cover-antdesign.less'
 import { s1Plugin } from '@/components/export.ts'
 
+import VxeUI from 'vxe-pc-ui'
+import 'vxe-pc-ui/lib/style.css'
+
+import VxeUITable from 'vxe-table'
+import 'vxe-table/lib/style.css'
+
 
 // 引入注册组件
 import 'virtual:svg-icons-register'
@@ -58,6 +64,8 @@ apiInstance.interceptors.response.use(defaultResponseInterceptors);
 const app = createApp(App)
 
 app.use(s1Plugin)
+
+app.use(VxeUI).use(VxeUITable)
 
 app.component("InfiniteLoading", InfiniteLoading);
 

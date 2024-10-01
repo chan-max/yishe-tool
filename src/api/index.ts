@@ -135,17 +135,12 @@ export const getModelById = (id) =>
 // 发送邮件
 export const sendEmail = (data) => apiInstance.post(Url.SEND_MAIL, data);
 
-// 获取用户列表
-export interface UserListInfo {
-  total: number;
-  list: any[];
-  currentPage: number;
-  pageSize: number;
-  totalPages: number;
-}
+
+
+
 export const getUserList = (params?: any) =>
   new Promise(async (resolve, reject) => {
-    const res = await apiInstance.post(Url.GET_USER_LIST, params);
+    const res = await apiInstance.post('/api/user/page', params);
     resolve(res.data.data);
   });
 
@@ -403,7 +398,7 @@ export const updateSticker = (data) => new Promise(async (resolve, reject) => {
 /**
  * 获取文件列表
 */
-export const getFileListApi = (params) => new Promise(async (resolve, reject) => {
+export const getFileList = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post('/api/file/page', params)
   resolve(res.data.data)
 })
@@ -499,7 +494,7 @@ class Api {
 
   createSticker = createSticker
 
-  getFileListApi = getFileListApi
+  getFileList = getFileList
 
 
   /* 用户关系处理 */
@@ -540,6 +535,9 @@ class Api {
   deleteProductModel = deleteProductModel
 
   updateCustomModel = updateCustomModel
+
+  // 获取用户列表
+  getUserList = getUserList
 }
 
 export default new Api()

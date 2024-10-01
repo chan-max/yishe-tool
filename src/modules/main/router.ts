@@ -4,8 +4,6 @@ import {
   createWebHistory,
 } from "vue-router";
 
-
-
 export const adminRoute = {
   path: "/admin",
   name: "Admin",
@@ -20,14 +18,13 @@ export const adminRoute = {
       path: "home",
       component: () => import('./view/admin/view/home.vue'),
       meta: {
-        title: '管理员首页',
+        title: '首页',
         header: false,
       }
     },
     {
-      name: "AdminUsers",
-      path: "users",
-      component: () => import('./view/admin/view/home.vue'),
+      name: "AdminUser",
+      path: "user",
       meta: {
         title: '用户管理',
         header: false,
@@ -46,11 +43,23 @@ export const adminRoute = {
           ]
         },
         {
-          name: "AdminDepartment",
-          path: "department",
-          component: () => import('./view/admin/view/home.vue'),
+          name: "AdminCompany",
+          path: "company",
+          component: () => import('./view/admin/view/user/company/index.vue'),
           meta: {
-            title: '部门管理',
+            title: '公司管理',
+            header: false,
+          },
+          children: [
+
+          ]
+        },
+        {
+          name: "AdminUserList",
+          path: "UserList",
+          component: () => import('./view/admin/view/user/userList/index.vue'),
+          meta: {
+            title: '用户',
             header: false,
           },
           children: [

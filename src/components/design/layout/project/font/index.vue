@@ -117,7 +117,7 @@ const loadingOptions = useLoadingOptions({});
 
 const { list, getList, loading, reset, isEmpty } = usePaging(
     (params) => {
-        return Api.getFileListApi({
+        return Api.getFileList({
             ...params,
             pageSize: 20,
             type: 'ttf,otf',

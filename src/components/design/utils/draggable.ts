@@ -28,6 +28,7 @@ export const initDraggableElement = (el, cb, sourceOrGetter = null) => {
 
     sourceOrGetter ||= el.src
 
+
     el._src = typeof sourceOrGetter === 'function' ? sourceOrGetter() : sourceOrGetter
 
     // 保证同一元素只初始化一次,需要保证src能够更新
@@ -35,7 +36,7 @@ export const initDraggableElement = (el, cb, sourceOrGetter = null) => {
         return
     }
 
-    // 创建一个新的 image 元素
+
     el.addEventListener('dragstart', (e) => {
         e.preventDefault()
     })
@@ -51,6 +52,7 @@ export const initDraggableElement = (el, cb, sourceOrGetter = null) => {
         clickX = event.clientX;
         clickY = event.clientY;
         // 添加鼠标移动和释放事件监听器
+        console.log('dev')
         document.addEventListener('mousemove', onMouseMove);
         draggingImage.src = el._src;
     }
@@ -59,7 +61,6 @@ export const initDraggableElement = (el, cb, sourceOrGetter = null) => {
     function onMouseMove(event) {
         var mouseX = event.clientX;
         var mouseY = event.clientY;
-
         // 限制拖拽条件
         if (!clickX || !clickY || Math.abs(mouseX - clickX) < 10 || Math.abs(mouseY - clickY) < 10) {
             if (!isDown) {
@@ -91,6 +92,11 @@ export const initDraggableElement = (el, cb, sourceOrGetter = null) => {
     // 添加鼠标按下事件监听器
     el.addEventListener('mousedown', onMouseDown);
     el.addEventListener('mouseup', onDoMouseUp);
+
+    el.addEventListener('click', () => {
+        console.log('img click')
+    });
+
 
     // 返回拖动结束时的事件回调函数
     el._isDraggable = true

@@ -52,8 +52,8 @@
     <a-modal v-model:open="showFormModal" :centered="true" :destroyOnClose="true" width="540px" title="更新信息" okText="修改"
         cancelText="取消" @ok="ok" :confirmLoading="submitLoading">
         <el-form style="padding:24px 12px;">
-            <el-form-item> <el-input v-model="editForm.name"></el-input></el-form-item>
-            <el-form-item> <el-input v-model="editForm.description"></el-input></el-form-item>
+            <el-form-item> <el-input v-model="editForm.name" placeholder="名字"></el-input></el-form-item>
+            <el-form-item> <el-input v-model="editForm.description" placeholder="描述"></el-input></el-form-item>
             <el-form-item>
                 <tagsInput v-model="editForm.keywords" :string="true"> </tagsInput>
             </el-form-item>

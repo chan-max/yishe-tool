@@ -17,10 +17,25 @@
       </div>
       <tags @change="tagChange"></tags>
     </div>
-    <RecycleScroller class="scroll-list" v-if="list.length" :items="list" @scroll-end="scrollEnd" :item-size="140"
-      :itemSecondarySize="130" :gridItems="2" item-class="scroll-list-item" key-field="id" v-slot="{ item, index }">
+    <RecycleScroller
+      class="scroll-list"
+      v-if="list.length"
+      :items="list"
+      @scroll-end="scrollEnd"
+      :item-size="140"
+      :itemSecondarySize="130"
+      :gridItems="2"
+      item-class="scroll-list-item"
+      key-field="id"
+      v-slot="{ item, index }"
+    >
       <div class="item">
-        <desimage padding="10%" :src="item.thumbnail" class="image" @load="imgLoad($event, item)"></desimage>
+        <s1-image
+          padding="10%"
+          :src="item.thumbnail"
+          class="image"
+          @load="imgLoad($event, item)"
+        ></s1-image>
         <sticker-popover :stickerInfo="item">
           <div class="bar">
             <div class="title text-ellipsis">{{ item.name || "......" }}</div>
@@ -41,10 +56,7 @@ import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 import stickerPopover from "./stickerPopover.vue";
-import {
-  currentModelController,
-  showImageUplaod,
-} from "@/components/design/store";
+import { currentModelController, showImageUplaod } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 import tags from "./tags.vue";
@@ -52,9 +64,9 @@ import { useLoadingOptions } from "@/components/loading/index.tsx";
 import scrollbar from "@/components/scrollbar/index.vue";
 import { stickerQueryParams } from "./index.tsx";
 import { loadingBottom } from "@/components/loading/index.tsx";
-import Utils from '@/common/utils'
+import Utils from "@/common/utils";
 
-const input = ref()
+const input = ref();
 
 // 列表展示几列
 const column = ref(2);
@@ -66,9 +78,9 @@ function tagChange() {
   getList();
 }
 
-
 function imgLoad(el, info) {
   const img = el;
+
   initDraggableElement(img, async () => {
     const base64 = imgToBase64(img);
     currentModelController.value.stickToMousePosition({
@@ -84,7 +96,7 @@ function imgLoad(el, info) {
 }
 
 function scrollEnd() {
-  getList()
+  getList();
 }
 
 const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePaging(
@@ -94,9 +106,8 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
       pageSize: 20,
       ...stickerQueryParams.value,
     });
-  },
+  }
 );
-
 </script>
 <style lang="less" scoped>
 @item-width: 40px;
@@ -121,8 +132,6 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
 .search {
   width: 100%;
 }
-
-
 
 .scroll-list {
   height: 100%;
@@ -150,7 +159,6 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   border-radius: 4px;
 }
 
-
 .title {
   width: 100%;
   text-align: left;
@@ -165,13 +173,12 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   // min-width: 100px;
 }
 
-
 .bar {
   width: 100%;
   font-size: 1rem;
   color: #666;
   display: flex;
-  padding: 0 .5rem;
+  padding: 0 0.5rem;
   justify-content: space-between;
   align-items: center;
   column-gap: 1em;
@@ -192,4 +199,3 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   overflow-y: overlay;
 }
 </style>
-

@@ -67,10 +67,10 @@
         cancelText="取消" @ok="ok" :confirmLoading="submitLoading">
         <el-form label-width="72px" :inline-message="false" :show-message="false" label-position="left">
             <el-form-item label="贴纸名称：">
-                <el-input v-model="editForm.name" placeholder="贴纸名称"></el-input>
+                <el-input v-model="editForm.name" placeholder="名称"></el-input>
             </el-form-item>
             <el-form-item label="贴纸描述:">
-                <el-input type="textarea" v-model="editForm.description" placeholder="贴纸描述"></el-input>
+                <el-input type="textarea" v-model="editForm.description" placeholder="描述"></el-input>
             </el-form-item>
             <el-form-item label="关键字:">
                 <tagsInput v-model="editForm.keywords" :autocomplete-tags="stickerAutoplacementTags"

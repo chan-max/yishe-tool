@@ -1,7 +1,15 @@
 <template>
-  <div class="img-container">
-    <el-image ref="elImageRef" class="el-img" v-bind="$attrs" :fit="fit || 'contain'" :lazy="lazy"
-      @load="load($event, info)" style="width: 100%; height: 100%" :style="{ padding }">
+  <div class="img-container" ref="imageRef">
+    <el-image
+      ref="elImageRef"
+      class="el-img"
+      v-bind="$attrs"
+      :fit="fit || 'contain'"
+      :lazy="lazy"
+      @load="load($event, info)"
+      style="width: 100%; height: 100%"
+      :style="{ padding }"
+    >
       <template #placeholder>
         <div class="el-img_loading"></div>
       </template>
@@ -14,8 +22,7 @@
       </template>
     </el-image>
 
-
-    <div class="slot">
+    <div class="slot" v-if="$slots.default">
       <slot></slot>
     </div>
   </div>
@@ -24,9 +31,11 @@
 import { onMounted, ref, computed, nextTick } from "vue";
 import { Picture, FolderOpened, Search, Operation } from "@element-plus/icons-vue";
 
-const emits = defineEmits(['load'])
+const emits = defineEmits(["load"]);
 
-const elImageRef = ref()
+const elImageRef = ref();
+
+const imageRef = ref()
 
 const props = defineProps({
   // 是否可拖拽
@@ -34,17 +43,17 @@ const props = defineProps({
     default: "0",
   },
   info: {
-    default: {}
+    default: {},
   },
   fit: {
-    default: 'contain'
+    default: "contain",
   },
   lazy: {
-    default: false
+    default: false,
   },
   hideloading: {
-    default: false
-  }
+    default: false,
+  },
 });
 
 /*
@@ -52,26 +61,24 @@ const props = defineProps({
 */
 
 function load(e) {
-  emits('load', e.target)
+  emits("load", e.target);
 }
-
 
 defineExpose({
   getNaturalSize() {
     // 获取
-    let el = elImageRef.value.$el.querySelector('img');
+    let el = elImageRef.value.$el.querySelector("img");
 
     if (!el.complete) {
-      return console.warn('img not loaded while get natural size')
+      return console.warn("img not loaded while get natural size");
     }
 
     return {
       width: el.naturalWidth,
-      height: el.naturalHeight
-    }
-  }
-})
-
+      height: el.naturalHeight,
+    };
+  },
+});
 </script>
 <style lang="less" scoped>
 .img-container {

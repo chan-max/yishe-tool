@@ -7,13 +7,13 @@
         <span>创作资源</span>
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" content="工作台" placement="right">
+    <!-- <el-tooltip :hide-after="0" content="工作台" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showWorkspace }"
         @click="showWorkspace = !showWorkspace">
         <div class="menu-bar-item-icon"><icon-workspace></icon-workspace></div>
         <span>工作台</span>
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
     <!-- <el-tooltip :hide-after="0" content="丰富的社区模型" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showCustomModel }"
         @click="showCustomModel = !showCustomModel">

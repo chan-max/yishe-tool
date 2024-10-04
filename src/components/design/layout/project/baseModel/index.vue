@@ -1,8 +1,8 @@
 <template>
-    <div style="height:64px;width:1000px" class="flex items-center">
+    <!-- <div style="height:64px;width:1000px" class="flex items-center">
         <div style="flex:1;"></div>
         <el-button  round bg text @click="uplaodClick"> 上传新模型 </el-button>
-    </div>
+    </div> -->
     <div v-infinite-scroll="inscroll" :infinite-scroll-distance="150" style="height: calc(100% - 64px);">
         <el-row style="row-gap: 8px;width:1000px;">
             <el-col :span="24 / column" v-for="item in list" align="center">
@@ -71,8 +71,8 @@
     <a-modal v-model:open="showFormModal" :centered="true" :destroyOnClose="true" width="540px" title="更新信息" okText="修改"
         cancelText="取消" @ok="ok" :confirmLoading="submitLoading">
         <el-form style="padding:24px 12px;">
-            <el-form-item> <el-input v-model="editForm.name"></el-input></el-form-item>
-            <el-form-item> <el-input v-model="editForm.description"></el-input></el-form-item>
+            <el-form-item> <el-input v-model="editForm.name" placeholder="名称"></el-input></el-form-item>
+            <el-form-item> <el-input v-model="editForm.description" placeholder="描述"></el-input></el-form-item>
             <el-form-item>
                 <tagsInput v-model="editForm.keywords" :string="true"> </tagsInput>
             </el-form-item>

@@ -16,7 +16,7 @@
     <div class="market-content">
       <el-row :gutter="24">
         <el-col v-for="model in list" :xs="24" :sm="12" :md="8" :lg="6" :xl="4" style="margin-bottom: 24px;">
-          <card class="market-item" @click="edit(model)" :model="model"></card>
+          <card class="market-item" :model="model"></card>
         </el-col>
       </el-row>
 
@@ -42,6 +42,8 @@ const { list, getList } = usePaging((params) => {
     pageSize: 20,
   });
 });
+
+
 </script>
 <style lang="less" scoped>
 .market-container {

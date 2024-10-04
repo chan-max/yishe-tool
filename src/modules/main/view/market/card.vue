@@ -11,11 +11,8 @@
 <template>
   <div class="market-card">
     <div class="market-card-main" @mouseenter="mouseenter" @mouseleave="mouseleave">
-      <div class="market-card-main-img" v-if="showImg">
-        <desimage fit="cover" :src="'https://' + model.thumbnail"> </desimage>
-      </div>
-      <div class="market-card-main-viewer" v-if="showViewer">
-        <gltf-viewer :model="model.meta.modelInfo" @load="load"></gltf-viewer>
+      <div class="market-card-main-img">
+        <s1-image fit="cover" :src="model.thumbnail"> </s1-image>
       </div>
     </div>
     <div class="bar">
@@ -34,28 +31,12 @@ import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import desimage from "@/components/image.vue";
 
 function getAvatar(model) {
-  return model.uploader.avatar
-    ? 'https://' + model.uploader.avatar
-    : "defaultAvatar/avatar3.png";
+  return model.uploader.avatar || "defaultAvatar/avatar3.png";
 }
 
 const props = defineProps(["model"]);
 
-const showImg = ref(true);
-
 const showViewer = ref(false);
-
-function mouseenter() {
-  setTimeout(() => {
-    showViewer.value = true;
-    showImg.value = false;
-  }, 1000);
-}
-
-function mouseleave() {
-  showViewer.value = false;
-  showImg.value = true;
-}
 
 function load() {
   showImg.value = false;
@@ -108,9 +89,9 @@ function load() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1em;
+  padding: 1rem;
   width: 100%;
-  column-gap: 1em;
+  column-gap: 1rem;
 }
 
 .avatar {
@@ -120,6 +101,7 @@ function load() {
   overflow: hidden;
 }
 .name {
-  font-size: 1.4em;
+  font-size: 1.2rem;
+  
 }
 </style>

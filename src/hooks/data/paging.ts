@@ -170,12 +170,14 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
     })
 
     // 当前页数和尺寸改变时重新加载
-    watch([pageSize, currentPage], () => {
-        if (loading.value) {
-            return;
-        }
-        getList()
-    })
+    if (isSinglePageMode.value) {
+        watch([pageSize, currentPage], () => {
+            if (loading.value) {
+                return;
+            }
+            getList()
+        })
+    }
 
 
     // 重新请求当前数据
@@ -183,7 +185,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         await getList()
     }
 
-    
+
     return {
         currentPage, // 当前页数
         totalPage, // 总页数

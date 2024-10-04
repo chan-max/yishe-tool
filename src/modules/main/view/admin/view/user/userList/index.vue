@@ -42,6 +42,14 @@ const gridOptions = ref({
       title: "名字",
       minWidth: 70,
     },
+    {
+      field: "isAdmin",
+      title: "管理员",
+      width: 120,
+      formatter(param) {
+        return param.cellValue ? '是' : '否';
+      },
+    },
   ],
   data: list,
   loading: loading,

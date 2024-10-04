@@ -16,9 +16,9 @@
         style="margin-left: 1em; flex-direction: column; flex: 1"
         class="flex justify-around"
       >
-        <div class="font-bold">{{ userInfo.name || "--" }}</div>
-        <div style="overflow: hidden; font-size: 1em">
-          {{ userInfo.email || "--" }}
+        <div class="font-bold">{{ userInfo.name || userInfo.account }}</div>
+        <div style="overflow: hidden; font-size: 1rem">
+          {{ userInfo.company?.name || '个人用户' }}    {{ userInfo.email || "--" }} 
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
         <icon-saved></icon-saved>
         我的收藏
       </div>
-      <div class="user-avatar-form-item" @click="router.push({name:'Admin'})">
+      <div class="user-avatar-form-item" @click="router.push({ name: 'Admin' })">
         <icon-admin></icon-admin>
         后台管理系统
       </div>
@@ -80,14 +80,9 @@ async function logout(params) {
     cancelText: "取消",
     okText: "确定",
     content: "确认要退出吗？",
-    // cancelButtonProps: {
-    //   size: 'small'
-    // },
-    // okButtonProps: {
-    //   size: 'small'
-    // },
     onOk: () => {
       doLogout();
+      router.replace("/");
     },
   });
 }

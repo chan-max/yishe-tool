@@ -31,9 +31,11 @@ export const useLoginStatusStore = defineStore("login_status", () => {
   }
 
   async function getUserInfo() {
+    const loginStore = useLoginStatusStore()
     const _userInfo = await Api.getUserInfo()
     if (_userInfo) {
       userInfo.value = _userInfo
+      loginStore.isAdmin = _userInfo.isAdmin
       isLogin.value = true
     } else {
       isLogin.value = false

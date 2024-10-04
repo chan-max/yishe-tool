@@ -5,12 +5,17 @@
         :model="form"
         ref="formRef"
         :rules="rules"
+        label-width="64px"
+        label-position="left"
         style="width: 100%; height: 100%; padding: 32px; box-sizing: border-box"
       >
         <div style="width: 100%; height: 100%; display: flex; flex-direction: column">
-              <el-row :gutter="24">
-                <el-col>
-                                  <el-form-item prop="avatar">
+          <el-row :gutter="36">
+            <el-col :span="24">
+              <el-button @click="$router.back()" :icon="Back" round> 返回 </el-button>
+            </el-col>
+            <el-col>
+              <el-form-item prop="avatar">
                 <div class="w-full flex justify-center">
                   <el-upload
                     ref="upload"
@@ -41,39 +46,47 @@
                   </el-upload>
                 </div>
               </el-form-item>
-                </el-col>
-                
-                <el-col :span="6">
-                  <el-form-item label="账号">
-                    <el-input placeholder="账号"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input placeholder="账号"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input placeholder="账号"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input placeholder="账号"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item>
-                    <el-input placeholder="账号"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item>
-                    <el-input placeholder="账号"></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
+            </el-col>
+
+            <el-col :span="6">
+              <el-form-item label="账号" prop="account">
+                {{ form.account }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="公司">
+                {{ form.company?.name || "无公司" }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="名字">
+                <el-input v-model="form.name" placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+              <el-form-item label="密码">
+                <el-input placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item label="联系方式">
+                <el-input placeholder="请输入" v-model="form.phone"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form-item label="邮箱">
+                <el-input placeholder="请输入" v-model="form.email"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item>
+                <el-input placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
           <div style="flex: 1"></div>
 
@@ -114,6 +127,7 @@ import {
   Lock,
   Message,
   InfoFilled,
+  Back,
   Bell,
 } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
@@ -127,8 +141,6 @@ const router = useRouter();
 
 const loginStore = useLoginStatusStore();
 
-const userInfoForm = ref({});
-
 onBeforeMount(() => {
   if (!loginStore.isLogin) {
     router.replace({
@@ -137,7 +149,7 @@ onBeforeMount(() => {
   }
 
   imageUrl.value = loginStore.userInfo.avatar;
-  userInfoForm.value = {
+  form.value = {
     ...loginStore.userInfo,
   };
 });
@@ -220,6 +232,7 @@ async function submit() {
     await Api.updateUserInfo({
       ...form.value,
     });
+    await loginStore.getUserInfo();
     message.success("信息更新成功");
   } finally {
     loading.value = false;

@@ -1,9 +1,13 @@
 <template>
   <div class="signup-container">
     <div class="signup-form">
-      <div style="font-size: 16px; color: #666; text-align: left; padding: 20px 0px">
-        注册衣设账号
+      <div class="flex items-center">
+        <img src="/logo.svg" style="width:20px;height:20px;margin-right: 8px;">
+        <div style="font-size: 14px;font-weight: bold; color: #666; text-align: left; padding: 20px 0px">
+          注册衣设账号
+        </div>
       </div>
+
       <el-form :model="signupForm" ref="form" :rules="rules">
         <el-form-item prop="account">
           <el-input placeholder="请输入账号" v-model="signupForm.account">
@@ -22,7 +26,11 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input placeholder="请输入密码" v-model="signupForm.password" type="password">
+          <el-input
+            placeholder="请输入密码"
+            v-model="signupForm.password"
+            type="password"
+          >
             <template #prefix>
               <el-icon>
                 <Lock />
@@ -31,7 +39,11 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="repassword">
-          <el-input placeholder="请再次确认密码" v-model="signupForm.repassword" type="password">
+          <el-input
+            placeholder="请再次确认密码"
+            v-model="signupForm.repassword"
+            type="password"
+          >
             <template #prefix>
               <el-icon>
                 <Lock />
@@ -39,6 +51,15 @@
             </template>
           </el-input>
         </el-form-item>
+
+        <el-form-item prop="inviteCode">
+          <el-input placeholder="邀请码" v-model="signupForm.inviteCode" type="password">
+            <template #prefix>
+              <el-icon><Place /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+
         <!-- <el-form-item prop="email">
           <el-input placeholder="请输入邮箱" v-model="signupForm.email">
             <template #prefix>
@@ -63,7 +84,12 @@
           </div>
         </el-form-item> -->
         <el-form-item>
-          <el-button style="width: 100%" type="primary" @click="submit(form)" :loading="loading">
+          <el-button
+            style="width: 100%"
+            type="primary"
+            @click="submit(form)"
+            :loading="loading"
+          >
             注 册
           </el-button>
         </el-form-item>
@@ -90,9 +116,13 @@ import {
   Message,
   InfoFilled,
   Bell,
+  Place,
 } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
-import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
+import {
+  openLoginDialog,
+  showLoginFormModal,
+} from "@/modules/main/view/user/login/index.tsx";
 
 const router = useRouter();
 
@@ -102,6 +132,7 @@ const signupForm = reactive({
   email: "",
   repassword: "",
   validateCode: "",
+  inviteCode: "",
 });
 
 const form = ref();
@@ -161,29 +192,30 @@ async function sendCode() {
   });
 }
 
-const loading = ref(false)
+const loading = ref(false);
 async function submit() {
-  const validateRes = await form.value.validate(() => { });
+  const validateRes = await form.value.validate(() => {});
   if (!validateRes) {
     return;
   }
 
   try {
-    loading.value = true
+    loading.value = true;
     var formData = new FormData();
 
     formData.append("account", signupForm.account);
     formData.append("email", signupForm.email);
     formData.append("password", signupForm.password);
     formData.append("validateCode", signupForm.validateCode);
+    formData.append("inviteCode", signupForm.inviteCode);
 
-    await register(formData)
+    await register(formData);
 
     message.success("注册成功！");
     router.replace({ name: "Home" });
-    openLoginDialog()
+    openLoginDialog();
   } catch (e) {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>

@@ -14,6 +14,9 @@
         ...$attrs,
       }"
     >
+      <template v-for="(_, slot) in slots" #[slot]="bind">
+        <slot :name="slot" v-bind="bind"></slot>
+      </template>
     </vxe-grid>
   </div>
 </template>

@@ -7,15 +7,15 @@
 
 @use "element-plus/theme-chalk/src/index.scss" as *;
 
-.el-dialog__header{
-  --el-dialog-title-font-size:1.2rem!important;
+.el-dialog__header {
+  --el-dialog-title-font-size: 1.2rem !important;
 }
 
-.el-popper{
-  font-size: 1rem!important;
+.el-popper {
+  font-size: 1rem !important;
 }
 
-.el-popover.el-popper{
+.el-popover.el-popper {
   box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 8px 0px, rgba(0, 0, 0, 0.08) 0px 5px 20px 0px;
   border-radius: 8px;
 }
@@ -27,7 +27,7 @@
 .el-slider {
   --el-slider-button-size: 12px !important;
   --el-slider-height: 4px;
-  --el-slider-button-wrapper-offset:-16px!important;
+  --el-slider-button-wrapper-offset: -16px !important;
 }
 
 .el-scrollbar__bar {
@@ -35,30 +35,90 @@
   height: 4px !important;
 }
 
-.el-loading-mask{
+.el-loading-mask {
   z-index: 99;
 }
 
-.el-button:focus-visible{
+.el-button:focus-visible {
   outline: none !important;
 }
 
-.is-text{
-  font-size: 1rem!important;
+.is-text {
+  font-size: 1rem !important;
 }
 
-.el-dropdown-menu--small .el-dropdown-menu__item{
+.el-dropdown-menu--small .el-dropdown-menu__item {
   font-size: 1rem;
 }
 
-.el-scrollbar{
-  --el-scrollbar-bg-color:#ddd;
+.el-scrollbar {
+  --el-scrollbar-bg-color: #ddd;
 }
 
-.el-select__wrapper{
+.el-select__wrapper {
   font-size: 1rem;
 }
 
-.el-popover{
-  font-size: 1rem!important;
+.el-popover {
+  font-size: 1rem !important;
+}
+
+
+@media only screen and (min-width: 1960px) {
+  :root {
+    font-size: 10px;
+    --el-font-size-base: 10px !important;
+  }
+
+
+  .el-button--small,
+  .el-input--small,
+  .el-select--small .el-select__wrapper,
+  .el-radio-button--small {
+    font-size: 10px !important;
+  }
+}
+
+@media only screen and (max-width: 1960px) {
+  :root {
+    font-size: 10px;
+    --el-font-size-base: 10px !important;
+  }
+
+  .el-button--small,
+  .el-input--small,
+  .el-select--small .el-select__wrapper,
+  .el-radio-button--small {
+    font-size: 10px !important;
+
+  }
+}
+
+@media only screen and (max-width: 1280px) {
+  :root {
+    font-size: 10px;
+    --el-font-size-base: 10px !important;
+  }
+
+  .el-button--small,
+  .el-input--small,
+  .el-select--small .el-select__wrapper,
+  .el-radio-button--small {
+    font-size: 10px !important;
+
+  }
+}
+
+@media only screen and (max-width: 780px) {
+  :root {
+    font-size: 10px;
+    --el-font-size-base: 10px !important;
+  }
+
+  .el-button--small,
+  .el-input--small,
+  .el-select--small .el-select__wrapper,
+  .el-radio-button--small {
+    font-size: 10px !important;
+  }
 }

@@ -25,6 +25,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         callback: null, // 处理每个请求元素的回调
         filter: null, // 请求结果被插入列表前的过滤器，被过滤掉的不会添加到列表中
         forEach: null,
+        isSinglePageMode: false,
         ...options,
     }
 
@@ -32,7 +33,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
     // 列表数据 , 可用外界传入的参数，也可以自身初始化
     const list = options.initialList as any
     // 当前页数
-    const currentPage = ref(0)
+    const currentPage = ref(options.currentPage || 0)
     // 总页数
     const totalPage = ref(Infinity)
     // 尺寸
@@ -46,7 +47,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
 
     //  是否为单页模式
-    const isSinglePageMode = ref(false)
+    const isSinglePageMode = ref(options.isSinglePageMode)
 
     // 首次加载
     const firstLoading = computed(() => {
@@ -85,7 +86,12 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
                 if (currentPage.value >= totalPage.value) {
                     return
                 }
+            } else {
+                if (currentPage.value == 0) {
+                    currentPage.value = 1
+                }
             }
+
 
             loading.value = true
             let res = await getListFn({
@@ -137,7 +143,6 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
         } finally {
             loading.value = false
-            isSinglePageMode.value = false
         }
     }
 
@@ -169,20 +174,16 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         if (loading.value) {
             return;
         }
-        isSinglePageMode.value = true
-        resetList()
         getList()
     })
 
 
     // 重新请求当前数据
     async function refresh() {
-        isSinglePageMode.value = true
-        resetList()
         await getList()
     }
 
-
+    
     return {
         currentPage, // 当前页数
         totalPage, // 总页数

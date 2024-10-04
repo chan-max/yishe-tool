@@ -30,7 +30,6 @@ let route = useRoute();
 // 顶部头像
 const loginStore = useLoginStatusStore();
 
-
 const avatar = computed(() => {
   const loginStore = useLoginStatusStore();
   return loginStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";

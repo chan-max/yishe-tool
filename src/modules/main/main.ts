@@ -102,7 +102,6 @@ async function setup() {
     if (loginStore.isLogin) {
        let [err,res] =  await to(loginStore.getUserInfo())
     }
-
     app.mount('#app')
 
 }

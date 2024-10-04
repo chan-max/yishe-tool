@@ -15,13 +15,17 @@ export const blockLoginPage = (router) => {
 export const blockAdminPage = (router) => {
   router.beforeEach((to, from, next) => {
     let loginStatusStore = useLoginStatusStore();
-    if (to.name === "Admin" && !loginStatusStore.userInfo?.isAdmin) {
-      next({ name: "Home" });
-    } else {
-      next();
+
+    if (to.name === "Admin") {
+
+      if (!loginStatusStore.userInfo?.isAdmin && !loginStatusStore.userInfo?.companyId) {
+        return next({ name: "Home" });
+      }
     }
+
+    next()
   });
-}; 
+};
 
 
 export const initDocumentTitle = (router) => {

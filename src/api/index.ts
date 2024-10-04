@@ -466,6 +466,33 @@ export const getStickerById = (id: string) => new Promise(async (resolve, reject
   resolve(data.data.data)
 })
 
+
+
+
+/**
+ * @define 公司管理
+*/
+/*
+    获取所有贴纸
+*/
+export const getCompanyList = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/company/page', data)
+  resolve(res.data.data)
+})
+
+
+export const createCompany = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/company/create', data)
+  resolve(res.data.data)
+})
+
+
+// 删除公司
+export const deleteCompany = (data) => apiInstance.post('/api/company/delete', data)
+
+export const updateCompany = (data) => apiInstance.post('/api/company/update', data)
+
+
 class Api {
 
 
@@ -485,6 +512,7 @@ class Api {
     const res = await apiInstance.post(Url.GET_USER_META, params)
     return res.data.data
   }
+
 
   uploadToCOS = uploadToCOS
 
@@ -538,6 +566,16 @@ class Api {
 
   // 获取用户列表
   getUserList = getUserList
+
+
+  /**
+   * @define
+  */
+
+  getCompanyList = getCompanyList
+  createCompany = createCompany
+  deleteCompany = deleteCompany
+  updateCompany = updateCompany
 }
 
 export default new Api()

@@ -1,11 +1,18 @@
 <template>
   <div class="login-form">
-    <div style="padding: 20px 0px; display: flex; justify-content: space-between">
-      <div style="font-size: 16px; color: #666">登录衣设账号</div>
-      <icon-qrcode @click="loginType = LoginType.QRCODE" style="height: 20px; width: 20px"></icon-qrcode>
+    <div style="padding: 20px 0px; display: flex; justify-content: space-between;align-items: center;">
+      <img src="/logo.svg" style="width: 20px; height: 20px; margin-right: 8px" />
+      <div style="font-size: 14px;font-weight: bold; color: #666; text-align: left;">
+        登录衣设账号
+      </div>
+      <div style="flex: 1"></div>
+      <icon-qrcode
+        @click="loginType = LoginType.QRCODE"
+        style="height: 20px; width: 20px"
+      ></icon-qrcode>
     </div>
     <el-form :model="loginForm" ref="form" :rules="rules" label-position="top">
-      <el-form-item prop="account">
+      <el-form-item prop="account" >
         <el-input placeholder="请输入账号或邮箱" v-model="loginForm.account">
           <template #prefix>
             <el-icon>
@@ -15,7 +22,11 @@
         </el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input placeholder="请输入密码" v-model="loginForm.password" :type="showPassword ? 'text' : 'password'">
+        <el-input
+          placeholder="请输入密码"
+          v-model="loginForm.password"
+          :type="showPassword ? 'text' : 'password'"
+        >
           <template #prefix>
             <el-icon>
               <Lock />
@@ -37,15 +48,18 @@
       <div class="login-error">{{ errMsg }}</div>
 
       <el-form-item>
-        <el-button style="width: 100%" type="primary" @click="submit(form)" :loading="loading">
-          {{ loading ? '登录中...' : '登 录' }}
+        <el-button
+          style="width: 100%"
+          type="primary"
+          @click="submit(form)"
+          :loading="loading"
+        >
+          {{ loading ? "登录中..." : "登 录" }}
         </el-button>
       </el-form-item>
     </el-form>
     <div style="display: flex; justify-content: space-between">
-      <div class="login-link" @click="signup">
-        没有账号？去注册
-      </div>
+      <div class="login-link" @click="signup">没有账号？去注册</div>
       <div></div>
       <div class="login-link" @click="">忘记密码？</div>
     </div>
@@ -65,7 +79,10 @@ import { loginType, LoginType } from "./index.tsx";
 import { View, Hide, User, Lock } from "@element-plus/icons-vue";
 import { doLoginAction } from "@/store/stores/loginAction";
 import iconQrcode from "@/icon/qrcode-half.svg?component";
-import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
+import {
+  openLoginDialog,
+  showLoginFormModal,
+} from "@/modules/main/view/user/login/index.tsx";
 const userStore = useLoginStatusStore();
 const router = useRouter();
 
@@ -89,7 +106,7 @@ const loginForm = reactive({
 const rules = reactive({
   account: [
     {
-      message: "请输入 6 ~ 16 位长度的账号",
+      message: "",
       trigger: ["blur"],
       validator(rule, val) {
         return val.length >= 6 && val.length <= 16;
@@ -98,7 +115,7 @@ const rules = reactive({
   ],
   password: [
     {
-      message: "请输入 6 ~ 16 位长度的密码",
+      message: "",
       trigger: ["blur"],
       validator(rule, val) {
         return val.length >= 6 && val.length <= 16;
@@ -108,7 +125,7 @@ const rules = reactive({
 });
 
 async function submit(form) {
-  const validateRes = await form.validate(() => { });
+  const validateRes = await form.validate(() => {});
 
   if (!validateRes) {
     return;
@@ -117,23 +134,26 @@ async function submit(form) {
   // loading.value = true;
 
   try {
-    loading.value = true
+    loading.value = true;
     let res = await login(toRaw(loginForm));
     doLoginAction(res.data, isOnce.value);
     message.success("登录成功!");
-    showLoginFormModal.value = false
+    if (showLoginFormModal.value) {
+      showLoginFormModal.value = false;
+    } else {
+      router.replace("/");
+    }
     await nextTick();
     loading.value = false;
   } catch (e) {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 function signup() {
-  showLoginFormModal.value = false
-  router.push({ name: 'Signup' })
+  showLoginFormModal.value = false;
+  router.push({ name: "Signup" });
 }
-
 </script>
 
 <style lang="less">

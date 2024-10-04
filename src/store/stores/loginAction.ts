@@ -49,16 +49,15 @@ export const isLogin = () => {
 export const doLoginAction = (data, once = false) => {
   // 保存登录时间
   const now = new Date().getTime();
-  const { userInfo, token } = data
+  const { token } = data
 
   // 同步用户信息
   const loginStatusStore = useLoginStatusStore();
   loginStatusStore.isLogin = true;
-  loginStatusStore.userInfo = userInfo;
   loginStatusStore.loginTime = now;
   loginStatusStore.once = once;
   loginStatusStore.token = token;
-  loginStatusStore.isAdmin = userInfo.isAdmin;
+  loginStatusStore.getUserInfo()
 };
 
 

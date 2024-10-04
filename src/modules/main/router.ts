@@ -31,18 +31,6 @@ export const adminRoute = {
       },
       children: [
         {
-          name: "AdminManager",
-          path: "manager",
-          component: () => import('./view/admin/view/home.vue'),
-          meta: {
-            title: '管理员管理',
-            header: false,
-          },
-          children: [
-
-          ]
-        },
-        {
           name: "AdminCompany",
           path: "company",
           component: () => import('./view/admin/view/user/company/index.vue'),

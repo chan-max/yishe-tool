@@ -3,7 +3,7 @@
     <s1Table v-bind="gridOptions">
       <template #toolbar-left> </template>
       <template #toolbar-right>
-        <el-button size="small" plain @click="refresh"> 刷新 </el-button>
+        <el-button plain @click="refresh" :icon="RefreshRight"> </el-button>
       </template>
     </s1Table>
     <s1Pagination
@@ -18,34 +18,29 @@
 import { ref, onMounted, onBeforeMount } from "vue";
 import Api from "@/api";
 import { usePaging } from "@/hooks/data/paging";
+import { RefreshRight } from "@element-plus/icons-vue";
 
 const { list, total, currentPage, pageSize, loading, refresh } = usePaging(
   (params) => {
-    return Api.getFileList({
+    return Api.getUserList({
       ...params,
     });
   },
   {
     pageSize: 10,
+    isSinglePageMode: true,
   }
 );
 
 const gridOptions = ref({
   columns: [
     { type: "seq", width: 70 },
-    { field: "id", title: "用户 ID", width: 120, 
-    showOverflow: true },
+    { field: "id", title: "用户 ID", width: 120, showOverflow: true },
     { field: "account", title: "账号", width: 120 },
     {
       field: "name",
       title: "名字",
       minWidth: 70,
-      editRender: {
-        name: "VxeInput",
-        props: {
-          size: "mini",
-        },
-      },
     },
   ],
   data: list,

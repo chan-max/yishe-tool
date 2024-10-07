@@ -12,39 +12,21 @@
   <div class="home">
     <banner></banner>
 
-    <!-- <product></product> -->
-
-    <!-- <carousel style="padding: 36px 6vw"></carousel>
-
-    <resource style="width: 92%"></resource> -->
-
-    <!-- <operate></operate> -->
-
-    <!-- <bar></bar> -->
+    <market></market>
 
     <site-footer></site-footer>
   </div>
 </template>
 
 <script setup>
-import carousel from "./carousel.vue";
 import siteFooter from "../footer/index.vue";
-import gltfViewer from "@/components/model/gltfViewer/index.vue";
-// import carousel from './baseModelCarousel.vue'
+
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "@/api";
-import bar from "./bar.vue";
-import resource from "./source.vue";
-import operate from "./operate.vue";
+
 import banner from "./banner.vue";
-import product from "./product/index.vue";
 
-let modelInfo = ref("");
-
-onMounted(async () => {
-  let data = await getBannerModel();
-  modelInfo.value = data;
-});
+import market from "@/modules/main/view/market/index.vue";
 </script>
 
 <style>

@@ -1,29 +1,39 @@
 <template>
   <div class="banner flex flex-col items-center">
-    <div style="z-index: 3" class="title">开放式服装 <span class="animate-gradient-text">DIY</span> 平台</div>
-    <div style="z-index: 3" class="subtitle">
-      功能丰富，使用简易的二维贴纸设计工具。高度定制和真实的3d模型辅助显示。各式各样的官方和社区模版，提供灵感来源
+    <div class="flex flex-col items-center" style="margin-top: 36vh">
+      <div style="z-index: 3" class="title">
+        开放式服装 <span class="animate-gradient-text">DIY</span> 设计平台
+      </div>
+      <div style="z-index: 3" class="subtitle">
+        功能丰富，使用简易的二维贴纸设计工具。高度定制和真实的3d模型辅助显示。各式各样的官方和社区模版，提供灵感来源
+      </div>
+      <div class="bar" style="z-index: 999">
+        <el-button
+          size="large"
+          type="primary"
+          round
+          @click="$router.push({ name: 'Design' })"
+          class="font-bold"
+        >
+          在线工具
+        </el-button>
+        <el-button
+          size="large"
+          type="primary"
+          plain
+          round
+          @click="more"
+          class="font-bold"
+        >
+          逛一逛
+        </el-button>
+      </div>
     </div>
-    <div class="bar" style="z-index: 999">
-      <el-button
-        size="large"
-        type="primary"
-        round
-        @click="$router.push({ name: 'Design' })"
-        class="font-bold"
-      >
-        在线工具
-      </el-button>
-      <!-- <el-button
-        size="large"
-        round
-        @click="$router.push({ name: 'Market' })"
-        class="font-bold"
-      >
-        逛一逛
-      </el-button> -->
-    </div>
-    <!-- <img src="/wave.svg" style="width: 100%;position:absolute;opacity:.3;bottom:-300px"> -->
+
+    <img
+      src="/wave.svg"
+      style="width: 100%; position: absolute; opacity: 0.3; bottom: -300px"
+    />
 
     <vue-danmaku
       ref="danmukuRef"
@@ -53,7 +63,6 @@
         </el-image>
       </template>
     </vue-danmaku>
-
   </div>
 </template>
 
@@ -81,18 +90,14 @@ const { list: CustomModelList } = usePaging((params) => {
   });
 });
 
-const { list: StickerList } = usePaging(
-  (params) => {
-    return Api.getStickerList({
-      ...params,
-      pageSize: 20,
-      myUploads: false,
-      random: true,
-    });
-  },
-  {
-  }
-);
+const { list: StickerList } = usePaging((params) => {
+  return Api.getStickerList({
+    ...params,
+    pageSize: 20,
+    myUploads: false,
+    random: true,
+  });
+}, {});
 
 const danmukuRef = ref();
 
@@ -105,6 +110,10 @@ watch(
     danmukuRef.value.resize();
   })
 );
+
+function more() {
+  document.getElementById("latest-makeup").scrollIntoView({ behavior: "smooth" ,block:'center'});
+}
 </script>
 
 <style scoped lang="less">
@@ -113,7 +122,6 @@ watch(
   height: 100vh;
   // background-color: #161616;
   background-color: #f5f5f9;
-  padding-top: 32vh;
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(2px);
@@ -141,7 +149,6 @@ watch(
 .banner {
   position: relative;
 }
-
 
 .animate-gradient-text {
   background-image: linear-gradient(to right, #f00090, #861fed);

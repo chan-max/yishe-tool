@@ -11,19 +11,25 @@
 <template>
   <el-backtop :right="100" :bottom="100" />
   <div class="market-container">
-    <div class="market-title">
-    </div>
+    <div class="market-title" id="latest-makeup">最新创作</div>
     <div class="market-content">
       <el-row :gutter="24">
-        <el-col v-for="model in list" :xs="24" :sm="12" :md="8" :lg="6" :xl="4" style="margin-bottom: 24px;">
+        <el-col
+          v-for="model in list"
+          :xs="24"
+          :sm="12"
+          :md="8"
+          :lg="6"
+          :xl="4"
+          style="margin: 24px 0"
+        >
           <card class="market-item" :model="model"></card>
         </el-col>
       </el-row>
-
     </div>
     <div class="more">
-        <el-button type="info" round @click="getList"> 加载更多 </el-button>
-      </div>
+      <el-button type="info" round @click="getList"> 加载更多 </el-button>
+    </div>
   </div>
 </template>
 <script setup>
@@ -42,31 +48,27 @@ const { list, getList } = usePaging((params) => {
     pageSize: 20,
   });
 });
-
-
 </script>
 <style lang="less" scoped>
 .market-container {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .market-title {
-  height: 120px;
+  font-size: 20px;
+  font-weight: bold;
   flex-shrink: 0;
+  font-weight: #333;
+  padding: 20px;
 }
-
 
 .market-content {
   width: 94%;
 }
 
-
-.more{
+.more {
   display: flex;
   justify-content: center;
   padding: 4em;

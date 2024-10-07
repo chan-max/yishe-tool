@@ -10,9 +10,9 @@
 -->
 <template>
   <div class="market-card">
-    <div class="market-card-main" @mouseenter="mouseenter" @mouseleave="mouseleave">
+    <div class="market-card-main">
       <div class="market-card-main-img">
-        <s1-image fit="cover" :src="model.thumbnail"> </s1-image>
+        <s1-image fit="cover" :src="model.thumbnail "> </s1-image>
       </div>
     </div>
     <div class="bar">
@@ -76,6 +76,8 @@ function load() {
   position: absolute;
   width: 100%;
   height: 100%;
+  background-color: #f1f2f3;
+  border-radius: 8px;
 }
 
 .market-card-main-viewer {
@@ -102,6 +104,5 @@ function load() {
 }
 .name {
   font-size: 1.2rem;
-  
 }
 </style>

@@ -307,6 +307,9 @@ export class CanvasController {
 
 
         if (!this.el) {
+            console.log('miss canvas el')
+            this.loading.value = false
+            renderingLoading.value = false
             return
         }
 
@@ -318,7 +321,7 @@ export class CanvasController {
 
                 this.base64 = _canvas.toDataURL('image/png')
 
-            
+
                 let width = Number(formatSizeOptionToPixelValue(canvasStickerOptions.value.width))
                 let height = Number(formatSizeOptionToPixelValue(canvasStickerOptions.value.height))
 
@@ -332,7 +335,7 @@ export class CanvasController {
 
                 this.loading.value = false
                 renderingLoading.value = false
-    
+
             } catch (e) {
                 throw Error('元素转换失败', e.message)
             }

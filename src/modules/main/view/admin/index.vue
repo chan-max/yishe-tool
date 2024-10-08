@@ -5,6 +5,7 @@
     </el-aside>
     <el-container>
       <el-header class="flex items-center admin-header">
+        <breadcrumb></breadcrumb>
         <div style="flex: 1"></div>
         <userAvatar></userAvatar>
       </el-header>
@@ -18,6 +19,7 @@
 <script lang="ts" setup>
 import sidebar from "./components/sidebar.vue";
 import userAvatar from "@/components/user/userAvatar.vue";
+import breadcrumb from "./components/breadcrumb.vue";
 </script>
 
 <style lang="less">

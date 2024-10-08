@@ -10,7 +10,7 @@ export const adminRoute = {
   component: () => import('./view/admin/index.vue'),
   meta: {
     header: false,
-    title: '管理系统首页'
+    title: '衣设管理系统'
   },
   children: [
     {
@@ -21,6 +21,43 @@ export const adminRoute = {
         title: '首页',
         header: false,
       }
+    },
+    {
+      name: "AdminSource",
+      path: "source",
+      meta: {
+        title: '资源管理',
+        header: false,
+      },
+      children: [
+        {
+          name: "AdminBaseModel",
+          path: "baseModel",
+          component: () => import('./view/admin/view/source/baseModel/index.vue'),
+          meta: {
+            title: '基础模型',
+            header: false,
+          },
+        },
+        {
+          name: "AdminProductModel",
+          path: "productModel",
+          component: () => import('./view/admin/view/source/productModel/index.vue'),
+          meta: {
+            title: '基础模型',
+            header: false,
+          },
+        },
+        {
+          name: "AdminResource",
+          path: "resource",
+          component: () => import('./view/admin/view/source/resource/index.vue'),
+          meta: {
+            title: '服装管理',
+            header: false,
+          },
+        },
+      ],
     },
     {
       name: "AdminUser",

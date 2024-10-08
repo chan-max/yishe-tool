@@ -62,6 +62,7 @@ declare module 'vue' {
     HueRotate: typeof import('./src/components/design/layout/canvas/operate/filter/hueRotate.vue')['default']
     Icon: typeof import('./src/components/icon/index.vue')['default']
     Image: typeof import('./src/components/image.vue')['default']
+    ImageListUploader: typeof import('./src/components/imageListUploader/index.vue')['default']
     ImageSelect: typeof import('./src/components/design/layout/canvas/operate/imageSelect/index.vue')['default']
     ImageSticker: typeof import('./src/components/design/layout/imageSticker/index.vue')['default']
     ImageUpload: typeof import('./src/components/design/layout/imageUpload/index.vue')['default']

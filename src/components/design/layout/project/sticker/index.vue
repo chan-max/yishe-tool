@@ -148,7 +148,7 @@ async function deleteItem(item) {
     await s1Confirm({
         content: '确认删除该贴纸吗？'
     })
-    await Api.deleteItem(item.id)
+    await Api.deleteSticker(item.id)
     reset()
     await getList()
     message.success('删除成功')

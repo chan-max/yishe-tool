@@ -1,14 +1,20 @@
 <template>
   <loading v-if="isFirstPageLoading"></loading>
 
-  <div id="layout-container" style="width: 100%; height: 100%; display: flex; flex-direction: column">
+  <div
+    id="layout-container"
+    style="width: 100%; height: 100%; display: flex; flex-direction: column"
+  >
     <div id="layout-header" style="height: var(--1s-header-height)">
       <div v-if="showHeader" style="width: 100%; height: 100%; display: flex">
         <header-menu />
       </div>
     </div>
 
-    <div id="layout-body" style="display: flex; height: calc(100% - var(--1s-header-height))">
+    <div
+      id="layout-body"
+      style="display: flex; height: calc(100% - var(--1s-header-height))"
+    >
       <div id="layout-left-menu" style="height: 100%; border-right: 1px solid #f3f3f3">
         <left-menu v-if="showLeftMenu"></left-menu>
       </div>
@@ -22,33 +28,42 @@
       </div>
 
       <div id="layout-canvas">
-
         <!-- 截屏组件 -->
         <screenshot ref="screenshotInstance"></screenshot>
 
-        <div v-show="showThreeCanvas" style="position:absolute;top:0;left:0;z-index:2;width: 100%;"
-          class="flex justify-center">
+        <div
+          v-show="showThreeCanvas"
+          style="position: absolute; top: 0; left: 0; z-index: 2; width: 100%"
+          class="flex justify-center"
+        >
           <!-- <threeCanvasTopBar></threeCanvasTopBar> -->
         </div>
 
-        <div v-show="showThreeCanvas" @contextmenu="onContextMenu" id="threejs-canvas" style="width: 100%; height: 100%"
-          ref="mountContainer"></div>
+        <div
+          v-show="showThreeCanvas"
+          @contextmenu="onContextMenu"
+          id="threejs-canvas"
+          style="width: 100%; height: 100%"
+          ref="mountContainer"
+        ></div>
 
-        
+        <basic-canvas
+          v-show="showBasicCanvas"
+          style="width: 100%; height: 100%; z-index: 3"
+          ref="basicCanvasRef"
+        ></basic-canvas>
 
-        <basic-canvas v-show="showBasicCanvas" style="width: 100%; height: 100%; z-index: 3"
-          ref="basicCanvasRef"></basic-canvas>
-
-
-        <div v-if="showBottomMenu" style="
-          height: var(--1s-bottom-menu-height);
-          position: absolute;
-          z-index: 9;
-          bottom: 30px;
-          ">
+        <div
+          v-if="showBottomMenu"
+          style="
+            height: var(--1s-bottom-menu-height);
+            position: absolute;
+            z-index: 9;
+            bottom: 30px;
+          "
+        >
           <bottom-menu></bottom-menu>
         </div>
-
       </div>
 
       <div id="layout-right" style="display: flex" v-if="rightComponent">
@@ -59,21 +74,34 @@
     </div>
   </div>
 
-  <diydialog title="图片上传" :header="true" mask="true" :show="showImageUplaod" @close="showImageUplaod = false"
-    :animation="basicContainerAnimation">
+  <diydialog
+    title="图片上传"
+    :header="true"
+    mask="true"
+    :show="showImageUplaod"
+    @close="showImageUplaod = false"
+    :animation="basicContainerAnimation"
+  >
     <image-upload></image-upload>
   </diydialog>
 
-  <diydialog :show="showBaseModelSelect" @close="showBaseModelSelect = false" :animation="basicContainerAnimation">
+  <diydialog
+    :show="showBaseModelSelect"
+    @close="showBaseModelSelect = false"
+    :animation="basicContainerAnimation"
+  >
     <template #title> 选择基础模型</template>
     <base-model-select></base-model-select>
   </diydialog>
 
-  <diydialog :show="showFontUpload" @close="showFontUpload = false" :animation="basicContainerAnimation">
+  <diydialog
+    :show="showFontUpload"
+    @close="showFontUpload = false"
+    :animation="basicContainerAnimation"
+  >
     <template #title> 字体上传 </template>
     <font-upload></font-upload>
   </diydialog>
-
 
   <diydialog title="设置场景" :show="showSceneControl" @close="showSceneControl = false">
     <scene-control></scene-control>
@@ -81,25 +109,42 @@
 
   <fontModal></fontModal>
 
-  <diydialog :show="viewDisplayController.showStickerModal" title="贴纸"
-    @close="viewDisplayController.showStickerModal = false" :animation="basicContainerAnimation">
+  <diydialog
+    :show="viewDisplayController.showStickerModal"
+    title="贴纸"
+    @close="viewDisplayController.showStickerModal = false"
+    :animation="basicContainerAnimation"
+  >
     <sticker-modal></sticker-modal>
   </diydialog>
 
-  <diydialog :show="showUpload" title="资源上传" @close="showUpload = false" :animation="basicContainerAnimation">
+  <diydialog
+    :show="showUpload"
+    title="资源上传"
+    @close="showUpload = false"
+    :animation="basicContainerAnimation"
+  >
     <upload></upload>
   </diydialog>
 
-  <diydialog :show="showSaveModel" title="保存模型" @close="showSaveModel = false" :animation="basicContainerAnimation">
+  <diydialog
+    :show="showSaveModel"
+    title="保存模型"
+    @close="showSaveModel = false"
+    :animation="basicContainerAnimation"
+  >
     <save-model></save-model>
   </diydialog>
 
   <!-- 个人项目弹层 -->
-  <diydialog :show="viewDisplayController.showProject" title="创作资源" @close="viewDisplayController.showProject = false"
-    :animation="basicContainerAnimation">
+  <diydialog
+    :show="viewDisplayController.showProject"
+    title="创作资源"
+    @close="viewDisplayController.showProject = false"
+    :animation="basicContainerAnimation"
+  >
     <projectModal></projectModal>
   </diydialog>
-
 
   <!-- 贴纸详细信息弹层 -->
   <stickerDetailModal></stickerDetailModal>
@@ -197,26 +242,20 @@ import {
   openLoginDialog,
   showLoginFormModal,
 } from "@/modules/main/view/user/login/index.tsx";
-import { useStickerDetailModal } from '@/components/design/layout/project/sticker/stickerModal'
+import { useStickerDetailModal } from "@/components/design/layout/project/sticker/stickerModal";
 
-import { useCustomModelDetailModal } from '@/components/design/layout/project/customModel/customModelModal'
-import decalTooltip from './decalTooltip/index.vue'
+import { useCustomModelDetailModal } from "@/components/design/layout/project/customModel/customModelModal";
+import decalTooltip from "./decalTooltip/index.vue";
 
+const { component: stickerDetailModal } = useStickerDetailModal();
+const { component: customModelDetailModal } = useCustomModelDetailModal();
 
-
-const { component: stickerDetailModal } = useStickerDetailModal()
-const { component: customModelDetailModal } = useCustomModelDetailModal()
-
-
-
-import threeCanvasTopBar from './threeCanvasTopBar/index.vue'
+import threeCanvasTopBar from "./threeCanvasTopBar/index.vue";
 
 const router = useRouter();
 const loginStore = useLoginStatusStore();
 
 const des = useDesignStore();
-
-
 
 const basicContainerAnimation = ref({
   "enter-active-class": "animate__animated animate__bounceIn",
@@ -227,32 +266,27 @@ const basicContainerAnimation = ref({
 const basicCanvasRef = ref();
 
 const leftComponent = computed(() => {
-
   if (showDecalControl.value) {
-    return decalControl
+    return decalControl;
   }
 
   if (showCanvasLayout.value) {
-    return canvasLayout
+    return canvasLayout;
   }
 
   if (showSticker.value) {
-    return sticker
+    return sticker;
   }
-
 });
 
-
 const rightComponent = computed(() => {
-
   if (showWorkspace.value) {
-    return workspace
+    return workspace;
   }
 
   if (showDecalList.value) {
-    return decalList
+    return decalList;
   }
-
 });
 
 // 挂载容器
@@ -270,7 +304,7 @@ onMounted(async () => {
   isFirstPageLoading.value = false;
 });
 
-initAction()
+initAction();
 
 async function initAction() {
   // 提示用户登录
@@ -306,6 +340,7 @@ async function initAction() {
       des.$patch(data);
       lastModifiedTime.value = data.lastModifiedTime;
     }
+
 
     startSyncDesignStorage();
     /*

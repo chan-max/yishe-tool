@@ -472,9 +472,6 @@ export const getStickerById = (id: string) => new Promise(async (resolve, reject
 /**
  * @define 公司管理
 */
-/*
-    获取所有贴纸
-*/
 export const getCompanyList = (data) => new Promise(async (resolve, reject) => {
   let res = await apiInstance.post('/api/company/page', data)
   resolve(res.data.data)
@@ -487,10 +484,30 @@ export const createCompany = (data) => new Promise(async (resolve, reject) => {
 })
 
 
-// 删除公司
 export const deleteCompany = (data) => apiInstance.post('/api/company/delete', data)
 
 export const updateCompany = (data) => apiInstance.post('/api/company/update', data)
+
+/**
+ * @define 服装资源管理
+*/
+export const getResourceList = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/resource/page', data)
+  resolve(res.data.data)
+}) 
+
+
+export const createResource = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/resource/create', data)
+  resolve(res.data.data)
+})
+
+
+export const deleteResource = (data) => apiInstance.post('/api/resource/delete', data)
+
+export const updateResource = (data) => apiInstance.post('/api/resource/update', data)
+
+
 
 
 class Api {
@@ -569,13 +586,21 @@ class Api {
 
 
   /**
-   * @define
+   * @define 公司
   */
-
   getCompanyList = getCompanyList
   createCompany = createCompany
   deleteCompany = deleteCompany
   updateCompany = updateCompany
+
+  /**
+   * @define 资源
+  */
+  getResourceList = getResourceList
+  createResource = createResource
+  deleteResource = deleteResource
+  updateResource = updateResource
+
 }
 
 export default new Api()

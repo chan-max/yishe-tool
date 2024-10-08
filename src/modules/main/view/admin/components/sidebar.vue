@@ -2,7 +2,7 @@
   <el-menu
     class="admin-menu"
     background-color="#222"
-    text-color="rgba(255,255,255,0.5)"
+    text-color="rgba(255,255,255,0.7)"
     active-text-color="#fff"
     :unique-opened="true"
   >
@@ -11,7 +11,7 @@
       style="padding: 24px 0; box-sizing: border-box"
     >
       <div class="flex items-center" style="column-gap: 8px">
-        <img style="width: 24px; height: 24px" src="/logo.svg" />
+        <img style="width: 18px; height: 18px" src="/logo.svg" />
         <span style="color: #fff; font-weight: bold; font-size: 16px">{{ title }}</span>
       </div>
     </div>
@@ -33,7 +33,7 @@ const isCollapse = ref(true);
 const loginStore = useLoginStatusStore();
 
 const title = computed(() => {
-  return loginStore?.userInfo?.company?.name || "1s.design";
+  return loginStore?.userInfo?.company?.name || "衣设管理系统";
 });
 </script>
 

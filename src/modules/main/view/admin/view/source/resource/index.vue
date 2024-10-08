@@ -2,12 +2,10 @@
   <div>
     <s1Table v-bind="gridOptions">
       <template #toolbar-left>
-        <el-button plain  @click="handleCreate">
-          添加公司
-        </el-button>
+        <el-button plain @click="handleCreate"> 添加 </el-button>
       </template>
       <template #toolbar-right>
-        <el-button  plain @click="refresh" :icon="RefreshRight"> </el-button>
+        <el-button plain @click="refresh" :icon="RefreshRight"> </el-button>
       </template>
 
       <template #operationDefault="{ row }">
@@ -23,16 +21,40 @@
     </s1Pagination>
     <a-modal
       v-model:open="showModal"
-      title="公司信息"
+      title="服装资源信息"
       @ok="handleOk"
       centered
       @close="close"
+      width="720px"
+      :destroyOnClose="true"
     >
       <div style="margin: 24px 0">
-        <el-form ref="formRef" :model="form" :rules="rules">
-          <el-form-item label="公司名称" prop="name" required>
-            <el-input v-model="form.name"></el-input>
-          </el-form-item>
+        <el-form ref="formRef" :model="form" :rules="rules" label-width="64px">
+          <el-row :gutter="12">
+            <el-col :span="12">
+              <el-form-item label="资源名称" prop="name" required>
+                <el-input v-model="form.name"></el-input> </el-form-item
+            ></el-col>
+            <el-col :span="12">
+              <el-form-item label="价格" prop="price">
+                <el-input v-model="form.price" type="number" min="0"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="描述" prop="description">
+                <el-input v-model="form.description" type="textarea"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+              <el-form-item label="缩略图" prop="thumbnails">
+                <s1ImageListUploader
+                  v-model="form.thumbnails"
+                  ref="imagelistUploaderRef"
+                ></s1ImageListUploader>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
       </div>
     </a-modal>
@@ -45,6 +67,7 @@ import { usePaging } from "@/hooks/data/paging";
 import { message } from "ant-design-vue";
 import { RefreshRight } from "@element-plus/icons-vue";
 import { s1Confirm } from "@/common/message";
+
 const {
   list,
   total,
@@ -56,7 +79,7 @@ const {
   getList,
 } = usePaging(
   (params) => {
-    return Api.getCompanyList({
+    return Api.getResourceList({
       ...params,
     });
   },
@@ -77,10 +100,21 @@ const rules = ref({
 
 const gridOptions = ref({
   columns: [
-    { type: "seq", width: 70 },
-    // { field: "id", title: "公司 ID", width: 240, showOverflow: true },
-    { field: "name", title: "公司名称", width: 160, showOverflow: true },
-    { field: "inviteCode", title: "邀请码", minWidth: 240 },
+    { type: "seq", width: 60 },
+    { field: "name", title: "资源名称", width: 160, showOverflow: true },
+    {
+      field: "price",
+      title: "价格",
+      width: 120,
+      type: "html",
+      align: "center",
+      formatter(row) {
+        return `<span style="font-size:16px;font-weight:bold;color:#ff4000">${
+          row.cellValue || "-"
+        }</span>`;
+      },
+    },
+    { field: "inviteCode", title: "描述", minWidth: 240 },
     {
       field: "operation",
       fixed: "right",
@@ -95,6 +129,8 @@ const gridOptions = ref({
   loading: loading,
 });
 
+const formRef = ref();
+
 const form = ref({
   name: "",
 } as any);
@@ -107,16 +143,23 @@ function close() {
   form.value = {};
 }
 
+const imagelistUploaderRef = ref();
+
 async function handleOk() {
+  await formRef.value.validate();
+
   if (modalType.value == "create") {
-    await Api.createCompany({
+    await imagelistUploaderRef.value.upload();
+
+    await Api.createResource({
       ...form.value,
     });
     reset();
     await getList();
     message.success("创建成功");
   } else if (modalType.value == "update") {
-    await Api.updateCompany({
+    await imagelistUploaderRef.value.upload();
+    await Api.updateResource({
       ...form.value,
     });
     refresh();
@@ -140,12 +183,12 @@ function handleUpdate(row) {
 
 async function handleDelete(row) {
   await s1Confirm({
-    content: "确认删除该公司吗?",
+    content: "确认删除吗?",
     okButtonProps: {
       danger: true,
     },
   });
-  await Api.deleteCompany({
+  await Api.deleteResource({
     id: row.id,
   });
   refresh();

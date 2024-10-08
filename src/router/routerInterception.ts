@@ -11,14 +11,15 @@ export const blockLoginPage = (router) => {
   });
 };
 
-
+/**
+ * 进管理员可进入
+*/
 export const blockAdminPage = (router) => {
   router.beforeEach((to, from, next) => {
     let loginStatusStore = useLoginStatusStore();
 
     if (to.name === "Admin") {
-
-      if (!loginStatusStore.userInfo?.isAdmin && !loginStatusStore.userInfo?.companyId) {
+      if (!loginStatusStore.userInfo?.isAdmin) {
         return next({ name: "Home" });
       }
     }

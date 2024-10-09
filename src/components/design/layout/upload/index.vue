@@ -14,11 +14,7 @@
         :on-change="fileListChange"
         :limit="1"
         :on-exceed="handleExceed"
-        :accept="
-          loginStore.isAdmin
-            ? Utils.const.ImageFontModelFileAcceptString
-            : Utils.const.ImageFontFileAcceptString
-        "
+        :accept="Utils.const.ImageFontFileAcceptString"
       >
         <div class="placeholder">
           <icon-file-upload></icon-file-upload>
@@ -26,9 +22,7 @@
         </div>
         <template #tip>
           <div class="tip">
-            <div>
-              支持 jpg,png,svg等图片格式 , ttf,woff等字体格式
-            </div>
+            <div>支持 jpg,png,svg等图片格式 , ttf,woff等字体格式</div>
           </div>
         </template>
 

@@ -35,62 +35,6 @@
       </div>
     </div>
   </div>
-
-  <el-dialog v-model="dialogVisible" title="资源上传" width="680" @close="close">
-    <el-upload
-      style="padding: 0"
-      v-model:file-list="fileList"
-      drag
-      :auto-upload="false"
-      multiple
-      v-bind="$attrs"
-      accept="image/png, image/jpeg, image/svg+xml, font/ttf, font/woff ,.glb"
-    >
-      <div class="placeholder">
-        <icon-file-upload></icon-file-upload>
-        <div style="font-size: 12px">点击或拖拽上传</div>
-        <!-- <div> 
-          <el-button size="small"> 扫码上传 </el-button>
-          <el-button size="small">  扫码上传 </el-button>
-        </div> -->
-      </div>
-      <template #tip>
-        <div class="tip">
-          <div>支持 jpg，png，svg等图片格式 ， ttf，woff等字体格式，glb模型文件</div>
-          <div>最大尺寸 5 MB</div>
-        </div>
-      </template>
-      <template #file="{ file }">
-        <div class="file-bar">
-          <div>
-            <el-icon size="24"
-              ><component :is="fileTypeIcons[getFileSuffix(file.name)]"></component
-            ></el-icon>
-          </div>
-          <div class="file-name">{{ file.name }}</div>
-          <div style="flex: 1"></div>
-          <div>
-            <el-button @click="previewFile(file)" type="info" link size="small">
-              预览
-            </el-button>
-            <el-button @click="removeFile(file)" type="danger" link
-              ><el-icon size="20"><CircleCloseFilled /></el-icon
-            ></el-button>
-          </div>
-        </div>
-      </template>
-    </el-upload>
-    <template #footer>
-      <div class="dialog-footer">
-        <div style="flex: 1"></div>
-        <el-button link size="small" :icon="QuestionFilled">了解更多 </el-button>
-        <el-button size="default" @click="dialogVisible = false">取消</el-button>
-        <el-button size="default" @click="doUpload" :loading="loading">
-          {{ loading ? "上传中" : "上传" }}
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
 </template>
 
 <script setup lang="ts">

@@ -494,7 +494,7 @@ export const updateCompany = (data) => apiInstance.post('/api/company/update', d
 export const getResourceList = (data) => new Promise(async (resolve, reject) => {
   let res = await apiInstance.post('/api/resource/page', data)
   resolve(res.data.data)
-}) 
+})
 
 
 export const createResource = (data) => new Promise(async (resolve, reject) => {
@@ -571,12 +571,11 @@ class Api {
 
   updateFile = updateFile
 
+
+  // 基础产品模型相关
   getProductModelList = getProductModelList
-
   createProductModel = createProductModel
-
   updateProductModel = updateProductModel
-
   deleteProductModel = deleteProductModel
 
   updateCustomModel = updateCustomModel

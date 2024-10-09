@@ -1,42 +1,107 @@
-<!--
- * @Author: chan-max jackieontheway666@gmail.com
- * @Date: 2023-12-31 11:46:23
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-25 20:58:39
- * @FilePath: /1s/index.html
- * @Description: app entry
- * 
- * Copyright (c) 2024 by 1s, All Rights Reserved. 
--->
 <!DOCTYPE html>
 <html class="notranslate" translate="no">
 
 <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="google" content="notranslate" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, 
-  maximum-scale=1.0, minimum-scale=1.0,
-  viewport-fit=cover" />
-    <title>1s</title>
-    <style>
-        .safe-area-inset-top {
-            padding-top: constant(safe-area-inset-top);
-            padding-top: env(safe-area-inset-top);
-        }
-
-        .safe-area-inset-bottom {
-            padding-bottom: constant(safe-area-inset-bottom);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-    </style>
+    <title>衣设网 - 在线服装设计</title>
+    <meta name="description" content="衣设网,衣设,1s,1s.design免费在线服装设计,平面设计">
+    <meta name="keywords" content="衣设网,衣设,1s,1s.design,服装设计,免费设计,在线服装设计,diy服装,自定义服装,diy,自定义,图片设计，艺术字设计，印章设计，春联设计">
 </head>
-<!-- 移动端引入多页面是因为防止打包时生成过多无用代码 -->
 
 <body>
-    <div id="app"></div>
-    <script type="module" src="./src/modules/app/main.ts"></script>
+    <div id="app">
+        <style>
+            html,
+            body,
+            #app {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .loading {
+                font-size: 16px;
+                font-family: 'Montserrat', sans-serif;
+                font-weight: 900;
+                text-align: center;
+                color: #aaa;
+                span {
+                    display: inline-block;
+                }
+            }
+
+            .loading01 span {
+                animation: loading01 1.4s infinite alternate;
+            }
+
+            .loading01 span:nth-child(1) {
+                animation-delay: 0s;
+            }
+
+            .loading01 span:nth-child(2) {
+                animation-delay: 0.1s;
+            }
+
+            .loading01 span:nth-child(3) {
+                animation-delay: 0.2s;
+            }
+
+            .loading01 span:nth-child(4) {
+                animation-delay: 0.3s;
+            }
+
+            .loading01 span:nth-child(5) {
+                animation-delay: 0.4s;
+            }
+
+            .loading01 span:nth-child(6) {
+                animation-delay: 0.5s;
+            }
+
+            .loading01 span:nth-child(7) {
+                animation-delay: 0.6s;
+            }
+
+            .loading01 span:nth-child(8) {
+                animation-delay: 0.7s;
+            }
+
+            .loading01 span:nth-child(9) {
+                animation-delay: 0.8s;
+            }
+
+            
+
+            @keyframes loading01 {
+                0% {
+                    opacity: 1;
+                }
+
+                100% {
+                    opacity: 0;
+                }
+            }
+        </style>
+
+
+        <div class="loading loading01">
+            <span>1</span>
+            <span>s</span>
+            <span>.</span>
+            <span>d</span>
+            <span>e</span>
+            <span>s</span>
+            <span>i</span>
+            <span>g</span>
+            <span>n</span>
+        </div>
+    </div>
+    <script type="module" src="./src/modules/main/main.ts"></script>
 </body>
 
 </html>

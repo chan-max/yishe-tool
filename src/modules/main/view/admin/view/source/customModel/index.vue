@@ -1,11 +1,13 @@
 <template>
   <div>
     <s1Table v-bind="gridOptions">
-      <template #toolbar-left>
-        <el-button plain @click="handleCreate"> 添加 </el-button>
-      </template>
+      <template #toolbar-left> </template>
       <template #toolbar-right>
         <el-button plain @click="refresh" :icon="RefreshRight"> </el-button>
+      </template>
+
+      <template #thumbnailDefault="{ row }">
+        <s1-image :src="row.thumbnail" style="width: 100px; height: 100px"></s1-image>
       </template>
 
       <template #operationDefault="{ row }">
@@ -21,10 +23,11 @@
     </s1Pagination>
     <a-modal
       v-model:open="showModal"
-      title="服装资源信息"
+      title="自定义模型信息"
       @ok="handleOk"
       centered
       @close="close"
+      @confirm="close"
       width="720px"
       :destroyOnClose="true"
     >
@@ -32,26 +35,19 @@
         <el-form ref="formRef" :model="form" :rules="rules" label-width="64px">
           <el-row :gutter="12">
             <el-col :span="12">
-              <el-form-item label="资源名称" prop="name" required>
+              <el-form-item label="模型名称" prop="name" required>
                 <el-input v-model="form.name"></el-input> </el-form-item
             ></el-col>
             <el-col :span="12">
-              <el-form-item label="价格" prop="price">
-                <el-input v-model="form.price" type="number" min="0"></el-input>
-              </el-form-item>
-            </el-col>
+              <el-form-item label="关键字" prop="keywords">
+                <s1-tagsInput
+                  v-model="form.keywords"
+                  :string="true"
+                ></s1-tagsInput> </el-form-item
+            ></el-col>
             <el-col :span="24">
               <el-form-item label="描述" prop="description">
                 <el-input v-model="form.description" type="textarea"></el-input>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="24">
-              <el-form-item label="缩略图" prop="thumbnails">
-                <s1ImageListUploader
-                  v-model="form.thumbnails"
-                  ref="imagelistUploaderRef"
-                ></s1ImageListUploader>
               </el-form-item>
             </el-col>
           </el-row>
@@ -79,12 +75,13 @@ const {
   getList,
 } = usePaging(
   (params) => {
-    return Api.getResourceList({
+    return Api.getCustomModelList({
       ...params,
     });
   },
   {
     isSinglePageMode: true,
+    pageSize: 10,
   }
 );
 
@@ -101,20 +98,17 @@ const rules = ref({
 const gridOptions = ref({
   columns: [
     { type: "seq", width: 60 },
-    { field: "name", title: "资源名称", width: 160, showOverflow: true },
     {
-      field: "price",
-      title: "价格",
+      field: "thumbnail",
+      title: "缩略图",
       width: 120,
-      type: "html",
-      align: "center",
-      formatter(row) {
-        return `<span style="font-size:16px;font-weight:bold;color:#ff4000">${
-          row.cellValue || "-"
-        }</span>`;
+      slots: {
+        default: "thumbnailDefault",
       },
     },
-    { field: "inviteCode", title: "描述", minWidth: 240 },
+    { field: "name", title: "资源名称", width: 160, showOverflow: true },
+    { field: "keywords", title: "关键字", width: 240, showOverflow: true },
+    { field: "description", title: "描述", minWidth: 240 },
     {
       field: "operation",
       fixed: "right",
@@ -143,34 +137,17 @@ function close() {
   form.value = {};
 }
 
-const imagelistUploaderRef = ref();
-
 async function handleOk() {
   await formRef.value.validate();
-
   if (modalType.value == "create") {
-    await imagelistUploaderRef.value.upload();
-
-    await Api.createResource({
-      ...form.value,
-    });
-    reset();
-    await getList();
-    message.success("创建成功");
   } else if (modalType.value == "update") {
-    await imagelistUploaderRef.value.upload();
-    await Api.updateResource({
+    await Api.updateCustomModel({
       ...form.value,
     });
     refresh();
     message.success("更新成功");
   }
   showModal.value = false;
-}
-
-async function handleCreate() {
-  modalType.value = "create";
-  showModal.value = true;
 }
 
 function handleUpdate(row) {
@@ -188,7 +165,7 @@ async function handleDelete(row) {
       danger: true,
     },
   });
-  await Api.deleteResource({
+  await Api.deleteCustomModel({
     id: row.id,
   });
   refresh();

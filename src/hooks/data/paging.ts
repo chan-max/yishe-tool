@@ -38,6 +38,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
     const totalPage = ref(Infinity)
     // 尺寸
     const pageSize = ref(options.pageSize)
+
     // 总数
     const total = ref(0)
     // 是否立即触发一次, 默认为true

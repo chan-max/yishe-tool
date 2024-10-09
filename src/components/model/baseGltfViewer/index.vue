@@ -131,10 +131,10 @@ async function initModel() {
   var currentMesh = null;
 
   if (!props.src) {
-    return
+    return;
   }
 
-  loading.value = true
+  loading.value = true;
 
   let gltf = await gltfLoader(props.src);
 
@@ -209,9 +209,8 @@ function getScreenShotFile() {
 
 defineExpose({
   init: (src) => initModel(src),
-  getScreenShotFile
-})
-
+  getScreenShotFile,
+});
 </script>
 <style lang="less" scoped>
 .base-gltf-viewer {
@@ -226,7 +225,7 @@ defineExpose({
 
 .loading {
   font-weight: bold;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(155, 155, 155, 0.7);
   width: 100%;
   height: 100%;
   display: flex;

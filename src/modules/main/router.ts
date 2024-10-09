@@ -31,20 +31,20 @@ export const adminRoute = {
       },
       children: [
         {
-          name: "AdminBaseModel",
-          path: "baseModel",
-          component: () => import('./view/admin/view/source/baseModel/index.vue'),
-          meta: {
-            title: '基础模型',
-            header: false,
-          },
-        },
-        {
           name: "AdminProductModel",
           path: "productModel",
           component: () => import('./view/admin/view/source/productModel/index.vue'),
           meta: {
-            title: '基础模型',
+            title: '基础产品模型',
+            header: false,
+          },
+        },
+        {
+          name: "AdminCustomModel",
+          path: "customModel",
+          component: () => import('./view/admin/view/source/customModel/index.vue'),
+          meta: {
+            title: '自定义模型',
             header: false,
           },
         },

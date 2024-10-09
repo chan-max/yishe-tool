@@ -8,7 +8,8 @@ import svgIcon from './icon/index.vue'
 import s1Table from './s1Table/index.vue';
 import s1Pagination from './s1Table/pagination.vue';
 import gltfViewer from './model/gltfViewer/index.vue'
-
+import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
+import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
 import imageListUploader from './imageListUploader/index.vue'
 
 
@@ -24,5 +25,7 @@ export const s1Plugin = {
         app.component('s1Table', s1Table);
         app.component('s1Pagination', s1Pagination);
         app.component('s1ImageListUploader', imageListUploader)
+        app.component('s1TagsInput', tagsInput)
+        app.component('s1BaseGltfViewer', baseGltfViewer)
     }
 }

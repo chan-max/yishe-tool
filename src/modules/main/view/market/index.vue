@@ -51,6 +51,7 @@ const { list, getList } = usePaging((params) => {
 </script>
 <style lang="less" scoped>
 .market-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -47,7 +47,7 @@ export default defineConfig((config: any) => {
     rollupOptions: {
       input: {
         mobile: resolve(__dirname, 'mobile.html'),
-        index: resolve(__dirname, 'pc.html'),
+        index: resolve(__dirname, 'index.html'),
       },
     }
   }
@@ -56,7 +56,7 @@ export default defineConfig((config: any) => {
     outDir: 'app',
     assetsDir: './',
     rollupOptions: {
-      input: resolve(__dirname, 'index.html'),
+      input: resolve(__dirname, 'app.html'),
     }
   }
 

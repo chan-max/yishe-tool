@@ -1,18 +1,15 @@
 <template>
   <el-menu
     class="admin-menu"
-    background-color="#222"
-    text-color="rgba(255,255,255,0.7)"
-    active-text-color="#fff"
+    background-color="#fff"
+    text-color="#555"
+    active-text-color="#222"
     :unique-opened="true"
   >
-    <div
-      class="flex items-center w-full justify-center"
-      style="padding: 24px 0; box-sizing: border-box"
-    >
+    <div class="flex items-center w-full" style="padding: 24px; box-sizing: border-box">
       <div class="flex items-center" style="column-gap: 8px">
         <img style="width: 18px; height: 18px" src="/logo.svg" />
-        <span style="color: #fff; font-weight: bold; font-size: 16px">{{ title }}</span>
+        <span style="color: #333; font-weight: bold; font-size: 16px">{{ title }}</span>
       </div>
     </div>
     <!-- 递归动态菜单 -->
@@ -41,10 +38,12 @@ const title = computed(() => {
 .admin-menu {
   height: 100%;
   user-select: none;
-
+  padding: 12px;
   .el-sub-menu__title,
   .el-menu-item {
     font-size: 12px;
   }
+
+  border-right: 1px solid #e8edf2;
 }
 </style>

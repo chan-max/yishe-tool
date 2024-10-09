@@ -47,11 +47,10 @@ const baseGridOptions = ref({
 
 <style>
 .s1-table {
-  border-radius: 8px;
+  --vxe-ui-input-height-mini: 24px;
+  border-radius: 12px;
   box-shadow: 0px 0px 13px 0px rgba(82, 63, 105, 0.05);
   padding: 24px;
   background-color: #fff;
-
-  --vxe-ui-input-height-mini: 24px;
 }
 </style>

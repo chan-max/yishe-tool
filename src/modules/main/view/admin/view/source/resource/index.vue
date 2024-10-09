@@ -107,10 +107,9 @@ const gridOptions = ref({
       title: "价格",
       width: 120,
       type: "html",
-      align: "center",
       formatter(row) {
         return `<span style="font-size:16px;font-weight:bold;color:#ff4000">${
-          row.cellValue || "-"
+          row.cellValue || ""
         }</span>`;
       },
     },

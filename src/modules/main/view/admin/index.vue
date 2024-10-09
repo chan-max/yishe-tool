@@ -9,7 +9,7 @@
         <div style="flex: 1"></div>
         <userAvatar></userAvatar>
       </el-header>
-      <el-main style="background: #f7f8fa">
+      <el-main style="background: #f7f8f9">
         <router-view></router-view>
       </el-main>
     </el-container>
@@ -29,5 +29,6 @@ import breadcrumb from "./components/breadcrumb.vue";
 
 .admin-header {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  border-bottom: 1px solid #e8edf2;
 }
 </style>

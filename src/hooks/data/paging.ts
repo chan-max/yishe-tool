@@ -74,7 +74,6 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
     // 滚动触发器， 当需要加载时触发该方法即可
     async function getList(params = {}) {
         // 已经请求完所有数据
-
         if (loading.value) {
             return;
         }
@@ -84,7 +83,8 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
             // 非单页模式处理
             if (!isSinglePageMode.value) {
                 currentPage.value++
-                if (currentPage.value >= totalPage.value) {
+
+                if (currentPage.value > totalPage.value) {
                     return
                 }
             } else {

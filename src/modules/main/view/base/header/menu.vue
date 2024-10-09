@@ -82,11 +82,11 @@ const menuOptions = ref([
     RouteName: "Market",
     key: "market",
   },
-  {
-    label: "商家",
-    RouteName: "Seller",
-    key: "seller",
-  },
+  // {
+  //   label: "商家",
+  //   RouteName: "Seller",
+  //   key: "seller",
+  // },
   {
     label: "工作台",
     RouteName: "Workspace",
@@ -159,7 +159,7 @@ const menuOptions = ref([
   display: flex;
   align-items: center;
   justify-content: center;
-  column-gap: .5rem;
+  column-gap: 0.5rem;
   text-wrap: nowrap;
   cursor: pointer;
   color: #666;

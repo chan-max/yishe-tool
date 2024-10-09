@@ -2,7 +2,7 @@
   <div class="banner flex flex-col items-center">
     <div class="flex flex-col items-center" style="margin-top: 36vh">
       <div style="z-index: 3" class="title">
-        开放式服装 <span class="animate-gradient-text">DIY</span> 设计平台
+        开放式 <span class="animate-gradient-text"> 服装 DIY</span> 设计平台
       </div>
       <div style="z-index: 3" class="subtitle">
         功能丰富，使用简易的二维贴纸设计工具。高度定制和真实的3d模型辅助显示。各式各样的官方和社区模版，提供灵感来源
@@ -37,11 +37,11 @@
 
     <vue-danmaku
       ref="danmukuRef"
-      :debounce="333"
+      :debounce="33"
       useSlot
       v-model:danmus="danmus"
       loop
-      :speeds="66"
+      :speeds="44"
       :top="48"
       :right="48"
       isSuspend
@@ -56,7 +56,7 @@
     >
       <template v-slot:dm="{ index, danmu }">
         <el-image
-          style="width: 100px; height: 100px; border-radius: 5%; object-fit: contain"
+          style="width: 120px; height: 120px; object-fit: contain"
           :src="danmu.thumbnail"
           fit="contain"
         >
@@ -112,7 +112,9 @@ watch(
 );
 
 function more() {
-  document.getElementById("latest-makeup").scrollIntoView({ behavior: "smooth" ,block:'center'});
+  document
+    .getElementById("latest-makeup")
+    .scrollIntoView({ behavior: "smooth", block: "center" });
 }
 </script>
 

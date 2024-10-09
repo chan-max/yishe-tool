@@ -28,7 +28,10 @@
       </el-row>
     </div>
     <div class="more">
-      <el-button type="info" round @click="getList"> 加载更多 </el-button>
+      <el-button type="info" round @click="getList" v-if="!isLastPage">
+        加载更多
+      </el-button>
+      <span v-else> 到底了 </span>
     </div>
   </div>
 </template>
@@ -42,7 +45,7 @@ import { usePaging } from "@/hooks/data/paging.ts";
 
 const router = useRouter();
 
-const { list, getList } = usePaging((params) => {
+const { list, getList, isLastPage } = usePaging((params) => {
   return getCustomModelList({
     ...params,
     pageSize: 20,

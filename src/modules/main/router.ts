@@ -160,15 +160,15 @@ const routes = [
       header: true
     }
   },
-  {
-    path: "/seller",
-    name: "Seller",
-    component: () => import("./view/workspace/index.vue"),
-    meta: {
-      header: true,
-      title: '设计室'
-    }
-  },
+  // {
+  //   path: "/seller",
+  //   name: "Seller",
+  //   component: () => import("./view/workspace/index.vue"),
+  //   meta: {
+  //     header: true,
+  //     title: '设计室'
+  //   }
+  // },
   {
     path: "/UserProfile",
     name: "UserProfile",

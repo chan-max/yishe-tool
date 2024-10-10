@@ -35,6 +35,9 @@ import { currentModelController } from '@/components/design/store'
 import { imageDataToFile } from '@/common/transform'
 import { defineCanvasChild } from './children/define.tsx';
 
+import { currentFocusingStickerId ,ChildViewHelperComponent} from '@/components/design/layout/canvas/components/childViewHelper/index'
+
+
 /*
     画布参数
 */
@@ -208,6 +211,7 @@ export function removeCavnasChild(id) {
     let child = canvasStickerOptions.value.children.find(child => child.id == id)
     let index = canvasStickerOptions.value.children.indexOf(child)
     canvasStickerOptions.value.children.splice(index, 1)
+    currentFocusingStickerId.value = null
 }
 
 

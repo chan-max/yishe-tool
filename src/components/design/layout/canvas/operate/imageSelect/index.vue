@@ -45,7 +45,10 @@
     </template>
   </operate-form-item>
 
-  <modal v-model="showImageSelectModal" @close="showImageSelectModal = false"></modal>
+  <modal
+    v-model:open="showImageSelectModal"
+    @close="showImageSelectModal = false"
+  ></modal>
 </template>
 
 <script setup lang="ts">

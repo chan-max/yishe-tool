@@ -32,7 +32,13 @@ const baseGridOptions = ref({
   headerCellClassName: "header-cell-class",
   cellClassName: "cell-class",
   rowClassName: "row-class",
-  size: "mini",
+  size: "small",
+  rowConfig: {
+    useKeys: true,
+  },
+  columnConfig: {
+    useKeys: true,
+  },
   editConfig: {
     enable: true,
     trigger: "dblclick",
@@ -48,9 +54,13 @@ const baseGridOptions = ref({
 <style>
 .s1-table {
   --vxe-ui-input-height-mini: 24px;
-  border-radius: 12px;
+  border-radius: 8px;
   box-shadow: 0px 0px 13px 0px rgba(82, 63, 105, 0.05);
-  padding: 24px;
+  padding: 24px 24px 48px 24px;
+  background-color: #fff;
+}
+
+.header-cell-class {
   background-color: #fff;
 }
 </style>

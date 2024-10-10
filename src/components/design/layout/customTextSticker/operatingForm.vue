@@ -12,7 +12,6 @@
               <template #name> 文字大小 </template>
               <template #content>
                 <el-input
-                  
                   v-model="operatingTextStickerOptions.fontSize"
                   size="small"
                 ></el-input>
@@ -96,7 +95,6 @@
               <template #name> 行高 </template>
               <template #content>
                 <el-input
-                  
                   v-model="operatingTextStickerOptions.lineHeight"
                   size="small"
                   min="0"
@@ -112,7 +110,6 @@
               <template #name> 间距 </template>
               <template #content>
                 <el-input
-                  
                   v-model="operatingTextStickerOptions.letterSpacing"
                   size="small"
                   min="-1"
@@ -160,7 +157,6 @@
               <template #name> 边框宽度 </template>
               <template #content>
                 <el-input
-                  
                   v-model="operatingTextStickerOptions.borderWidth"
                   min="0"
                   max="5"
@@ -205,8 +201,7 @@
 <script setup>
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import operateFormItem from "@/components/design/layout/canvas/operate/operateFormItem.vue";
-import colorPicker from "../../components/colorPicker.vue";
-
+import colorPicker from "@/components/design/components/colorPicker/colorPicker.vue";
 import iconBold from "@/components/design/assets/icon/bold.svg?component";
 import iconFontSize from "@/components/design/assets/icon/font-size.svg?component";
 import iconFontColor from "@/components/design/assets/icon/font-color.svg?component";
@@ -222,7 +217,7 @@ import iconBorderColor from "@/components/design/assets/icon/border-color.svg?co
 
 import { operatingTextStickerOptions, showFontModal } from "../../store";
 
-const r = ref()
+const r = ref();
 
 const actives = ref(["1", "2", "3", "4"]);
 

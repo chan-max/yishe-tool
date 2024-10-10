@@ -3,6 +3,21 @@ import {
   createWebHashHistory,
   createWebHistory,
 } from "vue-router";
+import { House } from '@element-plus/icons-vue'
+import {
+  HomeOutlined,
+  SettingFilled,
+  SmileOutlined,
+  SyncOutlined,
+  LoadingOutlined,
+  UserOutlined,
+  DatabaseOutlined,
+  IdcardOutlined,
+  SkinOutlined,
+  TeamOutlined,
+  ShoppingOutlined,
+  TagOutlined,
+} from '@ant-design/icons-vue';
 
 export const adminRoute = {
   path: "/admin",
@@ -10,7 +25,7 @@ export const adminRoute = {
   component: () => import('./view/admin/index.vue'),
   meta: {
     header: false,
-    title: '衣设管理系统'
+    title: '衣设管理系统',
   },
   children: [
     {
@@ -20,6 +35,7 @@ export const adminRoute = {
       meta: {
         title: '首页',
         header: false,
+        icon: HomeOutlined
       }
     },
     {
@@ -28,6 +44,7 @@ export const adminRoute = {
       meta: {
         title: '资源管理',
         header: false,
+        icon:DatabaseOutlined
       },
       children: [
         {
@@ -37,6 +54,7 @@ export const adminRoute = {
           meta: {
             title: '基础产品模型',
             header: false,
+            icon:ShoppingOutlined,
           },
         },
         {
@@ -46,6 +64,7 @@ export const adminRoute = {
           meta: {
             title: '自定义模型',
             header: false,
+            icon:TagOutlined,
           },
         },
         {
@@ -55,6 +74,7 @@ export const adminRoute = {
           meta: {
             title: '服装管理',
             header: false,
+            icon:SkinOutlined,
           },
         },
       ],
@@ -65,6 +85,7 @@ export const adminRoute = {
       meta: {
         title: '用户管理',
         header: false,
+        icon:UserOutlined
       },
       children: [
         {
@@ -74,10 +95,8 @@ export const adminRoute = {
           meta: {
             title: '公司管理',
             header: false,
+            icon:TeamOutlined,
           },
-          children: [
-
-          ]
         },
         {
           name: "AdminUserList",
@@ -86,10 +105,8 @@ export const adminRoute = {
           meta: {
             title: '用户',
             header: false,
+            icon:UserOutlined
           },
-          children: [
-
-          ]
         },
       ]
     },

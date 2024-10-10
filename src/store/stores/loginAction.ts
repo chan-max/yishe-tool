@@ -50,7 +50,7 @@ export const doLoginAction = (data, once = false) => {
   // 保存登录时间
   const now = new Date().getTime();
   const { token } = data
-
+  
   // 同步用户信息
   const loginStatusStore = useLoginStatusStore();
   loginStatusStore.isLogin = true;

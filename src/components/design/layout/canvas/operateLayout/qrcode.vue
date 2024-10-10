@@ -1,80 +1,78 @@
 <template>
-    <el-collapse v-model="qrcodeCollapseActives">
-        <el-collapse-item name="1">
-            <template #title>
-                <div class="title">基本配置</div>
-            </template>
-            <el-row :gutter="24" align="middle">
-                <el-col :span="24">
-                    <operateItemTextContent label="二维码内容" v-model="currentOperatingCanvasChild.qrcodeContent">
-                    </operateItemTextContent>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemSize label="二维码尺寸" v-model:width="currentOperatingCanvasChild.width"
-                        v-model:height="currentOperatingCanvasChild.height">
-                    </operateItemSize>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemBackgroundColor v-model="currentOperatingCanvasChild.backgroundColor">
-                    </operateItemBackgroundColor>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemColor label="二维码颜色" v-model="currentOperatingCanvasChild.qrCodeColor">
-                    </operateItemColor>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemPadding v-model="currentOperatingCanvasChild.padding">
-                    </operateItemPadding>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemPosition v-model="currentOperatingCanvasChild.position"></operateItemPosition>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemBorderRadius v-model="currentOperatingCanvasChild.borderRadius">
-                    </operateItemBorderRadius>
-                </el-col>
-            </el-row>
-        </el-collapse-item>
+  <el-collapse v-model="qrcodeCollapseActives">
+    <el-collapse-item name="1">
+      <template #title>
+        <div class="title">基本配置</div>
+      </template>
 
-        <el-collapse-item name="2">
-            <template #title>
-                <div class="title">二维码配置</div>
-            </template>
-            <el-row :gutter="24" align="middle">
-                <el-col :span="24">
-                    <operateItemQrcodeErrorCorrectionLevel v-model="currentOperatingCanvasChild.errorCorrectionLevel">
-                    </operateItemQrcodeErrorCorrectionLevel>
-                </el-col>
-                <el-col :span="24">
-                    <operateItemQrcodeType v-model="currentOperatingCanvasChild.qrcodeDotType"></operateItemQrcodeType>
-                </el-col>
-            </el-row>
-        </el-collapse-item>
+      <operateItemTextContent
+        label="二维码内容"
+        v-model="currentOperatingCanvasChild.qrcodeContent"
+      >
+      </operateItemTextContent>
 
-        <el-collapse-item name="3">
-            <template #title>
-                <div class="title">定位点样式</div>
-            </template>
-        </el-collapse-item>
-        <el-collapse-item name="3">
-            <template #title>
-                <div class="title">中心图片设置</div>
-            </template>
-        </el-collapse-item>
-        <el-collapse-item name="common">
-            <template #title>
-                <div class="title">通用属性</div>
-            </template>
-            <el-col :span="24">
-                <operateItemZindex v-model="currentOperatingCanvasChild.zIndex">
-                </operateItemZindex>
-            </el-col>
-        </el-collapse-item>
+      <operateItemSize
+        label="二维码尺寸"
+        v-model:width="currentOperatingCanvasChild.width"
+        v-model:height="currentOperatingCanvasChild.height"
+      >
+      </operateItemSize>
 
-    </el-collapse>
+      <operateItemBackgroundColor v-model="currentOperatingCanvasChild.backgroundColor">
+      </operateItemBackgroundColor>
+
+      <operateItemColor
+        label="二维码颜色"
+        v-model="currentOperatingCanvasChild.qrCodeColor"
+      >
+      </operateItemColor>
+
+      <!-- <operateItemPadding v-model="currentOperatingCanvasChild.padding">
+      </operateItemPadding> -->
+
+      <operateItemPosition
+        v-model="currentOperatingCanvasChild.position"
+      ></operateItemPosition>
+
+      <operateItemBorderRadius v-model="currentOperatingCanvasChild.borderRadius">
+      </operateItemBorderRadius>
+    </el-collapse-item>
+
+    <el-collapse-item name="2">
+      <template #title>
+        <div class="title">二维码配置</div>
+      </template>
+
+      <operateItemQrcodeErrorCorrectionLevel
+        v-model="currentOperatingCanvasChild.errorCorrectionLevel"
+      >
+      </operateItemQrcodeErrorCorrectionLevel>
+
+      <operateItemQrcodeType
+        v-model="currentOperatingCanvasChild.qrcodeDotType"
+      ></operateItemQrcodeType>
+    </el-collapse-item>
+
+    <el-collapse-item name="common" title="通用属性">
+      <operateItemCommonGroup
+        v-model="currentOperatingCanvasChild"
+      ></operateItemCommonGroup>
+    </el-collapse-item>
+
+    <el-collapse-item name="3">
+      <template #title>
+        <div class="title">定位点样式</div>
+      </template>
+    </el-collapse-item>
+    <el-collapse-item name="4">
+      <template #title>
+        <div class="title">中心图片设置</div>
+      </template>
+    </el-collapse-item>
+  </el-collapse>
 </template>
-    
-<script setup lang='ts'>
+
+<script setup lang="ts">
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 
 import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
@@ -107,29 +105,23 @@ import operateItemEllipseTextRadius from "@/components/design/layout/canvas/oper
 import operateItemTextStroke from "@/components/design/layout/canvas/operate/text/textStroke.vue";
 import operateItemFilterGroup from "@/components/design/layout/canvas/operate/filter/group.vue";
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
-import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue';
+import operateItemCommonGroup from "@/components/design/layout/canvas/operate/commonGroup.vue";
 
-
-
-import {
-    updateCanvasStickerOptionsUnit
-} from '../helper'
+import { updateCanvasStickerOptionsUnit } from "../helper";
 
 import {
-    CanvasController,
-    canvasStickerOptions,
-    addCanvasChild,
-    removeCavnasChild,
-    currentCanvasControllerInstance,
-    showMainCanvas,
-    currentOperatingCanvasChild,
-    CanvasChildType,
-    updateRenderingCanvas
+  CanvasController,
+  canvasStickerOptions,
+  addCanvasChild,
+  removeCavnasChild,
+  currentCanvasControllerInstance,
+  showMainCanvas,
+  currentOperatingCanvasChild,
+  CanvasChildType,
+  updateRenderingCanvas,
 } from "../index.tsx";
 
-
-const qrcodeCollapseActives = ref(["1", "2", "3", "4", '5']);
-
+const qrcodeCollapseActives = ref(["1", "2", "3", "4", "5", "common"]);
 </script>
-    
+
 <style></style>

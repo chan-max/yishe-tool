@@ -12,19 +12,14 @@
           size="large"
           type="primary"
           round
-          @click="$router.push({ name: 'Design' })"
+          @click="goTool"
           class="font-bold"
+          :loading="loading"
+          :icon="EditPen"
         >
-          在线工具
+          {{ loading ? "正在进入" : " 在线工具" }}
         </el-button>
-        <el-button
-          size="large"
-          type="primary"
-          plain
-          round
-          @click="more"
-          class="font-bold"
-        >
+        <el-button size="large" plain round @click="more" class="font-bold">
           逛一逛
         </el-button>
       </div>
@@ -75,7 +70,8 @@ import _ from "lodash";
 import { useResizeObserver } from "@vueuse/core";
 import { useWindowSize, useDebounceFn } from "@vueuse/core";
 import { ref, computed, watch } from "vue";
-import s1Image from "@/components/image.vue";
+import { useRouter } from "vue-router";
+import { EditPen } from "@element-plus/icons-vue";
 
 const danmus = computed(() => {
   return _.shuffle([...CustomModelList.value, ...StickerList.value]);
@@ -110,6 +106,14 @@ watch(
     danmukuRef.value.resize();
   })
 );
+
+let router = useRouter();
+function goTool() {
+  loading.value = true;
+  router.push({ name: "Design" });
+}
+
+const loading = ref(false);
 
 function more() {
   document

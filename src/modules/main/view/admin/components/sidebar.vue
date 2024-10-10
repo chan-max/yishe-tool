@@ -5,6 +5,7 @@
     text-color="#555"
     active-text-color="#222"
     :unique-opened="true"
+    :router="true"
   >
     <div class="flex items-center w-full" style="padding: 24px; box-sizing: border-box">
       <div class="flex items-center" style="column-gap: 8px">

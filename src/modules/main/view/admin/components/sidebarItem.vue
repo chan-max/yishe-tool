@@ -4,8 +4,10 @@
       <template v-if="item.children?.length > 0">
         <el-sub-menu :key="index" :index="item.path">
           <template #title>
-            <i :class="item.icon"></i>
-            <span>{{ item.meta.title }}</span>
+            <div class="sub-menu-item">
+              <el-icon><component :is="item.meta.icon"></component></el-icon>
+              <span>{{ item.meta.title }}</span>
+            </div>
           </template>
           <sidebarItem :data="item.children"></sidebarItem>
         </el-sub-menu>
@@ -15,7 +17,10 @@
         <el-menu-item :key="index" :index="item.path" @click="itemClick(item)">
           <i :class="item.icon"></i>
           <template #title>
-            <span>{{ item.meta.title }}</span>
+            <div class="menu-item">
+              <el-icon><component :is="item.meta.icon"></component></el-icon>
+              <span>{{ item.meta.title }}</span>
+            </div>
           </template>
         </el-menu-item>
       </template>
@@ -41,4 +46,14 @@ function itemClick(item) {
 }
 </script>
 
-<style></style>
+<style lang="less">
+.sub-menu-item,
+.menu-item {
+  display: flex;
+  align-items: center;
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+</style>

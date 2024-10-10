@@ -16,7 +16,6 @@ const currentTargetElRect = ref({
 
 
 watch(currentFocusingStickerId, (id) => {
-
     if (!id) {
         return
     }

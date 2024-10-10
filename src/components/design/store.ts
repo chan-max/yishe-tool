@@ -77,7 +77,7 @@ watch(showImageSticker, (value) => {
 export const showTextSticker = ref(false)
 
 // 是否展示工作台窗口
-export const showWorkspace = ref(true)
+export const showWorkspace = ref(false)
 watch(showWorkspace, (value) => {
     if (value) {
         clearRightLayout()

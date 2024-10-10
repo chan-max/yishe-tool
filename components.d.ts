@@ -29,7 +29,7 @@ declare module 'vue' {
     Canvas: typeof import('./src/components/design/layout/canvas/index.vue')['default']
     ClipPath: typeof import('./src/components/design/layout/canvas/operate/clipPath/index.vue')['default']
     Color: typeof import('./src/components/design/layout/canvas/operate/color/index.vue')['default']
-    ColorPicker: typeof import('./src/components/design/components/colorPicker.vue')['default']
+    ColorPicker: typeof import('./src/components/design/components/colorPicker/colorPicker.vue')['default']
     CommonGroup: typeof import('./src/components/design/layout/canvas/operate/commonGroup.vue')['default']
     Contrast: typeof import('./src/components/design/layout/canvas/operate/filter/contrast.vue')['default']
     CustomModel: typeof import('./src/components/design/layout/customModel/index.vue')['default']

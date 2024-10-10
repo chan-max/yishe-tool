@@ -1,7 +1,14 @@
 <template>
-  <el-dialog v-bind="$attrs" width="960px" title="选择图片" @open="open">
+  <a-modal
+    v-bind="$attrs"
+    width="960px"
+    style="min-width: 960px"
+    title="选择图片"
+    :footer="null"
+    :destroyOnClose="true"
+  >
     <div class="model">
-      <scrollbar>
+      <s1-scrollbar>
         <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
           <el-row style="row-gap: 1rem; padding: 20px">
             <el-col :span="24 / column" v-for="item in list" align="center">
@@ -12,18 +19,18 @@
           </el-row>
           <loadingBottom v-if="loading"></loadingBottom>
         </div>
-      </scrollbar>
+      </s1-scrollbar>
     </div>
-  </el-dialog>
+  </a-modal>
 </template>
 
 <script setup lang="tsx">
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 import { Search, ArrowRightBold, Operation, ArrowRight } from "@element-plus/icons-vue";
 import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
-
+import { showImageSelectModal } from "./index.tsx";
 import {
   currentModelController,
   showImageUplaod,
@@ -33,7 +40,6 @@ import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 
 import { useLoadingOptions } from "@/components/loading/index.tsx";
-import scrollbar from "@/components/scrollbar/index.vue";
 
 import { loadingBottom } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
@@ -72,9 +78,11 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
   }
 );
 
-function open() {
-  getList();
-}
+watch(showImageSelectModal, (val) => {
+  if (val) {
+    getList();
+  }
+});
 </script>
 
 <style scoped lang="less">

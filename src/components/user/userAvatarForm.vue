@@ -18,7 +18,7 @@
       >
         <div class="font-bold">{{ userInfo.name || userInfo.account }}</div>
         <div style="overflow: hidden; font-size: 1rem">
-          {{ userInfo.company?.name || '个人用户' }}    {{ userInfo.email || "--" }} 
+          {{ userInfo.company?.name || "个人用户" }} {{ userInfo.email || "--" }}
         </div>
       </div>
     </div>
@@ -31,7 +31,11 @@
         <icon-saved></icon-saved>
         我的收藏
       </div>
-      <div class="user-avatar-form-item" @click="router.push({ name: 'Admin' })">
+      <div
+        v-if="userInfo.isAdmin"
+        class="user-avatar-form-item"
+        @click="router.push({ name: 'Admin' })"
+      >
         <icon-admin></icon-admin>
         后台管理系统
       </div>

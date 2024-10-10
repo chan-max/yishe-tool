@@ -22,7 +22,7 @@
         <slot />
       </template>
     </color-picker>
-    <modal></modal>
+    <modal @select="select" v-model:open="showColorPickerModal"></modal>
   </div>
 </template>
 <script setup>
@@ -31,7 +31,7 @@ import "vue3-colorpicker/style.css";
 import { ref, watch } from "vue";
 import { useAttrs } from "vue";
 import { Picture } from "@element-plus/icons-vue";
-import { showColorPickerModal } from "./index.tsx";
+
 import modal from "./modal.vue";
 
 const model = defineModel({
@@ -41,16 +41,6 @@ const model = defineModel({
   },
 });
 
-watch(
-  model,
-  () => {
-    model;
-  },
-  {
-    immediate: true,
-  }
-);
-
 let attrs = useAttrs();
 
 const props = defineProps({
@@ -59,8 +49,18 @@ const props = defineProps({
   },
 });
 
+const showColorPickerModal = ref(false);
+
 function open() {
   showColorPickerModal.value = true;
+}
+
+function select(item) {
+  model.value = {
+    color: item.color,
+    type: item.type,
+  };
+  showColorPickerModal.value = false;
 }
 </script>
 <style lang="less">

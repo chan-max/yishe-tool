@@ -30,7 +30,7 @@
               <el-col :span="4" v-for="item in list">
                 <div style="margin: 20px">
                   <s1-img
-                    :src="item.thumbnail"
+                    :src="item.thumbnail?.url"
                     style="width: 100px; height: 100px"
                   ></s1-img>
                 </div>

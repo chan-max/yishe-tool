@@ -25,14 +25,13 @@
       :item-size="140"
       :itemSecondarySize="130"
       :gridItems="2"
-      item-class="scroll-list-item"
       key-field="id"
       v-slot="{ item, index }"
     >
       <div class="item">
         <s1-image
           padding="10%"
-          :src="item.thumbnail"
+          :src="item.thumbnail?.url"
           class="image"
           @load="imgLoad($event, item)"
         ></s1-image>

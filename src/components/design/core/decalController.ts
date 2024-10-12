@@ -92,7 +92,7 @@ export class DecalController {
     }
     this.state.id = this.id.value = (info.id || v4()) // 如果是本地的贴纸，随机分配一个id
     this.state.isLocalResource = info.isLocalResource
-    this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64 || info.thumbnail
+    this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64 || info.thumbnail?.url
     this.info = info
     if (this.state.isLocalResource) {
       this.info.src = this.info.base64
@@ -107,7 +107,7 @@ export class DecalController {
         return
       }
       this?.rotate((2 * Math.PI * value) / 360);
-    },11), {
+    }, 11), {
       immediate: true
     })
 
@@ -117,7 +117,7 @@ export class DecalController {
         return
       }
       this?.scale(value / 100);
-    },11), {
+    }, 11), {
       immediate: true
     })
   }
@@ -217,7 +217,7 @@ export class DecalController {
         texture.needsUpdate = true; // 更新纹理
       };
     } else {
-      texture = await textureLoader.loadAsync(this.img?.src || this.info.src || this.info.thumbnail)
+      texture = await textureLoader.loadAsync(this.img?.src || this.info.src || this.info.thumbnail?.url)
     }
 
 
@@ -235,7 +235,7 @@ export class DecalController {
 
   async create() {
 
-    if(this.isCreating){
+    if (this.isCreating) {
       return
     }
 
@@ -435,7 +435,7 @@ export class DecalController {
     })
 
     let data = await Api.createSticker({
-      thumbnail: cos.url,
+      thumbnail: cos,
       type: 'composition',
       isPublic: false,
       meta: {

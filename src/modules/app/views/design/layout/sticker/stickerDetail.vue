@@ -8,7 +8,11 @@
   >
     <div class="ion-padding content">
       <ion-card>
-        <van-image :src="currentPreviewSticker?.thumbnail" style="height:240px;padding:1em;" fit="contain"/>
+        <van-image
+          :src="currentPreviewSticker?.thumbnail?.url"
+          style="height: 240px; padding: 1em"
+          fit="contain"
+        />
         <ion-card-header>
           <ion-card-title>{{ currentPreviewSticker?.name }}</ion-card-title>
           <ion-card-subtitle>{{ currentPreviewSticker?.type }}</ion-card-subtitle>
@@ -26,7 +30,7 @@
 import {
   currentPreviewSticker,
   showStickerDetail,
-  showSticker
+  showSticker,
 } from "@/modules/app/views/design/store";
 import { close, checkmarkDoneOutline, helpCircleOutline } from "ionicons/icons";
 import { getProductModelList } from "@/api";
@@ -34,26 +38,23 @@ import { onBeforeMount } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";
 import { getStickerList } from "@/api";
-import {currentModelController} from '@/components/design/store'
-
+import { currentModelController } from "@/components/design/store";
 
 function didDismiss() {
   showStickerDetail.value = false;
   currentPreviewSticker.value = null;
 }
 
-
 /*
     添加贴纸
 */
-function add(){
-    currentModelController.value.addClickDelaySticker({
-      ...currentPreviewSticker.value
-    })
-    showStickerDetail.value = false;
-    showSticker.value = false
+function add() {
+  currentModelController.value.addClickDelaySticker({
+    ...currentPreviewSticker.value,
+  });
+  showStickerDetail.value = false;
+  showSticker.value = false;
 }
-
 </script>
 
 <style lang="less" scoped>

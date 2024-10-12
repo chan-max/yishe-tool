@@ -1,8 +1,10 @@
 <template>
   <div class="menu-bar">
     <el-tooltip :hide-after="0" content="创作资源" placement="right">
-      <div class="menu-bar-item"
-        @click="viewDisplayController.showProject = !viewDisplayController.showProject">
+      <div
+        class="menu-bar-item"
+        @click="viewDisplayController.showProject = !viewDisplayController.showProject"
+      >
         <div class="menu-bar-item-icon"><icon-project></icon-project></div>
         <span>创作资源</span>
       </div>
@@ -24,25 +26,39 @@
       </div>
     </el-tooltip> -->
     <el-tooltip :hide-after="0" content="许多贴纸哦～" placement="right">
-      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showSticker }" @click="showSticker = !showSticker">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showSticker }"
+        @click="showSticker = !showSticker"
+      >
         <div class="menu-bar-item-icon"><icon-sticker></icon-sticker></div>
         <span> 贴纸资源 </span>
       </div>
     </el-tooltip>
     <el-tooltip :hide-after="0" content="选择模型" placement="right">
-      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
-        @click="showBaseModelSelect = !showBaseModelSelect">
-        <desimage style="width:30px;height:30px;" v-if="currentOperatingBaseModelInfo?.id" :src="Utils.formatUrl(currentOperatingBaseModelInfo.thumbnail)"></desimage>
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
+        @click="showBaseModelSelect = !showBaseModelSelect"
+      >
+        <desimage
+          style="width: 30px; height: 30px"
+          v-if="currentOperatingBaseModelInfo?.id"
+          :src="currentOperatingBaseModelInfo.thumbnail?.url"
+        ></desimage>
         <div v-else class="menu-bar-item-icon">
           <icon-shirt></icon-shirt>
         </div>
-        <span> {{ currentOperatingBaseModelInfo?.id ? '切换模型' : '选择模型' }} </span>
+        <span> {{ currentOperatingBaseModelInfo?.id ? "切换模型" : "选择模型" }} </span>
       </div>
     </el-tooltip>
 
     <el-tooltip :hide-after="0" content="贴纸画布" placement="right">
-      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showCanvasLayout }"
-        @click="showCanvasLayout = !showCanvasLayout">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showCanvasLayout }"
+        @click="showCanvasLayout = !showCanvasLayout"
+      >
         <div class="menu-bar-item-icon">
           <icon-canvas></icon-canvas>
         </div>
@@ -67,8 +83,6 @@
         <span>图片贴纸</span>
       </div>
     </el-tooltip> -->
-
-
 
     <!-- <el-tooltip :hide-after="0" content="艺术字贴图" placement="right">
       <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': showTextSticker }"
@@ -183,7 +197,7 @@ import {
   showSvgCanvas,
   showCanvasLayout,
   currentOperatingBaseModelInfo,
-  viewDisplayController
+  viewDisplayController,
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?component";
@@ -204,11 +218,11 @@ import iconBadge from "@/components/design/assets/icon/badge.svg?component";
 import iconSetting from "@/icon/setting.svg?component";
 import iconFont from "@/icon/font.svg?component";
 import iconDecoration from "@/icon/design/decoration.svg?component";
-import iconCustomModel from '@/components/design/assets/icon/custom-model.svg?component'
-import iconSvgCanvas from '@/components/design/assets/icon/svg-canvas.svg?component'
-import iconCanvas from '@/components/design/assets/icon/canvas.svg?component'
-import iconProject from '@/components/design/assets/icon/project.svg?component'
-import Utils from '@/common/utils'
+import iconCustomModel from "@/components/design/assets/icon/custom-model.svg?component";
+import iconSvgCanvas from "@/components/design/assets/icon/svg-canvas.svg?component";
+import iconCanvas from "@/components/design/assets/icon/canvas.svg?component";
+import iconProject from "@/components/design/assets/icon/project.svg?component";
+import Utils from "@/common/utils";
 
 import desimage from "@/components/image.vue";
 </script>
@@ -253,7 +267,7 @@ import desimage from "@/components/image.vue";
   }
 
   span {
-    font-size: .9rem;
+    font-size: 0.9rem;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;

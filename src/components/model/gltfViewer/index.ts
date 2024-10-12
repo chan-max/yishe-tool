@@ -292,7 +292,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                         we will fix it
                     */
 
-                    let url = Utils.formatUrl(thumbnail, { nocache: true })
+                    let url = Utils.formatUrl(thumbnail.url, { nocache: true })
                     console.warn('gltfviewer load sticker')
                     const texture = await textureLoader.loadAsync(url);
 

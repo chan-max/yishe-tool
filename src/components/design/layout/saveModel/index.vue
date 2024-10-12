@@ -33,6 +33,27 @@
             type="textarea"
           ></el-input>
         </el-form-item>
+        <el-form-item label="模型截图">
+          <div
+            class="flex items-center"
+            style="padding: 12px; column-gap: 12px; overflow: auto"
+          >
+            <s1-image
+              v-for="item in screenshots"
+              style="width: 48px; height: 48px; border-radius: 4px; background: #eee"
+              :src="item.base64"
+            >
+              <el-button
+                style="top: -8px; right: -8px; position: absolute"
+                link
+                type="danger"
+                @click="removeScreenshot(item)"
+              >
+                <el-icon size="12"><CircleCloseFilled /></el-icon>
+              </el-button>
+            </s1-image>
+          </div>
+        </el-form-item>
       </el-form>
 
       <div style="flex: 1"></div>
@@ -46,11 +67,13 @@
 import { ref, onBeforeMount, computed } from "vue";
 import { createCustomModelApi, uploadToCOS } from "@/api";
 import { ElMessageBox } from "element-plus";
-import { currentModelController, lastestScreenshot } from "../../store";
+import { currentModelController, lastestScreenshot, screenshots } from "../../store";
 import { base64ToFile, base64ToPngFile } from "@/common/transform/base64ToFile";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { message } from "ant-design-vue";
 import desimage from "@/components/image.vue";
+import { CircleCloseFilled } from "@element-plus/icons-vue";
+import Utils from "@/common/utils";
 
 const thumbnail = ref();
 
@@ -64,10 +87,6 @@ onBeforeMount(() => {
 });
 
 const loginStore = useLoginStatusStore();
-
-const previewSrc = computed(() => {
-  return lastestScreenshot.value?.base64;
-});
 
 const loading = ref(false);
 const loadingMessage = ref("");
@@ -87,13 +106,21 @@ async function save() {
 
     const thumbnail = currentModelController.value.getScreenShotFile();
 
-    const { url } = await uploadToCOS({ file: thumbnail });
+    const cos = await uploadToCOS({ file: thumbnail });
 
     const modelInfo = await currentModelController.value.exportTo1stf();
 
+    let thumbnails = await Promise.all(
+      screenshots.value.map(async (shot) => {
+        const file = Utils.transform.base64ToPngFile(shot.base64);
+        return await uploadToCOS({ file: file });
+      })
+    );
+
     const params = {
       name: name.value,
-      thumbnail: url,
+      thumbnail: cos,
+      thumbnails,
       meta: {
         modelInfo,
       },
@@ -106,6 +133,11 @@ async function save() {
   } finally {
     loading.value = false;
   }
+}
+
+function removeScreenshot(item) {
+  let ind = screenshots.value.indexOf(item);
+  screenshots.value.splice(ind, 1);
 }
 </script>
 <style lang="less" scoped></style>

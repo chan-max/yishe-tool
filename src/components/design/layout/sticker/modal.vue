@@ -1,28 +1,30 @@
 <template>
-    <div class="model">
-        <scrollbar>
-            <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
-                <el-row style="row-gap: 1em;padding: 20px;">
-                    <el-col :span="24 / column" v-for="item in  list" align="center">
-                        <a-dropdown arrow placement="bottom">
-                            <div>
-                                <desimage class="img" padding="5%" :src="item.thumbnail">
-                                </desimage>
-                            </div>
-                            <template #overlay>
-                                <a-menu>
-                                    <a-menu-item v-if="item.type == 'image'" @click="useAsCanvasImage(item)">
-                                        使用该图片作为当前背景元素
-                                    </a-menu-item>
-                                </a-menu>
-                            </template>
-                        </a-dropdown>
-                    </el-col>
-                </el-row>
-                <loadingBottom v-if="loading"></loadingBottom>
-            </div>
-        </scrollbar>
-    </div>
+  <div class="model">
+    <scrollbar>
+      <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
+        <el-row style="row-gap: 1em; padding: 20px">
+          <el-col :span="24 / column" v-for="item in list" align="center">
+            <a-dropdown arrow placement="bottom">
+              <div>
+                <s1-image class="img" padding="5%" :src="item.thumbnail?.url"> </s1-image>
+              </div>
+              <template #overlay>
+                <a-menu>
+                  <a-menu-item
+                    v-if="item.type == 'image'"
+                    @click="useAsCanvasImage(item)"
+                  >
+                    使用该图片作为当前背景元素
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
+          </el-col>
+        </el-row>
+        <loadingBottom v-if="loading"></loadingBottom>
+      </div>
+    </scrollbar>
+  </div>
 </template>
 
 <script setup lang="tsx">
@@ -32,9 +34,7 @@ import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 import stickerPopover from "./stickerPopover.vue";
-import {
-    viewDisplayController,
-} from "@/components/design/store";
+import { viewDisplayController } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 import tags from "./tags.vue";
@@ -43,58 +43,53 @@ import scrollbar from "@/components/scrollbar/index.vue";
 import { stickerQueryParams, stickerLabelMap, StickerType } from "./index.tsx";
 import { loadingBottom } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
-import Utils from '@/common/utils'
+import Utils from "@/common/utils";
 
 // 列表展示几列
 const column = ref(8);
 
 const loadingOptions = useLoadingOptions({});
 
-
 /*
     作为当前
 */
 function useAsCanvasImage(item) {
-
-    if (item.type != 'image') {
-        throw '图片类型才能作为画布图片元素'
-    }
-    if (currentOperatingCanvasChild.value.type != 'image') {
-        throw '当前操作的不是图片元素'
-    }
-    currentOperatingCanvasChild.value.imageInfo = item
-    viewDisplayController.value.showStickerModal = false
+  if (item.type != "image") {
+    throw "图片类型才能作为画布图片元素";
+  }
+  if (currentOperatingCanvasChild.value.type != "image") {
+    throw "当前操作的不是图片元素";
+  }
+  currentOperatingCanvasChild.value.imageInfo = item;
+  viewDisplayController.value.showStickerModal = false;
 }
 
 const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePaging(
-    (params) => {
-        return getStickerList({
-            ...params,
-            pageSize: 20,
-            ...stickerQueryParams.value,
-        });
+  (params) => {
+    return getStickerList({
+      ...params,
+      pageSize: 20,
+      ...stickerQueryParams.value,
+    });
+  },
+  {
+    forEach(item) {
+      item.thumbnail = Utils.formatUrl(item.thumbnail);
+      item.url = Utils.formatUrl(item.url);
     },
-    {
-        forEach(item) {
-            item.thumbnail = Utils.formatUrl(item.thumbnail)
-            item.url = Utils.formatUrl(item.url)
-        },
-    }
+  }
 );
-
 </script>
-
-
 
 <style scoped lang="less">
 .model {
-    width: 920px;
-    height: 500px;
+  width: 920px;
+  height: 500px;
 }
 
 .img {
-    width: 100px;
-    height: 100px;
-    background: #f1f1f1;
+  width: 100px;
+  height: 100px;
+  background: #f1f1f1;
 }
 </style>

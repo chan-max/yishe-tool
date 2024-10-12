@@ -9,7 +9,10 @@
       </template>
 
       <template #thumbnailDefault="{ row }">
-        <s1-image :src="row.thumbnail" style="width: 100px; height: 100px"></s1-image>
+        <s1-image
+          :src="row.thumbnail?.url"
+          style="width: 100px; height: 100px"
+        ></s1-image>
       </template>
 
       <template #operationDefault="{ row }">
@@ -221,7 +224,7 @@ async function handleOk() {
   if (modalType.value == "create") {
     let { url } = await Api.uploadToCOS({ file: form.value.file.raw });
 
-    let { url: thumbnail } = await Api.uploadToCOS({
+    let cos = await Api.uploadToCOS({
       file: baseViewerRef.value.getScreenShotFile(),
     });
 
@@ -230,7 +233,7 @@ async function handleOk() {
       description: form.value.description,
       keywords: form.value.keywords,
       url: url,
-      thumbnail: thumbnail,
+      thumbnail: cos,
     });
     reset();
     await getList();

@@ -12,12 +12,12 @@
   <div class="market-card">
     <div class="market-card-main">
       <div class="market-card-main-img">
-        <s1-image fit="cover" :src="model.thumbnail "> </s1-image>
+        <s1-image fit="cover" :src="model.thumbnail?.url"> </s1-image>
       </div>
     </div>
     <div class="bar">
       <div class="avatar">
-        <desimage :src="getAvatar(model)"></desimage>
+        <s1-image :src="getAvatar(model)"></s1-image>
       </div>
       <div class="name">{{ model.uploader.name || model.uploader.account }}</div>
       <div style="flex: 1"></div>

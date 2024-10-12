@@ -149,7 +149,7 @@ async function setFontFamliy(){
         return
     }
 
-    let { name, thumbnail ,url,  id } = fontFamilyInfo;
+    let { name ,url,  id } = fontFamilyInfo;
 
     url = 'https://' + url
 

@@ -328,7 +328,7 @@ async function doUpload() {
     });
 
     await Api.createSticker({
-      thumbnail: cos.url,
+      thumbnail: cos,
       ...editForm.value,
       keywords: editForm.value.keywords.join(","),
       type: "composition",

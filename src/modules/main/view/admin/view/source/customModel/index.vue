@@ -7,7 +7,10 @@
       </template>
 
       <template #thumbnailDefault="{ row }">
-        <s1-image :src="row.thumbnail" style="width: 100px; height: 100px"></s1-image>
+        <s1-image
+          :src="row.thumbnail?.url"
+          style="width: 100px; height: 100px"
+        ></s1-image>
       </template>
 
       <template #operationDefault="{ row }">

@@ -5,10 +5,9 @@
         <el-col :span="24 / column" v-for="item in list" align="center">
           <div class="item">
             <div class="preview">
-                <gltf-viewer :model="item.meta.modelInfo"></gltf-viewer>
-                <!-- <desimage :src="'https://' + item.thumbnail" :draggable="false"></desimage> -->
+              <gltf-viewer :model="item.meta.modelInfo"></gltf-viewer>
             </div>
-            <el-popover placement="auto" trigger="click" width="auto" >
+            <el-popover placement="auto" trigger="click" width="auto">
               <template #reference>
                 <div class="bar">
                   <div class="title text-ellipsis">{{ item.name || "......" }}</div>
@@ -19,7 +18,6 @@
             </el-popover>
           </div>
         </el-col>
-        
       </el-row>
     </div>
   </div>
@@ -31,8 +29,7 @@ import { getCustomModelList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 import popover from "./popover.vue";
-import gltfViewer from '@/components/model/gltfViewer/index.vue';
-
+import gltfViewer from "@/components/model/gltfViewer/index.vue";
 
 const { list, getList } = usePaging((params) => {
   return getCustomModelList({
@@ -54,8 +51,6 @@ const column = ref(2);
   align-items: center;
 }
 
-
-
 .list {
   width: 100%;
   flex: 1;
@@ -72,10 +67,10 @@ const column = ref(2);
   row-gap: 0.5em;
 }
 
-.preview{
+.preview {
   width: 100%;
   height: 10em;
-  background:#eee;
+  background: #eee;
 }
 
 .title {

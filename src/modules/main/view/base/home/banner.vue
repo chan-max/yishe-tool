@@ -52,7 +52,7 @@
       <template v-slot:dm="{ index, danmu }">
         <el-image
           style="width: 120px; height: 120px; object-fit: contain"
-          :src="danmu.thumbnail"
+          :src="danmu.thumbnail?.url"
           fit="contain"
         >
         </el-image>

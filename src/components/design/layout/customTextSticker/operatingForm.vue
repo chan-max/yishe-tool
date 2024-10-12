@@ -73,9 +73,7 @@
                     @click="showFontModal = true"
                     style="background: #f3f4f6; border-radius: 0.2em; height: 2.4em"
                     fit="contain"
-                    :src="
-                      'https://' + operatingTextStickerOptions.fontFamilyInfo.thumbnail
-                    "
+                    :src="operatingTextStickerOptions.fontFamilyInfo.thumbnail?.url"
                   ></el-image>
                 </template>
                 <div v-else @click="showFontModal = true">暂未选择</div>

@@ -5,8 +5,8 @@
       <div v-for="item in list" class="card">
         <model-card-viewer
           class="viewer"
-          :model-url="'https://' + item.url"
-          :thumbnail-url="'https://' + item.thumbnail"
+          :model-url="item.url"
+          :thumbnail-url="item.thumbnail?.url"
         ></model-card-viewer>
         <div>这是模型描述</div>
       </div>

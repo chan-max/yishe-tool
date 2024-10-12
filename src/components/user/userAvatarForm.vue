@@ -27,9 +27,9 @@
         <icon-user></icon-user>
         个人信息
       </div>
-      <div class="user-avatar-form-item">
+      <div class="user-avatar-form-item" @click="goTool">
         <icon-saved></icon-saved>
-        我的收藏
+        在线工具
       </div>
       <div
         v-if="userInfo.isAdmin"
@@ -89,6 +89,10 @@ async function logout(params) {
       router.replace("/");
     },
   });
+}
+
+function goTool() {
+  router.push({ name: "Design" });
 }
 </script>
 

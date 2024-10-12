@@ -67,11 +67,6 @@ async function execScreenshot(base64) {
     await nextTick();
   }
   show.value = true;
-
-  message.success({
-    duration: 1,
-    content: "截图成功",
-  });
   clear();
 }
 

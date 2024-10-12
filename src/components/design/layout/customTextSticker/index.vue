@@ -47,10 +47,10 @@ function exportPng() {
 
 async function upload() {
   let file = await exportTextStickerFile();
-  let { url } = await uploadToCOS({ file: file });
+  let cos = await uploadToCOS({ file: file });
   await createSticker({
     url,
-    thumbnail: url,
+    thumbnail: cos,
     type: "text",
   });
   message.success("上传成功");

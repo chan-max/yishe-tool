@@ -5,6 +5,177 @@ export const builtInColors = ref([
     {
         color: '#f00',
         type: 'pure',
+        name: '红色',
+        description: '传统的中国红'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
+        name: '红色'
+    },
+    {
+        color: '#f00',
+        type: 'pure',
         name: '红色'
     },
     {
@@ -13,3 +184,6 @@ export const builtInColors = ref([
         name: '红色'
     },
 ])
+
+
+

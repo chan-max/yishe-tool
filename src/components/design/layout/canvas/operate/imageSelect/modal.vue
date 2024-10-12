@@ -13,7 +13,7 @@
           <el-row style="row-gap: 1rem; padding: 20px">
             <el-col :span="24 / column" v-for="item in list" align="center">
               <div @click="useAsCanvasImage(item)">
-                <desimage class="img" :src="item.thumbnail"> </desimage>
+                <s1-image class="img" :src="item.thumbnail?.url"> </s1-image>
               </div>
             </el-col>
           </el-row>

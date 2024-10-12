@@ -1,251 +1,296 @@
 <template>
-    <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
-        <el-row style="row-gap: 8px;width:1000px;">
-            <el-col :span="24 / column" v-for="item in list" align="center">
-                <div style="width:100%;height:100%;flex-shrink: 0;" class="flex flex-col items-center justify-center">
-                    <s1-img padding="5%" :src="item.thumbnail" @click="itemClick(item)"
-                        style="background:#f6f6f6!important;width:240px;height:180px;border-radius: 8px;">
-                        <s1-icon v-if="item.uploader.isAdmin" name="official-badge" style="position: absolute;right:5%;top:5%;opacity:.8;" :size="18"></s1-icon>
+  <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
+    <el-row style="row-gap: 8px; width: 1000px">
+      <el-col :span="24 / column" v-for="item in list" align="center">
+        <div
+          style="width: 100%; height: 100%; flex-shrink: 0"
+          class="flex flex-col items-center justify-center"
+        >
+          <s1-img
+            padding="5%"
+            :src="item.thumbnail?.url"
+            @click="itemClick(item)"
+            style="
+              background: #f6f6f6 !important;
+              width: 240px;
+              height: 180px;
+              border-radius: 8px;
+            "
+          >
+            <s1-icon
+              v-if="item.uploader.isAdmin"
+              name="official-badge"
+              style="position: absolute; right: 5%; top: 5%; opacity: 0.8"
+              :size="18"
+            ></s1-icon>
+          </s1-img>
+          <div class="bar flex items-center justify-between">
+            <div class="text-ellipsis" style="max-width: 80px">
+              {{ item.name || "未命名" }}
+            </div>
+            <div class="label-tag" v-if="item.isPublic">已共享</div>
+            <div
+              class="label-tag"
+              v-if="item.uploader.account == loginStore.userInfo?.account"
+            >
+              我
+            </div>
+            <div class="timeago">{{ Utils.time.timeago(item.updateTime) }}</div>
+            <div style="flex: 1"></div>
 
-                    </s1-img>
-                    <div class="bar flex items-center justify-between">
-                        <div class="text-ellipsis" style="max-width:80px;"> {{ item.name || '未命名' }} </div>
-                        <div class="label-tag" v-if="item.isPublic"> 已共享 </div>
-                        <div class="label-tag" v-if="item.uploader.account == loginStore.userInfo?.account"> 我 </div>
-                        <div class="timeago"> {{ Utils.time.timeago(item.updateTime) }} </div>
-                        <div style="flex:1;"></div>
-
-                        <a-dropdown trigger="click">
-                            <el-button link>
-                                <el-icon>
-                                    <MoreFilled />
-                                </el-icon>
-                            </el-button>
-                            <template #overlay>
-                                <a-menu>
-                                    <a-menu-item @click="edit(item)">
-                                        编辑
-                                    </a-menu-item>
-                                    <a-menu-item @click="useSticker(item)">
-                                        在工作台使用
-                                    </a-menu-item>
-                                    <!-- <a-menu-item @click="editStickerInWorkspace(item)">
+            <a-dropdown trigger="click">
+              <el-button link>
+                <el-icon>
+                  <MoreFilled />
+                </el-icon>
+              </el-button>
+              <template #overlay>
+                <a-menu>
+                  <a-menu-item @click="edit(item)"> 编辑 </a-menu-item>
+                  <a-menu-item @click="useSticker(item)"> 在工作台使用 </a-menu-item>
+                  <!-- <a-menu-item @click="editStickerInWorkspace(item)">
                                         在工作台中编辑
                                     </a-menu-item> -->
-                                    <a-menu-item @click="setOfficialTemplate(item)">
-                                         设置为样例模版
-                                    </a-menu-item>
-                                    <a-menu-item @click="deleteItem(item)">
-                                        <span style="color:var(--el-color-danger)">删除</span>
-                                    </a-menu-item>
-                                    <a-menu-item>
-                                        分享给好友
-                                    </a-menu-item>
-                                    <a-menu-item>
-                                        发布
-                                    </a-menu-item>
-                                    <a-menu-item v-if="item.type == 'image'" @click="download(item)">
-                                        下载源文件
-                                    </a-menu-item>
-                                </a-menu>
-                            </template>
-                        </a-dropdown>
-                    </div>
-                </div>
-            </el-col>
-        </el-row>
-        <loadingBottom v-if="loading"></loadingBottom>
-        <div class="endofpage" v-if="isLastPage"> 到底了~ </div>
-        <s1-empty v-if="isEmpty">
-            <template #description>
-                暂无模型
-            </template>
-        </s1-empty>
-    </div>
+                  <a-menu-item @click="setOfficialTemplate(item)">
+                    设置为样例模版
+                  </a-menu-item>
+                  <a-menu-item @click="deleteItem(item)">
+                    <span style="color: var(--el-color-danger)">删除</span>
+                  </a-menu-item>
+                  <a-menu-item> 分享给好友 </a-menu-item>
+                  <a-menu-item> 发布 </a-menu-item>
+                  <a-menu-item v-if="item.type == 'image'" @click="download(item)">
+                    下载源文件
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+    <loadingBottom v-if="loading"></loadingBottom>
+    <div class="endofpage" v-if="isLastPage">到底了~</div>
+    <s1-empty v-if="isEmpty">
+      <template #description> 暂无模型 </template>
+    </s1-empty>
+  </div>
 
-    <a-modal v-model:open="showFormModal" :centered="true" :destroyOnClose="true" width="540px" title="更新信息" okText="修改"
-        cancelText="取消" @ok="ok" :confirmLoading="submitLoading">
-        <el-form label-width="72px" :inline-message="false" :show-message="false" label-position="left">
-            <el-form-item label="贴纸名称：">
-                <el-input v-model="editForm.name" placeholder="名称"></el-input>
-            </el-form-item>
-            <el-form-item label="贴纸描述:">
-                <el-input type="textarea" v-model="editForm.description" placeholder="描述"></el-input>
-            </el-form-item>
-            <el-form-item label="关键字:">
-                <tagsInput v-model="editForm.keywords" :autocomplete-tags="stickerAutoplacementTags"
-                    :autocomplete-width="400" autocompletePlacement="right"></tagsInput>
-            </el-form-item>
-            <el-form-item label="模版分类:">
-                <el-select v-model="editForm.group" clearable>
-                    <el-option v-for="item in officialStickerTemplateOptions" :label="item.label"
-                        :value="item.value"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="是否共享:">
-                <a-switch v-model:checked="editForm.isPublic" checked-children="公开" un-checked-children="私密" />
-            </el-form-item>
-        </el-form>
-    </a-modal>
+  <a-modal
+    v-model:open="showFormModal"
+    :centered="true"
+    :destroyOnClose="true"
+    width="540px"
+    title="更新信息"
+    okText="修改"
+    cancelText="取消"
+    @ok="ok"
+    :confirmLoading="submitLoading"
+  >
+    <el-form
+      label-width="72px"
+      :inline-message="false"
+      :show-message="false"
+      label-position="left"
+    >
+      <el-form-item label="贴纸名称：">
+        <el-input v-model="editForm.name" placeholder="名称"></el-input>
+      </el-form-item>
+      <el-form-item label="贴纸描述:">
+        <el-input
+          type="textarea"
+          v-model="editForm.description"
+          placeholder="描述"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="关键字:">
+        <tagsInput
+          v-model="editForm.keywords"
+          :autocomplete-tags="stickerAutoplacementTags"
+          :autocomplete-width="400"
+          autocompletePlacement="right"
+        ></tagsInput>
+      </el-form-item>
+      <el-form-item label="模版分类:">
+        <el-select v-model="editForm.group" clearable>
+          <el-option
+            v-for="item in officialStickerTemplateOptions"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="是否共享:">
+        <a-switch
+          v-model:checked="editForm.isPublic"
+          checked-children="公开"
+          un-checked-children="私密"
+        />
+      </el-form-item>
+    </el-form>
+  </a-modal>
 </template>
 
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
-import { Search, ArrowRightBold, Operation, ArrowRight, MoreFilled } from "@element-plus/icons-vue";
+import {
+  Search,
+  ArrowRightBold,
+  Operation,
+  ArrowRight,
+  MoreFilled,
+} from "@element-plus/icons-vue";
 import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
-import { MoreOutlined } from '@ant-design/icons-vue'
+import { MoreOutlined } from "@ant-design/icons-vue";
 import {
-    currentModelController,
-    showImageUplaod,
-    viewDisplayController,
+  currentModelController,
+  showImageUplaod,
+  viewDisplayController,
 } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
-import { stickerAutoplacementTags } from '@/components/design/components/tagsInput/index.ts'
+import { stickerAutoplacementTags } from "@/components/design/components/tagsInput/index.ts";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import scrollbar from "@/components/scrollbar/index.vue";
 
 import { loadingBottom } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
-import Utils from '@/common/utils'
+import Utils from "@/common/utils";
 import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
 import { message, Modal } from "ant-design-vue";
-import { s1Confirm } from '@/common/message'
-import Api from '@/api'
+import { s1Confirm } from "@/common/message";
+import Api from "@/api";
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
-import { useStickerDetailModal } from './stickerModal.ts'
+import { useStickerDetailModal } from "./stickerModal.ts";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { officialStickerTemplateOptions } from "../../canvas/officialTemplateModal";
 
-
-const loginStore = useLoginStatusStore()
-
+const loginStore = useLoginStatusStore();
 
 // 列表展示几列
 const column = ref(4);
 
 const loadingOptions = useLoadingOptions({});
 
-const { list, getList, loading, reset, firstLoading, subsequentLoading, isLastPage, currentPage, totalPage,isEmpty } = usePaging(
-    (params) => {
-        return getStickerList({
-            ...params,
-            pageSize: 20,
-            // myUploads: true
-        });
-    },
-);
-
+const {
+  list,
+  getList,
+  loading,
+  reset,
+  firstLoading,
+  subsequentLoading,
+  isLastPage,
+  currentPage,
+  totalPage,
+  isEmpty,
+} = usePaging((params) => {
+  return getStickerList({
+    ...params,
+    pageSize: 20,
+    // myUploads: true
+  });
+});
 
 function useSticker(item) {
-    canvasStickerOptions.value = item.meta.data
-    message.success('引用成功')
+  canvasStickerOptions.value = item.meta.data;
+  message.success("引用成功");
 }
 
 async function deleteItem(item) {
-    await s1Confirm({
-        content: '确认删除该贴纸吗？'
-    })
-    await Api.deleteSticker(item.id)
-    reset()
-    await getList()
-    message.success('删除成功')
+  await s1Confirm({
+    content: "确认删除该贴纸吗？",
+  });
+  await Api.deleteSticker(item.id);
+  reset();
+  await getList();
+  message.success("删除成功");
 }
 
 function download(item) {
-    Api.downloadCOSFile(item.url)
+  Api.downloadCOSFile(item.url);
 }
 
-const currentItem = ref({})
+const currentItem = ref({});
 
-const showFormModal = ref(false)
+const showFormModal = ref(false);
 
-const submitLoading = ref(false)
-const editForm = ref({} as any)
+const submitLoading = ref(false);
+const editForm = ref({} as any);
 // 编辑
 function edit(item) {
-    editForm.value = {
-        id: item.id,
-        description: item.description,
-        name: item.name,
-        keywords: item.keywords
-    }
-    showFormModal.value = true
-    currentItem.value = item
+  editForm.value = {
+    id: item.id,
+    description: item.description,
+    name: item.name,
+    keywords: item.keywords,
+  };
+  showFormModal.value = true;
+  currentItem.value = item;
 }
 
 async function ok() {
-    submitLoading.value = true
-    let res = await Api.updateSticker(editForm.value)
-    message.success('修改成功')
-    submitLoading.value = false
-    let ind = list.value.indexOf(currentItem.value)
+  submitLoading.value = true;
+  let res = await Api.updateSticker(editForm.value);
+  message.success("修改成功");
+  submitLoading.value = false;
+  let ind = list.value.indexOf(currentItem.value);
 
-    // 这里可以保存关联的信息
-    list.value[ind] = {
-        ...currentItem.value,
-        ...res
-    }
+  // 这里可以保存关联的信息
+  list.value[ind] = {
+    ...currentItem.value,
+    ...res,
+  };
 }
 
-
-const { open } = useStickerDetailModal()
+const { open } = useStickerDetailModal();
 
 function itemClick(item) {
-    currentItem.value = item
-    open(item)
+  currentItem.value = item;
+  open(item);
 }
-
 
 /**
  * @method 设置为官方模版
-*/
+ */
 
-function setOfficialTemplate(item){
-    
-}
-
+function setOfficialTemplate(item) {}
 
 /**
  * @method 在工作台中编辑
-*/
-function editStickerInWorkspace(item){
-
-}
+ */
+function editStickerInWorkspace(item) {}
 </script>
-
-
 
 <style scoped lang="less">
 .bar {
-    width: 100%;
-    height: 36px;
-    padding: 0 1rem;
-    column-gap: 1rem;
+  width: 100%;
+  height: 36px;
+  padding: 0 1rem;
+  column-gap: 1rem;
 }
 
 .label-tag {
-    background-color: #ccc;
-    color: #fff;
-    border-radius: 2px;
-    padding: 1px 2px;
-    font-size: .8rem;
-    font-weight: bold;
+  background-color: #ccc;
+  color: #fff;
+  border-radius: 2px;
+  padding: 1px 2px;
+  font-size: 0.8rem;
+  font-weight: bold;
 }
 
 .endofpage {
-    width: 100%;
-    text-align: center;
-    height: 36px;
-    line-height: 36px;
-    color: #aaa;
+  width: 100%;
+  text-align: center;
+  height: 36px;
+  line-height: 36px;
+  color: #aaa;
 }
 
 .timeago {
-    font-size: .9rem;
-    color: #999;
-    font-weight: bold;
+  font-size: 0.9rem;
+  color: #999;
+  font-weight: bold;
 }
 </style>

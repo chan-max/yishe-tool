@@ -12,10 +12,27 @@
   <div v-if="firstLoading" class="flex justify-center w-full h-full items-center">
     <ion-spinner name="dots" style="height: 100px"></ion-spinner>
   </div>
-  <swiper v-else class="swiper" direction="vertical" :modules="[Virtual]" :slides-per-view="1" virtual
-    @reachEnd="reachEnd" @activeIndexChange="activeIndexChange" @touchStart="touchStart" @touchEnd="touchEnd"
-    @transitionStart="transitionStart" @transitionEnd="transitionEnd" @sliderMove="sliderMove">
-    <swiper-slide style="width: 100%; height: 100%" v-for="(item, index) in list" :key="index" :virtualIndex="index">
+  <swiper
+    v-else
+    class="swiper"
+    direction="vertical"
+    :modules="[Virtual]"
+    :slides-per-view="1"
+    virtual
+    @reachEnd="reachEnd"
+    @activeIndexChange="activeIndexChange"
+    @touchStart="touchStart"
+    @touchEnd="touchEnd"
+    @transitionStart="transitionStart"
+    @transitionEnd="transitionEnd"
+    @sliderMove="sliderMove"
+  >
+    <swiper-slide
+      style="width: 100%; height: 100%"
+      v-for="(item, index) in list"
+      :key="index"
+      :virtualIndex="index"
+    >
       <swiper-item :available-model-info="item" :index="index"></swiper-item>
     </swiper-slide>
   </swiper>
@@ -33,7 +50,7 @@ import { activeIndex, activeIndexChange, gltfViewerRef } from "./index.ts";
 
 const { list, getList, loading, firstLoading } = usePaging(getIndexAvailableModel, {
   // 获取首页模型信可能会涉及很多查询，所以严格控制其数量
-  pageSize:3
+  pageSize: 3,
 });
 
 // 滑动到最新
@@ -47,7 +64,7 @@ function reachEnd() {
 
 const showSwipe = ref(true);
 
-function touchStart() { }
+function touchStart() {}
 
 function sliderMove() {
   // 此事件在移动过程中持续触发，用于开始滑动的事件
@@ -62,9 +79,9 @@ function touchEnd() {
   }
 }
 
-function transitionStart() { }
+function transitionStart() {}
 
-function transitionEnd() { }
+function transitionEnd() {}
 </script>
 
 <style lang="less">

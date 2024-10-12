@@ -35,7 +35,7 @@ const emits = defineEmits(["load"]);
 
 const elImageRef = ref();
 
-const imageRef = ref()
+const imageRef = ref();
 
 const props = defineProps({
   // 是否可拖拽
@@ -85,6 +85,7 @@ defineExpose({
   width: 100%;
   height: 100%;
   position: relative;
+  flex-shrink: 0;
 }
 
 .slot {

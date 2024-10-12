@@ -16,30 +16,25 @@
       <el-row :gutter="8">
         <template v-for="item in builtInColors">
           <el-col :span="6" style="margin: 4px 0">
-            <div
-              ref="buttonRef"
-              @click="select(item)"
-              v-click-outside="onClickOutside"
-              class="color-item flex items-center justify-center"
-              :style="{ background: item.color }"
-            >
-              {{ item.name }}
-            </div>
+            <el-popover title="描述" :disabled="!item.description" :width="220">
+              <div>
+                {{ item.description }}
+              </div>
+              <template #reference>
+                <div
+                  @click="select(item)"
+                  class="color-item flex items-center justify-center"
+                  :style="{ background: item.color }"
+                >
+                  {{ item.name }}
+                </div>
+              </template>
+            </el-popover>
           </el-col>
         </template>
       </el-row>
     </div>
   </a-modal>
-
-  <el-popover
-    ref="popoverRef"
-    :virtual-ref="buttonRef"
-    trigger="hover"
-    title="描述"
-    virtual-triggering
-  >
-    <span> Some content </span>
-  </el-popover>
 </template>
 
 <script setup lang="ts">
@@ -54,12 +49,6 @@ const emits = defineEmits(["select"]);
 function select(item) {
   emits("select", item);
 }
-
-const buttonRef = ref();
-const popoverRef = ref();
-const onClickOutside = () => {
-  unref(popoverRef).popperRef?.delayHide?.();
-};
 </script>
 
 <style scoped lang="less">
@@ -75,7 +64,7 @@ const onClickOutside = () => {
   color: #fff;
   font-weight: bold;
   font-size: 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   &:hover {
     box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,

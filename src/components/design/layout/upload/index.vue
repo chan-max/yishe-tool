@@ -167,7 +167,7 @@ import {
 
 import { htmlToPngFile } from "@/common/transform";
 import desimage from "@/components/image.vue";
-import { createFontThumbnail } from "@/components/design/utils/utils";
+import {} from "@/components/design/utils/utils";
 import { toPng } from "html-to-image";
 import Utils from "@/common/utils";
 import { useLoginStatusStore } from "@/store/stores/login";
@@ -280,14 +280,14 @@ async function uploadSingleFile(file) {
   const keywords = file.tags && file.tags.join(",");
 
   if (Utils.type.isImageName(file.name)) {
-    const { url } = await uploadToCOS({ file: file.raw });
+    const fileCos = await uploadToCOS({ file: file.raw });
     const params = {
       name: file.customName,
       size: file.size,
-      url,
+      url: fileCos.url,
       keywords,
       type: "image", // 默认为图片贴纸, 图片统一为 image
-      thumbnail: url,
+      thumbnail: fileCos,
       description: file.description,
       isPublic: file.isPublic,
       uploaderId: loginStore.userInfo.id,
@@ -300,18 +300,18 @@ async function uploadSingleFile(file) {
 
     const png = await htmlToPngFile(fileBarFontPreviewRef.value);
 
-    const { url: thumbnailUrl } = await uploadToCOS({
+    const thumbnailCos = await uploadToCOS({
       file: png,
     });
 
-    const { url: fileUrl } = await uploadToCOS({ file: file.raw });
+    const fileCos = await uploadToCOS({ file: file.raw });
 
     const params = {
-      url: fileUrl,
+      url: fileCos.url,
       name: file.customName || file.raw.name,
       size: file.size,
       keywords,
-      thumbnail: thumbnailUrl,
+      thumbnail: thumbnailCos,
       description: file.description,
       isPublic: file.isPublic,
       uploaderId: loginStore.userInfo.id,
@@ -326,18 +326,18 @@ async function uploadSingleFile(file) {
 
     const png = baseViewerRef.value.getScreenShotFile();
 
-    const { url: thumbnailUrl } = await uploadToCOS({
+    const thumbnailCos = await uploadToCOS({
       file: png,
     });
 
-    const { url: fileUrl } = await uploadToCOS({ file: file.raw });
+    const fileCos = await uploadToCOS({ file: file.raw });
 
     const params = {
-      url: fileUrl,
+      url: fileCos.url,
       name: file.customName || file.raw.name,
       size: file.size,
       keywords,
-      thumbnail: thumbnailUrl,
+      thumbnail: thumbnailCos,
       description: file.description,
       isPublic: file.isPublic,
       uploaderId: loginStore.userInfo.id,

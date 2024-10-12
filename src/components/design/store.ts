@@ -5,6 +5,7 @@ import { defineStore } from "pinia";
 import Utils from '@/common/utils'
 import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
 import Api from '@/api'
+import { message } from 'ant-design-vue'
 
 // 当前实例
 export const currentModelController = shallowRef(null);
@@ -23,13 +24,14 @@ export function saveScreenshot() {
     const base64 = currentModelController.value.getScreenshotBase64();
     screenshotInstance.value.execScreenshot(base64);
 
-    if (screenshots.value.length >= 10) {
+    if (screenshots.value.length >= 20) {
         screenshots.value.shift()
+        message.warning('最多保存20张,超出会移除最早的截图')
     }
 
     screenshots.value.push({
         base64: base64,
-        createdTime: new Date().getTime()
+        createdTime: new Date(),
     })
 }
 
@@ -508,7 +510,9 @@ export function startSyncDesignStorage() {
 }
 
 
+// 是否展示截屏抽屉
+export const showScreenshotDrawer = ref(false)
 
-export {currentHoveringDecalController} from '@/components/design/core/decalController'
+export { currentHoveringDecalController } from '@/components/design/core/decalController'
 
 

@@ -10,58 +10,80 @@
 -->
 <template>
   <div class="designiy-bottom-menu">
-
     <el-tooltip :hide-after="0" content="拾色器" placement="top">
       <div>
         <el-button link @click="openEyeDropper">
-          <BgColorsOutlined style="font-size:16px;" />
+          <BgColorsOutlined style="font-size: 16px" />
         </el-button>
       </div>
     </el-tooltip>
 
-    <el-tooltip :hide-after="0" content="保存当前截图" placement="top">
+    <el-tooltip :hide-after="0" content="保存当前模型截图" placement="top">
       <div>
         <el-button link @click="takeshot">
-          <ScissorOutlined style="font-size:16px;" />
+          <CameraOutlined style="font-size: 16px" />
         </el-button>
       </div>
     </el-tooltip>
 
+    <el-tooltip :hide-after="0" content="查看所有截图" placement="top">
+      <div>
+        <el-button link @click="showScreenshotDrawer = true">
+          <PictureOutlined style="font-size: 16px" />
+        </el-button>
+      </div>
+    </el-tooltip>
 
-
-    <el-tooltip :hide-after="0" :content="isFullScreen ? '退出全屏' : '进入全屏'" placement="top">
+    <el-tooltip
+      :hide-after="0"
+      :content="isFullScreen ? '退出全屏' : '进入全屏'"
+      placement="top"
+    >
       <div>
         <el-button link @click="isFullScreen = !isFullScreen">
-          <ExpandOutlined style="font-size:16px;" />
+          <ExpandOutlined style="font-size: 16px" />
         </el-button>
       </div>
     </el-tooltip>
-
-
   </div>
+
+  <screenshotDrawer></screenshotDrawer>
 </template>
 <script setup>
-import { isFullScreen, currentModelController, saveScreenshot } from "../store";
+import {
+  isFullScreen,
+  currentModelController,
+  saveScreenshot,
+  showScreenshotDrawer,
+} from "../store";
 import iconFullscreen from "@/icon/fullscreen.svg?component";
 import iconRotate from "@/icon/rotate.svg?component";
 import iconLocate from "@/icon/locate.svg?component";
 import iconRefresh from "@/icon/refresh.svg?component";
 import iconScreenshot from "@/icon/screenshot.svg?component";
-import { ScissorOutlined, BgColorsOutlined, ExpandOutlined } from '@ant-design/icons-vue'
-import { useEyeDropper, useClipboard } from '@vueuse/core'
-import { notification } from 'ant-design-vue'
+import {
+  ScissorOutlined,
+  BgColorsOutlined,
+  CameraOutlined,
+  FileImageOutlined,
+  PictureOutlined,
+  ExpandOutlined,
+} from "@ant-design/icons-vue";
+import { useEyeDropper, useClipboard } from "@vueuse/core";
+import { notification } from "ant-design-vue";
+import screenshotDrawer from "@/components/design/components/screenshotDrawer.vue";
 
-const { isSupported, open, sRGBHex } = useEyeDropper()
+const { isSupported, open, sRGBHex } = useEyeDropper();
 
 async function openEyeDropper() {
-  let { sRGBHex } = await open()
+  let { sRGBHex } = await open();
   navigator.clipboard.writeText(sRGBHex);
 
   notification.open({
-    placement: 'topRight',
+    placement: "topRight",
     message: `颜色 ${sRGBHex} 已复制到粘贴板`,
     // style:`background-color:${sRGBHex}22`
-  })
+  });
 }
 
 function takeshot() {

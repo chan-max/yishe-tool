@@ -51,6 +51,7 @@
           <a-menu>
             <a-menu-item @click="exportPng"> 导出原始图 </a-menu-item>
             <a-menu-item @click="exportTrimmedPng"> 自动去除空白边框 </a-menu-item>
+            <a-menu-item @click="exportIco"> 导出ico </a-menu-item>
           </a-menu>
         </template>
       </a-dropdown>
@@ -273,6 +274,10 @@ function exportPng() {
 /* 导出去除多余空白的图片 */
 function exportTrimmedPng() {
   canvasController.downloadTrimmedPng();
+}
+
+function exportIco() {
+  canvasController.downloadIco();
 }
 
 function remove(id) {

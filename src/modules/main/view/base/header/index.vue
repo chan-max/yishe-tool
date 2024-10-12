@@ -12,24 +12,32 @@
   <!-- <top></top> -->
   <div ref="headerBar" class="header-bar flex justify-center z-10">
     <div class="left flex items-center">
-      <img class="logo" src="logo.svg" style="width: 32px;height:32px; object-fit: contain;"
-        @click="$router.push({ name: 'Design' })" />
+      <img
+        class="logo"
+        src="logo.svg"
+        style="width: 32px; height: 32px; object-fit: contain"
+        @click="$router.push({ name: 'Design' })"
+      />
     </div>
 
-    <div style="padding:0 24px;font-size: 20px;font-weight: bold;"> 衣设网 </div>
+    <!-- <div style="padding:0 24px;font-size: 20px;font-weight: bold;"> 衣设网 </div> -->
+    <img style="height: 24px; margin: 0 24px 0 12px" src="/yishe.png" />
+    <!-- <img style="height: 24px; margin: 0 24px 0 12px" src="/yishe2.png" /> -->
 
     <des-menu></des-menu>
     <div style="flex: 1"></div>
     <div class="right flex justify-end">
-
       <el-dropdown placement="bottom" size="small" trigger="click">
         <el-button size="small" link>
-          <span style="font-weight: bold;font-size: 1rem;"> {{ language }} </span>
+          <span style="font-weight: bold; font-size: 1rem"> {{ language }} </span>
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item v-for="lang in LanguageOptions" @click="changeLanguage(lang.value)">{{ lang.label
-            }}</el-dropdown-item>
+            <el-dropdown-item
+              v-for="lang in LanguageOptions"
+              @click="changeLanguage(lang.value)"
+              >{{ lang.label }}</el-dropdown-item
+            >
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -56,9 +64,11 @@ import userAvatar from "@/components/user/userAvatar.vue";
 import { ref, onMounted, onUnmounted } from "vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import desMenu from "./menu.vue";
-import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
-import { LanguageOptions, changeLanguage, language } from '@/i18n'
-
+import {
+  openLoginDialog,
+  showLoginFormModal,
+} from "@/modules/main/view/user/login/index.tsx";
+import { LanguageOptions, changeLanguage, language } from "@/i18n";
 
 const loginStatusStore = useLoginStatusStore();
 
@@ -87,7 +97,7 @@ const menuOptions = [{}];
 
   z-index: 999;
 
-  &>* {
+  & > * {
     flex-shrink: 0;
   }
 }

@@ -108,6 +108,7 @@
     "panzoom": "^9.4.3",
     "pg-hstore": "^2.3.4",
     "pinia": "^2.2.0",
+    "png2ico": "^0.4.1",
     "qr-code-styling": "^1.6.0-rc.1",
     "quasar": "^2.14.2",
     "randomcolor": "^0.6.2",

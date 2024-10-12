@@ -35,9 +35,9 @@ import { currentModelController } from '@/components/design/store'
 import { imageDataToFile } from '@/common/transform'
 import { defineCanvasChild } from './children/define.tsx';
 
-import { currentFocusingStickerId ,ChildViewHelperComponent} from '@/components/design/layout/canvas/components/childViewHelper/index'
+import { currentFocusingStickerId, ChildViewHelperComponent } from '@/components/design/layout/canvas/components/childViewHelper/index'
 
-
+import { PngIcoConverter } from "/public/lib/png2icojs"; // 导入库
 /*
     画布参数
 */
@@ -269,6 +269,27 @@ export class CanvasController {
     }
 
 
+    async downloadIco() {
+        const imageData = this.ctx.getImageData(0, 0, this.canvasEl.width, this.canvasEl.height);
+        let file = imageDataToFile(imageData)
+
+        // 使用 PNG2ICOjs 转换为 ICO 格式
+        const converter = new PngIcoConverter();
+        const resultBlob = await converter.convertToBlobAsync([{ png: file }]);
+
+        // 创建下载链接
+        const url = URL.createObjectURL(resultBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'favicon.ico';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+    }
+
+
+
     canvasId = 'canvas-render-helper-el'
 
     rawId = 'this_is_canvas_id'
@@ -318,6 +339,7 @@ export class CanvasController {
         }
 
         async function update() {
+            console.log('update')
             try {
                 // this.base64 = await toPng(this.el)
 

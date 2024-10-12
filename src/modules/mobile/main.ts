@@ -18,7 +18,7 @@ import VConsole from 'vconsole';
 import ElementPlus from 'element-plus'
 
 import { createPinia } from 'pinia'
-import { router} from '../mobile/router'
+import { router } from '../mobile/router'
 
 import '@/style/cover-antdesign.less'
 import 'animate.css';
@@ -32,19 +32,16 @@ import 'element-plus/dist/index.css'
 import '@/style/cover-elementplus.scss'
 
 
-export function createMobileApp(){
-const app = createApp(App)
-const vConsole = new VConsole({ theme: 'dark' });
-app.use(ElementPlus)
 
-app.use(ConfigProvider);
-const pinia = createPinia()
-
-app.use(pinia)
-
-app.use(router)
-
-app.mount('#app')
+export function createMobileApp() {
+    const app = createApp(App)
+    const vConsole = new VConsole({ theme: 'dark' });
+    app.use(ElementPlus)
+    app.use(ConfigProvider);
+    const pinia = createPinia()
+    app.use(pinia)
+    app.use(router)
+    app.mount('#app')
 }
 
 

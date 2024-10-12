@@ -14,5 +14,5 @@
     创建用于扫码上传的图片的链接, 扫码上传文件不需要在移动端登录
 */
 export function createUploadImageRedirectUrl(){
-    return 'http://172.20.10.10:6699/#/uploadImage'
+    
 }

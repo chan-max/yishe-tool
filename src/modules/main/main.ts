@@ -100,16 +100,26 @@ async function setup() {
     configStore.$patch(config)
 
     if (loginStore.isLogin) {
-       let [err,res] =  await to(loginStore.getUserInfo())
+        let [err, res] = await to(loginStore.getUserInfo())
     }
     app.mount('#app')
 
 }
 
 
+function isMobile() {
+    const mobile = ['iphone', 'ipad', 'android', 'blackberry', 'nokia', 'opera mini', 'windows mobile'];
+    for (var i in mobile) if (navigator.userAgent.toLowerCase().indexOf(mobile[i]) > 0) return true;
+    return false;
+}
 
+import { createMobileApp } from '@/modules/mobile/main'
 
-setup()
+if (isMobile()) {
+    createMobileApp()
+} else {
+    setup()
+}
 
 
 

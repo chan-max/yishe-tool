@@ -137,6 +137,7 @@ const showDetailModal = ref();
 
 async function deleteItem(item) {
   await s1Confirm({
+    okType: "danger",
     content: "确认删除该模型？",
   });
 

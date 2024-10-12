@@ -268,7 +268,6 @@ export class CanvasController {
         downloadByFile(imageDataToFile(imageData))
     }
 
-
     async downloadIco() {
         const imageData = this.ctx.getImageData(0, 0, this.canvasEl.width, this.canvasEl.height);
         let file = imageDataToFile(imageData)

@@ -21,7 +21,7 @@
     </div>
 
     <!-- <div style="padding:0 24px;font-size: 20px;font-weight: bold;"> 衣设网 </div> -->
-    <img style="height: 24px; margin: 0 24px 0 12px" src="/yishe.png" />
+    <img style="height: 24px; margin: 0 24px 0 12px" src="/yishe2.png" />
     <!-- <img style="height: 24px; margin: 0 24px 0 12px" src="/yishe2.png" /> -->
 
     <des-menu></des-menu>

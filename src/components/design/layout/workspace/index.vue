@@ -2,18 +2,28 @@
   <div class="container">
     <div class="info">
       <div class="preview">
-        <base-gltf-viewer style="flex-shrink: 0; background: #eee"
-          :src="currentOperatingBaseModelInfo?.url"></base-gltf-viewer>
+        <base-gltf-viewer
+          style="flex-shrink: 0; background: #eee"
+          :src="currentOperatingBaseModelInfo?.url"
+        ></base-gltf-viewer>
       </div>
     </div>
     <div class="decal">
       <div class="decal-content" v-if="currentModelController?.decalControllers.length">
-        <template v-for="(decal, index) in currentModelController.decalControllers" :key="index">
-          <div class="decal-item" @click="decalItemClick(decal)"
-            :class="{ active: isMouseover(decal) || isCurrent(decal) }">
-            <desimage :src="decal.info.src" fit="contain" class="decal-item-image"></desimage>
+        <template
+          v-for="(decal, index) in currentModelController.decalControllers"
+          :key="index"
+        >
+          <div
+            class="decal-item"
+            @click="decalItemClick(decal)"
+            :class="{ active: isMouseover(decal) || isCurrent(decal) }"
+          >
+            <s1-img :src="decal.info.src" fit="contain" class="decal-item-image"></s1-img>
             <div class="decal-item-content">
-              <div class="decal-item-content-title text-ellipsis"> {{ decal.info.name }} </div>
+              <div class="decal-item-content-title text-ellipsis">
+                {{ decal.info.name }}
+              </div>
               <div class="decal-item-content-desc text-ellipsis">
                 添加于 {{ formatDate(decal.createdAt) }}
               </div>
@@ -21,14 +31,16 @@
             <div style="flex: 1"></div>
             <div class="decal-item-bar">
               <el-button-group>
-                <el-button link round :icon="iconMore">
-                </el-button>
+                <el-button link round :icon="iconMore"> </el-button>
                 <el-button link round @click="setting(decal)" :icon="iconSetting">
                 </el-button>
-                <el-popconfirm title="确定要移除该贴纸吗？" @confirm="removeDecal(decal)" confirm-button-type="danger">
+                <el-popconfirm
+                  title="确定要移除该贴纸吗？"
+                  @confirm="removeDecal(decal)"
+                  confirm-button-type="danger"
+                >
                   <template #reference>
-                    <el-button link round type="danger" :icon="iconDelete">
-                    </el-button>
+                    <el-button link round type="danger" :icon="iconDelete"> </el-button>
                   </template>
                 </el-popconfirm>
               </el-button-group>
@@ -45,8 +57,13 @@
       <el-button round>
         <span> 上传 </span>
       </el-button>
-      <el-button :disabled="!currentModelController?.decalControllers.length" @click="showSaveModel = true" type="primary"
-        round style="flex: 1">
+      <el-button
+        :disabled="!currentModelController?.decalControllers.length"
+        @click="showSaveModel = true"
+        type="primary"
+        round
+        style="flex: 1"
+      >
         <span>
           共 {{ currentModelController?.decalControllers.length }} 张贴纸 ， 保存该模型
         </span>
@@ -62,7 +79,7 @@ import {
   currentOperatingDecalController,
   showDecalControl,
   viewDisplayController,
-  showWorkspace
+  showWorkspace,
 } from "../../store";
 import { computed, ref } from "vue";
 import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
@@ -71,8 +88,7 @@ import { MoreFilled, CloseBold, Edit, EditPen } from "@element-plus/icons-vue";
 import iconSetting from "./setting.svg";
 import iconDelete from "./remove.svg";
 import iconMore from "./more.svg";
-import desimage from '@/components/image.vue'
-
+import desimage from "@/components/image.vue";
 
 function formatDate(date) {
   const d = useDateFormat(date, "YYYY-MM-DD HH:mm:ss");
@@ -84,19 +100,19 @@ function isMouseover(decal) {
 }
 
 function decalItemClick(decal) {
-  return currentOperatingDecalController.value = decal;
+  return (currentOperatingDecalController.value = decal);
 }
 
 function isCurrent(decal) {
   if (!currentOperatingDecalController.value) {
-    return false
+    return false;
   }
-  return decal.id.value == currentOperatingDecalController.value?.id.value
+  return decal.id.value == currentOperatingDecalController.value?.id.value;
 }
 
 function setting(decal) {
   currentOperatingDecalController.value = decal;
-  showWorkspace.value = false
+  showWorkspace.value = false;
   showDecalControl.value = true;
 }
 
@@ -148,7 +164,7 @@ function removeDecal(decal) {
   background-color: #f9f9f9;
   column-gap: 1rem;
   padding: 1rem;
-  border-radius: .4rem;
+  border-radius: 0.4rem;
   transition: all 0.2s;
 
   &:hover {

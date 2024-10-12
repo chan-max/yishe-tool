@@ -78,11 +78,11 @@ export class DecalController {
   context = null
 
   // 该贴纸的创建时间
-  createdAt = new Date()
+  createTime = new Date()
 
   // 更新时间
-  updatedAt = new Date()
-
+  updateTime = new Date()
+  
   constructor(info?) {
 
     // 处理配置

@@ -30,12 +30,13 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import App from '../mobile/App.vue'
 import 'element-plus/dist/index.css'
 import '@/style/cover-elementplus.scss'
-
-
+import { s1Plugin } from '@/components/export.ts'
 
 export function createMobileApp() {
     const app = createApp(App)
     const vConsole = new VConsole({ theme: 'dark' });
+
+    app.use(s1Plugin)
     app.use(ElementPlus)
     app.use(ConfigProvider);
     const pinia = createPinia()

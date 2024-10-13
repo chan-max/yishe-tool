@@ -35,9 +35,11 @@ const baseGridOptions = ref({
   size: "small",
   rowConfig: {
     useKeys: true,
+    useKey: true,
   },
   columnConfig: {
     useKeys: true,
+    useKey: true,
   },
   editConfig: {
     enable: true,

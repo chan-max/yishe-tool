@@ -1,10 +1,8 @@
 <template>
   <van-config-provider :theme="isDark ? 'dark' : 'light'">
-    <m-header v-if="$route.meta.header"></m-header>
     <div class="content" style="flex: 1">
       <router-view></router-view>
     </div>
-    <m-footer v-if="$route.meta.footer"></m-footer>
   </van-config-provider>
 </template>
 <script setup>

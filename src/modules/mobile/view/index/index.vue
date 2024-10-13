@@ -1,23 +1,50 @@
-<!--
- * @Author: chan-max jackieontheway666@gmail.com
- * @Date: 2023-12-16 12:40:26
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-06 22:37:36
- * @FilePath: /1s/src/modules/mobile/view/index/index.vue
- * @Description: 
- * 
- * Copyright (c) 2024 by 1s, All Rights Reserved. 
--->
 <template>
-<van-tabs v-model:active="active" swipeable>
-  <van-tab v-for="index in 4" :title="'选项 ' + index">
-    内容 {{ index }}
-  </van-tab>
-</van-tabs>
+  <div class="mobile-homebg w-full h-full">
+    <!-- <div class="header">
+      <img src="/logo.svg" style="height: 24px; width: 24px" />
+      <img src="/yishe.png" style="height: 24px; width: 24px; filter: " />
+    </div> -->
 
+    <div class="banner">
+      <s1GltfViewer :model="modelInfo"></s1GltfViewer>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
+import Api from "@/api";
+
+const modelInfo = ref();
+
+onBeforeMount(async () => {
+  let res = await Api.getCustomModelList({
+    currentPage: 1,
+    pageSize: 1,
+    random: true,
+  });
+  let item = res.list[0];
+  modelInfo.value = item.meta.modelInfo;
+});
 </script>
+
+<style lang="less" scoped>
+.mobile-homebg {
+  background-color: #fff;
+}
+
+.header {
+  align-items: center;
+  padding: 24px;
+}
+
+.banner {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+</style>

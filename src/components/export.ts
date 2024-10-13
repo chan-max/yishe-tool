@@ -21,7 +21,7 @@ export const s1Plugin = {
         app.component('s1Scrollbar', s1Scrollbar);
         app.component('s1LoadingBottom', loadingBottom);
         app.component('s1Icon', svgIcon)
-        app.component('s1GltViewer', gltfViewer)
+        app.component('s1GltfViewer', gltfViewer)
         app.component('s1Table', s1Table);
         app.component('s1Pagination', s1Pagination);
         app.component('s1ImageListUploader', imageListUploader)

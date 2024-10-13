@@ -112,7 +112,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     var currentMesh = null;
 
     // 添加环境光
-    const ambientLight = new AmbientLight(0xffffff, 0.1); // 设置颜色和强度
+    const ambientLight = new AmbientLight(0xffffff, 0.01); // 设置颜色和强度
     scene.add(ambientLight);
 
     const renderer = new WebGLRenderer({
@@ -136,7 +136,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     controller.enableDamping = true;
     controller.dampingFactor = .1;
     controller.autoRotate = true
-
 
 
     controller.addEventListener('start', function () {
@@ -237,12 +236,12 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         scene.add(ambientLight);
 
         // 添加平行光
-        const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+        const directionalLight1 = new DirectionalLight(0xffffff, 0.35); // 设置颜色和强度
         directionalLight1.position.set(1, 1, 1); // 设置光源位置
         scene.add(directionalLight1);
 
         // 添加平行光
-        const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+        const directionalLight2 = new DirectionalLight(0xffffff, 0.3); // 设置颜色和强度
         directionalLight2.position.set(-1, -1, -1); // 设置光源位置
         scene.add(directionalLight2);
 
@@ -321,10 +320,11 @@ export const useViewer = (gltfViewerRef, props, emits) => {
             requestAnimationFrame(render);
             if (animate.value) {
                 // controller.autoRotate = true
-                // controller.update()
             } else {
                 controller.autoRotate = false
             }
+            // 不写这个会导致阻尼感失效
+            controller.update()
             renderer.render(scene, camera);
         }
 

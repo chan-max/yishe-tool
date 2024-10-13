@@ -218,8 +218,8 @@ export class ModelController extends Base {
 
         this.controller.enableDamping = true
         this.controller.dampingFactor = 0.1;
-        this.camera.position.copy(this.defaultCameraPosition);
 
+        this.camera.position.copy(this.defaultCameraPosition);
         this.canvasContainer.appendChild(this.renderer.domElement);
         this.resizeObserver = new ResizeObserver(
             () => {

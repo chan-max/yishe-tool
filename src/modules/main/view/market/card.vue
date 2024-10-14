@@ -19,7 +19,9 @@
       <div class="avatar">
         <s1-image :src="getAvatar(model)"></s1-image>
       </div>
-      <div class="name">{{ model.uploader.name || model.uploader.account }}</div>
+      <div class="name">
+        {{ model.name }} - {{ model.uploader.name || model.uploader.account }}
+      </div>
       <div style="flex: 1"></div>
     </div>
   </div>

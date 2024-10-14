@@ -27,6 +27,7 @@ declare module 'vue' {
     BuiltInBackground: typeof import('./src/components/design/layout/canvas/operate/builtInBackground/index.vue')['default']
     BuiltInTemplateModal: typeof import('./src/components/design/layout/canvas/builtInTemplate/builtInTemplateModal.vue')['default']
     Canvas: typeof import('./src/components/design/layout/canvas/index.vue')['default']
+    CanvasMediaRecorder: typeof import('./src/components/design/components/canvasMediaRecorder/index.vue')['default']
     ClipPath: typeof import('./src/components/design/layout/canvas/operate/clipPath/index.vue')['default']
     Color: typeof import('./src/components/design/layout/canvas/operate/color/index.vue')['default']
     ColorPicker: typeof import('./src/components/design/components/colorPicker/colorPicker.vue')['default']

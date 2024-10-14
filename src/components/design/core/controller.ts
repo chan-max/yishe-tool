@@ -43,6 +43,7 @@ import { eventMixin } from "./event";
 import { meta } from '../meta'
 import { Base } from './base'
 import { gsap } from 'gsap';
+import { saveAs } from 'file-saver';
 
 import {
     currentOperatingBaseModelInfo,
@@ -303,7 +304,7 @@ export class ModelController extends Base {
 
         this.isMounted = true;
     }
-    
+
     // 设置背景颜色
     public setBgColor(color: any, alpha = 1) {
         this.renderer.setClearColor(color, alpha);
@@ -488,11 +489,11 @@ export class ModelController extends Base {
 
     private initMousemoveEvent() {
 
-        let callback = useDebounceFn( (event: any) => {
+        let callback = useDebounceFn((event: any) => {
             this._onMousemove.forEach((cb: any) => cb.call(this, this));
-        },11)
+        }, 11)
 
-        this.canvasContainer.addEventListener("mousemove",callback);
+        this.canvasContainer.addEventListener("mousemove", callback);
     }
 
     private initClickEvent() {
@@ -727,13 +728,13 @@ export class ModelController extends Base {
         let mesh = this.mesh
         let scene = this.scene
         let camera = this.camera
-        
+
         // 初始化贴纸
         if (modelInfo.decals) {
             await Promise.all(modelInfo.decals.map((decal) => {
                 return new Promise(async (resolve, reject) => {
 
-                    var { id, position, rotation, ruleSize,modelValueRotate,modelValueSize } = decal;
+                    var { id, position, rotation, ruleSize, modelValueRotate, modelValueSize } = decal;
 
                     if (!id) {
                         return resolve(new Error('贴纸不存在'));
@@ -749,7 +750,7 @@ export class ModelController extends Base {
                     decalController.state.ruleSize = ruleSize
                     decalController.state.modelValueRotate = modelValueRotate
                     decalController.state.modelValueSize = modelValueSize
-           
+
                     await decalController.create()
 
                     decalController.ensureAdd()
@@ -765,6 +766,39 @@ export class ModelController extends Base {
         message.success('模型加载成功')
 
     }
+
+
+    activeMediaRecorder = null
+
+    startMediaRecord() {
+
+        const canvas = this.renderer.domElement
+
+        const stream = canvas.captureStream(30); // 每秒30帧
+        const mediaRecorder = this.activeMediaRecorder = new MediaRecorder(stream);
+        let chunks = [];
+
+        mediaRecorder.ondataavailable = function (event) {
+            chunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = function () {
+            const blob = new Blob(chunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            saveAs(url)
+            message.success('视频录制成功,已自动导出')
+            // 可以在这里下载或播放视频
+        };
+
+        mediaRecorder.start();
+        // 停止录制
+    }
+
+    stopMediaRecord() {
+        this.activeMediaRecorder.stop();
+        this.activeMediaRecorder = null;
+    }
+
 }
 
 

@@ -10,6 +10,8 @@
 -->
 <template>
   <div class="designiy-bottom-menu">
+    <canvasMediaRecorder></canvasMediaRecorder>
+
     <el-tooltip :hide-after="0" content="拾色器" placement="top">
       <div>
         <el-button link @click="openEyeDropper">
@@ -72,6 +74,7 @@ import {
 import { useEyeDropper, useClipboard } from "@vueuse/core";
 import { notification } from "ant-design-vue";
 import screenshotDrawer from "@/components/design/components/screenshotDrawer.vue";
+import canvasMediaRecorder from "@/components/design/components/canvasMediaRecorder/index.vue";
 
 const { isSupported, open, sRGBHex } = useEyeDropper();
 
@@ -105,10 +108,10 @@ function animate() {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 50px;
+  padding: 0 36px;
   background-color: #fff;
   border-radius: 16px;
-  column-gap: 4px;
+  column-gap: 6px;
   box-shadow: 0 10px 20px #0000001a;
 }
 

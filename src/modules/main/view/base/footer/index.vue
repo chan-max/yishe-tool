@@ -13,22 +13,9 @@
     <div class="gradient-border"></div>
     <div class="columns">
       <div class="column">
-        <div>资源</div>
-      </div>
-      <div class="column">
-        <div>资源</div>
-      </div>
-      <div class="column">
-        <div>资源</div>
-      </div>
-      <div class="column">
-        <div>其它相关</div>
-      </div>
-      <div class="column">
-        <div>其它相关</div>
-      </div>
-      <div class="column">
-        <div>其它相关</div>
+        <div class="column-title">联系我们</div>
+        <div>tel : 18742539196</div>
+        <div>wechat: 18742539196</div>
       </div>
     </div>
     <hr />
@@ -52,22 +39,29 @@
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  padding: 50px 50px 20px 50px;
+  padding: 50px 100px 20px 100px;
   position: relative;
 }
 
 .columns {
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   width: 100%;
 }
 
 .column {
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
-  color: #ddd;
+  row-gap: 16px;
+  color: #777;
   font-size: 12px;
+}
+
+.column-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ddd;
+  line-height: 36px;
 }
 
 .gradient-border {
@@ -75,14 +69,6 @@
   width: 100%;
   position: absolute;
   top: 0;
-  /* background: linear-gradient(90deg,
-            #fa6225,
-            #fc9632,
-            #eacc4b,
-            #7bc860,
-            #62b394,
-            #4793f5,
-            #7883f9); */
   background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
@@ -90,15 +76,6 @@ hr {
   width: 100%;
   border: 1px solid #111;
   margin: 30px 0;
-  box-sizing: border-box;
-}
-
-.copyright {
-  flex-shrink: 0;
-  font-size: 12px;
-  color: #999;
-  box-sizing: content-box;
-  width: 100%;
   box-sizing: border-box;
 }
 

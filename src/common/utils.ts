@@ -108,6 +108,13 @@ function clone(obj) {
 }
 
 
+
+function isMobile() {
+    const mobile = ['iphone', 'ipad', 'android', 'blackberry', 'nokia', 'opera mini', 'windows mobile'];
+    for (var i in mobile) if (navigator.userAgent.toLowerCase().indexOf(mobile[i]) > 0) return true;
+    return false;
+}
+
 import constModule from './const.ts'
 
 import { deepUnref } from './vue'
@@ -121,6 +128,12 @@ import time from './time.ts'
 
 class Utils {
 
+    constructor() {
+
+    }
+
+    isMobile = isMobile()
+    
     // 加密相关
     encrypt = new Encrypt()
 
@@ -134,7 +147,7 @@ class Utils {
 
     formatUrl = formatUrl
 
-    
+
 
     isPromise = isPromise
 

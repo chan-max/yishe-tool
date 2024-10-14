@@ -5,14 +5,17 @@
       <img src="/yishe.png" style="height: 24px; width: 24px; filter: " />
     </div> -->
 
-    <div class="banner">
+    <!-- <div class="banner">
       <s1GltfViewer :model="modelInfo"></s1GltfViewer>
-    </div>
+    </div> -->
+
+    <contactUs></contactUs>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import contactUs from "./contact.vue";
 
 import Api from "@/api";
 
@@ -32,6 +35,9 @@ onBeforeMount(async () => {
 <style lang="less" scoped>
 .mobile-homebg {
   background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .header {

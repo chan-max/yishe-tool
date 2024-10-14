@@ -14,19 +14,20 @@
 
     <market></market>
 
+    <contactus></contactus>
+
     <site-footer></site-footer>
   </div>
 </template>
 
 <script setup>
 import siteFooter from "../footer/index.vue";
+import market from "@/modules/main/view/market/index.vue";
+import banner from "./banner.vue";
+import contactus from "./contact.vue";
 
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "@/api";
-
-import banner from "./banner.vue";
-
-import market from "@/modules/main/view/market/index.vue";
 </script>
 
 <style>

@@ -8,7 +8,7 @@
     width="1080px"
     style="min-width: 1080px"
   >
-    <el-row style="height: 680px; padding: 24px 12px; overflow: auto" :gutter="24">
+    <el-row style="height: 640px; margin: 24px 12px; overflow: auto" :gutter="24">
       <el-col :span="16">
         <el-row style="row-gap: 2rem">
           <el-col :span="24">
@@ -20,11 +20,16 @@
           </el-col>
           <el-col :span="24">
             <div class="flex" style="column-gap: 12px; overflow: auto; padding: 12px">
-              <s1-image
+              <div
                 v-for="item in detailInfo.thumbnails"
-                style="width: 64px; height: 64px; background: #eee; border-radius: 4px"
-                :src="item.url"
-              ></s1-image>
+                @click="downloadThumbnail(item)"
+                title="点击导出原图"
+              >
+                <s1-image
+                  style="width: 64px; height: 64px; background: #eee; border-radius: 4px"
+                  :src="item.url"
+                ></s1-image>
+              </div>
             </div>
           </el-col>
           <el-col>
@@ -56,9 +61,14 @@
 import { useCustomModelDetailModal } from "./index.ts";
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import { UserOutlined } from "@ant-design/icons-vue";
-import desimage from "@/components/image.vue";
+
+import { saveAs } from "file-saver";
 
 const { show, detailInfo } = useCustomModelDetailModal();
+
+function downloadThumbnail(item) {
+  return saveAs(item.url, "thumbnail");
+}
 </script>
 
 <style></style>

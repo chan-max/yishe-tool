@@ -17,7 +17,6 @@ import { createPinia } from 'pinia'
 
 import router from '../main/router'
 import i18n from '@/i18n/index.ts'
-import 'animate.css';
 import '@/style/base.less'
 import '@/style/vars.less'
 
@@ -97,6 +96,7 @@ async function setup() {
     const configStore = useConfigStore()
 
     const config = await Api.getBasicConfig()
+    
     configStore.$patch(config)
 
     if (loginStore.isLogin) {

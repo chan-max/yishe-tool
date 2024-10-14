@@ -12,7 +12,6 @@ export const getCOS = () => {
         return _cos
     }
 
-
     _cos = new COS({
         SecretId: configStore.cos.SecretId,
         SecretKey: configStore.cos.SecretKey,

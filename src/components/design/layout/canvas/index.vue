@@ -179,7 +179,6 @@
   </a-modal>
 
   <officialTemplateModal></officialTemplateModal>
-
   <ChildViewHelperComponent></ChildViewHelperComponent>
 </template>
 

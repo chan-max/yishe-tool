@@ -1,6 +1,6 @@
 <template>
-  <div class="banner flex flex-col items-center">
-    <div class="flex flex-col items-center" style="margin-top: 36vh">
+  <div class="banner flex flex-col items-center" ref="bannerRef">
+    <div class="flex flex-col items-center" style="margin-top: 40vh">
       <div style="z-index: 3" class="title">
         开放式 <span class="animate-gradient-text"> 服装 DIY</span> 设计平台
       </div>
@@ -24,16 +24,12 @@
         </el-button>
       </div>
     </div>
-
-    <img
-      src="/wave.svg"
-      style="width: 100%; position: absolute; opacity: 0.3; bottom: -300px"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
+import { ref, onBeforeMount, onMounted, onBeforeUnmount } from "vue";
 import { EditPen } from "@element-plus/icons-vue";
 
 let router = useRouter();
@@ -49,31 +45,58 @@ function more() {
     .getElementById("latest-makeup")
     .scrollIntoView({ behavior: "smooth", block: "center" });
 }
+
+const bannerRef = ref();
+const bannerBgTimer = ref();
+const bgUrls = ref([
+  "/image/background/cloth.jpg",
+  "/image/background/cloth2.jpg",
+  "/image/background/cloth3.jpg",
+  "/image/background/cloth4.jpg",
+  "/image/background/cloth5.jpg",
+  "/image/background/cloth6.jpg",
+]);
+const loop = ref(0);
+
+function setBg() {
+  loop.value++;
+  let index = loop.value % bgUrls.value.length;
+  if (bannerRef.value) {
+    bannerRef.value.style.background = `url(${bgUrls.value[index]})`;
+  }
+}
+
+onMounted(() => {
+  setBg();
+  bannerBgTimer.value = setInterval(setBg, 10000);
+});
+onBeforeUnmount(() => [clearInterval(bannerBgTimer.value)]);
 </script>
 
 <style scoped lang="less">
 .banner {
   width: 100vw;
   height: 100vh;
-  // background-color: #161616;
   background-color: #f5f5f9;
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(2px);
   user-select: none;
   overflow: hidden;
+  transition: background 1s;
 }
 
 .title {
   font-size: 64px;
   font-weight: bold;
   text-align: center;
+  color: #777;
 }
 
 .subtitle {
   font-size: 24px;
   text-align: center;
-  color: #6e6e73;
+  color: #111;
   font-weight: 300;
 }
 

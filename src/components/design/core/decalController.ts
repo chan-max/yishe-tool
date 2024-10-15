@@ -64,12 +64,12 @@ export class DecalController {
     // 外部绑定的 旋转和尺寸值，位置是固定的所以不需要输入
     modelValueRotate: null,
     modelValueSize: null,
-    ruleSize: 0.1,
+    ruleSize: .2,
 
     rotation: null,
     position: null,
 
-
+    initialPosition: null, // 保存 最初始的位置
     isHover: false // 鼠标是否在覆盖模型上
   })
 
@@ -82,7 +82,7 @@ export class DecalController {
 
   // 更新时间
   updateTime = new Date()
-  
+
   constructor(info?) {
 
     // 处理配置
@@ -187,7 +187,7 @@ export class DecalController {
       depthTest: true,
       depthWrite: false,
       polygonOffset: true,
-      polygonOffsetFactor: -4,
+      polygonOffsetFactor: -14,
       wireframe: false,
     }
 
@@ -246,8 +246,6 @@ export class DecalController {
 
     this.isCreating = true
 
-
-
     // 初始化材质
     if (!this.material) {
       await this.initTexture()
@@ -303,6 +301,11 @@ export class DecalController {
     const position = intersects[0].point;
 
     this.state.position = position;
+
+    this.state.initialPosition = new Vector3()
+    this.state.initialPosition.copy(position)
+
+    console.log(position)
 
     const copy = intersects[0].face.normal.clone();
 
@@ -449,6 +452,38 @@ export class DecalController {
     this.state.id = data.id
     return data
   }
+
+
+  resetPosition() {
+    this.state.position = new Vector3()
+    this.state.position.copy(this.state.initialPosition)
+    this.create()
+  }
+
+  private moveDistance = .005
+
+  moveTop() {
+    this.state.position.y += this.moveDistance
+    this.create()
+  }
+
+
+  moveDown() {
+    this.state.position.y -= this.moveDistance
+    this.create()
+  }
+
+
+  moveLeft() {
+    this.state.position.x -= this.moveDistance
+    this.create()
+  }
+
+  moveRight() {
+    this.state.position.x += this.moveDistance
+    this.create()
+  }
+
 
   // 导出该信息
   async export() {

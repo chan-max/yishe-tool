@@ -157,28 +157,30 @@ watchEffect(() => {
     currentModelController.value.setBgColor(canvasBgColor.value, canvasBgOpacity.value)
 });
 
-/*
-  二维码
+
+/**
+ * 模型画布背景设置
 */
 
+export const builtInCanvasBackgrounds = ref([
+    {
+        name: '淡灰色',
+        backgroundCss: '#eee'
+    },
+    {
+        name: '淡紫渐变色',
+        backgroundCss: 'linear-gradient(to right, #4e54c8, #8f94fb)'
+    },
+    {
+        name: '透明',
+        backgroundCss: 'transparent'
+    },
+])
 
 
+export const currentCanvasBackground = useLocalStorage('_1s_canvasBackground', builtInCanvasBackgrounds.value[0])
 
-export const qrCodeOptions = ref({
-    text: "1s.design",
-    width: 0,
-    height: 0,
-    colorDark: "#000000",
-    colorLight: "rgba(0,0,0,0)",
-    correctLevel: 2, // L, M, Q, H
-})
 
-/*
- 条形码
-*/
-export const barCodeOptions = ref({
-
-})
 
 // 是否展示字体列表
 export const showFontModal = ref(false)
@@ -265,50 +267,13 @@ watch(showCanvasLayout, (value) => {
 export function clearLayout() {
 }
 
+
+
 // 记录当前正在操作的贴纸信息
 export const operatingTextStickerOptions = reactive({
-    // 贴纸内容
-    content: `天下第一`,
-    // text color
-    fontColor: '#333',
-    fontGradientColor: '#333',
-    // font-weight
-    fontWeight: "500",
-    // font-size
-    fontSize: 30,
-    // line-height rem
-    lineHeight: 1,
-    // font-style italic
-    italic: false,
-    // letter-spacing
-    letterSpacing: .1,
-
-    // 记录当前引用的字体信息 
-    fontFamilyInfo: '',
-    fontFamilyId: '',
-
-    // 背景颜色
-    backgroundColor: 'rgba(0,0,0,0)',
-    gradientBackgroundColor: '#0099ff',
-    backgroundBorderRadius: '5px',
-    backgroundPadding: '',
-
-    // 边框 
-    borderColor: '#000',
-    borderWidth: 0,
-    borderStyle: 'solid'
-
-    // 阴影效果暂时不考虑
 })
 
-export const operatingTextStickerWritingMode = ref('initial')
-export const enum TextStickerWritingMode {
-    INITIAL = 'initial',
-    VERTICAL_RL = 'vertical-rl',
-    VERTICAL_LR = 'vertical-lr',
-}
 
-export const operatingTextStickerTextOrientation = ref('upright')
 
 
 // 是否展示模型上传弹窗

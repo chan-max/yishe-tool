@@ -26,7 +26,19 @@
 
     <des-menu></des-menu>
     <div style="flex: 1"></div>
+
     <div class="right flex justify-end">
+      <el-popover width="auto">
+        <template #reference>
+          <el-button link>
+            <el-icon size="18"><Iphone /></el-icon>
+          </el-button>
+        </template>
+        <div>
+          <div ref="qrcodeRef"></div>
+          <div style="text-align: center">手机游览器扫码进入移动版</div>
+        </div>
+      </el-popover>
       <el-dropdown placement="bottom" size="small" trigger="click">
         <el-button size="small" link>
           <span style="font-weight: bold; font-size: 1rem"> {{ language }} </span>
@@ -59,7 +71,7 @@
 
 <script setup>
 import top from "./top.vue";
-import { Search, UserFilled } from "@element-plus/icons-vue";
+import { Search, UserFilled, Iphone } from "@element-plus/icons-vue";
 import userAvatar from "@/components/user/userAvatar.vue";
 import { ref, onMounted, onUnmounted } from "vue";
 import { useLoginStatusStore } from "@/store/stores/login";
@@ -69,10 +81,27 @@ import {
   showLoginFormModal,
 } from "@/modules/main/view/user/login/index.tsx";
 import { LanguageOptions, changeLanguage, language } from "@/i18n";
+import QRCodeStyling from "qr-code-styling";
+import LineHeight from "@/components/design/layout/canvas/operate/lineHeight.vue";
 
 const loginStatusStore = useLoginStatusStore();
 
 const menuOptions = [{}];
+
+const qrcodeRef = ref();
+
+onMounted(() => {
+  let qr = new QRCodeStyling({
+    data: "http://1s.design", // web 端和移动端共用一个地址
+    width: 160,
+    height: 160,
+    dotsOptions: {
+      color: "#000",
+    },
+  });
+
+  qr.append(qrcodeRef.value);
+});
 </script>
 
 <style lang="less" scoped>

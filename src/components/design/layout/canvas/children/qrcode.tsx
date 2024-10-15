@@ -111,9 +111,6 @@ function formatToQrcodeGradient(color) {
         }
     })
 
-
-
-
     return {
         type,
         rotation,

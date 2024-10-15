@@ -25,14 +25,12 @@ import { requestQRCodeLoginInfo } from "@/api";
 
 const qrcode = ref();
 
-
 onMounted(async () => {
   const parser = new UAParser();
   let result = parser.getResult();
   const info = {
     os: result.os.name,
     browser: result.browser.name,
-
     time: new Date(),
     location: "",
   };

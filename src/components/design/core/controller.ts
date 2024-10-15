@@ -32,7 +32,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
-import { reactive, ref, shallowReactive, nextTick } from "vue";
+import { reactive, ref, shallowReactive, nextTick, shallowRef } from "vue";
 import { reactify, useDebounceFn, useMouse, useMouseInElement } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
@@ -770,8 +770,10 @@ export class ModelController extends Base {
 
     activeMediaRecorder = null
 
-    startMediaRecord() {
+    mediaRecorders = shallowRef([])
 
+    startMediaRecord() {
+        let $this = this
         const canvas = this.renderer.domElement
 
         const stream = canvas.captureStream(30); // 每秒30帧
@@ -784,8 +786,13 @@ export class ModelController extends Base {
 
         mediaRecorder.onstop = function () {
             const blob = new Blob(chunks, { type: 'video/webm' });
-            const url = URL.createObjectURL(blob);
+            let file = new File([blob], 'video', { type: 'video/webm' })
+            const url = URL.createObjectURL(file);
+
             saveAs(url)
+            $this.mediaRecorders.value.push({
+                file: file,
+            })
             message.success('视频录制成功,已自动导出')
             // 可以在这里下载或播放视频
         };

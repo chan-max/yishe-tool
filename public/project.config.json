@@ -3,32 +3,38 @@
         {
             "icon": "/image/appicon/douyin.svg",
             "webHref": "https://www.douyin.com/user/MS4wLjABAAAAwGBmZCOehrYGnvLOQnmRrVXk6X5vq55B6uUegKFObYU",
-            "appHref": "snssdk1128://user/profile/77402594090460?refer=web"
+            "appHref": "snssdk1128://user/profile/77402594090460?refer=web",
+            "card": "/image/appcard/douyin.jpg"
         },
         {
             "icon": "/image/appicon/kuaishou.svg",
             "webHref": "",
-            "appHref": "kwai://profile/1162429530"
+            "appHref": "kwai://profile/1162429530",
+            "card": "/image/appcard/kuaishou.jpg"
         },
         {
             "icon": "/image/appicon/instagram.svg",
             "webHref": "",
-            "appHref": ""
+            "appHref": "",
+            "card": "/image/appcard/instagram.jpg"
         },
         {
             "icon": "/image/appicon/weibo.svg",
             "webHref": "",
-            "appHref": ""
+            "appHref": "",
+            "card": "/image/appcard/weibo.png"
         },
         {
             "icon": "/image/appicon/xiaohongshu.svg",
             "webHref": "",
-            "appHref": "xhsdiscover://user/65efe4100000000005008eca"
+            "appHref": "xhsdiscover://user/65efe4100000000005008eca",
+            "card": "/image/appcard/xiaohongshu.png"
         },
         {
             "icon": "/image/appicon/zhihu.svg",
             "webHref": "",
-            "appHref": ""
+            "appHref": "",
+            "card": "/image/appcard/zhihu.png"
         },
         {
             "icon": "/image/appicon/jingdong.svg",

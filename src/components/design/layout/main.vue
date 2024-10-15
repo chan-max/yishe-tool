@@ -45,6 +45,7 @@
           id="threejs-canvas"
           style="width: 100%; height: 100%"
           ref="mountContainer"
+          :style="{ background: currentCanvasBackground?.backgroundCss }"
         ></div>
 
         <basic-canvas
@@ -197,6 +198,7 @@ import {
   viewDisplayController,
   startSyncDesignStorage,
   lastModifiedTime,
+  currentCanvasBackground,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -341,7 +343,6 @@ async function initAction() {
       lastModifiedTime.value = data.lastModifiedTime;
     }
 
-
     startSyncDesignStorage();
     /*
       开启实时同步更新
@@ -378,7 +379,6 @@ function onContextMenu(e) {
 
 <style lang="less">
 #threejs-canvas {
-  background: #eee;
   overflow: hidden;
 }
 

@@ -12,6 +12,8 @@
   <div class="home">
     <banner></banner>
 
+    <danmuku></danmuku>
+
     <market></market>
 
     <contactus></contactus>
@@ -25,6 +27,7 @@ import siteFooter from "../footer/index.vue";
 import market from "@/modules/main/view/market/index.vue";
 import banner from "./banner.vue";
 import contactus from "./contact/contact.vue";
+import danmuku from "./danmuku.vue";
 
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "@/api";

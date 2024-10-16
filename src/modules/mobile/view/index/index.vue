@@ -5,10 +5,8 @@
       <img src="/yishe.png" style="height: 24px; width: 24px; filter: " />
     </div> -->
 
-    <!-- <div class="banner">
-      <s1GltfViewer :model="modelInfo"></s1GltfViewer>
-    </div> -->
-
+    <div class="banner"></div>
+    <!-- <s1GltfViewer :model="modelInfo"></s1GltfViewer> -->
     <contactUs></contactUs>
   </div>
 </template>

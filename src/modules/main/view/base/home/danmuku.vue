@@ -1,6 +1,7 @@
 <template>
-  <h1>丰富的设计资源</h1>
+  <h1>丰富的贴纸设计资源</h1>
   <vue-danmaku
+    class="png-background"
     ref="danmukuRef"
     :debounce="33"
     useSlot
@@ -33,20 +34,7 @@ import { useResizeObserver } from "@vueuse/core";
 import { useWindowSize, useDebounceFn } from "@vueuse/core";
 import { ref, computed, watch } from "vue";
 
-const danmus = computed(() => {
-  return _.shuffle([...CustomModelList.value, ...StickerList.value]);
-});
-
-const { list: CustomModelList } = usePaging((params) => {
-  return Api.getCustomModelList({
-    ...params,
-    pageSize: 20,
-    myUploads: false,
-    random: true,
-  });
-});
-
-const { list: StickerList } = usePaging((params) => {
+const { list: danmus } = usePaging((params) => {
   return Api.getStickerList({
     ...params,
     pageSize: 20,

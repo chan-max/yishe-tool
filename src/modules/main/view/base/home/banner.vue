@@ -55,6 +55,9 @@ const bgUrls = ref([
   "/image/background/cloth4.jpg",
   "/image/background/cloth5.jpg",
   "/image/background/cloth6.jpg",
+  "/image/background/cloth7.jpg",
+  "/image/background/cloth8.jpg",
+  "/image/background/cloth9.jpg",
 ]);
 const loop = ref(0);
 
@@ -62,7 +65,7 @@ function setBg() {
   loop.value++;
   let index = loop.value % bgUrls.value.length;
   if (bannerRef.value) {
-    bannerRef.value.style.background = `url(${bgUrls.value[index]})`;
+    bannerRef.value.style.backgroundImage = `url(${bgUrls.value[index]})`;
   }
 }
 
@@ -83,6 +86,7 @@ onBeforeUnmount(() => [clearInterval(bannerBgTimer.value)]);
   backdrop-filter: blur(2px);
   user-select: none;
   overflow: hidden;
+  background-size: cover;
   transition: background 1s;
 }
 

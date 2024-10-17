@@ -20,14 +20,18 @@
     </div>
     <hr />
     <div class="beian">
-      ICP备案号：<a class="icp" href="https://beian.miit.gov.cn/" target="_blank"
-        >辽ICP备2024040812号</a
-      >
+      ICP备案号：<a class="icp" :href="configStore.json.icp.link" target="_blank">
+        {{ configStore.json.icp.text }}
+      </a>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useConfigStore } from "@/store/stores/config";
+
+let configStore = useConfigStore();
+</script>
 
 <style scoped>
 .footer {

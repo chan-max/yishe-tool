@@ -52,37 +52,12 @@ import 'vxe-pc-ui/lib/style.css'
 
 import VxeUITable from 'vxe-table'
 import 'vxe-table/lib/style.css'
-
+import Utils from '@/common/utils'
 
 // 引入注册组件
 import 'virtual:svg-icons-register'
+import AnimateOnScroll from 'primevue/animateonscroll';
 
-// pc 端专有的拦截器
-apiInstance.interceptors.response.use(defaultResponseInterceptors);
-
-const app = createApp(App)
-
-app.use(s1Plugin)
-
-app.use(VxeUI).use(VxeUITable)
-
-app.component("InfiniteLoading", InfiniteLoading);
-
-const pinia = createPinia()
-
-app.use(pinia)
-
-app.use(VueVirtualScroller)
-
-app.use(Antd)
-
-app.use(i18n)
-
-app.use(router)
-
-app.use(ElementPlus)
-
-app.config.globalProperties.__DEV__ = import.meta.env.DEV
 
 
 import { useConfigStore } from '@/store/stores/config.ts';
@@ -92,11 +67,40 @@ import to from 'await-to-js';
 
 async function setup() {
 
+
+    // pc 端专有的拦截器
+    apiInstance.interceptors.response.use(defaultResponseInterceptors);
+
+    const app = createApp(App)
+
+    const pinia = createPinia()
+
+    app.use(s1Plugin)
+
+    app.use(VxeUI).use(VxeUITable)
+
+    app.component("InfiniteLoading", InfiniteLoading);
+
+    app.directive('animateonscroll', AnimateOnScroll);
+
+    app.use(pinia)
+
+    app.use(VueVirtualScroller)
+
+    app.use(Antd)
+
+    app.use(i18n)
+
+    app.use(router)
+
+    app.use(ElementPlus)
+
+    app.config.globalProperties.__DEV__ = import.meta.env.DEV
+
     const loginStore = useLoginStatusStore()
     const configStore = useConfigStore()
-
     const config = await Api.getBasicConfig()
-    
+
     configStore.$patch(config)
 
     if (loginStore.isLogin) {
@@ -106,16 +110,9 @@ async function setup() {
 
 }
 
-
-function isMobile() {
-    const mobile = ['iphone', 'ipad', 'android', 'blackberry', 'nokia', 'opera mini', 'windows mobile'];
-    for (var i in mobile) if (navigator.userAgent.toLowerCase().indexOf(mobile[i]) > 0) return true;
-    return false;
-}
-
 import { createMobileApp } from '@/modules/mobile/main'
 
-if (isMobile()) {
+if (Utils.isMobile) {
     createMobileApp()
 } else {
     setup()

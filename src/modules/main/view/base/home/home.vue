@@ -16,7 +16,13 @@
 
     <market></market>
 
-    <contactus></contactus>
+    <div
+      v-animateonscroll="{
+        enterClass: 'animate__animated animate__fadeIn',
+      }"
+    >
+      <contactus></contactus>
+    </div>
 
     <site-footer></site-footer>
   </div>

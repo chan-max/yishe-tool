@@ -31,15 +31,19 @@ import App from '../mobile/App.vue'
 import 'element-plus/dist/index.css'
 import '@/style/cover-elementplus.scss'
 import { s1Plugin } from '@/components/export.ts'
+import AnimateOnScroll from 'primevue/animateonscroll';
+import 'animate.css'
+
+
 
 export function createMobileApp() {
     const app = createApp(App)
     const vConsole = new VConsole({ theme: 'dark' });
-
+    const pinia = createPinia()
+    app.directive('animateonscroll', AnimateOnScroll);
     app.use(s1Plugin)
     app.use(ElementPlus)
     app.use(ConfigProvider);
-    const pinia = createPinia()
     app.use(pinia)
     app.use(router)
     app.mount('#app')

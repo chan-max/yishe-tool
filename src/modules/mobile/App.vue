@@ -1,6 +1,9 @@
 <template>
   <van-config-provider :theme="isDark ? 'dark' : 'light'">
-    <div class="content" style="flex: 1">
+    <div
+      style="flex: 1; overflow: auto"
+      class="flex flex-col items-center mobile-content"
+    >
       <router-view></router-view>
     </div>
   </van-config-provider>
@@ -41,5 +44,12 @@ document.addEventListener("gesturestart", function (event) {
 
 .van-theme-dark body {
   background-color: black;
+}
+
+.mobile-content {
+  background-color: #fff; // 防止在某些游览器内被黑色背景影响
+  * {
+    flex-shrink: 0;
+  }
 }
 </style>

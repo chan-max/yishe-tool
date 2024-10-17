@@ -1,14 +1,18 @@
 <template>
-  <h1>关注我们</h1>
-  <div
-    class="flex"
-    style="gap: 12px 12px; padding: 12px; flex-wrap: wrap; justify-content: center"
-  >
-    <template v-for="item in configStore.json.homepageContratUsLinks">
-      <div @click="redirect(item)">
-        <s1-image class="logo" :src="item.icon"></s1-image>
-      </div>
-    </template>
+  <div style="padding: 12px" class="flex flex-col items-center">
+    <h1 style="text-align: center" class="gradient-text">关注我们</h1>
+    <div
+      class="flex"
+      style="gap: 12px 12px; padding: 12px; flex-wrap: wrap; justify-content: center"
+    >
+      <template v-for="item in configStore.json.homepageContratUsLinks">
+        <div @click="redirect(item)">
+          <s1-image class="logo" :src="item.icon"></s1-image>
+        </div>
+      </template>
+    </div>
+
+    <div style="padding: 24px">电话和微信 ： 18742539196</div>
   </div>
 </template>
 
@@ -36,8 +40,8 @@ function redirect(item) {
 <style scoped lang="less">
 .logo {
   cursor: pointer;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
 
   transition: all 0.2s;
 

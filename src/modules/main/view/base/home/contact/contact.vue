@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center">
-    <h1>关注我们</h1>
+    <h1 class="gradient-text">关注我们</h1>
     <div class="flex" style="gap: 24px; flex-wrap: wrap; padding: 24px">
       <template v-for="item in configStore.json.homepageContratUsLinks">
         <contactItem :item="item"></contactItem>

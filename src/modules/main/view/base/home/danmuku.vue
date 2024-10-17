@@ -1,5 +1,5 @@
 <template>
-  <h1>丰富的贴纸设计资源</h1>
+  <h1 class="gradient-text">丰富的贴纸设计资源</h1>
   <vue-danmaku
     class="png-background"
     ref="danmukuRef"

@@ -11,7 +11,7 @@
 <template>
   <el-backtop :right="100" :bottom="100" />
   <div class="market-container">
-    <div class="market-title" id="latest-makeup">最新创作</div>
+    <div class="market-title gradient-text" id="latest-makeup">最新创作</div>
     <div class="market-content">
       <el-row :gutter="24">
         <el-col

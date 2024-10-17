@@ -1,12 +1,15 @@
 <template>
-  <div style="padding: 12px" class="flex flex-col items-center">
+  <div
+    style="padding: 12px; width: 100vw; box-sizing: border-box"
+    class="flex flex-col items-center"
+  >
     <h1 style="text-align: center" class="gradient-text">关注我们</h1>
     <div
-      class="flex"
+      class="flex w-full"
       style="gap: 12px 12px; padding: 12px; flex-wrap: wrap; justify-content: center"
     >
       <template v-for="item in configStore.json.homepageContratUsLinks">
-        <div @click="redirect(item)">
+        <div @click="redirect(item)" style="width: 48px; height: 48px">
           <s1-image class="logo" :src="item.icon"></s1-image>
         </div>
       </template>

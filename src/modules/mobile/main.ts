@@ -33,6 +33,10 @@ import '@/style/cover-elementplus.scss'
 import { s1Plugin } from '@/components/export.ts'
 import AnimateOnScroll from 'primevue/animateonscroll';
 import 'animate.css'
+import './cover-vant.less'
+
+
+import { Icon } from 'vant';
 
 
 
@@ -46,6 +50,7 @@ export function createMobileApp() {
     app.use(ConfigProvider);
     app.use(pinia)
     app.use(router)
+
     app.mount('#app')
 }
 

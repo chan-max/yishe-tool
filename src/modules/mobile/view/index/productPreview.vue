@@ -1,7 +1,7 @@
 <template>
   <div
-    class="w-full flex flex-col items-center"
-    style="padding: 12px; box-sizing: border-box"
+    class="flex flex-col items-center"
+    style="padding: 12px; box-sizing: border-box; width: 100vw"
   >
     <h1 class="gradient-text" style="padding: 24px">服装原型</h1>
     <div class="flex justify-around flex-wrap" style="row-gap: 12px; width: 100vw">

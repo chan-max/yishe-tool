@@ -1,8 +1,15 @@
 <template>
   <div class="login-form">
-    <div style="padding: 20px 0px; display: flex; justify-content: space-between;align-items: center;">
+    <div
+      style="
+        padding: 20px 0px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      "
+    >
       <img src="/logo.svg" style="width: 20px; height: 20px; margin-right: 8px" />
-      <div style="font-size: 14px;font-weight: bold; color: #666; text-align: left;">
+      <div style="font-size: 14px; font-weight: bold; color: #666; text-align: left">
         登录衣设账号
       </div>
       <div style="flex: 1"></div>
@@ -12,7 +19,7 @@
       ></icon-qrcode>
     </div>
     <el-form :model="loginForm" ref="form" :rules="rules" label-position="top">
-      <el-form-item prop="account" >
+      <el-form-item prop="account">
         <el-input placeholder="请输入账号或邮箱" v-model="loginForm.account">
           <template #prefix>
             <el-icon>

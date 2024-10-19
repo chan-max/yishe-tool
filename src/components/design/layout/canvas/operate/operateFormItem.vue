@@ -10,7 +10,7 @@
 -->
 <template>
   <div class="operate-form-item" :style="style">
-    <div style="display: flex; column-gap: 2px;align-items: center;min-height: 24px;">
+    <div style="display: flex; column-gap: 2px; align-items: center; min-height: 24px">
       <div class="operate-form-item-icon">
         <slot name="icon"></slot>
       </div>
@@ -28,10 +28,10 @@
 <script setup>
 import { Warning } from "@element-plus/icons-vue";
 const props = defineProps({
-  name:{
-    default:''
+  name: {
+    default: "",
   },
-  style:{}
+  style: {},
 });
 </script>
 <style lang="less">
@@ -42,14 +42,14 @@ const props = defineProps({
   column-gap: 16px;
   min-height: 40px;
   padding: 1.2rem 0;
-  .el-select__wrapper{
+  .el-select__wrapper {
     min-height: 24px;
   }
-  .el-input__wrapper{
-    height: 24px!important;
+  .el-input__wrapper {
+    height: 24px !important;
   }
 
-  .el-select--small .el-select__wrapper{
+  .el-select--small .el-select__wrapper {
     font-size: 1rem;
   }
 }
@@ -76,14 +76,13 @@ const props = defineProps({
   align-items: center;
 }
 
-
 .operate-form-item-content {
   display: flex;
   align-items: center;
   justify-content: end;
   height: 100%;
   flex: 1;
-  padding-right: .5rem;
+  padding-right: 0.5rem;
   column-gap: 1rem;
   font-size: 1rem;
 }

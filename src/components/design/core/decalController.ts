@@ -5,6 +5,7 @@ import {
   Mesh,
   MeshBasicMaterial,
   MeshPhongMaterial,
+  MeshPhysicalMaterial,
   Object3D,
   Raycaster,
   Texture,
@@ -74,7 +75,7 @@ export class DecalController {
     initialPosition: null, // 保存 最初始的位置
     isHover: false, // 鼠标是否在覆盖模型上
 
-    imgAspectRatio :1 // 当前贴花图的宽高比
+    imgAspectRatio: 1 // 当前贴花图的宽高比
   })
 
   id = ref()
@@ -181,7 +182,7 @@ export class DecalController {
   info = null
 
   async initTexture() {
-    console.warn('初始化新材质')
+
     // 初始化材质
 
     const basicTextureOptions = {
@@ -191,6 +192,10 @@ export class DecalController {
       polygonOffset: true,
       polygonOffsetFactor: -14,
       wireframe: false,
+      roughness: 0, // 粗糙度 , 目前没啥效果
+      metalness:0, // 金属感觉
+      // transmission :1 ,// 透明度
+      // thickness:1 ,// 厚度 
     }
 
 
@@ -201,10 +206,8 @@ export class DecalController {
     textureLoader.setWithCredentials(true)
     textureLoader.setCrossOrigin('*')
 
-
     // 该种方式也会重新请求图片
     // texture = new Texture(this.img)
-
     // 加载图片比较费时间
     // let objectUrl = await Utils.transform.createImgObjectURL(this.info.img)
     // let base64 = await  Utils.transform.imgToBase64(this.info.img)
@@ -225,7 +228,7 @@ export class DecalController {
 
     this.state.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
 
-    this.material = new MeshPhongMaterial({
+    this.material = new MeshPhysicalMaterial({
       map: texture,
       ...basicTextureOptions
     });
@@ -344,6 +347,7 @@ export class DecalController {
     currentModelController.value.scene.remove(this.mesh);
     this.mesh = null
   }
+
 
 
   // 旋转

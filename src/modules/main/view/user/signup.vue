@@ -2,14 +2,22 @@
   <div class="signup-container">
     <div class="signup-form">
       <div class="flex items-center">
-        <img src="/logo.svg" style="width:20px;height:20px;margin-right: 8px;">
-        <div style="font-size: 14px;font-weight: bold; color: #666; text-align: left; padding: 20px 0px">
+        <img src="/logo.svg" style="width: 20px; height: 20px; margin-right: 8px" />
+        <div
+          style="
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            text-align: left;
+            padding: 20px 0px;
+          "
+        >
           注册衣设账号
         </div>
       </div>
 
       <el-form :model="signupForm" ref="form" :rules="rules">
-        <el-form-item prop="account">
+        <el-form-item prop="account" required>
           <el-input placeholder="请输入账号" v-model="signupForm.account">
             <template #prefix>
               <el-icon>
@@ -25,7 +33,7 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item prop="password">
+        <el-form-item prop="password" required>
           <el-input
             placeholder="请输入密码"
             v-model="signupForm.password"
@@ -52,8 +60,20 @@
           </el-input>
         </el-form-item>
 
+        <el-form-item prop="phone" required>
+          <el-input placeholder="手机号" v-model="signupForm.phone">
+            <template #prefix>
+              <el-icon><Iphone /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+
         <el-form-item prop="inviteCode">
-          <el-input placeholder="邀请码" v-model="signupForm.inviteCode" type="password">
+          <el-input
+            placeholder="邀请码 由公司或组织提供"
+            v-model="signupForm.inviteCode"
+            type="password"
+          >
             <template #prefix>
               <el-icon><Place /></el-icon>
             </template>
@@ -117,6 +137,7 @@ import {
   InfoFilled,
   Bell,
   Place,
+  Iphone,
 } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import {
@@ -149,6 +170,27 @@ const rules = reactive({
   ],
   email: [
     { message: "请输入正确的邮箱格式", type: "email", required: true, trigger: ["blur"] },
+  ],
+  phone: [
+    { required: true, message: "请输入手机号", trigger: ["blur", "change"] },
+    {
+      message: "请输入正确的手机号",
+      validator: (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error("手机号不能为空"));
+        } else {
+          const reg = /^1[3-9][0-9]\d{8}$/;
+          // 这里定义的reg变量没有加引号，所以是一种特殊的数据类型，即正则，可以直接用test()方法
+          if (reg.test(value)) {
+            callback();
+          } else {
+            // 具体错误信息没有提示
+            return callback(new Error("请输入正确的手机号"));
+          }
+        }
+      },
+      trigger: ["blur"],
+    },
   ],
   password: [
     {

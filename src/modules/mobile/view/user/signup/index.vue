@@ -1,260 +1,158 @@
 <template>
-  <div class="signup">
-    <div class="mobile-signup-form">
-      <div class="mobile-signup-form-title">
-        <el-form
-          ref="formRef"
-          label-position="top"
-          :model="form"
-          :rules="rules"
-          hide-required-asterisk
-        >
-          <el-form-item>
-            <div style="font-size: 24px">注册一个账号</div>
-          </el-form-item>
-          <el-form-item prop="account">
-            <el-input v-model="form.account" placeholder="账号">
-              <template #prefix>
-                <el-icon><User /></el-icon>
-              </template>
-              <template #suffix>
-                <el-icon
-                  v-if="accountStatus == ResponseStatusCodeEnum.ACCOUNT_NOT_EXIST"
-                  color="green"
-                  ><CircleCheck
-                /></el-icon>
-                <el-icon
-                  v-if="accountStatus == ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST"
-                  color="red"
-                  ><CircleClose
-                /></el-icon>
-                <!-- <el-icon><Warning /></el-icon> -->
-              </template>
-            </el-input>
-          </el-form-item>
-
-          <el-form-item prop="password">
-            <el-input
-              :type="showPassword ? 'text' : 'password'"
-              v-model="form.password"
-              placeholder="密码"
-            >
-              <template #prefix>
-                <el-icon><Lock /></el-icon>
-              </template>
-              <template #suffix>
-                <el-icon v-if="showPassword" @click="toggle"><View /></el-icon>
-                <el-icon v-else @click="toggle"><Hide /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
-
-          <el-form-item prop="repassword">
-            <el-input v-model="form.repassword" type="password" placeholder="确认密码">
-              <template #prefix>
-                <el-icon><Lock /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
-
-          <el-form-item prop="email">
-            <el-input v-model="form.email" placeholder="输入邮箱">
-              <template #prefix>
-                <el-icon><Message /></el-icon>
-              </template>
-
-              <template #suffix>
-                <el-button @click="send" link> 发送验证码 </el-button>
-              </template>
-            </el-input>
-          </el-form-item>
-
-          <el-form-item prop="validateCode">
-            <el-input v-model="form.validateCode" placeholder="输入邮件验证码">
-              <template #prefix>
-                <el-icon><Message /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
-
-          <el-form-item style="width: 100%">
-            <el-button
-              :loading="signupLoading"
-              @click="submit"
-              style="width: 100%"
-              type="primary"
-            >
-              注 册
-            </el-button>
-          </el-form-item>
-          <el-form-item>
-            <div
-              style="
-                display: flex;
-                width: 100%;
-                justify-content: space-between;
-                padding: 0 4px;
-              "
-            >
-              <el-link> 忘记密码? </el-link>
-              <el-link> 注册账号 </el-link>
-            </div>
-          </el-form-item>
-        </el-form>
+  <div
+    style="width: 100%; height: 100%; row-gap: 24px"
+    class="flex flex-col items-center justify-center"
+  >
+    <h1 style="width: 90vw">欢迎注册衣设账号</h1>
+    <van-form @submit="onSubmit" style="width: 100vw">
+      <van-cell-group inset>
+        <van-field
+          v-model="signupForm.account"
+          name="用户"
+          label="用户"
+          placeholder="用户名或手机号"
+          :rules="[
+            { required: true, message: '请填写用户名' },
+            { validator: accountValidator, message: '账号长度为6-16位' },
+          ]"
+        />
+        <van-field
+          v-model="signupForm.password"
+          type="password"
+          name="密码"
+          label="密码"
+          placeholder="密码"
+          :rules="[{ required: true, message: '请填写密码' }]"
+        />
+        <van-field
+          v-model="signupForm.repassword"
+          type="password"
+          name="确认密码"
+          label="确认密码"
+          placeholder="确认密码"
+          :rules="[{ required: true, validator: repassword, message: '密码不一致' }]"
+        />
+      </van-cell-group>
+      <div style="margin: 16px">
+        <van-button round block type="primary" native-type="submit" :loading="loading">
+          注册
+        </van-button>
       </div>
+    </van-form>
+    <div class="flex items-center justify-between" style="width: 80vw">
+      <a></a>
+      <a @click="login">返回登录</a>
     </div>
   </div>
 </template>
+
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, toRaw, ref } from "vue";
+import { sendEmail, register } from "@/api/index";
+import { ResponseStatusCodeEnum } from "@common/statusCode.js";
+import { message } from "ant-design-vue";
 import {
-  User,
-  Lock,
   View,
   Hide,
-  Back,
-  CircleCheck,
-  CircleClose,
-  Warning,
+  User,
+  Lock,
   Message,
+  InfoFilled,
+  Bell,
+  Place,
+  Iphone,
 } from "@element-plus/icons-vue";
-import { register, getAccountStatus } from "@/api";
-import { ResponseStatusCodeEnum } from "@common/statusCode.js";
-import { useDebounceFn } from "@vueuse/core";
+import { useRouter } from "vue-router";
+import { showToast } from "vant";
 
-const rules = reactive({
-  account: [
-    {
-      required: true,
-      trigger: ["blur"],
-      async asyncValidator(rule, val, callback) {
-        if (!val) {
-          rule.message = "请输入账号";
-          return callback(new Error());
-        }
+const router = useRouter();
 
-        var res = await getAccountStatus({
-          account: form.account,
-        });
-        accountStatus.value = res.status;
-
-        if (res.status == ResponseStatusCodeEnum.ACCOUNT_ALREADY_EXIST) {
-          rule.message = " 账号已存在";
-          return callback(new Error());
-        }
-      },
-    },
-  ],
-  email: [
-    { message: "请输入正确的邮箱格式", type: "email", required: true, trigger: ["blur"] },
-  ],
-  password: [
-    {
-      message: "密码由6～18位字符组成",
-      required: true,
-      max: 16,
-      min: 6,
-      trigger: ["blur"],
-    },
-  ],
-  repassword: [
-    {
-      required: true,
-      validator(rule, val, callback) {
-        if (!val) {
-          rule.message = "请输入确认密码";
-          return false;
-        }
-        if (val !== form.password) {
-          rule.message = "两次密码输入不一致";
-          return false;
-        }
-        return true;
-      },
-      trigger: ["blur"],
-    },
-  ],
-  validateCode: {
-    len: 6,
-    required: true,
-    message: "请输入验证码",
-  },
-});
-
-const formRef = ref();
-
-// 密码输入框是否展示
-const showPassword = ref(false);
-function toggle() {
-  showPassword.value = !showPassword.value;
-}
-
-// 是否正在登录
-const signupLoading = ref(false);
-
-// 账号是否可以登录
-const accountStatus = ref("");
-
-// 验证码是否已经发送
-const isSending = ref(false);
-
-var form = reactive({
+const signupForm = reactive({
   account: "",
-  email: "",
   password: "",
   repassword: "",
+  email: "",
   validateCode: "",
+  inviteCode: "",
 });
 
-async function submit() {
-  try {
-    await formRef.value.validate();
-  } catch (e) {
-    return;
-  }
-
-  signupLoading.value = true;
-  const res = await signup(form);
-  if (res.status == ResponseStatusCodeEnum.SIGNUP_SUCCESS) {
-    alert("Signup successful");
-  } else {
-    alert("Signup failed");
-  }
-
-  signupLoading.value = false;
+function accountValidator() {
+  let len = signupForm.account.length;
+  return len >= 6 && len <= 16;
 }
 
-async function send() {
-  if (form.email) {
-    return;
+function repassword() {
+  return signupForm.password == signupForm.repassword;
+}
+
+const loading = ref(false);
+async function onSubmit() {
+  try {
+    loading.value = true;
+    var formData = new FormData();
+
+    formData.append("account", signupForm.account);
+    formData.append("email", signupForm.email);
+    formData.append("password", signupForm.password);
+    formData.append("validateCode", signupForm.validateCode);
+    formData.append("inviteCode", signupForm.inviteCode);
+
+    await register(formData);
+
+    showToast("注册成功！");
+    router.replace({ name: "Login" });
+  } catch (e) {
+    loading.value = false;
   }
+}
+
+function login() {
+  router.push({
+    name: "Login",
+  });
 }
 </script>
-<style lang="less" scoped>
-.signup {
-  width: 100%;
-  height: 100%;
+<style>
+.signup-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex: auto;
+  height: 100%;
 }
 
-.signup-banner {
-  padding: 30px;
+.signup-form {
+  width: 360px;
+
+  .el-input__inner {
+    font-size: 12px;
+    font-weight: 300;
+  }
+
+  .el-input__prefix {
+    color: #000;
+  }
 }
 
-.mobile-signup-form {
-  width: auto;
-  padding: 30px;
+.signup-link {
+  color: #999;
+  font-size: 12px;
+  font-weight: 400;
+  text-decoration: underline;
 
-  .el-input,
-  .el-button {
-    height: 48px;
+  &:hover {
+    cursor: pointer;
+    color: var(--el-color-primary);
+    text-decoration: underline;
   }
+}
 
-  .el-button,
-  .el-input__wrapper {
-    border-radius: 8px;
-  }
+.signup-validateCode {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  justify-content: space-between;
 }
 </style>

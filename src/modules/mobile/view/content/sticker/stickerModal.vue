@@ -26,7 +26,7 @@
         :desc="currentSticker.description || '暂无相关描述'"
         :title="currentSticker.name || '暂无名称'"
         :thumb="currentSticker.thumbnail?.url"
-        style="margin-top: 24px"
+        style="margin-top: 12px"
       >
         <template #tags>
           <template v-if="currentSticker.keywords">
@@ -58,8 +58,6 @@
     title="分享该设计"
     description="内容信息以复制，进入 app 后直接粘贴发送即可"
   />
-
-  <a href="www.1s.design"> 123</a>
 </template>
 
 <script setup lang="ts">

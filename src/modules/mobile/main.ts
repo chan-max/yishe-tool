@@ -33,10 +33,21 @@ import '@/style/cover-elementplus.scss'
 import { s1Plugin } from '@/components/export.ts'
 import AnimateOnScroll from 'primevue/animateonscroll';
 import 'animate.css'
+import { useConfigStore } from '@/store/stores/config.ts';
+import { useLoginStatusStore } from '@/store/stores/login';
+import to from 'await-to-js';
+import { apiInstance } from "@/api/apiInstance";
+
 import './cover-vant.less'
 import './index.less'
 
-export function createMobileApp() {
+
+import { mobileDefaultResponseInterceptors } from '@/api/apiInterception'
+
+export async function createMobileApp() {
+    
+    apiInstance.interceptors.response.use(mobileDefaultResponseInterceptors);
+
     const app = createApp(App)
     const vConsole = new VConsole({ theme: 'dark' });
     const pinia = createPinia()
@@ -46,6 +57,13 @@ export function createMobileApp() {
     app.use(ConfigProvider);
     app.use(pinia)
     app.use(router)
+
+    let loginStore = useLoginStatusStore()
+
+    if (loginStore.isLogin) {
+        let [err, res] = await to(loginStore.getUserInfo())
+    }
+
     app.mount('#app')
 }
 

@@ -15,7 +15,9 @@ import {
     messageResponseInterceptor,
     tokenRequestInterceptor,
     tokenResponseInterceptor,
+    defaultResponseInterceptors
 } from "./apiInterception";
+
 
 // 全局设置
 axios.defaults.timeout = 100000; // 时间超时设置100s
@@ -30,9 +32,6 @@ export const apiInstance: any = axios.create({
 });
 
 export const source = axios.CancelToken.source();
-
-
-
 
 
 apiInstance.interceptors.request.use(tokenRequestInterceptor);

@@ -83,8 +83,10 @@ import {
 import { LanguageOptions, changeLanguage, language } from "@/i18n";
 import QRCodeStyling from "qr-code-styling";
 import LineHeight from "@/components/design/layout/canvas/operate/lineHeight.vue";
+import { useConfigStore } from "@/store/stores/config";
 
 const loginStatusStore = useLoginStatusStore();
+const configStore = useConfigStore();
 
 const menuOptions = [{}];
 
@@ -92,7 +94,7 @@ const qrcodeRef = ref();
 
 onMounted(() => {
   let qr = new QRCodeStyling({
-    data: "http://1s.design", // web 端和移动端共用一个地址
+    data: configStore.json.h5QrcodeHref, // web 端和移动端共用一个地址
     width: 160,
     height: 160,
     dotsOptions: {

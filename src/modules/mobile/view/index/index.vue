@@ -2,10 +2,12 @@
   <div class="mobile-homebg">
     <div class="header w-full flex justify-between">
       <img src="/yishe2.png" style="height: 36px" />
+
       <van-button
+        v-if="!loginStore.isLogin"
         color="linear-gradient(to right, #f00090, #6900ff)"
         round
-        @click="quickCreate"
+        @click="login"
       >
         <van-swipe
           vertical
@@ -14,6 +16,7 @@
           :touchable="false"
           :show-indicators="false"
         >
+          <van-swipe-item>快速登录</van-swipe-item>
           <van-swipe-item>免费设计</van-swipe-item>
           <van-swipe-item>一键定制</van-swipe-item>
         </van-swipe>
@@ -27,9 +30,7 @@
         enterClass: 'animate__animated animate__fadeIn',
       }"
     >
-      <div class="gradient-text title">
-        一个免费的服装设计工具 , 为你打造独一无二的设计
-      </div>
+      <div class="gradient-text title">一个免费的服装设计工具 , 打造独一无二的设计</div>
       <van-button
         style="background: transparent"
         color="#fff"
@@ -133,11 +134,10 @@ import productPreview from "./productPreview.vue";
 import about from "./about.vue";
 import { useShare } from "@vueuse/core";
 
-
-
-let configStore = useConfigStore();
-
+import { useLoginStatusStore } from "@/store/stores/login";
 import Api from "@/api";
+let configStore = useConfigStore();
+let loginStore = useLoginStatusStore();
 
 /**
  * @bug 对模型列表如果不使用once 会出现bug
@@ -177,9 +177,9 @@ function startShare() {
 let router = useRouter();
 
 // 快速创建
-function quickCreate() {
+function login() {
   router.push({
-    name: "quickCreate",
+    name: "Login",
   });
 }
 </script>

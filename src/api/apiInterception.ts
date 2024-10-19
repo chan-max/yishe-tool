@@ -15,7 +15,6 @@ import { doLogout } from "@/store/stores/loginAction";
 import { useRouter } from "vue-router";
 import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
 
-
 function ensureFormData(obj) {
   if (obj instanceof FormData) {
     return obj;
@@ -104,8 +103,6 @@ export const messageResponseInterceptor = (response) => {
 
 import router from '@/modules/main/router'
 
-
-
 export const defaultResponseInterceptors = (response) => {
 
   if (response?.data?.code === 400) {
@@ -133,3 +130,26 @@ export const defaultResponseInterceptors = (response) => {
 }
 
 
+import { showToast } from "vant";
+export const mobileDefaultResponseInterceptors = (response) => {
+
+  if (response?.data?.code === 400) {
+    showToast(response.data.message)
+    return Promise.reject()
+  }
+
+  // 无权限
+  if (response?.data?.code === 401) {
+    let loginStore = useLoginStatusStore()
+    loginStore.logout()
+    showToast('登录状态已失效，请重新登录')
+    return Promise.reject()
+  }
+
+  if (response.data.code == 0) {
+    return response
+  }
+
+  showToast(response?.data?.message)
+  throw new Error(response)
+}

@@ -103,10 +103,10 @@ async function setup() {
 
     configStore.$patch(config)
 
-    if (loginStore.isLogin) {
-        let [err, res] = await to(loginStore.getUserInfo())
-    }
-    app.mount('#app')
+if (loginStore.isLogin) {
+    let [err, res] = await to(loginStore.getUserInfo())
+}
+app.mount('#app')
 
 }
 

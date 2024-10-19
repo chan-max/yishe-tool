@@ -1,15 +1,10 @@
 <template>
-    <div class="popup-menu">
-        
-    </div>
+  <div class="popup-menu"></div>
 </template>
 <script>
-export default {
-    
-}
+export default {};
 </script>
 <style lang="less">
-    .popup-menu{
-
-    }
+.popup-menu {
+}
 </style>

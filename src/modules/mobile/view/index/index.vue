@@ -2,7 +2,11 @@
   <div class="mobile-homebg">
     <div class="header w-full flex justify-between">
       <img src="/yishe2.png" style="height: 36px" />
-      <van-button color="linear-gradient(to right, #f00090, #6900ff)" round>
+      <van-button
+        color="linear-gradient(to right, #f00090, #6900ff)"
+        round
+        @click="quickCreate"
+      >
         <van-swipe
           vertical
           style="height: 40px; line-height: 40px"
@@ -98,9 +102,21 @@
     <contactUs></contactUs>
   </div>
 
+  <div style="padding: 24px">
+    <van-button
+      color="linear-gradient(to right, #f00090, #6900ff)"
+      round
+      icon="share-o"
+      icon-position="right"
+      @click="startShare"
+    >
+      分享该页面
+    </van-button>
+  </div>
+
   <div class="mobile-icp">
-    ICP备案号：<a :href="configStore.json.icp.link" target="_blank">
-      {{ configStore.json.icp.text }}
+    ICP备案号：<a :href="configStore.json?.icp?.link" target="_blank">
+      {{ configStore.json?.icp?.text }}
     </a>
   </div>
 
@@ -115,6 +131,9 @@ import stickerPreview from "./stickerPreview.vue";
 import modelPreview from "./modelPreview.vue";
 import productPreview from "./productPreview.vue";
 import about from "./about.vue";
+import { useShare } from "@vueuse/core";
+
+
 
 let configStore = useConfigStore();
 
@@ -138,6 +157,31 @@ const contactRef = ref();
 function goContact() {
   contactRef.value.scrollIntoView({ behavior: "smooth" });
 }
+
+// 分享
+
+const { share, isSupported } = useShare();
+
+function startShare() {
+  if (!isSupported.value) {
+    return;
+  }
+
+  share({
+    title: "衣设",
+    text: "欢迎使用衣设，一个免费的服装设计工具 !",
+    url: "1s.design",
+  });
+}
+
+let router = useRouter();
+
+// 快速创建
+function quickCreate() {
+  router.push({
+    name: "quickCreate",
+  });
+}
 </script>
 
 <style lang="less" scoped>
@@ -150,6 +194,7 @@ function goContact() {
   background-size: cover;
   height: 100vh;
   width: 100%;
+  overflow-x: hidden;
 }
 
 .header {

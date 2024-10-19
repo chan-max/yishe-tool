@@ -64,13 +64,17 @@ export class DecalController {
     // 外部绑定的 旋转和尺寸值，位置是固定的所以不需要输入
     modelValueRotate: null,
     modelValueSize: null,
+
+
     ruleSize: .2,
 
     rotation: null,
     position: null,
 
     initialPosition: null, // 保存 最初始的位置
-    isHover: false // 鼠标是否在覆盖模型上
+    isHover: false, // 鼠标是否在覆盖模型上
+
+    imgAspectRatio :1 // 当前贴花图的宽高比
   })
 
   id = ref()
@@ -134,8 +138,6 @@ export class DecalController {
   // 当前贴花使用的图片
   private img = null;
 
-  // 宽高比
-  imgAspectRatio = 1;
 
   // 材质
   material = null;
@@ -153,7 +155,7 @@ export class DecalController {
 
   // 尺寸
   size = computed(() => {
-    return new Vector3(this.state.ruleSize, this.state.ruleSize / this.imgAspectRatio, this.state.ruleSize);
+    return new Vector3(this.state.ruleSize, this.state.ruleSize / this.state.imgAspectRatio, this.state.ruleSize);
   })
 
 
@@ -221,7 +223,7 @@ export class DecalController {
     }
 
 
-    this.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
+    this.state.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
 
     this.material = new MeshPhongMaterial({
       map: texture,
@@ -340,6 +342,7 @@ export class DecalController {
   // 移除当前贴纸
   private removeMesh() {
     currentModelController.value.scene.remove(this.mesh);
+    this.mesh = null
   }
 
 

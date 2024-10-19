@@ -341,9 +341,9 @@ export class ModelController extends Base {
 
 
     removeDecals() {
-        this.decalControllers.forEach((decal) => {
-            decal.remove()
-        })
+        for(let i =  this.decalControllers.length; i > 0 ;i --){
+            this.decalControllers[i - 1].remove()
+        }
     }
 
     // 调用钩子函数

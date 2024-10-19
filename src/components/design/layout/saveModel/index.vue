@@ -12,8 +12,8 @@
   <div class="flex" style="padding: 12px 24px 24px 24px; column-gap: 12px">
     <s1-image
       style="
-        width: 360px;
-        height: 360px;
+        width: 480px;
+        height: 480px;
         flex-shrink: 0;
         background: #f5f6f7;
         border-radius: 12px;
@@ -33,6 +33,11 @@
             type="textarea"
           ></el-input>
         </el-form-item>
+
+        <el-form-item label="模型标签" prop="keywords">
+          <s1-tagsInput v-model="form.keywords" :string="true"></s1-tagsInput>
+        </el-form-item>
+
         <el-form-item label="模型截图">
           <div
             class="flex items-center"

@@ -41,7 +41,9 @@ import { PngIcoConverter } from "/public/lib/png2icojs"; // 导入库
 /*
     画布参数
 */
-export const canvasStickerOptions = ref({
+
+
+export var canvasStickerOptions = ref({
     width: 500,
     height: 500,
     unit: 'px',
@@ -173,7 +175,7 @@ defineCanvasChild({
 /*
     是否展示主画布
 */
-export const showMainCanvas = ref(true)
+export var showMainCanvas = ref(true)
 
 export function addCanvasChild(options) {
 
@@ -190,7 +192,7 @@ export function addCanvasChild(options) {
 
 
 // 当前正在操作的元素id
-export const currentOperatingCanvasChildId = ref('this_is_canvas_id')
+export var currentOperatingCanvasChildId = ref('this_is_canvas_id')
 
 export const currentOperatingCanvasChild: any = computed(() => {
 
@@ -284,10 +286,7 @@ export class CanvasController {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-
     }
-
-
 
     canvasId = 'canvas-render-helper-el'
 
@@ -297,7 +296,7 @@ export class CanvasController {
         return document.querySelector('#' + this.rawId) as any
     }
 
-
+    
     get canvasEl() {
         return document.querySelector('#' + this?.canvasId) as any
     }

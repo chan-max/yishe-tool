@@ -16,7 +16,7 @@
     @touchstart="stopAnimate"
     @touchend="startAnimate"
   >
-    <div class="gltf-viewer-loading" v-if="loading">...</div>
+    <div class="gltf-viewer-loading" v-if="loading">{{ loadingMessage }}</div>
   </div>
 </template>
 <script setup>
@@ -46,8 +46,8 @@ const props = defineProps({
 const emits = defineEmits([
   "screenshot", // 触发截屏
   "loaded", // 模型完全加载完成 , 包括基础模型和贴纸
-  "beforeLoad",// 开始加载前
-  "dragStart"
+  "beforeLoad", // 开始加载前
+  "dragStart",
 ]);
 
 function touchmove(e) {
@@ -57,15 +57,16 @@ function touchmove(e) {
 const {
   gltfViewerRef,
   loading,
+  loadingMessage,
   startAnimate,
   stopAnimate,
   controller,
-  getScreenshot
+  getScreenshot,
 } = useViewer(gltfViewer, props, emits);
 
 defineExpose({
   controller,
-  getScreenshot
+  getScreenshot,
 });
 </script>
 <style lang="less">
@@ -81,6 +82,15 @@ defineExpose({
 
 .gltf-viewer-loading {
   font-weight: bold;
-  color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(200, 200, 200, 0.3);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(4px);
+  color: #aaa;
+  font-size: 14px;
 }
 </style>

@@ -82,11 +82,12 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
             // 非单页模式处理
             if (!isSinglePageMode.value) {
-                currentPage.value++
 
-                if (currentPage.value > totalPage.value) {
+                if (currentPage.value + 1 > totalPage.value) {
                     return
                 }
+
+                currentPage.value++
             } else {
                 if (currentPage.value == 0) {
                     currentPage.value = 1
@@ -161,6 +162,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
     // 是否在最后一页
     const isLastPage = computed(() => {
+        console.log(currentPage.value, totalPage.value, loading.value)
         return (currentPage.value == totalPage.value) && !loading.value
     })
 

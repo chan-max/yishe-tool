@@ -1,18 +1,22 @@
 <template>
   <van-config-provider :theme="isDark ? 'dark' : 'light'">
     <div
-      style="flex: 1; overflow: auto"
+      style="flex: 1; overflow: auto; overflow-x: hidden"
       class="flex flex-col items-center mobile-content"
     >
       <router-view></router-view>
     </div>
   </van-config-provider>
+
+  <customModelModal></customModelModal>
+  <stickerModal></stickerModal>
 </template>
 <script setup>
 import mFooter from "./view/footer/index.vue";
 import mHeader from "./view/header/index.vue";
 import { ref } from "vue";
-
+import customModelModal from "./view/content/customModel/customModelModal.vue";
+import stickerModal from "./view/content/sticker/stickerModal.vue";
 import { useDark, useToggle } from "@vueuse/core";
 
 const isDark = ref(false);

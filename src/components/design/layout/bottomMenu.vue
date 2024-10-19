@@ -47,6 +47,14 @@
         </el-button>
       </div>
     </el-tooltip>
+
+    <el-tooltip :hide-after="0" content="移除当前所有贴纸" placement="top">
+      <div>
+        <el-button link @click="currentModelController.removeDecals()">
+          <RedoOutlined style="font-size: 16px" />
+        </el-button>
+      </div>
+    </el-tooltip>
   </div>
 
   <screenshotDrawer></screenshotDrawer>
@@ -70,6 +78,8 @@ import {
   FileImageOutlined,
   PictureOutlined,
   ExpandOutlined,
+  CloseCircleOutlined,
+  RedoOutlined,
 } from "@ant-design/icons-vue";
 import { useEyeDropper, useClipboard } from "@vueuse/core";
 import { notification } from "ant-design-vue";

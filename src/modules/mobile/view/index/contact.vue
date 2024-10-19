@@ -8,7 +8,9 @@
       class="flex w-full"
       style="gap: 12px 12px; padding: 12px; flex-wrap: wrap; justify-content: center"
     >
-      <template v-for="item in configStore.json.homepageContratUsLinks">
+      <template
+        v-for="item in Object.values(configStore.json.homepageContratUsLinks || {})"
+      >
         <div @click="redirect(item)" style="width: 48px; height: 48px">
           <s1-image class="logo" :src="item.icon"></s1-image>
         </div>

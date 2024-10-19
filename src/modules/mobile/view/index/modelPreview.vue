@@ -7,9 +7,9 @@
     <div class="w-full flex justify-around flex-wrap" style="row-gap: 12px">
       <template v-for="item in list">
         <div
+          class="page-card"
+          @click="open(item)"
           style="
-            width: 180px;
-            height: 200px;
             background: linear-gradient(to right, #f9f9f9, #fcfcfc);
             border-radius: 8px;
             overflow: hidden;
@@ -26,26 +26,37 @@
         <van-button type="default" round size="small">更多</van-button>
       </div>
       <div v-else>到底了</div>
+
+      <div style="margin-top: 24px">
+        <van-button
+          icon="guide-o"
+          type="default"
+          round
+          size="small"
+          @click="$router.push({ name: 'customModel' })"
+          >查看所有服装设计</van-button
+        >
+      </div>
     </div>
   </div>
-
-  <van-popup v-model:show="show" closeable position="bottom" :style="{ height: '30%' }" />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeMount } from "vue";
 import Api from "@/api";
-
-import { getCustomModelList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 
+import { openCustomModelModal } from "../content/customModel/index.ts";
+
 const { list, getList, isLastPage, isEmpty, loading } = usePaging((params) => {
-  return getCustomModelList({
+  return Api.getCustomModelList({
     ...params,
     pageSize: 4,
   });
 });
 
-const show = ref(false);
+function open(item) {
+  openCustomModelModal(item);
+}
 </script>
 <style></style>

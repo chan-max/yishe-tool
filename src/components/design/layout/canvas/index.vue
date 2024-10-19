@@ -253,7 +253,6 @@ const mousemove = function () {
   mouseMovedRecent.value = true;
   clearTimeout(mouseMoveTimer.value);
   mouseMoveTimer.value = setTimeout(() => {
-    console.log("timeout");
     mouseMovedRecent.value = false;
   }, 3000);
 };

@@ -150,7 +150,6 @@ export const Dragger = defineComponent({
         */
 
         watch(currentOperatingCanvasChild.value.clipPath, () => {
-            debugger
         })
 
 

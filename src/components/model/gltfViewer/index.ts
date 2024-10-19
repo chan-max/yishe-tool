@@ -60,18 +60,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce } from "@/common/utils/debounce";
 
 
-const getWidth = (el) => {
-    if (!el) {
-        return;
-    }
-    return Number(window.getComputedStyle(el).width.slice(0, -2));
-};
-const getHeight = (el) => {
-    if (!el) {
-        return;
-    }
-    return Number(window.getComputedStyle(el).height.slice(0, -2));
-};
 
 function initImportedModel(gltf) {
     let flag = 1;
@@ -89,12 +77,9 @@ function initImportedModel(gltf) {
     object.position.z += object.position.z - center.z;
 }
 
-
-
 export const useViewer = (gltfViewerRef, props, emits) => {
+
     const scene = new Scene();
-
-
 
     function startAnimate() {
         animate.value = true;
@@ -107,13 +92,28 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     // 是否执行动画
     const animate = ref(false);
 
+
+    // 是否加载中
     const loading = ref(false);
+
+    const loadingMessage = ref('加载中...')
 
     var currentMesh = null;
 
     // 添加环境光
-    const ambientLight = new AmbientLight(0xffffff, 0.01); // 设置颜色和强度
+    const ambientLight = new AmbientLight(0xffffff, 0.7); // 设置颜色和强度
     scene.add(ambientLight);
+
+    // 添加平行光
+    const directionalLight1 = new DirectionalLight(0xffffff, 0.35); // 设置颜色和强度
+    directionalLight1.position.set(1, 1, 1); // 设置光源位置
+    scene.add(directionalLight1);
+
+    // 添加平行光
+    const directionalLight2 = new DirectionalLight(0xffffff, 0.3); // 设置颜色和强度
+    directionalLight2.position.set(-1, -1, -1); // 设置光源位置
+    scene.add(directionalLight2);
+
 
     const renderer = new WebGLRenderer({
         alpha: true, // 透明背景
@@ -153,15 +153,19 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     async function initModel() {
         emits('beforeLoad')
 
-
         const model = format1stf(props.model);
 
         if (!model) {
             return;
         }
 
-        loading.value = true;
+        loading.value = true
+        loadingMessage.value = '正在获取基础模型信息...'
+
         var baseModel = model.fetchResult || await getProductModelById(model.baseModelId)
+
+        loading.value = false
+        loadingMessage.value = ''
 
         if (props.transparent) {
             renderer.setClearColor(null, 0);
@@ -172,8 +176,14 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
         let url = Utils.formatUrl(baseModel.url, { nocache: false })
 
+        loading.value = true
+        loadingMessage.value = '正在加载模型文件...'
 
         let gltf: any = await gltfLoader(url);
+
+
+        loading.value = false
+        loadingMessage.value = ''
 
         currentMesh = findMainMesh(gltf);
         function findMainMesh(gltf) {
@@ -211,8 +221,8 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         }
 
         function resetCameraAspect() {
-            let width = getWidth(el);
-            let height = getHeight(el);
+            let width = Utils.getComputedWidth(el);
+            let height = Utils.getComputedHeight(el);
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
@@ -225,38 +235,30 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
         el && resizeOb.observe(el);
 
-        renderer.setSize(getWidth(el), getHeight(el));
+        renderer.setSize(Utils.getComputedWidth(el), Utils.getComputedHeight(el));
 
         initImportedModel(gltf);
 
         scene.add(gltf.scene);
 
-        // 添加环境光
-        const ambientLight = new AmbientLight(0xffffff, 0.7); // 设置颜色和强度
-        scene.add(ambientLight);
-
-        // 添加平行光
-        const directionalLight1 = new DirectionalLight(0xffffff, 0.35); // 设置颜色和强度
-        directionalLight1.position.set(1, 1, 1); // 设置光源位置
-        scene.add(directionalLight1);
-
-        // 添加平行光
-        const directionalLight2 = new DirectionalLight(0xffffff, 0.3); // 设置颜色和强度
-        directionalLight2.position.set(-1, -1, -1); // 设置光源位置
-        scene.add(directionalLight2);
-
         // 初始化贴纸
         if (model.decals) {
 
+            loading.value = true
+            loadingMessage.value = '正在加载贴纸...'
+
             await Promise.all(model.decals.map((decal) => {
+
                 return new Promise(async (resolve, reject) => {
 
                     var { id, position, rotation, size } = decal;
 
-
                     if (!id) {
                         return resolve(void 0);
                     }
+
+                    loading.value = true
+                    loadingMessage.value = '正在获取贴纸信息...'
 
                     const sticker = decal.fetchResult || await getStickerById(id)
 
@@ -267,7 +269,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     // 判断是否在网格上
                     var raycaster = new Raycaster();
                     raycaster.set(position, new Vector3(0, -1, 0));
-
 
                     // 使用射线投射器检查模型是否与射线相交。
                     var intersects = raycaster.intersectObject(currentMesh);
@@ -292,9 +293,12 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     */
 
                     let url = Utils.formatUrl(thumbnail.url, { nocache: true })
-                    console.warn('gltfviewer load sticker')
-                    const texture = await textureLoader.loadAsync(url);
 
+                    loading.value = true
+                    loadingMessage.value = '正在获取贴纸...'
+
+                    console.log('before')
+                    const texture = await textureLoader.loadAsync(url);
 
                     const material = new MeshPhongMaterial({
                         map: texture,
@@ -309,9 +313,13 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     const decalGeometry = new DecalGeometry(currentMesh, position, rotation, size);
                     var decalMesh = new Mesh(decalGeometry, material);
                     scene.add(decalMesh);
+
+                    loading.value = false
+                    loadingMessage.value = ''
                     resolve(void 0)
                 })
             }))
+
 
         }
 
@@ -330,9 +338,10 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
         el.appendChild(renderer.domElement);
         render();
-        loading.value = false;
         emits("loaded");
     }
+
+
 
 
     function screenshot() {
@@ -361,6 +370,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     return {
         emits,
         loading,
+        loadingMessage,
         props,
         startAnimate,
         stopAnimate,

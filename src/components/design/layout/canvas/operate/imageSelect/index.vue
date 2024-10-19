@@ -6,7 +6,7 @@
     <template #name> {{ label }} </template>
     <template #content>
       <template v-if="model">
-        <el-popover placement="right" popper-class="el-popover-operation" width="240">
+        <el-popover placement="right" popper-class="el-popover-operation" width="280">
           <template #reference>
             <div class="flex items-center">
               <div class="text-ellipsis" style="font-size: 1rem; max-width: 180px">
@@ -17,14 +17,14 @@
           <el-row align="middle" justify="center" style="row-gap: 1rem">
             <el-col :span="24">
               <div class="flex justify-center">
-                <desimage
+                <s1-image
                   @load="imgLoad"
                   ref="imgRef"
                   style="width: 240px; height: 240px"
                   :src="model.url"
                   :lazy="false"
                 >
-                </desimage>
+                </s1-image>
               </div>
             </el-col>
 

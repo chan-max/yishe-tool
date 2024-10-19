@@ -22,7 +22,8 @@ import {
     CubeTextureLoader,
     BackSide,
     PointLight,
-    MathUtils
+    MathUtils,
+    PMREMGenerator
 } from "three";
 
 
@@ -44,6 +45,8 @@ import { meta } from '../meta'
 import { Base } from './base'
 import { gsap } from 'gsap';
 import { saveAs } from 'file-saver';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+
 
 import {
     currentOperatingBaseModelInfo,
@@ -112,60 +115,7 @@ export class ModelController extends Base {
         const intersects = raycaster.intersectObject(this.mesh, true);
         return intersects
     }
-
-
-
-    public setBackground() {
-        // 这样可以保持背景固定
-        // var geometry = new BoxGeometry( 1000, 1000, 1000 );
-        // var material = new MeshBasicMaterial({
-        //     envMap: new CubeTextureLoader().setPath('/skybox/').load([
-        //     			'pos-x.jpg',
-        //     			'neg-x.jpg',
-        //     			'pos-y.jpg',
-        //     			'neg-y.jpg',
-        //     			'pos-z.jpg',
-        //     			'neg-z.jpg'
-        //     ])
-        // });
-        // material.side = BackSide// 内部显示贴图
-        // var skybox = new Mesh( geometry, material );
-        // this.scene.add( skybox );
-
-        this.scene.background = new CubeTextureLoader()
-            .setPath('/skybox/')
-            .load([
-                'pos-x.jpg',
-                'neg-x.jpg',
-                'pos-y.jpg',
-                'neg-y.jpg',
-                'pos-z.jpg',
-                'neg-z.jpg'
-            ]);
-    }
-
-    public setSkyballBackground() {
-        var loader = new TextureLoader();
-        loader.load('/skyball2.jpeg', (texture) => {
-
-            // 创建天空球的网格几何体
-            var sphereGeometry = new SphereGeometry(100);
-
-            // 创建应用全景纹理的材料材质
-            var sphereMaterial = new MeshBasicMaterial({
-                map: texture,
-                side: BackSide, // 天空球内部才是可见的，所以材料应该渲染在背面
-            });
-
-            // 使用几何体和材料创建天空球网格
-            var skybox = new Mesh(sphereGeometry, sphereMaterial);
-
-            // 将天空球添加到场景中
-            this.scene.add(skybox);
-        });
-    }
-
-
+    
     // 保存当前鼠标坐标
     private _mouse = new Vector2();
 
@@ -299,6 +249,8 @@ export class ModelController extends Base {
         if (currentOperatingBaseModelInfo.value?.url) {
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);
         }
+
+        // this.initHdr()
 
         this.execRender();
 
@@ -536,6 +488,16 @@ export class ModelController extends Base {
     async stickToMousePosition(info, cb) {
         const decal = new DecalController(info)
         await decal.stickToMousePosition(cb)
+    }
+
+    initHdr() {
+        const pmremGenerator = new PMREMGenerator(this.renderer);
+        const hdriLoader = new RGBELoader()
+        hdriLoader.load('/3d/env.hdr', (texture) => {
+            const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+            texture.dispose();
+            this.scene.environment = envMap
+        });
     }
 
     // 添加延迟点击贴纸

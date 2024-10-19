@@ -508,10 +508,14 @@ export const deleteResource = (data) => apiInstance.post('/api/resource/delete',
 export const updateResource = (data) => apiInstance.post('/api/resource/update', data)
 
 
+export const hello = (data) => apiInstance.get('/api/hello')
+
 
 
 class Api {
 
+  // 测试服务是否联通
+  hello = hello
 
   /* 用户相关 */
   logout = logout

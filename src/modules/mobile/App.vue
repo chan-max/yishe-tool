@@ -14,12 +14,17 @@
 <script setup>
 import mFooter from "./view/footer/index.vue";
 import mHeader from "./view/header/index.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import customModelModal from "./view/content/customModel/customModelModal.vue";
 import stickerModal from "./view/content/sticker/stickerModal.vue";
 import { useDark, useToggle } from "@vueuse/core";
+import Api from "@/api";
 
 const isDark = ref(false);
+
+onMounted(async () => {
+  let res = await Api.hello();
+});
 
 //
 document.addEventListener("gesturestart", function (event) {

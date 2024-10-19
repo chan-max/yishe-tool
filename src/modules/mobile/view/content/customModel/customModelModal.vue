@@ -129,7 +129,7 @@ async function shareOpen() {
 const showPreview = ref(false);
 
 const previewImages = computed(() => {
-  return currentCustomModel.value.thumbnails.map((item) => {
+  return currentCustomModel.value.thumbnails?.map((item) => {
     return item.url;
   });
 });

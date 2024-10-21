@@ -9,27 +9,26 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
  */
 import { GLTFLoader, } from "three/examples/jsm/loaders/GLTFLoader";
-import {TextureLoader} from 'three'
+import { TextureLoader } from 'three'
 
 
 export function gltfLoader(url) {
     let loader = new GLTFLoader();
-    return new Promise(async (resolve,reject) => {
-        try{
+    return new Promise(async (resolve, reject) => {
+        try {
             let gltf = await loader.loadAsync(url)
             resolve(gltf)
-        }catch(e){
+        } catch (e) {
             reject(e)
         }
     })
 }
 
 
-export function textureLoader(url){
+export function textureLoader(url) {
     const loader = new TextureLoader();
-    return new Promise(async (resolve,reject) => {
-        let _url = import.meta.env.DEV ? `api/${url}` : url
-        let texture = await loader.loadAsync(_url)
+    return new Promise(async (resolve, reject) => {
+        let texture = await loader.loadAsync(url)
         resolve(texture)
     })
 }

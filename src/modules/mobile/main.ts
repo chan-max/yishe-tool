@@ -37,6 +37,8 @@ import { useConfigStore } from '@/store/stores/config.ts';
 import { useLoginStatusStore } from '@/store/stores/login';
 import to from 'await-to-js';
 import { apiInstance } from "@/api/apiInstance";
+import Antd from 'ant-design-vue'
+
 
 import './cover-vant.less'
 import './index.less'
@@ -45,7 +47,7 @@ import './index.less'
 import { mobileDefaultResponseInterceptors } from '@/api/apiInterception'
 
 export async function createMobileApp() {
-    
+
     apiInstance.interceptors.response.use(mobileDefaultResponseInterceptors);
 
     const app = createApp(App)
@@ -57,6 +59,7 @@ export async function createMobileApp() {
     app.use(ConfigProvider);
     app.use(pinia)
     app.use(router)
+    app.use(Antd)
 
     let loginStore = useLoginStatusStore()
 

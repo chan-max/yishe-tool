@@ -40,7 +40,7 @@ import {
   AxesHelper,
   Vector2,
 } from "three";
-import utils from "@/common/utils";
+import Utils from "@/common/utils";
 
 const loading = ref(false);
 
@@ -138,16 +138,7 @@ async function initModel() {
 
   let gltf = await gltfLoader(props.src);
 
-  currentMesh = findMainMesh(gltf);
-  function findMainMesh(gltf) {
-    let mesh = null;
-    gltf.scene.traverse((child) => {
-      if (child.isMesh && !mesh) {
-        mesh = child;
-      }
-    });
-    return mesh;
-  }
+  currentMesh = Utils.three.findMainMeshFromGltf(gltf);
 
   let el = gltfViewer.value;
 
@@ -191,6 +182,7 @@ async function initModel() {
 
   function render() {
     requestAnimationFrame(render);
+    controller?.update();
     renderer.render(scene, camera);
   }
 
@@ -204,7 +196,7 @@ watch(() => props.src, initModel, { immediate: true });
 function getScreenShotFile() {
   renderer.render(scene, camera); // 截取会出现白图片
   var base64 = renderer.domElement.toDataURL("image/png"); // base64
-  return utils.transform.base64ToPngFile(base64);
+  return Utils.transform.base64ToPngFile(base64);
 }
 
 defineExpose({

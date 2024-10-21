@@ -57,7 +57,7 @@
       </el-col>
     </el-row>
     <loadingBottom v-if="loading"></loadingBottom>
-    <div class="endofpage" v-if="isLastPage">到底了~</div>
+    <div class="endofpage" v-if="isLastPage">没有了~~</div>
     <s1-empty v-if="isEmpty">
       <template #description> 暂无模型 </template>
     </s1-empty>

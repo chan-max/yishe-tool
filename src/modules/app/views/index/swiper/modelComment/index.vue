@@ -30,20 +30,41 @@
       <div v-if="firstLoading" class="w-full h-full flex justify-center items-center">
         <ion-spinner name="dots"></ion-spinner>
       </div>
-      <ion-list v-else-if="availableModelInfo.comment_count" class="ion-padding" lines="none">
-        <bar v-for="item in list" :commentInfo="item" @reply="reply(item, item)" @like="like"
-          @delete="deleteComment(item, item)" @more="more(item)" :show-delete="loginStore.userInfo?.id == item.user_id"
-          :show-more="item.root_children_count" :loading-children="item.loading">
+      <ion-list
+        v-else-if="availableModelInfo.comment_count"
+        class="ion-padding"
+        lines="none"
+      >
+        <bar
+          v-for="item in list"
+          :commentInfo="item"
+          @reply="reply(item, item)"
+          @like="like"
+          @delete="deleteComment(item, item)"
+          @more="more(item)"
+          :show-delete="loginStore.userInfo?.id == item.user_id"
+          :show-more="item.root_children_count"
+          :loading-children="item.loading"
+        >
           <template v-if="item.children && item.children.length" #children>
-            <bar v-for="itemChild in item.children" :commentInfo="itemChild" @reply="reply(itemChild, item)" @like="like"
-              @delete="deleteComment(itemChild, item)" :show-delete="loginStore.userInfo?.id == itemChild.user_id"
-              :show-more="false">
+            <bar
+              v-for="itemChild in item.children"
+              :commentInfo="itemChild"
+              @reply="reply(itemChild, item)"
+              @like="like"
+              @delete="deleteComment(itemChild, item)"
+              :show-delete="loginStore.userInfo?.id == itemChild.user_id"
+              :show-more="false"
+            >
             </bar>
           </template>
         </bar>
       </ion-list>
-      <div v-else class="w-full h-full flex justify-center items-center flex-col opacity-10">
-        <no-comment style="width:80px;height:80px"></no-comment>
+      <div
+        v-else
+        class="w-full h-full flex justify-center items-center flex-col opacity-10"
+      >
+        <no-comment style="width: 80px; height: 80px"></no-comment>
         <span class="font-bold">暂无评论</span>
       </div>
       <ion-infinite-scroll @ionInfinite="ionInfinite">
@@ -52,11 +73,17 @@
     </ion-content>
     <ion-footer>
       <div class="footer ion-padding">
-        <ion-textarea :auto-grow="true" fill="outlined" placeholder="快来评论吧～" ref="commentInput" v-model="commentInputContent"
-          @ionBlur="ionBlur">
+        <ion-textarea
+          :auto-grow="true"
+          fill="outlined"
+          placeholder="快来评论吧～"
+          ref="commentInput"
+          v-model="commentInputContent"
+          @ionBlur="ionBlur"
+        >
         </ion-textarea>
-        <div @click="addComment" style="text-wrap: nowrap;">
-          {{ isReplying ? ' 回复' : '评论' }}
+        <div @click="addComment" style="text-wrap: nowrap">
+          {{ isReplying ? " 回复" : "评论" }}
         </div>
       </div>
     </ion-footer>
@@ -64,36 +91,43 @@
 </template>
 <script setup>
 import { sortType, toggleSort } from "./index";
-import { CommentSortType, getAvailableModelComment, addAvailableModelComment, deleteAvailableModelComment } from "@/api/api/comment";
+import {
+  CommentSortType,
+  getAvailableModelComment,
+  addAvailableModelComment,
+  deleteAvailableModelComment,
+} from "@/api/api/comment";
 import bar from "./bar.vue";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { likeAvailableModelComment } from "@/api";
 import { chatbubbleEllipsesOutline } from "ionicons/icons";
 import { ref, watch } from "vue";
-import { vibrate, impact } from '@/modules/app/helper/device.ts';
-import timeSort from '@/icon/mobile/time-sort.svg?component';
-import hotSort from '@/icon/mobile/hot-sort.svg?component';
-import noComment from '@/icon/mobile/no-comment.svg?component'
-
+import { vibrate, impact } from "@/modules/app/helper/device.ts";
+import timeSort from "@/icon/mobile/time-sort.svg?component";
+import hotSort from "@/icon/mobile/hot-sort.svg?component";
+import noComment from "@/icon/mobile/no-comment.svg?component";
 
 const loginStore = useLoginStatusStore();
 
 const props = defineProps(["availableModelInfo"]);
 
-const { list, getList, reset ,loading,firstLoading} = usePaging((params) => {
-  return getAvailableModelComment({
-    availableModelId: props.availableModelInfo.id,
-    sortType: sortType.value,
-    parentId: 0, // 获取所有根评论
-    ...params,
-  });
-}, {
-  // resListFilter: (item) => {
-  //   // 过滤掉出现过的评论
-  //   return list.value.every((child) => child.id != item.id)
-  // }
-});
+const { list, getList, reset, loading, firstLoading } = usePaging(
+  (params) => {
+    return getAvailableModelComment({
+      availableModelId: props.availableModelInfo.id,
+      sortType: sortType.value,
+      parentId: 0, // 获取所有根评论
+      ...params,
+    });
+  },
+  {
+    // resListFilter: (item) => {
+    //   // 过滤掉出现过的评论
+    //   return list.value.every((child) => child.id != item.id)
+    // }
+  }
+);
 
 const ionInfinite = async (ev) => {
   await getList();
@@ -101,13 +135,13 @@ const ionInfinite = async (ev) => {
 };
 
 // 输入框的引用
-const commentInput = ref()
+const commentInput = ref();
 
 // 输入框的内容
-const commentInputContent = ref()
+const commentInputContent = ref();
 
 // 是否在回复
-const isReplying = ref(false)
+const isReplying = ref(false);
 // 正在回复的评论
 const replyingComment = ref();
 // 正在评论的根评论
@@ -116,18 +150,17 @@ const replyingRootComment = ref();
 /* 切换排序方式 */
 watch(sortType, async () => {
   // 直接清空原有数据，并且加载一次
-  reset()
-  await getList()
-})
+  reset();
+  await getList();
+});
 
 /* 回复根评论 */
 function reply(current, root) {
   commentInput.value.$el.setFocus();
   isReplying.value = true;
   replyingComment.value = current;
-  replyingRootComment.value = root
+  replyingRootComment.value = root;
 }
-
 
 function ionBlur() {
   // 输入框失去焦点, 现在逻辑为输入框为空且失去焦点时失去回复状态
@@ -151,16 +184,16 @@ async function addComment() {
       userId: loginStore.userInfo?.id,
       parentId: isReplying.value ? replyingComment.value.id : 0,
       // 注：如果是根评论,其根id就是其id，在后台生成数据时生成
-      rootId: isReplying.value ? replyingComment.value.root_id : '',
+      rootId: isReplying.value ? replyingComment.value.root_id : "",
     });
 
-    // 
+    //
     latestComment.t_user = loginStore.userInfo;
     // 更新评论数
 
     if (isReplying.value) {
       if (!replyingRootComment.value.children) {
-        replyingRootComment.value.children = []
+        replyingRootComment.value.children = [];
       }
 
       replyingRootComment.value.children.unshift(latestComment);
@@ -171,33 +204,32 @@ async function addComment() {
     // reset 状态
     commentInputContent.value = "";
     isReplying.value = false;
-    replyingComment.value = null
-    replyingRootComment.value = null
-    props.availableModelInfo.comment_count++
+    replyingComment.value = null;
+    replyingRootComment.value = null;
+    props.availableModelInfo.comment_count++;
   } catch (e) {
     alert("评论失败");
   }
 }
-
 
 /* 删除评论 */
 async function deleteComment(commentInfo, rootCommentInfo) {
   await deleteAvailableModelComment({
     commentId: commentInfo.id,
     rootCommentId: rootCommentInfo.id,
-    availableModelId: props.availableModelInfo.id
-  })
+    availableModelId: props.availableModelInfo.id,
+  });
   // 删除成功
 
   if (commentInfo.id == rootCommentInfo.id) {
     // 根评论
-    list.value.splice(list.value.indexOf(commentInfo), 1)
+    list.value.splice(list.value.indexOf(commentInfo), 1);
   } else {
     // 子评论
-    rootCommentInfo.children.splice(rootCommentInfo.children.indexOf(commentInfo), 1)
+    rootCommentInfo.children.splice(rootCommentInfo.children.indexOf(commentInfo), 1);
   }
 
-  props.availableModelInfo.comment_count--
+  props.availableModelInfo.comment_count--;
 }
 
 /*
@@ -205,37 +237,40 @@ async function deleteComment(commentInfo, rootCommentInfo) {
   目前缺少剩多少条的功能
 */
 async function more(commentInfo) {
-  // 暂未初始化 
+  // 暂未初始化
   if (!commentInfo.getList) {
     if (!commentInfo.children) {
-      commentInfo.children = []
+      commentInfo.children = [];
     }
-    const { getList, loading } = usePaging((params) => {
-      return getAvailableModelComment({
-        isChildren: true,
-        availableModelId: props.availableModelInfo.id,
-        sortType: sortType.value,
-        rootId: commentInfo.root_id,
-        ...params,
-      });
-    }, {
-      initialList: commentInfo.children,
-      immediate: false,
-      pageSize: 10,
-      // 这里使用过滤是因为可能会出现用户新增评论，然后再加载评论，导致重复的问题
-      // resListFilter: (item) => {
-      //   // 过滤掉出现过的评论
-      //   return commentInfo.children.every((child) => child.id != item.id)
-      // }
-    });
+    const { getList, loading } = usePaging(
+      (params) => {
+        return getAvailableModelComment({
+          isChildren: true,
+          availableModelId: props.availableModelInfo.id,
+          sortType: sortType.value,
+          rootId: commentInfo.root_id,
+          ...params,
+        });
+      },
+      {
+        initialList: commentInfo.children,
+        immediate: false,
+        pageSize: 10,
+        // 这里使用过滤是因为可能会出现用户新增评论，然后再加载评论，导致重复的问题
+        // resListFilter: (item) => {
+        //   // 过滤掉出现过的评论
+        //   return commentInfo.children.every((child) => child.id != item.id)
+        // }
+      }
+    );
 
     // 执行获取列表
     commentInfo.getList = getList;
     commentInfo.loading = loading;
-    await getList()
+    await getList();
   } else {
     // 已经初始化
-    commentInfo.getList()
+    commentInfo.getList();
   }
 }
 
@@ -247,10 +282,9 @@ async function like(commentInfo) {
     commentId: commentInfo.id,
     count: 1,
   });
-  impact()
+  impact();
   // 反显状态
   commentInfo.liked = true;
   commentInfo.like_count++;
 }
 </script>
-

@@ -36,6 +36,7 @@ import {
     Raycaster,
     AxesHelper,
     Vector2,
+    SRGBColorSpace,
 } from "three";
 
 import {
@@ -100,20 +101,25 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
     var currentMesh = null;
 
+
     // 添加环境光
-    const ambientLight = new AmbientLight(0xffffff, 0.7); // 设置颜色和强度
+    const ambientLight = new AmbientLight(0xffffff, 1.5); // 设置颜色和强度
     scene.add(ambientLight);
 
-    // 添加平行光
-    const directionalLight1 = new DirectionalLight(0xffffff, 0.35); // 设置颜色和强度
+    // // 添加平行光
+    const directionalLight1 = new DirectionalLight(0xffffff, 1.5); // 设置颜色和强度
     directionalLight1.position.set(1, 1, 1); // 设置光源位置
     scene.add(directionalLight1);
 
     // 添加平行光
-    const directionalLight2 = new DirectionalLight(0xffffff, 0.3); // 设置颜色和强度
+    const directionalLight2 = new DirectionalLight(0xffffff, 1.5); // 设置颜色和强度
     directionalLight2.position.set(-1, -1, -1); // 设置光源位置
     scene.add(directionalLight2);
 
+    // 添加点光源
+    const pointLight = new PointLight(0xffffff, 5); // 设置颜色和强度
+    pointLight.position.set(0, 0, 4); // 设置光源位置
+    scene.add(pointLight);
 
     const renderer = new WebGLRenderer({
         alpha: true, // 透明背景
@@ -185,16 +191,10 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         loading.value = false
         loadingMessage.value = ''
 
-        currentMesh = findMainMesh(gltf);
-        function findMainMesh(gltf) {
-            let mesh = null;
-            gltf.scene.traverse((child) => {
-                if (child.isMesh && !mesh) {
-                    mesh = child;
-                }
-            });
-            return mesh;
-        }
+
+        let mesher = Utils.three.findMainMeshFromGltfAndMergeGeometries(gltf);
+
+        currentMesh = mesher.mergedMesh
 
         // 同步摄像机位置
 
@@ -299,6 +299,8 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
                     console.log('before')
                     const texture = await textureLoader.loadAsync(url);
+
+                    texture.colorSpace = SRGBColorSpace;
 
                     const material = new MeshPhongMaterial({
                         map: texture,

@@ -1,5 +1,8 @@
 import { message } from 'ant-design-vue'
-import { ElNotification } from 'element-plus'
+
+/**
+ * ant message 移动端通用
+*/
 
 export const meta = {
     onMainModelLoading: function () {
@@ -12,6 +15,7 @@ export const meta = {
     onMainModelLoadedError: function () {
         message.error({ content: '模型加载失败!', key: 'loadingmodel', duration: 1 });
     },
+
 
 
     onStickerBeforeCreate: async function () {

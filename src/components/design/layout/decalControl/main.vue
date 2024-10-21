@@ -1,13 +1,15 @@
 <template>
   <div class="container" v-if="currentOperatingDecalController">
-    <s1-img
-      :src="currentOperatingDecalController.state.src"
-      style="width: 320px; height: 320px"
-      class="png-background"
-    ></s1-img>
+    <div style="padding: 1rem">
+      <s1-img
+        :src="currentOperatingDecalController.state.src"
+        style="width: 64px; height: 64px"
+        class="png-background"
+      ></s1-img>
+    </div>
 
     <div style="padding: 1rem">
-      <el-form label-position="left" label-width="84px">
+      <el-form label-position="left" label-width="64px">
         <el-form-item label="旋转角度">
           <el-slider
             :min="0"
@@ -24,6 +26,26 @@
             :max="100"
             :step="1"
             v-model="currentOperatingDecalController.state.modelValueSize"
+            size="small"
+          />
+        </el-form-item>
+
+        <el-form-item label="贴纸粗糙度">
+          <el-slider
+            :min="0"
+            :max="1"
+            :step="0.01"
+            v-model="currentOperatingDecalController.state.roughness"
+            size="small"
+          />
+        </el-form-item>
+
+        <el-form-item label="金属质感">
+          <el-slider
+            :min="0"
+            :max="1"
+            :step="0.01"
+            v-model="currentOperatingDecalController.state.metalness"
             size="small"
           />
         </el-form-item>

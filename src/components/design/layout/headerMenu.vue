@@ -67,6 +67,8 @@
 
     <div style="flex-grow: 1"></div>
 
+    <a-button size="small" type="text"> 快速指南 </a-button>
+
     <a-dropdown>
       <a-button size="small" type="text">
         <div :style="{ background: currentCanvasBackground.backgroundCss }">画布背景</div>
@@ -153,6 +155,7 @@ import {
   CheckOutlined,
   ExclamationCircleOutlined,
   CheckCircleOutlined,
+  EyeOutlined,
 } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 import { useFileDialog } from "@vueuse/core";

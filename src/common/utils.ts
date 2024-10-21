@@ -130,6 +130,8 @@ import { Encrypt } from './encrypt.ts'
 import { Color } from './color.ts'
 import time from './time.ts'
 
+import three from './three.ts'
+
 class Utils {
 
     constructor() {
@@ -205,6 +207,10 @@ class Utils {
 
     // 常量相关
     const = constModule
+
+
+
+    three = new three()
 }
 
 

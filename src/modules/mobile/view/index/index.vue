@@ -21,6 +21,14 @@
           <van-swipe-item>一键定制</van-swipe-item>
         </van-swipe>
       </van-button>
+
+      <van-image
+        v-else
+        round
+        width="36px"
+        height="36px"
+        :src="loginStore.userInfo.avatar"
+      />
     </div>
 
     <div
@@ -30,7 +38,18 @@
         enterClass: 'animate__animated animate__fadeIn',
       }"
     >
-      <div class="gradient-text title">一个免费的服装设计工具 , 打造独一无二的设计</div>
+      <div class="gradient-text title" style="padding: 2vh 0">
+        一个免费的服装设计工具 , 打造独一无二的设计
+      </div>
+      <van-button
+        style="background: linear-gradient(to right, #f00090, #861fed)"
+        color="#fff"
+        size="large"
+        plain
+        round
+        @click="goDesign"
+        >快速设计</van-button
+      >
       <van-button
         style="background: transparent"
         color="#fff"
@@ -182,6 +201,12 @@ function login() {
     name: "Login",
   });
 }
+
+function goDesign() {
+  router.push({
+    name: "design",
+  });
+}
 </script>
 
 <style lang="less" scoped>
@@ -209,7 +234,8 @@ function login() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30vh 4vw 10vh 4vw;
+  justify-content: center;
+  padding: 0 4vw;
 }
 
 .title {

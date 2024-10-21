@@ -19,7 +19,14 @@
         >
           {{ loading ? "正在进入" : " 在线工具" }}
         </el-button>
-        <el-button size="large" plain round @click="more" class="font-bold">
+        <el-button
+          size="large"
+          plain
+          round
+          type="primary"
+          @click="more"
+          class="font-bold"
+        >
           逛一逛
         </el-button>
       </div>

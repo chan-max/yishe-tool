@@ -33,8 +33,10 @@
           padding="10%"
           :src="item.thumbnail?.url"
           class="image"
-          @load="imgLoad($event, item)"
-        ></s1-image>
+          :meta="item"
+          @load="imgLoad"
+        >
+        </s1-image>
         <sticker-popover :stickerInfo="item">
           <div class="bar">
             <div class="title text-ellipsis">{{ item.name || "......" }}</div>
@@ -77,17 +79,17 @@ function tagChange() {
   getList();
 }
 
-function imgLoad(el, info) {
+function imgLoad(el, meta) {
   const img = el;
 
   initDraggableElement(img, async () => {
-    const base64 = imgToBase64(img);
+    // 这里有一个 bug ， 获取到的info是错误的，暂未排查出问题
+    let info = img.meta;
     currentModelController.value.stickToMousePosition({
       img: img,
       type: "image",
       local: false,
       src: img.src,
-      base64: base64,
       id: info.id,
       info: info,
     });

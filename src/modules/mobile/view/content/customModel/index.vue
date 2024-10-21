@@ -15,7 +15,7 @@
     >
       <template v-for="item in list">
         <div
-          class="page-card"
+          class="page-card-2"
           @click="open(item)"
           style="
             background: linear-gradient(to right, #f9f9f9, #fcfcfc);
@@ -29,7 +29,7 @@
       <div style="padding: 24px 0" class="flex w-full flex-col items-center">
         <div v-if="isEmpty">暂无作品</div>
         <div v-else-if="loading"><van-loading type="spinner" /></div>
-        <div v-else-if="isLastPage">到底了</div>
+        <div v-else-if="isLastPage">没有了~</div>
       </div>
     </div>
   </div>

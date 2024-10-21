@@ -12,7 +12,7 @@
   <div class="model-content" v-infinite-scroll="scroll" :infinite-scroll-distance="150">
     <div v-for="item in list" class="item">
       <div class="img">
-        <el-image :src="item.preview_img" fit="cover" style="width:100%;height:100%">
+        <el-image :src="item.preview_img" fit="cover" style="width: 100%; height: 100%">
         </el-image>
       </div>
       <div class="menu">
@@ -22,7 +22,7 @@
   </div>
 </template>
 <script setup>
-import {publishModel} from '@/api'
+import { publishModel } from "@/api";
 
 import { ref } from "vue";
 import { usePaging } from "@/hooks/data/paging.ts";
@@ -30,8 +30,8 @@ import { getModelList } from "@/api";
 
 const { page, pages, pageSize, list, getList } = usePaging((params) => {
   return getModelList({
-    onlyMyContent:true,
-    ...params
+    onlyMyContent: true,
+    ...params,
   });
 });
 
@@ -39,13 +39,11 @@ function scroll() {
   getList();
 }
 
-
-async function publish(item){
+async function publish(item) {
   await publishModel({
-    modelId:item.id
-  })
+    modelId: item.id,
+  });
 }
-
 </script>
 <style lang="less" scoped>
 .model-content {
@@ -60,24 +58,24 @@ async function publish(item){
 
 .item {
   background: #fff;
-  border-radius:4px;
-  overflow:hidden;
-  position:relative;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
   padding: 5px;
   width: 300px;
   height: 200px;
 }
 
-.img{
+.img {
   width: 300px;
-  height: 160px; 
+  height: 160px;
 }
 
-.menu{
+.menu {
   display: flex;
   align-items: center;
   justify-content: end;
   width: 100%;
-  height: 40px; 
+  height: 40px;
 }
 </style>

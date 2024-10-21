@@ -8,6 +8,7 @@ import {
   MeshPhysicalMaterial,
   Object3D,
   Raycaster,
+  SRGBColorSpace,
   Texture,
   TextureLoader,
   Vector2,
@@ -75,7 +76,10 @@ export class DecalController {
     initialPosition: null, // 保存 最初始的位置
     isHover: false, // 鼠标是否在覆盖模型上
 
-    imgAspectRatio: 1 // 当前贴花图的宽高比
+    imgAspectRatio: 1, // 当前贴花图的宽高比
+
+    roughness: .7, // 粗糙度 
+    metalness: 0, // 金属感觉
   })
 
   id = ref()
@@ -122,6 +126,26 @@ export class DecalController {
         return
       }
       this?.scale(value / 100);
+    }, 11), {
+      immediate: true
+    })
+
+    // 0 - 1 
+    watch(() => this.state.roughness, useDebounceFn((value) => {
+      if (!value) {
+        return
+      }
+      this?.setRoughness(value)
+    }, 11), {
+      immediate: true
+    })
+
+    // 0 - 1 
+    watch(() => this.state.metalness, useDebounceFn((value) => {
+      if (!value) {
+        return
+      }
+      this?.setMetalness(value)
     }, 11), {
       immediate: true
     })
@@ -190,10 +214,10 @@ export class DecalController {
       depthTest: true,
       depthWrite: false,
       polygonOffset: true,
-      polygonOffsetFactor: -14,
+      polygonOffsetFactor: -4,
       wireframe: false,
-      roughness: 0, // 粗糙度 , 目前没啥效果
-      metalness:0, // 金属感觉
+      roughness: this.state.roughness, // 粗糙度 , 目前没啥效果
+      metalness: this.state.metalness, // 金属感觉
       // transmission :1 ,// 透明度
       // thickness:1 ,// 厚度 
     }
@@ -206,12 +230,7 @@ export class DecalController {
     textureLoader.setWithCredentials(true)
     textureLoader.setCrossOrigin('*')
 
-    // 该种方式也会重新请求图片
-    // texture = new Texture(this.img)
-    // 加载图片比较费时间
-    // let objectUrl = await Utils.transform.createImgObjectURL(this.info.img)
-    // let base64 = await  Utils.transform.imgToBase64(this.info.img)
-
+    
     if (this.state.isLocalResource) {
       const image = new Image();
       image.src = this.info.base64;
@@ -225,6 +244,8 @@ export class DecalController {
       texture = await textureLoader.loadAsync(this.img?.src || this.info.src || this.info.thumbnail?.url)
     }
 
+    // 这羊可以让图片颜色看起来更好
+    texture.colorSpace = SRGBColorSpace; 
 
     this.state.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
 
@@ -356,12 +377,22 @@ export class DecalController {
     this.create()
   }
 
-  // 移动
-  move() {
 
+  setRoughness(val) {
+    if (!this.material) {
+      return
+    }
+    this.material.roughness = val
+    this.material.needsUpdate = true
   }
 
-
+  setMetalness(val) {
+    if (!this.material) {
+      return
+    }
+    this.material.metalness = val
+    this.material.needsUpdate = true
+  }
 
   // 缩放
   scale(ratio) {

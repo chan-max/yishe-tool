@@ -23,7 +23,9 @@ import {
     BackSide,
     PointLight,
     MathUtils,
-    PMREMGenerator
+    PMREMGenerator,
+    MeshStandardMaterial,
+    RepeatWrapping
 } from "three";
 
 
@@ -32,8 +34,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
-import { gltfLoader, textureLoader } from "../../../common/threejsHelper";
-import { reactive, ref, shallowReactive, nextTick, shallowRef } from "vue";
+import { gltfLoader } from "../../../common/threejsHelper";
+import { reactive, ref, shallowReactive, nextTick, shallowRef, watch } from "vue";
 import { reactify, useDebounceFn, useMouse, useMouseInElement } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
@@ -47,11 +49,11 @@ import { gsap } from 'gsap';
 import { saveAs } from 'file-saver';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 import {
     currentOperatingBaseModelInfo,
 } from "@/components/design/store.ts";
-
 
 import Api from '@/api'
 import Utils from '@/common/utils'
@@ -67,14 +69,22 @@ export class ModelController extends Base {
     // 模式 , 暂时不支持 mb
     mode = 'pc' // pc 或 mb
 
+    // 是否在移动端
+    isMobile = false
+
     // 元数据
     meta: any = meta
 
     /**
      *  用于保存当前所有状态的仓库
     */
-    store = ref({
-        currentOperatingBaseModelInfo: null // 当前操作的模型信息
+    state = ref({
+        currentOperatingBaseModelInfo: null, // 当前操作的模型信息
+
+        //  主模型的材质
+        material: { textureId: null },
+
+
     })
 
     // 场景
@@ -115,7 +125,7 @@ export class ModelController extends Base {
         const intersects = raycaster.intersectObject(this.mesh, true);
         return intersects
     }
-    
+
     // 保存当前鼠标坐标
     private _mouse = new Vector2();
 
@@ -213,26 +223,29 @@ export class ModelController extends Base {
 
     // 初始化基本灯光
     initBasicLight() {
+
+        let scene = this.scene
+
         // 创建场景、相机和渲染器等...
 
         // 添加环境光
-        const ambientLight = new AmbientLight(0xffffff, 0.7); // 设置颜色和强度
-        this.scene.add(ambientLight);
+        const ambientLight = new AmbientLight(0xffffff, 1.5); // 设置颜色和强度
+        scene.add(ambientLight);
 
-        // 添加平行光
-        const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+        // // 添加平行光
+        const directionalLight1 = new DirectionalLight(0xffffff, 1.5); // 设置颜色和强度
         directionalLight1.position.set(1, 1, 1); // 设置光源位置
-        this.scene.add(directionalLight1);
+        scene.add(directionalLight1);
 
         // 添加平行光
-        const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
+        const directionalLight2 = new DirectionalLight(0xffffff, 1.5); // 设置颜色和强度
         directionalLight2.position.set(-1, -1, -1); // 设置光源位置
-        this.scene.add(directionalLight2);
+        scene.add(directionalLight2);
 
         // 添加点光源
-        // const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
-        // pointLight.position.set(0, 0, 2); // 设置光源位置
-        // this.scene.add(pointLight);
+        const pointLight = new PointLight(0xffffff, 5); // 设置颜色和强度
+        pointLight.position.set(0, 0, 4); // 设置光源位置
+        scene.add(pointLight);
     }
 
     // 正式执行渲染
@@ -252,9 +265,16 @@ export class ModelController extends Base {
 
         // this.initHdr()
 
+        watch(() => this.state.value.material, () => {
+            this.setMaterial()
+        }, {
+            deep: true
+        })
+
         this.execRender();
 
         this.isMounted = true;
+
     }
 
     // 设置背景颜色
@@ -277,23 +297,13 @@ export class ModelController extends Base {
     // 主网格
     mesh: any = null;
 
-    // 寻找模型中的网格
-    private findMainMesh(gltf) {
-        let mesh = null;
-        gltf.scene.traverse((child) => {
-            if (child.isMesh && !mesh) {
-                mesh = child;
-            }
-        });
-        return mesh;
-    }
-
+    group = null
 
     baseModelUrl: any = null;
 
 
     removeDecals() {
-        for(let i =  this.decalControllers.length; i > 0 ;i --){
+        for (let i = this.decalControllers.length; i > 0; i--) {
             this.decalControllers[i - 1].remove()
         }
     }
@@ -305,14 +315,10 @@ export class ModelController extends Base {
         }
     }
 
-    public async setMainModel(url: any) {
-
-
+    public async setMainModel(url) {
         // if(this.gltf){
         //     return message.info('当前控制台中存在模型，请先清理')
         // }
-
-
 
         this.removeMainModel();
         this.removeDecals()
@@ -327,11 +333,15 @@ export class ModelController extends Base {
             return
         }
 
+
+        let mesher = Utils.three.findMainMeshFromGltfAndMergeGeometries(this.gltf);
+        this.mesh = mesher.mergedMesh
+
+        // this.mesh = Utils.three.findMainMeshFromGltf(this.gltf);
+
         this.initModelPosition();
 
-        this.mesh = this.findMainMesh(this.gltf);
         this.initialCameraPosition.copy(this.camera.position);
-
 
         // 这个顺序很重要
         this.scene.add(this.gltf.scene);
@@ -766,6 +776,51 @@ export class ModelController extends Base {
     stopMediaRecord() {
         this.activeMediaRecorder.stop();
         this.activeMediaRecorder = null;
+    }
+
+
+
+    // 设置材质
+
+    // 当前使用的材质
+    material = null
+
+    async setMaterial() {
+        
+        let {
+            textureId
+        } = this.state.value.material
+
+        if (!textureId) {
+            return
+        }
+
+        let textrue = await Api.getStickerById(textureId)
+
+        const textureLoader = new TextureLoader();
+        textureLoader.setWithCredentials(true)
+        textureLoader.setCrossOrigin('*')
+
+        let texture = await textureLoader.loadAsync(textrue.url)
+
+        // 该段代码可以将纹理均匀的显示
+        texture.wrapS = RepeatWrapping; // 设置水平重复
+        texture.wrapT = RepeatWrapping; // 设置垂直重复
+        // 设置纹理的密度
+        texture.repeat.set(2, 2); // 设置重复次数
+        texture.offset.set(0, 0); // 设置偏移
+
+        const material = new MeshStandardMaterial({
+            map: texture,
+            // color: 0x777777, // 布料颜色
+            metalness: 0,    // 金属
+            roughness: .7,   // 粗糙度
+            side: DoubleSide,
+        });
+
+        
+        this.mesh.material = this.material = material
+        message.success('材质应用成功')
     }
 
 }

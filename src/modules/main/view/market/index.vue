@@ -32,7 +32,7 @@
       <el-button type="info" round @click="getList" v-else-if="!isLastPage">
         加载更多
       </el-button>
-      <span v-else> 到底了 </span>
+      <span v-else> 没有了~ </span>
     </div>
   </div>
 </template>

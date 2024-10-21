@@ -9,6 +9,7 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
  */
 import { Ref, computed, isReactive, isRef, ref, watch } from 'vue'
+import { length } from '../../../node_modules/@types/three/src/nodes/math/MathNode.d';
 
 /*
     通用分页逻辑
@@ -25,10 +26,10 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         callback: null, // 处理每个请求元素的回调
         filter: null, // 请求结果被插入列表前的过滤器，被过滤掉的不会添加到列表中
         forEach: null,
+        autofillColumns: null, // 这是一个特殊的参数， 当传递了该参数时，如何列表的数据不能被该列整除时，会自动填充满该数组
         isSinglePageMode: false,
         ...options,
     }
-
 
     // 列表数据 , 可用外界传入的参数，也可以自身初始化
     const list = options.initialList as any
@@ -125,20 +126,15 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
             }
 
             if (isRef(list)) {
-
                 res.list.forEach((item) => {
                     (list.value as any).push(item)
                 })
 
             } else if (isReactive(list)) {
-
                 res.list.forEach((item) => {
                     list.push(item)
                 })
-
             }
-
-
 
         } catch (e) {
             console.error('use paging error', e)
@@ -188,12 +184,25 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
         await getList()
     }
 
+    const filledList = computed(() => {
+        if (!options.autofillColumns) {
+            return list.value
+        } else {
+
+            // 余数
+            let remainder = list.value.length % options.autofillColumns
+
+            return [...list.value, ...Array.from({ length: options.autofillColumns - remainder })]
+        }
+    })
+
+
 
     return {
         currentPage, // 当前页数
         totalPage, // 总页数
         pageSize, // 每夜数量
-        list, // 数据列表
+        list: filledList, // 数据列表
         getList, // 获取数据的方法
         total, // 总数量
         loading, // 是否正在加载

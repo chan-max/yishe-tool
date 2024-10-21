@@ -8,7 +8,7 @@
       <template v-for="item in list">
         <div
           @click="open(item)"
-          class="page-card"
+          class="page-card-2"
           style="
             background: linear-gradient(to right, #f9f9f9, #fcfcfc);
             border-radius: 8px;
@@ -25,7 +25,7 @@
       <div v-else-if="!isLastPage" @click="getList">
         <van-button type="default" round size="small">更多</van-button>
       </div>
-      <div v-else>到底了</div>
+      <div v-else>没有了~</div>
       <div style="margin-top: 24px">
         <van-button
           icon="guide-o"

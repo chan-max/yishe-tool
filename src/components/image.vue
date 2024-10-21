@@ -6,7 +6,7 @@
       v-bind="$attrs"
       :fit="fit || 'contain'"
       :lazy="lazy"
-      @load="load($event, info)"
+      @load="load($event)"
       style="width: 100%; height: 100%"
       :style="{ padding }"
     >
@@ -42,7 +42,7 @@ const props = defineProps({
   padding: {
     default: "0",
   },
-  info: {
+  meta: {
     default: {},
   },
   fit: {
@@ -61,7 +61,8 @@ const props = defineProps({
 */
 
 function load(e) {
-  emits("load", e.target);
+  e.target.meta = props.meta;
+  emits("load", e.target, props.meta);
 }
 
 defineExpose({

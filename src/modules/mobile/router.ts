@@ -89,6 +89,15 @@ const routes = [
             footer: false,
         }
     },
+    {
+        path: "/design",
+        name: "design",
+        component: () => import('./view/design/index.vue'),
+        meta: {
+            header: false,
+            footer: false,
+        }
+    },
 ]
 
 export const router = createRouter({

@@ -21,7 +21,11 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <div style="width: 100%; height: 100%" class="three-canvas" ref="threeCanvasRef"></div>
+      <div
+        style="width: 100%; height: 100%"
+        class="three-canvas"
+        ref="threeCanvasRef"
+      ></div>
     </ion-content>
     <ion-footer>
       <ion-toolbar>
@@ -80,11 +84,15 @@ import { ref, onBeforeMount, onMounted } from "vue";
 import { logOutOutline } from "ionicons/icons";
 import selectModel from "./layout/selectModel/index.vue";
 import sticker from "./layout/sticker/index.vue";
-import workspace from './layout/workspace/index.vue';
+import workspace from "./layout/workspace/index.vue";
 import { showSelectModel, showSticker, showWorkspace } from "./store";
 import { ModelController } from "@/components/design/core/controller";
 import { meta } from "./meta";
-import { useDesignStore, currentOperatingBaseModelInfo, currentModelController } from "@/components/design/store";
+import {
+  useDesignStore,
+  currentOperatingBaseModelInfo,
+  currentModelController,
+} from "@/components/design/store";
 import { useIonRouter } from "@ionic/vue";
 import iconCloth from "@/modules/app/assets/icon/cloth.svg?url";
 import iconSticker from "@/modules/app/assets/icon/sticker.svg?url";
@@ -111,7 +119,7 @@ onMounted(() => {
   modelController.render(threeCanvasRef.value);
 });
 
-onBeforeMount(async () => { });
+onBeforeMount(async () => {});
 </script>
 
 <style scoped>

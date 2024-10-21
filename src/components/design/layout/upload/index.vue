@@ -29,54 +29,73 @@
         <template #file="{ file, url }">
           <div class="file-bar">
             <div class="file-bar-header">
-              <desimage
+              <s1-img
                 v-if="Utils.type.isImageName(file.name)"
                 @focus="null"
                 :src="file.url"
-                style="height: 3.2rem; width: 3.2rem"
+                style="height: 32px; width: 32px"
                 fit="contain"
-              ></desimage>
-              <el-icon v-else size="3.2rem">
+              ></s1-img>
+              <el-icon v-else size="32px">
                 <component :is="fileTypeIcons[getFileSuffix(file.name)]"></component>
               </el-icon>
 
-              <div style="font-size: 1.2rem">{{ file.name }}</div>
+              <div style="font-size: 12px">{{ file.name }}</div>
 
               <div style="flex: 1"></div>
               <div>{{ file.displaySize }}</div>
-              <a-switch
-                v-model:checked="file.isPublic"
-                checked-children="公开"
-                un-checked-children="私密"
-              />
               <el-button @click="removeFile(file)" type="danger" link style="height: 2em"
                 ><el-icon size="2rem"> <CircleCloseFilled /> </el-icon
               ></el-button>
             </div>
 
-            <div class="file-bar-name">
-              <el-input v-model="file.customName" placeholder="资源名称" />
-            </div>
+            <el-form
+              :inline-message="false"
+              :show-message="false"
+              label-width="100px"
+              label-position="left"
+            >
+              <el-form-item label="资源名称">
+                <el-input v-model="file.customName" placeholder="资源名称" />
+              </el-form-item>
+              <el-form-item label="文件描述">
+                <el-input
+                  v-model="file.description"
+                  placeholder="文件描述"
+                  type="textarea"
+                  :auto-size="{ minRows: 2, maxRows: 5 }"
+                />
+              </el-form-item>
+              <el-form-item label="文件标签">
+                <tags-input
+                  v-model="file.tags"
+                  :autocompleteTags="
+                    Utils.type.isFontName(file.name)
+                      ? fontAutoplacementTags
+                      : imageAutoplacementTags
+                  "
+                ></tags-input>
+              </el-form-item>
 
-            <div class="file-bar-description">
-              <el-input
-                v-model="file.description"
-                placeholder="文件描述"
-                type="textarea"
-                :auto-size="{ minRows: 2, maxRows: 5 }"
-              />
-            </div>
+              <el-form-item label="是否公开资源">
+                <a-switch
+                  v-model:checked="file.isPublic"
+                  checked-children="公开"
+                  un-checked-children="私密"
+                />
+              </el-form-item>
 
-            <div class="file-bar-tags">
-              <tags-input
-                v-model="file.tags"
-                :autocompleteTags="
-                  Utils.type.isFontName(file.name)
-                    ? fontAutoplacementTags
-                    : imageAutoplacementTags
-                "
-              ></tags-input>
-            </div>
+              <el-form-item
+                v-if="Utils.type.isImageName(file.name)"
+                label="是否作为材质文件"
+              >
+                <a-switch
+                  v-model:checked="file.isTexture"
+                  checked-children="是"
+                  un-checked-children="否"
+                />
+              </el-form-item>
+            </el-form>
 
             <template v-if="Utils.type.isFontName(file.name)">
               <div class="flex items-center justify-center" style="padding: 20px">
@@ -120,7 +139,7 @@
       <div style="flex: 1"></div>
       <template v-if="uploadTabType == 'local'">
         <el-button round @click="uploadTabType = 'scan'" :icon="Iphone">
-          APP 扫码上传
+          手机扫码上传
         </el-button>
         <el-button
           type="primary"
@@ -166,7 +185,6 @@ import {
 } from "@/components/design/components/tagsInput/index.ts";
 
 import { htmlToPngFile } from "@/common/transform";
-import desimage from "@/components/image.vue";
 import {} from "@/components/design/utils/utils";
 import { toPng } from "html-to-image";
 import Utils from "@/common/utils";
@@ -286,7 +304,7 @@ async function uploadSingleFile(file) {
       size: file.size,
       url: fileCos.url,
       keywords,
-      type: "image", // 默认为图片贴纸, 图片统一为 image
+      type: file.isTexture ? "texture" : "image", // 默认为图片贴纸, 图片统一为 image , 如果是材质则为 texture
       thumbnail: fileCos,
       description: file.description,
       isPublic: file.isPublic,
@@ -379,28 +397,6 @@ async function doUpload() {
   width: 600px;
 }
 
-.button {
-  background: transparent;
-  border-radius: 8px;
-  border: 2px solid rgba(0, 0, 2505, 0.9);
-  color: rgba(0, 0, 0, 0.9);
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1rem;
-  padding: 1em;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 18px;
-  opacity: 0.8;
-  font-weight: bold;
-}
-
-.button:hover {
-  opacity: 1;
-  transform: scale(1.05);
-}
-
 .placeholder {
   width: 100%;
   height: 100%;
@@ -428,12 +424,12 @@ async function doUpload() {
 
 .file-bar {
   border-radius: 4px;
-  padding: 1em 1em;
+  padding: 10px;
   width: 100%;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  row-gap: 1rem;
+  row-gap: 20px;
 }
 
 .file-bar-header {
@@ -443,11 +439,6 @@ async function doUpload() {
   column-gap: 1em;
   display: flex;
   font-size: 1rem;
-}
-
-.file-bar-tags {
-  display: flex;
-  gap: 0.5em;
 }
 
 .footer {

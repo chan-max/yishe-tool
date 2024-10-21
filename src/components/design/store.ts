@@ -347,7 +347,11 @@ export const viewDisplayController = ref({
     showProject: false, // 是否展示我的项目
 
     // 是否展示贴纸 
-    showDecalControl: false
+    showDecalControl: false,
+
+
+    // 服装材料相关弹层
+    showMaterialModal: false,
 })
 
 

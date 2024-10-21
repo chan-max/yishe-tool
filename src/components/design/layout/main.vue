@@ -154,6 +154,9 @@
 
   <!-- 贴纸覆盖时显示的提示框 -->
   <decalTooltip></decalTooltip>
+
+  <!-- 材质弹层 -->
+  <materialModal></materialModal>
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -248,6 +251,7 @@ import { useStickerDetailModal } from "@/components/design/layout/project/sticke
 
 import { useCustomModelDetailModal } from "@/components/design/layout/project/customModel/customModelModal";
 import decalTooltip from "./decalTooltip/index.vue";
+import materialModal from "./material/modal.vue";
 
 const { component: stickerDetailModal } = useStickerDetailModal();
 const { component: customModelDetailModal } = useCustomModelDetailModal();

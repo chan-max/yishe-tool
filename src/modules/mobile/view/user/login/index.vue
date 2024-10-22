@@ -4,7 +4,7 @@
     class="flex flex-col items-center justify-center"
   >
     <h1 style="width: 90vw">欢迎登录到衣设</h1>
-    <van-form @submit="onSubmit" style="width: 100vw">
+    <van-form @submit="onSubmit" style="width: 100vw" label-width="48px">
       <van-cell-group inset>
         <van-field
           v-model="loginForm.account"

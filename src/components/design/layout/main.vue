@@ -157,6 +157,9 @@
 
   <!-- 材质弹层 -->
   <materialModal></materialModal>
+
+  <!-- 材质详细信息弹层 -->
+  <materialDetailModal></materialDetailModal>
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -252,6 +255,7 @@ import { useStickerDetailModal } from "@/components/design/layout/project/sticke
 import { useCustomModelDetailModal } from "@/components/design/layout/project/customModel/customModelModal";
 import decalTooltip from "./decalTooltip/index.vue";
 import materialModal from "./material/modal.vue";
+import materialDetailModal from "./material/detailModal.vue";
 
 const { component: stickerDetailModal } = useStickerDetailModal();
 const { component: customModelDetailModal } = useCustomModelDetailModal();

@@ -11,6 +11,7 @@
           icon="share-o"
           icon-position="right"
           color="linear-gradient(to right, #f00090, #861fed)"
+          @click="showUploadPopup = true"
           >保存并分享</van-button
         >
       </template>
@@ -30,7 +31,7 @@
           </div>
         </template>
       </van-action-bar-icon>
-      <van-action-bar-icon icon="cart-o">
+      <van-action-bar-icon icon="cart-o" @click="showMaterialPopup = true">
         <template #default> 选择材质 </template>
         <template #icon>
           <div class="action-bar-icon">
@@ -40,14 +41,20 @@
       </van-action-bar-icon>
       <van-action-bar-icon
         icon="photo-o"
-        text="添加印花"
+        text="添加贴纸"
         @click="showStickerPopup = true"
       />
-      <van-action-bar-icon icon="shop-o" text="商场模型" />
+
       <van-action-bar-icon icon="upgrade" text="上传图片" />
-      <van-action-bar-icon icon="shop-o" text="店铺" />
-      <van-action-bar-icon icon="chat-o" text="客服" />
-      <van-action-bar-icon icon="cart-o" text="购物车" />
+      <van-action-bar-icon icon="shop-o" text="设计作品" />
+      <van-action-bar-icon icon="shop-collect-o" text="我的作品" />
+      <van-action-bar-icon icon="flower-o" text="创建贴纸" />
+      <van-action-bar-icon
+        icon="bars"
+        text="贴纸操作"
+        @click="showDecalPopup = true"
+        :badge="currentModelController.decalControllers.length"
+      />
       <van-action-bar-icon icon="shop-o" text="店铺" />
       <van-action-bar-icon icon="chat-o" text="客服" />
       <van-action-bar-icon icon="cart-o" text="购物车" />
@@ -68,19 +75,33 @@
   <productPopup></productPopup>
   <stickerPopup></stickerPopup>
   <stickerDetailPopup></stickerDetailPopup>
+  <materialPopup></materialPopup>
+  <materialDetailPopup></materialDetailPopup>
+  <uploadPopup></uploadPopup>
+  <decalPopup></decalPopup>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { ModelController } from "@/components/design/core/controller";
 import { meta } from "./meta.ts";
-import { showProductPopup, showStickerPopup } from "./index.ts";
+import {
+  showProductPopup,
+  showStickerPopup,
+  showMaterialPopup,
+  showUploadPopup,
+  showDecalPopup,
+} from "./index.ts";
 import clothIcon from "@/icon/mobile/cloth.svg?url";
 import materialIcon from "@/icon/mobile/material.svg?url";
 import productPopup from "./productPopup.vue";
 import stickerPopup from "./stickerPopup.vue";
 import stickerDetailPopup from "./stickerDetailPopup.vue";
-
+import materialPopup from "./materialPopup.vue";
+import materialDetailPopup from "./materialDetailPopup.vue";
+import uploadPopup from "./uploadPopup.vue";
+import decalPopup from "./decalPopup.vue";
+import { currentModelController } from "@/components/design/store";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";
 import { useRouter } from "vue-router";
 
@@ -114,6 +135,7 @@ function back() {
   width: 100%;
   height: 100%;
   position: relative;
+  user-select: none;
 }
 
 .action-bar {

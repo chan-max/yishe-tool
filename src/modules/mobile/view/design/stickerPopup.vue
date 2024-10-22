@@ -3,6 +3,8 @@
     round
     v-model:show="showStickerPopup"
     position="bottom"
+    closeable
+    style="padding-top: 32px"
     :style="{ height: '90%', width: '100%' }"
     :safe-area-inset-top="true"
     :safe-area-inset-bottom="true"

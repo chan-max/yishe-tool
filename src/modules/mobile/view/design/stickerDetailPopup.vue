@@ -1,6 +1,7 @@
 <template>
   <van-popup
     round
+    closeable
     v-model:show="showStickerDetailPopup"
     position="bottom"
     :style="{ height: '80%', width: '100%' }"
@@ -8,15 +9,14 @@
     :safe-area-inset-bottom="true"
     :before-close="beforeClose"
   >
-    <div
-      class="flex flex-col"
-      style="height: 100%; padding: 12px; box-sizing: border-box; row-gap: 16px"
-    >
-      <s1-img
-        class="png-background"
-        style="width: 100%; height: 360px"
-        :src="currentSticker?.thumbnail?.url"
-      ></s1-img>
+    <div class="flex flex-col" style="height: 100%; row-gap: 16px">
+      <div style="padding: 16px; box-sizing: border-box">
+        <s1-img
+          class="png-background"
+          style="width: 100%; height: 360px"
+          :src="currentSticker?.thumbnail?.url"
+        ></s1-img>
+      </div>
 
       <van-card
         num="999"
@@ -43,12 +43,7 @@
         <van-action-bar-icon text="模仿" />
         <van-action-bar-icon text="收藏" />
         <van-action-bar-icon text="分享" />
-        <van-action-bar-button
-          @click="use"
-          color="#6900ff"
-          icon="aim"
-          text="使用该贴纸"
-        />
+        <van-action-bar-button @click="use" color="#6900ff" text="使用该贴纸" />
       </van-action-bar>
     </div>
   </van-popup>

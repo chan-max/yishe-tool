@@ -57,11 +57,12 @@ import Utils from '@/common/utils'
 // 引入注册组件
 import 'virtual:svg-icons-register'
 import AnimateOnScroll from 'primevue/animateonscroll';
+import VueMagnifier from '@websitebeaver/vue-magnifier'
+import '@websitebeaver/vue-magnifier/styles.css'
 
 
-
-import { useConfigStore } from '@/store/stores/config.ts';
-import { useLoginStatusStore } from '@/store/stores/login';
+import { useConfigStore,initConfigStoreBasicConfig } from '@/store/stores/config.ts';
+import { useLoginStatusStore,initLoginStoreUserInfo } from '@/store/stores/login';
 import to from 'await-to-js';
 
 
@@ -81,6 +82,8 @@ async function setup() {
 
     app.component("InfiniteLoading", InfiniteLoading);
 
+    app.component('s1Mangnifier', VueMagnifier)
+
     app.directive('animateonscroll', AnimateOnScroll);
 
     app.use(pinia)
@@ -97,16 +100,12 @@ async function setup() {
 
     app.config.globalProperties.__DEV__ = import.meta.env.DEV
 
-    const loginStore = useLoginStatusStore()
-    const configStore = useConfigStore()
-    const config = await Api.getBasicConfig()
+  
+    await initLoginStoreUserInfo()
 
-    configStore.$patch(config)
+    await initConfigStoreBasicConfig()
 
-if (loginStore.isLogin) {
-    let [err, res] = await to(loginStore.getUserInfo())
-}
-app.mount('#app')
+    app.mount('#app')
 
 }
 

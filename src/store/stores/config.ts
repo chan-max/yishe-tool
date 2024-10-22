@@ -10,8 +10,13 @@
  */
 import { defineStore } from "pinia"
 import { ref } from 'vue'
+import Api from '@/api'
 
-
+export async function initConfigStoreBasicConfig() {
+    const configStore = useConfigStore()
+    const config = await Api.getBasicConfig()
+    configStore.$patch(config)
+}
 
 
 export const useConfigStore = defineStore("global_config", () => {
@@ -20,7 +25,6 @@ export const useConfigStore = defineStore("global_config", () => {
 
     // 文件对象存储
     const cos = ref()
-
 
     const json = ref({} as any)
     // 本地配置，可以通过json文件修改
@@ -37,6 +41,9 @@ export const useConfigStore = defineStore("global_config", () => {
         .catch(error => {
             console.log('project.config.json laod error')
         });
+
+
+
 
     return {
         ok,

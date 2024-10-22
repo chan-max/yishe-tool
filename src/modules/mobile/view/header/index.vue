@@ -14,30 +14,26 @@
     </van-nav-bar>
   </div>
   <van-popup
-  v-model:show="showMenu"
-  :style="{ width: '76%', height: '100%' }"
-  position="left">
-  <popup-menu></popup-menu>
+    v-model:show="showMenu"
+    :style="{ width: '76%', height: '100%' }"
+    position="left"
+  >
+    <popup-menu></popup-menu>
   </van-popup>
 </template>
 <script setup>
 import iconScan from "@/icon/mobile/header/scan.svg?component";
 import iconMenu from "@/icon/mobile/header/menu.svg?component";
-import popupMenu from './popupMenu.vue'
-import {ref} from 'vue'
+import popupMenu from "./popupMenu.vue";
+import { ref } from "vue";
 
-const showMenu = ref()
-
-
-
+const showMenu = ref();
 </script>
 
 <style lang="less">
 :root:root {
   --van-nav-bar-height: 60px;
 }
-
-
 
 .mobile-header-icon {
   width: 20px;

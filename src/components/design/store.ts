@@ -136,8 +136,7 @@ watch(
         if (!currentOperatingBaseModelInfo.value?.url) {
             return;
         }
-        // await nextTick();
-        await Utils.sleep(33)
+        await nextTick();
         currentModelController.value?.setMainModel(currentOperatingBaseModelInfo.value?.url);
     },
     {
@@ -352,6 +351,8 @@ export const viewDisplayController = ref({
 
     // 服装材料相关弹层
     showMaterialModal: false,
+    // 材质详细信息弹层
+    showMaterialDetailModal: false,
 })
 
 

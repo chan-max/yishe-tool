@@ -1,5 +1,6 @@
 import { ModelController } from "./controller";
 import { canvasBgColor, currentOperatingBaseModelInfo, isDarkMode, canvasBgOpacity } from '../store';
+import Utils from '@/common/utils';
 
 export const _1stfExporterMixin = (modelController: ModelController) => {
 
@@ -13,10 +14,10 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
       modelController.decalControllers.map((decal) => decal.export())
     )
 
-      
     return {
       baseModelId: currentOperatingBaseModelInfo.value.id,
       decals,
+      state: Utils.clone(modelController.state),
       isDarkMode: isDarkMode.value,
       canvasBgColor: canvasBgColor.value,
       canvasBgOpacity: canvasBgOpacity.value,

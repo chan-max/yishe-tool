@@ -13,8 +13,16 @@ import { useLocalStorage } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { reactive, ref, watch, toRaw, isReactive, isRef, unref } from "vue";
 import Api from '@/api'
-import { userInfo } from "os";
+import to from 'await-to-js';
 
+
+export async function initLoginStoreUserInfo() {
+  const loginStore = useLoginStatusStore()
+
+  if (loginStore.isLogin) {
+    let [err, res] = await to(loginStore.getUserInfo())
+  }
+}
 
 export const useLoginStatusStore = defineStore("login_status", () => {
 

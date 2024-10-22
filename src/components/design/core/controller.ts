@@ -58,11 +58,15 @@ import {
 import Api from '@/api'
 import Utils from '@/common/utils'
 
+import { createMaterialFromOptions, initBasicLight } from './controllerHelper'
+
 
 const mixins = [
     _1stfExporterMixin,
     eventMixin
 ];
+
+
 
 export class ModelController extends Base {
 
@@ -78,14 +82,13 @@ export class ModelController extends Base {
     /**
      *  用于保存当前所有状态的仓库
     */
-    state = ref({
+    state = reactive({
         currentOperatingBaseModelInfo: null, // 当前操作的模型信息
 
         //  主模型的材质
-        material: { textureId: null },
-
-
+        materialTextureInfo: null,
     })
+
 
     // 场景
     public scene: Scene = new Scene();
@@ -221,40 +224,13 @@ export class ModelController extends Base {
     public isMounted = false;
 
 
-    // 初始化基本灯光
-    initBasicLight() {
-
-        let scene = this.scene
-
-        // 创建场景、相机和渲染器等...
-
-        // 添加环境光
-        const ambientLight = new AmbientLight(0xffffff, 1.5); // 设置颜色和强度
-        scene.add(ambientLight);
-
-        // // 添加平行光
-        const directionalLight1 = new DirectionalLight(0xffffff, 1.5); // 设置颜色和强度
-        directionalLight1.position.set(1, 1, 1); // 设置光源位置
-        scene.add(directionalLight1);
-
-        // 添加平行光
-        const directionalLight2 = new DirectionalLight(0xffffff, 1.5); // 设置颜色和强度
-        directionalLight2.position.set(-1, -1, -1); // 设置光源位置
-        scene.add(directionalLight2);
-
-        // 添加点光源
-        const pointLight = new PointLight(0xffffff, 5); // 设置颜色和强度
-        pointLight.position.set(0, 0, 4); // 设置光源位置
-        scene.add(pointLight);
-    }
-
     // 正式执行渲染
     public render(target: any) {
         if (this.isMounted) {
             return;
         }
         this.initCanvasContainer(target);
-        this.initBasicLight()
+        initBasicLight(this.scene)
 
         // 先不设置 bg ，需要保留无背景
         this.setBgColor('#eee', 0)
@@ -265,8 +241,21 @@ export class ModelController extends Base {
 
         // this.initHdr()
 
-        watch(() => this.state.value.material, () => {
-            this.setMaterial()
+        watch(() => this.state.materialTextureInfo, async () => {
+
+            if (!this.state.materialTextureInfo) {
+                if (currentModelController.value.mesh) {
+                    currentModelController.value.mesh.material = Utils.three.createDefaultMaterial();
+                }
+                return
+            }
+
+            let material = await createMaterialFromOptions(this.state)
+            this.material = material
+            if (this.mesh) {
+                this.mesh.material = material
+                message.success('材质渲染成功')
+            }
         }, {
             deep: true
         })
@@ -316,12 +305,17 @@ export class ModelController extends Base {
     }
 
     public async setMainModel(url) {
+
+
         // if(this.gltf){
         //     return message.info('当前控制台中存在模型，请先清理')
         // }
 
+        // 清除之前的模型和贴纸和材质
         this.removeMainModel();
         this.removeDecals()
+        this.material = null
+        this.state.materialTextureInfo = null
 
         this.callHook(this.meta.onMainModelLoading)
 
@@ -333,7 +327,7 @@ export class ModelController extends Base {
             return
         }
 
-
+        // 合并当前模型
         let mesher = Utils.three.findMainMeshFromGltfAndMergeGeometries(this.gltf);
         this.mesh = mesher.mergedMesh
 
@@ -693,9 +687,12 @@ export class ModelController extends Base {
 
         currentOperatingBaseModelInfo.value = baseModel
 
-
         // 先加载模型在加载贴纸
         await this.setMainModel(baseModel.url)
+
+        // 需要先加载主模型
+
+        Object.assign(this.state, modelInfo.state)
 
         let mesh = this.mesh
         let scene = this.scene
@@ -724,20 +721,17 @@ export class ModelController extends Base {
                     decalController.state.modelValueSize = modelValueSize
 
                     await decalController.create()
-
                     decalController.ensureAdd()
-
                     resolve(void 0)
                 })
             }))
         }
 
-
-
         viewDisplayController.value.showProject = false
         message.success('模型加载成功')
-
     }
+
+
 
 
     activeMediaRecorder = null
@@ -784,44 +778,6 @@ export class ModelController extends Base {
 
     // 当前使用的材质
     material = null
-
-    async setMaterial() {
-        
-        let {
-            textureId
-        } = this.state.value.material
-
-        if (!textureId) {
-            return
-        }
-
-        let textrue = await Api.getStickerById(textureId)
-
-        const textureLoader = new TextureLoader();
-        textureLoader.setWithCredentials(true)
-        textureLoader.setCrossOrigin('*')
-
-        let texture = await textureLoader.loadAsync(textrue.url)
-
-        // 该段代码可以将纹理均匀的显示
-        texture.wrapS = RepeatWrapping; // 设置水平重复
-        texture.wrapT = RepeatWrapping; // 设置垂直重复
-        // 设置纹理的密度
-        texture.repeat.set(2, 2); // 设置重复次数
-        texture.offset.set(0, 0); // 设置偏移
-
-        const material = new MeshStandardMaterial({
-            map: texture,
-            // color: 0x777777, // 布料颜色
-            metalness: 0,    // 金属
-            roughness: .7,   // 粗糙度
-            side: DoubleSide,
-        });
-
-        
-        this.mesh.material = this.material = material
-        message.success('材质应用成功')
-    }
 
 }
 

@@ -45,21 +45,13 @@ function findMainMeshFromGltfAndMergeGeometries(gltf) {
 
     });
 
-
     /**
      * @description 这里负责合并所有的几何体，目的是为了让其能够贴图准确，但是，合并后，之前的模型材质都会失效，原因不知道该应用哪一个
      * */
 
     let merged = mergeGeometries(geometries)
 
-    const material = new MeshStandardMaterial({
-        color: 0x777777, // 布料颜色
-        metalness: .5,    // 非金属
-        roughness: .7,   // 粗糙度
-        side: DoubleSide
-    });
-
-
+    const material = createDefaultMaterial()
 
     // 创建合并后的网格
     const mergedMesh = new Mesh(merged, material);
@@ -69,7 +61,19 @@ function findMainMeshFromGltfAndMergeGeometries(gltf) {
 }
 
 
+function createDefaultMaterial(){
+    const material = new MeshStandardMaterial({
+        color: 0x777777, // 布料颜色
+        metalness: .5,    // 非金属
+        roughness: .7,   // 粗糙度
+        side: DoubleSide
+    });
+
+    return material
+}
+
 export default class three {
     findMainMeshFromGltf = findMainMeshFromGltf
     findMainMeshFromGltfAndMergeGeometries = findMainMeshFromGltfAndMergeGeometries
+    createDefaultMaterial = createDefaultMaterial
 }

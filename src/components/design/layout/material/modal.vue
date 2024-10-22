@@ -9,24 +9,45 @@
     centered
     :destroyOnClose="true"
   >
-    <div style="padding: 12px 0; width: 100%">
+    <div
+      style="padding: 0 12px; height: 64px; width: 100%"
+      class="flex justify-between items-center"
+    >
       <el-input style="width: 360px"></el-input>
+      <div style="flex: 1"></div>
+      <div
+        v-if="currentModelController.state.materialTextureInfo"
+        class="flex items-center"
+        style="column-gap: 12px"
+      >
+        正在使用:
+        <s1-img
+          :src="currentModelController.state?.materialTextureInfo?.thumbnail?.url"
+          style="width: 32px; height: 32px"
+          fit="cover"
+        ></s1-img>
+
+        <el-button @click="removeMaterial"> 移除当前材质 </el-button>
+      </div>
     </div>
     <div style="height: 480px; overflow: auto; padding: 12px" v-infinite-scroll="getList">
       <el-row :gutter="8">
         <template v-for="item in list">
           <el-col :span="6" style="margin: 8px 0">
-            <a-dropdown>
-              <s1-img :src="item.thumbnail.url" style="background: #f7f7f7"></s1-img>
-              <template #overlay>
-                <a-menu>
-                  <a-menu-item @click="use(item)"> 使用该材质 </a-menu-item>
-                </a-menu>
-              </template>
-            </a-dropdown>
+            <div @click="itemClick(item)" :draggable="false">
+              <s1-img
+                :src="item.thumbnail.url"
+                style="background: #f7f7f7; height: 160px"
+              ></s1-img>
+            </div>
           </el-col>
         </template>
       </el-row>
+      <s1-paging-bottom
+        :loading="loading"
+        :isEmpty="isEmpty"
+        :isLastPage="isLastPage"
+      ></s1-paging-bottom>
     </div>
   </a-modal>
 </template>
@@ -36,7 +57,9 @@ import { ref, unref } from "vue";
 import { ClickOutside as vClickOutside } from "element-plus";
 import { viewDisplayController, currentModelController } from "@/components/design/store";
 import { usePaging } from "@/hooks/data/paging.ts";
+import { currentMaterialInfo, showMaterialDetailModal } from "./index.ts";
 import Api from "@/api";
+import Utils from "@/common/utils";
 
 let search = ref("");
 
@@ -49,9 +72,14 @@ const { list, getList, isLastPage, isEmpty, loading } = usePaging((params) => {
 });
 
 // 使用该材质
-function use(item) {
-  currentModelController.value.state.value.material.textureId = item.id;
-  viewDisplayController.value.showMaterialModal = false;
+function itemClick(item) {
+  showMaterialDetailModal.value = true;
+  currentMaterialInfo.value = item;
+}
+
+function removeMaterial() {
+  // 移除当前材质
+  currentModelController.value.state.materialTextureInfo = null;
 }
 </script>
 

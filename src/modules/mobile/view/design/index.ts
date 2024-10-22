@@ -18,3 +18,23 @@ export function showStickerDetail(info) {
     showStickerDetailPopup.value = true
     currentSticker.value = info
 }
+
+
+/**
+ * 材料相关
+*/
+export const showMaterialPopup = ref(false)
+export const showMaterialDetailPopup = ref(false)
+export const currentMaterialDetail = ref({} as any)
+
+
+/**
+ * 上传
+*/
+
+export const showUploadPopup = ref(false)
+
+
+
+// 展示贴纸列表
+export const showDecalPopup = ref(false)

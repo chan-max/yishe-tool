@@ -59,6 +59,7 @@ export class DecalController {
   // 用于响应式的状态
   state = reactive({
     id: null,
+    info:null,
     isLocalResource: false,
     url: null, // 贴纸的路径，用于贴花和展示
     src: null, // 等同于 url
@@ -103,6 +104,7 @@ export class DecalController {
     this.state.isLocalResource = info.isLocalResource
     this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64 || info.thumbnail?.url
     this.info = info
+    this.state.info = info
     if (this.state.isLocalResource) {
       this.info.src = this.info.base64
     }
@@ -230,7 +232,7 @@ export class DecalController {
     textureLoader.setWithCredentials(true)
     textureLoader.setCrossOrigin('*')
 
-    
+
     if (this.state.isLocalResource) {
       const image = new Image();
       image.src = this.info.base64;
@@ -245,7 +247,7 @@ export class DecalController {
     }
 
     // 这羊可以让图片颜色看起来更好
-    texture.colorSpace = SRGBColorSpace; 
+    texture.colorSpace = SRGBColorSpace;
 
     this.state.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
 
@@ -259,16 +261,14 @@ export class DecalController {
 
   private isCreating = false
 
-  async create() {
+  private geometry = null
+
+  async create(isUpdate = false) {
 
     if (this.isCreating) {
       return
     }
 
-    // 检查是否已创建，并清除旧贴纸
-    if (this.mesh) {
-      currentModelController.value.scene.remove(this.mesh);
-    }
 
     this.isCreating = true
 
@@ -281,10 +281,17 @@ export class DecalController {
       return
     }
 
-    var decalGeometry = new DecalGeometry(this.parentMesh, this.state.position, this.state.rotation, this.size.value);
-    this.mesh = new Mesh(decalGeometry, this.material);
+    this.geometry = new DecalGeometry(this.parentMesh, this.state.position, this.state.rotation, this.size.value);
 
-    currentModelController.value.scene.add(this.mesh);
+    if (isUpdate) {
+      this.mesh.geometry = this.geometry
+    } else {
+      this.geometry = new DecalGeometry(this.parentMesh, this.state.position, this.state.rotation, this.size.value);
+      // 不再需要重建一个新的网格
+      this.mesh = new Mesh(this.geometry, this.material);
+      currentModelController.value.scene.add(this.mesh);
+    }
+
 
     this.isCreating = false
   }
@@ -331,14 +338,10 @@ export class DecalController {
     this.state.initialPosition = new Vector3()
     this.state.initialPosition.copy(position)
 
-    console.log(position)
-
     const copy = intersects[0].face.normal.clone();
 
     copy.transformDirection(this.parentMesh.matrixWorld);
     copy.add(position);
-
-
 
     const helper = new Object3D();
     helper.position.copy(position);
@@ -346,8 +349,6 @@ export class DecalController {
     let rotation = helper.rotation;
 
     this.state.rotation = rotation;
-
-
 
     await this.create()
 
@@ -374,7 +375,7 @@ export class DecalController {
   // 旋转
   rotate(rotation) {
     this.state.rotation.z = rotation;
-    this.create()
+    this.create(true)
   }
 
 
@@ -397,7 +398,7 @@ export class DecalController {
   // 缩放
   scale(ratio) {
     this.state.ruleSize = ratio
-    this.create()
+    this.create(true)
   }
 
 
@@ -495,31 +496,31 @@ export class DecalController {
   resetPosition() {
     this.state.position = new Vector3()
     this.state.position.copy(this.state.initialPosition)
-    this.create()
+    this.create(true)
   }
 
   private moveDistance = .005
 
   moveTop() {
     this.state.position.y += this.moveDistance
-    this.create()
+    this.create(true)
   }
 
 
   moveDown() {
     this.state.position.y -= this.moveDistance
-    this.create()
+    this.create(true)
   }
 
 
   moveLeft() {
     this.state.position.x -= this.moveDistance
-    this.create()
+    this.create(true)
   }
 
   moveRight() {
     this.state.position.x += this.moveDistance
-    this.create()
+    this.create(true)
   }
 
 

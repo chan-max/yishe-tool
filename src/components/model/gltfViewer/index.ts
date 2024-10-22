@@ -59,8 +59,8 @@ import {
 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce } from "@/common/utils/debounce";
-
-
+import { ModelController } from "@/components/design/core/controller";
+import {createMaterialFromOptions,initBasicLight} from "@/components/design/core/controllerHelper";
 
 function initImportedModel(gltf) {
     let flag = 1;
@@ -99,27 +99,9 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
     const loadingMessage = ref('加载中...')
 
-    var currentMesh = null;
+    var mesh = null;
 
-
-    // 添加环境光
-    const ambientLight = new AmbientLight(0xffffff, 1.5); // 设置颜色和强度
-    scene.add(ambientLight);
-
-    // // 添加平行光
-    const directionalLight1 = new DirectionalLight(0xffffff, 1.5); // 设置颜色和强度
-    directionalLight1.position.set(1, 1, 1); // 设置光源位置
-    scene.add(directionalLight1);
-
-    // 添加平行光
-    const directionalLight2 = new DirectionalLight(0xffffff, 1.5); // 设置颜色和强度
-    directionalLight2.position.set(-1, -1, -1); // 设置光源位置
-    scene.add(directionalLight2);
-
-    // 添加点光源
-    const pointLight = new PointLight(0xffffff, 5); // 设置颜色和强度
-    pointLight.position.set(0, 0, 4); // 设置光源位置
-    scene.add(pointLight);
+    initBasicLight(scene)
 
     const renderer = new WebGLRenderer({
         alpha: true, // 透明背景
@@ -159,16 +141,16 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     async function initModel() {
         emits('beforeLoad')
 
-        const model = format1stf(props.model);
+        const modelInfo = format1stf(props.model);
 
-        if (!model) {
+        if (!modelInfo) {
             return;
         }
 
         loading.value = true
         loadingMessage.value = '正在获取基础模型信息...'
 
-        var baseModel = model.fetchResult || await getProductModelById(model.baseModelId)
+        var baseModel = modelInfo.fetchResult || await getProductModelById(modelInfo.baseModelId)
 
         loading.value = false
         loadingMessage.value = ''
@@ -194,24 +176,24 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
         let mesher = Utils.three.findMainMeshFromGltfAndMergeGeometries(gltf);
 
-        currentMesh = mesher.mergedMesh
+        mesh = mesher.mergedMesh
 
         // 同步摄像机位置
 
-        if (model.camera) {
+        if (modelInfo.camera) {
             camera.position.set(
-                model.camera.position.x,
-                model.camera.position.y,
-                model.camera.position.z
+                modelInfo.camera.position.x,
+                modelInfo.camera.position.y,
+                modelInfo.camera.position.z
             );
             camera.rotation.set(
-                model.camera.rotation.x,
-                model.camera.rotation.y,
-                model.camera.rotation.z
+                modelInfo.camera.rotation.x,
+                modelInfo.camera.rotation.y,
+                modelInfo.camera.rotation.z
             );
-            camera.fov = model.camera.fov;
-            camera.near = model.camera.near;
-            camera.far = model.camera.far;
+            camera.fov = modelInfo.camera.fov;
+            camera.near = modelInfo.camera.near;
+            camera.far = modelInfo.camera.far;
         }
 
         let el = gltfViewerRef.value;
@@ -242,12 +224,23 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         scene.add(gltf.scene);
 
         // 初始化贴纸
-        if (model.decals) {
+
+        if (modelInfo.state?.material) {
+            let material = await createMaterialFromOptions(modelInfo.state.material)
+            if (!material) {
+                return
+            }
+
+            mesh.material = material
+        }
+
+
+        if (modelInfo.decals?.length) {
 
             loading.value = true
             loadingMessage.value = '正在加载贴纸...'
 
-            await Promise.all(model.decals.map((decal) => {
+            await Promise.all(modelInfo.decals.map((decal) => {
 
                 return new Promise(async (resolve, reject) => {
 
@@ -271,7 +264,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     raycaster.set(position, new Vector3(0, -1, 0));
 
                     // 使用射线投射器检查模型是否与射线相交。
-                    var intersects = raycaster.intersectObject(currentMesh);
+                    var intersects = raycaster.intersectObject(mesh);
                     // 如果有交点，那么这个点就在模型上。
                     if (intersects.length <= 0) {
                         console.log("贴花位置错误");
@@ -312,7 +305,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                         wireframe: false,
                     });
 
-                    const decalGeometry = new DecalGeometry(currentMesh, position, rotation, size);
+                    const decalGeometry = new DecalGeometry(mesh, position, rotation, size);
                     var decalMesh = new Mesh(decalGeometry, material);
                     scene.add(decalMesh);
 
@@ -321,6 +314,8 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     resolve(void 0)
                 })
             }))
+
+
 
 
         }
@@ -342,8 +337,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         render();
         emits("loaded");
     }
-
-
 
 
     function screenshot() {

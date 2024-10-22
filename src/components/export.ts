@@ -11,7 +11,7 @@ import gltfViewer from './model/gltfViewer/index.vue'
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
 import imageListUploader from './imageListUploader/index.vue'
-
+import pagingBottom from './pagingBottom.vue'
 
 export const s1Plugin = {
     install(app) {
@@ -27,5 +27,6 @@ export const s1Plugin = {
         app.component('s1ImageListUploader', imageListUploader)
         app.component('s1TagsInput', tagsInput)
         app.component('s1BaseGltfViewer', baseGltfViewer)
+        app.component('s1PagingBottom', pagingBottom)
     }
 }

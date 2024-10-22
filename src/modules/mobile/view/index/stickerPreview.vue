@@ -3,7 +3,7 @@
     class="flex flex-col items-center"
     style="padding: 12px; box-sizing: border-box; width: 100vw"
   >
-    <h1 class="gradient-text" style="padding: 24px">服装印花</h1>
+    <h1 class="gradient-text" style="padding: 24px">服装贴纸</h1>
     <div class="w-full flex justify-around flex-wrap" style="row-gap: 12px">
       <template v-for="item in list">
         <div
@@ -33,7 +33,7 @@
           round
           size="small"
           @click="$router.push({ name: 'sticker' })"
-          >查看所有服装印花</van-button
+          >查看所有服装贴纸</van-button
         >
       </div>
     </div>

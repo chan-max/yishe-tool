@@ -18,7 +18,7 @@
         background: #f5f6f7;
         border-radius: 12px;
       "
-      :src="thumbnail"
+      :src="displayThumbnail"
     ></s1-image>
 
     <div class="flex flex-col" style="width: 480px">
@@ -79,16 +79,19 @@ import { message } from "ant-design-vue";
 import desimage from "@/components/image.vue";
 import { CircleCloseFilled } from "@element-plus/icons-vue";
 import Utils from "@/common/utils";
+import { saveCustomModel } from "./index.ts";
 
-const thumbnail = ref();
+const displayThumbnail = ref();
 
 const form = ref({
   name: null,
+  description: null,
+  keywords: null,
 });
 
 // 获取模型缩略图
 onBeforeMount(() => {
-  thumbnail.value = currentModelController.value.getScreenshotBase64();
+  displayThumbnail.value = currentModelController.value.getScreenshotBase64();
 });
 
 const loginStore = useLoginStatusStore();
@@ -99,40 +102,7 @@ const loadingMessage = ref("");
 async function save() {
   try {
     loading.value = true;
-    // 上传本地贴纸 , 过滤出本地的贴纸
-    let localDecals = currentModelController.value.decalControllers.filter(
-      (decal) => decal.state.isLocalResource
-    );
-
-    // 只负责把贴纸上传即可
-    if (localDecals.length) {
-      // 提示存在未上传的贴纸
-    }
-
-    const thumbnail = currentModelController.value.getScreenShotFile();
-
-    const cos = await uploadToCOS({ file: thumbnail });
-
-    const modelInfo = await currentModelController.value.exportTo1stf();
-
-    let thumbnails = await Promise.all(
-      screenshots.value.map(async (shot) => {
-        const file = Utils.transform.base64ToPngFile(shot.base64);
-        return await uploadToCOS({ file: file });
-      })
-    );
-
-    const params = {
-      name: name.value,
-      thumbnail: cos,
-      thumbnails,
-      meta: {
-        modelInfo,
-      },
-      uploaderId: loginStore.userInfo.id,
-    };
-
-    await createCustomModelApi(params);
+    await saveCustomModel(form.value);
     message.success("上传成功");
   } catch (e) {
   } finally {

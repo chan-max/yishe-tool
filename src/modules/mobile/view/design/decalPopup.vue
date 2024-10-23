@@ -2,7 +2,7 @@
   <van-popup
     round
     closeable
-    style="padding-top: 32px"
+    style="padding-top: 36px"
     v-model:show="showDecalPopup"
     position="bottom"
     :style="{ height: '90%', width: '100%' }"
@@ -21,7 +21,7 @@
     >
       <van-empty
         image="error"
-        v-if="!currentModelController.decalControllers.length"
+        v-if="!currentModelController?.decalControllers?.length"
         description="暂未使用贴纸"
       >
         <van-button round type="primary" class="bottom-button" @click="goAdd"
@@ -64,7 +64,7 @@
         </van-card>
         <van-action-bar>
           <van-action-bar-icon
-            :text="`共 ${currentModelController.decalControllers.length} 个`"
+            :text="`共 ${currentModelController?.decalControllers.length} 个`"
           />
           <van-action-bar-button @click="removeAll" type="danger">
             移除所有

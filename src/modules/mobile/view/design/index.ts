@@ -34,7 +34,11 @@ export const currentMaterialDetail = ref({} as any)
 
 export const showUploadPopup = ref(false)
 
-
-
 // 展示贴纸列表
 export const showDecalPopup = ref(false)
+
+// 图片上传弹层
+export const showUploadImagePopup = ref(false)
+
+
+export const showDecalOperationPopup = ref(false)

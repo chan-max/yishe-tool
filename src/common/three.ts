@@ -4,10 +4,14 @@ import {
     DoubleSide,
     MeshStandardMaterial,
     FrontSide,
-    BackSide
+    BackSide,
+    WebGLRenderer
 } from 'three'
 
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+
+import WebGL from 'three/examples/jsm/capabilities/WebGL.js';
+
 
 /**
  * @function 返回gltf文件中的主网格
@@ -57,11 +61,11 @@ function findMainMeshFromGltfAndMergeGeometries(gltf) {
     const mergedMesh = new Mesh(merged, material);
     gltf.scene = mergedMesh
 
-    return {mergedMesh}
+    return { mergedMesh }
 }
 
 
-function createDefaultMaterial(){
+function createDefaultMaterial() {
     const material = new MeshStandardMaterial({
         color: 0x777777, // 布料颜色
         metalness: .5,    // 非金属
@@ -72,7 +76,25 @@ function createDefaultMaterial(){
     return material
 }
 
+
 export default class three {
+
+    constructor() {
+
+        var webglSupport = false
+
+        try {
+            new WebGLRenderer({})
+            webglSupport = true
+        } catch (e) {
+            webglSupport = false
+        }
+
+        this.isSupport = WebGL.isWebGLAvailable() && webglSupport
+    }
+
+    isSupport = false
+
     findMainMeshFromGltf = findMainMeshFromGltf
     findMainMeshFromGltfAndMergeGeometries = findMainMeshFromGltfAndMergeGeometries
     createDefaultMaterial = createDefaultMaterial

@@ -59,6 +59,7 @@ import Api from "@/api";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { currentModelController } from "@/components/design/store";
+import { showToast } from "vant";
 
 const search = ref();
 
@@ -68,6 +69,10 @@ function beforeClose() {
 }
 
 function use() {
+  if (!currentOperatingBaseModelInfo.value?.id) {
+    return showToast("请先从服装模型中选择一个模型");
+  }
+
   currentModelController.value.state.materialTextureInfo = currentMaterialDetail.value;
   showMaterialPopup.value = false;
   showMaterialDetailPopup.value = false;

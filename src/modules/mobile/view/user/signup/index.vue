@@ -4,7 +4,7 @@
     class="flex flex-col items-center justify-center"
   >
     <h1 style="width: 90vw">欢迎注册衣设账号</h1>
-    <van-form @submit="onSubmit" style="width: 100vw" label-width="48px">
+    <van-form @submit="onSubmit" style="width: 100vw" label-width="64px">
       <van-cell-group inset>
         <van-field
           v-model="signupForm.account"
@@ -13,7 +13,7 @@
           placeholder="用户名或手机号"
           :rules="[
             { required: true, message: '请填写用户名' },
-            { validator: accountValidator, message: '账号长度为6-16位' },
+            { validator: accountValidator, message: '账号长度为5-16位' },
           ]"
         />
         <van-field
@@ -78,7 +78,7 @@ const signupForm = reactive({
 
 function accountValidator() {
   let len = signupForm.account.length;
-  return len >= 6 && len <= 16;
+  return len >= 5 && len <= 16;
 }
 
 function repassword() {

@@ -160,6 +160,9 @@
 
   <!-- 材质详细信息弹层 -->
   <materialDetailModal></materialDetailModal>
+
+  <!-- 卡片分享弹层 -->
+  <shareCardModal></shareCardModal>
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -256,6 +259,7 @@ import { useCustomModelDetailModal } from "@/components/design/layout/project/cu
 import decalTooltip from "./decalTooltip/index.vue";
 import materialModal from "./material/modal.vue";
 import materialDetailModal from "./material/detailModal.vue";
+import shareCardModal from "@/components/design/layout/shareCard/modal.vue";
 
 const { component: stickerDetailModal } = useStickerDetailModal();
 const { component: customModelDetailModal } = useCustomModelDetailModal();

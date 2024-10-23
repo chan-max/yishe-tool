@@ -142,7 +142,6 @@ async function createQrcodeUrl(options) {
             errorCorrectionLevel: options.errorCorrectionLevel,
             mode: 'Byte'
         },
-
         mode: 'Byte',
     }
 

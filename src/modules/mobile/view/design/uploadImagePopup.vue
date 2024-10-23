@@ -1,9 +1,10 @@
 <template>
   <van-popup
     round
-    v-model:show="showUploadPopup"
+    v-model:show="showUploadImagePopup"
     position="bottom"
     @open="open"
+    @close="close"
     closeable
     style="padding-top: 36px"
     :style="{ height: 'auto', width: '100%' }"
@@ -11,11 +12,16 @@
     :safe-area-inset-bottom="true"
   >
     <div class="flex flex-col" style="height: 100%">
-      <van-form @submit="onSubmit">
+      <van-form @submit="onSubmit" v-if="selectedFile">
         <van-cell-group inset>
-          <van-field label="缩略图">
+          <van-field label="图片">
             <template #input>
-              <van-image width="160px" height="160px" fit="contain" :src="previewUrl" />
+              <s1-image
+                v-if="selectedFile"
+                style="width: 160px; height: 160px"
+                fit="contain"
+                :src="previewUrl"
+              ></s1-image>
             </template>
           </van-field>
           <van-field
@@ -42,13 +48,16 @@
           </van-button>
         </div>
       </van-form>
+      <div v-else class="flex justify-center items-center flex-col" style="padding: 24px">
+        <van-uploader :after-read="afterRead" reupload />
+      </div>
     </div>
   </van-popup>
 </template>
 
 <script setup lang="ts">
 import { ref, onBeforeMount } from "vue";
-import { showUploadPopup } from "./index.ts";
+import { showUploadImagePopup } from "./index.ts";
 import Api from "@/api";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";
 import { usePaging } from "@/hooks/data/paging.ts";
@@ -58,29 +67,37 @@ import { message } from "ant-design-vue";
 
 const loading = ref(false);
 
+const selectedFile = ref(false);
+const previewUrl = ref();
+
 const form = ref({
   name: "",
   description: "",
   isPublic: false,
 });
 
-const previewUrl = ref();
-
-function open() {
-  previewUrl.value = currentModelController.value.getScreenshotBase64();
-}
+function open() {}
 
 async function onSubmit() {
   try {
     loading.value = true;
-    await saveCustomModel(form.value);
-    showUploadPopup.value = false;
     message.success("保存成功");
   } catch (e) {
   } finally {
     loading.value = false;
   }
 }
+
+function close() {
+  selectedFile.value = null;
+  previewUrl.value = null;
+}
+
+const afterRead = (p) => {
+  // 此时可以自行将文件上传至服务器
+  selectedFile.value = p.file;
+  previewUrl.value = p.objectUrl;
+};
 </script>
 
 <style></style>

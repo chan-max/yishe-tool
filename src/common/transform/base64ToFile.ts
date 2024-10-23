@@ -3,12 +3,12 @@ const svgContentType = 'image/svg+xml;charset=utf-8'
 
 const pngContentType = 'image/png'
 
-export function base64ToSvgFile(base64){
-    return base64ToFile(base64,(new Date().getTime()) + '.svg',svgContentType)
+export function base64ToSvgFile(base64) {
+    return base64ToFile(base64, (new Date().getTime()) + '.svg', svgContentType)
 }
 
-export function base64ToPngFile(base64){
-    return base64ToFile(base64,(new Date().getTime()) + '.png',pngContentType)
+export function base64ToPngFile(base64, name = '') {
+    return base64ToFile(base64, (name || new Date().getTime()) + '.png', pngContentType)
 }
 
 export function base64ToFile(base64Data, tempfilename = (new Date().getTime()) + '.png', contentType = pngContentType) {

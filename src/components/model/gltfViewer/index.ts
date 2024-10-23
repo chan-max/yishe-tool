@@ -60,7 +60,7 @@ import {
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce } from "@/common/utils/debounce";
 import { ModelController } from "@/components/design/core/controller";
-import {createMaterialFromOptions,initBasicLight} from "@/components/design/core/controllerHelper";
+import { createMaterialFromOptions, initBasicLight } from "@/components/design/core/controllerHelper";
 
 function initImportedModel(gltf) {
     let flag = 1;
@@ -80,6 +80,12 @@ function initImportedModel(gltf) {
 
 export const useViewer = (gltfViewerRef, props, emits) => {
 
+    if (!Utils.three.isSupport) {
+        return {
+            isSupport: ref(false)
+        }
+    }
+
     const scene = new Scene();
 
     function startAnimate() {
@@ -92,7 +98,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
     // 是否执行动画
     const animate = ref(false);
-
 
     // 是否加载中
     const loading = ref(false);
@@ -115,7 +120,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
     camera.position.set(0, 0, 0.7);
 
-
     const controller = new OrbitControls(camera, renderer.domElement);
 
     controller.enablePan = false; // 禁止右键拖拽
@@ -124,7 +128,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     controller.enableDamping = true;
     controller.dampingFactor = .1;
     controller.autoRotate = true
-
 
     controller.addEventListener('start', function () {
         emits('dragStart')
@@ -363,6 +366,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     }
 
     return {
+        isSupport: ref(true),
         emits,
         loading,
         loadingMessage,

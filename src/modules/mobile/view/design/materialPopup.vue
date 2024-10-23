@@ -2,7 +2,7 @@
   <van-popup
     round
     closeable
-    style="padding-top: 32px"
+    style="padding-top: 36px"
     v-model:show="showMaterialPopup"
     position="bottom"
     :style="{ height: '90%', width: '100%' }"
@@ -64,14 +64,24 @@
         :infinite-scroll-distance="150"
       >
         <template v-for="item in list">
-          <div style="width: 100%; height: 120px" @click="detail(item)">
-            <s1-img
-              v-if="item"
-              :src="item?.thumbnail?.url"
-              style="border-radius: 4px"
-              fit="cover"
-            ></s1-img>
-          </div>
+          <van-badge
+            style="width: 100%; height: 120px"
+            :offset="[-36, 16]"
+            :content="
+              currentModelController.state?.materialTextureInfo?.id == item.id
+                ? '正在使用'
+                : ''
+            "
+          >
+            <div @click="detail(item)" style="width: 100%; height: 120px">
+              <s1-img
+                v-if="item"
+                :src="item?.thumbnail?.url"
+                style="border-radius: 4px"
+                fit="cover"
+              ></s1-img>
+            </div>
+          </van-badge>
         </template>
 
         <div style="padding: 24px 0" class="flex w-full flex-col items-center">

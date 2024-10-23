@@ -3,7 +3,20 @@
     <van-nav-bar>
       <template #title> </template>
       <template #left>
-        <van-button plain icon="revoke" size="small" @click="back">返回</van-button>
+        <div style="column-gap: 12px" class="flex items-center">
+          <van-button plain icon="revoke" size="small" @click="back">返回</van-button>
+
+          <van-button
+            v-if="!loginStore.isLogin"
+            color="linear-gradient(to right, #f00090, #6900ff)"
+            size="small"
+            @click="login"
+          >
+            去登录
+          </van-button>
+
+          <avatar v-else></avatar>
+        </div>
       </template>
       <template #right>
         <van-button
@@ -11,7 +24,7 @@
           icon="share-o"
           icon-position="right"
           color="linear-gradient(to right, #f00090, #861fed)"
-          @click="showUploadPopup = true"
+          @click="save"
           >保存并分享</van-button
         >
       </template>
@@ -45,7 +58,7 @@
         @click="showStickerPopup = true"
       />
 
-      <van-action-bar-icon icon="upgrade" text="上传图片" />
+      <van-action-bar-icon icon="upgrade" text="上传图片" @click="toUpload" />
       <van-action-bar-icon icon="shop-o" text="设计作品" />
       <van-action-bar-icon icon="shop-collect-o" text="我的作品" />
       <van-action-bar-icon icon="flower-o" text="创建贴纸" />
@@ -53,7 +66,7 @@
         icon="bars"
         text="贴纸操作"
         @click="showDecalPopup = true"
-        :badge="currentModelController.decalControllers.length"
+        :badge="currentModelController?.decalControllers.length"
       />
       <van-action-bar-icon icon="shop-o" text="店铺" />
       <van-action-bar-icon icon="chat-o" text="客服" />
@@ -79,11 +92,16 @@
   <materialDetailPopup></materialDetailPopup>
   <uploadPopup></uploadPopup>
   <decalPopup></decalPopup>
+  <uploadImagePopup></uploadImagePopup>
+  <decalFloatingBubble></decalFloatingBubble>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { ModelController } from "@/components/design/core/controller";
+import {
+  ModelController,
+  createModelController,
+} from "@/components/design/core/controller";
 import { meta } from "./meta.ts";
 import {
   showProductPopup,
@@ -91,6 +109,7 @@ import {
   showMaterialPopup,
   showUploadPopup,
   showDecalPopup,
+  showUploadImagePopup,
 } from "./index.ts";
 import clothIcon from "@/icon/mobile/cloth.svg?url";
 import materialIcon from "@/icon/mobile/material.svg?url";
@@ -99,26 +118,65 @@ import stickerPopup from "./stickerPopup.vue";
 import stickerDetailPopup from "./stickerDetailPopup.vue";
 import materialPopup from "./materialPopup.vue";
 import materialDetailPopup from "./materialDetailPopup.vue";
+import uploadImagePopup from "./uploadImagePopup.vue";
 import uploadPopup from "./uploadPopup.vue";
 import decalPopup from "./decalPopup.vue";
+import decalFloatingBubble from "./decalFloatingBubble.vue";
+
 import { currentModelController } from "@/components/design/store";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";
 import { useRouter } from "vue-router";
+import { showToast } from "vant";
+import avatar from "@/modules/mobile/components/avatar.vue";
+import Utils from "@/common/utils";
+import { useLoginStatusStore } from "@/store/stores/login";
 
 let router = useRouter();
-
+const loginStore = useLoginStatusStore();
 const threeCanvasRef = ref();
 
-const modelController = new ModelController();
-modelController.meta = meta;
-modelController.mode = "mb";
-modelController.isMobile = true;
 onMounted(() => {
-  modelController.render(threeCanvasRef.value);
+  if (Utils.three.isSupport) {
+    const modelController = createModelController({
+      meta,
+      mode: "mb",
+      isMobile: true,
+    });
+    modelController.render(threeCanvasRef.value);
+  } else {
+    showToast("当前设备不支持，请更换设备尝试");
+  }
 });
 
 function back() {
-  router.back();
+  router.push("/");
+}
+
+function save() {
+  if (!loginStore.userInfo?.id) {
+    showToast("请先登录后在保存");
+    return;
+  }
+  showUploadPopup.value = true;
+}
+
+// 去上传
+function toUpload() {
+  if (!loginStore.userInfo?.id) {
+    showToast("请先登录后在上传");
+    return;
+  }
+
+  showUploadImagePopup.value = true;
+}
+
+function login() {
+  router.push({
+    name: "Login",
+    query: {
+      redirect: "design",
+    },
+  });
 }
 </script>
 

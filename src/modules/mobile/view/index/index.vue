@@ -2,7 +2,6 @@
   <div class="mobile-homebg">
     <div class="header w-full flex justify-between">
       <img src="/yishe2.png" style="height: 36px" />
-
       <van-button
         v-if="!loginStore.isLogin"
         color="linear-gradient(to right, #f00090, #6900ff)"
@@ -22,13 +21,7 @@
         </van-swipe>
       </van-button>
 
-      <van-image
-        v-else
-        round
-        width="36px"
-        height="36px"
-        :src="loginStore.userInfo.avatar"
-      />
+      <avatar v-else></avatar>
     </div>
 
     <div
@@ -152,7 +145,7 @@ import modelPreview from "./modelPreview.vue";
 import productPreview from "./productPreview.vue";
 import about from "./about.vue";
 import { useShare } from "@vueuse/core";
-
+import avatar from "@/modules/mobile/components/avatar.vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import Api from "@/api";
 let configStore = useConfigStore();

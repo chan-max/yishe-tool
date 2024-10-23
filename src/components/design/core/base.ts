@@ -1,7 +1,6 @@
 
 
 export class Base {
-    constructor(){
+    constructor() {
     }
-    
 }

@@ -216,7 +216,7 @@ export class DecalController {
       depthTest: true,
       depthWrite: false,
       polygonOffset: true,
-      polygonOffsetFactor: -4,
+      polygonOffsetFactor: -12,
       wireframe: false,
       roughness: this.state.roughness, // 粗糙度 , 目前没啥效果
       metalness: this.state.metalness, // 金属感觉

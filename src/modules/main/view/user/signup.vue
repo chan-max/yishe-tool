@@ -25,7 +25,7 @@
               </el-icon>
             </template>
             <template #suffix>
-              <el-tooltip content="账号由6 ～ 16位数字，字母组成" placement="right">
+              <el-tooltip content="账号由5 ～ 16位数字，字母组成" placement="right">
                 <el-icon>
                   <InfoFilled />
                 </el-icon>
@@ -161,10 +161,10 @@ const form = ref();
 const rules = reactive({
   account: [
     {
-      message: "账号由6～18位字符组成",
+      message: "账号由5～18位字符组成",
       required: true,
       max: 16,
-      min: 6,
+      min: 5,
       trigger: ["blur"],
     },
   ],
@@ -194,10 +194,10 @@ const rules = reactive({
   ],
   password: [
     {
-      message: "密码由6～18位字符组成",
+      message: "密码由5～16位字符组成",
       required: true,
       max: 16,
-      min: 6,
+      min: 5,
       trigger: ["blur"],
     },
   ],

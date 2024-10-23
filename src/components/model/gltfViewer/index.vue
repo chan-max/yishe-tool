@@ -16,7 +16,10 @@
     @touchstart="stopAnimate"
     @touchend="startAnimate"
   >
-    <div class="gltf-viewer-loading" v-if="loading">{{ loadingMessage }}</div>
+    <div class="gltf-viewer-loading" v-if="isSupport && loading">
+      {{ loadingMessage }}
+    </div>
+    <div class="not-support" v-if="!isSupport">该设备暂不支持模型预览</div>
   </div>
 </template>
 <script setup>
@@ -62,6 +65,7 @@ const {
   stopAnimate,
   controller,
   getScreenshot,
+  isSupport,
 } = useViewer(gltfViewer, props, emits);
 
 defineExpose({
@@ -92,5 +96,16 @@ defineExpose({
   backdrop-filter: blur(4px);
   color: #aaa;
   font-size: 14px;
+}
+
+.not-support {
+  width: 100%;
+  height: 100%;
+  font-weight: bold;
+  color: #fff;
+  background-color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

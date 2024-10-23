@@ -20,7 +20,7 @@
         <s1-image :src="getAvatar(model)"></s1-image>
       </div>
       <div class="name">
-        {{ model.name }} - {{ model.uploader.name || model.uploader.account }}
+        {{ model?.name }} - {{ model?.uploader?.name || model?.uploader?.account }}
       </div>
       <div style="flex: 1"></div>
     </div>
@@ -33,7 +33,7 @@ import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import desimage from "@/components/image.vue";
 
 function getAvatar(model) {
-  return model.uploader.avatar || "defaultAvatar/avatar3.png";
+  return model?.uploader?.avatar || "defaultAvatar/avatar3.png";
 }
 
 const props = defineProps(["model"]);

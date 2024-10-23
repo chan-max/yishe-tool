@@ -41,9 +41,6 @@ export async function imgToFile(img) {
     })
 }
 
-// export const imgToFile = async (img) => {
-//     return base64ToPngFile(await imgToBase64(img))
-// }
 
 export const createImgObjectURL = async (img) => {
     return URL.createObjectURL(await imgToFile(img) as Blob)
@@ -119,9 +116,9 @@ export async function svgToPngFile(svg) {
 /*
  元素转png文件
 */
-export async function htmlToPngFile(html) {
+export async function htmlToPngFile(html, name = '') {
     const b6 = await toPng(html)
-    return base64ToPngFile(b6)
+    return base64ToPngFile(b6, name)
 }
 
 

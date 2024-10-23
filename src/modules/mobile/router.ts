@@ -4,7 +4,7 @@ import index from './view/index/index.vue';
 import signup from './view/user/signup/index.vue';
 import scan from './view/scan/index.vue';
 import me from './view/me/index.vue';
-
+import { ref } from 'vue'
 
 const routes = [
     {
@@ -100,7 +100,36 @@ const routes = [
     },
 ]
 
-export const router = createRouter({
+
+
+
+const router = createRouter({
     history: createWebHashHistory(),
     routes: routes,
 });
+
+// 用于存储访问过的路由信息
+export const routeRecords = ref([])
+
+// 导航守卫
+router.beforeEach((to, from, next) => {
+    // 记录当前访问的路由
+    const routeInfo = {
+        name: to.name,
+        path: to.path,
+        timestamp: new Date().toISOString(), // 记录访问时间
+    };
+
+    routeRecords.value.push(routeInfo); // 将当前路由信息添加到数组中
+    next();
+});
+
+// 提供一个方法来获取访问过的路由信息
+export function getVisitedRoutes() {
+    return routeRecords.value;
+}
+
+
+export {
+    router
+}

@@ -38,8 +38,10 @@
                   <a-menu-item @click="deleteItem(item)">
                     <span style="color: var(--el-color-danger)">删除</span>
                   </a-menu-item>
-                  <a-menu-item> 分享给好友 </a-menu-item>
                   <a-menu-item> 发布 </a-menu-item>
+                  <a-menu-item @click="openShareCardModal(item)">
+                    生成分享卡片
+                  </a-menu-item>
                 </a-menu>
               </template>
             </a-dropdown>
@@ -105,6 +107,7 @@ import { s1Confirm } from "@/common/message";
 import { message } from "ant-design-vue";
 
 import { useCustomModelDetailModal } from "@/components/design/layout/project/customModel/customModelModal";
+import { openShareCardModal } from "@/components/design/layout/shareCard/index.ts";
 
 const { open } = useCustomModelDetailModal();
 

@@ -51,6 +51,10 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
+import WebGL from 'three/examples/jsm/capabilities/WebGL.js';
+
+
+
 import {
     currentOperatingBaseModelInfo,
 } from "@/components/design/store.ts";
@@ -66,9 +70,11 @@ const mixins = [
     eventMixin
 ];
 
+export function createModelController(opts) {
+    return new ModelController(opts)
+}
 
-
-export class ModelController extends Base {
+export class ModelController {
 
     // 模式 , 暂时不支持 mb
     mode = 'pc' // pc 或 mb
@@ -84,18 +90,14 @@ export class ModelController extends Base {
     */
     state = reactive({
         currentOperatingBaseModelInfo: null, // 当前操作的模型信息
-
         //  主模型的材质
         materialTextureInfo: null,
     })
 
-
     // 场景
     public scene: Scene = new Scene();
     // 渲染器
-    public renderer: WebGLRenderer = new WebGLRenderer({
-        antialias: true,
-    });
+    public renderer: WebGLRenderer = null
     // 摄像机
     public camera: any;
     // 当前画布容器
@@ -152,13 +154,23 @@ export class ModelController extends Base {
         );
     }
 
-    constructor() {
-        super()
+    constructor(opts = {}) {
+
         mixins.forEach((mixin) => mixin(this));
-        this.renderer.setPixelRatio(window.devicePixelRatio)
-        // 初始化时暴露场景和渲染器
+
+        this.renderer = new WebGLRenderer({
+            antialias: true,
+        });
         currentModelController.value = this;
         window.mc = this
+
+        this.renderer.setPixelRatio(window.devicePixelRatio)
+        // 初始化时暴露场景和渲染器
+
+        this.meta = meta
+        this.mode = "mb"
+        this.isMobile = true
+
     }
 
     // 初始化容器

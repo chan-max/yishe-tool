@@ -4,7 +4,7 @@
     class="flex flex-col items-center justify-center"
   >
     <h1 style="width: 90vw">欢迎登录到衣设</h1>
-    <van-form @submit="onSubmit" style="width: 100vw" label-width="48px">
+    <van-form @submit="onSubmit" style="width: 100vw" label-width="64px">
       <van-cell-group inset>
         <van-field
           v-model="loginForm.account"
@@ -52,12 +52,11 @@ import {
   showLoginFormModal,
 } from "@/modules/main/view/user/login/index.tsx";
 import { showToast } from "vant";
+import { getVisitedRoutes } from "@/modules/mobile/router";
 
 const userStore = useLoginStatusStore();
 const router = useRouter();
-
-const route = useRoute();
-
+let route = useRoute();
 const loading = ref(false);
 
 const isOnce = ref(false);
@@ -72,9 +71,16 @@ async function onSubmit(form) {
     loading.value = true;
     let res = await login(toRaw(loginForm));
     doLoginAction(res.data, isOnce.value);
-
     showToast("登录成功");
-    router.replace("/");
+
+    if (route.query.redirect) {
+      router.replace({
+        name: route.query.redirect,
+      });
+    } else {
+      router.replace("/");
+    }
+
     await nextTick();
     loading.value = false;
   } catch (e) {

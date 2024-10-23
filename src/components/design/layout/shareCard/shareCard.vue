@@ -1,0 +1,155 @@
+<template>
+  <div
+    ref="targetRef"
+    :style="{
+      width: width + 'px',
+      height: height + 'px',
+      padding: width / 72 + 'px',
+      borderRadius: width / 72 + 'px',
+    }"
+    class="share-card-bg"
+    style="
+      background-image: conic-gradient(
+        from 0deg,
+        #ff4545,
+        #00ff99,
+        #006aff,
+        #ff0095,
+        #ff4545
+      );
+      user-select: none;
+    "
+  >
+    <div
+      style="
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        background-color: rgba(28, 31, 43, 0.99);
+      "
+      :style="{
+        rowGap: width / 20 + 'px',
+        padding: `${width / 18}px`,
+        backdropFilter: `blur(${width / 2}px)`,
+        borderRadius: width / 72 + 'px',
+      }"
+      class="share-card flex flex-col items-center justify-between"
+    >
+      <s1-img
+        :src="shareCardCustomModelInfo?.thumbnail?.url"
+        :style="{
+          width: width / 1.2 + 'px',
+          height: width / 1.2 + 'px',
+          borderRadius: width / 24 + 'px',
+        }"
+        style="background: rgba(255, 255, 255, 0.05)"
+      ></s1-img>
+
+      <div
+        style="color: rgba(255, 255, 255, 0.1); font-family: ins"
+        :style="{ fontSize: width / 16 + 'px' }"
+      >
+        yishe do something special
+      </div>
+
+      <!-- <div style="flex: 1"></div> -->
+
+      <div
+        class="flex justify-between items-center"
+        style="width: 100%"
+        :style="{ padding: width / 72 + 'px' }"
+      >
+        <div>
+          <div
+            style="color: #fff; font-weight: bold"
+            :style="{ fontSize: width / 16 + 'px', width: width / 2 + 'px' }"
+            class="text-ellipsis"
+          >
+            {{ shareCardCustomModelInfo.name || "无名称" }}
+          </div>
+          <div
+            style="color: rgba(255, 255, 255, 0.6)"
+            :style="{ fontSize: width / 36 + 'px', width: width / 2 + 'px' }"
+            class="text-ellipsis"
+          >
+            {{ shareCardCustomModelInfo.description || "无描述" }}
+          </div>
+          <div
+            style="color: rgba(255, 255, 255, 0.6)"
+            :style="{ fontSize: width / 36 + 'px', width: width / 2 + 'px' }"
+            class="text-ellipsis"
+          >
+            {{ shareCardCustomModelInfo.keywords || "无标签" }}
+          </div>
+          <div
+            style="color: rgba(255, 255, 255, 0.6)"
+            :style="{ fontSize: width / 36 + 'px', width: width / 2 + 'px' }"
+            class="text-ellipsis"
+          >
+            创建于 {{ shareCardCustomModelInfo.createTime }}
+          </div>
+        </div>
+        <div ref="qrcodeRef" style="flex-shrink: 0"></div>
+      </div>
+
+      <div
+        style="font-weight: bold; color: rgba(255, 255, 255, 0.3); font-family: ins"
+        :style="{ fontSize: width / 40 + 'px' }"
+      >
+        Designed by {{ shareCardCustomModelInfo?.uploader?.account || "anonymous" }} in
+        1s.design
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { shareCardCustomModelInfo, createCustomModelShareLink } from "./index.ts";
+import QRCodeStyling from "qr-code-styling";
+import { htmlToPngFile, downloadByFile } from "@/common/transform";
+
+let width = ref(320);
+
+let height = ref(width.value / 0.618);
+
+const qrcodeRef = ref();
+
+const targetRef = ref();
+
+onMounted(() => {
+  let qr = new QRCodeStyling({
+    data: createCustomModelShareLink(shareCardCustomModelInfo.value.id), // web 端和移动端共用一个地址
+    width: width.value / 3,
+    height: width.value / 3,
+    margin: 0,
+    dotsOptions: {
+      color: "#000000", // 点的颜色
+      gradient: {
+        type: "linear", // 渐变类型
+        rotation: 90,
+        colorStops: [
+          { offset: 0, color: "#6900ff" }, // 渐变起始颜色
+          { offset: 1, color: "#6900ff" }, // 渐变结束颜色
+        ],
+      },
+    },
+    backgroundOptions: {
+      // 设置背景为透明
+      color: "transparent",
+    },
+  });
+  qr.append(qrcodeRef.value);
+});
+
+async function download() {
+  const file = await htmlToPngFile(targetRef.value, "ecard");
+  downloadByFile(file);
+}
+
+defineExpose({
+  download: download,
+});
+</script>
+
+<style lang="less"></style>

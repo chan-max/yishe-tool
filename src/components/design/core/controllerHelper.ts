@@ -29,44 +29,56 @@ import {
     RepeatWrapping
 } from "three";
 import { message } from 'ant-design-vue'
-
+import three from '../../../common/three';
+import Utils from '@/common/utils'
 
 
 export async function createMaterialFromOptions(options) {
 
     let {
-        materialTextureInfo
+        textureInfo,
+        color,
+        metalness,
+        roughness
     } = options
-
-    if (!materialTextureInfo) {
-        return
-    }
-
 
 
     message.loading({ content: `正在生成材质...`, key: 'loadingmaterial', duration: 0 });
 
-    let textrue = materialTextureInfo
+    let map = null
 
-    const textureLoader = new TextureLoader();
-    textureLoader.setWithCredentials(true)
-    textureLoader.setCrossOrigin('*')
+    if (textureInfo) {
 
-    let texture = await textureLoader.loadAsync(textrue.url)
 
-    // 该段代码可以将纹理均匀的显示
-    texture.wrapS = RepeatWrapping; // 设置水平重复
-    texture.wrapT = RepeatWrapping; // 设置垂直重复
-    // 设置纹理的密度
-    texture.repeat.set(2, 2); // 设置重复次数
-    texture.offset.set(0, 0); // 设置偏移
+        let textrue = textureInfo
+
+        const textureLoader = new TextureLoader();
+        textureLoader.setWithCredentials(true)
+        textureLoader.setCrossOrigin('*')
+
+        let texture = await textureLoader.loadAsync(textrue.url)
+
+        // 该段代码可以将纹理均匀的显示
+        texture.wrapS = RepeatWrapping; // 设置水平重复
+        texture.wrapT = RepeatWrapping; // 设置垂直重复
+
+
+        // 设置纹理的密度
+        texture.repeat.set(2, 2); // 设置重复次数
+        texture.offset.set(0, 0); // 设置偏移
+
+        map = texture
+    }
+
+
 
     const material = new MeshStandardMaterial({
-        map: texture,
+        map: map,
         // color: 0x777777, // 布料颜色
-        metalness: 0,    // 金属
-        roughness: .7,   // 粗糙度
+        metalness: metalness,    // 金属
+        roughness: roughness,   // 粗糙度
         side: DoubleSide,
+        color: color,
     });
 
     message.destroy('loadingmaterial');

@@ -4,7 +4,7 @@
     :style="{
       width: width + 'px',
       height: height + 'px',
-      padding: width / 72 + 'px',
+      padding: width / 108 + 'px',
       borderRadius: width / 72 + 'px',
     }"
     class="share-card-bg"
@@ -49,7 +49,7 @@
         style="color: rgba(255, 255, 255, 0.1); font-family: ins"
         :style="{ fontSize: width / 16 + 'px' }"
       >
-        yishe do something special
+        yishe . do something special
       </div>
 
       <!-- <div style="flex: 1"></div> -->

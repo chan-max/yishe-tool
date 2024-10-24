@@ -91,7 +91,11 @@ export class ModelController {
     state = reactive({
         currentOperatingBaseModelInfo: null, // 当前操作的模型信息
         //  主模型的材质
-        materialTextureInfo: null,
+        material: {
+            textureInfo: null,
+            metalness: 0,    // 金属
+            roughness: .7,   // 粗糙度
+        },
     })
 
     // 场景
@@ -253,20 +257,12 @@ export class ModelController {
 
         // this.initHdr()
 
-        watch(() => this.state.materialTextureInfo, async () => {
+        watch(() => this.state.material, async () => {
+            let material = await createMaterialFromOptions(this.state.material)
 
-            if (!this.state.materialTextureInfo) {
-                if (currentModelController.value.mesh) {
-                    currentModelController.value.mesh.material = Utils.three.createDefaultMaterial();
-                }
-                return
-            }
-
-            let material = await createMaterialFromOptions(this.state)
             this.material = material
             if (this.mesh) {
                 this.mesh.material = material
-                message.success('材质渲染成功')
             }
         }, {
             deep: true
@@ -327,7 +323,7 @@ export class ModelController {
         this.removeMainModel();
         this.removeDecals()
         this.material = null
-        this.state.materialTextureInfo = null
+        this.state.material.textureInfo = null
 
         this.callHook(this.meta.onMainModelLoading)
 
@@ -790,6 +786,10 @@ export class ModelController {
 
     // 当前使用的材质
     material = null
+
+
+
+
 
 }
 

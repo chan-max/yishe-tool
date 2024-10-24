@@ -21,5 +21,6 @@ const props = defineProps({
 .paging-bottom {
   color: #ccc;
   font-weight: bold;
+  box-sizing: border-box;
 }
 </style>

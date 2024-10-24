@@ -78,6 +78,7 @@ declare module 'vue' {
     Loading: typeof import('./src/components/design/layout/loading.vue')['default']
     Main: typeof import('./src/components/design/layout/main.vue')['default']
     Masonry: typeof import('./src/components/layout/masonry/index.vue')['default']
+    Material: typeof import('./src/components/design/layout/material/index.vue')['default']
     Menu: typeof import('./src/components/design/layout/headerMenuDropdown/menu.vue')['default']
     MenuItem: typeof import('./src/components/design/layout/headerMenuDropdown/menuItem.vue')['default']
     Modal: typeof import('./src/components/design/components/colorPicker/modal.vue')['default']

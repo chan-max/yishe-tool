@@ -73,7 +73,7 @@ function use() {
     return showToast("请先从服装模型中选择一个模型");
   }
 
-  currentModelController.value.state.materialTextureInfo = currentMaterialDetail.value;
+  currentModelController.value.state.material.textureInfo = currentMaterialDetail.value;
   showMaterialPopup.value = false;
   showMaterialDetailPopup.value = false;
 }

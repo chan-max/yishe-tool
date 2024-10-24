@@ -16,13 +16,13 @@
       <el-input style="width: 360px"></el-input>
       <div style="flex: 1"></div>
       <div
-        v-if="currentModelController.state.materialTextureInfo"
+        v-if="currentModelController.state.material.textureInfo"
         class="flex items-center"
         style="column-gap: 12px"
       >
         正在使用:
         <s1-img
-          :src="currentModelController.state?.materialTextureInfo?.thumbnail?.url"
+          :src="currentModelController.state?.material.textureInfo?.thumbnail?.url"
           style="width: 32px; height: 32px"
           fit="cover"
         ></s1-img>
@@ -79,7 +79,7 @@ function itemClick(item) {
 
 function removeMaterial() {
   // 移除当前材质
-  currentModelController.value.state.materialTextureInfo = null;
+  currentModelController.value.state.material.textureInfo = null;
 }
 </script>
 

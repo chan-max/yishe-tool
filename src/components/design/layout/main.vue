@@ -260,6 +260,7 @@ import decalTooltip from "./decalTooltip/index.vue";
 import materialModal from "./material/modal.vue";
 import materialDetailModal from "./material/detailModal.vue";
 import shareCardModal from "@/components/design/layout/shareCard/modal.vue";
+import material from "@/components/design/layout/material/index.vue";
 
 const { component: stickerDetailModal } = useStickerDetailModal();
 const { component: customModelDetailModal } = useCustomModelDetailModal();
@@ -290,6 +291,10 @@ const leftComponent = computed(() => {
 
   if (showSticker.value) {
     return sticker;
+  }
+
+  if (viewDisplayController.value.showMaterialControl) {
+    return material;
   }
 });
 

@@ -56,10 +56,8 @@
     <el-tooltip :hide-after="0" content="服装材质" placement="right">
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': viewDisplayController.showMaterialModal }"
-        @click="
-          viewDisplayController.showMaterialModal = !viewDisplayController.showMaterialModal
-        "
+        :class="{ 'menu-bar-item-focus': viewDisplayController.showMaterialControl }"
+        @click="materialControlClick"
       >
         <div class="menu-bar-item-icon">
           <s1-icon name="material"></s1-icon>
@@ -159,6 +157,7 @@ import {
   showCanvasLayout,
   currentOperatingBaseModelInfo,
   viewDisplayController,
+  clearLeftLayout,
 } from "../store";
 
 import iconWorkspace from "@/icon/workspace.svg?component";
@@ -186,6 +185,15 @@ import iconProject from "@/components/design/assets/icon/project.svg?component";
 import Utils from "@/common/utils";
 
 import desimage from "@/components/image.vue";
+
+function materialControlClick() {
+  if (viewDisplayController.value.showMaterialControl) {
+    viewDisplayController.value.showMaterialControl = false;
+  } else {
+    clearLeftLayout();
+    viewDisplayController.value.showMaterialControl = true;
+  }
+}
 </script>
 <style lang="less">
 .menu-bar {

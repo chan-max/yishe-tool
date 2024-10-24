@@ -39,7 +39,7 @@ import { currentMaterialInfo, showMaterialDetailModal } from "./index.ts";
 
 // 使用该材质
 function use() {
-  currentModelController.value.state.materialTextureInfo = currentMaterialInfo.value;
+  currentModelController.value.state.material.textureInfo = currentMaterialInfo.value;
   viewDisplayController.value.showMaterialModal = false;
   showMaterialDetailModal.value = false;
 }

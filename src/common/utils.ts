@@ -129,6 +129,7 @@ import { Type } from './type'
 import { Encrypt } from './encrypt.ts'
 import { Color } from './color.ts'
 import time from './time.ts'
+import { Random } from './random.ts';
 
 import three from './three.ts'
 
@@ -211,6 +212,8 @@ class Utils {
 
 
     three = new three()
+
+    random = new Random()
 }
 
 

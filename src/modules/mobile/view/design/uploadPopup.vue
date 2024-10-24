@@ -75,7 +75,7 @@ async function onSubmit() {
     loading.value = true;
     await saveCustomModel(form.value);
     showUploadPopup.value = false;
-    message.success("保存成功");
+    message.success("上传成功");
   } catch (e) {
   } finally {
     loading.value = false;

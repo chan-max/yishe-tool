@@ -16,21 +16,22 @@
 
       <div
         style="margin-top: 12px"
-        v-if="currentModelController.state.materialTextureInfo"
+        v-if="currentModelController.state?.material?.textureInfo"
       >
         <van-card
           tag="当前"
           :desc="
-            currentModelController.state.materialTextureInfo.description || '暂无相关描述'
+            currentModelController.state.material.textureInfo.description ||
+            '暂无相关描述'
           "
-          :title="currentModelController.state.materialTextureInfo.name || '暂无名称'"
-          :thumb="currentModelController.state.materialTextureInfo.thumbnail.url"
+          :title="currentModelController.state.material.textureInfo.name || '暂无名称'"
+          :thumb="currentModelController.state.material.textureInfo.thumbnail.url"
           style="margin-top: 8px"
         >
           <template #tags>
-            <template v-if="currentModelController.state.materialTextureInfo.keywords">
+            <template v-if="currentModelController.state.material.textureInfo.keywords">
               <van-tag
-                v-for="item in currentModelController.state.materialTextureInfo.keywords.split(
+                v-for="item in currentModelController.state.material.textureInfo.keywords.split(
                   ','
                 )"
                 plain
@@ -68,7 +69,7 @@
             style="width: 100%; height: 120px"
             :offset="[-36, 16]"
             :content="
-              currentModelController.state?.materialTextureInfo?.id == item.id
+              currentModelController.state?.material.textureInfo?.id == item.id
                 ? '正在使用'
                 : ''
             "
@@ -128,7 +129,7 @@ function detail(item) {
 
 function removeMaterial() {
   // 移除当前材质
-  currentModelController.value.state.materialTextureInfo = null;
+  currentModelController.value.state.material.textureInfo = null;
 }
 </script>
 

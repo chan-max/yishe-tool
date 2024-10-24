@@ -49,8 +49,8 @@
         size="large"
         plain
         round
-        @click="goModelPreview"
-        >随便逛逛</van-button
+        @click="goMarket"
+        >进入商城</van-button
       >
       <van-button
         style="background: transparent"
@@ -198,6 +198,12 @@ function login() {
 function goDesign() {
   router.push({
     name: "design",
+  });
+}
+
+function goMarket() {
+  router.push({
+    name: "market",
   });
 }
 </script>

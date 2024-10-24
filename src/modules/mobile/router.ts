@@ -4,6 +4,7 @@ import index from './view/index/index.vue';
 import signup from './view/user/signup/index.vue';
 import scan from './view/scan/index.vue';
 import me from './view/me/index.vue';
+
 import { ref } from 'vue'
 
 const routes = [
@@ -93,6 +94,24 @@ const routes = [
         path: "/design",
         name: "design",
         component: () => import('./view/design/index.vue'),
+        meta: {
+            header: false,
+            footer: false,
+        }
+    },
+    {
+        path: "/preview",
+        name: "preview",
+        component: () => import('./view/preview/index.vue'),
+        meta: {
+            header: false,
+            footer: false,
+        }
+    },
+    {
+        path: "/market",
+        name: "market",
+        component: () => import('./view/market/index.vue'),
         meta: {
             header: false,
             footer: false,

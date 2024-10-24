@@ -239,6 +239,7 @@ export function clearLeftLayout() {
     showCanvasLayout.value = false
     showSticker.value = false
     showDecalControl.value = false
+    viewDisplayController.value.showMaterialControl = false
 }
 
 // 清空右侧布局
@@ -260,6 +261,8 @@ watch(showCanvasLayout, (value) => {
         // showBasicCanvas.value = false
     }
 })
+
+
 
 
 // 清空所有布局元素
@@ -351,10 +354,10 @@ export const viewDisplayController = ref({
 
     // 服装材料相关弹层
     showMaterialModal: false,
+    showMaterialControl:false,
     // 材质详细信息弹层
     showMaterialDetailModal: false,
 })
-
 
 
 /*

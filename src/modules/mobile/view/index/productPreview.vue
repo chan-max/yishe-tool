@@ -25,7 +25,7 @@
         <van-button type="default" round size="small">更多</van-button>
       </div>
       <div v-else>没有了~</div>
-      <div style="margin-top: 24px">
+      <!-- <div style="margin-top: 24px">
         <van-button
           icon="guide-o"
           type="default"
@@ -34,7 +34,7 @@
           @click="$router.push({ name: 'productModel' })"
           >查看所有服装产品</van-button
         >
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

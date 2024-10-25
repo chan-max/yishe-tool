@@ -3,11 +3,7 @@
         <div style="flex:1;"></div>
         <el-button  round bg text @click="uplaodClick"> 上传新模型 </el-button>
     </div> -->
-  <div
-    v-infinite-scroll="inscroll"
-    :infinite-scroll-distance="150"
-    style="height: calc(100% - 64px)"
-  >
+  <div v-infinite-scroll="inscroll" :infinite-scroll-distance="150">
     <el-row style="row-gap: 8px; width: 1000px">
       <el-col :span="24 / column" v-for="item in list" align="center">
         <div

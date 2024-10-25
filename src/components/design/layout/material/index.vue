@@ -51,6 +51,16 @@
           size="small"
         />
       </el-form-item>
+
+      <el-form-item label="纹理密度">
+        <el-slider
+          :min="1"
+          :max="10"
+          :step="1"
+          v-model="currentModelController.state.material.textureRepeat"
+          size="small"
+        />
+      </el-form-item>
     </el-form>
   </div>
 </template>

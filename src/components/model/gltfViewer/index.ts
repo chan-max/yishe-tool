@@ -37,6 +37,7 @@ import {
     AxesHelper,
     Vector2,
     SRGBColorSpace,
+    MeshStandardMaterial,
 } from "three";
 
 import {
@@ -60,7 +61,7 @@ import {
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce } from "@/common/utils/debounce";
 import { ModelController } from "@/components/design/core/controller";
-import { createMaterialFromOptions, initBasicLight } from "@/components/design/core/controllerHelper";
+import { createMaterialFromOptions, initBasicLight, initHdr } from "@/components/design/core/controllerHelper";
 
 function initImportedModel(gltf) {
     let flag = 1;
@@ -106,13 +107,15 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
     var mesh = null;
 
-    initBasicLight(scene)
 
     const renderer = new WebGLRenderer({
         alpha: true, // 透明背景
     });
 
     renderer.setPixelRatio(window.devicePixelRatio)
+
+    // initBasicLight(scene)
+    initHdr(renderer, scene)
 
     const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
 
@@ -247,7 +250,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
                 return new Promise(async (resolve, reject) => {
 
-                    var { id, position, rotation, size } = decal;
+                    var { id, position, rotation, size, } = decal;
 
                     if (!id) {
                         return resolve(void 0);
@@ -298,7 +301,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
                     texture.colorSpace = SRGBColorSpace;
 
-                    const material = new MeshPhongMaterial({
+                    const material = new MeshStandardMaterial({
                         map: texture,
                         transparent: true,
                         depthTest: true,
@@ -306,6 +309,8 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                         polygonOffset: true,
                         polygonOffsetFactor: -4,
                         wireframe: false,
+                        metalness:decal.state.metalness,
+                        roughness:decal.state.roughness,
                     });
 
                     const decalGeometry = new DecalGeometry(mesh, position, rotation, size);

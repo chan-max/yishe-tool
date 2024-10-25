@@ -6,8 +6,10 @@ import {
   MeshBasicMaterial,
   MeshPhongMaterial,
   MeshPhysicalMaterial,
+  MeshStandardMaterial,
   Object3D,
   Raycaster,
+  RepeatWrapping,
   SRGBColorSpace,
   Texture,
   TextureLoader,
@@ -59,7 +61,7 @@ export class DecalController {
   // 用于响应式的状态
   state = reactive({
     id: null,
-    info:null,
+    info: null,
     isLocalResource: false,
     url: null, // 贴纸的路径，用于贴花和展示
     src: null, // 等同于 url
@@ -79,7 +81,7 @@ export class DecalController {
 
     imgAspectRatio: 1, // 当前贴花图的宽高比
 
-    roughness: .7, // 粗糙度 
+    roughness: .9, // 粗糙度 
     metalness: 0, // 金属感觉
   })
 
@@ -210,7 +212,6 @@ export class DecalController {
   async initTexture() {
 
     // 初始化材质
-
     const basicTextureOptions = {
       transparent: true,
       depthTest: true,
@@ -232,7 +233,10 @@ export class DecalController {
     textureLoader.setWithCredentials(true)
     textureLoader.setCrossOrigin('*')
 
+    let sourceUrl = this.img?.src || this.info.src || this.info.thumbnail?.url
 
+
+    // 本地穿件的图片
     if (this.state.isLocalResource) {
       const image = new Image();
       image.src = this.info.base64;
@@ -243,15 +247,22 @@ export class DecalController {
         texture.needsUpdate = true; // 更新纹理
       };
     } else {
-      texture = await textureLoader.loadAsync(this.img?.src || this.info.src || this.info.thumbnail?.url)
+      texture = await textureLoader.loadAsync(sourceUrl)
     }
 
     // 这羊可以让图片颜色看起来更好
     texture.colorSpace = SRGBColorSpace;
 
+    texture.wrapS = RepeatWrapping; // 设置水平重复
+    texture.wrapT = RepeatWrapping; // 设置垂直重复
+
+    // 设置纹理的密度
+    texture.repeat.set(1, 1); // 设置重复次数
+    texture.offset.set(0, 0); // 设置偏移
+
     this.state.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
 
-    this.material = new MeshPhysicalMaterial({
+    this.material = new MeshStandardMaterial({
       map: texture,
       ...basicTextureOptions
     });
@@ -564,6 +575,7 @@ export class DecalController {
 
       modelValueSize: this.state.modelValueSize,
       modelValueRotate: this.state.modelValueRotate,
+      state: Utils.clone(this.state),
     };
   }
 }

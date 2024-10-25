@@ -66,7 +66,7 @@
       </div>
     </el-tooltip>
 
-    <el-tooltip :hide-after="0" content="贴纸画布" placement="right">
+    <el-tooltip :hide-after="0" content="制作贴纸" placement="right">
       <div
         class="menu-bar-item"
         :class="{ 'menu-bar-item-focus': showCanvasLayout }"
@@ -75,7 +75,7 @@
         <div class="menu-bar-item-icon">
           <icon-canvas></icon-canvas>
         </div>
-        <span>贴纸画布</span>
+        <span>制作贴纸</span>
       </div>
     </el-tooltip>
 

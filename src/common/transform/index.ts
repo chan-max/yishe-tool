@@ -63,6 +63,18 @@ export async function downloadByFile(file) {
     a.click()
 }
 
+
+export function getSvgTextContentByUrl(svgUrl) {
+    return fetch(svgUrl)
+        .then(response => response.text()) // 获取SVG文本
+        .then(svgText => {
+            return svgText
+        })
+        .catch(error => {
+            console.error("获取SVG文本内容时出错:", error);
+        });
+}
+
 export function svgToBase64(svg) {
 
     if (typeof svg == 'string') {

@@ -39,11 +39,13 @@ export async function createMaterialFromOptions(options) {
         textureInfo,
         color,
         metalness,
-        roughness
+        roughness,
+        textureRepeat
     } = options
 
+    color ||= '#ffffff'
 
-    message.loading({ content: `正在生成材质...`, key: 'loadingmaterial', duration: 0 });
+    // message.loading({ content: `正在生成材质...`, key: 'loadingmaterial', duration: 0 });
 
     let map = null
 
@@ -64,7 +66,7 @@ export async function createMaterialFromOptions(options) {
 
 
         // 设置纹理的密度
-        texture.repeat.set(2, 2); // 设置重复次数
+        texture.repeat.set(textureRepeat, textureRepeat); // 设置重复次数
         texture.offset.set(0, 0); // 设置偏移
 
         map = texture
@@ -81,7 +83,7 @@ export async function createMaterialFromOptions(options) {
         color: color,
     });
 
-    message.destroy('loadingmaterial');
+    // message.destroy('loadingmaterial');
     return material
 }
 
@@ -107,4 +109,27 @@ export function initBasicLight(scene) {
     const pointLight = new PointLight(0xffffff, 5); // 设置颜色和强度
     pointLight.position.set(0, 0, 4); // 设置光源位置
     scene.add(pointLight);
+}
+
+
+import { getSvgTextContentByUrl, svgToBase64, svgToPngFile } from '@/common/transform';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
+
+
+export function initHdr(renderer,scene){
+    const pmremGenerator = new PMREMGenerator(renderer);
+    const hdriLoader = new RGBELoader()
+
+    /**
+     * @example 比较合适的 , 从上到下排名
+     * cloud.hdr
+     * room3.hdr
+     * cloth5.hdr
+    */
+
+    hdriLoader.load('/3d/cloud.hdr', (texture) => {
+        const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+        texture.dispose();
+        scene.environment = envMap
+    });
 }

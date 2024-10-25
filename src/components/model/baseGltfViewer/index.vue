@@ -41,6 +41,8 @@ import {
   Vector2,
 } from "three";
 import Utils from "@/common/utils";
+import { createMaterialFromOptions } from "@/components/design/core/controllerHelper";
+import { initBasicLight } from "@/components/design/core/controllerHelper";
 
 const loading = ref(false);
 
@@ -77,24 +79,7 @@ camera.lookAt(0, 0, 0);
 
 camera.position.set(0, 0, 0.7);
 
-// 添加环境光
-const ambientLight = new AmbientLight(0xffffff, 0.5); // 设置颜色和强度
-scene.add(ambientLight);
-
-// 添加平行光
-const directionalLight1 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
-directionalLight1.position.set(1, 1, 1); // 设置光源位置
-scene.add(directionalLight1);
-
-// 添加平行光
-const directionalLight2 = new DirectionalLight(0xffffff, 0.4); // 设置颜色和强度
-directionalLight2.position.set(-1, -1, -1); // 设置光源位置
-scene.add(directionalLight2);
-
-// 添加点光源
-const pointLight = new PointLight(0xffffff, 0.4); // 设置颜色和强度
-pointLight.position.set(0, 0, 2); // 设置光源位置
-scene.add(pointLight);
+initBasicLight(scene);
 
 const getWidth = (el) => {
   if (!el) {
@@ -139,6 +124,11 @@ async function initModel() {
   let gltf = await gltfLoader(props.src);
 
   currentMesh = Utils.three.findMainMeshFromGltf(gltf);
+
+  let mesher = Utils.three.findMainMeshFromGltfAndMergeGeometries(gltf);
+  currentMesh = mesher.mergedMesh;
+
+  currentMesh.material = await createMaterialFromOptions({});
 
   let el = gltfViewer.value;
 

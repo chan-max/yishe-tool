@@ -62,7 +62,7 @@ import {
 import Api from '@/api'
 import Utils from '@/common/utils'
 
-import { createMaterialFromOptions, initBasicLight } from './controllerHelper'
+import { createMaterialFromOptions, initBasicLight, initHdr } from './controllerHelper'
 
 
 const mixins = [
@@ -95,6 +95,7 @@ export class ModelController {
             textureInfo: null,
             metalness: 0,    // 金属
             roughness: .7,   // 粗糙度
+            textureRepeat: 2,
         },
     })
 
@@ -246,7 +247,7 @@ export class ModelController {
             return;
         }
         this.initCanvasContainer(target);
-        initBasicLight(this.scene)
+        // initBasicLight(this.scene)
 
         // 先不设置 bg ，需要保留无背景
         this.setBgColor('#eee', 0)
@@ -255,15 +256,10 @@ export class ModelController {
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);
         }
 
-        // this.initHdr()
+        initHdr(this.renderer, this.scene)
 
         watch(() => this.state.material, async () => {
-            let material = await createMaterialFromOptions(this.state.material)
-
-            this.material = material
-            if (this.mesh) {
-                this.mesh.material = material
-            }
+            this.setMaterial()
         }, {
             deep: true
         })
@@ -271,7 +267,15 @@ export class ModelController {
         this.execRender();
 
         this.isMounted = true;
+    }
 
+    async setMaterial() {
+        let material = await createMaterialFromOptions(this.state.material)
+
+        this.material = material
+        if (this.mesh) {
+            this.mesh.material = material
+        }
     }
 
     // 设置背景颜色
@@ -314,7 +318,6 @@ export class ModelController {
 
     public async setMainModel(url) {
 
-
         // if(this.gltf){
         //     return message.info('当前控制台中存在模型，请先清理')
         // }
@@ -330,6 +333,9 @@ export class ModelController {
         try {
             this.gltf = await gltfLoader(url);
             this.callHook(this.meta.onMainModelLoaded)
+
+            // 防止先设置材质但模型还没加载完成的情况
+            this.setMaterial()
         } catch (e) {
             this.callHook(this.meta.onMainModelLoadedError)
             return
@@ -502,15 +508,6 @@ export class ModelController {
         await decal.stickToMousePosition(cb)
     }
 
-    initHdr() {
-        const pmremGenerator = new PMREMGenerator(this.renderer);
-        const hdriLoader = new RGBELoader()
-        hdriLoader.load('/3d/env.hdr', (texture) => {
-            const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-            texture.dispose();
-            this.scene.environment = envMap
-        });
-    }
 
     // 添加延迟点击贴纸
     addClickDelaySticker(stickerInfo) {

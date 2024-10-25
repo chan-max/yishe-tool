@@ -9,7 +9,7 @@
         <template v-if="currentModelController.state.material.textureInfo">
           <div>
             <s1-img
-              style="background: #f7f7f7"
+              style="background: #f7f7f7; width: 200px; height: 200px"
               :src="currentModelController.state.material?.textureInfo?.thumbnail?.url"
             ></s1-img>
             <el-button

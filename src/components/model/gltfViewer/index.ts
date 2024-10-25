@@ -309,8 +309,8 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                         polygonOffset: true,
                         polygonOffsetFactor: -4,
                         wireframe: false,
-                        metalness:decal.state.metalness,
-                        roughness:decal.state.roughness,
+                        metalness:decal.metalness,
+                        roughness:decal.roughness,
                     });
 
                     const decalGeometry = new DecalGeometry(mesh, position, rotation, size);

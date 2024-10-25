@@ -42,7 +42,7 @@ import {
 } from "three";
 import Utils from "@/common/utils";
 import { createMaterialFromOptions } from "@/components/design/core/controllerHelper";
-import { initBasicLight } from "@/components/design/core/controllerHelper";
+import { initBasicLight, initHdr } from "@/components/design/core/controllerHelper";
 
 const loading = ref(false);
 
@@ -79,20 +79,8 @@ camera.lookAt(0, 0, 0);
 
 camera.position.set(0, 0, 0.7);
 
-initBasicLight(scene);
-
-const getWidth = (el) => {
-  if (!el) {
-    return;
-  }
-  return Number(window.getComputedStyle(el).width.slice(0, -2));
-};
-const getHeight = (el) => {
-  if (!el) {
-    return;
-  }
-  return Number(window.getComputedStyle(el).height.slice(0, -2));
-};
+// initBasicLight(scene);
+initHdr(renderer, scene);
 
 function initImportedModel(gltf) {
   let flag = 0.8;
@@ -137,8 +125,8 @@ async function initModel() {
   }
 
   function resetCameraAspect() {
-    let width = getWidth(el);
-    let height = getHeight(el);
+    let width = Utils.getComputedWidth(el);
+    let height = Utils.getComputedHeight(el);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);
@@ -159,7 +147,7 @@ async function initModel() {
 
   el && resizeOb.observe(el);
 
-  renderer.setSize(getWidth(el), getHeight(el));
+  renderer.setSize(Utils.getComputedWidth(el), Utils.getComputedHeight(el));
 
   initImportedModel(gltf);
 

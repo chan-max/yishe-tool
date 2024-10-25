@@ -68,10 +68,7 @@ export class DecalController {
 
     // 外部绑定的 旋转和尺寸值，位置是固定的所以不需要输入
     modelValueRotate: null,
-    modelValueSize: null,
-
-
-    ruleSize: .2,
+    modelValueSize: 20,
 
     rotation: null,
     position: null,
@@ -184,7 +181,7 @@ export class DecalController {
 
   // 尺寸
   size = computed(() => {
-    return new Vector3(this.state.ruleSize, this.state.ruleSize / this.state.imgAspectRatio, this.state.ruleSize);
+    return new Vector3(this.state.modelValueSize / 100, this.state.modelValueSize / 100 / this.state.imgAspectRatio, this.state.modelValueSize / 100);
   })
 
 
@@ -408,7 +405,6 @@ export class DecalController {
 
   // 缩放
   scale(ratio) {
-    this.state.ruleSize = ratio
     this.create(true)
   }
 
@@ -571,11 +567,10 @@ export class DecalController {
   */
       size,
       rotation,
-      ruleSize: this.state.ruleSize,
-
       modelValueSize: this.state.modelValueSize,
       modelValueRotate: this.state.modelValueRotate,
-      state: Utils.clone(this.state),
+      metalness: this.state.metalness,
+      roughness: this.state.roughness,
     };
   }
 }

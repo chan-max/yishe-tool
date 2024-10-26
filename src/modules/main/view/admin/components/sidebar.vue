@@ -9,7 +9,7 @@
   >
     <div class="flex items-center w-full" style="padding: 24px; box-sizing: border-box">
       <div class="flex items-center" style="column-gap: 8px">
-        <img style="width: 18px; height: 18px" src="/logo.svg" />
+        <img style="width: 18px; height: 18px" src="/favicon.png" />
         <span style="color: #333; font-weight: bold; font-size: 16px">{{ title }}</span>
       </div>
     </div>

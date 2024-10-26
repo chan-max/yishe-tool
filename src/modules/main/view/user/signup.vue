@@ -2,7 +2,7 @@
   <div class="signup-container">
     <div class="signup-form">
       <div class="flex items-center">
-        <img src="/logo.svg" style="width: 20px; height: 20px; margin-right: 8px" />
+        <img src="/favicon.png" style="width: 20px; height: 20px; margin-right: 8px" />
         <div
           style="
             font-size: 14px;

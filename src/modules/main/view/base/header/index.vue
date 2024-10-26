@@ -14,7 +14,7 @@
     <div class="left flex items-center">
       <img
         class="logo"
-        src="logo.svg"
+        src="favicon.png"
         style="width: 32px; height: 32px; object-fit: contain"
         @click="$router.push({ name: 'Design' })"
       />

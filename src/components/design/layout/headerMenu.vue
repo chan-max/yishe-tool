@@ -14,7 +14,7 @@
       class="designiy-header-logo flex items-center justify-center"
       style="width: 72px; height: 100%"
     >
-      <img src="logo.svg" style="height: 36px" object-fit="contain" />
+      <img src="favicon.png" style="height: 36px" object-fit="contain" />
     </div>
 
     <el-popover width="240" trigger="click" popper-style="padding:2rem">

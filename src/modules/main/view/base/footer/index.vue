@@ -17,7 +17,12 @@
         <div>tel : 18742539196</div>
         <div>wechat: 18742539196</div>
       </div>
+      <div class="column">
+        <div style="flex: 1"></div>
+        <img style="width: 36px; height: 36px" src="/clover.svg" />
+      </div>
     </div>
+
     <hr />
     <div class="beian">
       ICP备案号：<a class="icp" :href="configStore.json.icp.link" target="_blank">
@@ -49,7 +54,7 @@ let configStore = useConfigStore();
 
 .columns {
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
   width: 100%;
 }
 

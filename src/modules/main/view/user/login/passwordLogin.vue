@@ -8,7 +8,7 @@
         align-items: center;
       "
     >
-      <img src="/logo.svg" style="width: 20px; height: 20px; margin-right: 8px" />
+      <img src="/favicon.png" style="width: 20px; height: 20px; margin-right: 8px" />
       <div style="font-size: 14px; font-weight: bold; color: #666; text-align: left">
         登录衣设账号
       </div>

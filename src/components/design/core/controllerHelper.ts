@@ -26,7 +26,8 @@ import {
     MathUtils,
     PMREMGenerator,
     MeshStandardMaterial,
-    RepeatWrapping
+    RepeatWrapping,
+    ACESFilmicToneMapping
 } from "three";
 import { message } from 'ant-design-vue'
 import three from '../../../common/three';
@@ -116,9 +117,13 @@ import { getSvgTextContentByUrl, svgToBase64, svgToPngFile } from '@/common/tran
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
 
-export function initHdr(renderer,scene){
+export function initHdr(renderer, scene) {
     const pmremGenerator = new PMREMGenerator(renderer);
     const hdriLoader = new RGBELoader()
+
+
+    // renderer.toneMapping = ACESFilmicToneMapping;
+    // renderer.toneMappingExposure = 1.3; // 降低整体亮度
 
     /**
      * @example 比较合适的 , 从上到下排名

@@ -1,7 +1,17 @@
 <template>
   <div class="content flex flex-col">
-    <el-form label-width="72px" label-position="left">
-      <el-form-item label="材质颜色">
+    <a-alert
+      message="该模块用于控制服装的材质，颜色等属性"
+      type="success"
+      style="margin: 24px 12px 24px 12px"
+    />
+
+    <el-form label-width="84px" label-position="left" style="margin: 0 24px">
+      <el-form-item label="常见服装颜色">
+        <div></div>
+      </el-form-item>
+
+      <el-form-item label="自定义颜色">
         <el-color-picker v-model="currentModelController.state.material.color" />
       </el-form-item>
 
@@ -73,6 +83,5 @@ import { viewDisplayController, currentModelController } from "@/components/desi
 .content {
   width: 340px;
   height: 100%;
-  padding: 24px;
 }
 </style>

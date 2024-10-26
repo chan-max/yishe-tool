@@ -247,7 +247,7 @@ export class ModelController {
             return;
         }
         this.initCanvasContainer(target);
-        // initBasicLight(this.scene)
+
 
         // 先不设置 bg ，需要保留无背景
         this.setBgColor('#eee', 0)
@@ -256,6 +256,8 @@ export class ModelController {
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);
         }
 
+
+        // initBasicLight(this.scene)
         initHdr(this.renderer, this.scene)
 
         watch(() => this.state.material, async () => {

@@ -90,7 +90,7 @@ export default class three {
             webglSupport = false
         }
 
-        this.isSupport = WebGL.isWebGLAvailable() && webglSupport
+        this.isSupport = WebGL.isWebGL2Available() && webglSupport
     }
 
     isSupport = false

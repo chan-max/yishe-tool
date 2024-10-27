@@ -82,6 +82,8 @@ export async function createMaterialFromOptions(options) {
         roughness: roughness,   // 粗糙度
         side: DoubleSide,
         color: color,
+        emissive: null, // 发光色
+        opacity:.6
     });
 
     // message.destroy('loadingmaterial');
@@ -93,16 +95,16 @@ export function initBasicLight(scene) {
 
     // 创建场景、相机和渲染器等...
     // 添加环境光
-    const ambientLight = new AmbientLight(0xffffff, 1.2); // 设置颜色和强度
+    const ambientLight = new AmbientLight(0xffffff, 1.5); // 设置颜色和强度
     scene.add(ambientLight);
 
     // // 添加平行光
-    const directionalLight1 = new DirectionalLight(0xffffff, 1.2); // 设置颜色和强度
+    const directionalLight1 = new DirectionalLight(0xffffff, 1.5); // 设置颜色和强度
     directionalLight1.position.set(1, 1, 1); // 设置光源位置
     scene.add(directionalLight1);
 
     // 添加平行光
-    const directionalLight2 = new DirectionalLight(0xffffff, 1.2); // 设置颜色和强度
+    const directionalLight2 = new DirectionalLight(0xffffff, 1.5); // 设置颜色和强度
     directionalLight2.position.set(-1, -1, -1); // 设置光源位置
     scene.add(directionalLight2);
 
@@ -123,7 +125,7 @@ export function initHdr(renderer, scene) {
 
 
     // renderer.toneMapping = ACESFilmicToneMapping;
-    // renderer.toneMappingExposure = 1.3; // 降低整体亮度
+    // renderer.toneMappingExposure = 1.7; // 降低整体亮度
 
     /**
      * @example 比较合适的 , 从上到下排名

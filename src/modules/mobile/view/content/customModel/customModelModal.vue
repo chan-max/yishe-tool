@@ -30,33 +30,42 @@
       <van-card
         num="999"
         price="0.00"
-        tag="现货"
+        tag=""
         :desc="currentCustomModel.description || '暂无相关描述'"
         :title="currentCustomModel.name || '暂无名称'"
         :thumb="currentCustomModel.thumbnail.url"
-        style="margin-top: 8px"
       >
         <template #tags>
           <template v-if="currentCustomModel.keywords">
             <van-tag
               v-for="item in currentCustomModel.keywords.split(',')"
               plain
-              type="primary"
+              style="margin-right: 5px"
+              color="#444"
               >{{ item }}</van-tag
             >
           </template>
           <template v-else> 无标签 </template>
         </template>
         <template #footer>
-          <div style="padding: 12px 0 4px 0">
+          <div style="margin-top: 12px" class="flex items-center">
+            <van-action-bar-icon icon="chat-o" text="客服" @click="onClickIcon" />
+            <van-action-bar-icon icon="shop-o" text="店铺" @click="onClickIcon" />
+            <van-action-bar-icon
+              icon="idcard"
+              text="分享卡片"
+              @click="showShareCard(currentCustomModel)"
+            />
+
+            <div style="flex: 1"></div>
             <van-button
               round
               type="primary"
-              icon="share-o"
-              icon-position="right"
               @click="showShare = true"
+              class="gradient-button"
+              color="linear-gradient(to right, #eb3941, #e14e53)"
             >
-              分享该设计
+              立即购买
             </van-button>
           </div>
         </template>
@@ -85,6 +94,8 @@ import { ref, computed } from "vue";
 import { showToast } from "vant";
 import { useConfigStore } from "@/store/stores/config";
 import { showImagePreview } from "vant";
+import { showShareCard } from "../shareCard";
+
 // 组件增加v-if 是因为需要每次重新渲染
 
 const showShare = ref(false);
@@ -139,4 +150,10 @@ function imagePreview(item, index) {
 }
 </script>
 
-<style></style>
+<style scoped lang="less">
+.gradient-button {
+  box-shadow: 0 5px 15px rgba(242, 97, 103, 0.4);
+  font-size: 12px;
+  font-weight: bold;
+}
+</style>

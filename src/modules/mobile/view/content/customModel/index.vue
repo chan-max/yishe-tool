@@ -42,6 +42,8 @@ import Api from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import { openCustomModelModal } from "./index.ts";
 
+const search = ref();
+
 const { list, getList, isLastPage, isEmpty, loading } = usePaging((params) => {
   return Api.getCustomModelList({
     ...params,

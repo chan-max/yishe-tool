@@ -94,13 +94,13 @@
     :confirmLoading="submitLoading"
   >
     <el-form style="padding: 24px 12px">
-      <el-form-item>
+      <el-form-item label="名字">
         <el-input v-model="editForm.name" placeholder="名称"></el-input
       ></el-form-item>
-      <el-form-item>
+      <el-form-item label="描述">
         <el-input v-model="editForm.description" placeholder="描述"></el-input
       ></el-form-item>
-      <el-form-item>
+      <el-form-item label="标签">
         <tagsInput v-model="editForm.keywords" :string="true"> </tagsInput>
       </el-form-item>
     </el-form>

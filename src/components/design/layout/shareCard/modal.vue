@@ -12,7 +12,7 @@
       style="height: 640px; overflow: auto; row-gap: 24px"
       class="flex flex-col justify-center items-center"
     >
-      <shareCard ref="shareCardRef"></shareCard>
+      <shareCard ref="shareCardRef" :info="shareCardCustomModelInfo"></shareCard>
 
       <div>
         <el-button @click="copy" round> 复制链接 </el-button>
@@ -27,7 +27,8 @@ import {
   openShareCardModal,
   showShareCardModal,
   createCustomModelShareLink,
-} from "./index.js";
+  shareCardCustomModelInfo,
+} from "./index.ts";
 import { ref, unref } from "vue";
 import shareCard from "./shareCard.vue";
 import { message } from "ant-design-vue";

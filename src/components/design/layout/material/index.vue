@@ -7,8 +7,16 @@
     />
 
     <el-form label-width="84px" label-position="left" style="margin: 0 24px">
-      <el-form-item label="常见服装颜色">
-        <div></div>
+      <el-form-item label="服装颜色">
+        <div class="flex flex-wrap" style="gap: 12px">
+          <div
+            v-for="item in normalClothingColors"
+            :style="{ background: item.value }"
+            class="color-item"
+            :title="item.label"
+            @click="currentModelController.state.material.color = item.value"
+          ></div>
+        </div>
       </el-form-item>
 
       <el-form-item label="自定义颜色">
@@ -65,7 +73,7 @@
       <el-form-item label="纹理密度">
         <el-slider
           :min="1"
-          :max="10"
+          :max="20"
           :step="1"
           v-model="currentModelController.state.material.textureRepeat"
           size="small"
@@ -77,11 +85,27 @@
 
 <script setup lang="ts">
 import { viewDisplayController, currentModelController } from "@/components/design/store";
+import { normalClothingColors } from "./index.ts";
 </script>
 
 <style scoped lang="less">
 .content {
   width: 340px;
   height: 100%;
+}
+
+.color-item {
+  width: 24px;
+  height: 24px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+      rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    transform: scale(1.1);
+  }
 }
 </style>

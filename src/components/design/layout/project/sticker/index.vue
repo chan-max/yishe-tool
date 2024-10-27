@@ -106,6 +106,7 @@
       <el-form-item label="关键字:">
         <tagsInput
           v-model="editForm.keywords"
+          :string="true"
           :autocomplete-tags="stickerAutoplacementTags"
           :autocomplete-width="400"
           autocompletePlacement="right"

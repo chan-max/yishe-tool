@@ -77,6 +77,26 @@ export const adminRoute = {
             icon:SkinOutlined,
           },
         },
+        {
+          name: "AdminSticker",
+          path: "sticker",
+          component: () => import('./view/admin/view/source/sticker/index.vue'),
+          meta: {
+            title: '贴纸',
+            header: false,
+            icon:ShoppingOutlined,
+          },
+        },
+        {
+          name: "AdminFont",
+          path: "font",
+          component: () => import('./view/admin/view/source/font/index.vue'),
+          meta: {
+            title: '字体',
+            header: false,
+            icon:ShoppingOutlined,
+          },
+        },
       ],
     },
     {

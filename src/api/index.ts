@@ -13,7 +13,10 @@ interface FetchFileOptions {
  * @description 根据一个地址 请求文件
 */
 export async function fetchFile(url, options) {
-  const response = await fetch(url, options as RequestInit);
+
+  const response = await fetch(url, options)
+
+  const contentType = response.headers.get('Content-Type');
 
   var { filename }: any = {
     ...{

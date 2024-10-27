@@ -36,7 +36,7 @@
       class="share-card flex flex-col items-center justify-between"
     >
       <s1-img
-        :src="shareCardCustomModelInfo?.thumbnail?.url"
+        :src="info?.thumbnail?.url"
         :style="{
           width: width / 1.2 + 'px',
           height: width / 1.2 + 'px',
@@ -65,28 +65,28 @@
             :style="{ fontSize: width / 16 + 'px', width: width / 2 + 'px' }"
             class="text-ellipsis"
           >
-            {{ shareCardCustomModelInfo.name || "无名称" }}
+            {{ info.name || "无名称" }}
           </div>
           <div
             style="color: rgba(255, 255, 255, 0.6)"
             :style="{ fontSize: width / 36 + 'px', width: width / 2 + 'px' }"
             class="text-ellipsis"
           >
-            {{ shareCardCustomModelInfo.description || "无描述" }}
+            {{ info.description || "无描述" }}
           </div>
           <div
             style="color: rgba(255, 255, 255, 0.6)"
             :style="{ fontSize: width / 36 + 'px', width: width / 2 + 'px' }"
             class="text-ellipsis"
           >
-            {{ shareCardCustomModelInfo.keywords || "无标签" }}
+            {{ info.keywords || "无标签" }}
           </div>
           <div
             style="color: rgba(255, 255, 255, 0.6)"
             :style="{ fontSize: width / 36 + 'px', width: width / 2 + 'px' }"
             class="text-ellipsis"
           >
-            创建于 {{ shareCardCustomModelInfo.createTime }}
+            创建于 {{ info.createTime }}
           </div>
         </div>
         <div ref="qrcodeRef" style="flex-shrink: 0"></div>
@@ -96,8 +96,7 @@
         style="font-weight: bold; color: rgba(255, 255, 255, 0.3); font-family: ins"
         :style="{ fontSize: width / 40 + 'px' }"
       >
-        Designed by {{ shareCardCustomModelInfo?.uploader?.account || "anonymous" }} in
-        1s.design
+        Designed by {{ info?.uploader?.account || "anonymous" }} in 1s.design
       </div>
     </div>
   </div>
@@ -105,13 +104,20 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { shareCardCustomModelInfo, createCustomModelShareLink } from "./index.ts";
+import { createCustomModelShareLink } from "./index.ts";
 import QRCodeStyling from "qr-code-styling";
 import { htmlToPngFile, downloadByFile } from "@/common/transform";
 
-let width = ref(320);
+const props = defineProps({
+  width: {
+    default: 320,
+  },
+  info: {
+    default: null,
+  },
+});
 
-let height = ref(width.value / 0.618);
+let height = ref(props.width / 0.618);
 
 const qrcodeRef = ref();
 
@@ -119,9 +125,9 @@ const targetRef = ref();
 
 onMounted(() => {
   let qr = new QRCodeStyling({
-    data: createCustomModelShareLink(shareCardCustomModelInfo.value.id), // web 端和移动端共用一个地址
-    width: width.value / 3,
-    height: width.value / 3,
+    data: createCustomModelShareLink(props.info.id), // web 端和移动端共用一个地址
+    width: props.width / 3,
+    height: props.width / 3,
     margin: 0,
     dotsOptions: {
       color: "#000000", // 点的颜色
@@ -142,13 +148,38 @@ onMounted(() => {
   qr.append(qrcodeRef.value);
 });
 
+/*
+  复制该分享链接
+*/
 async function download() {
   const file = await htmlToPngFile(targetRef.value, "ecard");
   downloadByFile(file);
 }
 
+async function getFile() {
+  const file = await htmlToPngFile(targetRef.value, "ecard");
+  return file;
+}
+
+async function share() {
+  let file = await getFile();
+  navigator.share({
+    files: [file],
+    text: props.info.description,
+    title: props.info.name,
+    url: createCustomModelShareLink(props.info.id),
+  });
+}
+
+function copylink() {
+  navigator.clipboard.writeText(createCustomModelShareLink(props.info.id));
+}
+
 defineExpose({
   download: download,
+  copylink: copylink,
+  getFile: getFile,
+  share: share,
 });
 </script>
 

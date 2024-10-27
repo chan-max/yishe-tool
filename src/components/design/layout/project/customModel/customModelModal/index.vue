@@ -38,7 +38,7 @@
           </el-col>
           <el-col>
             <div class="flex items-center" style="column-gap: 2rem">
-              <a-avatar size="large" :src="detailInfo.uploader.avatar" alt="?">
+              <a-avatar size="large" :src="detailInfo?.uploader?.avatar" alt="?">
                 <template #icon>
                   <UserOutlined />
                 </template>

@@ -35,7 +35,12 @@
         </el-form-item>
 
         <el-form-item label="模型标签" prop="keywords">
-          <s1-tagsInput v-model="form.keywords" :string="true"></s1-tagsInput>
+          <s1-tagsInput
+            v-model="form.keywords"
+            :string="true"
+            :autocompleteTags="customModelAutoplacementTags"
+            :autocompleteWidth="360"
+          ></s1-tagsInput>
         </el-form-item>
 
         <el-form-item label="模型截图">
@@ -80,6 +85,7 @@ import desimage from "@/components/image.vue";
 import { CircleCloseFilled } from "@element-plus/icons-vue";
 import Utils from "@/common/utils";
 import { saveCustomModel } from "./index.ts";
+import { customModelAutoplacementTags } from "../../components/tagsInput";
 
 const displayThumbnail = ref();
 

@@ -24,6 +24,7 @@ export const getCOS = () => {
 
 
 
+
 export async function uploadToCOS({
     file,
     key = new Date().getTime() + '_1s_' + file.name,
@@ -47,6 +48,12 @@ export async function uploadToCOS({
 
 
 export function deleteCOSFile(key) {
+
+    if(key.startsWith('http')){
+        // 如果是链接则会
+        key =  key.substring(key.lastIndexOf('/') + 1);
+    }
+
     return new Promise((resolve, reject) => {
         const cos = getCOS();
 

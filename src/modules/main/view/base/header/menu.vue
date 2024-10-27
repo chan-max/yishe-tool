@@ -82,16 +82,6 @@ const menuOptions = ref([
     RouteName: "Market",
     key: "market",
   },
-  // {
-  //   label: "商家",
-  //   RouteName: "Seller",
-  //   key: "seller",
-  // },
-  {
-    label: "工作台",
-    RouteName: "Workspace",
-    key: "workspace",
-  },
   {
     label: "商品模型分类",
     key: "group",

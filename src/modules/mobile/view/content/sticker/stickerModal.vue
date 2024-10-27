@@ -22,7 +22,7 @@
       <van-card
         num="999"
         price="0.00"
-        tag="现货"
+        tag=""
         :desc="currentSticker.description || '暂无相关描述'"
         :title="currentSticker.name || '暂无名称'"
         :thumb="currentSticker.thumbnail?.url"
@@ -39,25 +39,10 @@
           </template>
           <template v-else> 无标签 </template>
         </template>
-        <template #footer>
-          <div style="padding: 12px 0 4px 0">
-            <van-button round type="primary" icon="share-o" @click="showShare = true">
-              分享该设计
-            </van-button>
-          </div>
-        </template>
+        <template #footer> </template>
       </van-card>
     </div>
   </van-popup>
-
-  <van-share-sheet
-    v-model:show="showShare"
-    :options="shareOptions"
-    @select="shareSelect"
-    @open="shareOpen"
-    title="分享该设计"
-    description="内容信息以复制，进入 app 后直接粘贴发送即可"
-  />
 </template>
 
 <script setup lang="ts">

@@ -138,6 +138,9 @@
       </el-button>
       <div style="flex: 1"></div>
       <template v-if="uploadTabType == 'local'">
+        <!-- <el-button round :icon="Link" @click="linkUploadModal = true">
+          链接上传
+        </el-button> -->
         <el-button round @click="uploadTabType = 'scan'" :icon="Iphone">
           手机扫码上传
         </el-button>
@@ -157,6 +160,22 @@
       </template>
     </div>
   </div>
+
+  <a-modal
+    v-model:open="linkUploadModal"
+    centered
+    title="链接上传"
+    @ok="linkUploadOk"
+    :confirmLoading="linkUploadConfirmLoading"
+  >
+    <a-textarea
+      placeholder="请输入文件地址"
+      v-model:value="linkUploadUrl"
+      type="textarea"
+      auto-size
+    >
+    </a-textarea>
+  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -172,6 +191,7 @@ import {
   View,
   Warning,
   Iphone,
+  Link,
 } from "@element-plus/icons-vue";
 import iconFileUpload from "@/icon/file-upload.svg";
 import iconImg from "@/icon/fileType/img.svg";
@@ -193,14 +213,48 @@ import { filesize } from "filesize";
 import { genFileId } from "element-plus";
 import { uploadRef } from "./index";
 import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
+import { fetchFile } from "@/api";
 
+import { saveAs } from "file-saver";
 const loginStore = useLoginStatusStore();
 
 /*
   scan 
   local
+  link
 */
 const uploadTabType = ref("local");
+
+/**
+ * @description 链接上传逻辑
+ */
+
+const linkUploadModal = ref(false);
+
+const linkUploadConfirmLoading = ref(false);
+
+const linkUploadUrl = ref("");
+
+async function linkUploadOk() {
+  try {
+    linkUploadConfirmLoading.value = true;
+
+    let file = await fetchFile(linkUploadUrl.value, {
+      method: "GET",
+      mode: "no-cors",
+    });
+
+    fileList.value.push({
+      raw: file,
+      name: file.name,
+    });
+  } catch (e) {
+    console.log(e);
+    message.warning("文件请求失败，请检查链接地址");
+  } finally {
+    linkUploadConfirmLoading.value = false;
+  }
+}
 
 /**
  *  @description 如果同时上传多个 ， 会多次调用

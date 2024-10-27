@@ -92,6 +92,15 @@
           </el-row>
         </el-form>
       </div>
+      <template #footer>
+        <a-button @click="close">取消</a-button>
+        <a-button v-if="modalType == 'update'" @click="handleOk()" type="primary"
+          >更新缩略图并保存</a-button
+        >
+        <a-button @click="handleOk" :loading="confirmLoading" type="primary"
+          >确定</a-button
+        >
+      </template>
     </a-modal>
   </div>
 </template>
@@ -196,6 +205,7 @@ const showModal = ref(false);
 
 function close() {
   form.value = {};
+  showModal.value = false;
 }
 
 const confirmLoading = ref(false);
@@ -239,11 +249,20 @@ async function handleOk() {
     await getList();
     message.success("创建成功");
   } else if (modalType.value == "update") {
+    let cos = await Api.uploadToCOS({
+      file: baseViewerRef.value.getScreenShotFile(),
+    });
+
+    // 删除旧的缩略图
+
+    await Api.deleteCOSFile(form.value.thumbnail.key);
+
     await Api.updateProductModel({
       id: form.value.id,
       name: form.value.name,
       description: form.value.description,
       keywords: form.value.keywords,
+      thumbnail: cos,
     });
     refresh();
     message.success("更新成功");
@@ -272,6 +291,9 @@ async function handleDelete(row) {
       danger: true,
     },
   });
+
+  await Api.deleteCOSFile(row.url);
+
   await Api.deleteProductModel({
     id: row.id,
   });

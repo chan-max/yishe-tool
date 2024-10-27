@@ -82,3 +82,26 @@ export const stickerAutoplacementTags = [
     { name: '港台风格' },
     { name: '日本风格' }
 ]
+
+
+
+
+export const customModelAutoplacementTags = [
+    { name: 'T恤' },
+    { name: '衬衫' },
+    { name: '外套' },
+    { name: '卫衣' },
+    { name: '夹克' },
+    { name: '裤子' },
+    { name: '短裤' },
+    { name: '裙子' },
+    { name: '连衣裙' },
+    { name: '运动服' },
+    { name: '泳装' },
+    { name: '内衣' },
+    { name: '睡衣' },
+    { name: '风衣' },
+    { name: '马甲' },
+    { name: '牛仔裤' },
+    { name: '休闲裤' },
+]

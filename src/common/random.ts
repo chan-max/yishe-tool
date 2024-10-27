@@ -16,12 +16,20 @@ function randomArrayItem(arr, hash) {
 }
 
 
-// function randomArrayItem(arr, hash) {
-//     return arr[Math.floor(Math.random() * arr.length)]
-// }
+function randomArrayItemWithTimeHash(arr, hash) {
+
+    hash = hash + new Date().getDate();
+
+    const index = hashString(hash) % arr.length ;
+    return arr[index];
+}
+
+
 
 
 
 export class Random {
     randomArrayItem = randomArrayItem
+
+    randomArrayItemWithTimeHash = randomArrayItemWithTimeHash
 }

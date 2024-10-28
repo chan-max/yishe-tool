@@ -11,7 +11,7 @@
     ></s1-img>
 
     <div
-      style="height: 100%; padding: 12px; text-wrap: nowrap; row-gap: 4px; color: #555"
+      style="height: 100%; padding: 12px; text-wrap: nowrap; row-gap: 5px; color: #555"
       class="flex flex-col"
     >
       <div>
@@ -21,6 +21,16 @@
       <div>
         <label> 图片状态: </label>
         {{ currentHoveringDecalController.state.isLocalResource ? "未上传" : "已上传" }}
+      </div>
+
+      <div>
+        <label> 图片名称: </label>
+        {{ currentHoveringDecalController.state.info?.name || "-" }}
+      </div>
+
+      <div>
+        <label> 图片描述: </label>
+        {{ currentHoveringDecalController.state.info?.description || "-" }}
       </div>
     </div>
   </div>
@@ -51,6 +61,7 @@ function formatDate(date) {
     width: 48px;
     flex-shrink: 0;
     text-align: justify;
+    color: #000;
     // text-align-last: justify;
   }
 }

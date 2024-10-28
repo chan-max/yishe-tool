@@ -82,11 +82,10 @@ export const showTextSticker = ref(false)
 export const showWorkspace = ref(false)
 watch(showWorkspace, (value) => {
     if (value) {
-        clearRightLayout()
+        clearLeftLayout()
         showWorkspace.value = true
     }
 })
-
 
 
 
@@ -232,21 +231,17 @@ export const showBottomMenu = ref(true)
 
 // 清空左侧布局
 export function clearLeftLayout() {
-    showImageSticker.value = false
-    showCustomTextSticker.value = false
-    showTextSticker.value = false
-    showSvgCanvas.value = false
     showCanvasLayout.value = false
     showSticker.value = false
     showDecalControl.value = false
     viewDisplayController.value.showMaterialControl = false
+    showWorkspace.value = false
 }
 
 // 清空右侧布局
 export function clearRightLayout() {
     showDecalList.value = false
     showModelInfo.value = false
-    showWorkspace.value = false
 }
 
 
@@ -354,7 +349,7 @@ export const viewDisplayController = ref({
 
     // 服装材料相关弹层
     showMaterialModal: false,
-    showMaterialControl:false,
+    showMaterialControl: false,
     // 材质详细信息弹层
     showMaterialDetailModal: false,
 })

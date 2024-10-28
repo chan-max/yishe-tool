@@ -56,7 +56,7 @@ import iconUser from "@/icon/user/user.svg?component";
 import iconAdmin from "@/icon/user/admin.svg?component";
 import iconSaved from "@/icon/user/saved.svg?component";
 import { Modal } from "ant-design-vue";
-
+import Utils from "@/common/utils";
 let route = useRoute();
 let router = useRouter();
 
@@ -66,7 +66,7 @@ const loginStore = useLoginStatusStore();
 const avatar = computed(() => {
   const loginStore = useLoginStatusStore();
   // 默认头像
-  return loginStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
+  return loginStore.userInfo?.avatar || Utils.const.defaultUserAvatarPC;
 });
 
 const userInfo = computed(() => {

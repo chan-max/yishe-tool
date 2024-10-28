@@ -16,7 +16,7 @@
 import mFooter from "./view/footer/index.vue";
 import mHeader from "./view/header/index.vue";
 import { ref, onMounted } from "vue";
-import customModelModal from "./view/content/customModel/customModelModal.vue";
+import customModelModal from "./view/content/customModel/customModelPopup.vue";
 import stickerModal from "./view/content/sticker/stickerModal.vue";
 import shareCardModal from "./view/content/shareCard/index.vue";
 import { useDark, useToggle } from "@vueuse/core";

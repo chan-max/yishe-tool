@@ -31,9 +31,10 @@
 import { defineProps, ref } from "vue";
 import gltfViewer from "@/components/model/gltfViewer/index.vue";
 import desimage from "@/components/image.vue";
+import Utils from "@/common/utils";
 
 function getAvatar(model) {
-  return model?.uploader?.avatar || "defaultAvatar/avatar3.png";
+  return model?.uploader?.avatar || Utils.const.defaultUserAvatarPC;
 }
 
 const props = defineProps(["model"]);

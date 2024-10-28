@@ -63,7 +63,7 @@
                   v-model="file.description"
                   placeholder="文件描述"
                   type="textarea"
-                  :auto-size="{ minRows: 2, maxRows: 5 }"
+                  :autosize="{ minRows: 2, maxRows: 5 }"
                 />
               </el-form-item>
               <el-form-item label="文件标签">
@@ -74,6 +74,7 @@
                       ? fontAutoplacementTags
                       : imageAutoplacementTags
                   "
+                  :autocompleteWidth="460"
                 ></tags-input>
               </el-form-item>
 
@@ -138,9 +139,9 @@
       </el-button>
       <div style="flex: 1"></div>
       <template v-if="uploadTabType == 'local'">
-        <!-- <el-button round :icon="Link" @click="linkUploadModal = true">
+        <el-button round :icon="Link" @click="showLinkUploadModal = true">
           链接上传
-        </el-button> -->
+        </el-button>
         <el-button round @click="uploadTabType = 'scan'" :icon="Iphone">
           手机扫码上传
         </el-button>
@@ -162,7 +163,7 @@
   </div>
 
   <a-modal
-    v-model:open="linkUploadModal"
+    v-model:open="showLinkUploadModal"
     centered
     title="链接上传"
     @ok="linkUploadOk"
@@ -175,6 +176,7 @@
       auto-size
     >
     </a-textarea>
+    <p>请确保输入完成的地址，以防止加载失败，目前只支持图片和字体类型</p>
   </a-modal>
 </template>
 
@@ -214,12 +216,13 @@ import { genFileId } from "element-plus";
 import { uploadRef } from "./index";
 import baseGltfViewer from "@/components/model/baseGltfViewer/index.vue";
 import { fetchFile } from "@/api";
+import { apiInstance } from "@/api/apiInstance";
 
 import { saveAs } from "file-saver";
 const loginStore = useLoginStatusStore();
 
 /*
-  scan 
+  scan
   local
   link
 */
@@ -229,7 +232,7 @@ const uploadTabType = ref("local");
  * @description 链接上传逻辑
  */
 
-const linkUploadModal = ref(false);
+const showLinkUploadModal = ref(false);
 
 const linkUploadConfirmLoading = ref(false);
 
@@ -241,13 +244,18 @@ async function linkUploadOk() {
 
     let file = await fetchFile(linkUploadUrl.value, {
       method: "GET",
-      mode: "no-cors",
+      mode: "cors",
     });
 
-    fileList.value.push({
-      raw: file,
-      name: file.name,
-    });
+    if (!Utils.type.isImageFileType(file.type) && !Utils.type.isFontFileType(file.type)) {
+      return message.warning("不合理的文件类型，或无效的地址");
+    }
+
+    // 这里需要判断类型并且判断一下
+
+    file.uid = genFileId();
+    uploadRef.value!.handleStart(file);
+    showLinkUploadModal.value = false;
   } catch (e) {
     console.log(e);
     message.warning("文件请求失败，请检查链接地址");

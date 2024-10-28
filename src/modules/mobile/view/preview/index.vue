@@ -1,14 +1,28 @@
-<template>preview</template>
+<template>
+    <div>
+    
+        
+    </div>
+</template>
 
 <script setup lang="ts">
+import { functionsIn } from "lodash";
+import { ref, computed, onBeforeMount } from "vue";
+import { showConfirmDialog, showToast } from "vant";
+import { useConfigStore } from "@/store/stores/config";
+import { showImagePreview } from "vant";
 import { useRoute } from "vue-router";
-import { onBeforeMount } from "vue";
-
+import { openCustomModelModal } from "../content/customModel";
+import Api from "@/api";
 const route = useRoute();
 
-onBeforeMount(() => {
-    
+const info = ref();
+
+onBeforeMount(async () => {
+  let id = route.query.id;
+  info.value = await Api.getCustomModelById(id);
+  openCustomModelModal(info.value);
 });
 </script>
 
-<style></style>
+<style scoped lang="less"></style>

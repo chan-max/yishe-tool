@@ -24,6 +24,7 @@ import { doLogout } from "@/store/stores/loginAction";
 import { computed, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import userAvatarForm from "./userAvatarForm.vue";
+import Utils from "@/common/utils";
 
 let route = useRoute();
 
@@ -31,8 +32,7 @@ let route = useRoute();
 const loginStore = useLoginStatusStore();
 
 const avatar = computed(() => {
-  const loginStore = useLoginStatusStore();
-  return loginStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
+  return loginStore.userInfo?.avatar || Utils.const.defaultUserAvatarPC;
 });
 </script>
 <style lang="less" scoped>

@@ -29,10 +29,46 @@ function isModelName(fileName) {
 
 
 
+const imageFileTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/tiff',
+    'image/bmp',
+    'image/svg+xml',
+    'image/webp',
+    'image/heif',
+    'image/avif'
+];
+
+const fontFileTypes = [
+    'font/ttf',
+    'font/otf',
+    'font/woff',
+    'font/woff2',
+    'application/vnd.ms-fontobject', // EOT
+    'font/svg'
+];
+
+function isImageFileType(type){
+    return imageFileTypes.includes(type.toLowerCase());
+}   
+
+function isFontFileType(type){
+    return fontFileTypes.includes(type.toLowerCase());
+}
+
+
 export class Type {
     isFontName = isFontName
     isImageName = isImageName
     isModelName = isModelName
     modelSuffix = modelSuffix
+
+    isImageFileType = isImageFileType
+    isFontFileType = isFontFileType
 }
+
+
+
 

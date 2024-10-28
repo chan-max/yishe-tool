@@ -9,7 +9,13 @@
     :safe-area-inset-bottom="true"
   >
     <div v-if="showCustomModelModal" class="flex flex-col h-full">
-      <div style="flex: 1; background: linear-gradient(to right, #eee, #fff)">
+      <div
+        style="
+          flex: 1;
+          background: #eee;
+          box-shadow: rgba(0, 0, 0, 0.1) 0 30px 60px inset;
+        "
+      >
         <s1GltfViewer :model="currentCustomModel.meta.modelInfo"></s1GltfViewer>
       </div>
 
@@ -18,13 +24,19 @@
         class="flex items-center overflow-auto"
         style="width: 100%; padding: 12px; box-sizing: border-box; column-gap: 12px"
       >
-        <van-image
+        <div
+          style="
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            background: #f7f7f7;
+            border-radius: 4px;
+          "
           v-for="(item, index) in currentCustomModel.thumbnails"
-          round
-          style="width: 48px; height: 48px; flex-shrink: 0; background: #eee"
-          :src="item.url"
           @click="imagePreview(item, index)"
-        />
+        >
+          <s1-image :src="item.url" />
+        </div>
       </div>
 
       <van-card
@@ -49,13 +61,15 @@
         </template>
         <template #footer>
           <div style="margin-top: 12px" class="flex items-center">
-            <van-action-bar-icon icon="chat-o" text="客服" @click="onClickIcon" />
-            <van-action-bar-icon icon="shop-o" text="店铺" @click="onClickIcon" />
+            <van-action-bar-icon icon="chat-o" text="联系客服" />
+            <van-action-bar-icon icon="shop-o" text="店铺" />
             <van-action-bar-icon
-              icon="idcard"
-              text="分享卡片"
+              icon="share-o"
+              text="分享"
               @click="showShareCard(currentCustomModel)"
             />
+
+            <van-action-bar-icon icon="records-o" text="自定义" @click="goCustom" />
 
             <div style="flex: 1"></div>
             <van-button
@@ -82,7 +96,11 @@
     description="内容信息以复制，进入 app 后直接粘贴发送即可"
   />
 
-  <van-image-preview v-model:show="showPreview" :images="previewImages">
+  <van-image-preview
+    v-model:show="showPreview"
+    :images="previewImages"
+    :start-position="imagePreviewStartPosition"
+  >
     <template #index="{ index }">第{{ index + 1 }}页</template>
   </van-image-preview>
 </template>
@@ -91,10 +109,10 @@
 import { functionsIn } from "lodash";
 import { showCustomModelModal, currentCustomModel } from "./index.ts";
 import { ref, computed } from "vue";
-import { showToast } from "vant";
+import { showConfirmDialog, showToast } from "vant";
 import { useConfigStore } from "@/store/stores/config";
 import { showImagePreview } from "vant";
-import { showShareCard } from "../shareCard";
+import { showShareCard } from "../shareCard/index.ts";
 
 // 组件增加v-if 是因为需要每次重新渲染
 
@@ -145,8 +163,18 @@ const previewImages = computed(() => {
   });
 });
 
+const imagePreviewStartPosition = ref(0);
+
 function imagePreview(item, index) {
   showPreview.value = true;
+  imagePreviewStartPosition.value = index;
+}
+
+async function goCustom() {
+  await showConfirmDialog({
+    title: "自定义",
+    message: "确认跳转到工作台编辑该模型吗？",
+  });
 }
 </script>
 

@@ -84,18 +84,12 @@ export const stickerQueryParams = computed(() => {
 
 export function getStickerTypeLabel(type){
     switch (type) {
-        case 'text':
-            return '文字'
+        case 'compisition':
+            return '自定义组合'
         case 'image':
             return '图片'
-        case 'canvas':
-            return '画布'
-        case 'qrcode':
-            return '二维码'
-        case 'barcode':
-            return '条形码 '
-            case 'composition':
-                return '组合 '
+        case 'texture':
+            return '材质纹理'
         default: 
             return '未知'
     }

@@ -17,13 +17,14 @@
       </template>
     </div>
 
-    <div style="padding: 24px">电话和微信 ： 18742539196</div>
+    <div style="padding: 24px" @click="copyPhone">电话和微信 ： 18742539196</div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useConfigStore } from "@/store/stores/config";
 import Utils from "@/common/utils";
+import { showToast } from "vant";
 
 const configStore = useConfigStore();
 
@@ -39,6 +40,11 @@ function redirect(item) {
     }
     window.open(item.webHref, "_blank");
   }
+}
+
+function copyPhone() {
+  navigator.clipboard.writeText("18742539196");
+  showToast("联系方式已复制");
 }
 </script>
 

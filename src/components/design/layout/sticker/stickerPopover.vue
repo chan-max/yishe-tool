@@ -26,13 +26,6 @@
         <el-descriptions-item label="关键字" :span="2">
           {{ stickerInfo.keywords || "无" }}
         </el-descriptions-item>
-        <el-descriptions-item label="操作" :span="2">
-          <el-button size="small" round link type="primary" @click="addCanvasBackground">
-            添加画布元素背景<el-icon>
-              <TopRight />
-            </el-icon>
-          </el-button>
-        </el-descriptions-item>
       </el-descriptions>
       <el-button-group class="w-full" style="display: flex">
         <el-button style="flex: 1" @click="use" type="primary"> 使用该贴纸 </el-button>
@@ -43,20 +36,12 @@
 <script setup lang="ts">
 import { currentModelController, showCanvasLayout } from "@/components/design/store";
 import { getStickerTypeLabel } from "./index";
-import { TopRight } from "@element-plus/icons-vue";
-import {
-  addCanvasChild,
-  canvasStickerOptions,
-} from "@/components/design/layout/canvas/index.tsx";
 
 const props = defineProps({
   stickerInfo: {
     default: {} as any,
   },
 });
-
-// 添加背景元素
-function addCanvasBackground() {}
 
 function use() {
   currentModelController.value.addClickDelaySticker({
@@ -69,9 +54,5 @@ function use() {
 .container {
   width: 300px;
   height: auto;
-}
-
-:deep(.el-descriptions__label) {
-  // font-weight: bold;
 }
 </style>

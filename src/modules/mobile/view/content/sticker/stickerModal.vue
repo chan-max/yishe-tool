@@ -34,6 +34,8 @@
               v-for="item in currentSticker.keywords.split(',')"
               plain
               type="primary"
+              style="margin-right: 5px"
+              color="#444"
               >{{ item }}</van-tag
             >
           </template>

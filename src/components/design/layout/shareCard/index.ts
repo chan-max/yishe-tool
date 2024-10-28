@@ -1,4 +1,5 @@
 
+import { useConfigStore } from '@/store/stores/config'
 import { ref } from 'vue'
 
 
@@ -16,7 +17,10 @@ export const openShareCardModal = (info) => {
     shareCardCustomModelInfo.value = info
 }
 
+
+
 export function createCustomModelShareLink(id = '') {
+
 
     if (!id) {
         id = shareCardCustomModelInfo.value.id

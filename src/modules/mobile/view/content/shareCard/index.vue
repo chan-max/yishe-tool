@@ -12,7 +12,7 @@
         class="flex flex-col h-full items-center justify-center"
         style="padding: 64px 0 36px 0; row-gap: 24px; box-sizing: border-box"
       >
-        <shareCard :info="currentShareCardInfo" ref="cardRef"></shareCard>
+        <shareCard :info="currentShareCardInfo" ref="cardRef" :width="380"></shareCard>
 
         <div>
           <van-button type="primary" round @click="save" icon="down">下载卡片</van-button>

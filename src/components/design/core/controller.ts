@@ -710,7 +710,7 @@ export class ModelController {
             await Promise.all(modelInfo.decals.map((decal) => {
                 return new Promise(async (resolve, reject) => {
 
-                    var { id, position, rotation, modelValueRotate, modelValueSize } = decal;
+                    var { id, position, rotation, modelValueRotate, modelValueSize, metalness, roughness } = decal;
 
                     if (!id) {
                         return resolve(new Error('贴纸不存在'));
@@ -724,6 +724,8 @@ export class ModelController {
                     decalController.state.rotation = new Euler(rotation.x, rotation.y, rotation.z)
                     decalController.state.modelValueRotate = modelValueRotate
                     decalController.state.modelValueSize = modelValueSize
+                    decalController.state.roughness = roughness
+                    decalController.state.metalness = metalness
 
                     await decalController.create()
                     decalController.ensureAdd()

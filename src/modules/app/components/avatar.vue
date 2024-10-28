@@ -9,42 +9,39 @@
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-    <ion-avatar>
-        <div class="placeholder" v-if="!load && !error">
-            <ion-skeleton-text :animated="true"></ion-skeleton-text>
-        </div>
-        <img :src="src" @load="load = true" @error="onError($event)">
-    </ion-avatar>
+  <ion-avatar>
+    <div class="placeholder" v-if="!load && !error">
+      <ion-skeleton-text :animated="true"></ion-skeleton-text>
+    </div>
+    <img :src="src" @load="load = true" @error="onError($event)" />
+  </ion-avatar>
 </template>
-    
-<script setup lang='ts'>
-import { ref } from 'vue'
 
-const props = defineProps([
-    'src'
-])
+<script setup lang="ts">
+import { ref } from "vue";
+
+const props = defineProps(["src"]);
 
 // 图片是否加载完成
-const load = ref(false)
+const load = ref(false);
 
 // 图片是否加载失败
-const error = ref(false)
+const error = ref(false);
 
 function onError(e) {
-    error.value = true
-    // 错误图
-    e.target.src = '/mobileDefaultAvatar.svg'
+  error.value = true;
+  // 错误图
+  e.target.src = "";
 }
-
 </script>
-    
+
 <style scoped lang="less">
 ion-avatar {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .placeholder {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 </style>

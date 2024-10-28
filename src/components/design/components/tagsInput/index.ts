@@ -64,13 +64,22 @@ export const fontAutoplacementTags = [
 
 
 export const imageAutoplacementTags = [
-    { name: '扁平结构' },
-    { name: '紧凑结构' },
-    { name: '舒展结构' },
-    { name: '简体中文' },
-    { name: '繁体中文' },
-    { name: '港台风格' },
-    { name: '日本风格' }
+    { "name": "文字类" },   
+    { "name": "现代风" },           // 现代设计风格
+    { "name": "复古风" },           // 怀旧感设计
+    { "name": "极简风" },           // 简约设计
+    { "name": "自然景" },           // 自然相关图像
+    { "name": "城市景" },           // 城市建筑与生活
+    { "name": "艺术插" },           // 艺术风格插图
+    { "name": "商业用" },           // 商业用途图片
+    { "name": "社媒图" },           // 社交媒体分享图片
+    { "name": "教育用" },           // 教育相关图像
+    { "name": "科技感" },           // 科技主题设计
+    { "name": "运动风" },           // 运动主题图像
+    { "name": "时尚风" },           // 时尚潮流相关
+    { "name": "生活美" },           // 生活方式相关图像
+    { "name": "旅行记" },           // 旅行与探险主题
+    { "name": "美食图" }
 ]
 
 export const stickerAutoplacementTags = [

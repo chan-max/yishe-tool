@@ -73,6 +73,8 @@ async function deleteSearchRecord() {
   await showConfirmDialog({
     title: "提示",
     message: "确认要清空搜索历史吗",
+    theme: "round-button",
+    cancelButtonColor: "#ddd",
   });
   localSearchRecords.value = [];
 }

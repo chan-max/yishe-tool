@@ -62,7 +62,6 @@ import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 import tags from "./tags.vue";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
-import scrollbar from "@/components/scrollbar/index.vue";
 import { stickerQueryParams } from "./index.tsx";
 import { loadingBottom } from "@/components/loading/index.tsx";
 import Utils from "@/common/utils";
@@ -176,10 +175,10 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
 
 .bar {
   width: 100%;
-  font-size: 1rem;
+  font-size: 10px;
   color: #666;
   display: flex;
-  padding: 0 0.5rem;
+  padding: 0 7px;
   justify-content: space-between;
   align-items: center;
   column-gap: 1em;

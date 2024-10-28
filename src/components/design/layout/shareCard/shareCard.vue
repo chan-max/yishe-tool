@@ -38,8 +38,8 @@
       <s1-img
         :src="info?.thumbnail?.url"
         :style="{
-          width: width / 1.2 + 'px',
-          height: width / 1.2 + 'px',
+          width: width / 1.1 + 'px',
+          height: width / 1.1 + 'px',
           borderRadius: width / 24 + 'px',
         }"
         style="background: rgba(255, 255, 255, 0.05)"
@@ -49,7 +49,7 @@
         style="color: rgba(255, 255, 255, 0.1); font-family: ins"
         :style="{ fontSize: width / 16 + 'px' }"
       >
-        yishe . do something special
+        <!-- do something special -->
       </div>
 
       <!-- <div style="flex: 1"></div> -->

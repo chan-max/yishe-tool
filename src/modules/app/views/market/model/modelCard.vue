@@ -18,10 +18,7 @@
     <ion-card-content>
       <div class="footer">
         <ion-thumbnail slot="start" style="width: 20px; height: 20px">
-          <img
-            alt="avatar"
-            :src="item.t_user?.avatar || '/mobileDefaultAvatar.svg'"
-          />
+          <img alt="avatar" :src="item.t_user?.avatar || '' />
         </ion-thumbnail>
         {{ item.t_user?.name || "未命名" }}
         <div style="flex: 1"></div>

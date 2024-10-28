@@ -112,7 +112,11 @@
                   <s1-image :src="item?.thumbnail?.url"></s1-image>
                 </div>
 
-                <div class="text-ellipsis card-title">{{ item?.name || "-" }}</div>
+                <div class="card-title flex items-center">
+                  <div class="text-ellipsis" style="flex: 1">{{ item?.name || "-" }}</div>
+
+                  <!-- <span class="card-title-tag-base"> 新 </span> -->
+                </div>
                 <div class="text-ellipsis card-desc">
                   {{ item?.description || "..." }}
                 </div>
@@ -232,6 +236,21 @@ function searchMenuSelect(tag) {
   font-size: 10px;
   color: #aaa;
   padding-left: 4px;
+}
+
+//  商品卡片标题上的标签
+.card-title-tag-base {
+  font-size: 10px;
+  font-weight: 600;
+  margin-left: 4px;
+  background: #ddd;
+  color: #ffff;
+  border-radius: 4px 3px 4px 3px;
+  padding: 1px 3px;
+}
+
+.card-title-tag-red {
+  background-color: red;
 }
 </style>
 <style lang="less">

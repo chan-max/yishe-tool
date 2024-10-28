@@ -47,11 +47,24 @@
         </el-button>
       </div>
     </el-tooltip>
-
     <el-tooltip :hide-after="0" content="移除当前所有贴纸" placement="top">
       <div>
         <el-button link @click="currentModelController.removeDecals()">
-          <RedoOutlined style="font-size: 16px" />
+          <DeleteOutlined style="font-size: 16px" />
+        </el-button>
+      </div>
+    </el-tooltip>
+
+    <el-tooltip :hide-after="0" content="自动根据当前控制台生成模型" placement="top">
+      <div>
+        <el-button
+          style="box-shadow: 0 4px 15px 0 rgba(155, 0, 255, 0.2)"
+          @click="autocreate"
+          :icon="Grid"
+          round
+          color="#6900ff"
+        >
+          自动生成
         </el-button>
       </div>
     </el-tooltip>
@@ -80,11 +93,14 @@ import {
   ExpandOutlined,
   CloseCircleOutlined,
   RedoOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons-vue";
 import { useEyeDropper, useClipboard } from "@vueuse/core";
+import { Pointer, Grid } from "@element-plus/icons-vue";
 import { notification } from "ant-design-vue";
 import screenshotDrawer from "@/components/design/components/screenshotDrawer.vue";
 import canvasMediaRecorder from "@/components/design/components/canvasMediaRecorder/index.vue";
+import { showAutocreateModal } from "@/components/design/layout/autocreate/index.ts";
 
 const { isSupported, open, sRGBHex } = useEyeDropper();
 
@@ -110,6 +126,13 @@ function locate() {
 function animate() {
   currentModelController.value.animate = !currentModelController.value.animate;
 }
+
+/**
+ * @method 根据当前控制台信息快速生成模型
+ */
+function autocreate() {
+  showAutocreateModal.value = true;
+}
 </script>
 <style lang="less">
 .designiy-bottom-menu {
@@ -118,10 +141,10 @@ function animate() {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 36px;
+  padding: 0 24px;
   background-color: #fff;
-  border-radius: 16px;
-  column-gap: 6px;
+  border-radius: 32px;
+  column-gap: 8px;
   box-shadow: 0 10px 20px #0000001a;
 }
 

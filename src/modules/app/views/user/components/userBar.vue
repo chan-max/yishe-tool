@@ -4,7 +4,7 @@
       <div class="flex flex-col items-center" style="row-gap: 1em">
         <cr-avatar :src="avatar" style="width: 66px; height: 66px"> </cr-avatar>
       </div>
-      <div class="flex justify-center items-center" style="flex: 1;column-gap:2em;">
+      <div class="flex justify-center items-center" style="flex: 1; column-gap: 2em">
         <div class="user-item">
           <div>0</div>
           <div>关注</div>
@@ -54,7 +54,7 @@ const router = useIonRouter();
 const loginStore = useLoginStatusStore();
 
 const avatar = computed(() => {
-  return loginStore.userInfo?.avatar || "/mobileDefaultAvatar.svg";
+  return loginStore.userInfo?.avatar || "";
 });
 </script>
 
@@ -64,7 +64,6 @@ const avatar = computed(() => {
   flex-direction: column;
   align-items: center;
   font-weight: bold;
-  font-size:.8em;
-
+  font-size: 0.8em;
 }
 </style>

@@ -121,3 +121,17 @@
     font-size: 10px !important;
   }
 }
+
+.el-descriptions__cell {
+  line-height: 20px !important;
+
+  .el-descriptions__label {
+    font-weight: bold;
+  }
+
+  .el-descriptions__label,
+  .el-descriptions__content {
+    font-size: 10px;
+  }
+
+}

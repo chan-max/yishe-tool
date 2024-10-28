@@ -9,6 +9,34 @@ interface FetchFileOptions {
 }
 
 
+function getFileSuffixFromContentType(contentType) {
+
+  let extension = null
+
+  switch (contentType) {
+    case 'image/jpeg':
+      extension = 'jpg';
+      break;
+    case 'image/png':
+      extension = 'png';
+      break;
+    case 'image/svg+xml':
+      extension = 'svg';
+      break;
+    case 'application/pdf':
+      extension = 'pdf';
+      break;
+    case 'text/plain':
+      extension = 'txt';
+      break;
+    // 添加更多类型...
+    default:
+      console.log('未知的文件类型');
+  }
+
+  return extension
+}
+
 /**
  * @description 根据一个地址 请求文件
 */
@@ -18,20 +46,28 @@ export async function fetchFile(url, options) {
 
   const contentType = response.headers.get('Content-Type');
 
+  let suffix = getFileSuffixFromContentType(contentType)
+
   var { filename }: any = {
     ...{
-      filename: String(new Date().getTime())
+      filename: String(new Date().getTime()) + '.' + suffix
     },
     ...options
   }
 
   if (!response.ok) {
+
     throw new Error("file request failed");
   }
 
   const blob = await response.blob();
 
-  const file = new File([blob], filename);
+  const file = new File([blob], filename, {
+    type: blob.type,
+    lastModified: Date.now()
+  });
+
+
   return file;
 }
 
@@ -174,9 +210,6 @@ export const getImageById = (id: string) => new Promise(async (resolve, reject) 
   const data = await apiInstance.post(Url.GET_IMAGE_BY_ID, { id })
   resolve(data.data.data)
 })
-
-
-
 
 
 export const getFontById = (id: string) => new Promise(async (resolve, reject) => {
@@ -443,6 +476,13 @@ export const getCustomModelList = (params) => new Promise(async (resolve, reject
   resolve(res.data.data)
 })
 
+
+// 根据图片id来查询图片
+export const getCustomModelById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.get('/api/custom-model', { params: { id } })
+  resolve(data.data.data)
+})
+
 export const deleteCustomModel = (id) => new Promise(async (resolve, reject) => {
   let res = await apiInstance.post('/api/custom-model/delete', {
     id: id
@@ -557,6 +597,8 @@ class Api {
   getBasicConfig = getBasicConfig
 
   getCustomModelList = getCustomModelList
+
+  getCustomModelById = getCustomModelById
 
   getProductModelById = getProductModelById
 

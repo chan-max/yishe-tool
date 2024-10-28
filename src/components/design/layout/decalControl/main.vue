@@ -88,7 +88,10 @@
       >
         点击上传
       </el-button>
-      <el-button @click="showDecalList = true" round plain> 显示贴纸列表 </el-button>
+      <el-button @click="showDecalList = !showDecalList" round plain>
+        贴纸列表
+      </el-button>
+      <el-button @click="showWorkspace = !showWorkspace" round plain> 工作台 </el-button>
     </el-button-group>
     <el-button @click="remove" type="danger" round>移除该贴纸</el-button>
   </div>

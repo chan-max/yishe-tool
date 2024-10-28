@@ -14,17 +14,14 @@
   </div>
 </template>
 <script setup>
-
 import { onMounted, computed } from "vue";
 import { IonToggle, IonItem, IonLabel, IonAvatar } from "@ionic/vue";
 import { useLoginStatusStore } from "@/store/stores/login.ts";
 
-
 const loginStatusStore = useLoginStatusStore();
 
 const avatar = computed(() => {
-  return loginStatusStore.userInfo?.avatar || "/defaultAvatar/avatar3.png";
+  return loginStatusStore.userInfo?.avatar || "";
 });
-
 </script>
 <style lang=""></style>

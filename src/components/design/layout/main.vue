@@ -163,6 +163,9 @@
 
   <!-- 卡片分享弹层 -->
   <shareCardModal></shareCardModal>
+
+  <!-- 自动创建弹层 -->
+  <autocreateModal></autocreateModal>
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -261,11 +264,10 @@ import materialModal from "./material/modal.vue";
 import materialDetailModal from "./material/detailModal.vue";
 import shareCardModal from "@/components/design/layout/shareCard/modal.vue";
 import material from "@/components/design/layout/material/index.vue";
+import autocreateModal from "./autocreate/modal.vue";
 
 const { component: stickerDetailModal } = useStickerDetailModal();
 const { component: customModelDetailModal } = useCustomModelDetailModal();
-
-import threeCanvasTopBar from "./threeCanvasTopBar/index.vue";
 
 const router = useRouter();
 const loginStore = useLoginStatusStore();
@@ -285,6 +287,10 @@ const leftComponent = computed(() => {
     return decalControl;
   }
 
+  if (showWorkspace.value) {
+    return workspace;
+  }
+
   if (showCanvasLayout.value) {
     return canvasLayout;
   }
@@ -299,10 +305,6 @@ const leftComponent = computed(() => {
 });
 
 const rightComponent = computed(() => {
-  if (showWorkspace.value) {
-    return workspace;
-  }
-
   if (showDecalList.value) {
     return decalList;
   }
@@ -351,6 +353,7 @@ async function initAction() {
     });
   } else {
     /* 获取数据并同步 */
+
     const data = await Api.getUserMeta({
       metaKey: "designStorage",
     });

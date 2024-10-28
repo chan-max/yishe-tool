@@ -12,8 +12,8 @@
   <div class="flex" style="padding: 12px 24px 24px 24px; column-gap: 12px">
     <s1-image
       style="
-        width: 480px;
-        height: 480px;
+        width: 500px;
+        height: 500px;
         flex-shrink: 0;
         background: #f5f6f7;
         border-radius: 12px;
@@ -41,6 +41,16 @@
             :autocompleteTags="customModelAutoplacementTags"
             :autocompleteWidth="360"
           ></s1-tagsInput>
+        </el-form-item>
+        <el-form-item label="辅助操作">
+          <el-button
+            type="primary"
+            round
+            plain
+            title="根据基础模型和贴纸信息自动生成模型信息"
+          >
+            自动生成信息
+          </el-button>
         </el-form-item>
 
         <el-form-item label="模型截图">

@@ -117,7 +117,9 @@
         </template>
       </a-dropdown>
 
-      <el-button @click="showUpload = true" round text bg> 素材上传 </el-button>
+      <el-button @click="showUpload = true" round text bg :icon="Upload">
+        素材上传
+      </el-button>
       <el-button type="primary" @click="showSaveModel = true" round> 保存 </el-button>
     </div>
     <user-avatar v-if="loginStatusStore.isLogin" />
@@ -150,6 +152,7 @@ import { onShortcutTrigger } from "../shortcut/index";
 import iconHelp from "@/icon/help.svg?component";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { useDateFormat, useNow } from "@vueuse/core";
+import { Upload } from "@element-plus/icons-vue";
 import {
   LoadingOutlined,
   CheckOutlined,

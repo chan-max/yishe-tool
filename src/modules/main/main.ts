@@ -61,8 +61,8 @@ import VueMagnifier from '@websitebeaver/vue-magnifier'
 import '@websitebeaver/vue-magnifier/styles.css'
 
 
-import { useConfigStore,initConfigStoreBasicConfig } from '@/store/stores/config.ts';
-import { useLoginStatusStore,initLoginStoreUserInfo } from '@/store/stores/login';
+import { useConfigStore, initConfigStoreBasicConfig } from '@/store/stores/config.ts';
+import { useLoginStatusStore, initLoginStoreUserInfo } from '@/store/stores/login';
 import to from 'await-to-js';
 
 
@@ -100,7 +100,7 @@ async function setup() {
 
     app.config.globalProperties.__DEV__ = import.meta.env.DEV
 
-  
+
     await initLoginStoreUserInfo()
 
     await initConfigStoreBasicConfig()
@@ -111,12 +111,7 @@ async function setup() {
 
 import { createMobileApp } from '@/modules/mobile/main'
 
-console.log(`
-▗▖ ▗▖ ▗▄▖ ▗▄▄▖ ▗▄▄▖▗▖  ▗▖    ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▖▗▖  ▗▖    ▗▄▄▄  ▗▄▖▗▖  ▗▖    ▗▄▄▄▖▗▄▖     ▗▖   ▗▄▄▄▖▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖
-▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▝▚▞▘     ▐▌   ▐▌  ▐▌▐▌   ▐▌ ▐▌▝▚▞▘     ▐▌  █▐▌ ▐▌▝▚▞▘       █ ▐▌ ▐▌    ▐▌     █  ▐▌   ▐▌   ▐▛▚▖▐▌
-▐▛▀▜▌▐▛▀▜▌▐▛▀▘ ▐▛▀▘  ▐▌      ▐▛▀▀▘▐▌  ▐▌▐▛▀▀▘▐▛▀▚▖ ▐▌      ▐▌  █▐▛▀▜▌ ▐▌        █ ▐▌ ▐▌    ▐▌     █  ▐▛▀▀▘▐▛▀▀▘▐▌ ▝▜▌
-▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌    ▐▌      ▐▙▄▄▖ ▝▚▞▘ ▐▙▄▄▖▐▌ ▐▌ ▐▌      ▐▙▄▄▀▐▌ ▐▌ ▐▌        █ ▝▚▄▞▘    ▐▙▄▄▖▗▄█▄▖▐▌   ▐▙▄▄▖▐▌  ▐▌                                                                                                                                                                                                          
-`)
+console.log("%c 希望小李天天开心! %c", "background: pink;color:#fff;padding:2px 5px;border-radius: 5px;line-height: 16px;", "")
 
 if (Utils.isMobile) {
     createMobileApp()

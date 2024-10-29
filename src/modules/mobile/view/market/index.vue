@@ -84,6 +84,16 @@
 
     <div v-if="show" class="mobile-market-search-content">
       <van-tabs v-model:active="active" swipeable>
+        <template #nav-left> </template>
+        <template #nav-right> </template>
+        <template #nav-bottom>
+          <div
+            style="height: var(--market-tab-bottom); padding: 0px 24px; overflow: auto"
+            class="flex items-center hide-scrollbar"
+          >
+            <dropdownMenu></dropdownMenu></div
+        ></template>
+
         <van-tab v-for="item in mobileMarketTabs" :title="item.title">
           <div
             class="tab-content flex flex-wrap justify-around"
@@ -95,7 +105,7 @@
               box-sizing: border-box;
             "
             :style="{
-              height: `calc(${height}px - var(--market-search-bar) - var(--van-tabs-line-height))`,
+              height: `calc(${height}px - var(--market-search-bar) - var(--van-tabs-line-height) - var(--market-tab-bottom))`,
             }"
             v-infinite-scroll="getList"
             :infinite-scroll-distance="150"
@@ -106,7 +116,7 @@
                   :style="{
                     background: Utils.random.randomArrayItemWithTimeHash(bgs, index),
                   }"
-                  style="height: 220px; border-radius: 16px; row-gap: 12px"
+                  style="height: 220px; border-radius: 8px; row-gap: 12px"
                   class="flex flex-col overflow-hidden"
                 >
                   <s1-image :src="item?.thumbnail?.url"></s1-image>
@@ -147,6 +157,7 @@ import {
 } from "./index.tsx";
 import Utils from "@/common/utils";
 import searchMenu from "./searchMenu.vue";
+import dropdownMenu from "./dropdownMenu.vue";
 
 const show = ref(false);
 
@@ -255,7 +266,11 @@ function searchMenuSelect(tag) {
 </style>
 <style lang="less">
 .mobile-market {
+  // 整个搜索栏的高度
   --market-search-bar: 64px;
+
+  // tab栏下方，可以放一些分类相关的
+  --market-tab-bottom: 48px;
 }
 
 .van-tabs__line {
@@ -263,7 +278,7 @@ function searchMenuSelect(tag) {
 }
 
 .market-card {
-  width: calc(50% - 12px);
+  width: calc(50% - 10px);
 }
 
 .mobile-market-search {

@@ -11,7 +11,7 @@ export const showMaterialDetailModal = ref(false)
 /**
  * 记录常见的服装颜色信息
 */
-export const normalClothingColors = ref([
+export const builtInClothingColors = ref([
     { label: '纯黄色', value: '#ffff00' },
     { label: '红色', value: '#ff0000' },
     { label: '绿色', value: '#00ff00' },

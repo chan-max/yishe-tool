@@ -106,12 +106,6 @@
                   </template>
                 </menu-item>
                 <menu-item>
-                  <template #title> 字体上传 </template>
-                  <template #suffix>
-                    <el-switch v-model="showFontUpload" size="small" />
-                  </template>
-                </menu-item>
-                <menu-item>
                   <template #title> 字体列表 </template>
                   <template #suffix>
                     <el-switch v-model="showFontModal" size="small" />
@@ -164,7 +158,6 @@ import {
   showWorkspace,
   showBaseModelSelect,
   showDecalControl,
-  showFontUpload,
   showFontModal,
   showHeader,
   showSubHeader,

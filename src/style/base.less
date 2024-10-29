@@ -59,8 +59,20 @@ input:-webkit-autofill:active {
 
 
 
-.hide-scrollbar::-webkit-scrollbar {
-    width: 0 !important
+// 隐藏滚动条
+.hide-scrollbar {
+    /* 对于 WebKit 和 Blink 浏览器（Chrome, Safari, Edge） */
+    overflow: -moz-scrollbars-none;
+    /* Firefox */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* Internet Explorer 和 Edge */
+
+    /* 隐藏 WebKit 和 Blink 浏览器的滚动条 */
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 /* 模拟png背景 */
@@ -69,4 +81,4 @@ input:-webkit-autofill:active {
     background-image: linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0), linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0) !important;
     background-position: 0 0, 10px 10px !important;
     background-size: 20px 20px !important;
-  }
+}

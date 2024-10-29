@@ -271,6 +271,10 @@ export class ModelController {
         this.isMounted = true;
     }
 
+
+    // 设置材质
+    // 当前使用的材质
+    material = null
     async setMaterial() {
         let material = await createMaterialFromOptions(this.state.material)
 
@@ -677,6 +681,20 @@ export class ModelController {
     }
 
 
+    doAnimation() {
+
+        let camera = this.camera
+
+        gsap.to(camera.position, {
+            x: 3,
+            duration: 2,
+            ease: "power1.inOut",
+            repeat: 1,
+            yoyo: true
+        });
+    }
+
+
 
     /**
      * 根据模型信息初始化当前场景
@@ -706,7 +724,15 @@ export class ModelController {
         let camera = this.camera
 
         // 初始化贴纸
+
+        message.loading({
+            content: '正在加载贴纸',
+            key: 'loadsticker'
+        })
+
+
         if (modelInfo.decals) {
+
             await Promise.all(modelInfo.decals.map((decal) => {
                 return new Promise(async (resolve, reject) => {
 
@@ -732,10 +758,14 @@ export class ModelController {
                     resolve(void 0)
                 })
             }))
+
         }
 
         viewDisplayController.value.showProject = false
-        message.success('模型加载成功')
+        message.success({
+            content: '模型加载成功',
+            key: 'loadsticker'
+        })
     }
 
 
@@ -743,13 +773,24 @@ export class ModelController {
 
     activeMediaRecorder = null
 
+
+    // 记录所有的录制
     mediaRecorders = shallowRef([])
 
-    startMediaRecord() {
+    isMediaRecording  = ref(false)
+
+    startMediaRecord(opts) {
         let $this = this
+
+        $this.isMediaRecording.value = true
+        opts = {
+            frame: 66, // 帧数
+            ...opts
+        }
+
         const canvas = this.renderer.domElement
 
-        const stream = canvas.captureStream(30); // 每秒30帧
+        const stream = canvas.captureStream(opts.frame);
         const mediaRecorder = this.activeMediaRecorder = new MediaRecorder(stream);
         let chunks = [];
 
@@ -765,7 +806,10 @@ export class ModelController {
             saveAs(url)
             $this.mediaRecorders.value.push({
                 file: file,
+                time: Date.now()
             })
+
+            $this.isMediaRecording.value = false
             message.success('视频录制成功,已自动导出')
             // 可以在这里下载或播放视频
         };
@@ -778,13 +822,6 @@ export class ModelController {
         this.activeMediaRecorder.stop();
         this.activeMediaRecorder = null;
     }
-
-
-
-    // 设置材质
-
-    // 当前使用的材质
-    material = null
 
 
 

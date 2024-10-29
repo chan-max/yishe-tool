@@ -3,18 +3,15 @@
 
 export const fontAutoplacementTags = [
     { name: '中文' },
-    { name: '英文字母' },
     { name: '繁体字' },
+    { name: '英文' },
+    { name: '通用' },
     { name: '日文' },
     { name: '黑体' },
     { name: '宋体' },
     { name: '动漫' },
     { name: '动画' },
     { name: '卡通' },
-    { name: 'TrueType格式' },
-    { name: 'PostScript格式' },
-    { name: 'WOFF格式' },
-    { name: 'WOFF2格式' },
     { name: '字重' },
     { name: '字宽' },
     { name: '小写字高' },
@@ -64,7 +61,7 @@ export const fontAutoplacementTags = [
 
 
 export const imageAutoplacementTags = [
-    { "name": "文字类" },   
+    { "name": "文字类" },
     { "name": "现代风" },           // 现代设计风格
     { "name": "复古风" },           // 怀旧感设计
     { "name": "极简风" },           // 简约设计

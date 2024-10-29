@@ -38,7 +38,7 @@ import { useLoginStatusStore,initLoginStoreUserInfo } from '@/store/stores/login
 import to from 'await-to-js';
 import { apiInstance } from "@/api/apiInstance";
 import Antd from 'ant-design-vue'
-
+import zhCn from 'element-plus/es/locale/lang/zh-cn'; // 引入中文语言包
 
 import './cover-vant.less'
 import './index.less'
@@ -55,7 +55,9 @@ export async function createMobileApp() {
     const pinia = createPinia()
     app.directive('animateonscroll', AnimateOnScroll);
     app.use(s1Plugin)
-    app.use(ElementPlus)
+    app.use(ElementPlus,{
+        locale: zhCn,
+    })
     app.use(ConfigProvider);
     app.use(pinia)
     app.use(router)

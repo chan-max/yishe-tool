@@ -32,10 +32,10 @@
           <template v-if="currentSticker.keywords">
             <van-tag
               v-for="item in currentSticker.keywords.split(',')"
-              plain
               type="primary"
-              style="margin-right: 5px"
-              color="#444"
+              style="margin: 3px; font-size: 10px; padding: 2px 6px"
+              color="#ddd"
+              round
               >{{ item }}</van-tag
             >
           </template>

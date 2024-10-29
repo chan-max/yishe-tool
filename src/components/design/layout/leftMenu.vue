@@ -90,6 +90,20 @@
       </div>
     </el-tooltip>
 
+    <el-tooltip :hide-after="0" content="辅助视频剪辑" placement="right">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': viewDisplayController.showVideoClip }"
+        @click="videoClipClick"
+      >
+        <div class="menu-bar-item-icon">
+          <VideoCameraOutlined />
+        </div>
+        <span>剪辑相关</span>
+      </div>
+    </el-tooltip>
+
+    <!-- 
     <el-tooltip :hide-after="0" content="喷图" placement="right">
       <div class="menu-bar-item">
         <div class="menu-bar-item-icon"><icon-brush></icon-brush></div>
@@ -127,7 +141,7 @@
         <div class="menu-bar-item-icon"><icon-setting></icon-setting></div>
         <span>设置</span>
       </div>
-    </el-tooltip>
+    </el-tooltip> -->
   </div>
 </template>
 <script setup>
@@ -145,7 +159,6 @@ import {
   showFontModal,
   showDecoration,
   showSticker,
-  showQrcode,
   showStamp,
   showCustomModel,
   showSvgCanvas,
@@ -178,6 +191,7 @@ import iconSvgCanvas from "@/components/design/assets/icon/svg-canvas.svg?compon
 import iconCanvas from "@/components/design/assets/icon/canvas.svg?component";
 import iconProject from "@/components/design/assets/icon/project.svg?component";
 import Utils from "@/common/utils";
+import { VideoCameraOutlined } from "@ant-design/icons-vue";
 
 import desimage from "@/components/image.vue";
 
@@ -187,6 +201,15 @@ function materialControlClick() {
   } else {
     clearLeftLayout();
     viewDisplayController.value.showMaterialControl = true;
+  }
+}
+
+function videoClipClick() {
+  if (viewDisplayController.value.showVideoClip) {
+    viewDisplayController.value.showVideoClip = false;
+  } else {
+    clearLeftLayout();
+    viewDisplayController.value.showVideoClip = true;
   }
 }
 </script>

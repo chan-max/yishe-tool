@@ -99,6 +99,8 @@ export class DecalController {
     if (!info) {
       return
     }
+
+
     this.state.id = this.id.value = (info.id || v4()) // 如果是本地的贴纸，随机分配一个id
     this.state.isLocalResource = info.isLocalResource
     this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64 || info.thumbnail?.url
@@ -164,10 +166,8 @@ export class DecalController {
   // 当前贴花使用的图片
   private img = null;
 
-
   // 材质
   material = null;
-
 
 
   // 贴纸尺寸限制
@@ -218,8 +218,6 @@ export class DecalController {
       wireframe: false,
       roughness: this.state.roughness, // 粗糙度 , 目前没啥效果
       metalness: this.state.metalness, // 金属感觉
-      // transmission :1 ,// 透明度
-      // thickness:1 ,// 厚度 
     }
 
 

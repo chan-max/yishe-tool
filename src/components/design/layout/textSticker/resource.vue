@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { ref, onBeforeMount } from "vue";
-import { currentModelController, } from "../../store";
+import { currentModelController } from "../../store";
 import { initDraggableElement } from "../../utils/draggable";
 import { getTextSticker } from "@/api";
 

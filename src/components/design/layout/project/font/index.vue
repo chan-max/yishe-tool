@@ -109,7 +109,12 @@
         <el-input v-model="editForm.description" placeholder="描述"></el-input
       ></el-form-item>
       <el-form-item label="标签">
-        <tagsInput v-model="editForm.keywords" :string="true"> </tagsInput>
+        <tagsInput
+          v-model="editForm.keywords"
+          :string="true"
+          :autocomplete-tags="fontAutoplacementTags"
+        >
+        </tagsInput>
       </el-form-item>
     </el-form>
   </a-modal>
@@ -117,22 +122,10 @@
 
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
-import { Search, ArrowRightBold, Operation, ArrowRight } from "@element-plus/icons-vue";
-import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
-import desimage from "@/components/image.vue";
-
-import {
-  currentModelController,
-  showImageUplaod,
-  viewDisplayController,
-} from "@/components/design/store";
-import { initDraggableElement } from "@/components/design/utils/draggable";
-import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 import { MoreFilled } from "@element-plus/icons-vue";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import scrollbar from "@/components/scrollbar/index.vue";
-
 import { loadingBottom } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 import Utils from "@/common/utils";
@@ -140,6 +133,8 @@ import Api from "@/api";
 import { s1Confirm } from "@/common/message";
 import { message } from "ant-design-vue";
 import { useLoginStatusStore } from "@/store/stores/login";
+import { fontAutoplacementTags } from "@/components/design/components/tagsInput";
+
 const loginStore = useLoginStatusStore();
 // 列表展示几列
 const column = ref(4);

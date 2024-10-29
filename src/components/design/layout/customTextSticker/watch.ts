@@ -224,15 +224,6 @@ export async function _initDraggableTextSticker(){
   initDraggableElement(
     canvasBackgroundEl.value,
     async (img) => {
-      await currentModelController.value.stickToMousePosition({
-        base64: base64.value,
-        local: true,
-        type: "text",
-        img: img,
-        src:img.src,
-        meta:{
-        }
-      });
     },
     base64.value
   );

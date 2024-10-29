@@ -57,7 +57,6 @@ export const canvasBgOpacity = ref('0')
 
 // 画布颜色随着暗色模式的变化而变化
 
-
 // 是否展示基础模型选择菜单
 export const showBaseModelSelect = ref(false);
 
@@ -70,11 +69,6 @@ export const showSceneControl = ref(false)
 // 是否展示图片贴图的弹窗
 export const showImageSticker = ref(false)
 
-watch(showImageSticker, (value) => {
-    if (value) {
-    }
-})
-
 // 是否展示艺术字弹窗
 export const showTextSticker = ref(false)
 
@@ -86,7 +80,6 @@ watch(showWorkspace, (value) => {
         showWorkspace.value = true
     }
 })
-
 
 
 // 是否展示贴画控制弹窗
@@ -104,24 +97,10 @@ export const showCustomModel = ref(false)
 
 // 是否展示自定义文字贴纸
 export const showCustomTextSticker = ref(false)
-watch(showCustomTextSticker, (value) => {
-    if (value) {
-        clearLeftLayout()
-        showCustomTextSticker.value = true
-    }
-})
 
-// 是否展示二维码
-export const showQrcode = ref(false)
 
 // 当前正在操作的贴花实例
 export const currentOperatingDecalController = shallowRef()
-
-// 是否展示图片上传弹窗
-export const showImageUplaod = ref(false)
-
-// 是否展示字体上传弹窗
-export const showFontUpload = ref(false)
 
 
 /*
@@ -179,7 +158,6 @@ export const builtInCanvasBackgrounds = ref([
 export const currentCanvasBackground = useLocalStorage('_1s_canvasBackground', builtInCanvasBackgrounds.value[0])
 
 
-
 // 是否展示字体列表
 export const showFontModal = ref(false)
 
@@ -235,6 +213,7 @@ export function clearLeftLayout() {
     showSticker.value = false
     showDecalControl.value = false
     viewDisplayController.value.showMaterialControl = false
+    viewDisplayController.value.showVideoClip = false
     showWorkspace.value = false
 }
 
@@ -352,6 +331,10 @@ export const viewDisplayController = ref({
     showMaterialControl: false,
     // 材质详细信息弹层
     showMaterialDetailModal: false,
+
+
+    // 视频剪辑相关功能模块
+    showVideoClip: false
 })
 
 

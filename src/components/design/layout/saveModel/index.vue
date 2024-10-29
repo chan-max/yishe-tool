@@ -31,6 +31,7 @@
             v-model="form.description"
             placeholder="请输入"
             type="textarea"
+            :autosize="{ minRows: 2, maxRows: 5 }"
           ></el-input>
         </el-form-item>
 
@@ -44,10 +45,10 @@
         </el-form-item>
         <el-form-item label="辅助操作">
           <el-button
-            type="primary"
-            round
-            plain
+            type="default"
+            size="small"
             title="根据基础模型和贴纸信息自动生成模型信息"
+            @click="autofillInfo"
           >
             自动生成信息
           </el-button>
@@ -55,23 +56,30 @@
 
         <el-form-item label="模型截图">
           <div
-            class="flex items-center"
+            class="flex items-center w-full"
             style="padding: 12px; column-gap: 12px; overflow: auto"
           >
-            <s1-image
-              v-for="item in screenshots"
-              style="width: 48px; height: 48px; border-radius: 4px; background: #eee"
-              :src="item.base64"
-            >
-              <el-button
-                style="top: -8px; right: -8px; position: absolute"
-                link
-                type="danger"
-                @click="removeScreenshot(item)"
+            <template v-if="screenshots.length">
+              <s1-image
+                v-for="item in screenshots"
+                style="width: 48px; height: 48px; border-radius: 4px; background: #eee"
+                :src="item.base64"
               >
-                <el-icon size="12"><CircleCloseFilled /></el-icon>
-              </el-button>
-            </s1-image>
+                <el-button
+                  style="top: -8px; right: -8px; position: absolute"
+                  link
+                  type="danger"
+                  @click="removeScreenshot(item)"
+                >
+                  <el-icon size="12"><CircleCloseFilled /></el-icon>
+                </el-button>
+              </s1-image>
+            </template>
+            <template v-else>
+              <div style="font-size: 10px; color: #aaa" class="w-full text-center">
+                无截图
+              </div>
+            </template>
           </div>
         </el-form-item>
       </el-form>
@@ -87,7 +95,12 @@
 import { ref, onBeforeMount, computed } from "vue";
 import { createCustomModelApi, uploadToCOS } from "@/api";
 import { ElMessageBox } from "element-plus";
-import { currentModelController, lastestScreenshot, screenshots } from "../../store";
+import {
+  currentModelController,
+  currentOperatingBaseModelInfo,
+  lastestScreenshot,
+  screenshots,
+} from "../../store";
 import { base64ToFile, base64ToPngFile } from "@/common/transform/base64ToFile";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { message } from "ant-design-vue";
@@ -96,6 +109,8 @@ import { CircleCloseFilled } from "@element-plus/icons-vue";
 import Utils from "@/common/utils";
 import { saveCustomModel } from "./index.ts";
 import { customModelAutoplacementTags } from "../../components/tagsInput";
+
+const loginStore = useLoginStatusStore();
 
 const displayThumbnail = ref();
 
@@ -109,8 +124,6 @@ const form = ref({
 onBeforeMount(() => {
   displayThumbnail.value = currentModelController.value.getScreenshotBase64();
 });
-
-const loginStore = useLoginStatusStore();
 
 const loading = ref(false);
 const loadingMessage = ref("");
@@ -129,6 +142,35 @@ async function save() {
 function removeScreenshot(item) {
   let ind = screenshots.value.indexOf(item);
   screenshots.value.splice(ind, 1);
+}
+
+/**
+ * @method 自动从基础模型和贴纸中填充信息
+ */
+function autofillInfo() {
+  let name = currentOperatingBaseModelInfo.value.name || "";
+  let description = currentOperatingBaseModelInfo.value.description || "";
+  let keywords = currentOperatingBaseModelInfo.value.keywords || "";
+
+  currentModelController.value.decalControllers.map((item) => {
+    if (item.info.name) {
+      name += "," + item.info.name;
+    }
+
+    if (item.info.description) {
+      description += "," + item.info.description || "";
+    }
+
+    if (item.info.keywords) {
+      keywords += "," + item.info.keywords;
+    }
+  });
+
+  form.value = {
+    name,
+    description,
+    keywords,
+  };
 }
 </script>
 <style lang="less" scoped></style>

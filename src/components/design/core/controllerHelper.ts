@@ -83,7 +83,8 @@ export async function createMaterialFromOptions(options) {
         side: DoubleSide,
         color: color,
         emissive: null, // 发光色
-        opacity:.6
+        opacity:1,
+        transparent: true // 设置该属性 才可以设置 opacity
     });
 
     // message.destroy('loadingmaterial');

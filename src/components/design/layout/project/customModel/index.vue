@@ -87,11 +87,7 @@ import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 
-import {
-  currentModelController,
-  showImageUplaod,
-  viewDisplayController,
-} from "@/components/design/store";
+import { currentModelController, viewDisplayController } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 import { MoreFilled } from "@element-plus/icons-vue";

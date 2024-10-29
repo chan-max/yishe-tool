@@ -76,32 +76,12 @@
   </div>
 
   <diydialog
-    title="图片上传"
-    :header="true"
-    mask="true"
-    :show="showImageUplaod"
-    @close="showImageUplaod = false"
-    :animation="basicContainerAnimation"
-  >
-    <image-upload></image-upload>
-  </diydialog>
-
-  <diydialog
     :show="showBaseModelSelect"
     @close="showBaseModelSelect = false"
     :animation="basicContainerAnimation"
   >
     <template #title> 选择基础模型</template>
     <base-model-select></base-model-select>
-  </diydialog>
-
-  <diydialog
-    :show="showFontUpload"
-    @close="showFontUpload = false"
-    :animation="basicContainerAnimation"
-  >
-    <template #title> 字体上传 </template>
-    <font-upload></font-upload>
   </diydialog>
 
   <diydialog title="设置场景" :show="showSceneControl" @close="showSceneControl = false">
@@ -185,9 +165,7 @@ import {
   showWorkspace,
   showDecalControl,
   isFirstPageLoading,
-  showImageUplaod,
   showCustomTextSticker,
-  showFontUpload,
   showFontModal,
   showModelInfo,
   showDecalList,
@@ -200,7 +178,6 @@ import {
   showThreeCanvas,
   showBasicCanvas,
   useDesignStore,
-  showQrcode,
   showUpload,
   showStamp,
   screenshotInstance,
@@ -265,6 +242,7 @@ import materialDetailModal from "./material/detailModal.vue";
 import shareCardModal from "@/components/design/layout/shareCard/modal.vue";
 import material from "@/components/design/layout/material/index.vue";
 import autocreateModal from "./autocreate/modal.vue";
+import videoClip from "./videoClip/index.vue";
 
 const { component: stickerDetailModal } = useStickerDetailModal();
 const { component: customModelDetailModal } = useCustomModelDetailModal();
@@ -301,6 +279,10 @@ const leftComponent = computed(() => {
 
   if (viewDisplayController.value.showMaterialControl) {
     return material;
+  }
+
+  if (viewDisplayController.value.showVideoClip) {
+    return videoClip;
   }
 });
 

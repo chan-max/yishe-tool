@@ -42,8 +42,10 @@
             <template v-if="item.state.info.keywords">
               <van-tag
                 v-for="i in item.state.info.keywords.split(',')"
-                plain
                 type="primary"
+                style="margin: 3px; font-size: 10px; padding: 2px 6px"
+                color="#ddd"
+                round
                 >{{ i }}</van-tag
               >
             </template>

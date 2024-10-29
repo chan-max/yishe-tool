@@ -31,7 +31,9 @@
           <template v-if="currentMaterialDetail?.keywords">
             <van-tag
               v-for="item in currentMaterialDetail?.keywords?.split(',')"
-              plain
+              style="margin: 3px; font-size: 10px; padding: 2px 6px"
+              color="#ddd"
+              round
               type="primary"
               >{{ item }}</van-tag
             >

@@ -40,24 +40,34 @@
       </div>
 
       <van-card
-        num="999"
-        price="0.00"
-        tag=""
         :desc="currentCustomModel.description || '暂无相关描述'"
         :title="currentCustomModel.name || '暂无名称'"
         :thumb="currentCustomModel.thumbnail.url"
       >
+        <!-- <template #title> </template> -->
+        <!-- <template #thumb></template> -->
+        <!-- <template #desc> </template> -->
+        <template #num> </template>
+        <template #price> {{ currentCustomModel.price || "暂未定价" }} </template>
+        <template #origin-price> </template>
+        <!-- <template #price-top> </template>
+        <template #bottom> </template> -->
+        <!-- <template #tag>  </template> -->
+
         <template #tags>
-          <template v-if="currentCustomModel.keywords">
-            <van-tag
-              v-for="item in currentCustomModel.keywords.split(',')"
-              plain
-              style="margin-right: 5px"
-              color="#444"
-              >{{ item }}</van-tag
-            >
-          </template>
-          <template v-else> 无标签 </template>
+          <div style="padding: 10px 0">
+            <template v-if="currentCustomModel.keywords">
+              <van-tag
+                v-for="item in currentCustomModel.keywords.split(',')"
+                type="primary"
+                style="margin: 3px; font-size: 10px; padding: 2px 6px"
+                color="#ddd"
+                round
+                >{{ item }}</van-tag
+              >
+            </template>
+            <template v-else> 无标签 </template>
+          </div>
         </template>
         <template #footer>
           <div style="margin-top: 12px" class="flex items-center">
@@ -71,13 +81,14 @@
 
             <van-action-bar-icon icon="records-o" text="自定义" @click="goCustom" />
 
-            <div style="flex: 1"></div>
+            <!-- <div style="flex: 1"></div> -->
             <van-button
               round
               type="primary"
               @click="showShare = true"
               class="gradient-button"
               color="linear-gradient(to right, #eb3941, #e14e53)"
+              style="flex: 1"
             >
               立即购买
             </van-button>
@@ -113,6 +124,11 @@ import { showConfirmDialog, showToast } from "vant";
 import { useConfigStore } from "@/store/stores/config";
 import { showImagePreview } from "vant";
 import { showShareCard } from "../shareCard/index.ts";
+import { useRouter } from "vue-router";
+import { currentModelController } from "@/components/design/store";
+import { toRaw } from "vue";
+
+const router = useRouter();
 
 // 组件增加v-if 是因为需要每次重新渲染
 
@@ -172,8 +188,25 @@ function imagePreview(item, index) {
 
 async function goCustom() {
   await showConfirmDialog({
-    title: "自定义",
-    message: "确认跳转到工作台编辑该模型吗？",
+    title: "是否进入工作台，可享受如下功能",
+    message: `
+      自选服装款式
+      自定义服装材质和颜色
+      丰富可自定义的服装印花
+      发布个人的创作模型
+    `,
+    theme: "round-button",
+    messageAlign: "left",
+  });
+
+  let modelInfo = currentCustomModel.value.meta.modelInfo;
+
+  showCustomModelModal.value = false;
+  router.push({
+    name: "design",
+    state: {
+      modelInfo: toRaw(modelInfo),
+    },
   });
 }
 </script>

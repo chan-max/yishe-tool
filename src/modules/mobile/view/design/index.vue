@@ -52,6 +52,9 @@
           </div>
         </template>
       </van-action-bar-icon>
+
+      <van-action-bar-icon icon="eye-o" text="服装外观" @click="showColorPopup = true" />
+
       <van-action-bar-icon
         icon="photo-o"
         text="添加贴纸"
@@ -61,26 +64,15 @@
       <van-action-bar-icon icon="upgrade" text="上传图片" @click="toUpload" />
       <van-action-bar-icon icon="shop-o" text="设计作品" />
       <van-action-bar-icon icon="shop-collect-o" text="我的作品" />
-      <van-action-bar-icon icon="flower-o" text="创建贴纸" />
+
+      <van-action-bar-icon icon="flower-o" text="创建贴纸" @click="createSticker" />
       <van-action-bar-icon
         icon="bars"
-        text="贴纸操作"
+        text="操作贴纸"
         @click="showDecalPopup = true"
         :badge="currentModelController?.decalControllers.length"
       />
-      <van-action-bar-icon icon="shop-o" text="店铺" />
-      <van-action-bar-icon icon="chat-o" text="客服" />
-      <van-action-bar-icon icon="cart-o" text="购物车" />
-      <van-action-bar-icon icon="shop-o" text="店铺" />
-      <van-action-bar-icon icon="chat-o" text="客服" />
-      <van-action-bar-icon icon="cart-o" text="购物车" />
-      <van-action-bar-icon icon="shop-o" text="店铺" />
-      <van-action-bar-icon icon="chat-o" text="客服" />
-      <van-action-bar-icon icon="cart-o" text="购物车" />
-      <van-action-bar-icon icon="shop-o" text="店铺" />
-      <van-action-bar-icon icon="chat-o" text="客服" />
-      <van-action-bar-icon icon="cart-o" text="购物车" />
-      <van-action-bar-icon icon="shop-o" text="店铺" />
+
       <!-- <van-action-bar-button color="#be99ff" type="warning" text="加入购物车" />
       <van-action-bar-button color="#7232dd" type="danger" text="立即购买" /> -->
     </van-action-bar>
@@ -94,6 +86,7 @@
   <decalPopup></decalPopup>
   <uploadImagePopup></uploadImagePopup>
   <decalFloatingBubble></decalFloatingBubble>
+  <colorPopup></colorPopup>
 </template>
 
 <script setup lang="ts">
@@ -110,6 +103,7 @@ import {
   showUploadPopup,
   showDecalPopup,
   showUploadImagePopup,
+  showColorPopup,
 } from "./index.ts";
 import clothIcon from "@/icon/mobile/cloth.svg?url";
 import materialIcon from "@/icon/mobile/material.svg?url";
@@ -122,16 +116,18 @@ import uploadImagePopup from "./uploadImagePopup.vue";
 import uploadPopup from "./uploadPopup.vue";
 import decalPopup from "./decalPopup.vue";
 import decalFloatingBubble from "./decalFloatingBubble.vue";
+import colorPopup from "./colorPopup.vue";
 
 import { currentModelController } from "@/components/design/store";
 import { currentOperatingBaseModelInfo } from "@/components/design/store";
-import { useRouter } from "vue-router";
-import { showToast } from "vant";
+import { useRouter, useRoute } from "vue-router";
+import { showDialog, showToast } from "vant";
 import avatar from "@/modules/mobile/components/avatar.vue";
 import Utils from "@/common/utils";
 import { useLoginStatusStore } from "@/store/stores/login";
 
 let router = useRouter();
+let route = useRoute();
 const loginStore = useLoginStatusStore();
 const threeCanvasRef = ref();
 
@@ -143,6 +139,11 @@ onMounted(() => {
       isMobile: true,
     });
     modelController.render(threeCanvasRef.value);
+
+    // 引用了其他模型
+    if (history.state.modelInfo) {
+      modelController.useModelInfo(history.state.modelInfo);
+    }
   } else {
     showToast("当前设备不支持，请更换设备尝试");
   }
@@ -176,6 +177,18 @@ function login() {
     query: {
       redirect: "design",
     },
+  });
+}
+
+/**
+ * @methiod 点击创建贴纸
+ */
+function createSticker() {
+  showDialog({
+    title: "提示",
+    message: "移动端暂时不支持创建贴纸，可以前往pc端使用全部功能",
+    theme: "round-button",
+    confirmButtonText: "知道了",
   });
 }
 </script>

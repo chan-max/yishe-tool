@@ -55,6 +55,14 @@
       </div>
     </el-tooltip>
 
+    <el-tooltip :hide-after="0" content="执行内置动画" placement="top">
+      <div>
+        <el-button link @click="doBuiltInAnimations">
+          <VideoCameraOutlined style="font-size: 16px" />
+        </el-button>
+      </div>
+    </el-tooltip>
+
     <el-tooltip :hide-after="0" content="自动根据当前控制台生成模型" placement="top">
       <div>
         <el-button
@@ -94,6 +102,7 @@ import {
   CloseCircleOutlined,
   RedoOutlined,
   DeleteOutlined,
+  VideoCameraOutlined,
 } from "@ant-design/icons-vue";
 import { useEyeDropper, useClipboard } from "@vueuse/core";
 import { Pointer, Grid } from "@element-plus/icons-vue";
@@ -133,6 +142,11 @@ function animate() {
 function autocreate() {
   showAutocreateModal.value = true;
 }
+
+/**
+ * @method 执行内置动画，可以生成短视频
+ */
+function doBuiltInAnimations() {}
 </script>
 <style lang="less">
 .designiy-bottom-menu {

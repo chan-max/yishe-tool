@@ -25,9 +25,14 @@
               :thumb="item.thumbnail.url"
             >
               <template #tags>
-                <van-tag v-for="tag in item.keywords.split(',')" plain type="primary">{{
-                  tag
-                }}</van-tag>
+                <van-tag
+                  v-for="tag in item.keywords.split(',')"
+                  type="primary"
+                  style="margin: 3px; font-size: 10px; padding: 2px 6px"
+                  color="#ddd"
+                  round
+                  >{{ tag }}</van-tag
+                >
               </template>
               <template #footer>
                 <van-button size="mini" @click="selectModel(item)">

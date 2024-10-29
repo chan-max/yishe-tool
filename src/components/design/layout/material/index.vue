@@ -10,7 +10,7 @@
       <el-form-item label="服装颜色">
         <div class="flex flex-wrap" style="gap: 12px">
           <div
-            v-for="item in normalClothingColors"
+            v-for="item in builtInClothingColors"
             :style="{ background: item.value }"
             class="color-item"
             :title="item.label"
@@ -49,7 +49,15 @@
           >
         </template>
       </el-form-item>
-
+      <el-form-item label="纹理密度">
+        <el-slider
+          :min="1"
+          :max="20"
+          :step="1"
+          v-model="currentModelController.state.material.textureRepeat"
+          size="small"
+        />
+      </el-form-item>
       <el-form-item label="粗糙度">
         <el-slider
           :min="0"
@@ -69,23 +77,13 @@
           size="small"
         />
       </el-form-item>
-
-      <el-form-item label="纹理密度">
-        <el-slider
-          :min="1"
-          :max="20"
-          :step="1"
-          v-model="currentModelController.state.material.textureRepeat"
-          size="small"
-        />
-      </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script setup lang="ts">
 import { viewDisplayController, currentModelController } from "@/components/design/store";
-import { normalClothingColors } from "./index.ts";
+import { builtInClothingColors } from "./index.ts";
 </script>
 
 <style scoped lang="less">

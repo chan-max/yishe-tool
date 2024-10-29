@@ -57,7 +57,7 @@ import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 import stickerPopover from "./stickerPopover.vue";
-import { currentModelController, showImageUplaod } from "@/components/design/store";
+import { currentModelController } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 import tags from "./tags.vue";
@@ -82,7 +82,6 @@ function imgLoad(el, meta) {
   const img = el;
 
   initDraggableElement(img, async () => {
-    // 这里有一个 bug ， 获取到的info是错误的，暂未排查出问题
     let info = img.meta;
     currentModelController.value.stickToMousePosition({
       img: img,
@@ -90,7 +89,7 @@ function imgLoad(el, meta) {
       local: false,
       src: img.src,
       id: info.id,
-      info: info,
+      ...info,
     });
   });
 }

@@ -35,9 +35,7 @@
         </el-image>
       </div>
     </div>
-    <div class="designiy-image-sticker-footer">
-      <el-button type="pirmary" @click="showImageUplaod = true"> 上传图片 </el-button>
-    </div>
+    <div class="designiy-image-sticker-footer"></div>
   </div>
 </template>
 <script setup>
@@ -46,7 +44,7 @@ import { currentModelController } from "../../store";
 import { Picture, FolderOpened, Search, Operation } from "@element-plus/icons-vue";
 import { getImage } from "@/api/index";
 import { initDraggableElement } from "../../utils/draggable";
-import { showImageUplaod } from "../../store";
+
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 
 const input = ref();
@@ -59,15 +57,6 @@ function load(e, info) {
   initDraggableElement(img, () => {
     const src = createImgObjectURL(img);
     const base64 = imgToBase64(img);
-
-    currentModelController.value.stickToMousePosition({
-      img: img,
-      type: "image",
-      isLocalResource: false,
-      src: src,
-      ...info,
-      base64: base64,
-    });
   });
 }
 

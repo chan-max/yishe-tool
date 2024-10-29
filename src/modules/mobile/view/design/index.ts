@@ -42,3 +42,11 @@ export const showUploadImagePopup = ref(false)
 
 
 export const showDecalOperationPopup = ref(false)
+
+
+
+
+
+// 服装颜色选择
+
+export const showColorPopup = ref(false)

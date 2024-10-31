@@ -174,6 +174,8 @@ class Transform {
     base64ToPngFile = base64ToPngFile
 
     transformSvgPathToPngDataUrl = transformSvgPathToPngDataUrl
+
+    imageDataToFile = imageDataToFile
 }
 
 

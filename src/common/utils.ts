@@ -133,6 +133,8 @@ import { Random } from './random.ts';
 
 import three from './three.ts'
 
+import { Format } from './format.ts'
+
 class Utils {
 
     constructor() {
@@ -154,10 +156,7 @@ class Utils {
 
     formatUrl = formatUrl
 
-
-
     isPromise = isPromise
-
 
     isEmptyObject = isEmptyObject
 
@@ -211,6 +210,8 @@ class Utils {
     three = new three()
 
     random = new Random()
+
+    format = new Format()
 }
 
 

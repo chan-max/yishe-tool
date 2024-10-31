@@ -63,7 +63,6 @@ export async function createMobileApp() {
     app.use(router)
     app.use(Antd)
 
-
     await initLoginStoreUserInfo()
 
     await initConfigStoreBasicConfig()

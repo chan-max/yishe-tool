@@ -187,7 +187,6 @@ const { open: openFileDialog, reset, onCancel, onChange } = useFileDialog({
 
 onChange((fileList) => {
   localFileListResource.value.push(...fileList);
-  console.log(localFileListResource.value);
 });
 
 function openUplaodModal(file) {

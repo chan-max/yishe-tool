@@ -20,16 +20,27 @@ const getColor = (img) => new Promise((resolve, reject) => {
 
 
 const getPalette = (img) => new Promise((resolve, reject) => {
-    if (img.complete) {
-        let color = colorThief.getPalette(img);
-        resolve(color);
-    } else {
+
+    if (img.nodeName != 'IMG') {
+        let el = document.createElement('img');
+        el.src = img
+        img = el
+    }
+
+    if (!img.complete) {
         img.addEventListener('load', function () {
-            let color = colorThief.getPalette(img);
+            let color = colorThief.getPalette(img,5);
             resolve(color);
         });
     }
+    else {
+        let color = colorThief.getPalette(img,5);
+        resolve(color);
+    }
 })
+
+
+
 
 export class Color {
 

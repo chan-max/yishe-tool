@@ -313,6 +313,11 @@ export class CanvasController {
         return this.canvasEl.toDataURL('image/png')
     }
 
+
+    async getPalette(){
+        return Utils.color.getPalette(this.getBase64())
+    }
+
     // 需要组件渲染后再更新
     async updateRenderingCanvas() {
 

@@ -2,7 +2,7 @@
   <div style="width: 100%; height: 100%" class="flex flex-col mobile-market">
     <div style="height: var(--market-search-bar); position: relative">
       <van-search
-        v-model="searchText"
+        v-model="queryParams.searchText"
         show-action
         placeholder="请输入搜索关键词"
         class="mobile-market-search"
@@ -40,7 +40,7 @@
           <van-button
             v-if="showSearchMenu"
             size="small"
-            color="#6900ff"
+            color="var(--van-primary-color)"
             round
             @click="doSearch"
           >
@@ -49,7 +49,7 @@
           </van-button>
 
           <van-button
-            v-if="!showSearchMenu && searchText"
+            v-if="!showSearchMenu && queryParams.searchText"
             size="small"
             type="default"
             color="transparent"
@@ -83,7 +83,9 @@
     </div>
 
     <div v-if="show" class="mobile-market-search-content">
-      <van-tabs v-model:active="active" swipeable>
+      <!-- 这个tab没有实际的tab效果，只是作为分类使用 -->
+
+      <van-tabs v-model:active="activeTab" swipeable @change="tabChange">
         <template #nav-left> </template>
         <template #nav-right> </template>
         <template #nav-bottom>
@@ -94,24 +96,23 @@
             <dropdownMenu></dropdownMenu></div
         ></template>
 
-        <van-tab v-for="item in mobileMarketTabs" :title="item.title">
-          <div
-            class="tab-content flex flex-wrap justify-around"
-            style="
-              overflow-y: auto;
-              width: 100%;
-              row-gap: 12px;
-              padding: 24px 12px;
-              box-sizing: border-box;
-            "
-            :style="{
-              height: `calc(${height}px - var(--market-search-bar) - var(--van-tabs-line-height) - var(--market-tab-bottom))`,
-            }"
-            v-infinite-scroll="getList"
-            :infinite-scroll-distance="150"
-          >
-            <template v-for="(item, index) in list">
-              <div class="market-card" @click="open(item)" style="overflow: hidden">
+        <van-tab v-for="item in mobileMarketTabs" :title="item.title"> </van-tab>
+      </van-tabs>
+
+      <!-- 搜索内容 -->
+      <div
+        class="tab-content flex flex-wrap justify-around"
+        style="overflow-y: auto; width: 100%; box-sizing: border-box; padding: 12px"
+        :style="{
+          height: `calc(${height}px - var(--market-search-bar) - var(--van-tabs-line-height) - var(--market-tab-bottom))`,
+        }"
+        v-infinite-scroll="getList"
+        :infinite-scroll-distance="150"
+      >
+        <el-row style="width: 100%; box-sizing: border-box" v-if="!isEmpty">
+          <template v-for="(item, index) in list">
+            <el-col :span="12">
+              <div @click="open(item)" style="overflow: hidden; padding: 6px">
                 <div
                   :style="{
                     background: Utils.random.randomArrayItemWithTimeHash(bgs, index),
@@ -131,15 +132,16 @@
                   {{ item?.description || "..." }}
                 </div>
               </div>
-            </template>
-            <s1-paging-bottom
-              :loading="loading"
-              :isEmpty="isEmpty"
-              :isLastPage="isLastPage"
-            ></s1-paging-bottom>
-          </div>
-        </van-tab>
-      </van-tabs>
+            </el-col>
+          </template>
+        </el-row>
+
+        <s1-paging-bottom :loading="loading" :isEmpty="isEmpty" :isLastPage="isLastPage">
+          <template #empty>
+            <s1-empty>未找到相关服装 </s1-empty>
+          </template>
+        </s1-paging-bottom>
+      </div>
     </div>
   </div>
 </template>
@@ -150,18 +152,24 @@ import { useWindowSize, useDebounceFn } from "@vueuse/core";
 import { openCustomModelModal } from "../content/customModel/index.ts";
 import {
   addSearchRecords,
-  searchText,
   showSearchMenu,
   mobileMarketTabs,
   bgs,
+  queryParams,
+  menuRef,
+  getOptionsValue,
 } from "./index.tsx";
 import Utils from "@/common/utils";
 import searchMenu from "./searchMenu.vue";
 import dropdownMenu from "./dropdownMenu.vue";
 
-const show = ref(false);
+import Api from "@/api";
 
+import { usePaging } from "@/hooks/data/paging.ts";
+import { useRouter } from "vue-router";
 let router = useRouter();
+
+const show = ref(false);
 
 const { width, height } = useWindowSize();
 
@@ -169,19 +177,25 @@ onMounted(() => {
   show.value = true;
 });
 
-const active = ref();
+const activeTab = ref();
 
-import Api from "@/api";
+const { list, getList, isLastPage, isEmpty, loading, reset } = usePaging((params) => {
+  let tabValue = getOptionsValue(mobileMarketTabs.value, activeTab.value, {
+    outputKey: "match",
+    inputKey: "index",
+  });
 
-import { usePaging } from "@/hooks/data/paging.ts";
-import { useRouter } from "vue-router";
-
-const { list, getList, isLastPage, isEmpty, loading } = usePaging((params) => {
   return Api.getCustomModelList({
     ...params,
+    match: [queryParams.value.searchText, queryParams.value.color, tabValue].filter(
+      Boolean
+    ),
+    createTimeOrderBy: queryParams.value.createTimeOrderBy,
+    priceOrderBy: queryParams.value.priceOrderBy,
+    baseModelId: queryParams.value.baseModelId, // meta 查询
     pageSize: 12,
   });
-}, {});
+});
 
 function open(info) {
   openCustomModelModal(info);
@@ -207,17 +221,25 @@ async function searchBlur() {
  * @methos 点击搜索
  */
 function doSearch() {
+  if (!queryParams.value.searchText) {
+    return;
+  }
+
   addSearchRecords({
-    label: searchText.value,
+    label: queryParams.value.searchText,
   });
   showSearchMenu.value = false;
+  reset();
+  getList();
 }
 
 /**
  * @methos 取消搜索
  */
 function cancelSearch() {
-  searchText.value = "";
+  queryParams.value.searchText = "";
+  reset();
+  getList();
 }
 
 /**
@@ -231,9 +253,32 @@ function searchMenuBack() {
  * @methos 从搜索下拉中选择了标签
  */
 function searchMenuSelect(tag) {
-  searchText.value = tag;
+  queryParams.value.searchText = tag;
   showSearchMenu.value = false;
+  reset();
+  getList();
 }
+
+/**
+ * @methos tab 栏切换时触发
+ */
+function tabChange() {
+  reset();
+  getList();
+}
+
+watch(
+  [
+    () => queryParams.value.createTimeOrderBy,
+    () => queryParams.value.priceOrderBy,
+    () => queryParams.value.baseModelId,
+    () => queryParams.value.color,
+  ],
+  () => {
+    reset();
+    getList();
+  }
+);
 </script>
 
 <style scoped lang="less">
@@ -275,10 +320,7 @@ function searchMenuSelect(tag) {
 
 .van-tabs__line {
   --van-tabs-bottom-bar-width: 12px !important;
-}
-
-.market-card {
-  width: calc(50% - 10px);
+  --van-tabs-bottom-bar-height: 4px !important;
 }
 
 .mobile-market-search {

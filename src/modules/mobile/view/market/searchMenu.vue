@@ -59,12 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  localSearchRecords,
-  hotSearchOptions,
-  searchText,
-  showSearchMenu,
-} from "./index.tsx";
+import { localSearchRecords, hotSearchOptions, showSearchMenu } from "./index.tsx";
 import { showConfirmDialog } from "vant";
 
 const emits = defineEmits(["select"]);

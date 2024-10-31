@@ -37,11 +37,16 @@
       <div style="margin: 24px 0">
         <el-form ref="formRef" :model="form" :rules="rules" label-width="64px">
           <el-row :gutter="12">
-            <el-col :span="12">
+            <el-col :span="24">
               <el-form-item label="模型名称" prop="name" required>
                 <el-input v-model="form.name"></el-input> </el-form-item
             ></el-col>
-            <el-col :span="12">
+            <el-col :span="24">
+              <el-form-item label="描述" prop="description">
+                <el-input v-model="form.description" type="textarea"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
               <el-form-item label="关键字" prop="keywords">
                 <s1-tagsInput
                   v-model="form.keywords"
@@ -49,8 +54,8 @@
                 ></s1-tagsInput> </el-form-item
             ></el-col>
             <el-col :span="24">
-              <el-form-item label="描述" prop="description">
-                <el-input v-model="form.description" type="textarea"></el-input>
+              <el-form-item label="定价" prop="price">
+                <el-input v-model="form.price" type="number"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -110,6 +115,7 @@ const gridOptions = ref({
       },
     },
     { field: "name", title: "资源名称", width: 160, showOverflow: true },
+    { field: "price", title: "价格", width: 160 },
     { field: "keywords", title: "关键字", width: 240, showOverflow: true },
     { field: "description", title: "描述", minWidth: 240 },
     {

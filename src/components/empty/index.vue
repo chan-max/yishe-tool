@@ -31,8 +31,8 @@ const props = defineProps({
 
 <style lang="less">
 .s1-empty {
-  font-size: 1rem;
-  color: #555;
+  font-size: 10px;
+  color: #ccc;
   .el-empty {
     --el-empty-padding: 12px 24px !important;
     --el-empty-bottom-margin-top: 8px;

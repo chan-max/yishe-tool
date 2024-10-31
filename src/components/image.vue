@@ -104,15 +104,11 @@ defineExpose({
   transition: all 0.3s;
   display: block;
 
-  // &:hover {
-  //   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  // }
-
   &_loading {
     width: 100%;
     height: 100%;
     list-style: none;
-    background-image: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+    background-image: linear-gradient(100deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
     background-size: 400% 100%;
     background-position: 100% 50%;
     animation: skeleton-loading 1.4s ease infinite;

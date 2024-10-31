@@ -1,10 +1,7 @@
 import { useLocalStorage } from '@vueuse/core'
-import { ref } from 'vue'
+import { ref, computed, onBeforeMount } from 'vue'
+import Api from '@/api'
 
-
-
-
-export const searchText = ref()
 
 /**
  * @define 本地搜素记录 , 最多保存 15 条
@@ -78,31 +75,141 @@ export const bgs = ref([
     "#E5D5F1",
     "#D9EAD3",
     "#A4D9E1",
-  ]);
+]);
 
-export const  mobileMarketTabs = ref([
+export const mobileMarketTabs = ref([
     {
-      index: "1",
-      title: " T恤",
+        index: "0",
+        title: " 全部",
+        match: ''
     },
     {
-      index: "2",
-      title: " 卫衣",
+        index: "1",
+        title: " T恤",
+        match: 'T恤'
     },
     {
-      index: "3",
-      title: "背心",
+        index: "2",
+        title: " 卫衣",
+        match: '卫衣'
     },
     {
-      index: "4",
-      title: "短裤",
+        index: "4",
+        title: "短裤",
+        match: '短裤'
     },
     {
-      index: "5",
-      title: "员工服",
+        index: "6",
+        title: "工作服",
+        match: '工作服'
     },
     {
-      index: "6",
-      title: "工作服",
+        index: "5",
+        title: "员工服",
+        match: '员工服'
     },
-  ]);
+]);
+
+
+
+export function getOptionsValue(options, value, opt?) {
+    opt = {
+        outputKey: 'text',
+        inputKey: 'value',
+        ...opt
+    }
+
+    for (let i = 0; i < options.length; i++) {
+        let item = options[i];
+        if (item[opt.inputKey] == value) {
+            return item[opt.outputKey]
+        }
+    }
+
+    return null
+}
+
+
+
+export const queryParams = ref({
+    searchText: '',
+    priceOrderBy: null,
+    createTimeOrderBy: null,
+    baseModelId: null,
+    color: null,
+});
+
+export const priceDropdownMenuOptions = ref([
+    {
+        text: "不考虑价格",
+        value: null,
+    },
+    {
+        text: "按价格降序",
+        value: "DESC",
+    },
+    {
+        text: "按价格升序",
+        value: "ASC",
+    },
+]);
+
+
+
+// 这里的value是用来显示用的
+export const colorDropMenuOptions = ref([
+    { text: "红色", value: "red" },
+    { text: "绿色", value: "green" },
+    { text: "蓝色", value: "blue" },
+    { text: "黑色", value: "black" },
+    { text: "白色", value: "white" },
+    { text: "黄色", value: "yellow" },
+    { text: "紫色", value: "purple" },
+    { text: "橙色", value: "orange" },
+    { text: "灰色", value: "gray" },
+    { text: "粉色", value: "pink" },
+    { text: "棕色", value: "brown" },
+    { text: "青色", value: "cyan" },
+    { text: "洋红", value: "magenta" },
+    { text: "金色", value: "#FFD700" },
+    { text: "银色", value: "#C0C0C0" },
+])
+
+export const createTimeDropdownMenuOptions = ref([
+    {
+        text: "默认时间排序",
+        value: null,
+    },
+    {
+        text: "按时间降序(最新)",
+        value: "DESC",
+    },
+    {
+        text: "按时间升序",
+        value: "ASC",
+    },
+]);
+
+
+
+export function useDropdownMenuMixin() {
+
+
+
+    let baseModelList = ref([])
+
+    onBeforeMount(async () => {
+        let res = await Api.getProductModelList({ currentPage: 1, pageSize: 999 })
+        baseModelList.value = res.list
+    })
+
+
+
+    return {
+        baseModelList
+    }
+}
+
+
+export const menuRef = ref(null);
+

@@ -48,10 +48,24 @@
         <!-- <template #thumb></template> -->
         <!-- <template #desc> </template> -->
         <template #num> </template>
-        <template #price> {{ currentCustomModel.price || "暂未定价" }} </template>
+
         <template #origin-price> </template>
-        <!-- <template #price-top> </template>
-        <template #bottom> </template> -->
+        <template #price-top>
+          <div style="color: #999; font-size: 10px">
+            创建时间 : {{ currentCustomModel.createTime }}
+          </div>
+        </template>
+        <template #price>
+          <div class="font-bold" style="color: red; font-size: 16px; margin: 12px 0">
+            ¥
+            {{
+              currentCustomModel.price
+                ? Utils.format.formatCurrency(currentCustomModel.price)
+                : "暂未定价"
+            }}
+          </div>
+        </template>
+        <template #bottom> </template>
         <!-- <template #tag>  </template> -->
 
         <template #tags>
@@ -89,6 +103,7 @@
               class="gradient-button"
               color="linear-gradient(to right, #eb3941, #e14e53)"
               style="flex: 1"
+              icon="balance-o"
             >
               立即购买
             </van-button>
@@ -127,6 +142,7 @@ import { showShareCard } from "../shareCard/index.ts";
 import { useRouter } from "vue-router";
 import { currentModelController } from "@/components/design/store";
 import { toRaw } from "vue";
+import Utils from "@/common/utils";
 
 const router = useRouter();
 

@@ -41,6 +41,7 @@ const avatar = computed(() => {
   border-radius: 50%;
   height: 32px;
   width: 32px;
+  flex-shrink: 0;
 
   .el-avatar {
     height: 100%;

@@ -158,7 +158,6 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
 
     // 是否在最后一页
     const isLastPage = computed(() => {
-        console.log(currentPage.value, totalPage.value, loading.value)
         return (currentPage.value == totalPage.value) && !loading.value
     })
 

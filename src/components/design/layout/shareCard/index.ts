@@ -23,7 +23,11 @@ export function createCustomModelShareLink(id = '') {
 
 
     if (!id) {
-        id = shareCardCustomModelInfo.value.id
+        id = shareCardCustomModelInfo.value?.id
+    }
+
+    if(!id){
+        return ''
     }
 
     // 保存模型的 id 和生成链接的时间

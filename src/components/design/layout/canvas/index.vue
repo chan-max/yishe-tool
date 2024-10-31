@@ -129,13 +129,14 @@
     :centered="true"
     :destroyOnClose="true"
     width="540px"
-    title="保存"
+    title="保存该贴纸"
     okText="保存"
     cancelText="取消"
     @ok="doUpload"
     :confirmLoading="submitLoading"
   >
     <el-form
+      style="padding: 12px"
       label-width="72px"
       :inline-message="false"
       :show-message="false"
@@ -156,7 +157,7 @@
           v-model="editForm.keywords"
           :autocomplete-tags="stickerAutoplacementTags"
           :autocomplete-width="400"
-          autocompletePlacement="right"
+          autocompletePlacement="bottom"
         ></tagsInput>
       </el-form-item>
       <el-form-item label="模版分类:">
@@ -174,6 +175,9 @@
           checked-children="公开"
           un-checked-children="私密"
         />
+      </el-form-item>
+      <el-form-item label="调色板:">
+        <a-button @click="getCanvasStickerColor" size="small"> 获取色卡 </a-button>
       </el-form-item>
     </el-form>
   </a-modal>
@@ -362,6 +366,13 @@ function optionMouseleave(item) {
   if (item.id == currentFocusingStickerId.value) {
     currentFocusingStickerId.value = null;
   }
+}
+
+/**
+ * 获取贴纸的主题色
+ */
+async function getCanvasStickerColor() {
+  let colors = await canvasController.getPalette();
 }
 </script>
 

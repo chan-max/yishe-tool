@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { currentModelController } from "../../store";
+import gsap from "gsap";
 
 export const isRecordingEnabled = ref(false);
 

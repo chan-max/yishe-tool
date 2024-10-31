@@ -66,15 +66,21 @@
           </div>
         </template>
         <template #bottom> </template>
-        <!-- <template #tag>  </template> -->
+        <template #tag v-if="currentCustomModel.customizable">
+          <van-tag color="red"> 可定制<van-icon name="hot-o" size="24" /> </van-tag>
+        </template>
 
         <template #tags>
-          <div style="padding: 10px 0">
+          <div style="padding: 10px 0; gap: 4px" class="flex flex-wrap">
             <template v-if="currentCustomModel.keywords">
+              <van-tag v-if="currentCustomModel.uploader?.isAdmin"> 官方认证 </van-tag>
+              <van-tag v-if="Utils.time.isRecentDays(currentCustomModel.createTime, 3)">
+                新品
+              </van-tag>
               <van-tag
                 v-for="item in currentCustomModel.keywords.split(',')"
                 type="primary"
-                style="margin: 3px; font-size: 10px; padding: 2px 6px"
+                style="font-size: 10px; padding: 2px 6px"
                 color="#ddd"
                 round
                 >{{ item }}</van-tag
@@ -204,6 +210,7 @@ function imagePreview(item, index) {
 
 async function goCustom() {
   await showConfirmDialog({
+    closeOnClickOverlay: true,
     title: "是否进入工作台，可享受如下功能",
     message: `
       自选服装款式

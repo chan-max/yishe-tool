@@ -86,13 +86,13 @@ let fileRef = shallowRef();
 let previewRef = ref("");
 
 async function initQrcode() {
+  loading.value = true;
+
   let data = createCustomModelShareLink(currentShareCardInfo.value.id);
 
   let img = await remoteImageUrlToRemoveTransparentEdgesLocalPreviewUrl(
     currentShareCardInfo.value.thumbnail.url
   );
-
-  loading.value = true;
   let qr = new QRCodeStyling({
     width: 300,
     height: 300,

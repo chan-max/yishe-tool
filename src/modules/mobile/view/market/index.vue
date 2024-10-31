@@ -190,6 +190,7 @@ const { list, getList, isLastPage, isEmpty, loading, reset } = usePaging((params
     match: [queryParams.value.searchText, queryParams.value.color, tabValue].filter(
       Boolean
     ),
+    customizable: queryParams.value.customizable,
     createTimeOrderBy: queryParams.value.createTimeOrderBy,
     priceOrderBy: queryParams.value.priceOrderBy,
     baseModelId: queryParams.value.baseModelId, // meta 查询
@@ -273,6 +274,7 @@ watch(
     () => queryParams.value.priceOrderBy,
     () => queryParams.value.baseModelId,
     () => queryParams.value.color,
+    () => queryParams.value.customizable,
   ],
   () => {
     reset();

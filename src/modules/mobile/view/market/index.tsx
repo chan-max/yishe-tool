@@ -137,6 +137,7 @@ export const queryParams = ref({
     createTimeOrderBy: null,
     baseModelId: null,
     color: null,
+    customizable: null,
 });
 
 export const priceDropdownMenuOptions = ref([
@@ -190,11 +191,23 @@ export const createTimeDropdownMenuOptions = ref([
     },
 ]);
 
+export const customizableDropdownMenuOptions = ref([
+    {
+        text: "是否可定制",
+        value: null,
+    },
+    {
+        text: "可定制",
+        value: '1',
+    },
+    {
+        text: "不可定制",
+        value: '0',
+    },
+]);
 
 
 export function useDropdownMenuMixin() {
-
-
 
     let baseModelList = ref([])
 
@@ -202,8 +215,6 @@ export function useDropdownMenuMixin() {
         let res = await Api.getProductModelList({ currentPage: 1, pageSize: 999 })
         baseModelList.value = res.list
     })
-
-
 
     return {
         baseModelList

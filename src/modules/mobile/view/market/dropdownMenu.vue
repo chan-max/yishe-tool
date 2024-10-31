@@ -119,6 +119,16 @@
         </template>
       </van-dropdown-item>
 
+      <van-dropdown-item
+        :options="customizableDropdownMenuOptions"
+        v-model="queryParams.customizable"
+      >
+        <template #title="slot">
+          {{ getOptionsValue(customizableDropdownMenuOptions, queryParams.customizable) }}
+          <van-icon name="arrow-down" size="10"
+        /></template>
+      </van-dropdown-item>
+
       <van-dropdown-item>
         <template #title>风格<van-icon name="arrow-down" size="10" /></template>
         <template #default> </template>
@@ -166,6 +176,7 @@ import {
   useDropdownMenuMixin,
   colorDropMenuOptions,
   menuRef,
+  customizableDropdownMenuOptions,
 } from "./index.tsx";
 
 let { baseModelList } = useDropdownMenuMixin();

@@ -58,6 +58,11 @@
                 <el-input v-model="form.price" type="number"></el-input>
               </el-form-item>
             </el-col>
+            <el-col :span="24">
+              <el-form-item label="是否可定制" prop="customizable">
+                <el-switch v-model="form.customizable" size="small" />
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form>
       </div>
@@ -116,6 +121,7 @@ const gridOptions = ref({
     },
     { field: "name", title: "资源名称", width: 160, showOverflow: true },
     { field: "price", title: "价格", width: 160 },
+    { field: "customizable", title: "是否可定制", width: 160 },
     { field: "keywords", title: "关键字", width: 240, showOverflow: true },
     { field: "description", title: "描述", minWidth: 240 },
     {

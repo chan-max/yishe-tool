@@ -109,6 +109,9 @@ import rawCanvasLayout from './operateLayout/rawCanvas.vue'
 import qrcodeLayout from './operateLayout/qrcode.vue'
 import rectLayout from './operateLayout/rect.vue'
 import ellipseLayout from './operateLayout/ellipse.vue'
+import barcodeLayout from './operateLayout/barcode.vue'
+
+import { createCanvasChildBarcode, createDefaultCanvasChildBarcodeOptions } from './children/barcode/index.tsx';
 
 
 export const CanvasChildOperationComponentMap = {
@@ -172,6 +175,15 @@ defineCanvasChild({
 })
 
 
+defineCanvasChild({
+    typeName: 'barcode',
+    typeKey: 'barcode',
+    label: '条形码',
+    defaultOptionsCreator: createDefaultCanvasChildBarcodeOptions,
+    renderer: createCanvasChildBarcode,
+    operationLayout: barcodeLayout
+})
+
 /*
     是否展示主画布
 */
@@ -195,6 +207,7 @@ export function addCanvasChild(options) {
 export var currentOperatingCanvasChildId = ref('this_is_canvas_id')
 
 export const currentOperatingCanvasChild: any = computed(() => {
+
 
     let child = canvasStickerOptions.value.children.find((c) => c.id == currentOperatingCanvasChildId.value)
 
@@ -296,7 +309,7 @@ export class CanvasController {
         return document.querySelector('#' + this.rawId) as any
     }
 
-    
+
     get canvasEl() {
         return document.querySelector('#' + this?.canvasId) as any
     }
@@ -314,7 +327,7 @@ export class CanvasController {
     }
 
 
-    async getPalette(){
+    async getPalette() {
         return Utils.color.getPalette(this.getBase64())
     }
 

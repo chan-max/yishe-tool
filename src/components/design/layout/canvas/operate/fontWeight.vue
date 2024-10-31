@@ -7,7 +7,12 @@
         <template #label="{ label, value }">
           <span :style="{ fontWeight: value }"> {{ label }} </span>
         </template>
-        <el-option v-for="item in fontWeightOptions" :key="item.value" :label="item.label" :value="item.value">
+        <el-option
+          v-for="item in fontWeightOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
           <span :style="{ fontWeight: item.value }"> {{ item.label }} </span>
         </el-option>
       </el-select>
@@ -17,9 +22,9 @@
 
 <script setup lang="ts">
 import iconFontSize from "@/components/design/assets/icon/font-size.svg?component";
-import { ref, reactive } from 'vue'
+import { ref, reactive } from "vue";
 import iconBold from "@/components/design/assets/icon/bold.svg?component";
-const model = defineModel({})
+const model = defineModel({});
 
 const fontWeightOptions = reactive([
   {
@@ -59,8 +64,6 @@ const fontWeightOptions = reactive([
     label: "超粗体",
   },
 ]);
-
 </script>
-  
+
 <style></style>
-  

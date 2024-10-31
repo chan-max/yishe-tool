@@ -62,6 +62,7 @@ const props = defineProps({
   justify-content: center;
   color: #555;
   margin: 0 4px;
+  font-size: 12px;
   svg {
     width: 14px;
     height: 14px;

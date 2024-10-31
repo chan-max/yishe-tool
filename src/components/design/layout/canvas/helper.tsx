@@ -197,7 +197,6 @@ export function formatToNativeSizeOption(size, relativeElementSize = null) {
     }
 
     if (unit == '%w') {
-        m
         const { value: relativeSize, unit: relativeUnit } = formatToNativeSizeOption(relativeElementSize.width)
         return {
             unit,

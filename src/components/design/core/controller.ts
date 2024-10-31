@@ -819,13 +819,9 @@ export class ModelController {
     }
 
     stopMediaRecord() {
-        this.activeMediaRecorder.stop();
+        this.activeMediaRecorder?.stop();
         this.activeMediaRecorder = null;
     }
-
-
-
-
 
 }
 

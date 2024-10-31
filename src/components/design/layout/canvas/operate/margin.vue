@@ -3,25 +3,23 @@
     <template #icon>
       <icon></icon>
     </template>
-    <template #name> 内间距 </template>
+    <template #name> 边距 </template>
     <template #content>
       <el-popover width="160" trigger="click" popper-class="el-popover-operation">
         <template #reference>
           <el-button size="small" link>
-            <el-tooltip :content="borderRadiusLabel" :hide-after="0">
-              <div class="text-ellipsis" style="max-width: 200px">
-                {{ borderRadiusLabel }}
-              </div>
+            <el-tooltip content="边距设置" :hide-after="0">
+              <div class="text-ellipsis" style="max-width: 200px">边距设置</div>
             </el-tooltip>
           </el-button>
         </template>
         <div>
           <el-row align="middle" justify="center">
             <el-col :span="24">
-              <div style="font-weight: bold; padding: 1em 0">间距设置</div>
+              <div style="font-weight: bold; padding: 1em 0">边距设置</div>
             </el-col>
 
-            <template v-for="item in paddingOptions">
+            <template v-for="item in marginOptions">
               <el-col :span="8">
                 <div>{{ item.label }}</div>
               </el-col>
@@ -76,20 +74,38 @@
 
 <script setup lang="ts">
 import { ref, computed, nextTick } from "vue";
-import icon from "@/components/design/assets/icon/padding.svg?component";
-import { getPaddingDispalyLabel } from "@/components/design/layout/canvas/helper.tsx";
+import icon from "@/components/design/assets/icon/margin.svg?component";
 import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
 
 /*
- padding 存在五种单位
- 像素
- 相对于画布的宽
- 相对于画布的高
- 相对于当前元素的宽
- 相对于当起元素的高
-*/
+   margin 存在五种单位
+   像素
+   相对于画布的宽
+   相对于画布的高
+   相对于当前元素的宽
+   相对于当起元素的高
+  */
 
-const model = defineModel({});
+const model = defineModel({
+  default: {
+    top: {
+      unit: "px",
+      value: 0,
+    },
+    right: {
+      unit: "px",
+      value: 0,
+    },
+    bottom: {
+      unit: "px",
+      value: 0,
+    },
+    left: {
+      unit: "px",
+      value: 0,
+    },
+  },
+});
 
 function reset() {
   function newVal() {
@@ -104,7 +120,7 @@ function reset() {
   };
 }
 
-const paddingOptions = ref([
+const marginOptions = ref([
   {
     type: "top",
     label: "上间距",
@@ -129,27 +145,27 @@ const unitOptions = computed(() => {
       label: `使用当前画布单位(${canvasStickerOptions.value.unit})`,
       value: canvasStickerOptions.value.unit,
     },
-    {
-      label: "相对于画布宽的百分比",
-      value: "vw",
-    },
-    {
-      label: "相对于画布高的百分比",
-      value: "vh",
-    },
-    {
-      label: "相对于当前元素宽的百分比",
-      value: "%w",
-    },
-    {
-      label: "相对于当前元素高的百分比",
-      value: "%h",
-    },
-  ];
-});
 
-const borderRadiusLabel = computed(() => {
-  return getPaddingDispalyLabel(model.value);
+    /**
+     * @description 这几个单位暂时先不考虑支持
+     */
+    // {
+    //   label: "相对于画布宽的百分比",
+    //   value: "vw",
+    // },
+    // {
+    //   label: "相对于画布高的百分比",
+    //   value: "vh",
+    // },
+    // {
+    //   label: "相对于当前元素宽的百分比",
+    //   value: "%w",
+    // },
+    // {
+    //   label: "相对于当前元素高的百分比",
+    //   value: "%h",
+    // },
+  ];
 });
 </script>
 

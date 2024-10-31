@@ -93,13 +93,12 @@
           <div style="margin-top: 12px" class="flex items-center">
             <van-action-bar-icon icon="chat-o" text="联系客服" />
             <van-action-bar-icon icon="shop-o" text="店铺" />
+            <van-action-bar-icon icon="records-o" text="自定义" @click="goCustom" />
             <van-action-bar-icon
               icon="share-o"
               text="分享"
               @click="showShareCard(currentCustomModel)"
             />
-
-            <van-action-bar-icon icon="records-o" text="自定义" @click="goCustom" />
 
             <!-- <div style="flex: 1"></div> -->
             <van-button

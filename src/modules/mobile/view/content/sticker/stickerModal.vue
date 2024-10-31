@@ -20,9 +20,6 @@
       </div>
 
       <van-card
-        num="999"
-        price="0.00"
-        tag=""
         :desc="currentSticker.description || '暂无相关描述'"
         :title="currentSticker.name || '暂无名称'"
         :thumb="currentSticker.thumbnail?.url"

@@ -48,6 +48,7 @@ export const animations = [
             // 这里需要对主模型和贴花同时处理
             let mesh = currentModelController.value.mesh;
             mesh.material.opacity = 0;
+
             gsap.to(mesh.material, {
                 opacity: 1,
                 duration: 2,
@@ -58,10 +59,16 @@ export const animations = [
             });
 
             currentModelController.value.decalControllers.forEach((decal) => {
-                
+                decal.meterial.opacity = 0;
+                gsap.to(decal.mesh, {
+                    opacity: 1,
+                    duration: 2,
+                    ease: "power1.inOut",
+                    onComplete: () => {
+                        stopRecord();
+                    },
+                });
             })
-
-
         },
     },
 ];

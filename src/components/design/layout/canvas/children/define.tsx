@@ -31,7 +31,6 @@ export const defineCanvasChild = (canvasChildDefineOptions: canvasChildDefineOpt
 
     canvasChildDefaultOptionsMap[typeKey] = defaultOptionsCreator
 
-
     canvasChildRenderMap[typeKey] = renderer
     
     CanvasChildOperationComponentMap[typeKey] = operationLayout

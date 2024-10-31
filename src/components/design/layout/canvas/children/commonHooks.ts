@@ -46,15 +46,11 @@ function processBasicElEvent(payload) {
 
         canvasChildDOMMap[options.id] = el
 
-
-
         el.onclick = (e) => {
             e.stopPropagation();
             console.log('click')
             currentOperatingCanvasChildId.value = options.id
         }
-
-        
 
         el._EventsReady = true
     })

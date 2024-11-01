@@ -123,6 +123,7 @@ const stopDrag = () => {
 
 onMounted(() => {
   // 可以在这里添加额外的初始化逻辑
+  console.log("init dragger");
   emits("init");
 });
 

@@ -188,6 +188,7 @@ declare module 'vue' {
     VanTag: typeof import('vant/es')['Tag']
     VanUploader: typeof import('vant/es')['Uploader']
     VideoClip: typeof import('./src/components/design/layout/videoClip/index.vue')['default']
+    Vue3TagsInput: typeof import('./src/components/design/components/tagsInput/src/vue3-tags-input.vue')['default']
     Waterfall: typeof import('./src/components/layout/waterfall/index.vue')['default']
     Width: typeof import('./src/components/design/layout/canvas/operate/barcode/width.vue')['default']
     Workspace: typeof import('./src/components/design/layout/workspace/index.vue')['default']

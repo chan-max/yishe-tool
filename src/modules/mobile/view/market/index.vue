@@ -12,7 +12,7 @@
         :background="
           showSearchMenu
             ? '#fff'
-            : 'linear-gradient( 0deg,  rgba(105, 0, 255, 0.05) 0%,  rgba(105, 0, 255, 0.15) 100% )'
+            : 'linear-gradient( 0deg,  rgba(234, 76, 137, 0.1) 0%,  rgba(234, 76, 137, 0.15) 100% )'
         "
       >
         <template #left>
@@ -101,7 +101,7 @@
 
       <!-- 搜索内容 -->
       <div
-        class="tab-content flex flex-wrap justify-around"
+        class="mobile-market-scroller tab-content flex flex-wrap justify-around"
         style="overflow-y: auto; width: 100%; box-sizing: border-box; padding: 12px"
         :style="{
           height: `calc(${height}px - var(--market-search-bar) - var(--van-tabs-line-height) - var(--market-tab-bottom))`,
@@ -109,6 +109,8 @@
         v-infinite-scroll="getList"
         :infinite-scroll-distance="150"
       >
+        <van-back-top target=".mobile-market-scroller" />
+
         <el-row style="width: 100%; box-sizing: border-box" v-if="!isEmpty">
           <template v-for="(item, index) in list">
             <el-col :span="12">
@@ -120,7 +122,7 @@
                   style="height: 220px; border-radius: 8px; row-gap: 12px"
                   class="flex flex-col overflow-hidden"
                 >
-                  <s1-image :src="item?.thumbnail?.url"></s1-image>
+                  <s1-image :src="item?.thumbnail?.url" fit="cover"></s1-image>
                 </div>
 
                 <div class="card-title flex items-center">
@@ -180,6 +182,7 @@ onMounted(() => {
 const activeTab = ref();
 
 const { list, getList, isLastPage, isEmpty, loading, reset } = usePaging((params) => {
+  // tab栏选中的分类
   let tabValue = getOptionsValue(mobileMarketTabs.value, activeTab.value, {
     outputKey: "match",
     inputKey: "index",
@@ -187,9 +190,13 @@ const { list, getList, isLastPage, isEmpty, loading, reset } = usePaging((params
 
   return Api.getCustomModelList({
     ...params,
-    match: [queryParams.value.searchText, queryParams.value.color, tabValue].filter(
-      Boolean
-    ),
+    match: [
+      queryParams.value.searchText,
+      queryParams.value.color,
+      queryParams.value.style,
+      queryParams.value.content,
+      tabValue,
+    ].filter(Boolean),
     customizable: queryParams.value.customizable,
     createTimeOrderBy: queryParams.value.createTimeOrderBy,
     priceOrderBy: queryParams.value.priceOrderBy,
@@ -275,6 +282,8 @@ watch(
     () => queryParams.value.baseModelId,
     () => queryParams.value.color,
     () => queryParams.value.customizable,
+    () => queryParams.value.style,
+    () => queryParams.value.content,
   ],
   () => {
     reset();
@@ -318,11 +327,20 @@ watch(
 
   // tab栏下方，可以放一些分类相关的
   --market-tab-bottom: 48px;
-}
 
-.van-tabs__line {
-  --van-tabs-bottom-bar-width: 12px !important;
-  --van-tabs-bottom-bar-height: 4px !important;
+  .van-tab {
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .van-tab--active {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .van-tabs__line {
+    --van-tabs-bottom-bar-width: 12px !important;
+    --van-tabs-bottom-bar-height: 4px !important;
+  }
 }
 
 .mobile-market-search {

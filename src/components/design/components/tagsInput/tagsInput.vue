@@ -39,7 +39,7 @@
 
 <script setup>
 import { defineComponent, ref } from "vue";
-import Vue3TagsInput from "vue3-tags-input";
+import Vue3TagsInput from "./src/vue3-tags-input.vue";
 import { useLocalStorage } from "@vueuse/core";
 
 const props = defineProps({

@@ -1,7 +1,7 @@
 <template>
   <operate-form-item>
     <template #icon> 高 </template>
-    <template #name> 条形码高度 </template>
+    <template #name> 条形码线条高度 </template>
     <template #content>
       <el-popover trigger="click" popper-class="el-popover-operation">
         <template #reference>

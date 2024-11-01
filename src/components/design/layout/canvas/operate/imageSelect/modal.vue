@@ -3,14 +3,14 @@
     v-bind="$attrs"
     width="960px"
     style="min-width: 960px"
-    title="选择图片"
+    title="选择基础图片"
     :footer="null"
     :destroyOnClose="true"
   >
     <div class="model">
       <s1-scrollbar>
         <div v-infinite-scroll="getList" :infinite-scroll-distance="150">
-          <el-row style="row-gap: 1rem; padding: 20px">
+          <el-row style="row-gap: 4px; padding: 20px">
             <el-col :span="24 / column" v-for="item in list" align="center">
               <div @click="useAsCanvasImage(item)">
                 <s1-image class="img" :src="item.thumbnail?.url"> </s1-image>

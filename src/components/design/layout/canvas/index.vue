@@ -66,6 +66,7 @@
             <a-menu-item @click="consoleStikcerOptions">
               在控制台打印贴纸信息
             </a-menu-item>
+            <a-menu-item @click="copyCurrentCanvasChild"> 复制当前元素 </a-menu-item>
           </a-menu>
         </template>
       </a-dropdown>
@@ -373,6 +374,14 @@ function optionMouseleave(item) {
  */
 async function getCanvasStickerColor() {
   let colors = await canvasController.getPalette();
+}
+
+/**
+ * @methods 复制当前操作的子画布元素
+ */
+function copyCurrentCanvasChild() {
+  let copy = Utils.clone(currentOperatingCanvasChild.value);
+  addCanvasChild(copy);
 }
 </script>
 

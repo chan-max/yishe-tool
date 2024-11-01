@@ -2,7 +2,6 @@
   <div class="mobile-market-search-menu">
     <div class="flex justify-between items-center">
       <div class="title">搜索历史</div>
-
       <van-icon name="delete" color="#333" size="16" @click="deleteSearchRecord" />
     </div>
     <template v-if="localSearchRecords.length">

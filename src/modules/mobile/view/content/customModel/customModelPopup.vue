@@ -73,8 +73,20 @@
         <template #tags>
           <div style="padding: 10px 0; gap: 4px" class="flex flex-wrap">
             <template v-if="currentCustomModel.keywords">
-              <van-tag v-if="currentCustomModel.uploader?.isAdmin"> 官方认证 </van-tag>
-              <van-tag v-if="Utils.time.isRecentDays(currentCustomModel.createTime, 3)">
+              <van-tag
+                v-if="currentCustomModel.uploader?.isAdmin"
+                style="font-size: 10px; padding: 2px 6px; color: gold"
+                round
+                color="#000"
+              >
+                官方
+              </van-tag>
+              <van-tag
+                round
+                color="red"
+                v-if="Utils.time.isRecentDays(currentCustomModel.createTime, 3)"
+                style="font-size: 10px; padding: 2px 6px"
+              >
                 新品
               </van-tag>
               <van-tag
@@ -91,20 +103,23 @@
         </template>
         <template #footer>
           <div style="margin-top: 12px" class="flex items-center">
-            <van-action-bar-icon icon="chat-o" text="联系客服" />
-            <van-action-bar-icon icon="shop-o" text="店铺" />
+            <van-action-bar-icon
+              icon="smile-comment-o"
+              text="联系我们"
+              @click="showContactUs = true"
+            />
+
             <van-action-bar-icon icon="records-o" text="自定义" @click="goCustom" />
             <van-action-bar-icon
               icon="share-o"
               text="分享"
               @click="showShareCard(currentCustomModel)"
             />
-
+            <van-action-bar-icon icon="ellipsis" text="了解更多" />
             <!-- <div style="flex: 1"></div> -->
             <van-button
               round
               type="primary"
-              @click="showShare = true"
               class="gradient-button"
               color="linear-gradient(to right, #eb3941, #e14e53)"
               style="flex: 1"
@@ -119,12 +134,12 @@
   </van-popup>
 
   <van-share-sheet
-    v-model:show="showShare"
-    :options="shareOptions"
-    @select="shareSelect"
-    @open="shareOpen"
-    title="分享该设计"
-    description="内容信息以复制，进入 app 后直接粘贴发送即可"
+    v-model:show="showContactUs"
+    :options="contactUsOptions"
+    @select="contactUsSelect"
+    @open="contactUsOpen"
+    title="联系我们"
+    description="可以通过以下方式联系到我们，服装信息已复制，进入 app 后直接粘贴发送即可"
   />
 
   <van-image-preview
@@ -153,11 +168,11 @@ const router = useRouter();
 
 // 组件增加v-if 是因为需要每次重新渲染
 
-const showShare = ref(false);
+const showContactUs = ref(false);
 
 const configStore = useConfigStore();
 
-const shareOptions = computed(() => {
+const contactUsOptions = computed(() => {
   return Object.values(configStore.json?.homepageContratUsLinks || {}).map(
     (item: any) => {
       return {
@@ -168,7 +183,7 @@ const shareOptions = computed(() => {
 });
 
 // 选择分享应用 ， 直接跳转到app
-function shareSelect(item) {
+function contactUsSelect(item) {
   if (!item.appHref) {
     return;
   }
@@ -176,7 +191,7 @@ function shareSelect(item) {
 }
 
 // 分享面板打开
-async function shareOpen() {
+async function contactUsOpen() {
   let write = await navigator.clipboard.writeText(`
     模型名称 : ${currentCustomModel.value.name},
     模型描述 : ${currentCustomModel.value.description},
@@ -187,7 +202,7 @@ async function shareOpen() {
   `);
 
   showToast({
-    message: "信息已复制，打开应用联系客服即可",
+    message: "服装信息已复制，打开应用联系客服即可",
     duration: 1000,
   });
 }

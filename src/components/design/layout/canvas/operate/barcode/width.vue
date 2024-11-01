@@ -1,7 +1,7 @@
 <template>
   <operate-form-item>
     <template #icon> 宽 </template>
-    <template #name> 线条宽度 </template>
+    <template #name> 条形码线条宽度 </template>
     <template #content>
       <el-popover trigger="click" popper-class="el-popover-operation">
         <template #reference>

@@ -70,6 +70,7 @@ import { createCustomModelShareLink } from "@/components/design/layout/shareCard
 import { downloadByFile } from "@/common/transform";
 import { base64ToFile, base64ToPngFile } from "@/common/transform/base64ToFile";
 import { remoteImageUrlToRemoveTransparentEdgesLocalPreviewUrl } from "@/common/transform/imageData.ts";
+import Utils from "@/common/utils";
 
 function save() {}
 
@@ -93,6 +94,10 @@ async function initQrcode() {
   let img = await remoteImageUrlToRemoveTransparentEdgesLocalPreviewUrl(
     currentShareCardInfo.value.thumbnail.url
   );
+
+  // 这里有时移动端会不显示中心图片
+  await Utils.sleep(33);
+
   let qr = new QRCodeStyling({
     width: 300,
     height: 300,
@@ -131,7 +136,7 @@ async function initQrcode() {
   qrRef.value = qr;
   let blob = await qr.getRawData("png");
 
-  let file = new File([blob], "1s.png");
+  let file = new File([blob], `${currentShareCardInfo.value.name || "服装卡片"}.png`);
   fileRef.value = file;
   //   qr.append(qrcodeRef.value);
   previewRef.value = URL.createObjectURL(file);

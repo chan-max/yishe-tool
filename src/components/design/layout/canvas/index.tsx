@@ -190,11 +190,10 @@ defineCanvasChild({
 export var showMainCanvas = ref(true)
 
 export function addCanvasChild(options) {
-
     options = {
-        id: '_' + String(new Date().getTime()), // 这里要兼容 选择器规范
         ...canvasChildDefaultOptionsMap[options.type].call(null),
         ...options,
+        id: '_' + String(new Date().getTime()), // 这里要兼容 选择器规范
     }
 
     canvasStickerOptions.value.children.push(options)
@@ -207,8 +206,6 @@ export function addCanvasChild(options) {
 export var currentOperatingCanvasChildId = ref('this_is_canvas_id')
 
 export const currentOperatingCanvasChild: any = computed(() => {
-
-
     let child = canvasStickerOptions.value.children.find((c) => c.id == currentOperatingCanvasChildId.value)
 
     if (!child) {

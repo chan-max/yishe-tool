@@ -40,7 +40,7 @@
             v-model="form.keywords"
             :string="true"
             :autocompleteTags="customModelAutoplacementTags"
-            :autocompleteWidth="360"
+            :autocompleteWidth="500"
           ></s1-tagsInput>
         </el-form-item>
         <el-form-item label="辅助操作">

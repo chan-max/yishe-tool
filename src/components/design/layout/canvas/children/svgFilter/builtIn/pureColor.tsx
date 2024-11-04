@@ -6,9 +6,6 @@
 
 
 
-
-
-
 export const BlackAndWhiteMatrix = `
 0.2126 0.7152 0.0722 0 0
 0.2126 0.7152 0.0722 0 0
@@ -28,7 +25,6 @@ export const blackAndWhite = {
         </filter>
     }
 }
-
 
 
 
@@ -57,8 +53,6 @@ export const anjinhuang = {
  * @method 
 */
 
-
-
 export function createPureColorFilterRender(id, r, g, b) {
     return <filter id={id}>
         <feColorMatrix type="matrix" values={
@@ -85,6 +79,23 @@ export const redStamp = {
                 0 0 0 0 0
                 0 0 0 0 0
                 0 0 0 1 0`
+            } />
+        </filter>
+    }
+}
+
+export const golden = {
+    filterLabel: '金色',
+    filterId: 'golden',
+    render: () => {
+        return <filter id='golden'>
+            <feColorMatrix type="matrix" values={
+                `
+                1.0  0.9  0.2  0 0
+                0.5  0.5  0.2  0 0
+                0.1  0.1  0.1  0 0
+                0    0    0    1 0
+                `
             } />
         </filter>
     }

@@ -19,7 +19,11 @@
             @click="decalItemClick(decal)"
             :class="{ active: isMouseover(decal) || isCurrent(decal) }"
           >
-            <s1-img :src="decal.info.src" fit="contain" class="decal-item-image"></s1-img>
+            <s1-img
+              :src="decal.state.src"
+              fit="contain"
+              class="decal-item-image"
+            ></s1-img>
             <div class="decal-item-content">
               <div class="decal-item-content-title text-ellipsis">
                 {{ decal.info.name }}
@@ -54,20 +58,23 @@
     </div>
 
     <div class="bottom">
-      <el-button round>
-        <span> 上传 </span>
-      </el-button>
-      <el-button
-        :disabled="!currentModelController?.decalControllers.length"
-        @click="showSaveModel = true"
-        type="primary"
-        round
-        style="flex: 1"
-      >
-        <span>
-          共 {{ currentModelController?.decalControllers.length }} 张贴纸 ， 保存该模型
-        </span>
-      </el-button>
+      <el-button-group type="primary">
+        <el-button @click="clear">
+          <span> 清空当前场景 </span>
+        </el-button>
+        <!-- <el-button>
+          <span> 上传 </span>
+        </el-button>
+        <el-button>
+          <span> 上传 </span>
+        </el-button>
+        <el-button>
+          <span> 上传 </span>
+        </el-button>
+        <el-button>
+          <span> 上传 </span>
+        </el-button> -->
+      </el-button-group>
     </div>
   </div>
 </template>
@@ -118,6 +125,10 @@ function setting(decal) {
 
 function removeDecal(decal) {
   decal.remove();
+}
+
+function clear() {
+  currentModelController.value.clear();
 }
 </script>
 <style lang="less" scoped>

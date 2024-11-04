@@ -84,7 +84,7 @@ export const stickerQueryParams = computed(() => {
 
 export function getStickerTypeLabel(type){
     switch (type) {
-        case 'compisition':
+        case 'composition':
             return '自定义组合'
         case 'image':
             return '图片'

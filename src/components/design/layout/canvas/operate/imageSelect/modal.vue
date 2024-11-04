@@ -52,7 +52,7 @@ const emits = defineEmits(["close"]);
     作为当前
 */
 function useAsCanvasImage(item) {
-  if (item.type != "image") {
+  if (!["image", "texture".includes(item.type)]) {
     throw "图片类型才能作为画布图片元素";
   }
 
@@ -66,7 +66,7 @@ const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePa
     return getStickerList({
       ...params,
       pageSize: 20,
-      type: "image",
+      type: "image,texture",
     });
   },
   {

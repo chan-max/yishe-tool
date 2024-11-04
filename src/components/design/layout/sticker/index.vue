@@ -2,7 +2,7 @@
   <div class="container">
     <div class="menu">
       <div class="search">
-        <el-input v-model="input" placeholder="寻找贴纸">
+        <el-input v-model="stickerSearchQueryParams.searchText" placeholder="寻找贴纸">
           <template #prefix>
             <el-icon>
               <Search />
@@ -47,11 +47,15 @@
         </sticker-popover>
       </div>
     </RecycleScroller>
-    <loadingBottom v-if="loading"></loadingBottom>
+    <s1-paging-bottom
+      :loading="loading"
+      :isEmpty="isEmpty"
+      :isLastPage="isLastPage"
+    ></s1-paging-bottom>
   </div>
 </template>
 <script setup lang="tsx">
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 import { Search, ArrowRightBold, Operation, ArrowRight } from "@element-plus/icons-vue";
 import { getStickerList } from "@/api";
 import { usePaging } from "@/hooks/data/paging.ts";
@@ -61,17 +65,17 @@ import { currentModelController } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 import tags from "./tags.vue";
-import { useLoadingOptions } from "@/components/loading/index.tsx";
 import { stickerQueryParams } from "./index.tsx";
 import { loadingBottom } from "@/components/loading/index.tsx";
 import Utils from "@/common/utils";
+import { isEmpty } from "lodash";
 
-const input = ref();
+const stickerSearchQueryParams = ref({
+  searchText: "",
+});
 
 // 列表展示几列
 const column = ref(2);
-
-const loadingOptions = useLoadingOptions({});
 
 function tagChange() {
   reset();
@@ -98,15 +102,29 @@ function scrollEnd() {
   getList();
 }
 
-const { list, getList, loading, reset, firstLoading, subsequentLoading } = usePaging(
-  (params) => {
-    return getStickerList({
-      ...params,
-      pageSize: 20,
-      ...stickerQueryParams.value,
-    });
-  }
-);
+const {
+  list,
+  getList,
+  loading,
+  reset,
+  firstLoading,
+  subsequentLoading,
+  isEmpty,
+  isLastPage,
+} = usePaging((params) => {
+  return getStickerList({
+    match: [stickerSearchQueryParams.value.searchText].filter(Boolean),
+    ...params,
+
+    pageSize: 20,
+    ...stickerQueryParams.value,
+  });
+});
+
+watch([() => stickerSearchQueryParams.value.searchText], () => {
+  reset();
+  getList();
+});
 </script>
 <style lang="less" scoped>
 @item-width: 40px;

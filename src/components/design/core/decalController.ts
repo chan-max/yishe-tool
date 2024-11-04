@@ -80,6 +80,10 @@ export class DecalController {
 
     roughness: .9, // 粗糙度 
     metalness: 0, // 金属感觉
+
+    renderOrder: 1,
+
+    polygonOffsetFactor: -12,
   })
 
   id = ref()
@@ -99,7 +103,6 @@ export class DecalController {
     if (!info) {
       return
     }
-
 
     this.state.id = this.id.value = (info.id || v4()) // 如果是本地的贴纸，随机分配一个id
     this.state.isLocalResource = info.isLocalResource
@@ -124,10 +127,13 @@ export class DecalController {
     })
 
     // 0 -  100
-    watch(() => this.state.modelValueSize, useDebounceFn((value) => {
+    watch(() => this.state.modelValueSize, useDebounceFn((value, oldValue) => {
+
+
       if (!value) {
         return
       }
+
       this?.scale(value / 100);
     }, 11), {
       immediate: true
@@ -212,9 +218,10 @@ export class DecalController {
     const basicTextureOptions = {
       transparent: true,
       depthTest: true,
-      depthWrite: false,
+      depthWrite: true,
       polygonOffset: true,
-      polygonOffsetFactor: -12,
+      polygonOffsetFactor: this.state.polygonOffsetFactor -= 2,
+      polygonOffsetUnits: 1,
       wireframe: false,
       roughness: this.state.roughness, // 粗糙度 , 目前没啥效果
       metalness: this.state.metalness, // 金属感觉
@@ -259,8 +266,10 @@ export class DecalController {
 
     this.material = new MeshStandardMaterial({
       map: texture,
-      ...basicTextureOptions
+      ...basicTextureOptions,
     });
+
+
   }
 
   // 创建该贴纸
@@ -275,7 +284,6 @@ export class DecalController {
       return
     }
 
-
     this.isCreating = true
 
     // 初始化材质
@@ -287,9 +295,17 @@ export class DecalController {
       return
     }
 
-    this.geometry = new DecalGeometry(this.parentMesh, this.state.position, this.state.rotation, this.size.value);
+    if (!this.state.position) {
+      return
+    }
+
+    if (!this.state.rotation) {
+      return
+    }
+
 
     if (isUpdate) {
+      this.geometry = new DecalGeometry(this.parentMesh, this.state.position, this.state.rotation, this.size.value);
       this.mesh.geometry = this.geometry
     } else {
       this.geometry = new DecalGeometry(this.parentMesh, this.state.position, this.state.rotation, this.size.value);
@@ -298,7 +314,10 @@ export class DecalController {
       currentModelController.value.scene.add(this.mesh);
     }
 
+    this.mesh.renderOrder = this.state.renderOrder++
 
+    // this.geometry.computeFaceNormals();
+    // this.geometry.computeVertexNormals();
     this.isCreating = false
   }
 

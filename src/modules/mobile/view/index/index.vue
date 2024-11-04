@@ -40,8 +40,8 @@
         size="large"
         plain
         round
-        @click="goDesign"
-        >快速设计</van-button
+        @click="goMarket"
+        >进入商城</van-button
       >
       <van-button
         style="background: transparent"
@@ -49,9 +49,10 @@
         size="large"
         plain
         round
-        @click="goMarket"
-        >进入商城</van-button
+        @click="goDesign"
+        >快速设计</van-button
       >
+
       <van-button
         style="background: transparent"
         color="#fff"
@@ -148,6 +149,8 @@ import { useShare } from "@vueuse/core";
 import avatar from "@/modules/mobile/components/avatar.vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import Api from "@/api";
+import { showToast } from "vant";
+
 let configStore = useConfigStore();
 let loginStore = useLoginStatusStore();
 

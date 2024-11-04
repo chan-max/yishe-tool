@@ -38,7 +38,7 @@
                   <a-menu-item @click="deleteItem(item)">
                     <span style="color: var(--el-color-danger)">删除</span>
                   </a-menu-item>
-                  <a-menu-item> 发布 </a-menu-item>
+                  <a-menu-item @click="downloadThumbnail(item)"> 下载缩略图 </a-menu-item>
                   <a-menu-item @click="openShareCardModal(item)">
                     生成分享卡片
                   </a-menu-item>
@@ -105,6 +105,8 @@ import { message } from "ant-design-vue";
 import { useCustomModelDetailModal } from "@/components/design/layout/project/customModel/customModelModal";
 import { openShareCardModal } from "@/components/design/layout/shareCard/index.ts";
 
+import { saveAs } from "file-saver";
+
 const { open } = useCustomModelDetailModal();
 
 function openDetail(modelInfo) {
@@ -140,6 +142,7 @@ async function deleteItem(item) {
     content: "确认删除该模型？",
   });
 
+  await Api.deleteCOSFile(item.thumbnail.key);
   await Api.deleteCustomModel(item.id);
   reset();
   await getList();
@@ -181,6 +184,10 @@ async function ok() {
 function workspaceEdit(item) {
   let modelInfo = item.meta.modelInfo;
   currentModelController.value.useModelInfo(modelInfo);
+}
+
+function downloadThumbnail(item) {
+  saveAs(item.thumbnail.url);
 }
 </script>
 

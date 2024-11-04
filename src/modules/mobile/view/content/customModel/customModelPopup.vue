@@ -22,7 +22,7 @@
       <div
         v-if="currentCustomModel.thumbnails?.length"
         class="flex items-center overflow-auto"
-        style="width: 100%; padding: 12px; box-sizing: border-box; column-gap: 12px"
+        style="width: 100%; padding: 12px 12px; box-sizing: border-box; column-gap: 12px"
       >
         <div
           style="
@@ -39,15 +39,20 @@
         </div>
       </div>
 
-      <van-card
-        :desc="currentCustomModel.description || '暂无相关描述'"
-        :title="currentCustomModel.name || '暂无名称'"
-        :thumb="currentCustomModel.thumbnail.url"
-      >
-        <!-- <template #title> </template> -->
+      <van-card :thumb="currentCustomModel.thumbnail.url">
         <!-- <template #thumb></template> -->
-        <!-- <template #desc> </template> -->
-        <template #num> </template>
+        <template #title>
+          <div style="font-size: 16px; font-weight: bold">
+            {{ currentCustomModel.name || "暂无名称" }}
+          </div>
+        </template>
+
+        <template #desc>
+          <div style="color: #555">
+            {{ currentCustomModel.description || "暂无相关介绍" }}
+          </div>
+        </template>
+        <template #num>库存 : 999 </template>
 
         <template #origin-price> </template>
         <template #price-top>
@@ -67,42 +72,47 @@
         </template>
         <template #bottom> </template>
         <template #tag v-if="currentCustomModel.customizable">
-          <van-tag color="red"> 可定制<van-icon name="hot-o" size="24" /> </van-tag>
+          <van-tag @click="showToast('该作品内容可以定制，具体可以联系客服')" color="red">
+            可定制<van-icon name="hot-o" size="24" />
+          </van-tag>
         </template>
 
         <template #tags>
           <div style="padding: 10px 0; gap: 4px" class="flex flex-wrap">
+            <van-tag
+              v-if="currentCustomModel.uploader?.isAdmin"
+              style="font-size: 10px; padding: 2px 6px; color: gold"
+              round
+              color="#000"
+              @click="showToast('该作品由官方团队设计')"
+            >
+              官方
+            </van-tag>
+            <van-tag
+              round
+              color="red"
+              v-if="Utils.time.isRecentDays(currentCustomModel.createTime, 3)"
+              style="font-size: 10px; padding: 2px 6px"
+              @click="showToast('该作品在三天内创建')"
+            >
+              新
+            </van-tag>
+
             <template v-if="currentCustomModel.keywords">
-              <van-tag
-                v-if="currentCustomModel.uploader?.isAdmin"
-                style="font-size: 10px; padding: 2px 6px; color: gold"
-                round
-                color="#000"
-              >
-                官方
-              </van-tag>
-              <van-tag
-                round
-                color="red"
-                v-if="Utils.time.isRecentDays(currentCustomModel.createTime, 3)"
-                style="font-size: 10px; padding: 2px 6px"
-              >
-                新品
-              </van-tag>
               <van-tag
                 v-for="item in currentCustomModel.keywords.split(',')"
                 type="primary"
+                @click="tagClick(item)"
                 style="font-size: 10px; padding: 2px 6px"
                 color="#ddd"
                 round
                 >{{ item }}</van-tag
               >
             </template>
-            <template v-else> 无标签 </template>
           </div>
         </template>
         <template #footer>
-          <div style="margin-top: 12px" class="flex items-center">
+          <div class="flex items-center">
             <van-action-bar-icon
               icon="smile-comment-o"
               text="联系我们"
@@ -123,7 +133,6 @@
               class="gradient-button"
               color="linear-gradient(to right, #eb3941, #e14e53)"
               style="flex: 1"
-              icon="balance-o"
             >
               立即购买
             </van-button>
@@ -163,8 +172,14 @@ import { useRouter } from "vue-router";
 import { currentModelController } from "@/components/design/store";
 import { toRaw } from "vue";
 import Utils from "@/common/utils";
+import {
+  mobileMarketSearchQueryParams,
+  searchBus,
+} from "@/modules/mobile/view/market/index.tsx";
+import { useEventBus } from "@vueuse/core";
 
 const router = useRouter();
+const route = useRoute();
 
 // 组件增加v-if 是因为需要每次重新渲染
 
@@ -245,6 +260,31 @@ async function goCustom() {
       modelInfo: toRaw(modelInfo),
     },
   });
+}
+
+/**
+ * @methid 点击服装标签，用于搜索
+ */
+
+async function tagClick(tag) {
+  await showConfirmDialog({
+    title: "搜索",
+    message: `是否去商城查看更多关于 <span style="color:var(--van-primary-color);font-weight:bold"> ${tag} </span>   的服装设计`,
+    closeOnClickOverlay: true,
+    theme: "round-button",
+    allowHtml: true,
+    confirmButtonText: "确定",
+    showCancelButton: false,
+  });
+
+  // 从非商城的地址跳转到商城
+  if (route.name !== "market") {
+    await router.push({ name: "market" });
+  }
+
+  showCustomModelModal.value = false;
+  mobileMarketSearchQueryParams.value.searchText = tag;
+  searchBus.emit();
 }
 </script>
 

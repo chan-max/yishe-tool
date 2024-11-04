@@ -110,8 +110,10 @@ import qrcodeLayout from './operateLayout/qrcode.vue'
 import rectLayout from './operateLayout/rect.vue'
 import ellipseLayout from './operateLayout/ellipse.vue'
 import barcodeLayout from './operateLayout/barcode.vue'
+import htmlLayout from './operateLayout/html.vue'
 
 import { createCanvasChildBarcode, createDefaultCanvasChildBarcodeOptions } from './children/barcode/index.tsx';
+import { createCanvasChildHtml, createDefaultCanvasChildHtmlOptions } from './children/html.tsx';
 
 
 export const CanvasChildOperationComponentMap = {
@@ -182,6 +184,15 @@ defineCanvasChild({
     defaultOptionsCreator: createDefaultCanvasChildBarcodeOptions,
     renderer: createCanvasChildBarcode,
     operationLayout: barcodeLayout
+})
+
+defineCanvasChild({
+    typeName: 'html',
+    typeKey: 'html',
+    label: 'html代码',
+    defaultOptionsCreator: createDefaultCanvasChildHtmlOptions,
+    renderer: createCanvasChildHtml,
+    operationLayout: htmlLayout
 })
 
 /*
@@ -331,6 +342,10 @@ export class CanvasController {
     // 需要组件渲染后再更新
     async updateRenderingCanvas() {
 
+        this.shouldUpdateCanvasSticker.value = true
+
+        return
+
         this.loading.value = true
         renderingLoading.value = true
 
@@ -338,11 +353,19 @@ export class CanvasController {
     }
 
 
+    // 是否应该更新贴纸 
+    shouldUpdateCanvasSticker = ref(true)
+
+    // 主动触发更新贴纸
+    async activeUpdateRenderingCanvas() {
+        this.loading.value = true
+        renderingLoading.value = true
+        this.debouncedUpdateJob()
+    }
 
     debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this), 999)
 
     async updateRenderingCanvasJob() {
-
 
         if (!this.el) {
             console.log('miss canvas el')
@@ -352,14 +375,15 @@ export class CanvasController {
         }
 
         async function update() {
-            console.log('update')
+
+            console.time('updateRenderingCanvas')
+
             try {
                 // this.base64 = await toPng(this.el)
 
                 let _canvas = await toCanvas(this.el, {})
 
                 this.base64 = _canvas.toDataURL('image/png')
-
 
                 let width = Number(formatSizeOptionToPixelValue(canvasStickerOptions.value.width))
                 let height = Number(formatSizeOptionToPixelValue(canvasStickerOptions.value.height))
@@ -375,6 +399,10 @@ export class CanvasController {
                 this.loading.value = false
                 renderingLoading.value = false
 
+                this.shouldUpdateCanvasSticker.value = false
+
+
+                console.timeEnd('updateRenderingCanvas')
             } catch (e) {
                 throw Error('元素转换失败', e.message)
             }

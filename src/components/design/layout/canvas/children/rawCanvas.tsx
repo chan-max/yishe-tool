@@ -10,7 +10,7 @@ export const createDefaultCanvasChildRawCanvasOptions = () => {
     const canvasUnit = canvasStickerOptions.value.unit
 
     return {
-        type: CanvasChildType.RAW_CANVAS,
+        type: 'rawCanvas',
         position: createPositionDefaultOptions(canvasUnit),
         width: {
             value: 100,
@@ -48,6 +48,8 @@ export const RawCanvas = defineComponent({
             props.options.targetComputedHeight = Utils.getComputedHeight(canvasRef.value)
         })
 
+
+        
         const paint = useDebounceFn(function paint() {
             const width = formatSizeOptionToPixelValue(props.options.width)
             const height = formatSizeOptionToPixelValue(props.options.width)
@@ -55,9 +57,6 @@ export const RawCanvas = defineComponent({
             if (!context) {
                 return
             }
-
-
-
         })
 
 

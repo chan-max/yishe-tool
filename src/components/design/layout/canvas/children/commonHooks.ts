@@ -133,6 +133,5 @@ function processClipPath(payload) {
 
 function processTransform(payload) {
     const { options, style } = payload
-    
     style.transform = createTransformString(options.transform)
 }

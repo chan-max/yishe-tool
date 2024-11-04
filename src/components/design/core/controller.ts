@@ -63,6 +63,7 @@ import Api from '@/api'
 import Utils from '@/common/utils'
 
 import { createMaterialFromOptions, initBasicLight, initHdr } from './controllerHelper'
+import { CameraController } from "./cameraController";
 
 
 const mixins = [
@@ -159,6 +160,9 @@ export class ModelController {
         );
     }
 
+
+    cameraController = null
+
     constructor(opts = {}) {
 
         mixins.forEach((mixin) => mixin(this));
@@ -175,6 +179,8 @@ export class ModelController {
         this.meta = meta
         this.mode = "mb"
         this.isMobile = true
+
+        this.cameraController = new CameraController(this)
 
     }
 
@@ -246,13 +252,17 @@ export class ModelController {
         if (this.isMounted) {
             return;
         }
+
+
         this.initCanvasContainer(target);
 
 
         // 先不设置 bg ，需要保留无背景
         this.setBgColor('#eee', 0)
 
+
         if (currentOperatingBaseModelInfo.value?.url) {
+
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);
         }
 
@@ -261,6 +271,8 @@ export class ModelController {
         initHdr(this.renderer, this.scene)
 
         watch(() => this.state.material, async () => {
+
+            console.log('set material')
             this.setMaterial()
         }, {
             deep: true
@@ -322,6 +334,15 @@ export class ModelController {
         }
     }
 
+
+    clear() {
+        this.removeMainModel();
+        this.removeDecals()
+        this.material = null
+        this.state.material.textureInfo = null
+    }
+
+
     public async setMainModel(url) {
 
         // if(this.gltf){
@@ -329,11 +350,7 @@ export class ModelController {
         // }
 
         // 清除之前的模型和贴纸和材质
-        this.removeMainModel();
-        this.removeDecals()
-        this.material = null
-        this.state.material.textureInfo = null
-
+        this.clear()
         this.callHook(this.meta.onMainModelLoading)
 
         try {
@@ -358,7 +375,9 @@ export class ModelController {
         this.initialCameraPosition.copy(this.camera.position);
 
         // 这个顺序很重要
+
         this.scene.add(this.gltf.scene);
+
         this.doOpenAnimation()
     }
 
@@ -398,6 +417,7 @@ export class ModelController {
 
     // 移除主模型
     public removeMainModel() {
+
         if (!this.gltf) {
             return;
         }
@@ -411,6 +431,8 @@ export class ModelController {
         this.clearAllMeshes(this.scene)
         this.mesh = null;
         this.gltf = null;
+
+
     }
 
     // 模型居中和调整尺寸
@@ -696,11 +718,16 @@ export class ModelController {
 
 
 
+
+
+    // 是否已使用模式正在渲染
+    isUsingModelInfo = false
     /**
      * 根据模型信息初始化当前场景
     */
     async useModelInfo(modelInfo) {
 
+        this.isUsingModelInfo = true
         // 清空当前工作台
 
         let { baseModelId } = modelInfo
@@ -713,11 +740,14 @@ export class ModelController {
         currentOperatingBaseModelInfo.value = baseModel
 
         // 先加载模型在加载贴纸
+
         await this.setMainModel(baseModel.url)
 
         // 需要先加载主模型
 
         Object.assign(this.state, modelInfo.state)
+
+        this.setMaterial()
 
         let mesh = this.mesh
         let scene = this.scene
@@ -732,7 +762,6 @@ export class ModelController {
 
 
         if (modelInfo.decals) {
-
             await Promise.all(modelInfo.decals.map((decal) => {
                 return new Promise(async (resolve, reject) => {
 
@@ -743,6 +772,7 @@ export class ModelController {
                     }
 
                     const sticker = await Api.getStickerById(id)
+
 
                     let decalController = new DecalController(sticker)
 
@@ -766,6 +796,7 @@ export class ModelController {
             content: '模型加载成功',
             key: 'loadsticker'
         })
+        this.isUsingModelInfo = false
     }
 
 
@@ -777,7 +808,7 @@ export class ModelController {
     // 记录所有的录制
     mediaRecorders = shallowRef([])
 
-    isMediaRecording  = ref(false)
+    isMediaRecording = ref(false)
 
     startMediaRecord(opts) {
         let $this = this
@@ -822,6 +853,12 @@ export class ModelController {
         this.activeMediaRecorder?.stop();
         this.activeMediaRecorder = null;
     }
+
+
+
+
+
+
 
 }
 

@@ -305,9 +305,9 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                         map: texture,
                         transparent: true,
                         depthTest: true,
-                        depthWrite: false,
+                        depthWrite: true,
                         polygonOffset: true,
-                        polygonOffsetFactor: -4,
+                        polygonOffsetFactor: -1,
                         wireframe: false,
                         metalness:decal.metalness,
                         roughness:decal.roughness,
@@ -316,7 +316,8 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     const decalGeometry = new DecalGeometry(mesh, position, rotation, size);
                     var decalMesh = new Mesh(decalGeometry, material);
                     scene.add(decalMesh);
-
+                    decalMesh.frustumCulled = false;
+                    decalMesh.renderOrder = 1
                     loading.value = false
                     loadingMessage.value = ''
                     resolve(void 0)

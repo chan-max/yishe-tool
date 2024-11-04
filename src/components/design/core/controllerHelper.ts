@@ -84,6 +84,8 @@ export async function createMaterialFromOptions(options) {
         color: color,
         emissive: null, // 发光色
         opacity:1,
+        // polygonOffset: true,
+        // polygonOffsetFactor: -2,
         transparent: true // 设置该属性 才可以设置 opacity
     });
 

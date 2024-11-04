@@ -111,7 +111,7 @@ export const currentOperatingDecalController = shallowRef()
 watch(
     currentOperatingBaseModelInfo,
     async () => {
-        if (!currentOperatingBaseModelInfo.value?.url) {
+        if (!currentOperatingBaseModelInfo.value?.url || currentModelController.value?.isUsingModelInfo ) {
             return;
         }
         await nextTick();

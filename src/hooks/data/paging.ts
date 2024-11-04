@@ -79,6 +79,7 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
             return;
         }
 
+
         try {
 
             // 非单页模式处理
@@ -89,13 +90,18 @@ export const usePaging = (getListFn: (params: any) => Promise<any>, options: any
                 }
 
                 currentPage.value++
+
             } else {
+
+                // 单页面模式
+
                 if (currentPage.value == 0) {
                     currentPage.value = 1
                 }
             }
 
-
+            console.log(currentPage.value)
+            
             loading.value = true
             let res = await getListFn({
                 currentPage: currentPage.value,

@@ -105,6 +105,7 @@
                   ref="fileBarFontPreviewRef"
                   contenteditable="true"
                   @vue:mounted="initFontFamily(file, $event)"
+                  @paste="fontContainerPaste"
                 >
                   {{ file.name }}
                 </div>
@@ -425,6 +426,19 @@ async function uploadSingleFile(file) {
 
     await Api.createProductModel(params);
   }
+}
+
+/**
+ * 防止拷贝时多余的样式影响
+ */
+function fontContainerPaste(e) {
+  // 阻止默认的粘贴行为
+  event.preventDefault();
+
+  // 获取剪贴板中的纯文本
+  const text = (event.clipboardData || window.clipboardData).getData("text/plain");
+  // 将纯文本插入到光标位置
+  document.execCommand("insertText", false, text);
 }
 
 async function doUpload() {

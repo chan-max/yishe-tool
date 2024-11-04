@@ -9,12 +9,17 @@
 
       <van-dropdown-item
         :options="createTimeDropdownMenuOptions"
-        v-model="queryParams.createTimeOrderBy"
-        :title-class="queryParams.createTimeOrderBy ? 'active-dropdown' : ''"
+        v-model="mobileMarketSearchQueryParams.createTimeOrderBy"
+        :title-class="
+          mobileMarketSearchQueryParams.createTimeOrderBy ? 'active-dropdown' : ''
+        "
       >
         <template #title>
           {{
-            getOptionsValue(createTimeDropdownMenuOptions, queryParams.createTimeOrderBy)
+            getOptionsValue(
+              createTimeDropdownMenuOptions,
+              mobileMarketSearchQueryParams.createTimeOrderBy
+            )
           }}
           <van-icon name="underway-o" size="10"
         /></template>
@@ -22,26 +27,35 @@
 
       <van-dropdown-item
         :options="priceDropdownMenuOptions"
-        v-model="queryParams.priceOrderBy"
-        :title-class="queryParams.priceOrderBy ? 'active-dropdown' : ''"
+        v-model="mobileMarketSearchQueryParams.priceOrderBy"
+        :title-class="mobileMarketSearchQueryParams.priceOrderBy ? 'active-dropdown' : ''"
       >
         <template #title="slot">
-          {{ getOptionsValue(priceDropdownMenuOptions, queryParams.priceOrderBy) }}
+          {{
+            getOptionsValue(
+              priceDropdownMenuOptions,
+              mobileMarketSearchQueryParams.priceOrderBy
+            )
+          }}
           <van-icon name="after-sale" size="10"
         /></template>
       </van-dropdown-item>
 
       <van-dropdown-item
-        v-model="queryParams.baseModelId"
-        :title-class="queryParams.baseModelId ? 'active-dropdown' : ''"
+        v-model="mobileMarketSearchQueryParams.baseModelId"
+        :title-class="mobileMarketSearchQueryParams.baseModelId ? 'active-dropdown' : ''"
       >
         <template #title>
           {{
-            queryParams.baseModelId
-              ? getOptionsValue(baseModelList, queryParams.baseModelId, {
-                  outputKey: "name",
-                  inputKey: "id",
-                })
+            mobileMarketSearchQueryParams.baseModelId
+              ? getOptionsValue(
+                  baseModelList,
+                  mobileMarketSearchQueryParams.baseModelId,
+                  {
+                    outputKey: "name",
+                    inputKey: "id",
+                  }
+                )
               : "款式"
           }}
           <van-icon name="contact-o" size="10"
@@ -57,7 +71,10 @@
                   :src="item.thumbnail.url"
                   style="width: 84px; height: 84px"
                   :style="{
-                    background: item.id == queryParams.baseModelId ? '#eee' : '#f9f9f9',
+                    background:
+                      item.id == mobileMarketSearchQueryParams.baseModelId
+                        ? '#eee'
+                        : '#f9f9f9',
                   }"
                 ></s1-img>
                 <div
@@ -79,13 +96,13 @@
       </van-dropdown-item>
 
       <van-dropdown-item
-        v-model="queryParams.color"
-        :title-class="queryParams.color ? 'active-dropdown' : ''"
+        v-model="mobileMarketSearchQueryParams.color"
+        :title-class="mobileMarketSearchQueryParams.color ? 'active-dropdown' : ''"
       >
         <template #title>
           <div class="flex items-center">
             <span
-              v-if="queryParams.color"
+              v-if="mobileMarketSearchQueryParams.color"
               style="
                 width: 12px;
                 height: 12px;
@@ -94,20 +111,28 @@
                 margin-right: 4px;
               "
               :style="{
-                background: getOptionsValue(colorDropMenuOptions, queryParams.color, {
-                  outputKey: 'value',
-                  inputKey: 'text',
-                }),
+                background: getOptionsValue(
+                  clothingColorOptions,
+                  mobileMarketSearchQueryParams.color,
+                  {
+                    outputKey: 'value',
+                    inputKey: 'text',
+                  }
+                ),
               }"
             ></span>
-            {{ queryParams.color ? queryParams.color : "颜色" }}
+            {{
+              mobileMarketSearchQueryParams.color
+                ? mobileMarketSearchQueryParams.color
+                : "颜色"
+            }}
 
             <van-icon name="arrow-down" size="10" />
           </div>
         </template>
         <template #default>
           <div style="padding: 12px; gap: 12px" class="flex flex-wrap justify-center">
-            <div v-for="item in colorDropMenuOptions">
+            <div v-for="item in clothingColorOptions">
               <a-tag
                 @click="colorDropMenuSelect(item)"
                 :bordered="false"
@@ -128,28 +153,37 @@
 
       <van-dropdown-item
         :options="customizableDropdownMenuOptions"
-        v-model="queryParams.customizable"
-        :title-class="queryParams.customizable ? 'active-dropdown' : ''"
+        v-model="mobileMarketSearchQueryParams.customizable"
+        :title-class="mobileMarketSearchQueryParams.customizable ? 'active-dropdown' : ''"
       >
         <template #title="slot">
-          {{ getOptionsValue(customizableDropdownMenuOptions, queryParams.customizable) }}
+          {{
+            getOptionsValue(
+              customizableDropdownMenuOptions,
+              mobileMarketSearchQueryParams.customizable
+            )
+          }}
           <van-icon name="arrow-down" size="10"
         /></template>
       </van-dropdown-item>
 
       <van-dropdown-item
-        v-model="queryParams.style"
-        :title-class="queryParams.style ? 'active-dropdown' : ''"
+        v-model="mobileMarketSearchQueryParams.style"
+        :title-class="mobileMarketSearchQueryParams.style ? 'active-dropdown' : ''"
       >
         <template #title>
           <div class="flex items-center">
-            {{ queryParams.style ? queryParams.style : "服装风格" }}
+            {{
+              mobileMarketSearchQueryParams.style
+                ? mobileMarketSearchQueryParams.style
+                : "服装风格"
+            }}
             <van-icon name="arrow-down" size="10" />
           </div>
         </template>
         <template #default>
           <div style="padding: 12px; gap: 12px" class="flex flex-wrap justify-center">
-            <div v-for="item in clothingStyleDropdownMenuOptions">
+            <div v-for="item in clothingStyleOptions">
               <a-tag
                 @click="clothingStyleDropdownMenuSelect(item)"
                 :bordered="false"
@@ -168,18 +202,22 @@
       </van-dropdown-item>
 
       <van-dropdown-item
-        v-model="queryParams.content"
-        :title-class="queryParams.content ? 'active-dropdown' : ''"
+        v-model="mobileMarketSearchQueryParams.content"
+        :title-class="mobileMarketSearchQueryParams.content ? 'active-dropdown' : ''"
       >
         <template #title>
           <div class="flex items-center">
-            {{ queryParams.content ? `内容:${queryParams.content}` : "服装内容" }}
+            {{
+              mobileMarketSearchQueryParams.content
+                ? `内容:${mobileMarketSearchQueryParams.content}`
+                : "服装内容"
+            }}
             <van-icon name="arrow-down" size="10" />
           </div>
         </template>
         <template #default>
           <div style="padding: 12px; gap: 12px" class="flex flex-wrap justify-center">
-            <div v-for="item in clothingContentsDropdownMenuOptions">
+            <div v-for="item in clothingContentOptions">
               <a-tag @click="clothingContentDropdownMenuSelect(item)" :bordered="false">{{
                 item.text
               }}</a-tag>
@@ -203,54 +241,54 @@ import {
   getOptionsValue,
   createTimeDropdownMenuOptions,
   priceDropdownMenuOptions,
-  queryParams,
+  mobileMarketSearchQueryParams,
   useDropdownMenuMixin,
-  colorDropMenuOptions,
+  clothingColorOptions,
   menuRef,
   customizableDropdownMenuOptions,
-  clothingStyleDropdownMenuOptions,
-  clothingContentsDropdownMenuOptions,
+  clothingStyleOptions,
+  clothingContentOptions,
 } from "./index.tsx";
 
 let { baseModelList } = useDropdownMenuMixin();
 
 function baseModelDropMenuSelect(item) {
-  queryParams.value.baseModelId = item.id;
+  mobileMarketSearchQueryParams.value.baseModelId = item.id;
   menuRef.value.close();
 }
 
 function baseModelDropMenuReset() {
-  queryParams.value.baseModelId = null;
+  mobileMarketSearchQueryParams.value.baseModelId = null;
   menuRef.value.close();
 }
 
 function colorDropMenuSelect(item) {
-  queryParams.value.color = item.text;
+  mobileMarketSearchQueryParams.value.color = item.text;
   menuRef.value.close();
 }
 
 function colorDropMenuReset() {
-  queryParams.value.color = null;
+  mobileMarketSearchQueryParams.value.color = null;
   menuRef.value.close();
 }
 
 function clothingStyleDropdownMenuSelect(item) {
-  queryParams.value.style = item.text;
+  mobileMarketSearchQueryParams.value.style = item.text;
   menuRef.value.close();
 }
 
 function styleDropMenuReset() {
-  queryParams.value.style = null;
+  mobileMarketSearchQueryParams.value.style = null;
   menuRef.value.close();
 }
 
 function clothingContentDropdownMenuSelect(item) {
-  queryParams.value.content = item.text;
+  mobileMarketSearchQueryParams.value.content = item.text;
   menuRef.value.close();
 }
 
 function contentDropMenuReset() {
-  queryParams.value.content = null;
+  mobileMarketSearchQueryParams.value.content = null;
   menuRef.value.close();
 }
 </script>

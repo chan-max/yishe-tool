@@ -98,7 +98,7 @@
             </el-row>
           </template>
 
-          <template v-if="activeTab == Tab.Custom">
+          <!-- <template v-if="activeTab == Tab.Custom">
             <el-row>
               <el-scrollbar height="360px">
                 <el-col
@@ -258,7 +258,7 @@
                 </el-col>
               </el-scrollbar>
             </el-row>
-          </template>
+          </template> -->
 
           <el-row>
             <el-col :span="24">
@@ -266,7 +266,7 @@
                 class="flex toolbar items-center"
                 style="column-gap: 1rem; height: 48px"
               >
-                <template v-if="activeTab == Tab.BuiltIn">
+                <!-- <template v-if="activeTab == Tab.BuiltIn">
                   <el-button :icon="Switch" size="small" @click="activeTab = Tab.Custom">
                     使用自定义高级滤镜
                   </el-button>
@@ -284,6 +284,8 @@
                     />
                   </el-tooltip>
                 </template>
+
+                
                 <template v-if="activeTab == Tab.Custom">
                   <el-button :icon="Switch" size="small" @click="activeTab = Tab.BuiltIn">
                     使用内置滤镜
@@ -309,7 +311,7 @@
                       </el-dropdown-menu>
                     </template>
                   </el-dropdown>
-                </template>
+                </template> -->
 
                 <div style="flex: 1"></div>
 
@@ -336,7 +338,6 @@ import {
   SvgFilterResource,
 } from "@/components/design/layout/canvas/children/svgFilter/index";
 import { ref, computed } from "vue";
-import colorPicker from "@/components/design/components/colorPicker/colorPicker.vue";
 import { StopOutlined } from "@ant-design/icons-vue";
 import { Switch } from "@element-plus/icons-vue";
 import desimage from "@/components/image.vue";

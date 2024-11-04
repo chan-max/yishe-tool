@@ -2,7 +2,7 @@
   <div style="width: 100%; height: 100%" class="flex flex-col mobile-market">
     <div style="height: var(--market-search-bar); position: relative">
       <van-search
-        v-model="queryParams.searchText"
+        v-model="mobileMarketSearchQueryParams.searchText"
         show-action
         placeholder="请输入搜索关键词"
         class="mobile-market-search"
@@ -49,7 +49,7 @@
           </van-button>
 
           <van-button
-            v-if="!showSearchMenu && queryParams.searchText"
+            v-if="!showSearchMenu && mobileMarketSearchQueryParams.searchText"
             size="small"
             type="default"
             color="transparent"
@@ -96,7 +96,8 @@
             <dropdownMenu></dropdownMenu></div
         ></template>
 
-        <van-tab v-for="item in mobileMarketTabs" :title="item.title"> </van-tab>
+        <van-tab v-for="item in mobileMarketTabs" :title="item.title" :name="item.index">
+        </van-tab>
       </van-tabs>
 
       <!-- 搜索内容 -->
@@ -114,7 +115,7 @@
         <el-row style="width: 100%; box-sizing: border-box" v-if="!isEmpty">
           <template v-for="(item, index) in list">
             <el-col :span="12">
-              <div @click="open(item)" style="overflow: hidden; padding: 6px">
+              <div @click="open(item)" style="overflow: hidden; padding: 8px 4px">
                 <div
                   :style="{
                     background: Utils.random.randomArrayItemWithTimeHash(bgs, index),
@@ -126,7 +127,9 @@
                 </div>
 
                 <div class="card-title flex items-center">
-                  <div class="text-ellipsis" style="flex: 1">{{ item?.name || "-" }}</div>
+                  <div class="text-ellipsis" style="flex: 1; color: #444">
+                    {{ item?.name || "-" }}
+                  </div>
 
                   <!-- <span class="card-title-tag-base"> 新 </span> -->
                 </div>
@@ -142,6 +145,13 @@
           <template #empty>
             <s1-empty>未找到相关服装 </s1-empty>
           </template>
+          <template #loading>
+            <van-loading type="spinner">
+              <span style="color: #c9c9c9; font-size: 12px"
+                >正在获取服装...
+              </span></van-loading
+            >
+          </template>
         </s1-paging-bottom>
       </div>
     </div>
@@ -150,16 +160,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick, watch } from "vue";
-import { useWindowSize, useDebounceFn } from "@vueuse/core";
+import { useWindowSize, useDebounceFn, useEventBus } from "@vueuse/core";
 import { openCustomModelModal } from "../content/customModel/index.ts";
 import {
   addSearchRecords,
   showSearchMenu,
   mobileMarketTabs,
   bgs,
-  queryParams,
+  mobileMarketSearchQueryParams,
   menuRef,
   getOptionsValue,
+  searchBus,
+  activeTab,
 } from "./index.tsx";
 import Utils from "@/common/utils";
 import searchMenu from "./searchMenu.vue";
@@ -179,8 +191,6 @@ onMounted(() => {
   show.value = true;
 });
 
-const activeTab = ref();
-
 const { list, getList, isLastPage, isEmpty, loading, reset } = usePaging((params) => {
   // tab栏选中的分类
   let tabValue = getOptionsValue(mobileMarketTabs.value, activeTab.value, {
@@ -191,16 +201,16 @@ const { list, getList, isLastPage, isEmpty, loading, reset } = usePaging((params
   return Api.getCustomModelList({
     ...params,
     match: [
-      queryParams.value.searchText,
-      queryParams.value.color,
-      queryParams.value.style,
-      queryParams.value.content,
+      mobileMarketSearchQueryParams.value.searchText,
+      mobileMarketSearchQueryParams.value.color,
+      mobileMarketSearchQueryParams.value.style,
+      mobileMarketSearchQueryParams.value.content,
       tabValue,
     ].filter(Boolean),
-    customizable: queryParams.value.customizable,
-    createTimeOrderBy: queryParams.value.createTimeOrderBy,
-    priceOrderBy: queryParams.value.priceOrderBy,
-    baseModelId: queryParams.value.baseModelId, // meta 查询
+    customizable: mobileMarketSearchQueryParams.value.customizable,
+    createTimeOrderBy: mobileMarketSearchQueryParams.value.createTimeOrderBy,
+    priceOrderBy: mobileMarketSearchQueryParams.value.priceOrderBy,
+    baseModelId: mobileMarketSearchQueryParams.value.baseModelId, // meta 查询
     pageSize: 12,
   });
 });
@@ -228,24 +238,27 @@ async function searchBlur() {
 /**
  * @methos 点击搜索
  */
+
 function doSearch() {
-  if (!queryParams.value.searchText) {
+  if (!mobileMarketSearchQueryParams.value.searchText) {
     return;
   }
 
   addSearchRecords({
-    label: queryParams.value.searchText,
+    label: mobileMarketSearchQueryParams.value.searchText,
   });
   showSearchMenu.value = false;
   reset();
   getList();
 }
 
+searchBus.on(doSearch);
+
 /**
  * @methos 取消搜索
  */
 function cancelSearch() {
-  queryParams.value.searchText = "";
+  mobileMarketSearchQueryParams.value.searchText = "";
   reset();
   getList();
 }
@@ -261,7 +274,7 @@ function searchMenuBack() {
  * @methos 从搜索下拉中选择了标签
  */
 function searchMenuSelect(tag) {
-  queryParams.value.searchText = tag;
+  mobileMarketSearchQueryParams.value.searchText = tag;
   showSearchMenu.value = false;
   reset();
   getList();
@@ -277,13 +290,13 @@ function tabChange() {
 
 watch(
   [
-    () => queryParams.value.createTimeOrderBy,
-    () => queryParams.value.priceOrderBy,
-    () => queryParams.value.baseModelId,
-    () => queryParams.value.color,
-    () => queryParams.value.customizable,
-    () => queryParams.value.style,
-    () => queryParams.value.content,
+    () => mobileMarketSearchQueryParams.value.createTimeOrderBy,
+    () => mobileMarketSearchQueryParams.value.priceOrderBy,
+    () => mobileMarketSearchQueryParams.value.baseModelId,
+    () => mobileMarketSearchQueryParams.value.color,
+    () => mobileMarketSearchQueryParams.value.customizable,
+    () => mobileMarketSearchQueryParams.value.style,
+    () => mobileMarketSearchQueryParams.value.content,
   ],
   () => {
     reset();
@@ -310,7 +323,7 @@ watch(
   font-size: 10px;
   font-weight: 600;
   margin-left: 4px;
-  background: #ddd;
+  background: #f00;
   color: #ffff;
   border-radius: 4px 3px 4px 3px;
   padding: 1px 3px;

@@ -19,7 +19,7 @@
             "name": "快手",
             "icon": "/image/appicon/kuaishou.svg",
             "webHref": "",
-            "appHref": "kwai://profile/1162429530",
+            "appHref": "",
             "card": "/image/appcard/kuaishou.jpg",
             "appShareable": true,
             "appShareDescription": ""

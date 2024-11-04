@@ -100,7 +100,6 @@ async function setup() {
 
     app.config.globalProperties.__DEV__ = import.meta.env.DEV
 
-
     await initLoginStoreUserInfo()
 
     await initConfigStoreBasicConfig()

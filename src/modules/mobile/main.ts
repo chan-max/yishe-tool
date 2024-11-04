@@ -33,8 +33,8 @@ import '@/style/cover-elementplus.scss'
 import { s1Plugin } from '@/components/export.ts'
 import AnimateOnScroll from 'primevue/animateonscroll';
 import 'animate.css'
-import { useConfigStore ,initConfigStoreBasicConfig} from '@/store/stores/config.ts';
-import { useLoginStatusStore,initLoginStoreUserInfo } from '@/store/stores/login';
+import { useConfigStore, initConfigStoreBasicConfig } from '@/store/stores/config.ts';
+import { useLoginStatusStore, initLoginStoreUserInfo } from '@/store/stores/login';
 import to from 'await-to-js';
 import { apiInstance } from "@/api/apiInstance";
 import Antd from 'ant-design-vue'
@@ -51,11 +51,16 @@ export async function createMobileApp() {
     apiInstance.interceptors.response.use(mobileDefaultResponseInterceptors);
 
     const app = createApp(App)
-    const vConsole = new VConsole({ theme: 'dark' });
+
+
+    if (import.meta.env.DEV) {
+        const vConsole = new VConsole({ theme: 'dark' });
+    }
+
     const pinia = createPinia()
     app.directive('animateonscroll', AnimateOnScroll);
     app.use(s1Plugin)
-    app.use(ElementPlus,{
+    app.use(ElementPlus, {
         locale: zhCn,
     })
     app.use(ConfigProvider);

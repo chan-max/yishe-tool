@@ -28,9 +28,9 @@
         {{ currentHoveringDecalController.state.info?.name || "-" }}
       </div>
 
-      <div>
+      <div class="text-ellipsis" style="max-width: 160px">
         <label> 图片描述: </label>
-        {{ currentHoveringDecalController.state.info?.description || "-" }}
+        <span> {{ currentHoveringDecalController.state.info?.description || "-" }}</span>
       </div>
     </div>
   </div>

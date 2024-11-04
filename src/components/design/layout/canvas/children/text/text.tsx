@@ -153,13 +153,15 @@ export const Text = defineComponent({
                 textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color,
                 perspective: formatToNativeSizeString(props.options.transform.perspective),
                 // 用于显示换行
-                whiteSpace: 'pre-line',
+                whiteSpace: 'pre-wrap',
                 textWrap: 'nowrap',
                 zIndex: props.options.zIndex,
                 ..._style,
             }
 
 
+
+            // 文字字体
             if (props.options.fontFamilyInfo) {
                 style.fontFamily = `font_${props.options.fontFamilyInfo.id}`
                 // 由于不确定字体是否加载，需要初始化一下
@@ -176,6 +178,8 @@ export const Text = defineComponent({
                     style.color = props.options.fontColor.color;
                 }
             }
+
+            
 
             // 文字背景图
             if (props.options.imageInfo) {

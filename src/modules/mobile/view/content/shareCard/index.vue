@@ -52,9 +52,9 @@
             >分享模型</van-button
           >
         </div>
-
+        <div style="text-align: center">长按保存到相册</div>
         <!-- <div>如果卡片出现模型图或二维码丢失，请尝试更换设备或截图保存</div> -->
-      </div>
+    </div>
     </template>
   </van-popup>
 </template>
@@ -91,19 +91,23 @@ async function initQrcode() {
 
   let data = createCustomModelShareLink(currentShareCardInfo.value.id);
 
-  let img = await remoteImageUrlToRemoveTransparentEdgesLocalPreviewUrl(
-    currentShareCardInfo.value.thumbnail.url
-  );
+  // let img = await remoteImageUrlToRemoveTransparentEdgesLocalPreviewUrl(
+  //   currentShareCardInfo.value.thumbnail.url
+  // );
 
   // 这里有时移动端会不显示中心图片
-  await Utils.sleep(33);
+  await Utils.sleep(99);
 
   let qr = new QRCodeStyling({
     width: 300,
     height: 300,
     type: "canvas",
     data: data,
-    image: img,
+    // image: img,
+    // imageOptions: {
+    //   crossOrigin: "anonymous",
+    //   margin: 10,
+    // },
     dotsOptions: {
       type: "dots",
       color: "#6a1a4c",
@@ -125,10 +129,6 @@ async function initQrcode() {
     },
     backgroundOptions: {
       color: "transparent",
-    },
-    imageOptions: {
-      crossOrigin: "anonymous",
-      margin: 10,
     },
   });
 

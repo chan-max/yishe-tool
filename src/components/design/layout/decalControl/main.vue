@@ -53,9 +53,9 @@
         <el-form-item label="调整位置">
           <div class="w-full flex justify-center">
             <el-button-group size="small">
+              <el-button @click="moveLeft" :icon="Back"> </el-button>
               <el-button @click="moveTop" :icon="Top"> </el-button>
               <el-button @click="moveDown" :icon="Bottom"> </el-button>
-              <el-button @click="moveLeft" :icon="Back"> </el-button>
               <el-button @click="moveRight" :icon="Right"> </el-button>
               <el-button @click="resetPosition" :icon="RefreshRight">
                 重置位置
@@ -78,8 +78,8 @@
     <div style="flex: 1"></div>
 
     <el-button-group class="w-full" type="primary" plain style="display: flex" round>
-      <el-button @click="showCanvasLayout = true" round style="flex: 1" plain
-        >打开创建贴纸</el-button
+      <el-button @click="useCurrentSticker()" round style="flex: 1" plain
+        >使用该贴纸模版</el-button
       >
       <el-button
         v-if="currentOperatingDecalController.state.isLocalResource"
@@ -111,6 +111,7 @@ import {
   showCanvasLayout,
 } from "../../store";
 import { Top, Bottom, Back, Right, RefreshRight } from "@element-plus/icons-vue";
+import { canvasStickerOptions } from "../canvas";
 
 function remove() {
   currentOperatingDecalController.value.remove();
@@ -137,6 +138,15 @@ function moveRight() {
 
 function resetPosition() {
   currentOperatingDecalController.value.resetPosition();
+}
+
+function useCurrentSticker() {
+  let currentOperatingDecalControllerState = currentOperatingDecalController.value.state;
+
+  canvasStickerOptions.value =
+    currentOperatingDecalControllerState.info.data ||
+    currentOperatingDecalControllerState.info.meta.data;
+  showCanvasLayout.value = true;
 }
 </script>
 

@@ -33,7 +33,7 @@
 
     <div
       class="flex"
-      style="width: 100%; padding: 1rem; padding-top: 2rem; column-gap: 1rem"
+      style="width: 100%; padding: 10px; padding-top: 20px; column-gap: 10px"
     >
       <el-button plain link @click="showUploadModal = true">
         <CloudUploadOutlined style="font-size: 1.2em; margin-right: 4px" />
@@ -82,6 +82,13 @@
           </el-button>
         </addPopover>
       </div>
+    </div>
+
+    <div class="flex" style="width: 100%; padding: 10px; column-gap: 10px">
+      <div style="flex: 1"></div>
+      <el-button size="small" @click="genSticker" link>
+        {{ shouldUpdateCanvasSticker ? "点击更新贴纸" : "贴纸已更新" }}
+      </el-button>
     </div>
 
     <div style="width: 100%; padding: 1rem">
@@ -268,6 +275,10 @@ let canvasController = new CanvasController({
   max: 320,
 });
 
+const shouldUpdateCanvasSticker = computed(() => {
+  return canvasController.shouldUpdateCanvasSticker.value;
+});
+
 let canvass = canvasController.getRender();
 
 function exportPng() {
@@ -382,6 +393,13 @@ async function getCanvasStickerColor() {
 function copyCurrentCanvasChild() {
   let copy = Utils.clone(currentOperatingCanvasChild.value);
   addCanvasChild(copy);
+}
+
+/**
+ * @methods 手动生成贴纸
+ */
+function genSticker() {
+  canvasController.activeUpdateRenderingCanvas();
 }
 </script>
 

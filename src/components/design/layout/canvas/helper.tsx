@@ -220,43 +220,10 @@ let directionMap = {
     right: '右侧'
 }
 
-/*
-    处理元素位置
-*/
-
-function getPositionRealLabel(direction, size) {
-    let { value, unit } = size
-
-
-    if (unit == 'px') {
-        return `距离${directionMap[direction]} ${value}px`
-    }
-
-    if (unit == 'cm') {
-        return `距离${directionMap[direction]} ${value}cm`
-    }
-
-    if (unit == 'mm') {
-        return `距离${directionMap[direction]} ${value}mm`
-    }
-
-    if (unit == 'in') {
-        return `距离${directionMap[direction]} ${value}in`
-    }
-
-    if (unit == 'vw') {
-        return `距离${directionMap[direction]} ${value / 100} 个画布宽度`
-    }
-
-    if (unit == 'vh') {
-        return `距离${directionMap[direction]} ${value / 100} 个画布高度`
-    }
-}
 
 export function getPositionInfoFromOptions(position) {
     const containerStyle: any = {}
     const style: any = {}
-
 
     if (!position) {
         return {
@@ -264,6 +231,19 @@ export function getPositionInfoFromOptions(position) {
             style
         }
     }
+
+
+    // 依赖收集
+    let topValue = position.top?.value
+    let topUnit = position.top?.unit
+    let bottomValue = position.bottom?.value
+    let bottomUnit = position.bottom?.unit
+    let leftValue = position.left?.value
+    let leftUnit = position.left?.unit
+    let rightValue = position.right?.value
+    let rightUnit = position.right?.unit
+
+    console.log('getPosition')
 
     if (position.center) {
         containerStyle.display = 'flex'
@@ -284,7 +264,7 @@ export function getPositionInfoFromOptions(position) {
             let top = formatToNativeSizeOption(position.top)
             style.top = top.value + top.unit
 
-        } else if (isNumber(style.bottom.value)) {
+        } else if (isNumber(position.bottom.value)) {
             let bottom = formatToNativeSizeOption(position.bottom)
             style.bottom = bottom.value + bottom.unit
         }
@@ -299,16 +279,16 @@ export function getPositionInfoFromOptions(position) {
             let left = formatToNativeSizeOption(position.left)
             style.left = left.value + left.unit
 
-        } else if (isNumber(style.right.value)) {
+        } else if (isNumber(position.right.value)) {
             let right = formatToNativeSizeOption(position.right)
             style.right = right.value + right.unit
-
         }
 
 
     } else {
         // 自定义属性
         style.position = 'absolute'
+
 
         if (isNumber(position.top.value)) {
             let top = formatToNativeSizeOption(position.top)
@@ -317,7 +297,6 @@ export function getPositionInfoFromOptions(position) {
         } else if (isNumber(position.bottom.value)) {
             let bottom = formatToNativeSizeOption(position.bottom)
             style.bottom = bottom.value + bottom.unit
-
         }
 
         if (isNumber(position.left.value)) {
@@ -534,7 +513,7 @@ export function createFilterFromOptions(options) {
 
 export function createTransformString(options) {
 
-    if(!options){
+    if (!options) {
         return null
     }
 

@@ -17,7 +17,7 @@ export type SvgFilterCustomEffectType = {
 
 import { createDefaultFilter } from './default'
 import { createMosaicFilter } from './mosaic'
-import { blackAndWhite, anjinhuang, redStamp} from './pureColor'
+import { blackAndWhite, anjinhuang, redStamp,golden} from './pureColor'
 
 
 import {
@@ -68,7 +68,8 @@ export const SvgFilterCategoryOptions = [
         children: [
             blackAndWhite,
             anjinhuang,
-            redStamp
+            redStamp,
+            golden
         ]
     },
     {

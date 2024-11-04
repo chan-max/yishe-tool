@@ -30,7 +30,7 @@
           v-for="(tag, index) in autocompleteTags"
           @click="handleSelect(tag)"
         >
-          {{ tag.name }}
+          {{ tag.text }}
         </a-tag>
       </div>
     </el-popover>
@@ -86,8 +86,8 @@ const showAlert = useLocalStorage("_1s_showAutoCompleteTip", true);
 const popperRef = ref();
 
 const handleSelect = (tag) => {
-  if (!tags.value.includes(tag.name)) {
-    tags.value.push(tag.name);
+  if (!tags.value.includes(tag.text)) {
+    tags.value.push(tag.text);
   }
   emitModel();
 };
@@ -139,6 +139,7 @@ function customValidate(value) {
   font-size: 1rem;
   background: var(--el-color-primary) !important;
   height: 20px !important;
+  margin: 5px 3px;
 }
 
 .v3ti--focus {
@@ -163,6 +164,6 @@ function customValidate(value) {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  gap: 8px;
+  row-gap: 8px;
 }
 </style>

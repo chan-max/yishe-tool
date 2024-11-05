@@ -1,5 +1,9 @@
 <template>
-  <van-config-provider :theme="isDark ? 'dark' : 'light'">
+  <van-config-provider
+    :theme="isDark ? 'dark' : 'light'"
+    class="van-safe-area-top van-safe-area-bottom"
+    style="box-sizing: border-box"
+  >
     <div
       style="flex: 1; overflow: auto; overflow-x: hidden"
       class="flex flex-col items-center mobile-content"

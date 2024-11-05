@@ -13,7 +13,9 @@ function isFontName(fileName) {
 
 function isImageName(fileName) {
 
-    const [name, extension] = fileName.split('.');
+    let suffix = fileName.slice(fileName.lastIndexOf('.'))
+
+    let extension = suffix.slice(1)
 
     return imageSuffix.includes(extension.toLowerCase());
 }

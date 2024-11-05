@@ -47,6 +47,12 @@ export interface DecalControllerParams {
 }
 
 
+// 处理层级 ， 保证多个贴纸时的同时显示
+const globalRenderOrder = ref(1)
+
+const globalPolygonOffsetFactor = ref(-12)
+
+
 /**
  * @declare 当前鼠标正在覆盖的贴花
 */
@@ -81,9 +87,7 @@ export class DecalController {
     roughness: .9, // 粗糙度 
     metalness: 0, // 金属感觉
 
-    renderOrder: 1,
-
-    polygonOffsetFactor: -12,
+    polygonOffsetFactor: -24,
   })
 
   id = ref()
@@ -220,7 +224,7 @@ export class DecalController {
       depthTest: true,
       depthWrite: true,
       polygonOffset: true,
-      polygonOffsetFactor: this.state.polygonOffsetFactor -= 2,
+      polygonOffsetFactor: globalPolygonOffsetFactor.value -= 5,
       polygonOffsetUnits: 1,
       wireframe: false,
       roughness: this.state.roughness, // 粗糙度 , 目前没啥效果
@@ -314,7 +318,8 @@ export class DecalController {
       currentModelController.value.scene.add(this.mesh);
     }
 
-    this.mesh.renderOrder = this.state.renderOrder++
+    this.mesh.renderOrder = globalRenderOrder.value++
+
 
     // this.geometry.computeFaceNormals();
     // this.geometry.computeVertexNormals();

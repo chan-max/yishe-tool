@@ -57,7 +57,7 @@ import { createPinia } from 'pinia'
 import Api from '@/api'
 
 
-if (true || import.meta.env.DEV) {
+if (import.meta.env.DEV) {
   const vConsole = new VConsole({ theme: 'dark' });
 }
 

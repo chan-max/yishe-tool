@@ -14,8 +14,6 @@
 
     <danmuku></danmuku>
 
-    <market></market>
-
     <div
       v-animateonscroll="{
         enterClass: 'animate__animated animate__fadeIn',

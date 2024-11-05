@@ -1,6 +1,10 @@
 <template>
   <div class="container">
     <div class="menu">
+      <div class="flex justify-between w-full">
+        <el-button @click="refresh"> 刷新 </el-button>
+        <div style="flex: 1"></div>
+      </div>
       <div class="search">
         <el-input v-model="stickerSearchQueryParams.searchText" placeholder="寻找贴纸">
           <template #prefix>
@@ -68,8 +72,6 @@ import tags from "./tags.vue";
 import { stickerQueryParams } from "./index.tsx";
 import { loadingBottom } from "@/components/loading/index.tsx";
 import Utils from "@/common/utils";
-import { isEmpty } from "lodash";
-
 const stickerSearchQueryParams = ref({
   searchText: "",
 });
@@ -78,6 +80,11 @@ const stickerSearchQueryParams = ref({
 const column = ref(2);
 
 function tagChange() {
+  reset();
+  getList();
+}
+
+function refresh() {
   reset();
   getList();
 }

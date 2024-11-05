@@ -43,9 +43,7 @@
             color: #fff;
             font-weight: 900;
             font-size: 8px;
-            height: 12px;
-            line-height: 12px;
-            padding: 2px 4px;
+            padding: 0px 2px;
             border-radius: 4px;
             margin-left: 6px;
           "

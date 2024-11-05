@@ -282,7 +282,6 @@ export class CanvasController {
     async downloadTrimmedPng() {
         const imageData = this.ctx.getImageData(0, 0, this.canvasEl.width, this.canvasEl.height);
         const trimmed = Utils.trimImageData(imageData)
-
         downloadByFile(imageDataToFile(trimmed))
     }
 
@@ -363,7 +362,7 @@ export class CanvasController {
         this.debouncedUpdateJob()
     }
 
-    debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this), 999)
+    debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this),11)
 
     async updateRenderingCanvasJob() {
 
@@ -396,11 +395,12 @@ export class CanvasController {
 
                 this.ctx.drawImage(_canvas, 0, 0, _canvas.width, _canvas.height, 0, 0, width, height);
 
+                
+
                 this.loading.value = false
                 renderingLoading.value = false
 
                 this.shouldUpdateCanvasSticker.value = false
-
 
                 console.timeEnd('updateRenderingCanvas')
             } catch (e) {

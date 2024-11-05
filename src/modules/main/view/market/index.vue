@@ -10,8 +10,7 @@
 -->
 <template>
   <el-backtop :right="100" :bottom="100" />
-  <div class="market-container">
-    <div class="market-title gradient-text" id="latest-makeup">最新创作</div>
+  <div class="market-container" style="margin-top: 64px">
     <div class="market-content">
       <el-row :gutter="24">
         <el-col
@@ -29,6 +28,7 @@
     </div>
     <div class="more">
       <div v-if="isEmpty">暂无作品</div>
+      <div v-else-if="loading">加载中...</div>
       <el-button type="info" round @click="getList" v-else-if="!isLastPage">
         加载更多
       </el-button>
@@ -46,10 +46,10 @@ import { usePaging } from "@/hooks/data/paging.ts";
 
 const router = useRouter();
 
-const { list, getList, isLastPage, isEmpty } = usePaging((params) => {
+const { list, getList, isLastPage, isEmpty, loading } = usePaging((params) => {
   return getCustomModelList({
     ...params,
-    pageSize: 20,
+    pageSize: 12,
   });
 });
 </script>

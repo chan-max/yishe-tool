@@ -103,6 +103,7 @@ export const clothingContentOptions = ref([
     { text: "人像", value: "cat" },
     { text: "花", value: "flower" },
     { text: "狗", value: "cat" },
+    { text: "图案", value: "cat" },
     { text: "猫", value: "cat" },
     { text: "糖果", value: "cat" },
     { text: "白云", value: "cloud" },

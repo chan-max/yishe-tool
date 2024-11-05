@@ -52,9 +52,9 @@ export async function createMobileApp() {
 
     const app = createApp(App)
 
-    if (import.meta.env.env) {
-        const vConsole = new VConsole({ theme: 'dark' });
-    }
+    // if (import.meta.env.DEV) {
+    //     const vConsole = new VConsole({ theme: 'dark' });
+    // }
 
     const pinia = createPinia()
     app.directive('animateonscroll', AnimateOnScroll);

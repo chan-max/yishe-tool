@@ -4,7 +4,7 @@
 
 export default {
     // image and font , file accept
-    ImageFontFileAcceptString: 'image/png, image/jpeg, image/svg+xml, font/ttf, font/woff, font/otf',
+    ImageFontFileAcceptString: 'image/png,image/webp, image/jpeg, image/svg+xml, font/ttf, font/woff, font/otf',
     ImageFontModelFileAcceptString: 'image/png, image/jpeg, image/svg+xml, font/ttf, font/woff, font/otf , .glb',
 
     // 系统默认头像

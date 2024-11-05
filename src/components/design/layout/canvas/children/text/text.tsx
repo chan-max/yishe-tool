@@ -186,6 +186,7 @@ export const Text = defineComponent({
                 style.background = `url(${props.options.imageInfo.url})`
                 style.backgroundClip = 'text'
                 style.color = 'transparent';
+                style.backgroundSize = 'cover'  // contain
             }
 
             const textContainerStyle = {

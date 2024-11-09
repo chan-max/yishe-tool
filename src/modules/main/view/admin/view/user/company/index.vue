@@ -2,12 +2,10 @@
   <div>
     <s1Table v-bind="gridOptions">
       <template #toolbar-left>
-        <el-button plain  @click="handleCreate">
-          添加公司
-        </el-button>
+        <el-button plain @click="handleCreate"> 添加公司 </el-button>
       </template>
       <template #toolbar-right>
-        <el-button  plain @click="refresh" :icon="RefreshRight"> </el-button>
+        <el-button plain @click="refresh" :icon="RefreshRight"> </el-button>
       </template>
 
       <template #operationDefault="{ row }">
@@ -81,6 +79,7 @@ const gridOptions = ref({
     // { field: "id", title: "公司 ID", width: 240, showOverflow: true },
     { field: "name", title: "公司名称", width: 160, showOverflow: true },
     { field: "inviteCode", title: "邀请码", minWidth: 240 },
+    { field: "createTime", title: "添加时间", width: 160 },
     {
       field: "operation",
       fixed: "right",

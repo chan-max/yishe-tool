@@ -79,30 +79,6 @@
             </template>
           </el-input>
         </el-form-item>
-
-        <!-- <el-form-item prop="email">
-          <el-input placeholder="请输入邮箱" v-model="signupForm.email">
-            <template #prefix>
-              <el-icon>
-                <Message />
-              </el-icon>
-            </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item prop="validateCode">
-          <div class="signup-validateCode">
-            <el-input placeholder="请输入邮箱验证码" v-model="signupForm.validateCode">
-              <template #prefix>
-                <el-icon>
-                  <Bell />
-                </el-icon>
-              </template>
-            </el-input>
-            <el-button @click="sendCode">
-              <span style="font-size: 12px; font-weight: 400"> 发送验证码 </span>
-            </el-button>
-          </div>
-        </el-form-item> -->
         <el-form-item>
           <el-button
             style="width: 100%"
@@ -254,6 +230,7 @@ async function submit() {
     await register(formData);
 
     message.success("注册成功！");
+
     router.replace({ name: "Home" });
     openLoginDialog();
   } catch (e) {

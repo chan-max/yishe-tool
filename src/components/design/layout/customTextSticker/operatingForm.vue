@@ -66,7 +66,7 @@
           <el-col :span="24">
             <operate-form-item>
               <template #icon> <icon-font-family></icon-font-family> </template>
-              <template #name> 个性字体 </template>
+              <template #name> </template>
               <template #content>
                 <template v-if="operatingTextStickerOptions.fontFamilyInfo">
                   <el-image

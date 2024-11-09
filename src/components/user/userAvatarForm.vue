@@ -18,7 +18,7 @@
       >
         <div class="font-bold">{{ userInfo.name || userInfo.account }}</div>
         <div style="overflow: hidden; font-size: 1rem">
-          {{ userInfo.company?.name || "个人用户" }} {{ userInfo.email || "--" }}
+          {{ userInfo.company?.name || "个人用户" }} {{ userInfo.phone }}
         </div>
       </div>
     </div>

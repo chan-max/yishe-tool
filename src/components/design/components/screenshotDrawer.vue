@@ -12,9 +12,14 @@
 
         <div style="flex: 1"></div>
 
-        <el-button type="danger" size="small" plain @click="remove(item)">
-          移除
-        </el-button>
+        <el-button-group>
+          <el-button type="primary" size="small" plain @click="download(item)">
+            下载当前图片
+          </el-button>
+          <el-button type="danger" size="small" plain @click="remove(item)">
+            移除
+          </el-button>
+        </el-button-group>
       </div>
     </div>
     <s1-empty v-else>暂无截图</s1-empty>
@@ -24,10 +29,15 @@
 <script setup lang="ts">
 import { showScreenshotDrawer, screenshots } from "@/components/design/store";
 import Utils from "@/common/utils";
-
+import { saveAs } from "file-saver";
 function remove(item) {
   let ind = screenshots.value.indexOf(item);
   screenshots.value.splice(ind, 1);
+}
+
+async function download(item) {
+  let file = Utils.transform.base64ToPngFile(item.base64);
+  saveAs(file);
 }
 </script>
 

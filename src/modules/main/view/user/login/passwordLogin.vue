@@ -116,7 +116,7 @@ const rules = reactive({
       message: "",
       trigger: ["blur"],
       validator(rule, val) {
-        return val.length >= 6 && val.length <= 16;
+        return val.length >= 5 && val.length <= 16;
       },
     },
   ],
@@ -125,7 +125,7 @@ const rules = reactive({
       message: "",
       trigger: ["blur"],
       validator(rule, val) {
-        return val.length >= 6 && val.length <= 16;
+        return val.length >= 5 && val.length <= 16;
       },
     },
   ],

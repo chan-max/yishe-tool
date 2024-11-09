@@ -12,6 +12,8 @@
   <div class="home">
     <banner></banner>
 
+    <description></description>
+
     <danmuku></danmuku>
 
     <div
@@ -32,6 +34,7 @@ import market from "@/modules/main/view/market/index.vue";
 import banner from "./banner.vue";
 import contactus from "./contact/contact.vue";
 import danmuku from "./danmuku.vue";
+import description from "./description.vue";
 
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "@/api";

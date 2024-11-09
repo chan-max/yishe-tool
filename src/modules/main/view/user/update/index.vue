@@ -64,13 +64,13 @@
               </el-form-item>
             </el-col>
 
-            <el-col :span="6">
-              <el-form-item label="密码">
-                <el-input placeholder="请输入"></el-input>
+            <!-- <el-col :span="6">
+              <el-form-item label="密码" prop="password">
+                <el-input placeholder="请输入" v-model="form.password"></el-input>
               </el-form-item>
-            </el-col>
+            </el-col> -->
 
-            <el-col :span="12">
+            <el-col :span="6">
               <el-form-item label="联系方式">
                 <el-input placeholder="请输入" v-model="form.phone"></el-input>
               </el-form-item>
@@ -173,38 +173,22 @@ const rules = reactive({
       message: "账号由6～18位字符组成",
       required: true,
       max: 16,
-      min: 6,
+      min: 5,
       trigger: ["blur"],
     },
   ],
   email: [
     { message: "请输入正确的邮箱格式", type: "email", required: true, trigger: ["blur"] },
   ],
-  password: [
-    {
-      message: "密码由6～18位字符组成",
-      required: true,
-      max: 16,
-      min: 6,
-      trigger: ["blur"],
-    },
-  ],
-  repassword: [
-    {
-      message: "两次密码输入不一致",
-      required: true,
-      validator(form, val) {
-        if (!val) {
-          form.message = "请输入确认密码";
-          return false;
-        } else {
-          form.message = "两次密码输入不一致";
-          return val === form.password;
-        }
-      },
-      trigger: ["blur"],
-    },
-  ],
+  // password: [
+  //   {
+  //     message: "密码由5～16位字符组成",
+  //     required: false,
+  //     max: 16,
+  //     min: 5,
+  //     trigger: ["blur"],
+  //   },
+  // ],
   validateCode: {
     len: 6,
     required: true,

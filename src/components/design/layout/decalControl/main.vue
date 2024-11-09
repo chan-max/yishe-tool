@@ -69,7 +69,39 @@
             style="margin-top: 12px"
           />
         </el-form-item>
-        <el-form-item label="固定位置"> </el-form-item>
+        <el-form-item label="印花工艺">
+          <el-select
+            v-model="clothingPaintMethod"
+            size="small"
+            placeholder="选择印花工艺"
+          >
+            <template #label="{ label }">
+              <div style="font-size: 1rem">{{ label }}</div>
+            </template>
+            <el-option
+              v-for="item in clothingPaintMethods"
+              :key="item.title"
+              :label="item.title"
+              :value="item.title"
+            >
+              <el-popover width="auto" :hide-after="0" placement="right">
+                <template #reference>
+                  <div class="flex">
+                    {{ item.title }}
+                  </div>
+                </template>
+                <s1-img
+                  :src="item.thumbnail"
+                  fit="cover"
+                  style="width: 200px; height: 200px"
+                ></s1-img>
+                <div style="width: 200px; padding: 12px">
+                  {{ item.description }}
+                </div>
+              </el-popover>
+            </el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
     </div>
 
@@ -112,6 +144,7 @@ import {
 } from "../../store";
 import { Top, Bottom, Back, Right, RefreshRight } from "@element-plus/icons-vue";
 import { canvasStickerOptions } from "../canvas";
+import { clothingPaintMethods } from ".";
 
 function remove() {
   currentOperatingDecalController.value.remove();
@@ -148,6 +181,8 @@ function useCurrentSticker() {
     currentOperatingDecalControllerState.info.meta.data;
   showCanvasLayout.value = true;
 }
+
+const clothingPaintMethod = ref();
 </script>
 
 <style scoped lang="less">

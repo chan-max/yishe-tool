@@ -20,7 +20,7 @@ import {
 
 
 // 全局设置
-axios.defaults.timeout = 100000; // 时间超时设置100s
+axios.defaults.timeout = 1000000; // 时间超时设置100s
 
 // 读取配置中的请求地址
 axios.defaults.baseURL = import.meta.env.VITE_API;

@@ -16,13 +16,13 @@
 
     <danmuku></danmuku>
 
-    <div
+    <!-- <div
       v-animateonscroll="{
         enterClass: 'animate__animated animate__fadeIn',
       }"
     >
       <contactus></contactus>
-    </div>
+    </div> -->
 
     <site-footer></site-footer>
   </div>

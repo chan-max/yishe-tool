@@ -28,7 +28,7 @@
     <div style="flex: 1"></div>
 
     <div class="right flex justify-end">
-      <el-popover width="auto">
+      <!-- <el-popover width="auto">
         <template #reference>
           <el-button link>
             <el-icon size="18"><Iphone /></el-icon>
@@ -38,7 +38,7 @@
           <div ref="qrcodeRef"></div>
           <div style="text-align: center">手机游览器扫码进入移动版</div>
         </div>
-      </el-popover>
+      </el-popover> -->
       <el-dropdown placement="bottom" size="small" trigger="click">
         <el-button size="small" link>
           <span style="font-weight: bold; font-size: 1rem"> {{ language }} </span>

@@ -12,11 +12,11 @@
   <div class="footer">
     <div class="gradient-border"></div>
     <div class="columns">
-      <div class="column">
+      <!-- <div class="column">
         <div class="column-title">联系我们</div>
         <div>tel : 18742539196</div>
         <div>wechat: 18742539196</div>
-      </div>
+      </div> -->
       <div class="column">
         <div style="flex: 1"></div>
         <img style="width: 36px; height: 36px" src="/clover.svg" />

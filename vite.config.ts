@@ -27,7 +27,6 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 // 编译文件支持旧游览器
 import legacy from '@vitejs/plugin-legacy';
 // import AntdvResolver from 'antdv-component-resolver'
-import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import svgLoader from 'vite-svg-loader'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from "unplugin-auto-import/vite";
@@ -70,11 +69,8 @@ export default defineConfig((config: any) => {
       }),
       qrcode(),
       legacy(),
-      quasar({
-        sassVariables: 'src/style/quasar-variables.sass'
-      }),
       vue({
-        template: { transformAssetUrls }
+        template: {  }
       }),
       svgLoader(),
       vueJsx({

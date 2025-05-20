@@ -17,14 +17,12 @@
       </div>
     </el-config-provider>
   </a-config-provider>
-
-
   <!-- 全局登录弹窗 -->
   <a-modal v-model:open="showLoginFormModal" :footer="null" :centered="true" :destroyOnClose="true"
     style="min-width:440px;" width="440px">
     <loginForm></loginForm>
   </a-modal>
-</template>
+</template> 
 <script setup>
 import { computed, ref } from "vue";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";

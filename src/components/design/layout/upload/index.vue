@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="upload-container">
     <div v-if="uploadTabType == 'local'">
       <el-upload
         ref="uploadRef"
@@ -9,10 +9,10 @@
         drag
         :before-remove="beforeRemove"
         :auto-upload="false"
-        :multiple="false"
+        :multiple="true"
         v-bind="$attrs"
         :on-change="fileListChange"
-        :limit="1"
+        :limit="999"
         :on-exceed="handleExceed"
         :accept="Utils.const.ImageFontFileAcceptString"
       >
@@ -134,6 +134,7 @@
       <div class="qrcode" style="width: 10rem; height: 10rem"></div>
       <div class="tip">打开app扫码上传</div>
     </div>
+
     <div class="footer">
       <el-button link type="danger">
         {{ loginStore.isLogin ? "" : "当前未登录，请登录后再上传" }}
@@ -467,10 +468,14 @@ async function doUpload() {
 }
 </script>
 
+
+
+
 <style lang="less" scoped>
-.container {
+.upload-container {
   padding: 1rem;
-  width: 600px;
+  height: 100%;
+  width: 100%;
 }
 
 .placeholder {

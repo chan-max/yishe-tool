@@ -60,14 +60,20 @@
     <projectModal></projectModal>
   </diydialog>
 
-  <diydialog
+  <!-- <diydialog
     :show="showUpload"
     title="资源上传"
     @close="showUpload = false"
     :animation="basicContainerAnimation"
   >
     <upload></upload>
-  </diydialog>
+  </diydialog> -->
+
+  <a-modal v-model:visible="showUpload"      title="资源上传"  width="100%"
+      :footer="null"
+      wrap-class-name="full-modal">
+    <upload></upload>
+  </a-modal>
 
 
 

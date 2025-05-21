@@ -1,3 +1,11 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-05-20 06:50:38
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-05-22 06:30:10
+ * @FilePath: /1s/src/common/type.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 
 
 
@@ -9,6 +17,12 @@ function isFontName(fileName) {
     const [name, extension] = fileName.split('.');
 
     return fontSuffix.includes(extension.toLowerCase());
+}
+
+function isPsd(fileName) {
+    const [name, extension] = fileName.split('.');
+
+    return extension == 'psd'
 }
 
 function isImageName(fileName) {
@@ -69,6 +83,8 @@ export class Type {
 
     isImageFileType = isImageFileType
     isFontFileType = isFontFileType
+
+    isPsd = isPsd
 }
 
 

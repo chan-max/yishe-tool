@@ -14,7 +14,7 @@
       id="layout-body"
       style="display: flex; height: calc(100% - var(--1s-header-height))"
     >
-      <div id="layout-left-menu" style="height: 100%; border-right: 1px solid #f3f3f3">
+      <div id="layout-left-menu" style="height: 100%;">
         <left-menu v-if="showLeftMenu"></left-menu>
       </div>
 
@@ -154,25 +154,10 @@ const basicContainerAnimation = ref({
 
 
 const leftComponent = computed(() => {
-  if (showDecalControl.value) {
-    return decalControl;
-  }
-
-  if (showWorkspace.value) {
-    return workspace;
-  }
-
-  if (showCanvasLayout.value) {
-    return canvasLayout;
-  }
 
   if (showSticker.value) {
     sticker.name = "sticker";
     return sticker;
-  }
-
-  if (viewDisplayController.value.showMaterialControl) {
-    return material;
   }
 
   if (viewDisplayController.value.showVideoClip) {
@@ -181,9 +166,7 @@ const leftComponent = computed(() => {
 });
 
 const rightComponent = computed(() => {
-  if (showDecalList.value) {
-    return decalList;
-  }
+  return null
 });
 
 
@@ -233,7 +216,6 @@ onMounted(async () => {
 }
 
 #layout-left {
-  box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.1);
   border-right: 1px solid #eee;
 }
 

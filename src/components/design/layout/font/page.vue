@@ -54,7 +54,7 @@
               <div style="flex: 1"></div>
             </div>
             <s1-image
-              :src="item.thumbnail?.url"
+              :src="item.thumbnail"
               fit="contain"
               style="width: auto; height: 48px"
             ></s1-image>
@@ -81,10 +81,11 @@ import Utils from "@/common/utils";
 import { Paperclip, TopRight } from "@element-plus/icons-vue";
 
 import { fetchFontFaceWithMessage } from "@/components/design/layout/canvas/operate/fontFamily/index.ts";
+import { getFontList } from "@/api";
 
 // 字体列表
 const { list, getList, reset, loading, total } = usePaging((params) => {
-  return getFontListApi({
+  return getFontList({
     ...params,
     pageSize: 30,
   });

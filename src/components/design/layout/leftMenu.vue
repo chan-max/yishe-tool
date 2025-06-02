@@ -39,7 +39,7 @@
         <desimage
           style="width: 30px; height: 30px"
           v-if="currentOperatingBaseModelInfo?.id"
-          :src="currentOperatingBaseModelInfo.thumbnail?.url"
+          :src="currentOperatingBaseModelInfo.thumbnail"
         ></desimage>
         <div v-else class="menu-bar-item-icon">
           <icon-shirt></icon-shirt>

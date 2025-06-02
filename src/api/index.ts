@@ -146,9 +146,6 @@ export const getImage = (params) =>
     resolve(res.data.data);
   });
 
-// 上传文字字体文件
-export const uploadFont = (data) => apiInstance.post(Url.UPLOAD_FONT, data);
-
 // 获取所有字体
 
 export const getFonts = () =>
@@ -374,6 +371,26 @@ export const uploadFile = (params) => new Promise(async (resolve, reject) => {
   resolve(void 0)
 })
 
+export const uploadFont = (params) => new Promise(async (resolve, reject) => {
+
+  const data = {
+    ...params,
+    thumbnail: params.thumbnail,
+    name: params.name,
+    type: params.type,
+    size: params.size,
+    meta: params.meta || {},
+  }
+
+  await apiInstance.post('/api/font-template/create', data)
+  resolve(void 0)
+})
+
+
+export const getFontList = (params) => new Promise(async (resolve, reject) => {
+  const res = await apiInstance.post('/api/font-template/page', params)
+  resolve(res.data.data)
+})
 
 /* 
   获取商品模型列表

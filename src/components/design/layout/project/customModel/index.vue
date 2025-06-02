@@ -9,7 +9,7 @@
           <s1-image
             @click="openDetail(item)"
             padding="5%"
-            :src="item.thumbnail?.url"
+            :src="item.thumbnail"
             style="
               background: #f6f6f6 !important;
               width: 240px;
@@ -142,7 +142,6 @@ async function deleteItem(item) {
     content: "确认删除该模型？",
   });
 
-  await Api.deleteCOSFile(item.thumbnail.key);
   await Api.deleteCustomModel(item.id);
   reset();
   await getList();
@@ -187,7 +186,7 @@ function workspaceEdit(item) {
 }
 
 function downloadThumbnail(item) {
-  saveAs(item.thumbnail.url);
+  saveAs(item.thumbnail);
 }
 </script>
 

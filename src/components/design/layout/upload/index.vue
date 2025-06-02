@@ -223,6 +223,7 @@ import { fetchFile } from "@/api";
 import { apiInstance } from "@/api/apiInstance";
 
 import { saveAs } from "file-saver";
+import { uploadFont } from "@/api";
 const loginStore = useLoginStatusStore();
 
 /*
@@ -371,8 +372,6 @@ async function uploadSingleFile(file) {
       size: file.size,
       url: fileCos.url,
       keywords,
-      type: file.isTexture ? "texture" : "image", // 默认为图片贴纸, 图片统一为 image , 如果是材质则为 texture
-      thumbnail: fileCos,
       description: file.description,
       isPublic: file.isPublic,
       uploaderId: loginStore.userInfo.id,
@@ -396,14 +395,14 @@ async function uploadSingleFile(file) {
       name: file.customName || file.raw.name,
       size: file.size,
       keywords,
-      thumbnail: thumbnailCos,
+      thumbnail: thumbnailCos.url,
       description: file.description,
       isPublic: file.isPublic,
       uploaderId: loginStore.userInfo.id,
       type: file.name.split(".").pop(),
     };
 
-    await uploadFile(params);
+    await uploadFont(params);
   }
 
   if (Utils.type.isModelName(file.name)) {
@@ -422,7 +421,7 @@ async function uploadSingleFile(file) {
       name: file.customName || file.raw.name,
       size: file.size,
       keywords,
-      thumbnail: thumbnailCos,
+      thumbnail: thumbnailCos.url,
       description: file.description,
       isPublic: file.isPublic,
       uploaderId: loginStore.userInfo.id,

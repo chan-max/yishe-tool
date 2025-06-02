@@ -12,7 +12,7 @@
         >
           <s1-image
             padding="5%"
-            :src="item.thumbnail?.url"
+            :src="item.thumbnail"
             @click="itemClick(item)"
             style="
               background: #f6f6f6 !important;
@@ -69,7 +69,7 @@
   >
     <div class="flex">
       <s1-img
-        :src="currentItem.thumbnail?.url"
+        :src="currentItem.thumbnail"
         style="width: 480px; height: 480px; flex-shrink: 0"
       >
       </s1-img>

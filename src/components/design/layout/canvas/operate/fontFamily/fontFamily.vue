@@ -35,7 +35,7 @@
           <el-option v-if="!item.hide" :label="item.name" :value="item">
             <div>
               <desimage
-                :src="item.thumbnail?.url"
+                :src="item.thumbnail"
                 style="width: 240px; height: 32px"
               ></desimage>
             </div>

@@ -1,10 +1,17 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-05-20 06:50:38
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-02 20:31:55
+ * @FilePath: /1s/src/components/design/layout/saveModel/index.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { currentModelController, lastestScreenshot, screenshots } from "../../store";
 import { createCustomModelApi, uploadToCOS } from "@/api";
 import Utils from "@/common/utils";
 import { useLoginStatusStore } from "@/store/stores/login";
 
 export async function saveCustomModel(form) {
-
     const loginStore = useLoginStatusStore();
 
     // 上传本地贴纸 , 过滤出本地的贴纸
@@ -26,13 +33,14 @@ export async function saveCustomModel(form) {
     let thumbnails = await Promise.all(
         screenshots.value.map(async (shot) => {
             const file = Utils.transform.base64ToPngFile(shot.base64);
-            return await uploadToCOS({ file: file });
+            let coss = await uploadToCOS({ file: file });
+            return coss.url
         })
     );
 
     const params = {
-        ...form || {},
-        thumbnail: cos,
+        // ...form || {},
+        thumbnail: cos.url,
         thumbnails,
         meta: {
             modelInfo,

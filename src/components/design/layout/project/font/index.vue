@@ -8,7 +8,7 @@
         >
           <s1-image
             padding="5%"
-            :src="item.thumbnail?.url"
+            :src="item.thumbnail"
             @click="itemClick(item)"
             style="
               background: #f6f6f6 !important;
@@ -77,7 +77,7 @@
   >
     <div class="flex">
       <s1-img
-        :src="currentItem.thumbnail?.url"
+        :src="currentItem.thumbnail"
         style="width: 480px; height: 480px; flex-shrink: 0"
       >
       </s1-img>
@@ -134,6 +134,7 @@ import { s1Confirm } from "@/common/message";
 import { message } from "ant-design-vue";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { fontAutoplacementTags } from "@/components/design/components/tagsInput";
+import { getFontList } from "@/api";
 
 const loginStore = useLoginStatusStore();
 // 列表展示几列
@@ -142,10 +143,9 @@ const column = ref(4);
 const loadingOptions = useLoadingOptions({});
 
 const { list, getList, loading, reset, isEmpty } = usePaging((params) => {
-  return Api.getFileList({
+  return getFontList({
     ...params,
     pageSize: 20,
-    type: "ttf,otf",
     // myUploads: true
   });
 });
@@ -166,7 +166,7 @@ function downloadFile(item) {
 }
 
 function downloadThumbnail(item) {
-  Api.downloadCOSFile(item.thumbnail.url);
+  Api.downloadCOSFile(item.thumbnail);
 }
 
 const currentItem = ref({} as any);

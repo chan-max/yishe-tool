@@ -99,14 +99,10 @@
     <sticker-modal></sticker-modal>
   </diydialog>
 
-  <diydialog
-    :show="showUpload"
-    title="资源上传"
-    @close="showUpload = false"
-    :animation="basicContainerAnimation"
-  >
+  <a-modal title="资源上传" v-model:open="showUpload"       width="100%" :footer="null"
+  wrap-class-name="full-modal">
     <upload></upload>
-  </diydialog>
+  </a-modal>
 
   <diydialog
     :show="showSaveModel"

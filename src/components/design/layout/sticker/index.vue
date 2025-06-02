@@ -35,7 +35,7 @@
       <div class="item">
         <s1-image
           padding="10%"
-          :src="item.thumbnail?.url"
+          :src="item.url"
           class="image"
           :meta="item"
           @load="imgLoad"

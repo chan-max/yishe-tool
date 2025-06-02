@@ -8,7 +8,7 @@
         >
           <s1-img
             padding="5%"
-            :src="item.thumbnail?.url"
+            :src="item.url"
             @click="itemClick(item)"
             style="
               background: #f6f6f6 !important;
@@ -200,7 +200,6 @@ async function deleteItem(item) {
     content: "确认删除该贴纸吗？",
   });
 
-  await Api.deleteCOSFile(item.thumbnail.key);
   await Api.deleteSticker(item.id);
   reset();
   await getList();

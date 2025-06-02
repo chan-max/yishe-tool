@@ -110,7 +110,7 @@ export class DecalController {
 
     this.state.id = this.id.value = (info.id || v4()) // 如果是本地的贴纸，随机分配一个id
     this.state.isLocalResource = info.isLocalResource
-    this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64 || info.thumbnail
+    this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64
     this.info = info
     this.state.info = info
     if (this.state.isLocalResource) {
@@ -239,7 +239,7 @@ export class DecalController {
     textureLoader.setWithCredentials(true)
     textureLoader.setCrossOrigin('*')
 
-    let sourceUrl = this.img?.src || this.info.src || this.info.thumbnail
+    let sourceUrl = this.img?.src || this.info.src || this.info.url
 
 
     // 本地穿件的图片
@@ -506,7 +506,7 @@ export class DecalController {
     })
 
     let data = await Api.createSticker({
-      thumbnail: cos.url,
+      url: cos.url,
       type: 'composition',
       isPublic: false,
       meta: {

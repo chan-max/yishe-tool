@@ -99,8 +99,13 @@
     <sticker-modal></sticker-modal>
   </diydialog>
 
-  <a-modal title="资源上传" v-model:open="showUpload"       width="100%" :footer="null"
-  wrap-class-name="full-modal">
+  <a-modal
+    title="资源上传"
+    v-model:open="showUpload"
+    width="100%"
+    :footer="null"
+    wrap-class-name="full-modal"
+  >
     <upload></upload>
   </a-modal>
 
@@ -114,14 +119,16 @@
   </diydialog>
 
   <!-- 个人项目弹层 -->
-  <diydialog
-    :show="viewDisplayController.showProject"
-    title="创作资源"
-    @close="viewDisplayController.showProject = false"
-    :animation="basicContainerAnimation"
+
+  <a-modal
+    title="资源上传"
+    v-model:open="viewDisplayController.showProject"
+    width="100%"
+    :footer="null"
+    wrap-class-name="full-modal"
   >
     <projectModal></projectModal>
-  </diydialog>
+  </a-modal>
 
   <!-- 贴纸详细信息弹层 -->
   <stickerDetailModal></stickerDetailModal>

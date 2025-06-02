@@ -1,3 +1,11 @@
+<!--
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-05-20 06:50:38
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-03 07:26:50
+ * @FilePath: /1s/src/components/design/layout/project/index.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <div style="height: 600px; margin: 12px" class="flex">
     <div style="width: 120px">
@@ -46,11 +54,6 @@ const tabs = ref([
     component: tabBaseModel,
   },
   {
-    label: "设计模型",
-    key: "customModel",
-    component: tabCustomModel,
-  },
-  {
     label: "贴纸",
     key: "sticker",
     component: tabSticker,
@@ -59,6 +62,11 @@ const tabs = ref([
     label: "字体",
     key: UserOwnSourceType.FONT,
     component: tabFont,
+  },
+  {
+    label: "设计模型",
+    key: "customModel",
+    component: tabCustomModel,
   },
 ]);
 

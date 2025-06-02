@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="upload-container">
     <div v-if="uploadTabType == 'local'">
       <el-upload
         ref="uploadRef"
@@ -9,12 +9,12 @@
         drag
         :before-remove="beforeRemove"
         :auto-upload="false"
-        :multiple="false"
+        :multiple="true"
         v-bind="$attrs"
         :on-change="fileListChange"
-        :limit="1"
+        :limit="999"
         :on-exceed="handleExceed"
-        :accept="Utils.const.ImageFontFileAcceptString"
+        :accept="Utils.const.RecourceFileAcceptString"
       >
         <div class="placeholder">
           <icon-file-upload></icon-file-upload>
@@ -22,7 +22,7 @@
         </div>
         <template #tip>
           <div class="tip">
-            <div>支持 jpg,png,svg等图片格式 , ttf,woff等字体格式</div>
+            <div>支持 jpg,png,svg等图片格式 , ttf,woff等字体格式, psd 格式</div>
           </div>
         </template>
 
@@ -134,6 +134,7 @@
       <div class="qrcode" style="width: 10rem; height: 10rem"></div>
       <div class="tip">打开app扫码上传</div>
     </div>
+
     <div class="footer">
       <el-button link type="danger">
         {{ loginStore.isLogin ? "" : "当前未登录，请登录后再上传" }}
@@ -198,8 +199,10 @@ import {
 } from "@element-plus/icons-vue";
 import iconFileUpload from "@/icon/file-upload.svg";
 import iconImg from "@/icon/fileType/img.svg";
+
 import iconFont from "@/icon/fileType/font.svg";
 import iconGlb from "@/icon/fileType/glb.svg";
+import iconPsd from "@/icon/fileType/psd.svg";
 import tags from "@/components/design/components/tags.vue";
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import {
@@ -290,6 +293,7 @@ const fileTypeIcons = {
   ttf: iconFont,
   glb: iconGlb,
   otf: iconFont,
+  psd: iconPsd,
 };
 
 /**
@@ -426,6 +430,24 @@ async function uploadSingleFile(file) {
 
     await Api.createProductModel(params);
   }
+
+  if (Utils.type.isPsd(file.name)) {
+
+    const fileCos = await uploadToCOS({ file: file.raw });
+
+    const params = {
+      url: fileCos.url,
+      name: file.customName || file.raw.name,
+      size: file.size,
+      keywords,
+      thumbnail: null,
+      description: file.description,
+      isPublic: file.isPublic,
+      uploaderId: loginStore.userInfo.id,
+      type: file.name.split(".").pop(),
+    };
+    await uploadFile(params);
+  }
 }
 
 /**
@@ -467,10 +489,14 @@ async function doUpload() {
 }
 </script>
 
+
+
+
 <style lang="less" scoped>
-.container {
+.upload-container {
   padding: 1rem;
-  width: 600px;
+  height: 100%;
+  width: 100%;
 }
 
 .placeholder {

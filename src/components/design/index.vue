@@ -28,17 +28,7 @@ import { s1Confirm } from "@/common/message";
 // 阻止缩放屏幕影响使用体验
 usePreventScreenResize();
 
-const route = useRoute();
-
 onBeforeMount(async () => {
-  // 有 id 为编辑模式
-  const id = route.query.id;
-  if (id) {
-    isEdit.value = true;
-    let model = await getModelById(id);
-    currentEditingModelInfo.value = model;
-  }
-
   window.addEventListener("beforeunload", onbeforeunload);
 });
 

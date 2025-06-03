@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
           source: "www/**"
-          target: "/www/wwwroot/49.232.186.238:1520"
+          target: "/www/wwwroot/49.232.186.238_1520"
           rm: false
           strip_components: 1
           overwrite: true

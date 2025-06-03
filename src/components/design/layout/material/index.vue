@@ -28,7 +28,7 @@
           <div>
             <s1-img
               style="background: #f7f7f7; width: 200px; height: 200px"
-              :src="currentModelController.state.material?.textureInfo?.thumbnail?.url"
+              :src="currentModelController.state.material?.textureInfo?.url"
             ></s1-img>
             <el-button
               style="margin-top: 12px"

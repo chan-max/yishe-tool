@@ -2,7 +2,7 @@
   <div ref="container" class="container">
     <div class="item" v-for="item in models">
       <div class="img">
-        <s1-image :src="item.thumbnail?.url"></s1-image>
+        <s1-image :src="item.thumbnail"></s1-image>
       </div>
 
       <h1 style="max-width: 300px; word-wrap: break-word">{{ item.name }}</h1>

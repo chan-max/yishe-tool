@@ -1,3 +1,11 @@
+<!--
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-05-20 06:50:38
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-03 08:08:27
+ * @FilePath: /1s/src/components/design/layout/material/detailModal.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <a-modal
     v-bind="$attrs"
@@ -12,7 +20,7 @@
     <div class="flex">
       <div :draggable="false">
         <s1-mangnifier
-          :src="currentMaterialInfo.thumbnail?.url"
+          :src="currentMaterialInfo.url"
           width="480px"
           height="480px"
           style="border-radius: 12px"

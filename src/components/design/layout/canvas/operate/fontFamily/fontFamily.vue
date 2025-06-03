@@ -60,6 +60,7 @@ import { GlobalConst } from "@/types/index.ts";
 import { useDebounceFn } from "@vueuse/core";
 import { TopRight } from "@element-plus/icons-vue";
 import { showFontModal } from "@/components/design/store";
+import { getFontList } from "@/api";
 
 const model = defineModel({});
 
@@ -107,7 +108,7 @@ const remoteMethod = useDebounceFn(function (val) {
 // 字体列表
 const { list, getList, reset, loading } = usePaging(
   (params) => {
-    return getFontListApi({
+    return getFontList({
       ...params,
       pageSize: 999,
     });

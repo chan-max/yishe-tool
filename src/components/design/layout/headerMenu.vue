@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-27 19:20:45
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2023-12-30 10:39:20
+ * @LastEditTime: 2025-06-03 20:37:58
  * @FilePath: /1s/src/components/design/layout/headerMenu.vue
  * @Description: 
  * 
@@ -16,54 +16,6 @@
     >
       <img src="/favicon.png" style="height: 36px" object-fit="contain" />
     </div>
-
-    <el-popover width="240" trigger="click" popper-style="padding:2rem">
-      <template #reference>
-        <el-button link v-if="loginStatusStore.isLogin" class="link">
-          <span style="font-size: 1.1rem"> {{ storageName || "未命名" }}</span>
-          <el-icon size="1rem" style="margin-left: 0.4rem">
-            <el-tooltip
-              content="正在同步到远程"
-              placement="right"
-              v-if="syncState.loading"
-            >
-              <LoadingOutlined style="color: var(--el-color-primary)" />
-            </el-tooltip>
-            <el-tooltip
-              content="同步成功"
-              placement="right"
-              v-if="!syncState.loading && syncState.success"
-            >
-              <CheckCircleOutlined style="color: var(--el-color-success)" />
-            </el-tooltip>
-            <el-tooltip
-              content="同步失败"
-              placement="right"
-              v-if="!syncState.loading && syncState.failed"
-            >
-              <ExclamationCircleOutlined style="color: var(--el-color-danger)" />
-            </el-tooltip>
-          </el-icon>
-        </el-button>
-      </template>
-      <el-row style="row-gap: 1rem" align="middle">
-        <el-col :span="8"> 场景名称： </el-col>
-        <el-col :span="16">
-          <el-input v-model="storageName" size="small"></el-input>
-        </el-col>
-        <el-col :span="8"> 最近更新： </el-col>
-        <el-col :span="16">
-          <div style="text-align: right; height: 24px; line-height: 24px">
-            {{ displayDate }}
-          </div>
-        </el-col>
-        <el-col :span="24">
-          <el-button size="small" class="w-full" type="primary" plain>
-            另存到工作台
-          </el-button>
-        </el-col>
-      </el-row>
-    </el-popover>
 
     <div style="flex-grow: 1"></div>
 

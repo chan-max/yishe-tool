@@ -319,12 +319,7 @@ async function initAction() {
     await Modal.confirm({
       content: (
         <div>
-          建议登录后可以解锁全部功能
-          <ul>
-            <li> 工作台 </li>
-            <li> 发布与保存 </li>
-            <li> 分享评论 </li>
-          </ul>
+          请登录
         </div>
       ),
       icon: createVNode(ExclamationCircleOutlined),
@@ -337,22 +332,6 @@ async function initAction() {
         Modal.destroyAll();
       },
     });
-  } else {
-    /* 获取数据并同步 */
-
-    const data = await Api.getUserMeta({
-      metaKey: "designStorage",
-    });
-
-    if (!Utils.isEmptyObject(data)) {
-      des.$patch(data);
-      lastModifiedTime.value = data.lastModifiedTime;
-    }
-
-    startSyncDesignStorage();
-    /*
-      开启实时同步更新
-    */
   }
 }
 

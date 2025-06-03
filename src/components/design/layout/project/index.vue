@@ -2,22 +2,21 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-20 06:50:38
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-03 07:26:50
+ * @LastEditTime: 2025-06-03 19:25:51
  * @FilePath: /1s/src/components/design/layout/project/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <div style="height: 600px; margin: 12px" class="flex">
+  <div style="height: calc(100vh - 8 0px); margin: 12px" class="flex">
     <div style="width: 120px">
       <el-tabs v-model="activeKey" tab-position="left" style="height: 400px">
         <el-tab-pane v-for="(tab, i) in tabs" :label="tab.label" :name="tab.key"></el-tab-pane>
       </el-tabs>
     </div>
-    <div style="flex-shrink: 0">
-      <div style="height: calc(600px - 12px); min-width:1020px;overflow: auto;">
+
+      <div style="height: calc(100vh - 80px);width:100%;overflow: auto;">
         <component :is="activeComponent"></component>
       </div>
-    </div>
   </div>
 </template>
 <script lang="ts" setup>

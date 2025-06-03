@@ -3,32 +3,29 @@
         <div style="flex:1;"></div>
         <el-button  round bg text @click="uplaodClick"> 上传新模型 </el-button>
     </div> -->
-  <div v-infinite-scroll="inscroll" :infinite-scroll-distance="150">
-    <el-row style="row-gap: 8px; width: 1000px">
-      <el-col :span="24 / column" v-for="item in list" align="center">
+  <div class="flex flex-col min-h-screen">
+    <div class="flex-1 relative">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full mx-auto">
         <div
-          style="width: 100%; height: 100%; flex-shrink: 0"
-          class="flex flex-col items-center justify-center"
+          v-for="item in list"
+          class="flex flex-col items-center justify-start h-[240px]"
         >
           <s1-image
             padding="5%"
             :src="item.thumbnail"
             @click="itemClick(item)"
-            style="
-              background: #f6f6f6 !important;
-              width: 240px;
-              height: 180px;
-              border-radius: 8px;
-            "
+            class="w-[240px] !h-[180px] rounded-lg bg-[#f6f6f6] flex-shrink-0"
           >
           </s1-image>
-          <div class="bar flex items-center justify-between">
-            <div class="text-ellipsis" style="max-width: 80px">
+          <div class="bar flex items-center justify-between w-full mt-2 px-2">
+            <div class="text-ellipsis max-w-[80px]">
               {{ item.name || "未命名" }}
             </div>
-            <div class="label-tag" v-if="item.isPublic">已共享</div>
+            <div class="flex items-center gap-2">
+              <div class="label-tag" v-if="item.isPublic">已共享</div>
+            </div>
             <div class="timeago">{{ Utils.time.timeago(item.updateTime) }}</div>
-            <div style="flex: 1"></div>
+            <div class="flex-1"></div>
 
             <a-dropdown trigger="click">
               <el-button link>
@@ -41,7 +38,6 @@
                   <a-menu-item @click="edit(item)"> 编辑 </a-menu-item>
                   <a-menu-item> 选择新的封面图 </a-menu-item>
                   <a-menu-item> 设置预留点 </a-menu-item>
-
                   <a-menu-item @click="deleteItem(item)">
                     <span style="color: var(--el-color-danger)">删除</span>
                   </a-menu-item>
@@ -50,13 +46,28 @@
             </a-dropdown>
           </div>
         </div>
-      </el-col>
-    </el-row>
-    <loadingBottom v-if="loading"></loadingBottom>
-    <div class="endofpage" v-if="isLastPage">没有了~~</div>
-    <s1-empty v-if="isEmpty">
-      <template #description> 暂无模型 </template>
-    </s1-empty>
+      </div>
+      <div v-if="loading" class="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
+        <el-icon class="animate-spin text-2xl"><Loading /></el-icon>
+      </div>
+      <s1-empty v-if="isEmpty">
+        <template #description> 暂无模型 </template>
+      </s1-empty>
+    </div>
+    
+    <div class="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-4">
+      <div class="mx-auto flex justify-end">
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[20, 40, 60, 80]"
+          :total="total"
+          layout="total, sizes, prev, pager, next"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+    </div>
   </div>
 
   <a-modal
@@ -115,12 +126,10 @@ import {
   Operation,
   ArrowRight,
   MoreFilled,
+  Loading,
 } from "@element-plus/icons-vue";
-import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
-
-import { loadingBottom } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 import Utils from "@/common/utils";
 import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
@@ -135,31 +144,56 @@ function uplaodClick() {
   showUpload.value = true;
 }
 
-// 列表展示几列
-const column = ref(4);
-
 const loadingOptions = useLoadingOptions({});
 
-const {
-  list,
-  getList,
-  loading,
-  reset,
-  firstLoading,
-  subsequentLoading,
-  isLastPage,
-  isEmpty,
-} = usePaging((params) => {
-  return Api.getProductModelList({
-    ...params,
-    pageSize: 99,
-    // myUploads: true,
-  });
-});
+// 分页相关
+const currentPage = ref(1);
+const pageSize = ref(20);
+const total = ref(0);
+const list = ref([]);
+const loading = ref(false);
+const isEmpty = ref(false);
 
-function inscroll() {
+// 获取列表数据
+async function getList() {
+  loading.value = true;
+  try {
+    const res = await Api.getProductModelList({
+      currentPage: currentPage.value,
+      pageSize: pageSize.value,
+    });
+    list.value = res.list;
+    total.value = res.total;
+    isEmpty.value = list.value.length === 0;
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+// 处理页码改变
+function handleCurrentChange(val: number) {
+  currentPage.value = val;
   getList();
 }
+
+// 处理每页条数改变
+function handleSizeChange(val: number) {
+  pageSize.value = val;
+  currentPage.value = 1;
+  getList();
+}
+
+// 重置
+function reset() {
+  currentPage.value = 1;
+  getList();
+}
+
+onBeforeMount(() => {
+  getList();
+});
 
 function useSticker(item) {
   canvasStickerOptions.value = item.meta.data;
@@ -218,10 +252,9 @@ async function ok() {
 
 <style scoped lang="less">
 .bar {
-  width: 100%;
   height: 36px;
-  padding: 0 1rem;
   column-gap: 1rem;
+  min-height: 36px;
 }
 
 .label-tag {
@@ -231,19 +264,13 @@ async function ok() {
   padding: 1px 2px;
   font-size: 0.8rem;
   font-weight: bold;
-}
-
-.endofpage {
-  width: 100%;
-  text-align: center;
-  height: 36px;
-  line-height: 36px;
-  color: #aaa;
+  white-space: nowrap;
 }
 
 .timeago {
   font-size: 0.9rem;
   color: #999;
   font-weight: bold;
+  white-space: nowrap;
 }
 </style>

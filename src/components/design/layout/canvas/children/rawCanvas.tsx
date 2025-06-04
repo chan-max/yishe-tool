@@ -1,4 +1,4 @@
-import { canvasStickerOptions, currentCanvasControllerInstance, updateRenderingCanvas, CanvasChildType } from "../index.tsx"
+import { canvasStickerOptions, currentCanvasControllerInstance, updateRenderingCanvas, CanvasChildType, canvasStickerOptionsOnlyChild } from "../index.tsx"
 import { getPositionInfoFromOptions, formatToNativeSizeString, createFilterFromOptions, createTransformString, formatSizeOptionToPixelValue } from '../helper.tsx'
 import { computed, defineComponent, onMounted, onUpdated, ref } from "vue"
 import { createFilterDefaultOptions, createPositionDefaultOptions, createTransformDefaultOptions } from "./defaultOptions.tsx"
@@ -7,7 +7,7 @@ import { useDebounceFn } from "@vueuse/core"
 
 export const createDefaultCanvasChildRawCanvasOptions = () => {
 
-    const canvasUnit = canvasStickerOptions.value.unit
+    const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
 
     return {
         type: 'rawCanvas',

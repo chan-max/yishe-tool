@@ -38,15 +38,19 @@ import { defineCanvasChild } from './children/define.tsx';
 import { currentFocusingStickerId, ChildViewHelperComponent } from '@/components/design/layout/canvas/components/childViewHelper/index'
 
 import { PngIcoConverter } from "/public/lib/png2icojs"; // 导入库
+
+
+
+
 /*
     画布参数
 */
 
 
 export var canvasStickerOptions = ref({
-    width: 500,
-    height: 500,
-    unit: 'px',
+    // width: 500,
+    // height: 500,
+    // unit: 'px',
     showCanvasRealSize: false,
     supportBackgroundColor: {
         type: 'pure',
@@ -63,6 +67,11 @@ export var canvasStickerOptions = ref({
         // 默认会存在一个画布元素
         createDefaultCanvasChildcanvasStickerOptions()
     ],
+})
+
+
+export const canvasStickerOptionsOnlyChild = computed(() => {
+    return canvasStickerOptions.value.children.find((c) => c.type == 'canvas')
 })
 
 
@@ -257,12 +266,16 @@ function createCanvasChild(options) {
 
 export const renderingLoading = ref(false)
 
+// 二维的画布控制器
+
 export class CanvasController {
 
     target = null
 
     constructor(params) {
         currentCanvasControllerInstance.value = this
+
+        // 先不自动控制
         // this.updateRenderingCanvas = useDebounceFn(this.updateRenderingCanvas, 666).bind(this)
         this.maxDisplaySize = params.max
     }
@@ -384,8 +397,8 @@ export class CanvasController {
 
                 this.base64 = _canvas.toDataURL('image/png')
 
-                let width = Number(formatSizeOptionToPixelValue(canvasStickerOptions.value.width))
-                let height = Number(formatSizeOptionToPixelValue(canvasStickerOptions.value.height))
+                let width = Number(formatSizeOptionToPixelValue(canvasStickerOptionsOnlyChild.value.width))
+                let height = Number(formatSizeOptionToPixelValue(canvasStickerOptionsOnlyChild.value.height))
 
                 // let _ctx = _canvas.getContext('2d')
                 // const imageData = _ctx.getImageData(0, 0, width, height);
@@ -395,8 +408,7 @@ export class CanvasController {
 
                 this.ctx.drawImage(_canvas, 0, 0, _canvas.width, _canvas.height, 0, 0, width, height);
 
-                
-
+            
                 this.loading.value = false
                 renderingLoading.value = false
 
@@ -407,6 +419,7 @@ export class CanvasController {
                 throw Error('元素转换失败', e.message)
             }
 
+            // 定义可拖拽
             if (!showMainCanvas.value) {
                 await Utils.sleep(99)
                 this.initDraggable()
@@ -430,9 +443,7 @@ export class CanvasController {
     /*
         初始化拖拽
     */
-
-
-
+    
     initDraggable() {
         let self = this
 

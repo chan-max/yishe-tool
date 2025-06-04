@@ -12,10 +12,7 @@
 
                 <div style="flex:1;"></div>
                 <div v-if="loading" class="italic font-bold"> 正在渲染贴纸... </div>
-                <div>
-                    宽 {{ canvasStickerOptions.width }}{{ canvasStickerOptions.unit }} 高 {{ canvasStickerOptions.height }}{{
-                        canvasStickerOptions.unit }}
-                </div>
+
                 <el-button type="danger" link @click="showMainCanvas = false">
                     <el-icon size="20">
                         <CircleCloseFilled></CircleCloseFilled>

@@ -5,7 +5,7 @@
 */
 
 
-import { canvasStickerOptions, currentCanvasControllerInstance, updateRenderingCanvas } from "../index.tsx"
+import { canvasStickerOptions, canvasStickerOptionsOnlyChild, currentCanvasControllerInstance, updateRenderingCanvas } from "../index.tsx"
 import { getPositionInfoFromOptions, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../helper.tsx'
 import { computed, defineComponent, onMounted, onUpdated, ref } from "vue"
 import { createFilterDefaultOptions, createPositionDefaultOptions, createTransformDefaultOptions } from "./defaultOptions.tsx"
@@ -16,7 +16,7 @@ import { asyncComputed } from '@vueuse/core'
 
 export const createDefaultCanvasChildHtmlOptions = () => {
 
-    const canvasUnit = canvasStickerOptions.value.unit
+    const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
 
     return {
         type: 'html',

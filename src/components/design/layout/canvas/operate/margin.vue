@@ -75,7 +75,7 @@
 <script setup lang="ts">
 import { ref, computed, nextTick } from "vue";
 import icon from "@/components/design/assets/icon/margin.svg?component";
-import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
+import { canvasStickerOptions,canvasStickerOptionsOnlyChild } from "@/components/design/layout/canvas/index.tsx";
 
 /*
    margin 存在五种单位
@@ -142,8 +142,8 @@ const marginOptions = ref([
 const unitOptions = computed(() => {
   return [
     {
-      label: `使用当前画布单位(${canvasStickerOptions.value.unit})`,
-      value: canvasStickerOptions.value.unit,
+      label: `使用当前画布单位(${canvasStickerOptionsOnlyChild.value.width.unit})`,
+      value: canvasStickerOptionsOnlyChild.value.width.unit,
     },
 
     /**

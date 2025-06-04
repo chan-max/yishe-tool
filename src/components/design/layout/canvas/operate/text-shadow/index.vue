@@ -78,7 +78,7 @@
 <script setup lang="tsx">
 import icon from "@/components/design/assets/icon/text-shadow.svg?component";
 import { ref, computed, onMounted, onBeforeMount } from "vue";
-import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
+import { canvasStickerOptions,canvasStickerOptionsOnlyChild } from "@/components/design/layout/canvas/index.tsx";
 import sizeInput from "../sizeInput.vue";
 import colorPicker from "@/components/design/components/colorPicker/colorPicker.vue";
 import {
@@ -106,7 +106,7 @@ const props = defineProps({
 });
 
 function addShadow() {
-  const unit = canvasStickerOptions.value.unit;
+  const unit = canvasStickerOptionsOnlyChild.value.width.unit;
 
   model.value.push({
     horizontal: {
@@ -139,8 +139,8 @@ function clear() {
 const unitOptions = computed(() => {
   return [
     {
-      label: `使用当前画布单位(${canvasStickerOptions.value.unit})`,
-      value: canvasStickerOptions.value.unit,
+      label: `使用当前画布单位(${canvasStickerOptionsOnlyChild.value.width.unit})`,
+      value: canvasStickerOptionsOnlyChild.value.width.unit,
     },
     {
       label: "相对于画布宽的百分比",

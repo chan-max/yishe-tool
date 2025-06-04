@@ -1,11 +1,11 @@
-import { canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
+import { canvasStickerOptions, canvasStickerOptionsOnlyChild } from '@/components/design/layout/canvas/index.tsx'
 import { formatSizeOptionToPixelValue } from '../../../helper'
 
 import { SvgFilterEffects } from '..'
 
 
 export function createFeDropShadowDefaultOptions() {
-    let unit = canvasStickerOptions.value.unit
+    let unit = canvasStickerOptionsOnlyChild.value.width.unit
     return {
         type: SvgFilterEffects.DROP_SHADOW,
         dx: {

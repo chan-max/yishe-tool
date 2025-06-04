@@ -1,4 +1,4 @@
-import { canvasStickerOptions, currentCanvasControllerInstance, updateRenderingCanvas } from "../../index.tsx"
+import { canvasStickerOptions, canvasStickerOptionsOnlyChild, currentCanvasControllerInstance, updateRenderingCanvas } from "../../index.tsx"
 import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../../helper.tsx'
 import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watch } from "vue"
 // import CircleType from "circletype";
@@ -22,7 +22,7 @@ enum WritingMode {
 
 export const createDefaultCanvasChildTextOptions = () => {
 
-    const canvasUnit = canvasStickerOptions.value.unit
+    const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
 
     return {
         type: 'text',

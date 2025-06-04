@@ -1,6 +1,6 @@
 import Utils from '@/common/utils';
 
-import { canvasStickerOptions } from "./index"
+import { canvasStickerOptions, canvasStickerOptionsOnlyChild } from "./index"
 
 
 /*
@@ -117,16 +117,16 @@ export function formatSizeOptionToPixelValue(size, elementRealSize = null /* 当
 
     if (unit == 'vw') {
         let canvasPxWidth = formatSizeOptionToPixelValue({
-            value: canvasStickerOptions.value.width,
-            unit: canvasStickerOptions.value.unit,
+            value: canvasStickerOptionsOnlyChild.value.width.value,
+            unit: canvasStickerOptionsOnlyChild.value.width.unit,
         })
         return value * canvasPxWidth / 100
     }
 
     if (unit == 'vh') {
         let canvasPxHeight = formatSizeOptionToPixelValue({
-            value: canvasStickerOptions.value.height,
-            unit: canvasStickerOptions.value.unit,
+          value: canvasStickerOptionsOnlyChild.value.height.value,
+        unit: canvasStickerOptionsOnlyChild.value.height.unit,
         })
         return value * canvasPxHeight / 100
     }
@@ -184,15 +184,15 @@ export function formatToNativeSizeOption(size, relativeElementSize = null) {
 
     if (unit == 'vw') {
         return {
-            value: value * canvasStickerOptions.value.width / 100,
-            unit: canvasStickerOptions.value.unit
+            value: value * canvasStickerOptionsOnlyChild.value.width.value / 100,
+            unit: canvasStickerOptionsOnlyChild.value.width.unit
         }
     }
 
     if (unit == 'vh') {
         return {
-            value: value * canvasStickerOptions.value.height / 100,
-            unit: canvasStickerOptions.value.unit
+            value: value * canvasStickerOptionsOnlyChild.value.height.value / 100,
+            unit: canvasStickerOptionsOnlyChild.value.height.unit
         }
     }
 
@@ -331,7 +331,7 @@ export function getPaddingRealLabel(direction, size) {
     let { value, unit } = size
 
     if (unit == 'currentUnit') {
-        unit = canvasStickerOptions.value.unit
+        unit = canvasStickerOptionsOnlyChild.value.width.unit
     }
 
     if (unit == 'px') {
@@ -403,7 +403,7 @@ export function getBorderRadiusRealLabel(position, size) {
     let { value, unit } = size
 
     if (unit == 'currentUnit') {
-        unit = canvasStickerOptions.value.unit
+        unit = canvasStickerOptionsOnlyChild.value.width.unit
     }
 
     if (unit == 'px') {

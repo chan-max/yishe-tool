@@ -63,7 +63,6 @@ import operateItemWritingMode from "@/components/design/layout/canvas/operate/wr
 import operateItemSize from "@/components/design/layout/canvas/operate/size/relativeSize.vue";
 import operateItemBarcodeWidth from "@/components/design/layout/canvas/operate/barcode/width.vue";
 import operateItemBarcodeHeight from "@/components/design/layout/canvas/operate/barcode/height.vue";
-import operateItemAbsoluteSize from "@/components/design/layout/canvas/operate/size/absoluteSize.vue";
 import operateItemPosition from "@/components/design/layout/canvas/operate/position/position.vue";
 import operateItemZindex from "@/components/design/layout/canvas/operate/zIndex.vue";
 import operateItemBackgroundColor from "@/components/design/layout/canvas/operate/backgroundColor.vue";

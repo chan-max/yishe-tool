@@ -1,6 +1,6 @@
 import QRCodeStyling from 'qr-code-styling';
 import { ref, watchEffect, watch, onUpdated, onMounted } from 'vue'
-import { canvasStickerOptions, updateRenderingCanvas } from '../index.tsx'
+import { canvasStickerOptions, canvasStickerOptionsOnlyChild, updateRenderingCanvas } from '../index.tsx'
 
 import { getPositionInfoFromOptions, formatToNativeSizeString, formatSizeOptionToPixelValue, getPaddingRealPixel, getBorderRadiusRealPixel } from '../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
@@ -15,7 +15,7 @@ import Utils from '@/common/utils'
 
 export const createDefaultCanvasChildQrcodeOptions = () => {
 
-    const canvasUnit = canvasStickerOptions.value.unit
+    const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
 
     return {
         // 支持渐变色和普通颜色

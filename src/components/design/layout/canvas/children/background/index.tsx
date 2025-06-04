@@ -1,4 +1,4 @@
-import { canvasStickerOptions, updateRenderingCanvas } from '../../index.tsx'
+import { canvasStickerOptions, canvasStickerOptionsOnlyChild, updateRenderingCanvas } from '../../index.tsx'
 import { getPositionInfoFromOptions, formatToNativeSizeString, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, createFilterFromOptions, createTransformString } from '../../helper.tsx'
 import { defineComponent, ref, onUpdated, onMounted } from 'vue'
 import Utils from '@/common/utils'
@@ -13,7 +13,7 @@ import { onBeforeReturnRender,onCanvasChildSetup } from '../commonHooks.ts';
 
 
 export const createDefaultCanvasChildBackgroundOptions = () => {
-    const canvasUnit = canvasStickerOptions.value.unit
+    const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
     return {
         type: 'background',
         ...createBasicDefaultOptions(),

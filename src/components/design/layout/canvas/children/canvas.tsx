@@ -23,11 +23,19 @@ export function createPngBackgroundStyle(scale = 1, cellWidth = 10) {
     }
 }
 
-
+// 这是默认始终存在的画布元素 ，有且只有一个，他会与所有其他子元素同级显示，但实际上它是包含所有子元素的
 export function createDefaultCanvasChildcanvasStickerOptions() {
     return {
         id: 'this_is_canvas_id',
         type: 'canvas',
+        width:{
+            unit:'px',
+            value:500
+        },
+        height:{
+            unit:'px',
+            value:500
+        },
         undeletable: true, // 不可删除
         filter: createFilterDefaultOptions('px'),
         backgroundColor: {
@@ -62,15 +70,13 @@ export const Canvas = defineComponent({
 
         return () => {
 
-            const pxWidth = formatSizeOptionToPixelValue({
-                value: canvasStickerOptions.value.width,
-                unit: canvasStickerOptions.value.unit
+            let canvasChild = canvasStickerOptions.value.children.find((item) => {
+                return item.type == 'canvas'
             })
 
-            const pxHeight = formatSizeOptionToPixelValue({
-                value: canvasStickerOptions.value.height,
-                unit: canvasStickerOptions.value.unit
-            })
+
+            const pxWidth = formatSizeOptionToPixelValue(canvasChild.width)
+            const pxHeight = formatSizeOptionToPixelValue(canvasChild.height)
 
             const transformValue = (showMainCanvas.value) ? 1 : (props.maxDisplaySize / Math.max(pxWidth, pxHeight))
 
@@ -78,8 +84,8 @@ export const Canvas = defineComponent({
 
             // 画布的辅助背景
             const containerStyle: any = {
-                width: canvasStickerOptions.value.width + canvasStickerOptions.value.unit,
-                height: canvasStickerOptions.value.height + canvasStickerOptions.value.unit,
+                width:canvasChild.width.value + canvasChild.width.unit,
+                height:canvasChild.height.value + canvasChild.height.unit,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -94,8 +100,8 @@ export const Canvas = defineComponent({
             // 画布真实元素背景
             let style: any = {
                 flexShrink: 0,
-                width: canvasStickerOptions.value.width + canvasStickerOptions.value.unit,
-                height: canvasStickerOptions.value.height + canvasStickerOptions.value.unit,
+                width:canvasChild.width.value + canvasChild.width.unit,
+                height:canvasChild.height.value + canvasChild.height.unit,
                 position: "absolute",
                 top: 0,
                 left: 0,

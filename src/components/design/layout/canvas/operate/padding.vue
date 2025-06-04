@@ -78,7 +78,7 @@
 import { ref, computed, nextTick } from "vue";
 import icon from "@/components/design/assets/icon/padding.svg?component";
 import { getPaddingDispalyLabel } from "@/components/design/layout/canvas/helper.tsx";
-import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
+import { canvasStickerOptions,canvasStickerOptionsOnlyChild } from "@/components/design/layout/canvas/index.tsx";
 
 /*
  padding 存在五种单位
@@ -126,8 +126,8 @@ const paddingOptions = ref([
 const unitOptions = computed(() => {
   return [
     {
-      label: `使用当前画布单位(${canvasStickerOptions.value.unit})`,
-      value: canvasStickerOptions.value.unit,
+      label: `使用当前画布单位(${canvasStickerOptionsOnlyChild.value.width.unit})`,
+      value: canvasStickerOptionsOnlyChild.value.width.unit,
     },
     {
       label: "相对于画布宽的百分比",

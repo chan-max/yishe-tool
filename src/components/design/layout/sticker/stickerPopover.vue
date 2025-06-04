@@ -47,7 +47,7 @@
   </el-popover>
 </template>
 <script setup lang="ts">
-import { currentModelController, showCanvasLayout } from "@/components/design/store";
+import { currentModelController } from "@/components/design/store";
 import { getStickerTypeLabel } from "./index";
 import { canvasStickerOptions } from "../canvas";
 import { message } from "ant-design-vue";

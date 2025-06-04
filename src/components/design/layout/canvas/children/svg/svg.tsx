@@ -1,5 +1,5 @@
 import { VNode, ref, watchEffect } from 'vue'
-import { canvasStickerOptions, updateRenderingCanvas } from '../../index.tsx'
+import { canvasStickerOptions, canvasStickerOptionsOnlyChild, updateRenderingCanvas } from '../../index.tsx'
 import { getPositionInfoFromOptions, formatToNativeSizeOption, formatToNativeSizeString, formatSizeOptionToPixelValue, } from '../../helper.tsx'
 import { defineAsyncComponent, defineComponent } from 'vue';
 import { svgToBase64 } from "@/common/transform/index";
@@ -13,7 +13,7 @@ import { createBasicDefaultOptions,createTransformDefaultOptions ,createFilterDe
 */
 
 export const createDefaultCanvasChildSvgOptions = () => {
-    const canvasUnit = canvasStickerOptions.value.unit
+    const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
     return {
         position: {
             center: true,
@@ -118,7 +118,7 @@ export function createCanvasChildSvg(options) {
 
 export const createDefaultCanvasChildSvgRectOptions = () => {
 
-    let canvasUnit = canvasStickerOptions.value.unit
+    let canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
 
     return {
         backgroundColor: {
@@ -231,7 +231,7 @@ export function createCanvasChildRect(options) {
 
 export const createDefaultCanvasChildSvgEllipseOptions = () => {
 
-    const canvasUnit = canvasStickerOptions.value.unit
+    const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
 
     return {
         backgroundColor: {

@@ -1,4 +1,4 @@
-import { canvasStickerOptions, currentCanvasControllerInstance, updateRenderingCanvas } from "../index.tsx"
+import { canvasStickerOptions, canvasStickerOptionsOnlyChild, currentCanvasControllerInstance, updateRenderingCanvas } from "../index.tsx"
 import { getPositionInfoFromOptions, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../helper.tsx'
 import { computed, defineComponent, onUpdated, ref } from "vue"
 import { createFilterDefaultOptions, createPositionDefaultOptions, createTransformDefaultOptions } from "./defaultOptions.tsx"
@@ -7,7 +7,7 @@ import { onCanvasChildSetup, onBeforeReturnRender } from "./commonHooks.ts"
 import { asyncComputed } from '@vueuse/core'
 export const createDefaultCanvasChildImageOptions = () => {
 
-    const canvasUnit = canvasStickerOptions.value.unit
+    const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
 
     return {
         type: 'image',

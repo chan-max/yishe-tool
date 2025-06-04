@@ -1,8 +1,8 @@
 <template>
   <el-collapse v-model="canvasCollapseActives">
     <el-collapse-item name="1" title="画布配置">
-      <operateItemAbsoluteSize label="画布尺寸" v-model:width="canvasStickerOptions.width"
-        v-model:height="canvasStickerOptions.height">
+      <operateItemAbsoluteSize label="画布尺寸" v-model:width="currentOperatingCanvasChild.width"
+        v-model:height="currentOperatingCanvasChild.height">
       </operateItemAbsoluteSize>
 
       <!-- 不再支持画布单位选择，默认全部使用px -->
@@ -101,7 +101,9 @@ function aspectRatioChange(asepctRatio) {
   /**
    * 分为基于宽度或高度
   */
-  canvasStickerOptions.value.height =  Number((canvasStickerOptions.value.width / asepctRatio).toFixed(2))
+ let canvasChild = canvasStickerOptions.value.find((item) => item.type == 'canvas');
+
+  canvasChild.height.value =  Number((canvasChild.width.value / asepctRatio).toFixed(2))
 }
 
 

@@ -168,13 +168,13 @@ const draggerValue = ref({
 const draggerAttrs = computed(() => {
   // 计算 宽高，子元素宽高 缩放尺寸
   const containerWidth = formatSizeOptionToPixelValue({
-    value: canvasStickerOptions.value.width,
-    unit: canvasStickerOptions.value.unit,
+    value: canvasStickerOptionsOnlyChild.value.width.value,
+    unit: canvasStickerOptionsOnlyChild.value.width.unit,
   });
 
   const containerHeight = formatSizeOptionToPixelValue({
-    value: canvasStickerOptions.value.height,
-    unit: canvasStickerOptions.value.unit,
+    value: canvasStickerOptionsOnlyChild.value.height.value,
+    unit: canvasStickerOptionsOnlyChild.value.height.unit,
   });
 
   // 控制拖拽板的大小
@@ -211,7 +211,7 @@ function draggerDrag(pos) {
   left = Number(left);
 
   // 强制把单位调整为画布单位
-  let canvasUnit = canvasStickerOptions.value.unit;
+  let canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit;
 
   if (canvasUnit == "px") {
     top = y;
@@ -240,8 +240,8 @@ function draggerDrag(pos) {
 const unitOptions = computed(() => {
   return [
     {
-      label: `使用当前画布单位(${canvasStickerOptions.value.unit})`,
-      value: canvasStickerOptions.value.unit,
+      label: `使用当前画布单位(${canvasStickerOptionsOnlyChild.value.width.unit})`,
+      value: canvasStickerOptionsOnlyChild.value.width.unit,
     },
     {
       label: "相对于画布宽的百分比",

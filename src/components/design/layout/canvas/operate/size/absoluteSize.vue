@@ -6,7 +6,7 @@
         <template #name> {{ label }} </template>
         <template #content>
             <span style="font-size:1rem"> 宽 </span>
-            <el-input style="width: 80px" size="small" v-model="width" step="10"  placeholder="宽" type="number">
+            <el-input style="width: 80px" size="small" v-model="width.value" step="10"  placeholder="宽" type="number">
                 <template #suffix>
                     <span class="text-[1rem]">  
                         {{ canvasStickerOptions.unit }}
@@ -14,7 +14,7 @@
                 </template>
             </el-input>
             <span style="font-size:1rem"> 高 </span>
-            <el-input style="width: 80px" size="small" v-model="height" step="10"  placeholder="高" type="number">
+            <el-input style="width: 80px" size="small" v-model="height.value" step="10"  placeholder="高" type="number">
                 <template #suffix>
                     <span class="text-[1rem]">  
                         {{ canvasStickerOptions.unit }}
@@ -30,6 +30,8 @@ import icon from "@/components/design/assets/icon/size.svg?component";
 import { ref, watch, computed } from "vue";
 import { Setting } from "@element-plus/icons-vue";
 import {canvasStickerOptions} from '@/components/design/layout/canvas/index.tsx'
+
+// 只给画布子元素使用
 
 const props = defineProps({
     label: {

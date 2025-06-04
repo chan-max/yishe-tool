@@ -68,7 +68,6 @@ export const createTransformDefaultOptions = (translateUnit = 'px') => {
     }
 }
 
-
 export const createPositionDefaultOptions = (unit = 'px') => {
     return {
         center: true,

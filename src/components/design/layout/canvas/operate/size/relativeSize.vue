@@ -55,7 +55,7 @@
 import icon from "@/components/design/assets/icon/size.svg?component";
 import { ref, watch, computed } from "vue";
 import { Setting } from "@element-plus/icons-vue";
-import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
+import { canvasStickerOptions ,canvasStickerOptionsOnlyChild} from "@/components/design/layout/canvas/index.tsx";
 
 
 
@@ -71,7 +71,7 @@ const props = defineProps({
 
 const unitOptions = computed(() => {
 
-    let currentUnit = canvasStickerOptions.value.unit
+    let currentUnit = canvasStickerOptionsOnlyChild.value.width.unit
 
     const options = [
         {

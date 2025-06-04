@@ -92,7 +92,7 @@ async function initQrcode() {
   let data = createCustomModelShareLink(currentShareCardInfo.value.id);
 
   // let img = await remoteImageUrlToRemoveTransparentEdgesLocalPreviewUrl(
-  //   currentShareCardInfo.value.thumbnail.url
+  //   currentShareCardInfo.value.thumbnail
   // );
 
   // 这里有时移动端会不显示中心图片

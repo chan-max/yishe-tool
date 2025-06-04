@@ -22,7 +22,7 @@
               :price="item.price"
               :desc="item.description || '无描述'"
               :title="item.name || '未命名'"
-              :thumb="item.thumbnail.url"
+              :thumb="item.thumbnail"
             >
               <template #tags>
                 <van-tag

@@ -14,7 +14,7 @@
             overflow: hidden;
           "
         >
-          <s1-image :src="item.thumbnail.url"></s1-image>
+          <s1-image :src="item.thumbnail"></s1-image>
         </div>
       </template>
     </div>

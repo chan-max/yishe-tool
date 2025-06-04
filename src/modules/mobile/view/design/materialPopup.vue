@@ -25,7 +25,7 @@
             '暂无相关描述'
           "
           :title="currentModelController.state.material.textureInfo.name || '暂无名称'"
-          :thumb="currentModelController.state.material.textureInfo.thumbnail.url"
+          :thumb="currentModelController.state.material.textureInfo.thumbnail"
           style="margin-top: 8px"
         >
           <template #tags>

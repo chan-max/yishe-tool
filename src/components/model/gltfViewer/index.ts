@@ -291,7 +291,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                         we will fix it
                     */
 
-                    let url = Utils.formatUrl(thumbnail.url, { nocache: true })
+                    let url = Utils.formatUrl(thumbnail, { nocache: true })
 
                     loading.value = true
                     loadingMessage.value = '正在获取贴纸...'

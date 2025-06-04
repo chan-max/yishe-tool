@@ -50,7 +50,7 @@
           @click="openModel(item)"
           style="width: 64px; height: 64px; background: #fcfcfc"
         >
-          <s1-img :src="item.thumbnail.url"></s1-img>
+          <s1-img :src="item.thumbnail"></s1-img>
         </div>
       </div>
       <van-button

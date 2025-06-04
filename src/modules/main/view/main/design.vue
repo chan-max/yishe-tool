@@ -25,7 +25,7 @@ import designiy from "@/components/design/index.vue";
   background-color: #bbb;
 }
 
-@padding: 1.2em;
+@padding: .5em;
 
 .design-view {
   height: calc(100% - 2 * @padding);

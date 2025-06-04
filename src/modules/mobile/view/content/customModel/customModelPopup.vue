@@ -39,7 +39,7 @@
         </div>
       </div>
 
-      <van-card :thumb="currentCustomModel.thumbnail.url">
+      <van-card :thumb="currentCustomModel.thumbnail">
         <!-- <template #thumb></template> -->
         <template #title>
           <div style="font-size: 16px; font-weight: bold">

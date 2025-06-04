@@ -118,7 +118,6 @@
 <script setup>
 import { reactive, toRaw, ref, onBeforeMount, shallowRef } from "vue";
 import { sendEmail, register } from "@/api/index";
-import { ResponseStatusCodeEnum } from "@common/statusCode.js";
 import { message } from "ant-design-vue";
 import {
   View,

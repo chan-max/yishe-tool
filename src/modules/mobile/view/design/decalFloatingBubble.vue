@@ -5,7 +5,7 @@
     axis="xy"
     magnetic="x"
   >
-    <s1-img :src="currentOperatingDecalController.state.info.thumbnail.url"></s1-img>
+    <s1-img :src="currentOperatingDecalController.state.info.thumbnail"></s1-img>
   </van-floating-bubble>
 </template>
 

@@ -59,8 +59,6 @@
 <script setup>
 import { ref, reactive } from "vue";
 
-import { ResponseStatusCodeEnum } from "@common/statusCode.js";
-
 import {
   IonPage,
   IonHeader,

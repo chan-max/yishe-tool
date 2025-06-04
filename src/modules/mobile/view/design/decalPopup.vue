@@ -36,7 +36,7 @@
           tag="贴纸"
           :desc="item.state.info.description || '暂无相关描述'"
           :title="item.state.info.name || '暂无名称'"
-          :thumb="item.state.info.thumbnail.url"
+          :thumb="item.state.info.thumbnail"
         >
           <template #tags>
             <template v-if="item.state.info.keywords">

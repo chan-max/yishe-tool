@@ -68,7 +68,7 @@
                 @click="baseModelDropMenuSelect(item)"
               >
                 <s1-img
-                  :src="item.thumbnail.url"
+                  :src="item.thumbnail"
                   style="width: 84px; height: 84px"
                   :style="{
                     background:

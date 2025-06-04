@@ -43,4 +43,26 @@ jobs:
           overwrite: true
           command_timeout: "10m"
           timeout: "10m"
-          debug: true 
+          debug: true
+
+      - name: Send Feishu Notification
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const status = '${{ job.status }}';
+            const emoji = status === 'success' ? '🚀' : '❌';
+            const message = {
+              msg_type: "text",
+              content: {
+                text: `${emoji} 部署${status === 'success' ? '成功' : '失败'}通知\n\n项目: ${{ github.repository }}\n分支: ${{ github.ref }}\n提交者: ${{ github.actor }}\n提交信息: ${{ github.event.head_commit.message }}\n部署时间: ${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}\n状态: ${status === 'success' ? '✅ 成功' : '❌ 失败'}`
+              }
+            };
+            
+            await fetch('${{ secrets.FEISHU_WEBHOOK_URL }}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(message)
+            }); 

@@ -131,6 +131,7 @@ import {
 import {
   canvasStickerOptions,
   currentOperatingCanvasChild,
+  canvasStickerOptionsOnlyChild,
 } from "@/components/design/layout/canvas/index.tsx";
 import dragger from "./dragger.vue";
 import Utils from "@/common/utils";

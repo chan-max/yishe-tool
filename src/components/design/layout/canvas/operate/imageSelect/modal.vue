@@ -1,3 +1,11 @@
+<!--
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-05-20 06:50:38
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-04 20:52:46
+ * @FilePath: /1s/src/components/design/layout/canvas/operate/imageSelect/modal.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <a-modal
     v-bind="$attrs"
@@ -13,7 +21,7 @@
           <el-row style="row-gap: 4px; padding: 20px">
             <el-col :span="24 / column" v-for="item in list" align="center">
               <div @click="useAsCanvasImage(item)">
-                <s1-image class="img" :src="item.thumbnail?.url"> </s1-image>
+                <s1-image class="img" :src="item?.url"> </s1-image>
               </div>
             </el-col>
           </el-row>

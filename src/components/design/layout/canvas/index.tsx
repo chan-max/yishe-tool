@@ -94,6 +94,7 @@ export function getCanvasChildTopZIndex() {
  * 这里会默认的留一个画布元素
 */
 
+// 定义所有出现的类型
 export const CanvasChildType = {
     canvas: 'canvas', // 画布
 }
@@ -114,7 +115,7 @@ import backgroundLayout from './operateLayout/background.vue'
 import canvasLayout from './operateLayout/canvas.vue'
 import textLayout from './operateLayout/text.vue'
 import imageLayout from './operateLayout/image.vue'
-import rawCanvasLayout from './operateLayout/rawCanvas.vue'
+// import rawCanvasLayout from './operateLayout/rawCanvas.vue'
 import qrcodeLayout from './operateLayout/qrcode.vue'
 import rectLayout from './operateLayout/rect.vue'
 import ellipseLayout from './operateLayout/ellipse.vue'
@@ -129,6 +130,8 @@ export const CanvasChildOperationComponentMap = {
     [CanvasChildType.canvas]: canvasLayout
 }
 
+
+// 文字
 defineCanvasChild({
     typeName: 'text',
     typeKey: 'text',
@@ -198,7 +201,7 @@ defineCanvasChild({
 defineCanvasChild({
     typeName: 'html',
     typeKey: 'html',
-    label: 'html代码',
+    label: 'HTML代码',
     defaultOptionsCreator: createDefaultCanvasChildHtmlOptions,
     renderer: createCanvasChildHtml,
     operationLayout: htmlLayout
@@ -436,8 +439,6 @@ export class CanvasController {
             renderingLoading.value = false
         }
     }
-
-
 
 
     /*

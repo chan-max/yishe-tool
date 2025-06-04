@@ -1,7 +1,7 @@
 <template>
   <el-collapse v-model="canvasCollapseActives">
     <el-collapse-item name="1" title="画布配置">
-      <operateItemAbsoluteSize label="画布尺寸" v-model:width="currentOperatingCanvasChild.width"
+      <operateItemAbsoluteSize label="画布尺寸(px)" v-model:width="currentOperatingCanvasChild.width"
         v-model:height="currentOperatingCanvasChild.height">
       </operateItemAbsoluteSize>
 

@@ -16,11 +16,12 @@ import { asyncComputed } from '@vueuse/core'
 
 export const createDefaultCanvasChildHtmlOptions = () => {
 
+    // 取画布的 单位
     const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
 
     return {
-        type: 'html',
-        htmlContent: '',
+        type: 'html', // 类型标识
+        htmlContent: '', // html 代码片段
         transform: createTransformDefaultOptions(canvasUnit),
         filter: createFilterDefaultOptions(canvasUnit),
         zIndex: 0,
@@ -67,6 +68,8 @@ export const Html = defineComponent({
             // 依赖收集
             props.options.htmlContent
 
+
+            // 所有的容器都一样
             var containerStyle: any = {
                 width: '100%',
                 height: '100%',
@@ -82,10 +85,8 @@ export const Html = defineComponent({
                 filter: createFilterFromOptions(props.options.filter),
                 zIndex: props.options.zIndex,
                 width: '100%',
-                Height: '100%',
+                height: '100%',
             }
-
-
 
             onBeforeReturnRender({
                 style,
@@ -97,7 +98,6 @@ export const Html = defineComponent({
 
             return <div style={containerStyle}>
                 <div style={style} ref={targetElRef} v-html={props.options.htmlContent}>
-
                 </div>
             </div>
         }

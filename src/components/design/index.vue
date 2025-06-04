@@ -1,8 +1,8 @@
 <!--
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-11 09:10:15
- * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-21 20:20:55
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-04 20:51:49
  * @FilePath: /yishe/src/components/design/index.vue
  * @Description: 
  * 
@@ -28,13 +28,13 @@ import { s1Confirm } from "@/common/message";
 // 阻止缩放屏幕影响使用体验
 usePreventScreenResize();
 
-onBeforeMount(async () => {
-  window.addEventListener("beforeunload", onbeforeunload);
-});
+// onBeforeMount(async () => {
+//   window.addEventListener("beforeunload", onbeforeunload);
+// });
 
-onBeforeUnmount(() => {
-  window.removeEventListener("beforeunload", onbeforeunload);
-});
+// onBeforeUnmount(() => {
+//   window.removeEventListener("beforeunload", onbeforeunload);
+// });
 
 function onbeforeunload(e) {
   e = e || window.event;

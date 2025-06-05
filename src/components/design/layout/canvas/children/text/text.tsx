@@ -57,7 +57,6 @@ export const createDefaultCanvasChildTextOptions = () => {
         isPointingToCenter: true, // 是否指向圆心
         isReverseLetter: false, // 是否将文字旋转180度 ， 可以用于凹凸文字
 
-
         textStrokeWidth: {
             unit: canvasUnit,
             value: 0,

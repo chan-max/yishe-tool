@@ -101,7 +101,7 @@ function aspectRatioChange(asepctRatio) {
   /**
    * 分为基于宽度或高度
   */
- let canvasChild = canvasStickerOptions.value.find((item) => item.type == 'canvas');
+ let canvasChild = canvasStickerOptions.value.children.find((item) => item.type == 'canvas');
 
   canvasChild.height.value =  Number((canvasChild.width.value / asepctRatio).toFixed(2))
 }

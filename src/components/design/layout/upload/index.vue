@@ -18,12 +18,9 @@
       >
         <div class="placeholder">
           <icon-file-upload></icon-file-upload>
-          <div>点击或拖拽上传</div>
+          <div>点击或拖拽上传, jpg,png,svg,ttf,woff,psd ,glb</div> 
         </div>
         <template #tip>
-          <div class="tip">
-            <div>支持 jpg,png,svg等图片格式 , ttf,woff等字体格式, psd 格式</div>
-          </div>
         </template>
 
         <template #file="{ file, url }">
@@ -549,7 +546,7 @@ async function doUpload() {
 }
 
 :deep(.el-upload-list) {
-  max-height: 360px;
+  max-height: 420px;
   overflow-y: auto;
   overflow-x: hidden;
 

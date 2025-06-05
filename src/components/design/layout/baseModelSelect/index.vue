@@ -34,27 +34,8 @@
         </a-col>
       </a-row>
 
-      <a-row>
-        <a-col :span="24">
-          <a-statistic :value="item.link_count" :precision="0">
-            <template #prefix>
-              <FormOutlined />
-            </template>
-            <template #suffix> 个作品使用了该模型 </template>
-          </a-statistic>
-        </a-col>
-      </a-row>
-
       <div style="flex: 1"></div>
-      <a-row>
-        <a-col :span="24" align="right">
-          <a-statistic title="单件售价" :value="item.price || 0" :precision="2">
-            <template #prefix>
-              <PayCircleOutlined />
-            </template>
-          </a-statistic>
-        </a-col>
-      </a-row>
+
       <el-button @click="selectModel(item)" type="primary" plain> 使用该模型 </el-button>
     </div>
   </div>
@@ -103,13 +84,11 @@ function selectModel(productModel) {
 </script>
 <style lang="less" scoped>
 .container {
-  width: 1000px;
   height: 600px;
   overflow: auto;
   display: flex;
+  flex-direction: column;
   column-gap: 10px;
-  margin: 12px;
-  padding: 12px;
 }
 
 .item {
@@ -117,7 +96,7 @@ function selectModel(productModel) {
   display: flex;
   flex-direction: column;
   row-gap: 1rem;
-  padding: 12px;
+  padding:2em;
   flex-shrink: 0;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
 }

@@ -1,11 +1,7 @@
 <template>
-  <!-- <div style="height:64px;width:1000px" class="flex items-center">
-        <div style="flex:1;"></div>
-        <el-button  round bg text @click="uplaodClick"> 上传新模型 </el-button>
-    </div> -->
   <div class="flex flex-col min-h-screen">
     <div class="flex-1 relative">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full mx-auto p-4">
         <div
           v-for="item in list"
           class="flex flex-col items-center justify-start h-[240px]"
@@ -36,6 +32,7 @@
               <template #overlay>
                 <a-menu>
                   <a-menu-item @click="edit(item)"> 编辑 </a-menu-item>
+                  <a-menu-item @click="useItem(item)"> 在工作台使用该模型 </a-menu-item>
                   <a-menu-item> 选择新的封面图 </a-menu-item>
                   <a-menu-item> 设置预留点 </a-menu-item>
                   <a-menu-item @click="deleteItem(item)">
@@ -137,7 +134,7 @@ import { message, Modal } from "ant-design-vue";
 import { s1Confirm } from "@/common/message";
 import Api from "@/api";
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
-import { showUpload, viewDisplayController } from "@/components/design/store";
+import { showUpload, viewDisplayController,currentOperatingBaseModelInfo } from "@/components/design/store";
 
 function uplaodClick() {
   viewDisplayController.value.showProject = false;
@@ -200,6 +197,10 @@ function useSticker(item) {
   message.success("引用成功");
 }
 
+function selectBaseModel(item){
+  currentOperatingBaseModelInfo.value = item;
+}
+
 async function deleteItem(item) {
   await s1Confirm({
     content: "确认删除该模型吗？",
@@ -238,6 +239,10 @@ function edit(item) {
   };
   currentItem.value = item;
   showFormModal.value = true;
+}
+
+function useItem(item){
+  currentOperatingBaseModelInfo.value = item;
 }
 
 async function ok() {

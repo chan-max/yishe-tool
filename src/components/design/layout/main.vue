@@ -121,7 +121,7 @@
   <!-- 个人项目弹层 -->
 
   <a-modal
-    title="资源上传"
+    title="创作资源"
     v-model:open="viewDisplayController.showProject"
     width="100%"
     :footer="null"

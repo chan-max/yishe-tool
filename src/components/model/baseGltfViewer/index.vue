@@ -113,10 +113,10 @@ async function initModel() {
 
   currentMesh = Utils.three.findMainMeshFromGltf(gltf);
 
-  let mesher = Utils.three.findMainMeshFromGltfAndMergeGeometries(gltf);
-  currentMesh = mesher.mergedMesh;
-
-  currentMesh.material = await createMaterialFromOptions({});
+  // let mesher = Utils.three.findMainMeshFromGltfAndMergeGeometries(gltf);
+  // currentMesh = mesher.mergedMesh;
+  
+  // currentMesh.material = await createMaterialFromOptions({});
 
   let el = gltfViewer.value;
 

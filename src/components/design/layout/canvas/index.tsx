@@ -48,9 +48,7 @@ import { PngIcoConverter } from "/public/lib/png2icojs"; // 导入库
 
 
 export var canvasStickerOptions = ref({
-    // width: 500,
-    // height: 500,
-    // unit: 'px',
+    unit: 'px', // 这个单位还是要保留，当作整个部分的单位
     showCanvasRealSize: false,
     supportBackgroundColor: {
         type: 'pure',
@@ -302,6 +300,7 @@ export class CanvasController {
     }
 
     async downloadPng() {
+        await this.activeUpdateRenderingCanvas()
         const imageData = this.ctx.getImageData(0, 0, this.canvasEl.width, this.canvasEl.height);
         downloadByFile(imageDataToFile(imageData))
     }
@@ -375,7 +374,8 @@ export class CanvasController {
     async activeUpdateRenderingCanvas() {
         this.loading.value = true
         renderingLoading.value = true
-        this.debouncedUpdateJob()
+        // this.debouncedUpdateJob()
+        await this.updateRenderingCanvasJob()
     }
 
     debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this),11)

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <div class="flex-1 relative">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full mx-auto p-4">
         <div
           v-for="item in list"
           class="flex flex-col items-center justify-start h-[240px]"

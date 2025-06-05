@@ -1,7 +1,9 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <div class="flex-1 relative">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full mx-auto">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full mx-auto p-4"
+      >
         <div
           v-for="item in list"
           class="flex flex-col items-center justify-start h-[240px]"
@@ -65,14 +67,17 @@
           </div>
         </div>
       </div>
-      <div v-if="loading" class="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center">
+      <div
+        v-if="loading"
+        class="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center"
+      >
         <el-icon class="animate-spin text-2xl"><Loading /></el-icon>
       </div>
       <s1-empty v-if="isEmpty">
         <template #description> 暂无模型 </template>
       </s1-empty>
     </div>
-    
+
     <div class="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-4">
       <div class="mx-auto flex justify-end">
         <el-pagination

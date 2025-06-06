@@ -1,8 +1,8 @@
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:26
- * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-21 23:14:31
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-05 23:28:34
  * @FilePath: /yishe/src/modules/main/App.vue
  * @Description: 
  * 
@@ -11,7 +11,7 @@
 <template>
   <a-config-provider :theme="antdTheme" :locale="antLocale">
     <el-config-provider :locale="elementLocale">
-      <header-menu v-if="$route?.meta?.header"></header-menu>
+      <!-- <header-menu v-if="$route?.meta?.header"></header-menu> -->
       <div class="app-content">
         <router-view></router-view>
       </div>

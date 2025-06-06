@@ -177,16 +177,13 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="是否共享:">
+      <!-- <el-form-item label="是否共享:">
         <a-switch
           v-model:checked="editForm.isPublic"
           checked-children="公开"
           un-checked-children="私密"
         />
-      </el-form-item>
-      <el-form-item label="调色板:">
-        <a-button @click="getCanvasStickerColor" size="small"> 获取色卡 </a-button>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
   </a-modal>
 
@@ -347,10 +344,9 @@ async function doUpload() {
     });
 
     await Api.createSticker({
-      thumbnail: cos,
+      url: cos.url,
       ...editForm.value,
       keywords: editForm.value.keywords.join(","),
-      type: "composition",
       meta: {
         data: canvasStickerOptions.value,
       },

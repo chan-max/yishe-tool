@@ -1,8 +1,8 @@
 <!--
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
- * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-24 17:36:37
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-05 23:37:20
  * @FilePath: /yishe/src/modules/main/view/base/home/home.vue
  * @Description: 
  * 
@@ -10,11 +10,28 @@
 -->
 <template>
   <div class="home">
-    <banner></banner>
+    <div id="test-el" style="width:100px;height:100px;">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="5,5 195,10 185,185 10,195" />
+
+        <foreignObject x="20" y="20" width="160" height="160">
+
+          <div xmlns="http://www.w3.org/1999/xhtml" style="color:red;">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis mollis mi
+            ut ultricies. Nullam magna ipsum, porta vel dui convallis, rutrum imperdiet
+            eros. Aliquam erat volutpat.
+          </div>
+        </foreignObject>
+      </svg>
+    </div>
+
+    <div id="test-container"></div>
+
+    <!-- <banner></banner>
 
     <description></description>
 
-    <danmuku></danmuku>
+    <danmuku></danmuku> -->
 
     <!-- <div
       v-animateonscroll="{
@@ -24,7 +41,7 @@
       <contactus></contactus>
     </div> -->
 
-    <site-footer></site-footer>
+    <!-- <site-footer></site-footer> -->
   </div>
 </template>
 
@@ -38,6 +55,17 @@ import description from "./description.vue";
 
 import { onMounted, ref } from "vue";
 import { getBannerModel } from "@/api";
+import { toCanvas } from "html-to-image";
+
+onMounted(async () => {
+  let el = document.querySelector("#test-el");
+
+  let canvas = await toCanvas(el, {});
+
+  let container = document.querySelector("#test-container");
+
+  container.appendChild(canvas);
+});
 </script>
 
 <style>

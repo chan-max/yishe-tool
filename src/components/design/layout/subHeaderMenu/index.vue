@@ -42,13 +42,6 @@
     <el-divider direction="vertical" />
 
     <online-point :online="online"></online-point>
-    <el-switch
-      v-model="isDarkMode"
-      inline-prompt
-      style="--el-switch-off-color: #bbb"
-      active-text="夜间"
-      inactive-text="白天"
-    />
   </div>
 </template>
 

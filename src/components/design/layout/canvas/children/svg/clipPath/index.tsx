@@ -317,13 +317,12 @@ export function transformSvgPathStringToRelativePathString(pathString: string, b
  * 定义画布中的所有svg裁剪路径
 */
 export const SvgClipPathComponent = () => {
-    return <>
-        <svg id="define-clip-path" width="0" height="0">
+    return  <svg id="define-clip-path" width="0" height="0">
             <defs>
                 <clipPath id="heart" clipPathUnits="objectBoundingBox">
                     <path d={headerPathString} />
                 </clipPath>
             </defs>
         </svg>
-    </>
+
 }

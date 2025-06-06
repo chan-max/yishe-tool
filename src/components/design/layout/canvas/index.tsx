@@ -1,5 +1,5 @@
 import { ref, computed, shallowRef, nextTick, watch, defineAsyncComponent, defineComponent, shallowReactive } from 'vue'
-import { toPng, toJpeg, toBlob, toPixelData, toSvg, toCanvas } from "html-to-image";
+import { toPng, toJpeg, toBlob, toPixelData, toSvg, toCanvas,getFontEmbedCSS } from "html-to-image";
 import { htmlToPngFile, downloadByFile } from '@/common/transform'
 import { useDebounceFn } from '@vueuse/core'
 import { waitImage } from '@/common'
@@ -374,8 +374,8 @@ export class CanvasController {
     async activeUpdateRenderingCanvas() {
         this.loading.value = true
         renderingLoading.value = true
-        // this.debouncedUpdateJob()
-        await this.updateRenderingCanvasJob()
+        this.debouncedUpdateJob()
+        // await this.updateRenderingCanvasJob()
     }
 
     debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this),11)
@@ -396,7 +396,25 @@ export class CanvasController {
             try {
                 // this.base64 = await toPng(this.el)
 
+
+                // const fontEmbedCSS = await getFontEmbedCSS(this.el);
+
                 let _canvas = await toCanvas(this.el, {})
+
+                console.log('toCanvas')
+
+                // let svg = await toSvg(this.el,{})
+
+                // let img = document.createElement('img')
+                // img.src = svg
+                // img.width = 100
+                // img.height = 100 
+                // img.style.position= 'fixed'
+                // img.style.top= '0'
+                // img.style.left= '0'
+                // document.body.appendChild(img)
+
+                // document.body.appendChild(_canvas)
 
                 this.base64 = _canvas.toDataURL('image/png')
 

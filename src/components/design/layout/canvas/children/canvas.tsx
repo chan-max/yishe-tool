@@ -131,17 +131,21 @@ export const Canvas = defineComponent({
                 <div id={currentCanvasControllerInstance.value?.rawId} style={style} ref={targetElRef}>
                     {/* svg过滤器 */}
                     <SvgFilterComponent></SvgFilterComponent>
-                    <SvgFilterStyleComponent></SvgFilterStyleComponent>
+                    {/* <SvgFilterStyleComponent></SvgFilterStyleComponent> */}
 
                     {/* 裁剪 */}
                     <SvgClipPathComponent></SvgClipPathComponent>
 
-                    {/* 这里把所有的元素放在svg中 */}
-                    <svg style="width:100%;height:100%;">
+                    {/* 这里把所有的元素放在svg中,但是有一个问题，文字无法显示颜色和字体 ，直接放在div中貌似也没啥问题，也不知道当时为啥放这里了 */}
+                    {/* <svg style="width:100%;height:100%;">
                         <foreignObject style="width:100%;height:100%;">
                             {ctx.slots.default()}
                         </foreignObject>
-                    </svg>
+                    </svg> */}
+                    
+                    <div>
+                     {ctx.slots.default()}
+                    </div>
 
                 </div>
                 {/* 真实的画布 */}

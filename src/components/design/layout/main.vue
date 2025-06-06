@@ -75,14 +75,14 @@
     </div>
   </div>
 
-  <diydialog
-    :show="showBaseModelSelect"
-    @close="showBaseModelSelect = false"
-    :animation="basicContainerAnimation"
-  >
-    <template #title> 选择基础模型</template>
+  <a-modal 
+    title="选择基础模型" 
+    v-model:open="showBaseModelSelect"     
+    width="100%"
+    :footer="null"
+    wrap-class-name="full-modal">
     <base-model-select></base-model-select>
-  </diydialog>
+  </a-modal>
 
   <diydialog title="设置场景" :show="showSceneControl" @close="showSceneControl = false">
     <scene-control></scene-control>
@@ -317,11 +317,7 @@ async function initAction() {
   // 提示用户登录
   if (!loginStore.isLogin) {
     await Modal.confirm({
-      content: (
-        <div>
-          请登录
-        </div>
-      ),
+      content: <div>请登录</div>,
       icon: createVNode(ExclamationCircleOutlined),
       onOk() {
         openLoginDialog();

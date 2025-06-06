@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" class="container">
+  <div ref="container" class="base-model-select-container">
     <div class="item" v-for="item in models">
       <div class="img">
         <s1-image :src="item.thumbnail"></s1-image>
@@ -83,8 +83,8 @@ function selectModel(productModel) {
 }
 </script>
 <style lang="less" scoped>
-.container {
-  height: 600px;
+.base-model-select-container {
+  height: 100%;
   overflow: auto;
   display: flex;
   flex-direction: column;

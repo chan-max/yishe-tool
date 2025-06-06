@@ -147,7 +147,6 @@
 <script setup>
 import {
   showBaseModelSelect,
-  isDarkMode,
   isFullScreen,
   canvasBgColor,
   canvasBgOpacity,

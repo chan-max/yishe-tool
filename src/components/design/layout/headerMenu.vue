@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-27 19:20:45
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-03 20:37:58
+ * @LastEditTime: 2025-06-06 07:55:53
  * @FilePath: /1s/src/components/design/layout/headerMenu.vue
  * @Description: 
  * 
@@ -72,6 +72,16 @@
       <el-button @click="showUpload = true" round text bg :icon="Upload">
         素材上传
       </el-button>
+
+      <el-switch
+        v-model="isDarkMode"
+        class="mx-8"
+        inline-prompt
+        style="--el-switch-off-color: #bbb"
+        active-text="夜间"
+        inactive-text="白天"
+      />
+
       <el-button type="primary" @click="showSaveModel = true" round> 保存 </el-button>
     </div>
     <user-avatar v-if="loginStatusStore.isLogin" />
@@ -85,7 +95,6 @@ import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
 import {
   canvasBgColor,
   canvasBgOpacity,
-  isDarkMode,
   currentModelController,
   showSaveModel,
   showUpload,
@@ -94,6 +103,7 @@ import {
   syncState,
   builtInCanvasBackgrounds,
   currentCanvasBackground,
+  isDarkMode,
 } from "../store";
 
 import { openFileModal } from "@/components/design/layout/upload/index.tsx";

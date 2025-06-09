@@ -25,7 +25,9 @@ import {
     MathUtils,
     PMREMGenerator,
     MeshStandardMaterial,
-    RepeatWrapping
+    RepeatWrapping,
+    PlaneGeometry,
+    PCFSoftShadowMap
 } from "three";
 
 
@@ -64,7 +66,6 @@ import Utils from '@/common/utils'
 
 import { createMaterialFromOptions, initBasicLight, initHdr } from './controllerHelper'
 import { CameraController } from "./cameraController";
-
 
 const mixins = [
     _1stfExporterMixin,
@@ -112,6 +113,8 @@ export class ModelController {
     public controller: any;
     // 尺寸侦听器
     public resizeObserver: any;
+    // 地面平面
+    private groundPlane: any = null;
 
     // 记录原始摄像机位置 , 正前方
     public defaultCameraPosition = new Vector3(0, 0, 1);
@@ -164,7 +167,6 @@ export class ModelController {
     cameraController = null
 
     constructor(opts = {}) {
-
         mixins.forEach((mixin) => mixin(this));
 
         this.renderer = new WebGLRenderer({
@@ -174,14 +176,16 @@ export class ModelController {
         window.mc = this
 
         this.renderer.setPixelRatio(window.devicePixelRatio)
-        // 初始化时暴露场景和渲染器
+        // 启用阴影渲染器，但不添加地面阴影
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = PCFSoftShadowMap;
 
+        // 初始化时暴露场景和渲染器
         this.meta = meta
         this.mode = "mb"
         this.isMobile = true
 
         this.cameraController = new CameraController(this)
-
     }
 
     // 初始化容器
@@ -247,31 +251,117 @@ export class ModelController {
     public isMounted = false;
 
 
+    // 地面阴影配置
+    private shadowConfig = {
+        enabled: false,
+        groundPlane: null,
+        directionalLight: null,
+        groundSize: 10,
+        groundPosition: -0.5,
+        lightPosition: new Vector3(5, 5, 5),
+        lightIntensity: 1,
+        shadowMapSize: 1024
+    }
+
+    // 启用/禁用地面阴影
+    public setGroundShadow(enabled: boolean) {
+        this.shadowConfig.enabled = enabled;
+        
+        if (enabled) {
+            this.addGroundPlane();
+            this.addShadowLight();
+        } else {
+            this.removeGroundPlane();
+            this.removeShadowLight();
+        }
+    }
+
+    // 添加地面平面
+    private addGroundPlane() {
+        if (this.shadowConfig.groundPlane) {
+            this.scene.remove(this.shadowConfig.groundPlane);
+        }
+
+        const groundGeometry = new PlaneGeometry(
+            this.shadowConfig.groundSize, 
+            this.shadowConfig.groundSize
+        );
+        const groundMaterial = new MeshStandardMaterial({ 
+            color: 0xffffff,
+            roughness: 0.8,
+            metalness: 0.2
+        });
+        
+        this.shadowConfig.groundPlane = new Mesh(groundGeometry, groundMaterial);
+        this.shadowConfig.groundPlane.rotation.x = -Math.PI / 2;
+        this.shadowConfig.groundPlane.position.y = this.shadowConfig.groundPosition;
+        this.shadowConfig.groundPlane.receiveShadow = true;
+        
+        this.scene.add(this.shadowConfig.groundPlane);
+    }
+
+    // 移除地面平面
+    private removeGroundPlane() {
+        if (this.shadowConfig.groundPlane) {
+            this.scene.remove(this.shadowConfig.groundPlane);
+            this.shadowConfig.groundPlane = null;
+        }
+    }
+
+    // 添加阴影光源
+    private addShadowLight() {
+        if (this.shadowConfig.directionalLight) {
+            this.scene.remove(this.shadowConfig.directionalLight);
+        }
+
+        const directionalLight = new DirectionalLight(
+            0xffffff, 
+            this.shadowConfig.lightIntensity
+        );
+        directionalLight.position.copy(this.shadowConfig.lightPosition);
+        directionalLight.castShadow = true;
+        
+        // 设置阴影属性
+        directionalLight.shadow.mapSize.width = this.shadowConfig.shadowMapSize;
+        directionalLight.shadow.mapSize.height = this.shadowConfig.shadowMapSize;
+        directionalLight.shadow.camera.near = 0.5;
+        directionalLight.shadow.camera.far = 50;
+        directionalLight.shadow.camera.left = -10;
+        directionalLight.shadow.camera.right = 10;
+        directionalLight.shadow.camera.top = 10;
+        directionalLight.shadow.camera.bottom = -10;
+        
+        this.shadowConfig.directionalLight = directionalLight;
+        this.scene.add(directionalLight);
+    }
+
+    // 移除阴影光源
+    private removeShadowLight() {
+        if (this.shadowConfig.directionalLight) {
+            this.scene.remove(this.shadowConfig.directionalLight);
+            this.shadowConfig.directionalLight = null;
+        }
+    }
+
     // 正式执行渲染
     public render(target: any) {
         if (this.isMounted) {
             return;
         }
 
-
         this.initCanvasContainer(target);
-
 
         // 先不设置 bg ，需要保留无背景
         this.setBgColor('#eee', 0)
 
-
         if (currentOperatingBaseModelInfo.value?.url) {
-
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);
         }
 
-
-        // initBasicLight(this.scene)
+        // 初始化HDR环境
         initHdr(this.renderer, this.scene)
 
         watch(() => this.state.material, async () => {
-
             console.log('set material')
             this.setMaterial()
         }, {
@@ -286,7 +376,7 @@ export class ModelController {
 
     // 设置材质
     // 当前使用的材质
-    material = null
+    public material = null
     async setMaterial() {
         let material = await createMaterialFromOptions(this.state.material)
 
@@ -343,6 +433,8 @@ export class ModelController {
     }
 
 
+
+    // 根据url 获取模型
     public async setMainModel(url) {
 
         // if(this.gltf){
@@ -352,6 +444,7 @@ export class ModelController {
         // 清除之前的模型和贴纸和材质
         this.clear()
         this.callHook(this.meta.onMainModelLoading)
+
 
         try {
             this.gltf = await gltfLoader(url);
@@ -379,6 +472,17 @@ export class ModelController {
         this.scene.add(this.gltf.scene);
 
         this.doOpenAnimation()
+
+        // 设置模型阴影
+        this.mesh.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+
+        // 添加地面平面
+        // this.addGroundPlane();
     }
 
 
@@ -417,7 +521,6 @@ export class ModelController {
 
     // 移除主模型
     public removeMainModel() {
-
         if (!this.gltf) {
             return;
         }
@@ -431,8 +534,11 @@ export class ModelController {
         this.clearAllMeshes(this.scene)
         this.mesh = null;
         this.gltf = null;
-
-
+        
+        // 如果启用了地面阴影，重新添加地面平面
+        if (this.shadowConfig.enabled) {
+            this.addGroundPlane();
+        }
     }
 
     // 模型居中和调整尺寸
@@ -854,11 +960,65 @@ export class ModelController {
         this.activeMediaRecorder = null;
     }
 
+    // 导出多角度图片
+    async exportMultiAngleImages() {
+        const angles = [
+            { name: 'front', position: new Vector3(0, 0, 1) },
+            { name: 'back', position: new Vector3(0, 0, -1) },
+            { name: 'left', position: new Vector3(-1, 0, 0) },
+            { name: 'right', position: new Vector3(1, 0, 0) },
+            { name: 'top', position: new Vector3(0, 1, 0) },
+            { name: 'bottom', position: new Vector3(0, -1, 0) },
+            { name: 'frontRight', position: new Vector3(1, 1, 1).normalize() },
+            { name: 'backLeft', position: new Vector3(-1, -1, -1).normalize() }
+        ];
 
+        const images = [];
+        const originalPosition = this.camera.position.clone();
+        const originalRotation = this.camera.rotation.clone();
+        const distance = originalPosition.length();
 
+        for (const angle of angles) {
+            // 设置相机位置，保持距离不变
+            const newPosition = angle.position.multiplyScalar(distance);
+            this.camera.position.copy(newPosition);
+            this.camera.lookAt(0, 0, 0);
+            
+            // 等待一帧以确保渲染完成
+            await new Promise(resolve => requestAnimationFrame(resolve));
+            
+            // 获取截图
+            const base64 = this.getScreenshotBase64();
+            images.push({
+                name: angle.name,
+                base64
+            });
+        }
 
+        // 恢复原始相机位置
+        this.camera.position.copy(originalPosition);
+        this.camera.rotation.copy(originalRotation);
+        this.renderer.render(this.scene, this.camera);
 
+        return images;
+    }
 
+    // 下载多角度图片
+    async downloadMultiAngleImages() {
+        const images = await this.exportMultiAngleImages();
+        
+        // 下载每个图片
+        images.forEach(image => {
+            const link = document.createElement('a');
+            link.href = image.base64;
+            link.download = `model_${image.name}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+        
+        return images;
+    }
 
 }
 

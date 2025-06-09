@@ -1,12 +1,6 @@
 <template>
   <div class="content flex flex-col">
-    <a-alert
-      message="该模块用于控制服装的材质，颜色等属性"
-      type="success"
-      style="margin: 24px 12px 24px 12px"
-    />
-
-    <el-form label-width="84px" label-position="left" style="margin: 0 24px">
+    <el-form class="pt-8" label-width="84px" label-position="left" style="margin: 0 24px">
       <el-form-item label="服装颜色">
         <div class="flex flex-wrap" style="gap: 12px">
           <div

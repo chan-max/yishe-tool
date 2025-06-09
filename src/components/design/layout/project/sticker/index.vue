@@ -138,12 +138,17 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="是否共享:">
+      <!-- <el-form-item label="是否共享:">
         <a-switch
           v-model:checked="editForm.isPublic"
           checked-children="公开"
           un-checked-children="私密"
         />
+      </el-form-item> -->
+      <el-form-item label="是否为材质:">
+        <el-switch
+          v-model="editForm.isTexture"
+        ></el-switch>
       </el-form-item>
     </el-form>
   </a-modal>

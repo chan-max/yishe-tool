@@ -1,42 +1,35 @@
 <template>
   <div ref="container" class="base-model-select-container">
     <div class="item" v-for="item in models">
-      <div class="img">
-        <s1-image :src="item.thumbnail"></s1-image>
+      <div class="left-section">
+        <div class="img">
+          <s1-image :src="item.thumbnail"></s1-image>
+        </div>
       </div>
+      <div class="right-section">
+        <h1 style="max-width: 300px; word-wrap: break-word">{{ item.name }}</h1>
+        <div>{{ item.description }}</div>
+        <div>最近更新时间： {{ item.updateTime }}</div>
 
-      <h1 style="max-width: 300px; word-wrap: break-word">{{ item.name }}</h1>
+        <a-row>
+          <a-col :span="24">
+            <a-image-preview-group v-if="item?.meta?.details">
+              <div class="preview-images">
+                <a-image
+                  v-for="img in item?.meta?.details"
+                  :width="36"
+                  :height="36"
+                  :src="img.url"
+                />
+              </div>
+            </a-image-preview-group>
+          </a-col>
+        </a-row>
 
-      <div>{{ item.description }}</div>
-      <div>最近更新时间： {{ item.updateTime }}</div>
+        <div style="flex: 1"></div>
 
-      <a-row>
-        <a-col :span="24">
-          <a-image-preview-group v-if="item?.meta?.details">
-            <div
-              style="
-                width: 100%;
-                display: flex;
-                overflow: auto;
-                width: 300px;
-                column-gap: 4px;
-                row-gap: 4px;
-              "
-            >
-              <a-image
-                v-for="img in item?.meta?.details"
-                :width="36"
-                :height="36"
-                :src="img.url"
-              />
-            </div>
-          </a-image-preview-group>
-        </a-col>
-      </a-row>
-
-      <div style="flex: 1"></div>
-
-      <el-button @click="selectModel(item)" type="primary" plain> 使用该模型 </el-button>
+        <el-button @click="selectModel(item)" type="primary" plain class="select-button"> 使用该模型 </el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -88,22 +81,48 @@ function selectModel(productModel) {
   overflow: auto;
   display: flex;
   flex-direction: column;
-  column-gap: 10px;
+  gap: 10px;
+  padding: 10px;
 }
 
 .item {
   border-radius: 5px;
   display: flex;
-  flex-direction: column;
-  row-gap: 1rem;
-  padding:2em;
+  gap: 1rem;
+  padding: 1em;
   flex-shrink: 0;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
 }
 
+.left-section {
+  flex-shrink: 0;
+}
+
+.right-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
 .img {
-  width: 300px;
-  height: 240px;
+  width: 200px;
+  height: 160px;
   background-color: #f6f6f6;
+}
+
+.preview-images {
+  display: flex;
+  overflow: auto;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: 300px;
+}
+
+.select-button {
+  width: fit-content;
+  font-size: 12px;
+  padding: 4px 12px;
+  height: 28px;
 }
 </style>

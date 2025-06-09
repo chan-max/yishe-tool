@@ -27,11 +27,13 @@ import {
     PMREMGenerator,
     MeshStandardMaterial,
     RepeatWrapping,
-    ACESFilmicToneMapping
+    ACESFilmicToneMapping,
+    SRGBColorSpace
 } from "three";
 import { message } from 'ant-design-vue'
 import three from '../../../common/three';
 import Utils from '@/common/utils'
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
 
 export async function createMaterialFromOptions(options) {
@@ -119,16 +121,39 @@ export function initBasicLight(scene) {
 
 
 import { getSvgTextContentByUrl, svgToBase64, svgToPngFile } from '@/common/transform';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
+
+export function createReflectiveSphere(scene) {
+    // 创建一个球体几何体
+    const geometry = new SphereGeometry(0.5, 64, 64);
+    
+    // 创建一个具有高反射度的材质
+    const material = new MeshStandardMaterial({
+        metalness: 1.0,    // 金属度设为最大
+        roughness: 0.0,    // 粗糙度设为最小，使其完全光滑
+        color: 0xffffff,   // 白色
+    });
+
+    // 创建网格
+    const sphere = new Mesh(geometry, material);
+    
+    // 将球体放置在场景中
+    sphere.position.set(0, 0, 0);
+    scene.add(sphere);
+
+    return sphere;
+}
 
 export function initHdr(renderer, scene) {
     const pmremGenerator = new PMREMGenerator(renderer);
     const hdriLoader = new RGBELoader()
 
-
-    // renderer.toneMapping = ACESFilmicToneMapping;
-    // renderer.toneMappingExposure = 1.7; // 降低整体亮度
+    // 设置渲染器的色调映射
+    renderer.toneMapping = ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.7;
+    
+    // 设置渲染器的输出编码
+    renderer.outputColorSpace = SRGBColorSpace;
 
     /**
      * @example 比较合适的 , 从上到下排名
@@ -137,9 +162,14 @@ export function initHdr(renderer, scene) {
      * cloth5.hdr
     */
 
-    hdriLoader.load('/3d/cloud.hdr', (texture) => {
+    hdriLoader.load('/3d/room3.hdr', (texture) => {
         const envMap = pmremGenerator.fromEquirectangular(texture).texture;
         texture.dispose();
-        scene.environment = envMap
+        scene.environment = envMap;
+        
+        // 创建反射球体 ,这个反射球体可以辅助 查看hdr
+        // createReflectiveSphere(scene);
+        
+        pmremGenerator.dispose(); // 清理 PMREMGenerator
     });
 }

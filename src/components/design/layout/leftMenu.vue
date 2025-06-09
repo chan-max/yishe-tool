@@ -103,6 +103,13 @@
       </div>
     </el-tooltip>
 
+    <el-tooltip :hide-after="0" content="设置场景" placement="right">
+      <div class="menu-bar-item" @click="showSceneControl = !showSceneControl">
+        <div class="menu-bar-item-icon"><icon-earth></icon-earth></div>
+        <span>场景</span>
+      </div>
+    </el-tooltip>
+
     <!-- 
     <el-tooltip :hide-after="0" content="喷图" placement="right">
       <div class="menu-bar-item">
@@ -116,12 +123,7 @@
         <span>测量</span>
       </div>
     </el-tooltip>
-    <el-tooltip :hide-after="0" content="设置场景" placement="right">
-      <div class="menu-bar-item" @click="showSceneControl = !showSceneControl">
-        <div class="menu-bar-item-icon"><icon-earth></icon-earth></div>
-        <span>场景</span>
-      </div>
-    </el-tooltip>
+ 
     <el-tooltip :hide-after="0" content="灯光调整" placement="right">
       <div class="menu-bar-item">
         <div class="menu-bar-item-icon"><icon-light></icon-light></div>

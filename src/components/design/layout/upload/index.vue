@@ -9,7 +9,7 @@
         drag
         :before-remove="beforeRemove"
         :auto-upload="false"
-        :multiple="true"
+        :multiple="false"
         v-bind="$attrs"
         :on-change="fileListChange"
         :limit="999"
@@ -371,6 +371,7 @@ async function uploadSingleFile(file) {
       keywords,
       description: file.description,
       isPublic: file.isPublic,
+      isTexture:file.isTexture,
       uploaderId: loginStore.userInfo.id,
     };
     await createSticker(params);

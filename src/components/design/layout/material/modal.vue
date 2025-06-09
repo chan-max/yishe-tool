@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-20 06:50:38
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-03 08:07:27
+ * @LastEditTime: 2025-06-07 08:55:24
  * @FilePath: /1s/src/components/design/layout/material/modal.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -11,7 +11,7 @@
     v-bind="$attrs"
     v-model:open="viewDisplayController.showMaterialModal"
     width="980px"
-    title="服装材料"
+    title="材质"
     style="min-width: 980px"
     :footer="null"
     centered
@@ -74,7 +74,7 @@ let search = ref("");
 const { list, getList, isLastPage, isEmpty, loading } = usePaging((params) => {
   return Api.getStickerList({
     ...params,
-    type: "texture",
+    isTexture:true,
     pageSize: 12,
   });
 });

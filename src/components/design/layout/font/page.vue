@@ -71,7 +71,6 @@
 import { ref, onBeforeMount } from "vue";
 import { getFontListApi } from "@/api";
 import {
-  operatingTextStickerOptions,
   showFontModal,
   showUpload,
   viewDisplayController,

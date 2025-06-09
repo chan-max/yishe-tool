@@ -27,7 +27,8 @@ import {
     MeshStandardMaterial,
     RepeatWrapping,
     PlaneGeometry,
-    PCFSoftShadowMap
+    PCFSoftShadowMap,
+    EquirectangularReflectionMapping
 } from "three";
 
 
@@ -361,6 +362,9 @@ export class ModelController {
         // 初始化HDR环境
         initHdr(this.renderer, this.scene)
 
+        // 设置默认背景
+        this.setBackground()
+
         watch(() => this.state.material, async () => {
             console.log('set material')
             this.setMaterial()
@@ -389,6 +393,35 @@ export class ModelController {
     // 设置背景颜色
     public setBgColor(color: any, alpha = 1) {
         this.renderer.setClearColor(color, alpha);
+    }
+
+    // 设置背景图片
+    public setBackground(imageUrl: string = '/3d/room3.hdr') {
+        console.log('开始加载背景图片:', imageUrl);
+        const loader = new RGBELoader();
+        
+        loader.load(
+            imageUrl,
+            (texture) => {
+                console.log('背景图片加载成功');
+                texture.mapping = EquirectangularReflectionMapping;
+                
+                // 调整背景缩放
+                // texture.repeat.set(2, 2);  // 增加重复次数使背景看起来更远
+                
+                // // 调整相机的远平面
+                // this.camera.far = 1000;  // 增加远平面距离
+                // this.camera.updateProjectionMatrix();
+                
+                this.scene.background = texture;
+            },
+            (progress) => {
+                console.log('加载进度:', progress);
+            },
+            (error) => {
+                console.error('背景图片加载失败:', error);
+            }
+        );
     }
 
     // 设置透明度

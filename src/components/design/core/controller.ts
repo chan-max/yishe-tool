@@ -396,32 +396,53 @@ export class ModelController {
     }
 
     // 设置背景图片
-    public setBackground(imageUrl: string = '/3d/room3.hdr') {
+    public setBackground(imageUrl: string = '/3d/room.hdr') {
+        // hdr 和 jpg 的效果是一样的
         console.log('开始加载背景图片:', imageUrl);
-        const loader = new RGBELoader();
         
-        loader.load(
-            imageUrl,
-            (texture) => {
-                console.log('背景图片加载成功');
-                texture.mapping = EquirectangularReflectionMapping;
-                
-                // 调整背景缩放
-                // texture.repeat.set(2, 2);  // 增加重复次数使背景看起来更远
-                
-                // // 调整相机的远平面
-                // this.camera.far = 1000;  // 增加远平面距离
-                // this.camera.updateProjectionMatrix();
-                
-                this.scene.background = texture;
-            },
-            (progress) => {
-                console.log('加载进度:', progress);
-            },
-            (error) => {
-                console.error('背景图片加载失败:', error);
-            }
-        );
+        // 获取文件扩展名
+        const extension = imageUrl.split('.').pop()?.toLowerCase();
+        
+        if (extension === 'hdr') {
+            // 使用 RGBELoader 加载 HDR 图片
+            const loader = new RGBELoader();
+            loader.load(
+                imageUrl,
+                (texture) => {
+                    console.log('HDR背景图片加载成功');
+                    texture.mapping = EquirectangularReflectionMapping;
+                    // 设置背景
+                    this.scene.background = texture;
+
+                },
+                (progress) => {
+                    console.log('HDR加载进度:', progress);
+                },
+                (error) => {
+                    console.error('HDR背景图片加载失败:', error);
+                }
+            );
+        } else if (['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
+            // 使用 TextureLoader 加载普通图片
+            const loader = new TextureLoader();
+            loader.load(
+                imageUrl,
+                (texture) => {
+                    console.log('普通背景图片加载成功');
+                    // 设置背景
+                    this.scene.background = texture;
+
+                },
+                (progress) => {
+                    console.log('普通图片加载进度:', progress);
+                },
+                (error) => {
+                    console.error('普通背景图片加载失败:', error);
+                }
+            );
+        } else {
+            console.error('不支持的背景图片格式:', extension);
+        }
     }
 
     // 设置透明度

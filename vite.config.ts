@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-04 00:07:43
+ * @LastEditTime: 2025-06-12 07:06:15
  * @FilePath: /yishe/vite.config.ts
  * @Description: 
  * 
@@ -106,11 +106,10 @@ export default defineConfig((config: any) => {
       },
     },
     server: {
-      port: 6699,
+      port: 1522,
       proxy: {
         "/api": {
-          target: "https://localhost:7788",
-          // target: "https://1s.design:7788",
+          target: "https://localhost:1522",
           changeOrigin: true,
           secure: false, // 防止证书引发的
           rewrite: (path) => path.replace(/^\/api/, ""),

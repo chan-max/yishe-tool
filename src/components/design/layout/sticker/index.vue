@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <div class="menu">
-      <div class="flex justify-between w-full">
-        <el-button @click="refresh"> 刷新 </el-button>
+      <div class="flex justify-between w-full ">
         <div style="flex: 1"></div>
+        <el-button @click="refresh" link type="primary"> 刷新 </el-button>
       </div>
       <div class="search">
         <el-input v-model="stickerSearchQueryParams.searchText" placeholder="寻找贴纸">

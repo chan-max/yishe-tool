@@ -42,6 +42,7 @@ declare module 'vue' {
     Design: typeof import('./src/components/design/index.vue')['default']
     DetailModal: typeof import('./src/components/design/layout/material/detailModal.vue')['default']
     Dialog: typeof import('./src/components/design/components/dialog.vue')['default']
+    Draft: typeof import('./src/components/design/layout/project/draft/index.vue')['default']
     Dragger: typeof import('./src/components/design/layout/canvas/operate/position/dragger.vue')['default']
     DragTip: typeof import('./src/components/design/layout/canvas/dragTip.vue')['default']
     DragToMove: typeof import('./src/components/tips/dragToMove/index.vue')['default']

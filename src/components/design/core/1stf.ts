@@ -6,21 +6,22 @@ export const _1stfExporterMixin = (modelController: ModelController) => {
 
   modelController.exportTo1stf = async () => {
 
-    // const decals = modelController.decalControllers.map((decal: any) => {
-    //   return decal.export()
-    // }).filter(Boolean);
-
     const decals = await Promise.all(
       modelController.decalControllers.map((decal) => decal.export())
     )
 
     return {
+      // 基础模型 id
       baseModelId: currentOperatingBaseModelInfo.value.id,
+      // 所有的贴花，具体信息见贴花
       decals,
+
+      // 存储 模型的一些状态信息
       state: Utils.clone(modelController.state),
       isDarkMode: isDarkMode.value,
-      canvasBgColor: canvasBgColor.value,
-      canvasBgOpacity: canvasBgOpacity.value,
+
+      
+      // 相机角度
       camera: {
         position: {
           x: modelController.camera.position.x,

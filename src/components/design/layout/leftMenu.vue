@@ -234,7 +234,6 @@ function videoClipClick() {
   width: 64px;
   height: 64px;
   display: flex;
-  border-radius: 14px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -242,6 +241,10 @@ function videoClipClick() {
   cursor: pointer;
   flex-shrink: 0;
   color: #222;
+
+  border-bottom-right-radius: 18px;
+  border-top-right-radius: 18px;
+
 
   .menu-bar-item-icon {
     flex-shrink: 0;

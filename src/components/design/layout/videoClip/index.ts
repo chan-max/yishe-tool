@@ -2,7 +2,8 @@ import { ref } from "vue";
 import { currentModelController } from "../../store";
 import gsap from "gsap";
 import { FrontSide } from "three";
-
+import { message } from "ant-design-vue";
+import { uploadToCOS, createDraft } from "@/api";
 
 export const modelControllerViewSetterOptions = ref([
     {
@@ -13,18 +14,41 @@ export const modelControllerViewSetterOptions = ref([
     }
 ])
 
-
-
 export const isRecordingEnabled = ref(false);
 
 const isAnimating = ref(false);
+
+// 处理录制结束后的视频保存
+const handleRecordedVideo = async (blob: Blob) => {
+  try {
+    // 创建文件对象
+    const file = new File([blob], `录制视频_${new Date().getTime()}.webm`, { type: 'video/webm' });
+    
+    // 上传到 COS
+    const cos = await uploadToCOS({ file });
+    
+    // 保存到草稿箱
+    await createDraft({
+      url: cos.url,
+      name: '模型录制视频',
+      updateTime: new Date()
+    });
+    
+    message.success('视频已保存到草稿箱');
+  } catch (err) {
+    message.error('保存视频失败');
+    console.error(err);
+  }
+};
 
 function startRecord() {
     if (!isRecordingEnabled.value) {
         return;
     }
 
-    currentModelController.value.startMediaRecord();
+    currentModelController.value.startMediaRecord({
+        onStop: handleRecordedVideo
+    });
 }
 
 function stopRecord() {
@@ -38,7 +62,9 @@ export const animations = [
     {
         title: "拉远再拉近",
         handle() {
-            startRecord();
+            if (isRecordingEnabled.value) {
+                startRecord();
+            }
             let camera = currentModelController.value.camera;
             gsap.to(camera.position, {
                 x: 5 * Math.cos(Math.PI / 4), // 初始位置
@@ -48,7 +74,9 @@ export const animations = [
                 repeat: 1,
                 yoyo: true,
                 onComplete: () => {
-                    stopRecord();
+                    if (isRecordingEnabled.value) {
+                        stopRecord();
+                    }
                 },
             });
         },
@@ -56,15 +84,22 @@ export const animations = [
     {
         title: "淡入",
         async handle() {
-            await fadeInScene(currentModelController.value.scene, 4)
-            console.log('动画结束')
+            if (isRecordingEnabled.value) {
+                startRecord();
+            }
+            await fadeInScene(currentModelController.value.scene, 4);
+            if (isRecordingEnabled.value) {
+                stopRecord();
+            }
         },
     },
     {
         title: "摇晃",
         async handle() {
-   
-            let mesh = currentModelController.value.mesh
+            if (isRecordingEnabled.value) {
+                startRecord();
+            }
+            let mesh = currentModelController.value.mesh;
 
             // 使用 GSAP 实现左右摇晃动画
             gsap.to(mesh.rotation, {
@@ -72,12 +107,16 @@ export const animations = [
                 y: `+=${1}`, // 向右摇晃
                 yoyo: true, // 动画反向播放
                 repeat: 3, // 无限重复
-                ease: "sine.inOut" // 缓动效果
+                ease: "sine.inOut", // 缓动效果
+                onComplete: () => {
+                    if (isRecordingEnabled.value) {
+                        stopRecord();
+                    }
+                }
             });
         },
     },
 ];
-
 
 /**
  *  @method 模型淡入效果

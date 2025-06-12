@@ -569,6 +569,29 @@ export const updateResource = (data) => apiInstance.post('/api/resource/update',
 export const hello = (data) => apiInstance.get('/api/hello')
 
 
+/*
+    文件草稿
+*/
+
+
+export const createDraft = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/draft/create', data)
+  resolve(res.data.data)
+})
+
+
+export const getDraftList = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/draft/page', data)
+  resolve(res.data.data)
+})
+
+
+export const deleteDraft = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/draft/delete', data)
+  resolve(res.data.data)
+})
+
+
 
 class Api {
 
@@ -664,6 +687,11 @@ class Api {
   deleteResource = deleteResource
   updateResource = updateResource
 
+
+  // 草稿文件
+  getDraftList = getDraftList
+  createDraft = createDraft
+  deleteDraft = deleteDraft
 }
 
 export default new Api()

@@ -95,11 +95,16 @@ export class ModelController {
         currentOperatingBaseModelInfo: null, // 当前操作的模型信息
         //  主模型的材质
         material: {
-            textureInfo: null,
+            textureInfo: null, // 材质信息就是贴纸信息
             metalness: 0,    // 金属
             roughness: .7,   // 粗糙度
             textureRepeat: 2,
         },
+        // 画布背景色
+        canvasBackground: {
+            color: '#eee',
+            opacity: 1
+        }
     })
 
     // 场景
@@ -352,8 +357,8 @@ export class ModelController {
 
         this.initCanvasContainer(target);
 
-        // 先不设置 bg ，需要保留无背景
-        this.setBgColor('#eee', 0)
+        // 设置初始背景色
+        this.setCanvasBackground('#eee', 1);
 
         if (currentOperatingBaseModelInfo.value?.url) {
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);
@@ -886,7 +891,18 @@ export class ModelController {
 
         // 需要先加载主模型
 
+        // 赋值 状态
         Object.assign(this.state, modelInfo.state)
+
+        // 设置背景色
+        if (modelInfo.state?.canvasBackground) {
+            this.setCanvasBackground(
+                modelInfo.state.canvasBackground.color,
+                modelInfo.state.canvasBackground.opacity
+            );
+        } else {
+            this.setCanvasBackground('#eee', 1);
+        }
 
         this.setMaterial()
 
@@ -956,7 +972,7 @@ export class ModelController {
 
         $this.isMediaRecording.value = true
         opts = {
-            frame: 66, // 帧数
+            frame: 120, // 提高帧率到120fps
             ...opts
         }
 
@@ -983,11 +999,14 @@ export class ModelController {
 
             $this.isMediaRecording.value = false
             message.success('视频录制成功,已自动导出')
-            // 可以在这里下载或播放视频
+            
+            // 调用 onStop 回调
+            if (opts.onStop) {
+                opts.onStop(blob);
+            }
         };
 
         mediaRecorder.start();
-        // 停止录制
     }
 
     stopMediaRecord() {
@@ -1055,6 +1074,12 @@ export class ModelController {
         return images;
     }
 
+    // 设置画布背景色
+    public setCanvasBackground(color: string, opacity: number = 1) {
+        this.state.canvasBackground.color = color;
+        this.state.canvasBackground.opacity = opacity;
+        this.setBgColor(color, opacity);
+    }
 }
 
 

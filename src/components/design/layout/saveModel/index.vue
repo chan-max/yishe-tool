@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-01-07 18:22:15
+ * @LastEditTime: 2025-06-12 23:16:37
  * @FilePath: /1s/src/components/design/layout/saveModel/index.vue
  * @Description: 
  * 
@@ -52,35 +52,6 @@
           >
             自动生成信息
           </el-button>
-        </el-form-item>
-
-        <el-form-item label="模型截图">
-          <div
-            class="flex items-center w-full"
-            style="padding: 12px; column-gap: 12px; overflow: auto"
-          >
-            <template v-if="screenshots.length">
-              <s1-image
-                v-for="item in screenshots"
-                style="width: 48px; height: 48px; border-radius: 4px; background: #eee"
-                :src="item.base64"
-              >
-                <el-button
-                  style="top: -8px; right: -8px; position: absolute"
-                  link
-                  type="danger"
-                  @click="removeScreenshot(item)"
-                >
-                  <el-icon size="12"><CircleCloseFilled /></el-icon>
-                </el-button>
-              </s1-image>
-            </template>
-            <template v-else>
-              <div style="font-size: 10px; color: #aaa" class="w-full text-center">
-                无截图
-              </div>
-            </template>
-          </div>
         </el-form-item>
       </el-form>
 

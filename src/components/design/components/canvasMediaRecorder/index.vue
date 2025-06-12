@@ -23,6 +23,8 @@
 import { ref } from "vue";
 import icon from "./record.svg?component";
 import { currentModelController } from "@/components/design/store";
+import { uploadToCOS, createDraft } from "@/api";
+import { message } from "ant-design-vue";
 
 // 是否正在录制
 const isRecording = ref(false);
@@ -42,19 +44,9 @@ const handleRecord = async () => {
   if (isRecording.value) {
     // 停止录制
     stopRecording();
-  } else if (countdown.value > 0) {
-    // 取消录制
-    clearState();
   } else {
-    countdown.value = 3; // 设置倒计时为3秒
-    interval.value = setInterval(() => {
-      if (countdown.value > 1) {
-        countdown.value--;
-      } else {
-        clearState();
-        startRecording();
-      }
-    }, 1000);
+    // 直接开始录制
+    startRecording();
   }
 };
 
@@ -65,7 +57,9 @@ let timeCountInterval = ref();
 const startRecording = async () => {
   isRecording.value = true;
 
-  currentModelController.value.startMediaRecord();
+  currentModelController.value.startMediaRecord({
+    onStop: handleRecordedVideo
+  });
 
   timeCountInterval.value = setInterval(() => {
     // 慕目前最多限制60秒
@@ -81,6 +75,29 @@ const startRecording = async () => {
 const stopRecording = () => {
   currentModelController.value.stopMediaRecord();
   clearState();
+};
+
+// 处理录制结束后的视频保存
+const handleRecordedVideo = async (blob) => {
+  try {
+    // 创建文件对象
+    const file = new File([blob], `录制视频_${new Date().getTime()}.webm`, { type: 'video/webm' });
+    
+    // 上传到 COS
+    const cos = await uploadToCOS({ file });
+    
+    // 保存到草稿箱
+    await createDraft({
+      url: cos.url,
+      name: '模型录制视频',
+      updateTime: new Date()
+    });
+    
+    message.success('视频已保存到草稿箱');
+  } catch (err) {
+    message.error('保存视频失败');
+    console.error(err);
+  }
 };
 </script>
 

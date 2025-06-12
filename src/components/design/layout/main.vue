@@ -85,7 +85,16 @@
     <base-model-select></base-model-select>
   </a-modal>
 
-  <el-drawer v-model="showSceneControl" :modal="false" :size="360" :with-header="true" title="控制场景">
+  <el-drawer 
+    v-model="showSceneControl" 
+    :modal="true" 
+    :size="360" 
+    :with-header="true" 
+    :append-to-body="true"
+    :wrapper-closable="true"
+    modal-class="bg-transparent"
+    title="控制场景"
+  >
     <scene-control></scene-control>
   </el-drawer>
 
@@ -110,14 +119,17 @@
     <upload></upload>
   </a-modal>
 
-  <diydialog
-    :show="showSaveModel"
+  <a-modal
     title="保存模型"
-    @close="showSaveModel = false"
-    :animation="basicContainerAnimation"
+    v-model:open="showSaveModel"
+    :footer="null"
+    width="auto"
+    :mask-closable="true"
+    centered
+    class="auto-width-modal"
   >
     <save-model></save-model>
-  </diydialog>
+  </a-modal>
 
   <!-- 个人项目弹层 -->
 
@@ -401,5 +413,20 @@ function onContextMenu(e) {
 #layout-right {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
   z-index: 4;
+}
+
+.bg-transparent{
+  background: transparent!important;
+}
+
+.auto-width-modal {
+  .ant-modal {
+    min-width: 360px;
+    width: auto !important;
+  }
+  .ant-modal-content {
+    width: fit-content;
+    min-width: 360px;
+  }
 }
 </style>

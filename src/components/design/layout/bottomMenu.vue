@@ -10,8 +10,6 @@
 -->
 <template>
   <div class="designiy-bottom-menu">
-    <canvasMediaRecorder></canvasMediaRecorder>
-
     <el-tooltip :hide-after="0" content="拾色器" placement="top">
       <div>
         <el-button link @click="openEyeDropper">

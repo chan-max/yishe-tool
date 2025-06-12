@@ -11,31 +11,16 @@
 <template>
   <div class="designiy-header">
     <div
-      class="designiy-header-logo flex items-center justify-center"
-      style="width: 72px; height: 100%"
+      class="designiy-header-logo flex items-center justify-center shrink-0"
+      style="width: 64px; height: 100%"
     >
-      <img src="/favicon.png" style="height: 36px" object-fit="contain" />
+      <img src="/favicon.png" style="height: 32px" object-fit="contain" />
     </div>
 
     <div style="flex-grow: 1"></div>
 
     <a-button size="small" type="text"> 快速指南 </a-button>
 
-    <a-dropdown>
-      <a-button size="small" type="text">
-        <div :style="{ background: currentCanvasBackground.backgroundCss }">画布背景</div>
-      </a-button>
-      <template #overlay>
-        <a-menu>
-          <a-menu-item
-            v-for="item in builtInCanvasBackgrounds"
-            @click="useCurrentBackground(item)"
-          >
-            <div :style="{ background: item.backgroundCss }">{{ item.name }}</div>
-          </a-menu-item>
-        </a-menu>
-      </template>
-    </a-dropdown>
 
     <div class="flex items-center">
       <a-dropdown>
@@ -158,9 +143,7 @@ function openUplaodModal(file) {
 //
 function remove(file) {}
 
-function useCurrentBackground(item) {
-  currentCanvasBackground.value = item;
-}
+
 </script>
 
 <style lang="less" scoped>

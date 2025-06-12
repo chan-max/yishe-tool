@@ -25,7 +25,7 @@ import designiy from "@/components/design/index.vue";
   background-color: #bbb;
 }
 
-@padding: .5em;
+@padding: 0em;
 
 .design-view {
   height: calc(100% - 2 * @padding);
@@ -34,7 +34,6 @@ import designiy from "@/components/design/index.vue";
   overflow: hidden;
   background: #fff;
   box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px;
-  border: 2px solid #fafafa;
   display: flex;
   margin: @padding;
   justify-content: center;

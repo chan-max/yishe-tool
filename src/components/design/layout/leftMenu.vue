@@ -216,7 +216,7 @@ function videoClipClick() {
 </script>
 <style lang="less">
 .menu-bar {
-  width: 72px;
+  width: 64px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -250,12 +250,12 @@ function videoClipClick() {
   }
 
   svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
 
   span {
-    font-size: 0.9rem;
+    font-size: 8px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -264,7 +264,7 @@ function videoClipClick() {
     color: #666;
     line-height: 16px;
   }
-
+  
   &:hover {
     background: #eee;
   }

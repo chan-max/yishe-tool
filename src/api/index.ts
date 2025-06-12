@@ -426,9 +426,7 @@ export const getStickerList = (data) => new Promise(async (resolve, reject) => {
 
 
 export const deleteSticker = (data) => new Promise(async (resolve, reject) => {
-  let res = await apiInstance.post('/api/sticker/delete', {
-    id: data
-  })
+  let res = await apiInstance.post('/api/sticker/delete', data)
   resolve(res.data.data)
 })
 

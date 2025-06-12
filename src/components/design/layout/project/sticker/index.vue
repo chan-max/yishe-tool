@@ -249,9 +249,8 @@ async function deleteItem(item) {
     content: "确认删除该贴纸吗？",
   });
 
-  await Api.deleteSticker(item.id);
+  await Api.deleteSticker({ids:[item.id]});
   reset();
-  await getList();
   message.success("删除成功");
 }
 

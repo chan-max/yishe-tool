@@ -75,18 +75,19 @@
     </div>
   </div>
 
-  <a-modal 
-    title="选择基础模型" 
-    v-model:open="showBaseModelSelect"     
+  <a-modal
+    title="选择基础模型"
+    v-model:open="showBaseModelSelect"
     width="100%"
     :footer="null"
-    wrap-class-name="full-modal">
+    wrap-class-name="full-modal"
+  >
     <base-model-select></base-model-select>
   </a-modal>
 
-  <diydialog title="设置场景" :show="showSceneControl" @close="showSceneControl = false">
+  <el-drawer v-model="showSceneControl" :modal="false" :size="360" :with-header="true" title="控制场景">
     <scene-control></scene-control>
-  </diydialog>
+  </el-drawer>
 
   <fontModal></fontModal>
 

@@ -363,7 +363,7 @@ export class ModelController {
         initHdr(this.renderer, this.scene)
 
         // 设置默认背景
-        this.setBackground()
+        // this.setBackground()
 
         watch(() => this.state.material, async () => {
             console.log('set material')
@@ -396,40 +396,21 @@ export class ModelController {
     }
 
     // 设置背景图片
-    public setBackground(imageUrl: string = '/3d/room.hdr') {
+    public setBackground(imageUrl: string = '/3d/room.jpg') {
         // hdr 和 jpg 的效果是一样的
         console.log('开始加载背景图片:', imageUrl);
         
-        // 获取文件扩展名
         const extension = imageUrl.split('.').pop()?.toLowerCase();
         
-        if (extension === 'hdr') {
-            // 使用 RGBELoader 加载 HDR 图片
-            const loader = new RGBELoader();
-            loader.load(
-                imageUrl,
-                (texture) => {
-                    console.log('HDR背景图片加载成功');
-                    texture.mapping = EquirectangularReflectionMapping;
-                    // 设置背景
-                    this.scene.background = texture;
-
-                },
-                (progress) => {
-                    console.log('HDR加载进度:', progress);
-                },
-                (error) => {
-                    console.error('HDR背景图片加载失败:', error);
-                }
-            );
-        } else if (['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
+         if (['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
             // 使用 TextureLoader 加载普通图片
             const loader = new TextureLoader();
             loader.load(
                 imageUrl,
                 (texture) => {
                     console.log('普通背景图片加载成功');
-                    // 设置背景
+                    // 设置背景 为 可动还是固定
+                    texture.mapping = EquirectangularReflectionMapping;
                     this.scene.background = texture;
 
                 },

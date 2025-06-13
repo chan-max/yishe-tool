@@ -27,7 +27,7 @@
         <div class="background-tip">该颜色只作为辅助，不会真实渲染到画布，也不会影响导出的截图</div>
       </el-form-item>
 
-      <el-form-item label="画布背景色">
+      <el-form-item label="画布背景">
         <div class="canvas-background-control">
           <el-color-picker
             v-model="canvasBackgroundColor"

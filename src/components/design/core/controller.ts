@@ -972,7 +972,7 @@ export class ModelController {
 
         $this.isMediaRecording.value = true
         opts = {
-            frame: 120, // 提高帧率到120fps
+            frame: opts.frame || 120, // 提高帧率到120fps
             ...opts
         }
 

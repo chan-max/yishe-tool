@@ -138,12 +138,12 @@
       </el-button>
       <div style="flex: 1"></div>
       <template v-if="uploadTabType == 'local'">
-        <el-button round :icon="Link" @click="showLinkUploadModal = true">
+        <!-- <el-button round :icon="Link" @click="showLinkUploadModal = true">
           链接上传
         </el-button>
         <el-button round @click="uploadTabType = 'scan'" :icon="Iphone">
           手机扫码上传
-        </el-button>
+        </el-button> -->
         <el-button
           type="primary"
           round

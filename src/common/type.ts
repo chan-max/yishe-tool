@@ -14,33 +14,33 @@ const fontSuffix = ['eot', 'otf', 'ttf', 'woff', 'woff2'];
 const imageSuffix = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
 
 function isFontName(fileName) {
-    const [name, extension] = fileName.split('.');
-
-    return fontSuffix.includes(extension.toLowerCase());
+    const lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex === -1) return false;
+    const extension = fileName.slice(lastDotIndex + 1).toLowerCase();
+    return fontSuffix.includes(extension);
 }
 
 function isPsd(fileName) {
-    const [name, extension] = fileName.split('.');
-
-    return extension == 'psd'
+    const lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex === -1) return false;
+    const extension = fileName.slice(lastDotIndex + 1).toLowerCase();
+    return extension === 'psd';
 }
 
 function isImageName(fileName) {
-
-    let suffix = fileName.slice(fileName.lastIndexOf('.'))
-
-    let extension = suffix.slice(1)
-
-    return imageSuffix.includes(extension.toLowerCase());
+    const lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex === -1) return false;
+    const extension = fileName.slice(lastDotIndex + 1).toLowerCase();
+    return imageSuffix.includes(extension);
 }
 
 
 const modelSuffix = ['glb']
 function isModelName(fileName) {
-
-    const [name, extension] = fileName.split('.');
-
-    return modelSuffix.includes(extension.toLowerCase());
+    const lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex === -1) return false;
+    const extension = fileName.slice(lastDotIndex + 1).toLowerCase();
+    return modelSuffix.includes(extension);
 }
 
 

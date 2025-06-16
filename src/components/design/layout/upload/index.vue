@@ -362,6 +362,8 @@ async function uploadSingleFile(file) {
   file = toRaw(file);
   const keywords = file.tags && file.tags.join(",");
 
+
+
   if (Utils.type.isImageName(file.name)) {
     const fileCos = await uploadToCOS({ file: file.raw });
     const params = {
@@ -376,6 +378,7 @@ async function uploadSingleFile(file) {
     };
     await createSticker(params);
   }
+
 
   if (Utils.type.isFontName(file.name)) {
     /* 需要生成缩略图 */

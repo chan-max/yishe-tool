@@ -239,17 +239,19 @@ function edit(item) {
     name: item.name,
     keywords: item.keywords,
   };
+
+
   currentItem.value = item;
   showFormModal.value = true;
 }
 
 async function ok() {
   submitLoading.value = true;
-  let res = await Api.updateFile(editForm.value);
+  let res = await Api.updateFontTemplate(editForm.value);
   message.success("修改成功");
   submitLoading.value = false;
-  let ind = list.value.indexOf(currentItem.value);
-  list.value[ind] = res;
+  await getList()
+  showFormModal.value = false;
 }
 </script>
 

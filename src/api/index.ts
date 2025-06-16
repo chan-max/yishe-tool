@@ -387,9 +387,26 @@ export const uploadFont = (params) => new Promise(async (resolve, reject) => {
 })
 
 
+
+
 export const getFontList = (params) => new Promise(async (resolve, reject) => {
   const res = await apiInstance.post('/api/font-template/page', params)
   resolve(res.data.data)
+})
+
+
+export const updateFontTemplate = (params) => new Promise(async (resolve, reject) => {
+
+  const data = {
+    ...params,
+    thumbnail: params.thumbnail,
+    name: params.name,
+    size: params.size,
+    meta: params.meta || {},
+  }
+
+  let res =  await apiInstance.post('/api/font-template/update', data)
+  resolve(res)
 })
 
 /* 
@@ -692,6 +709,10 @@ class Api {
   getDraftList = getDraftList
   createDraft = createDraft
   deleteDraft = deleteDraft
+
+  // 字体相关
+
+  updateFontTemplate = updateFontTemplate
 }
 
 export default new Api()

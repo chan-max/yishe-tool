@@ -9,7 +9,7 @@
           class="flex flex-col items-center justify-start h-[240px]"
         >
           <!-- 视频文件 -->
-          <div v-if="isVideo(item.url)" class="w-[240px] !h-[180px] rounded-lg bg-[#f6f6f6] flex-shrink-0 relative">
+          <div v-if="isVideo(item.url)" class="w-full !h-[180px] rounded-lg bg-[#f6f6f6] relative">
             <video 
               class="w-full h-full object-contain"
               :src="item.url"

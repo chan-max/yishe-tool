@@ -489,7 +489,6 @@ export class ModelController {
         try {
             this.gltf = await gltfLoader(url);
             this.callHook(this.meta.onMainModelLoaded)
-
             // 防止先设置材质但模型还没加载完成的情况
             this.setMaterial()
         } catch (e) {

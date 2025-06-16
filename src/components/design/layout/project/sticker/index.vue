@@ -267,10 +267,7 @@ const editForm = ref({} as any);
 // 编辑
 function edit(item) {
   editForm.value = {
-    id: item.id,
-    description: item.description,
-    name: item.name,
-    keywords: item.keywords,
+    ...item
   };
   showFormModal.value = true;
   currentItem.value = item;

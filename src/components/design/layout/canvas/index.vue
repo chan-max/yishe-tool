@@ -145,7 +145,7 @@
   >
     <el-form
       style="padding: 12px"
-      label-width="72px"
+      label-width="80px"
       :inline-message="false"
       :show-message="false"
       label-position="left"
@@ -176,6 +176,13 @@
             :value="item.value"
           ></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="保存到草稿箱:">
+        <a-switch
+          v-model:checked="editForm.isDraft"
+          checked-children="是"
+          un-checked-children="否"
+        />
       </el-form-item>
       <!-- <el-form-item label="是否共享:">
         <a-switch
@@ -242,6 +249,7 @@ import {
 } from "@/components/design/layout/canvas/components/childViewHelper/index";
 
 import { officialStickerTemplateOptions } from "./officialTemplateModal";
+import { createDraft } from "@/api";
 
 const loginStore = useLoginStatusStore();
 
@@ -329,12 +337,11 @@ const editForm = ref({
   keywords: [],
   group: "",
   isPublic: false,
+  isDraft: true,
 });
 
 async function doUpload() {
   submitLoading.value = true;
-
-  // 这里是防止点击后立刻造成卡顿
 
   try {
     const file = await canvasController.toPngFile();
@@ -343,19 +350,36 @@ async function doUpload() {
       file: file,
     });
 
-    await Api.createSticker({
-      url: cos.url,
-      ...editForm.value,
-      keywords: editForm.value.keywords.join(","),
-      meta: {
-        data: canvasStickerOptions.value,
-      },
-      uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null,
-    });
+    if (editForm.value.isDraft) {
+      // 保存到草稿箱
+      await createDraft({
+        url: cos.url,
+        name: editForm.value.name,
+        description: editForm.value.description,
+        keywords: editForm.value.keywords.join(","),
+        group: editForm.value.group,
+        meta: {
+          data: canvasStickerOptions.value,
+        },
+        updateTime: new Date()
+      });
+      message.success("已保存到草稿箱");
+    } else {
+      // 正常保存
+      await Api.createSticker({
+        url: cos.url,
+        ...editForm.value,
+        keywords: editForm.value.keywords.join(","),
+        meta: {
+          data: canvasStickerOptions.value,
+        },
+        uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null,
+      });
+      message.success("保存成功");
+    }
 
     submitLoading.value = false;
     showUploadModal.value = false;
-    message.success("保存成功");
   } catch (e) {
     submitLoading.value = false;
     message.error("保存失败");

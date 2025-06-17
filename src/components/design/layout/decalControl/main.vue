@@ -51,17 +51,69 @@
         </el-form-item>
 
         <el-form-item label="调整位置">
-          <div class="w-full flex justify-center">
-            <el-button-group size="small">
-              <el-button @click="moveLeft" :icon="Back"> </el-button>
-              <el-button @click="moveTop" :icon="Top"> </el-button>
-              <el-button @click="moveDown" :icon="Bottom"> </el-button>
-              <el-button @click="moveRight" :icon="Right"> </el-button>
-              <el-button @click="resetPosition" :icon="RefreshRight">
-                重置位置
+          <div class="position-control-container">
+            <!-- 方向控制区域 -->
+            <div class="direction-controls">
+              <!-- 上方向 -->
+              <div class="direction-row">
+                <div class="direction-spacer"></div>
+                <el-button
+                  @click="moveTop"
+                  :icon="Top"
+                  class="direction-btn up-btn"
+                  size="small"
+                  circle
+                ></el-button>
+                <div class="direction-spacer"></div>
+              </div>
+
+              <!-- 左中右方向 -->
+              <div class="direction-row">
+                <el-button
+                  @click="moveLeft"
+                  :icon="Back"
+                  class="direction-btn left-btn"
+                  size="small"
+                  circle
+                ></el-button>
+                <div class="center-spacer"></div>
+                <el-button
+                  @click="moveRight"
+                  :icon="Right"
+                  class="direction-btn right-btn"
+                  size="small"
+                  circle
+                ></el-button>
+              </div>
+
+              <!-- 下方向 -->
+              <div class="direction-row">
+                <div class="direction-spacer"></div>
+                <el-button
+                  @click="moveDown"
+                  :icon="Bottom"
+                  class="direction-btn down-btn"
+                  size="small"
+                  circle
+                ></el-button>
+                <div class="direction-spacer"></div>
+              </div>
+            </div>
+
+            <!-- 重置按钮 -->
+            <div class="reset-section">
+              <el-button
+                @click="resetPosition"
+                :icon="RefreshRight"
+                class="reset-btn"
+                size="small"
+                type="warning"
+              >
+                恢复原始贴图位置
               </el-button>
-            </el-button-group>
+            </div>
           </div>
+
           <a-alert
             message="适用于微调，如果出现贴纸部分丢失，建议重新拉取一个贴纸"
             banner
@@ -109,22 +161,19 @@
 
     <div style="flex: 1"></div>
 
-    <el-button-group class="w-full" type="primary" plain style="display: flex" round>
-      <el-button @click="useCurrentSticker()" round style="flex: 1" plain
-        >使用该贴纸模版</el-button
-      >
-      <el-button
-        v-if="currentOperatingDecalController.state.isLocalResource"
-        @click="upload"
-        plain
-      >
-        点击上传
-      </el-button>
-      <el-button @click="showDecalList = !showDecalList" round plain>
-        贴纸列表
-      </el-button>
-      <el-button @click="showWorkspace = !showWorkspace" round plain> 工作台 </el-button>
-    </el-button-group>
+    <el-button @click="useCurrentSticker()" round style="flex: 1" plain
+      >在贴纸制作中使用该贴纸模版</el-button
+    >
+    <el-button
+      v-if="currentOperatingDecalController.state.isLocalResource"
+      @click="upload"
+      plain
+      round
+    >
+      点击上传
+    </el-button>
+    <el-button @click="showDecalList = !showDecalList" round plain> 贴纸列表 </el-button>
+    <el-button @click="showWorkspace = !showWorkspace" round plain> 工作台 </el-button>
     <el-button @click="remove" type="danger" round>移除该贴纸</el-button>
   </div>
 
@@ -194,5 +243,90 @@ const clothingPaintMethod = ref();
   padding: 1rem;
   row-gap: 1rem;
   overflow: auto;
+}
+
+.position-control-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+}
+
+.direction-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  position: relative;
+}
+
+.direction-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.direction-spacer {
+  width: 24px;
+  height: 24px;
+}
+
+.center-spacer {
+  width: 24px;
+  height: 24px;
+}
+
+.reset-section {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.reset-btn {
+  width: 100%;
+}
+
+.direction-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #606266;
+  font-size: 16px;
+
+  &:hover {
+    background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+    border-color: #c0c4cc;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.up-btn {
+  margin-bottom: 8px;
+}
+
+.down-btn {
+  margin-top: 8px;
+}
+
+.left-btn {
+  margin-right: 8px;
+}
+
+.right-btn {
+  margin-left: 8px;
 }
 </style>

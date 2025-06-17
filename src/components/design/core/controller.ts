@@ -358,7 +358,7 @@ export class ModelController {
         this.initCanvasContainer(target);
 
         // 设置初始背景色
-        this.setCanvasBackground('#eee', 1);
+    
 
         if (currentOperatingBaseModelInfo.value?.url) {
             this.setMainModel(currentOperatingBaseModelInfo.value?.url);
@@ -368,7 +368,11 @@ export class ModelController {
         initHdr(this.renderer, this.scene)
 
         // 设置默认背景
-        // this.setBackground()
+
+        // this.setCanvasBackground('#eee', 1);
+
+        
+        this.setBackground()
 
         watch(() => this.state.material, async () => {
             console.log('set material')

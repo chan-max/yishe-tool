@@ -1,4 +1,3 @@
-
 import { apiInstance, source } from "./apiInstance";
 import { deleteCOSFile, downloadCOSFile, uploadToCOS } from "./cos";
 import { Url } from "./url";
@@ -541,6 +540,11 @@ export const getStickerById = (id: string) => new Promise(async (resolve, reject
   resolve(data.data.data)
 })
 
+export const getDraftById = (id: string) => new Promise(async (resolve, reject) => {
+  const data = await apiInstance.get('/api/draft', { params: { id } })
+  resolve(data.data.data)
+})
+
 
 
 
@@ -709,6 +713,7 @@ class Api {
   getDraftList = getDraftList
   createDraft = createDraft
   deleteDraft = deleteDraft
+  getDraftById = getDraftById
 
   // 字体相关
 

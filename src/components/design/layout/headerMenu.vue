@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-27 19:20:45
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-06 07:55:53
+ * @LastEditTime: 2025-06-17 22:09:18
  * @FilePath: /1s/src/components/design/layout/headerMenu.vue
  * @Description: 
  * 
@@ -23,7 +23,7 @@
 
 
     <div class="flex items-center">
-      <a-dropdown>
+      <!-- <a-dropdown>
         <el-button link class="icon-btn" @click="openFileDialog">
           <s1-icon name="file-upload-up-arrow" :size="16"></s1-icon>
         </el-button>
@@ -52,7 +52,7 @@
             </a-menu-item>
           </a-menu>
         </template>
-      </a-dropdown>
+      </a-dropdown> -->
 
       <el-button @click="showUpload = true" round text bg :icon="Upload">
         素材上传

@@ -56,6 +56,7 @@ import {
     getStickerById,
     getProductModelById,
     getTextStickerById,
+    getDraftById,
 } from "@/api";
 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -250,7 +251,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
                 return new Promise(async (resolve, reject) => {
 
-                    var { id, position, rotation, size, } = decal;
+                    var { id, position, rotation, size, isDraft } = decal;
 
                     if (!id) {
                         return resolve(void 0);
@@ -259,7 +260,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                     loading.value = true
                     loadingMessage.value = '正在获取贴纸信息...'
 
-                    const sticker = decal.fetchResult || await getStickerById(id)
+                    const sticker = decal.fetchResult || (isDraft ? await getDraftById(id) : await getStickerById(id))
 
                     var { thumbnail } = sticker
 

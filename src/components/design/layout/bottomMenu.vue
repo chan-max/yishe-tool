@@ -155,7 +155,7 @@ function doBuiltInAnimations() {}
   align-items: center;
   padding: 0 24px;
   background-color: #fff;
-  border-radius: 32px;
+  border-radius: 32px 32px 0 0;
   column-gap: 8px;
   box-shadow: 0 10px 20px #0000001a;
 }

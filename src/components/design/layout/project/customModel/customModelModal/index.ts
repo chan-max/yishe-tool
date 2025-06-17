@@ -47,7 +47,7 @@ async function resolveModelInfo(modelInfo) {
         }),
         ...modelInfo.decals ? modelInfo.decals.map(async (decal) => {
             return new Promise(async (resolve) => {
-                decal.fetchResult = await Api.getStickerById(decal.id)
+                decal.fetchResult = decal.isDraft ? await Api.getDraftById(decal.id) : await Api.getStickerById(decal.id)
                 resolve(void 0)
             })
         }) : []

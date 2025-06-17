@@ -26,8 +26,8 @@
       v-if="list.length"
       :items="list"
       @scroll-end="scrollEnd"
-      :item-size="140"
-      :itemSecondarySize="130"
+      :item-size="170"
+      :itemSecondarySize="160"
       :gridItems="2"
       key-field="id"
       v-slot="{ item, index }"
@@ -137,7 +137,7 @@ watch([() => stickerSearchQueryParams.value.searchText], () => {
 @item-width: 40px;
 
 .container {
-  width: 280px;
+  width: 340px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -177,8 +177,8 @@ watch([() => stickerSearchQueryParams.value.searchText], () => {
 }
 
 .image {
-  width: 120px !important;
-  height: 100px !important;
+  width: 150px !important;
+  height: 120px !important;
   background-color: #efefef;
   border-radius: 4px;
 }

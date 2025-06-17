@@ -184,6 +184,12 @@ export const currentCanvasBackground = useLocalStorage('_1s_canvasBackground', b
 */
 export const builtInCanvasBackgroundImages = ref([
     {
+        id: 'default-bg',
+        name: '默认',
+        url: '/3d-static-bg/default.jpg',
+        description: ''
+    },
+    {
         id: 'gray-bg',
         name: '灰白背景',
         url: '/3d-static-bg/gray.jpg',

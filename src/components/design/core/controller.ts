@@ -588,10 +588,13 @@ export class ModelController {
         }
     }
 
+
+    modelSizeFlag = 1.36
+
     // 模型居中和调整尺寸
     private initModelPosition() {
         let object = this.gltf.scene;
-        let flag = 1
+        let flag = this.modelSizeFlag
         // 先处理尺寸，再居中
         const sizeBox = new Box3().setFromObject(object);
         let size = new Vector3();
@@ -929,13 +932,13 @@ export class ModelController {
             await Promise.all(modelInfo.decals.map((decal) => {
                 return new Promise(async (resolve, reject) => {
 
-                    var { id, position, rotation, modelValueRotate, modelValueSize, metalness, roughness } = decal;
+                    var { id, position, rotation, modelValueRotate, modelValueSize, metalness, roughness,isDraft } = decal;
 
                     if (!id) {
                         return resolve(new Error('贴纸不存在'));
                     }
 
-                    const sticker = await Api.getStickerById(id)
+                    const sticker = isDraft ? await Api.getDraftById(id) : await Api.getStickerById(id)
 
 
                     let decalController = new DecalController(sticker)

@@ -88,6 +88,11 @@ export class DecalController {
     metalness: 0, // 金属感觉
 
     polygonOffsetFactor: -24,
+
+
+
+    // 默认不是草稿箱贴纸，只新建未上传的才作为草稿箱贴纸
+    isDraft : false 
   })
 
   id = ref()
@@ -491,6 +496,7 @@ export class DecalController {
   }
 
 
+
   // 如果是本地创建的贴纸，则需要上传到远程
   public async upload() {
     if (!this.state.isLocalResource) {
@@ -505,17 +511,18 @@ export class DecalController {
       file: file
     })
 
-    let data = await Api.createSticker({
+    let data = await Api.createDraft({
       url: cos.url,
+      name: '贴纸草稿',
       type: 'composition',
-      isPublic: false,
       meta: {
         data: this.info.data
       },
+      updateTime: new Date(),
       uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null
     })
 
-    
+    this.state.isDraft = true
     this.state.isLocalResource = false
     this.state.id = data.id
     return data
@@ -593,6 +600,7 @@ export class DecalController {
       modelValueRotate: this.state.modelValueRotate,
       metalness: this.state.metalness,
       roughness: this.state.roughness,
+      isDraft:this.state.isDraft,
     };
   }
 }

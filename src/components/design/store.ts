@@ -370,8 +370,6 @@ export const viewDisplayController = ref({
     // 服装材料相关弹层
     showMaterialModal: false,
     showMaterialControl: false,
-    // 材质详细信息弹层
-    showMaterialDetailModal: false,
 
 
     // 视频剪辑相关功能模块

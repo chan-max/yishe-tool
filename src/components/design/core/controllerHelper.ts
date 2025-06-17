@@ -154,7 +154,7 @@ export function initHdr(renderer, scene) {
     // 不使用曝光
     // renderer.toneMapping = NoToneMapping;
 
-    renderer.toneMappingExposure =1.2;
+    renderer.toneMappingExposure = 1.1;
     
     // 设置渲染器的输出编码
     renderer.outputColorSpace = SRGBColorSpace;

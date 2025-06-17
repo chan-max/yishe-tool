@@ -46,6 +46,7 @@ declare module 'vue' {
     Dragger: typeof import('./src/components/design/layout/canvas/operate/position/dragger.vue')['default']
     DragTip: typeof import('./src/components/design/layout/canvas/dragTip.vue')['default']
     DragToMove: typeof import('./src/components/tips/dragToMove/index.vue')['default']
+    Drawer: typeof import('./src/components/design/layout/material/drawer.vue')['default']
     Ellipse: typeof import('./src/components/design/layout/canvas/operateLayout/ellipse.vue')['default']
     EllipseTextRadius: typeof import('./src/components/design/layout/canvas/operate/text/ellipseTextRadius.vue')['default']
     Empty: typeof import('./src/components/empty/index.vue')['default']

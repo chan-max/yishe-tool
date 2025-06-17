@@ -48,16 +48,19 @@
                   <a-menu-item @click="edit(item)"> 编辑 </a-menu-item>
                   <a-menu-item @click="useSticker(item)"> 在工作台使用 </a-menu-item>
                   <!-- <a-menu-item @click="editStickerInWorkspace(item)">
-                                        在工作台中编辑
-                                    </a-menu-item> -->
+                      在工作台中编辑
+                  </a-menu-item> -->
+
+                  <a-menu-item @click="showRepeatEffect(item)"> 查看重复效果 </a-menu-item>
+
                   <a-menu-item @click="setOfficialTemplate(item)">
                     设置为样例模版
                   </a-menu-item>
                   <a-menu-item @click="deleteItem(item)">
                     <span style="color: var(--el-color-danger)">删除</span>
                   </a-menu-item>
-                  <a-menu-item> 分享给好友 </a-menu-item>
-                  <a-menu-item> 发布 </a-menu-item>
+                  <!-- <a-menu-item> 分享给好友 </a-menu-item>
+                  <a-menu-item> 发布 </a-menu-item> -->
                   <a-menu-item v-if="item.type == 'image'" @click="download(item)">
                     下载源文件
                   </a-menu-item>
@@ -151,6 +154,24 @@
         ></el-switch>
       </el-form-item>
     </el-form>
+  </a-modal>
+
+  <!-- 重复效果预览 Modal -->
+  <a-modal
+    v-model:open="showRepeatModal"
+    :centered="true"
+    :destroyOnClose="true"
+    width="600px"
+    title="重复效果预览"
+    :footer="null"
+  >
+    <div class="repeat-preview-container">
+      <div class="repeat-preview-grid">
+        <div v-for="i in 9" :key="i" class="repeat-preview-item-wrapper">
+          <img :src="currentPreviewItem?.url" class="repeat-preview-item" />
+        </div>
+      </div>
+    </div>
   </a-modal>
 </template>
 
@@ -304,6 +325,14 @@ function setOfficialTemplate(item) {}
  * @method 在工作台中编辑
  */
 function editStickerInWorkspace(item) {}
+
+const showRepeatModal = ref(false);
+const currentPreviewItem = ref(null);
+
+function showRepeatEffect(item) {
+  currentPreviewItem.value = item;
+  showRepeatModal.value = true;
+}
 </script>
 
 <style scoped lang="less">
@@ -328,5 +357,42 @@ function editStickerInWorkspace(item) {}
   color: #999;
   font-weight: bold;
   white-space: nowrap;
+}
+
+.repeat-preview-container {
+  width: 100%;
+  overflow: hidden;
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.repeat-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+}
+
+.repeat-preview-item-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  overflow: hidden;
+}
+
+.repeat-preview-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.5);
+    z-index: 1;
+  }
 }
 </style>

@@ -23,7 +23,7 @@
       >
       </s1-img>
       <div style="padding: 24px; row-gap: 12px" class="flex flex-col">
-        <h1>{{ detailInfo.name }}</h1>
+        <h1>{{ detailInfo.name  }}</h1>
         <h6>{{ detailInfo.description }}</h6>
         <h6>{{ detailInfo.keywords }}</h6>
         <h6>{{ detailInfo.updateTime }}</h6>

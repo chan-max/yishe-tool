@@ -51,7 +51,6 @@
 import icon from "@/components/design/assets/icon/font-family.svg?component";
 import { ref, onBeforeMount, watch, computed } from "vue";
 import { getFontListApi } from "@/api";
-import { usePaging } from "@/hooks/data/paging.ts";
 import desimage from "@/components/image.vue";
 import Utils from "@/common/utils";
 import { fetchFontFaceWithMessage } from "./index.ts";
@@ -63,18 +62,42 @@ import { showFontModal } from "@/components/design/store";
 import { getFontList } from "@/api";
 
 const model = defineModel({});
-
 const selectRef = ref();
+const list = ref([]);
+const loading = ref(false);
 
 function emitUpload() {
   selectRef.value.toggleMenu(false);
   showUpload.value = true;
 }
 
-function resetSearchInput() {
-  reset();
-  getList();
+async function fetchFontList(params = {}) {
+  loading.value = true;
+  try {
+    const res = await getFontList({
+      ...params,
+      currentPage:1,
+      pageSize: 999,
+    });
+    list.value = res.list || [];
+  } catch (error) {
+    console.error('获取字体列表失败:', error);
+    list.value = [];
+  } finally {
+    loading.value = false;
+  }
 }
+
+const remoteMethod = useDebounceFn(function (val) {
+  fetchFontList({
+    match: val,
+  });
+}, 333);
+
+// 初始化加载
+onBeforeMount(() => {
+  fetchFontList();
+});
 
 /**
  * */
@@ -95,27 +118,6 @@ watch(
   },
   {
     immediate: true,
-  }
-);
-
-const remoteMethod = useDebounceFn(function (val) {
-  reset();
-  getList({
-    match: val,
-  });
-}, 333);
-
-// 字体列表
-const { list, getList, reset, loading } = usePaging(
-  (params) => {
-    return getFontList({
-      ...params,
-      pageSize: 999,
-    });
-  },
-  {
-    immediate: false,
-    forEach(item) {},
   }
 );
 </script>

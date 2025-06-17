@@ -81,6 +81,8 @@ import { Paperclip, TopRight } from "@element-plus/icons-vue";
 
 import { fetchFontFaceWithMessage } from "@/components/design/layout/canvas/operate/fontFamily/index.ts";
 import { getFontList } from "@/api";
+import { canvasStickerOptions, currentOperatingCanvasChildId,currentOperatingCanvasChild } from '@/components/design/layout/canvas/index.tsx'
+
 
 // 字体列表
 const { list, getList, reset, loading, total } = usePaging((params) => {

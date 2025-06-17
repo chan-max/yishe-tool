@@ -150,7 +150,11 @@ export function initHdr(renderer, scene) {
 
     // 设置渲染器的色调映射
     renderer.toneMapping = ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.7;
+
+    // 不使用曝光
+    // renderer.toneMapping = NoToneMapping;
+
+    renderer.toneMappingExposure =1.2;
     
     // 设置渲染器的输出编码
     renderer.outputColorSpace = SRGBColorSpace;

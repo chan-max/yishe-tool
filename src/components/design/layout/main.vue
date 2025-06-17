@@ -93,7 +93,7 @@
     :append-to-body="true"
     :wrapper-closable="true"
     modal-class="bg-transparent"
-    title="控制场景"
+    title="场景控制"
   >
     <scene-control></scene-control>
   </el-drawer>
@@ -139,6 +139,7 @@
     width="100%"
     :footer="null"
     wrap-class-name="full-modal"
+    :destroyOnClose="true"
   >
     <projectModal></projectModal>
   </a-modal>

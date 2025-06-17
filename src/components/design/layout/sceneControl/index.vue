@@ -10,24 +10,24 @@
 
     <el-form>
       <el-form-item label="画板背景">
-        <a-radio-group v-model:value="currentCanvasBackground">
+        <el-radio-group v-model="selectedCanvasBackgroundId">
           <div class="background-options">
-            <a-radio
+            <el-radio
               v-for="item in builtInCanvasBackgrounds"
-              :key="item.name"
-              :value="item"
+              :key="item.id"
+              :label="item.id"
             >
               <div class="background-option">
                 <div class="background-preview" :style="{ background: item.backgroundCss }"></div>
                 <span class="background-name">{{ item.name }}</span>
               </div>
-            </a-radio>
+            </el-radio>
           </div>
-        </a-radio-group>
+        </el-radio-group>
         <div class="background-tip">该颜色只作为辅助，不会真实渲染到画布，也不会影响导出的截图</div>
       </el-form-item>
 
-      <el-form-item label="画布背景">
+      <el-form-item label="画布背景色">
         <div class="canvas-background-control">
           <el-color-picker
             v-model="canvasBackgroundColor"
@@ -39,11 +39,29 @@
           <span class="background-tip">此颜色会真实渲染到画布背景</span>
         </div>
       </el-form-item>
+      
+      <el-form-item label="画布背景图">
+        <el-radio-group v-model="selectedBackgroundImageId">
+          <div class="background-image-options">
+            <el-radio
+              v-for="item in builtInCanvasBackgroundImages"
+              :key="item.id"
+              :label="item.id"
+            >
+              <div class="background-image-option">
+                <div class="background-image-preview" :style="{ backgroundImage: `url(${item.url})` }"></div>
+                <span class="background-image-name">{{ item.name }}</span>
+              </div>
+            </el-radio>
+          </div>
+        </el-radio-group>
+        <div class="background-tip">选择背景图会覆盖背景色设置</div>
+      </el-form-item>
     </el-form>
   </div>
 </template>
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import {
   showBaseModelSelect,
   currentCanvasBackground,
@@ -52,6 +70,8 @@ import {
   canvasBgOpacity,
   builtInCanvasBackgrounds,
   currentModelController,
+  currentCanvasBackgroundImageId,
+  builtInCanvasBackgroundImages,
 } from "../../store.ts";
 import Color from "color";
 
@@ -95,6 +115,29 @@ const canvasBackgroundColor = computed({
   }
 });
 
+// 选中的背景图ID
+const selectedBackgroundImageId = computed({
+  get() {
+    return currentCanvasBackgroundImageId.value || '';
+  },
+  set(val) {
+    currentCanvasBackgroundImageId.value = val;
+  }
+});
+
+// 选中的画板背景ID
+const selectedCanvasBackgroundId = computed({
+  get() {
+    return currentCanvasBackground.value?.id || '';
+  },
+  set(val) {
+    const selectedBackground = builtInCanvasBackgrounds.value.find(item => item.id === val);
+    if (selectedBackground) {
+      currentCanvasBackground.value = selectedBackground;
+    }
+  }
+});
+
 // 处理背景色变化
 const handleBackgroundColorChange = (val) => {
   if (currentModelController.value) {
@@ -110,6 +153,23 @@ const handleActiveColorChange = (val) => {
     currentModelController.value.setCanvasBackground(val, color.alpha());
   }
 };
+
+// 处理背景图变化
+const handleBackgroundImageChange = (imageId) => {
+  if (currentModelController.value) {
+    const selectedImage = builtInCanvasBackgroundImages.value.find(item => item.id === imageId);
+    if (selectedImage && selectedImage.url) {
+      currentModelController.value.setBackground(selectedImage.url);
+    } else {
+      currentModelController.value.setBackground();
+    }
+  }
+};
+
+// 监听背景图选择变化
+watch(currentCanvasBackgroundImageId, (newValue) => {
+  handleBackgroundImageChange(newValue);
+});
 
 function useCurrentBackground(item) {
   currentCanvasBackground.value = item;
@@ -151,6 +211,33 @@ function useCurrentBackground(item) {
     display: flex;
     align-items: center;
     gap: 12px;
+  }
+
+  .background-image-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .background-image-option {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .background-image-preview {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    border: 1px solid #d9d9d9;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #f5f5f5;
+  }
+
+  .background-image-name {
+    font-size: 12px;
   }
 }
 </style>

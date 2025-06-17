@@ -160,14 +160,17 @@ watchEffect(() => {
 
 export const builtInCanvasBackgrounds = ref([
     {
+        id: 'light-gray',
         name: '淡灰色',
         backgroundCss: '#eee'
     },
     {
+        id: 'purple-gradient',
         name: '淡紫渐变色',
         backgroundCss: 'linear-gradient(to right, #4e54c8, #8f94fb)'
     },
     {
+        id: 'transparent',
         name: '透明',
         backgroundCss: 'transparent'
     },
@@ -176,6 +179,25 @@ export const builtInCanvasBackgrounds = ref([
 
 export const currentCanvasBackground = useLocalStorage('_1s_canvasBackground', builtInCanvasBackgrounds.value[0])
 
+/**
+ * 画布背景图设置
+*/
+export const builtInCanvasBackgroundImages = ref([
+    {
+        id: 'gray-bg',
+        name: '灰白背景',
+        url: '/3d-static-bg/gray.jpg',
+        description: ''
+    },
+    {
+        id: 'base-bg',
+        name: '带底盘的',
+        url: '/3d-static-bg/2.jpg',
+        description: ''
+    },
+])
+
+export const currentCanvasBackgroundImageId = useLocalStorage('_1s_canvasBackgroundImageId', builtInCanvasBackgroundImages.value[0].id)
 
 // 是否展示字体列表
 export const showFontModal = ref(false)

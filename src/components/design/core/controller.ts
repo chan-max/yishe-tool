@@ -44,7 +44,7 @@ import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
-import { currentModelController, isUsingClickDelaySticker, clickDelaySticker, viewDisplayController } from '@/components/design/store'
+import { currentModelController, isUsingClickDelaySticker, clickDelaySticker, viewDisplayController, currentCanvasBackgroundImageId, builtInCanvasBackgroundImages } from '@/components/design/store'
 import { eventMixin } from "./event";
 import { meta } from '../meta'
 import { Base } from './base'
@@ -371,8 +371,12 @@ export class ModelController {
 
         // this.setCanvasBackground('#eee', 1);
 
-        
-        this.setBackground()
+        if(currentCanvasBackgroundImageId.value){
+            const selectedImage = builtInCanvasBackgroundImages.value.find(item => item.id === currentCanvasBackgroundImageId.value);
+            if(selectedImage && selectedImage.url){
+                this.setBackground(selectedImage.url)
+            }
+        }
 
         watch(() => this.state.material, async () => {
             console.log('set material')
@@ -405,7 +409,7 @@ export class ModelController {
     }
 
     // 设置背景图片
-    public setBackground(imageUrl: string = '/3d/room.jpg') {
+    public setBackground(imageUrl: string = '') {
         // hdr 和 jpg 的效果是一样的
         console.log('开始加载背景图片:', imageUrl);
         
@@ -419,7 +423,7 @@ export class ModelController {
                 (texture) => {
                     console.log('普通背景图片加载成功');
                     // 设置背景 为 可动还是固定
-                    texture.mapping = EquirectangularReflectionMapping;
+                    // texture.mapping = EquirectangularReflectionMapping;
                     this.scene.background = texture;
 
                 },
@@ -1084,5 +1088,6 @@ export class ModelController {
         this.setBgColor(color, opacity);
     }
 }
+
 
 

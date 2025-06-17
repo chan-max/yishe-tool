@@ -168,7 +168,12 @@
     <div class="repeat-preview-container">
       <div class="repeat-preview-grid">
         <div v-for="i in 9" :key="i" class="repeat-preview-item-wrapper">
-          <img :src="currentPreviewItem?.url" class="repeat-preview-item" />
+          <img 
+            :src="currentPreviewItem?.url" 
+            class="repeat-preview-item"
+            @load="onImageLoad"
+            ref="previewImages"
+          />
         </div>
       </div>
     </div>
@@ -328,10 +333,39 @@ function editStickerInWorkspace(item) {}
 
 const showRepeatModal = ref(false);
 const currentPreviewItem = ref(null);
+const previewImages = ref([]);
 
 function showRepeatEffect(item) {
   currentPreviewItem.value = item;
   showRepeatModal.value = true;
+}
+
+function onImageLoad(event) {
+  const img = event.target;
+  const wrapper = img.parentElement;
+  
+  // 获取图片原始宽高比
+  const aspectRatio = img.naturalWidth / img.naturalHeight;
+  
+  // 设置最大尺寸
+  const maxWidth = 150;
+  const maxHeight = 150;
+  
+  // 根据宽高比计算实际尺寸
+  let width, height;
+  if (aspectRatio > 1) {
+    // 宽图
+    width = Math.min(maxWidth, img.naturalWidth);
+    height = width / aspectRatio;
+  } else {
+    // 高图
+    height = Math.min(maxHeight, img.naturalHeight);
+    width = height * aspectRatio;
+  }
+  
+  // 设置容器尺寸
+  wrapper.style.width = `${width}px`;
+  wrapper.style.height = `${height}px`;
 }
 </script>
 
@@ -365,28 +399,30 @@ function showRepeatEffect(item) {
   background: #f5f5f5;
   padding: 10px;
   border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .repeat-preview-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  width: 100%;
+  grid-template-columns: repeat(3, auto);
+  gap: 0;
+  width: fit-content;
 }
 
 .repeat-preview-item-wrapper {
   position: relative;
-  width: 100%;
-  padding-bottom: 100%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .repeat-preview-item {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.3s ease;
   cursor: pointer;
 

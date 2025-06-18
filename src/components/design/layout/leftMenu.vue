@@ -99,7 +99,7 @@
         <div class="menu-bar-item-icon">
           <VideoCameraOutlined />
         </div>
-        <span>剪辑相关</span>
+        <span> 图像导出 </span>
       </div>
     </el-tooltip>
 

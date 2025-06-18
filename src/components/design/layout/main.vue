@@ -27,41 +27,40 @@
         </div>
       </div>
 
-      <div id="layout-canvas">
+      <div id="layout-canvas" style="display: flex; flex-direction: column; height: 100%">
         <!-- 截屏组件 -->
         <screenshot ref="screenshotInstance"></screenshot>
 
-        <div
-          v-show="showThreeCanvas"
-          style="position: absolute; top: 0; left: 0; z-index: 2; width: 100%"
-          class="flex justify-center"
-        >
-          <!-- <threeCanvasTopBar></threeCanvasTopBar> -->
+        <!-- 画布区域 -->
+        <div style="flex: 1; position: relative; min-height: 0">
+          <div
+            v-show="showThreeCanvas"
+            style="position: absolute; top: 0; left: 0; z-index: 2; width: 100%"
+            class="flex justify-center"
+          >
+            <!-- <threeCanvasTopBar></threeCanvasTopBar> -->
+          </div>
+
+          <div
+            v-show="showThreeCanvas && !showBasicCanvas"
+            @contextmenu="onContextMenu"
+            id="threejs-canvas"
+            style="width: 100%; height: 100%"
+            ref="mountContainer"
+            :style="{ background: currentCanvasBackground?.backgroundCss }"
+          ></div>
+
+          <basic-canvas
+            v-show="showBasicCanvas"
+            style="width: 100%; height: 100%; z-index: 3"
+            ref="basicCanvasRef"
+          ></basic-canvas>
         </div>
 
-        <div
-          v-show="showThreeCanvas"
-          @contextmenu="onContextMenu"
-          id="threejs-canvas"
-          style="width: 100%; height: 100%"
-          ref="mountContainer"
-          :style="{ background: currentCanvasBackground?.backgroundCss }"
-        ></div>
-
-        <basic-canvas
-          v-show="showBasicCanvas"
-          style="width: 100%; height: 100%; z-index: 3"
-          ref="basicCanvasRef"
-        ></basic-canvas>
-
+        <!-- 底部菜单 -->
         <div
           v-if="showBottomMenu"
-          style="
-            height: var(--1s-bottom-menu-height);
-            position: absolute;
-            z-index: 9;
-            bottom: 0px;
-          "
+          style="height: var(--1s-bottom-menu-height); flex-shrink: 0"
         >
           <bottom-menu></bottom-menu>
         </div>
@@ -377,10 +376,9 @@ function onContextMenu(e) {
   height: 100%;
   flex: 1;
   position: relative;
-  overflow: auto;
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
 }
 
 #layout-header {

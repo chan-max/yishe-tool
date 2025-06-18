@@ -18,13 +18,18 @@
               :label="item.id"
             >
               <div class="background-option">
-                <div class="background-preview" :style="{ background: item.backgroundCss }"></div>
+                <div
+                  class="background-preview"
+                  :style="{ background: item.backgroundCss }"
+                ></div>
                 <span class="background-name">{{ item.name }}</span>
               </div>
             </el-radio>
           </div>
         </el-radio-group>
-        <div class="background-tip">该颜色只作为辅助，不会真实渲染到画布，也不会影响导出的截图</div>
+        <div class="background-tip">
+          该颜色只作为辅助，不会真实渲染到画布，也不会影响导出的截图
+        </div>
       </el-form-item>
 
       <el-form-item label="画布背景色">
@@ -39,7 +44,7 @@
           <span class="background-tip">此颜色会真实渲染到画布背景</span>
         </div>
       </el-form-item>
-      
+
       <el-form-item label="画布背景图">
         <el-radio-group v-model="selectedBackgroundImageId">
           <div class="background-image-options">
@@ -49,7 +54,10 @@
               :label="item.id"
             >
               <div class="background-image-option">
-                <div class="background-image-preview" :style="{ backgroundImage: `url(${item.url})` }"></div>
+                <div
+                  class="background-image-preview"
+                  :style="{ backgroundImage: `url(${item.url})` }"
+                ></div>
                 <span class="background-image-name">{{ item.name }}</span>
               </div>
             </el-radio>
@@ -78,14 +86,14 @@ import Color from "color";
 const predefineColors = ref(["#ffffff", "#dddddd", "#333333", "#555555"]);
 
 const predefineBackgroundColors = ref([
-  '#ffffff', // 白色
-  '#f5f5f5', // 浅灰
-  '#eeeeee', // 淡灰
-  '#e0e0e0', // 中灰
-  '#fafafa', // 超浅灰
-  '#f0f0f0', // 浅灰白
-  '#f8f8f8', // 近白
-  '#f2f2f2', // 淡灰白
+  "#ffffff", // 白色
+  "#f5f5f5", // 浅灰
+  "#eeeeee", // 淡灰
+  "#e0e0e0", // 中灰
+  "#fafafa", // 超浅灰
+  "#f0f0f0", // 浅灰白
+  "#f8f8f8", // 近白
+  "#f2f2f2", // 淡灰白
 ]);
 
 const bgColor = computed({
@@ -106,36 +114,38 @@ const bgColor = computed({
 // 画布背景色
 const canvasBackgroundColor = computed({
   get() {
-    return currentModelController.value?.state.canvasBackground.color || '#eee';
+    return currentModelController.value?.state.canvasBackground.color || "#eee";
   },
   set(val) {
     if (currentModelController.value) {
       currentModelController.value.setCanvasBackground(val);
     }
-  }
+  },
 });
 
 // 选中的背景图ID
 const selectedBackgroundImageId = computed({
   get() {
-    return currentCanvasBackgroundImageId.value || '';
+    return currentCanvasBackgroundImageId.value || "";
   },
   set(val) {
     currentCanvasBackgroundImageId.value = val;
-  }
+  },
 });
 
 // 选中的画板背景ID
 const selectedCanvasBackgroundId = computed({
   get() {
-    return currentCanvasBackground.value?.id || '';
+    return currentCanvasBackground.value?.id || "";
   },
   set(val) {
-    const selectedBackground = builtInCanvasBackgrounds.value.find(item => item.id === val);
+    const selectedBackground = builtInCanvasBackgrounds.value.find(
+      (item) => item.id === val
+    );
     if (selectedBackground) {
       currentCanvasBackground.value = selectedBackground;
     }
-  }
+  },
 });
 
 // 处理背景色变化
@@ -157,7 +167,9 @@ const handleActiveColorChange = (val) => {
 // 处理背景图变化
 const handleBackgroundImageChange = (imageId) => {
   if (currentModelController.value) {
-    const selectedImage = builtInCanvasBackgroundImages.value.find(item => item.id === imageId);
+    const selectedImage = builtInCanvasBackgroundImages.value.find(
+      (item) => item.id === imageId
+    );
     if (selectedImage && selectedImage.url) {
       currentModelController.value.setBackground(selectedImage.url);
     } else {

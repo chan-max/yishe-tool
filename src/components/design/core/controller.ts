@@ -589,7 +589,7 @@ export class ModelController {
     }
 
 
-    modelSizeFlag = 1.36
+    modelSizeFlag = 1.5
 
     // 模型居中和调整尺寸
     private initModelPosition() {
@@ -1024,27 +1024,119 @@ export class ModelController {
         this.activeMediaRecorder = null;
     }
 
-    // 导出多角度图片
-    async exportMultiAngleImages() {
-        const angles = [
-            { name: 'front', position: new Vector3(0, 0, 1) },
-            { name: 'back', position: new Vector3(0, 0, -1) },
-            { name: 'left', position: new Vector3(-1, 0, 0) },
-            { name: 'right', position: new Vector3(1, 0, 0) },
-            { name: 'top', position: new Vector3(0, 1, 0) },
-            { name: 'bottom', position: new Vector3(0, -1, 0) },
-            { name: 'frontRight', position: new Vector3(1, 1, 1).normalize() },
-            { name: 'backLeft', position: new Vector3(-1, -1, -1).normalize() }
+    // 角度配置数组
+    angleConfigs = [
+        // 正方向
+        { name: 'front', label: '正面', description: '模型正前方视角', position: new Vector3(0, 0, 1), group: 'front' },
+        { name: 'back', label: '背面', description: '模型正后方视角', position: new Vector3(0, 0, -1), group: 'front' },
+        { name: 'left', label: '左侧', description: '模型正左侧视角', position: new Vector3(-1, 0, 0), group: 'front' },
+        { name: 'right', label: '右侧', description: '模型正右侧视角', position: new Vector3(1, 0, 0), group: 'front' },
+        { name: 'top', label: '顶部', description: '模型正上方视角', position: new Vector3(0, 1, 0), group: 'front' },
+        { name: 'bottom', label: '底部', description: '模型正下方视角', position: new Vector3(0, -1, 0), group: 'front' },
+        
+        // 45度斜角 - 水平面
+        { name: 'frontRight', label: '前右', description: '前右45度视角', position: new Vector3(1, 0, 1).normalize(), group: '45deg' },
+        { name: 'frontLeft', label: '前左', description: '前左45度视角', position: new Vector3(-1, 0, 1).normalize(), group: '45deg' },
+        { name: 'backRight', label: '后右', description: '后右45度视角', position: new Vector3(1, 0, -1).normalize(), group: '45deg' },
+        { name: 'backLeft', label: '后左', description: '后左45度视角', position: new Vector3(-1, 0, -1).normalize(), group: '45deg' },
+        
+        // 45度斜角 - 垂直面
+        { name: 'frontTop', label: '前上', description: '前上45度视角', position: new Vector3(0, 1, 1).normalize(), group: '45deg' },
+        { name: 'frontBottom', label: '前下', description: '前下45度视角', position: new Vector3(0, -1, 1).normalize(), group: '45deg' },
+        { name: 'backTop', label: '后上', description: '后上45度视角', position: new Vector3(0, 1, -1).normalize(), group: '45deg' },
+        { name: 'backBottom', label: '后下', description: '后下45度视角', position: new Vector3(0, -1, -1).normalize(), group: '45deg' },
+        { name: 'leftTop', label: '左上', description: '左上45度视角', position: new Vector3(-1, 1, 0).normalize(), group: '45deg' },
+        { name: 'leftBottom', label: '左下', description: '左下45度视角', position: new Vector3(-1, -1, 0).normalize(), group: '45deg' },
+        { name: 'rightTop', label: '右上', description: '右上45度视角', position: new Vector3(1, 1, 0).normalize(), group: '45deg' },
+        { name: 'rightBottom', label: '右下', description: '右下45度视角', position: new Vector3(1, -1, 0).normalize(), group: '45deg' },
+        
+        // 45度斜角 - 三维对角线
+        { name: 'frontRightTop', label: '前右上', description: '前右上45度视角', position: new Vector3(1, 1, 1).normalize(), group: 'diagonal' },
+        { name: 'frontRightBottom', label: '前右下', description: '前右下45度视角', position: new Vector3(1, -1, 1).normalize(), group: 'diagonal' },
+        { name: 'frontLeftTop', label: '前左上', description: '前左上45度视角', position: new Vector3(-1, 1, 1).normalize(), group: 'diagonal' },
+        { name: 'frontLeftBottom', label: '前左下', description: '前左下45度视角', position: new Vector3(-1, -1, 1).normalize(), group: 'diagonal' },
+        { name: 'backRightTop', label: '后右上', description: '后右上45度视角', position: new Vector3(1, 1, -1).normalize(), group: 'diagonal' },
+        { name: 'backRightBottom', label: '后右下', description: '后右下45度视角', position: new Vector3(1, -1, -1).normalize(), group: 'diagonal' },
+        { name: 'backLeftTop', label: '后左上', description: '后左上45度视角', position: new Vector3(-1, 1, -1).normalize(), group: 'diagonal' },
+        { name: 'backLeftBottom', label: '后左下', description: '后左下45度视角', position: new Vector3(-1, -1, -1).normalize(), group: 'diagonal' },
+        
+        // 30度斜角 - 水平面
+        { name: 'frontRight30', label: '前右30°', description: '前右30度视角', position: new Vector3(Math.cos(Math.PI/6), 0, Math.sin(Math.PI/6)), group: '30deg' },
+        { name: 'frontLeft30', label: '前左30°', description: '前左30度视角', position: new Vector3(-Math.cos(Math.PI/6), 0, Math.sin(Math.PI/6)), group: '30deg' },
+        { name: 'backRight30', label: '后右30°', description: '后右30度视角', position: new Vector3(Math.cos(Math.PI/6), 0, -Math.sin(Math.PI/6)), group: '30deg' },
+        { name: 'backLeft30', label: '后左30°', description: '后左30度视角', position: new Vector3(-Math.cos(Math.PI/6), 0, -Math.sin(Math.PI/6)), group: '30deg' },
+        
+        // 30度斜角 - 垂直面
+        { name: 'frontTop30', label: '前上30°', description: '前上30度视角', position: new Vector3(0, Math.cos(Math.PI/6), Math.sin(Math.PI/6)), group: '30deg' },
+        { name: 'frontBottom30', label: '前下30°', description: '前下30度视角', position: new Vector3(0, -Math.cos(Math.PI/6), Math.sin(Math.PI/6)), group: '30deg' },
+        { name: 'backTop30', label: '后上30°', description: '后上30度视角', position: new Vector3(0, Math.cos(Math.PI/6), -Math.sin(Math.PI/6)), group: '30deg' },
+        { name: 'backBottom30', label: '后下30°', description: '后下30度视角', position: new Vector3(0, -Math.cos(Math.PI/6), -Math.sin(Math.PI/6)), group: '30deg' },
+        { name: 'leftTop30', label: '左上30°', description: '左上30度视角', position: new Vector3(-Math.sin(Math.PI/6), Math.cos(Math.PI/6), 0), group: '30deg' },
+        { name: 'leftBottom30', label: '左下30°', description: '左下30度视角', position: new Vector3(-Math.sin(Math.PI/6), -Math.cos(Math.PI/6), 0), group: '30deg' },
+        { name: 'rightTop30', label: '右上30°', description: '右上30度视角', position: new Vector3(Math.sin(Math.PI/6), Math.cos(Math.PI/6), 0), group: '30deg' },
+        { name: 'rightBottom30', label: '右下30°', description: '右下30度视角', position: new Vector3(Math.sin(Math.PI/6), -Math.cos(Math.PI/6), 0), group: '30deg' },
+        
+        // 60度斜角 - 水平面
+        { name: 'frontRight60', label: '前右60°', description: '前右60度视角', position: new Vector3(Math.cos(Math.PI/3), 0, Math.sin(Math.PI/3)), group: '60deg' },
+        { name: 'frontLeft60', label: '前左60°', description: '前左60度视角', position: new Vector3(-Math.cos(Math.PI/3), 0, Math.sin(Math.PI/3)), group: '60deg' },
+        { name: 'backRight60', label: '后右60°', description: '后右60度视角', position: new Vector3(Math.cos(Math.PI/3), 0, -Math.sin(Math.PI/3)), group: '60deg' },
+        { name: 'backLeft60', label: '后左60°', description: '后左60度视角', position: new Vector3(-Math.cos(Math.PI/3), 0, -Math.sin(Math.PI/3)), group: '60deg' },
+        
+        // 60度斜角 - 垂直面
+        { name: 'frontTop60', label: '前上60°', description: '前上60度视角', position: new Vector3(0, Math.cos(Math.PI/3), Math.sin(Math.PI/3)), group: '60deg' },
+        { name: 'frontBottom60', label: '前下60°', description: '前下60度视角', position: new Vector3(0, -Math.cos(Math.PI/3), Math.sin(Math.PI/3)), group: '60deg' },
+        { name: 'backTop60', label: '后上60°', description: '后上60度视角', position: new Vector3(0, Math.cos(Math.PI/3), -Math.sin(Math.PI/3)), group: '60deg' },
+        { name: 'backBottom60', label: '后下60°', description: '后下60度视角', position: new Vector3(0, -Math.cos(Math.PI/3), -Math.sin(Math.PI/3)), group: '60deg' },
+        { name: 'leftTop60', label: '左上60°', description: '左上60度视角', position: new Vector3(-Math.sin(Math.PI/3), Math.cos(Math.PI/3), 0), group: '60deg' },
+        { name: 'leftBottom60', label: '左下60°', description: '左下60度视角', position: new Vector3(-Math.sin(Math.PI/3), -Math.cos(Math.PI/3), 0), group: '60deg' },
+        { name: 'rightTop60', label: '右上60°', description: '右上60度视角', position: new Vector3(Math.sin(Math.PI/3), Math.cos(Math.PI/3), 0), group: '60deg' },
+        { name: 'rightBottom60', label: '右下60°', description: '右下60度视角', position: new Vector3(Math.sin(Math.PI/3), -Math.cos(Math.PI/3), 0), group: '60deg' }
+    ];
+
+    // 获取所有可用的角度配置
+    getAvailableAngles() {
+        return this.angleConfigs;
+    }
+
+    // 获取角度组配置
+    getAngleGroups() {
+        return [
+            { key: 'front', label: '正方向', description: '前、后、左、右、上、下' },
+            { key: '45deg', label: '45度斜角', description: '水平面和垂直面45度视角' },
+            { key: '30deg', label: '30度斜角', description: '30度视角组合' },
+            { key: '60deg', label: '60度斜角', description: '60度视角组合' },
+            { key: 'diagonal', label: '三维对角线', description: '45度三维对角线视角' }
         ];
+    }
+
+    // 获取默认选中的角度（前后左右）
+    getDefaultSelectedAngles() {
+        return ['front', 'back', 'left', 'right'];
+    }
+
+    // 导出多角度图片
+    async exportMultiAngleImages(angleNames?: string[]) {
+        const allAngles = this.getAvailableAngles();
+        let anglesToExport = allAngles;
+
+        // 如果传递了角度name数组，则只导出这些角度
+        if (Array.isArray(angleNames) && angleNames.length > 0) {
+            anglesToExport = allAngles.filter(angle => angleNames.includes(angle.name));
+        }
+
+        // 如果没有角度要导出，返回空数组
+        if (anglesToExport.length === 0) {
+            return [];
+        }
 
         const images = [];
         const originalPosition = this.camera.position.clone();
         const originalRotation = this.camera.rotation.clone();
         const distance = originalPosition.length();
 
-        for (const angle of angles) {
+        for (const angle of anglesToExport) {
             // 设置相机位置，保持距离不变
-            const newPosition = angle.position.multiplyScalar(distance);
+            const newPosition = angle.position.clone().multiplyScalar(distance);
             this.camera.position.copy(newPosition);
             this.camera.lookAt(0, 0, 0);
             
@@ -1055,6 +1147,8 @@ export class ModelController {
             const base64 = this.getScreenshotBase64();
             images.push({
                 name: angle.name,
+                label: angle.label,
+                description: angle.description,
                 base64
             });
         }
@@ -1068,20 +1162,62 @@ export class ModelController {
     }
 
     // 下载多角度图片
-    async downloadMultiAngleImages() {
-        const images = await this.exportMultiAngleImages();
+    async downloadMultiAngleImages(options: {
+        angles?: string[], // 指定要导出的角度名称数组
+        angleGroups?: string[], // 指定要导出的角度组
+        excludeAngles?: string[], // 指定要排除的角度名称数组
+        includeAll?: boolean, // 是否包含所有角度（默认true）
+        filename?: string // 文件名前缀，默认为 'model'
+    } = {}) {
+        const images = await this.exportMultiAngleImages(options.angles);
+        const filename = options.filename || 'model';
         
         // 下载每个图片
         images.forEach(image => {
             const link = document.createElement('a');
             link.href = image.base64;
-            link.download = `model_${image.name}.png`;
+            link.download = `${filename}_${image.name}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         });
         
         return images;
+    }
+
+    // 批量下载多角度图片（可选择角度）
+    async batchDownloadMultiAngleImages(options: {
+        angles?: string[], // 指定要导出的角度名称数组
+        angleGroups?: string[], // 指定要导出的角度组
+        excludeAngles?: string[], // 指定要排除的角度名称数组
+        includeAll?: boolean, // 是否包含所有角度（默认true）
+        filename?: string // 文件名前缀，默认为 'model'
+    } = {}) {
+        const filename = options.filename || 'model';
+
+        try {
+            const images = await this.exportMultiAngleImages(options.angles);
+            
+            // 批量下载
+            for (let i = 0; i < images.length; i++) {
+                const image = images[i];
+                const link = document.createElement('a');
+                link.href = image.base64;
+                link.download = `${filename}_${image.name}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // 添加小延迟避免浏览器阻止多个下载
+                if (i < images.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+            }
+
+            return images;
+        } catch (error) {
+            throw error;
+        }
     }
 
     // 设置画布背景色

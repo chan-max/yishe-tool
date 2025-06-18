@@ -2,18 +2,91 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-20 06:50:38
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-13 08:37:55
+ * @LastEditTime: 2025-06-19 00:48:09
  * @FilePath: /1s/src/components/design/layout/videoClip/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <div style="width: 320px; padding: 12px">
+  <div style="width: 340px; padding: 12px">
     <el-form>
 
       <el-form-item label="导出图片">
-        <el-button type="primary" round @click="() => {
-          currentModelController.downloadMultiAngleImages();
-        }"> 下载多角度图 </el-button>
+        <div>
+          <!-- 角度选择器 -->
+          <div class="mb-3">
+            <!-- 快速选择按钮 -->
+            <div class="flex flex-wrap gap-1 mb-3">
+              <el-button 
+                size="small" 
+                type="primary" 
+                plain
+                @click="selectDefaultAngles"
+              >
+                默认(前后左右)
+              </el-button>
+              <el-button 
+                size="small" 
+                type="primary" 
+                plain
+                @click="selectAllAngles"
+              >
+                全选
+              </el-button>
+              <el-button 
+                size="small" 
+                type="primary" 
+                plain
+                @click="clearAllAngles"
+              >
+                清空
+              </el-button>
+            </div>
+
+
+              <div class="flex flex-wrap justify-center gap-2">
+                <div 
+                  v-for="angle in availableAngles" 
+                  :key="angle.name"
+                  class="custom-checkbox"
+                  :class="{ 'selected': selectedAngles.includes(angle.name) }"
+                  @click="toggleAngle(angle.name)"
+                >
+                  <div class="flex items-center gap-1">
+                    <span class="text-xs">{{ angle.label }}</span>
+                  </div>
+                </div>
+              </div>
+   
+
+            <!-- 选中数量显示 -->
+            <div class="text-xs text-gray-500 mt-2">
+              已选择 {{ selectedAngles.length }} 个角度
+            </div>
+          </div>
+
+          <!-- 导出按钮 -->
+          <div class="flex gap-2">
+            <el-button 
+              class="w-full"
+              type="primary" 
+              round 
+              :disabled="selectedAngles.length === 0"
+              @click="handleExportImages"
+            >
+              下载多角度图 ({{ selectedAngles.length }}张)
+            </el-button>
+            <el-button 
+              class="w-full"
+              type="success" 
+              round 
+              :disabled="selectedAngles.length === 0"
+              :loading="isSavingToDraft"
+              @click="handleSaveToDraft"
+            >
+              {{ isSavingToDraft ? '保存中...' : `保存到草稿箱 (${selectedAngles.length}张)` }}
+            </el-button>
+          </div>
+        </div>
       </el-form-item>
 
       <el-form-item label="执行动画">
@@ -68,10 +141,11 @@
 
 <script setup lang="ts">
 import { currentModelController } from "../../store";
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import gsap from "gsap";
 import { message } from "ant-design-vue";
 import { uploadToCOS, createDraft } from "@/api";
+import { QuestionFilled } from '@element-plus/icons-vue';
 import {
   isRecordingEnabled,
   animations,
@@ -82,6 +156,79 @@ import {
 const isRecording = ref(false);
 const timeCount = ref(0);
 let timeCountInterval: any = null;
+
+// 角度选择相关状态
+const selectedAngles = ref<string[]>([]);
+const availableAngles = ref<any[]>([]);
+const isSavingToDraft = ref(false);
+
+// 初始化角度数据
+onMounted(() => {
+  if (currentModelController.value) {
+    availableAngles.value = currentModelController.value.getAvailableAngles();
+    // 默认选中前后左右
+    selectedAngles.value = currentModelController.value.getDefaultSelectedAngles();
+  }
+});
+
+// 选择默认角度（前后左右）
+const selectDefaultAngles = () => {
+  if (currentModelController.value) {
+    selectedAngles.value = currentModelController.value.getDefaultSelectedAngles();
+  }
+};
+
+// 全选所有角度
+const selectAllAngles = () => {
+  selectedAngles.value = availableAngles.value.map(angle => angle.name);
+};
+
+// 清空所有选择
+const clearAllAngles = () => {
+  selectedAngles.value = [];
+};
+
+// 切换角度选择
+const toggleAngle = (angleName: string) => {
+  const index = selectedAngles.value.indexOf(angleName);
+  if (index > -1) {
+    selectedAngles.value.splice(index, 1);
+  } else {
+    selectedAngles.value.push(angleName);
+  }
+};
+
+// 处理导出图片
+const handleExportImages = async () => {
+  if (selectedAngles.value.length === 0) {
+    message.warning('请至少选择一个角度');
+    return;
+  }
+
+  try {
+    message.loading({
+      content: `正在生成 ${selectedAngles.value.length} 张多角度图片...`,
+      key: 'exportImages'
+    });
+
+    await currentModelController.value.batchDownloadMultiAngleImages({
+      angles: selectedAngles.value,
+      filename: 'model',
+      showProgress: true
+    });
+
+    message.success({
+      content: `成功导出 ${selectedAngles.value.length} 张图片`,
+      key: 'exportImages'
+    });
+  } catch (error) {
+    message.error({
+      content: '导出失败',
+      key: 'exportImages'
+    });
+    console.error('导出图片失败:', error);
+  }
+};
 
 // 处理录制
 const handleRecord = async () => {
@@ -131,6 +278,72 @@ const handleRecordedVideo = async (blob: Blob) => {
     console.error(err);
   }
 };
+
+// 处理保存到草稿箱
+const handleSaveToDraft = async () => {
+  if (selectedAngles.value.length === 0) {
+    message.warning('请至少选择一个角度');
+    return;
+  }
+
+  isSavingToDraft.value = true;
+
+  try {
+    message.loading({
+      content: `正在生成 ${selectedAngles.value.length} 张多角度图片...`,
+      key: 'saveToDraft'
+    });
+
+    // 获取多角度图片
+    const images = await currentModelController.value.exportMultiAngleImages(selectedAngles.value);
+    
+    message.loading({
+      content: `正在上传 ${images.length} 张图片到云端...`,
+      key: 'saveToDraft'
+    });
+
+    // 并发上传所有图片
+    const uploadPromises = images.map(async (image) => {
+      // 将base64转换为文件
+      const base64Data = image.base64.split(',')[1];
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let j = 0; j < byteCharacters.length; j++) {
+        byteNumbers[j] = byteCharacters.charCodeAt(j);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const file = new File([byteArray], `多角度图片_${image.label}.png`, { type: 'image/png' });
+
+      // 上传到 COS
+      const cos = await uploadToCOS({ file });
+      
+      // 保存到草稿箱
+      const draft = await createDraft({
+        url: cos.url,
+        name: `多角度图片_${image.label}`,
+        updateTime: new Date()
+      });
+      
+      return draft;
+    });
+
+    // 等待所有上传完成
+    const savedDrafts = await Promise.all(uploadPromises);
+
+    message.success({
+      content: `成功保存 ${savedDrafts.length} 张多角度图片到草稿箱`,
+      key: 'saveToDraft'
+    });
+  } catch (error) {
+    message.error({
+      content: '保存到草稿箱失败',
+      key: 'saveToDraft'
+    });
+    console.error('保存到草稿箱失败:', error);
+  } finally {
+    isSavingToDraft.value = false;
+  }
+};
 </script>
 
 <style scoped>
@@ -149,5 +362,34 @@ const handleRecordedVideo = async (blob: Blob) => {
   100% {
     transform: scale(1);
   }
+}
+
+.custom-checkbox {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e0e0e0;
+  font-size: 12px;
+  user-select: none;
+}
+
+.custom-checkbox:hover {
+  background-color: #e8e8e8;
+  border-color: #d0d0d0;
+}
+
+.custom-checkbox.selected {
+  background-color: #409eff;
+  color: white;
+  border-color: #409eff;
+  box-shadow: 0 2px 4px rgba(64, 158, 255, 0.3);
+}
+
+.custom-checkbox.selected:hover {
+  background-color: #337ecc;
+  border-color: #337ecc;
 }
 </style>

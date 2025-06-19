@@ -161,20 +161,27 @@
 
     <div style="flex: 1"></div>
 
-    <el-button @click="useCurrentSticker()" round style="flex: 1" plain
+    <div>
+      <el-button @click="useCurrentSticker()" round style="flex: 1" plain
       >在贴纸制作中使用该贴纸模版</el-button
     >
-    <el-button
-      v-if="currentOperatingDecalController.state.isLocalResource"
+    </div>
+    <div v-if="currentOperatingDecalController.state.isLocalResource">
+      <el-button
       @click="upload"
       plain
       round
     >
       点击上传
     </el-button>
-    <el-button @click="showDecalList = !showDecalList" round plain> 贴纸列表 </el-button>
-    <el-button @click="showWorkspace = !showWorkspace" round plain> 工作台 </el-button>
-    <el-button @click="remove" type="danger" round>移除该贴纸</el-button>
+    </div>
+    <div>
+      <el-button @click="showDecalList = !showDecalList" round plain> 贴纸列表 </el-button>
+    </div>
+    <div>
+      <el-button @click="showWorkspace = !showWorkspace" round plain> 工作台 </el-button>
+    </div>
+    <div>    <el-button @click="remove" type="danger" round>移除该贴纸</el-button></div>
   </div>
 
   <s1-empty v-else>

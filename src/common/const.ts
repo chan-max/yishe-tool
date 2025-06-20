@@ -16,7 +16,7 @@ export default {
     ImageFontModelFileAcceptString: 'image/png, image/jpeg, image/svg+xml, font/ttf, font/woff, font/otf , .glb',
 
 
-    RecourceFileAcceptString:'image/png,image/webp, image/jpeg, image/svg+xml, font/ttf, font/woff, font/otf,.otf, application/vnd.adobe.photoshop,.psd, .glb',
+    RecourceFileAcceptString:'image/png,image/webp, image/jpeg, image/svg+xml, font/ttf, font/woff, font/otf,.otf, application/vnd.adobe.photoshop,.psd, .glb,.ttf',
 
     // 系统默认头像
     defaultUserAvatar: '/defaultAvatar/default.svg',

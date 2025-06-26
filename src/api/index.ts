@@ -614,6 +614,52 @@ export const deleteDraft = (data) => new Promise(async (resolve, reject) => {
 
 
 
+// 句子相关API
+export const getSentenceList = (params?: any) => new Promise(async (resolve, reject) => {
+  try {
+    const res = await apiInstance.get('/api/sentences', { params });
+    resolve(res.data.data || res.data);
+  } catch (error) {
+    reject(error);
+  }
+});
+
+export const createSentence = (data) => new Promise(async (resolve, reject) => {
+  try {
+    const res = await apiInstance.post('/api/sentences', data);
+    resolve(res.data.data || res.data);
+  } catch (error) {
+    reject(error);
+  }
+});
+
+export const updateSentence = (id, data) => new Promise(async (resolve, reject) => {
+  try {
+    const res = await apiInstance.patch(`/api/sentences/${id}`, data);
+    resolve(res.data.data || res.data);
+  } catch (error) {
+    reject(error);
+  }
+});
+
+export const deleteSentence = (id) => new Promise(async (resolve, reject) => {
+  try {
+    const res = await apiInstance.delete(`/api/sentences/${id}`);
+    resolve(res.data.data || res.data);
+  } catch (error) {
+    reject(error);
+  }
+});
+
+export const getSentenceById = (id) => new Promise(async (resolve, reject) => {
+  try {
+    const res = await apiInstance.get(`/api/sentences/${id}`);
+    resolve(res.data.data || res.data);
+  } catch (error) {
+    reject(error);
+  }
+});
+
 class Api {
 
   // 测试服务是否联通
@@ -718,6 +764,13 @@ class Api {
   // 字体相关
 
   updateFontTemplate = updateFontTemplate
+
+  // 句子相关方法
+  getSentenceList = getSentenceList
+  createSentence = createSentence
+  updateSentence = updateSentence
+  deleteSentence = deleteSentence
+  getSentenceById = getSentenceById
 }
 
 export default new Api()

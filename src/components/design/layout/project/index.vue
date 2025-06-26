@@ -29,6 +29,7 @@ import tabSticker from "./sticker/index.vue";
 import tabFont from "./font/index.vue";
 import tabCustomModel from './customModel/index.vue'
 import tabDraft from './draft/index.vue'
+import tabSentence from './sentence/index.vue'
 import { useLocalStorage } from "@vueuse/core";
 
 const searchText = ref("");
@@ -73,6 +74,11 @@ const tabs = ref([
     label: "设计模型",
     key: "customModel",
     component: tabCustomModel,
+  },
+  {
+    label: "句子",
+    key: "sentence",
+    component: tabSentence,
   },
 ]);
 

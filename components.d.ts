@@ -127,6 +127,7 @@ declare module 'vue' {
     Screenshot: typeof import('./src/components/design/components/screenshot.vue')['default']
     ScreenshotDrawer: typeof import('./src/components/design/components/screenshotDrawer.vue')['default']
     Scrollbar: typeof import('./src/components/scrollbar/index.vue')['default']
+    Sentence: typeof import('./src/components/design/layout/project/sentence/index.vue')['default']
     Sepia: typeof import('./src/components/design/layout/canvas/operate/filter/sepia.vue')['default']
     Setting: typeof import('./src/components/design/layout/setting/index.vue')['default']
     ShareCard: typeof import('./src/components/design/layout/shareCard/shareCard.vue')['default']

@@ -160,36 +160,95 @@
     <div></div>
 
     <div style="flex: 1"></div>
-
+    <div>
+      <el-button @click="replace" type="warning" round class="bottom-btn"
+        >替换该贴纸</el-button
+      >
+    </div>
     <div>
       <el-button @click="useCurrentSticker()" round plain class="bottom-btn"
-      >在贴纸制作中使用该贴纸模版</el-button
-    >
+        >在贴纸制作中使用该贴纸模版</el-button
+      >
     </div>
     <div v-if="currentOperatingDecalController.state.isLocalResource">
-      <el-button
-      @click="upload"
-      plain
-      round
-      class="bottom-btn"
-    >
-      点击上传
-    </el-button>
+      <el-button @click="upload" plain round class="bottom-btn"> 点击上传 </el-button>
     </div>
     <div>
-      <el-button @click="showDecalList = !showDecalList" round plain class="bottom-btn"> 贴纸列表 </el-button>
+      <el-button @click="showDecalList = !showDecalList" round plain class="bottom-btn">
+        贴纸列表
+      </el-button>
     </div>
     <div>
-      <el-button @click="showWorkspace = !showWorkspace" round plain class="bottom-btn"> 工作台 </el-button>
+      <el-button @click="showWorkspace = !showWorkspace" round plain class="bottom-btn">
+        工作台
+      </el-button>
     </div>
     <div>
-      <el-button @click="remove" type="danger" round class="bottom-btn">移除该贴纸</el-button>
+      <el-button @click="remove" type="danger" round class="bottom-btn"
+        >移除该贴纸</el-button
+      >
     </div>
   </div>
 
   <s1-empty v-else>
     <template #description> 未选择贴纸 </template>
   </s1-empty>
+
+  <!-- 替换贴纸弹窗 -->
+  <el-dialog
+    v-model="showReplaceDialog"
+    title="替换贴纸"
+    width="100%"
+    :fullscreen="true"
+    :before-close="handleCloseDialog"
+  >
+    <div class="replace-dialog-content">
+      <div class="search-section">
+        <el-input
+          v-model="stickerSearchQueryParams.searchText"
+          placeholder="搜索贴纸"
+          clearable
+        >
+          <template #prefix>
+            <el-icon>
+              <Search />
+            </el-icon>
+          </template>
+        </el-input>
+      </div>
+
+      <div class="sticker-grid">
+        <div v-for="item in stickerList" :key="item.id" class="sticker-item">
+          <s1-image
+            padding="10%"
+            :src="item.url"
+            class="sticker-image"
+            :meta="item"
+            :showSize="true"
+          >
+          </s1-image>
+          <div class="sticker-info">
+            <div class="sticker-title text-ellipsis">{{ item.name || "......" }}</div>
+            <el-button @click="replaceSticker(item.id)" type="primary" size="small" round>
+              替换
+            </el-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pagination-section">
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[12, 24, 36, 48]"
+          :total="total"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+    </div>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -201,14 +260,77 @@ import {
   showDecalList,
   showCanvasLayout,
 } from "../../store";
-import { Top, Bottom, Back, Right, RefreshRight } from "@element-plus/icons-vue";
+import { Top, Bottom, Back, Right, RefreshRight, Search } from "@element-plus/icons-vue";
 import { canvasStickerOptions } from "../canvas";
 import { clothingPaintMethods } from ".";
+import { getStickerList } from "@/api";
+
+// 替换贴纸弹窗相关
+const showReplaceDialog = ref(false);
+const stickerList = ref([]);
+const total = ref(0);
+const currentPage = ref(1);
+const pageSize = ref(12);
+const stickerSearchQueryParams = ref({
+  searchText: "",
+});
 
 function remove() {
   currentOperatingDecalController.value.remove();
   showCanvasLayout.value = true;
 }
+
+function replace() {
+  showReplaceDialog.value = true;
+  getStickerListData();
+}
+
+function handleCloseDialog() {
+  showReplaceDialog.value = false;
+  stickerSearchQueryParams.value.searchText = "";
+  currentPage.value = 1;
+}
+
+function replaceSticker(stickerId: string) {
+  currentOperatingDecalController.value.replaceSticker(stickerId);
+  showReplaceDialog.value = false;
+}
+
+async function getStickerListData() {
+  try {
+    const params = {
+      match: [stickerSearchQueryParams.value.searchText].filter(Boolean),
+      currentPage: currentPage.value,
+      pageSize: pageSize.value,
+    };
+    
+    const response = await getStickerList(params);
+    stickerList.value = response.list || [];
+    total.value = response.total || 0;
+  } catch (error) {
+    console.error("获取贴纸列表失败:", error);
+  }
+}
+
+function handleSizeChange(newSize: number) {
+  pageSize.value = newSize;
+  currentPage.value = 1;
+  getStickerListData();
+}
+
+function handleCurrentChange(newPage: number) {
+  currentPage.value = newPage;
+  getStickerListData();
+}
+
+// 监听搜索文本变化
+watch(
+  () => stickerSearchQueryParams.value.searchText,
+  () => {
+    currentPage.value = 1;
+    getStickerListData();
+  }
+);
 
 function upload() {}
 
@@ -353,5 +475,73 @@ const clothingPaintMethod = ref();
 
 .right-btn {
   margin-left: 6px;
+}
+
+// 替换贴纸弹窗样式
+.replace-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-section {
+  width: 100%;
+}
+
+.sticker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sticker-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #409eff;
+    box-shadow: 0 2px 8px rgba(64, 158, 255, 0.1);
+  }
+}
+
+.sticker-image {
+  width: 120px !important;
+  height: 100px !important;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.sticker-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.sticker-title {
+  font-size: 12px;
+  color: #606266;
+  text-align: center;
+  max-width: 100%;
+}
+
+.pagination-section {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 </style>

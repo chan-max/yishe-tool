@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-27 05:52:57
+ * @LastEditTime: 2025-06-27 07:42:41
  * @FilePath: /1s/src/components/design/layout/saveModel/index.vue
  * @Description: 
  * 
@@ -40,7 +40,7 @@
             <el-input 
               v-model="form.name" 
               placeholder="请输入模型名称"
-              size="large"
+              size="default"
             ></el-input>
           </el-form-item>
           
@@ -50,7 +50,7 @@
               placeholder="请输入模型描述"
               type="textarea"
               :autosize="{ minRows: 4, maxRows: 8 }"
-              size="large"
+              size="default"
             ></el-input>
           </el-form-item>
 
@@ -66,7 +66,7 @@
           <el-form-item label="辅助操作">
             <el-button
               type="default"
-              size="large"
+              size="default"
               title="根据基础模型和贴纸信息自动生成模型信息"
               @click="autofillInfo"
             >
@@ -83,7 +83,7 @@
             class="w-full" 
             round 
             :loading="loading"
-            size="large"
+            size="default"
           >
             {{ loadingMessage || "上传模型" }}
           </el-button>
@@ -247,7 +247,7 @@ function autofillInfo() {
 }
 
 /* 按钮样式优化 */
-.el-button--large {
+.el-button--default {
   font-weight: 500;
 }
 </style>

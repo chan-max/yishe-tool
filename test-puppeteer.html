@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puppeteer 桥接测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        .status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="status" id="status">PuppeteerBridge 未加载</div>
+    
+    <h1>Puppeteer 桥接测试页面</h1>
+    
+    <div class="test-section">
+        <h3>基础功能测试</h3>
+        <button onclick="testBasicFunctions()">测试基础功能</button>
+        <button onclick="testElementOperations()">测试元素操作</button>
+        <button onclick="testApiCall()">测试 API 调用</button>
+        <div id="basic-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>元素操作测试</h3>
+        <input type="text" id="test-input" placeholder="测试输入框">
+        <textarea id="test-textarea" placeholder="测试文本域" rows="3"></textarea>
+        <button id="test-button">测试按钮</button>
+        <button onclick="testElementInfo()">获取元素信息</button>
+        <div id="element-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>事件测试</h3>
+        <button onclick="testEventListeners()">测试事件监听</button>
+        <button onclick="testTriggerEvent()">触发测试事件</button>
+        <div id="event-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>页面操作测试</h3>
+        <button onclick="testScreenshot()">测试截图</button>
+        <button onclick="testScroll()">测试滚动</button>
+        <button onclick="testPageInfo()">获取页面信息</button>
+        <div id="page-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>调试工具</h3>
+        <button onclick="getConsoleLogs()">获取控制台日志</button>
+        <button onclick="clearConsoleLogs()">清除控制台日志</button>
+        <button onclick="getStatus()">获取桥接状态</button>
+        <div id="debug-result" class="result"></div>
+    </div>
+
+    <script>
+        // 等待 PuppeteerBridge 加载
+        function waitForBridge() {
+            if (window.puppeteerBridge) {
+                document.getElementById('status').textContent = 'PuppeteerBridge 已加载';
+                document.getElementById('status').style.background = '#28a745';
+                console.log('PuppeteerBridge 已就绪');
+            } else {
+                setTimeout(waitForBridge, 100);
+            }
+        }
+        
+        waitForBridge();
+        
+        // 测试基础功能
+        async function testBasicFunctions() {
+            const result = document.getElementById('basic-result');
+            try {
+                result.textContent = '测试中...';
+                
+                // 测试页面信息
+                const pageInfo = await window.puppeteerBridge.getPageInfo();
+                
+                // 测试元素存在检查
+                const buttonExists = await window.puppeteerBridge.elementExists('#test-button');
+                
+                result.textContent = `基础功能测试完成:\n页面信息: ${JSON.stringify(pageInfo, null, 2)}\n按钮存在: ${buttonExists}`;
+            } catch (error) {
+                result.textContent = `测试失败: ${error.message}`;
+            }
+        }
+        
+        // 测试元素操作
+        async function testElementOperations() {
+            const result = document.getElementById('basic-result');
+            try {
+                result.textContent = '测试元素操作...';
+                
+                // 测试输入文本
+                await window.puppeteerBridge.typeText('#test-input', 'Hello Puppeteer!');
+                
+                // 测试点击按钮
+                await window.puppeteerBridge.clickElement({ selector: '#test-button' });
+                
+                result.textContent = '元素操作测试完成';
+            } catch (error) {
+                result.textContent = `元素操作测试失败: ${error.message}`;
+            }
+        }
+        
+        // 测试 API 调用
+        async function testApiCall() {
+            const result = document.getElementById('basic-result');
+            try {
+                result.textContent = '测试 API 调用...';
+                
+                // 模拟 API 调用
+                const response = await window.puppeteerBridge.callApi({
+                    url: 'https://jsonplaceholder.typicode.com/posts/1',
+                    method: 'GET'
+                });
+                
+                result.textContent = `API 调用成功: ${JSON.stringify(response, null, 2)}`;
+            } catch (error) {
+                result.textContent = `API 调用失败: ${error.message}`;
+            }
+        }
+        
+        // 测试元素信息获取
+        async function testElementInfo() {
+            const result = document.getElementById('element-result');
+            try {
+                result.textContent = '获取元素信息...';
+                
+                const info = await window.puppeteerBridge.getElementInfo('#test-input');
+                
+                result.textContent = `元素信息: ${JSON.stringify(info, null, 2)}`;
+            } catch (error) {
+                result.textContent = `获取元素信息失败: ${error.message}`;
+            }
+        }
+        
+        // 测试事件监听
+        async function testEventListeners() {
+            const result = document.getElementById('event-result');
+            try {
+                result.textContent = '设置事件监听...';
+                
+                window.puppeteerBridge.on('test-event', (data) => {
+                    result.textContent = `收到事件: ${JSON.stringify(data, null, 2)}`;
+                });
+                
+                result.textContent = '事件监听已设置，请点击"触发测试事件"按钮';
+            } catch (error) {
+                result.textContent = `事件监听设置失败: ${error.message}`;
+            }
+        }
+        
+        // 测试触发事件
+        async function testTriggerEvent() {
+            const result = document.getElementById('event-result');
+            try {
+                result.textContent = '触发事件...';
+                
+                await window.puppeteerBridge.triggerEvent('test-event', {
+                    message: 'Hello from Puppeteer!',
+                    timestamp: Date.now()
+                });
+                
+                result.textContent = '事件已触发';
+            } catch (error) {
+                result.textContent = `触发事件失败: ${error.message}`;
+            }
+        }
+        
+        // 测试截图
+        async function testScreenshot() {
+            const result = document.getElementById('page-result');
+            try {
+                result.textContent = '生成截图中...';
+                
+                const screenshot = await window.puppeteerBridge.takeScreenshot();
+                
+                result.innerHTML = `截图完成 (Base64 数据):<br><img src="${screenshot}" style="max-width: 100%; height: auto;">`;
+            } catch (error) {
+                result.textContent = `截图失败: ${error.message}`;
+            }
+        }
+        
+        // 测试滚动
+        async function testScroll() {
+            const result = document.getElementById('page-result');
+            try {
+                result.textContent = '测试滚动...';
+                
+                await window.puppeteerBridge.scrollTo({ y: 100 });
+                
+                result.textContent = '滚动测试完成';
+            } catch (error) {
+                result.textContent = `滚动测试失败: ${error.message}`;
+            }
+        }
+        
+        // 测试页面信息
+        async function testPageInfo() {
+            const result = document.getElementById('page-result');
+            try {
+                result.textContent = '获取页面信息...';
+                
+                const pageInfo = await window.puppeteerBridge.getPageInfo();
+                
+                result.textContent = `页面信息: ${JSON.stringify(pageInfo, null, 2)}`;
+            } catch (error) {
+                result.textContent = `获取页面信息失败: ${error.message}`;
+            }
+        }
+        
+        // 获取控制台日志
+        async function getConsoleLogs() {
+            const result = document.getElementById('debug-result');
+            try {
+                const logs = await window.puppeteerBridge.getConsoleLogs();
+                result.textContent = `控制台日志:\n${logs.join('\n')}`;
+            } catch (error) {
+                result.textContent = `获取日志失败: ${error.message}`;
+            }
+        }
+        
+        // 清除控制台日志
+        async function clearConsoleLogs() {
+            const result = document.getElementById('debug-result');
+            try {
+                await window.puppeteerBridge.clearConsoleLogs();
+                result.textContent = '控制台日志已清除';
+            } catch (error) {
+                result.textContent = `清除日志失败: ${error.message}`;
+            }
+        }
+        
+        // 获取桥接状态
+        async function getStatus() {
+            const result = document.getElementById('debug-result');
+            try {
+                const status = window.puppeteerBridge.getStatus();
+                result.textContent = `桥接状态: ${JSON.stringify(status, null, 2)}`;
+            } catch (error) {
+                result.textContent = `获取状态失败: ${error.message}`;
+            }
+        }
+        
+        // 为测试按钮添加点击事件
+        document.getElementById('test-button').addEventListener('click', function() {
+            alert('测试按钮被点击了！');
+        });
+    </script>
+</body>
+</html> 

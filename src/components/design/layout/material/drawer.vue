@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-20 06:50:38
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-07 08:55:24
+ * @LastEditTime: 2025-06-21 12:09:25
  * @FilePath: /1s/src/components/design/layout/material/drawer.vue
  * @Description: 材质选择drawer组件
 -->
@@ -42,52 +42,33 @@
       </div>
       
       <div style="height: calc(100% - 64px - 44px - 60px); overflow: auto; padding: 12px">
-        <el-row :gutter="8">
-          <template v-for="(item, index) in list">
-            <el-col :span="12" style="margin: 8px 0">
-              <el-popover
-                placement="right"
-                :width="300"
-                trigger="hover"
-                popper-class="material-popover"
-                :visible="viewDisplayController.showMaterialModal && popoverVisible[index]"
-                @show="showPopover(index)"
-                @hide="hidePopover(index)"
-              >
-                <template #reference>
-                  <div @click="useMaterial(item)" :draggable="false" class="material-item">
-                    <s1-img
-                      :src="item.url"
-                      style="background: #f7f7f7; height: 120px; border-radius: 8px"
-                    ></s1-img>
-                  </div>
-                </template>
-                
-                <!-- Popover内容 -->
-                <div class="material-popover-content">
-                  <div class="material-preview">
-                    <s1-img
-                      :src="item.url"
-                      style="width: 200px; height: 200px; border-radius: 8px; background: #f7f7f7"
-                      fit="cover"
-                    ></s1-img>
-                  </div>
-                  <div class="material-info">
-                    <h4 style="margin: 8px 0; color: #333;">{{ item.name || '未命名材质' }}</h4>
-                    <p style="margin: 4px 0; color: #666; font-size: 12px;">
-                      {{ item.description || '暂无描述' }}
-                    </p>
-                    <div style="margin-top: 12px;">
-                      <el-button @click="useMaterial(item)" type="primary" size="small" round>
-                        使用该材质
-                      </el-button>
-                    </div>
-                  </div>
+        <div class="material-list">
+          <template v-for="(item, index) in list" :key="index">
+            <div class="material-item-row">
+              <!-- 左侧图片 -->
+              <div class="material-image">
+                <s1-img
+                  :src="item.url"
+                  style="background: #f7f7f7; height: 80px; width: 80px; border-radius: 8px"
+                  fit="cover"
+                ></s1-img>
+              </div>
+              
+              <!-- 右侧信息和操作 -->
+              <div class="material-info-section">
+                <div class="material-info">
+                  <h4 class="material-name">{{ item.name || '未命名材质' }}</h4>
+                  <p class="material-description">{{ item.description || '暂无描述' }}</p>
                 </div>
-              </el-popover>
-            </el-col>
+                <div class="material-actions">
+                  <el-button @click="useMaterial(item)" type="primary" size="small" round>
+                    使用该材质
+                  </el-button>
+                </div>
+              </div>
+            </div>
           </template>
-        </el-row>
+        </div>
         
         <div v-if="loading" style="text-align: center; padding: 20px; color: #999;">
           加载中...
@@ -117,7 +98,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
-import { ClickOutside as vClickOutside } from "element-plus";
 import { viewDisplayController, currentModelController } from "@/components/design/store";
 import Api from "@/api";
 import Utils from "@/common/utils";
@@ -131,19 +111,6 @@ const total = ref(0);
 const list = ref([]);
 const loading = ref(false);
 const isEmpty = ref(false);
-
-// Popover显示状态管理
-const popoverVisible = ref({});
-
-// 显示popover
-function showPopover(index: number) {
-  popoverVisible.value[index] = true;
-}
-
-// 隐藏popover
-function hidePopover(index: number) {
-  popoverVisible.value[index] = false;
-}
 
 // 获取列表数据
 async function getList() {
@@ -193,18 +160,9 @@ function removeMaterial() {
 }
 
 function handleClose() {
-  // 关闭所有popover
-  popoverVisible.value = {};
   // 关闭drawer
   viewDisplayController.value.showMaterialModal = false;
 }
-
-// 监听drawer状态变化，关闭时隐藏所有popover
-watch(() => viewDisplayController.value.showMaterialModal, (newVal) => {
-  if (!newVal) {
-    popoverVisible.value = {};
-  }
-});
 
 // 监听搜索变化
 watch(search, () => {
@@ -225,42 +183,64 @@ onMounted(() => {
   flex-direction: column;
 }
 
-.material-item {
-  cursor: pointer;
+.material-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.material-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fafafa;
   transition: all 0.2s ease;
   
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #f0f0f0;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
-// Popover样式
-:deep(.material-popover) {
-  z-index: 5000 !important;
+.material-image {
+  flex-shrink: 0;
 }
 
-.material-popover-content {
-  padding: 0;
+.material-info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 80px;
+}
+
+.material-info {
+  flex: 1;
   
-  .material-preview {
-    text-align: center;
-    margin-bottom: 12px;
+  .material-name {
+    margin: 0 0 4px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
   }
   
-  .material-info {
-    h4 {
-      margin: 8px 0;
-      color: #333;
-      font-size: 14px;
-    }
-    
-    p {
-      margin: 4px 0;
-      color: #666;
-      font-size: 12px;
-      line-height: 1.4;
-    }
+  .material-description {
+    margin: 0;
+    color: #666;
+    font-size: 12px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
+}
+
+.material-actions {
+  margin-top: 8px;
 }
 </style> 

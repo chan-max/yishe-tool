@@ -1,8 +1,8 @@
 /*
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-20 08:07:02
- * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-21 15:06:56
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-27 06:06:52
  * @FilePath: /yishe/src/modules/main/main.ts
  * @Description: 
  * 
@@ -20,6 +20,8 @@ import i18n from '@/i18n/index.ts'
 import '@/style/base.less'
 import '@/style/vars.less'
 
+// 引入 Puppeteer 桥接对象
+import '@/common/utils/puppeteerBridge'
 
 import Antd from 'ant-design-vue'
 //  import "ant-design-vue/dist/antd.css";

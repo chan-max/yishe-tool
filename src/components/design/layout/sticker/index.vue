@@ -38,6 +38,7 @@
           :src="item.url"
           class="image"
           :meta="item"
+          :showSize="true"
           @load="imgLoad"
         >
         </s1-image>

@@ -2,68 +2,98 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-12 23:16:37
+ * @LastEditTime: 2025-06-27 05:52:57
  * @FilePath: /1s/src/components/design/layout/saveModel/index.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-  <div class="flex" style="padding: 12px 24px 24px 24px; column-gap: 12px">
-    <s1-image
-      style="
-        width: 500px;
-        height: 500px;
-        flex-shrink: 0;
-        background: #f5f6f7;
-        border-radius: 12px;
-      "
-      :src="displayThumbnail"
-    ></s1-image>
+  <div class="flex flex-col h-full overflow-y-auto" style="padding: 24px 0; width: 100%;">
+    <!-- 主要内容区域 -->
+    <div class="flex flex-col gap-8" style="min-height: 0; padding: 0 24px;">
+      <!-- 顶部预览区域 -->
+      <div class="w-full">
+        <div class="mb-4">
+          <h3 class="text-lg font-medium mb-2">模型预览</h3>
+        </div>
+        <s1-image
+          style="
+            width: 100%;
+            height: 400px;
+            background: #f5f6f7;
+            border-radius: 12px;
+            object-fit: contain;
+          "
+          :src="displayThumbnail"
+        ></s1-image>
+      </div>
 
-    <div class="flex flex-col" style="width: 480px">
-      <el-form label-position="top">
-        <el-form-item label="模型名称">
-          <el-input v-model="form.name" placeholder="请输入"></el-input>
-        </el-form-item>
-        <el-form-item label="模型描述">
-          <el-input
-            v-model="form.description"
-            placeholder="请输入"
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 5 }"
-          ></el-input>
-        </el-form-item>
+      <!-- 底部表单区域 -->
+      <div class="flex flex-col w-full">
+        <div class="mb-4">
+          <h3 class="text-lg font-medium mb-2">模型信息</h3>
+        </div>
+        
+        <el-form label-position="top" class="w-full">
+          <el-form-item label="模型名称">
+            <el-input 
+              v-model="form.name" 
+              placeholder="请输入模型名称"
+              size="large"
+            ></el-input>
+          </el-form-item>
+          
+          <el-form-item label="模型描述">
+            <el-input
+              v-model="form.description"
+              placeholder="请输入模型描述"
+              type="textarea"
+              :autosize="{ minRows: 4, maxRows: 8 }"
+              size="large"
+            ></el-input>
+          </el-form-item>
 
-        <el-form-item label="模型标签" prop="keywords">
-          <s1-tagsInput
-            v-model="form.keywords"
-            :string="true"
-            :autocompleteTags="customModelAutoplacementTags"
-            :autocompleteWidth="500"
-          ></s1-tagsInput>
-        </el-form-item>
-        <el-form-item label="辅助操作">
-          <el-button
-            type="default"
-            size="small"
-            title="根据基础模型和贴纸信息自动生成模型信息"
-            @click="autofillInfo"
+          <el-form-item label="模型标签" prop="keywords">
+            <s1-tagsInput
+              v-model="form.keywords"
+              :string="true"
+              :autocompleteTags="customModelAutoplacementTags"
+              :autocompleteWidth="400"
+            ></s1-tagsInput>
+          </el-form-item>
+          
+          <el-form-item label="辅助操作">
+            <el-button
+              type="default"
+              size="large"
+              title="根据基础模型和贴纸信息自动生成模型信息"
+              @click="autofillInfo"
+            >
+              自动生成信息
+            </el-button>
+          </el-form-item>
+        </el-form>
+
+        <!-- 底部操作区域 -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <el-button 
+            @click="save" 
+            type="primary" 
+            class="w-full" 
+            round 
+            :loading="loading"
+            size="large"
           >
-            自动生成信息
+            {{ loadingMessage || "上传模型" }}
           </el-button>
-        </el-form-item>
-      </el-form>
-
-      <div style="flex: 1"></div>
-      <el-button @click="save" type="primary" class="w-full" round :loading="loading">
-        {{ loadingMessage || "上传模型" }}
-      </el-button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, computed, watch } from "vue";
 import { createCustomModelApi, uploadToCOS } from "@/api";
 import { ElMessageBox } from "element-plus";
 import {
@@ -71,6 +101,7 @@ import {
   currentOperatingBaseModelInfo,
   lastestScreenshot,
   screenshots,
+  showSaveModel,
 } from "../../store";
 import { base64ToFile, base64ToPngFile } from "@/common/transform/base64ToFile";
 import { useLoginStatusStore } from "@/store/stores/login";
@@ -92,8 +123,21 @@ const form = ref({
 });
 
 // 获取模型缩略图
-onBeforeMount(() => {
+function updateThumbnail() {
   displayThumbnail.value = currentModelController.value.getScreenshotBase64();
+}
+
+// 监听弹窗显示状态，每次显示时重新生成截图
+watch(showSaveModel, (newVal) => {
+  if (newVal) {
+    // 弹窗显示时重新生成截图
+    updateThumbnail();
+  }
+});
+
+// 初始化时获取截图
+onBeforeMount(() => {
+  updateThumbnail();
 });
 
 const loading = ref(false);
@@ -144,4 +188,66 @@ function autofillInfo() {
   };
 }
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+/* 滚动条样式 */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .w-full s1-image {
+    height: 300px !important;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+  
+  .text-lg {
+    font-size: 1.125rem;
+  }
+}
+
+/* 确保内容区域不会溢出 */
+.flex-1 {
+  min-height: 0;
+}
+
+/* 表单区域样式优化 */
+.el-form {
+  .el-form-item {
+    margin-bottom: 20px;
+  }
+  
+  .el-form-item__label {
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+  }
+}
+
+/* 按钮样式优化 */
+.el-button--large {
+  font-weight: 500;
+}
+</style>

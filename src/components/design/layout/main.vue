@@ -122,10 +122,10 @@
     title="保存模型"
     v-model:open="showSaveModel"
     :footer="null"
-    width="auto"
+    width="100%"
     :mask-closable="true"
     centered
-    class="auto-width-modal"
+    wrap-class-name="full-modal"
   >
     <save-model></save-model>
   </a-modal>

@@ -15,7 +15,9 @@ import {
   TextureLoader,
   Vector2,
   Vector3,
-
+  LinearFilter,
+  RGBAFormat,
+  UnsignedByteType,
 } from "three";
 import { message } from 'ant-design-vue'
 import { ref, reactive, computed, shallowRef, watch } from 'vue'
@@ -245,7 +247,7 @@ export class DecalController {
     textureLoader.setCrossOrigin('*')
 
     let sourceUrl = this.img?.src || this.info.src || this.info.url
-
+    
 
     // 本地穿件的图片
     if (this.state.isLocalResource) {
@@ -270,6 +272,23 @@ export class DecalController {
     // 设置纹理的密度
     texture.repeat.set(1, 1); // 设置重复次数
     texture.offset.set(0, 0); // 设置偏移
+
+    // 提高贴花清晰度的关键设置
+    // 1. 设置纹理过滤模式为线性过滤，提高清晰度
+    texture.minFilter = LinearFilter;
+    texture.magFilter = LinearFilter;
+    
+    // 2. 启用各向异性过滤，提高倾斜角度下的清晰度
+    texture.anisotropy = currentModelController.value.renderer?.capabilities?.getMaxAnisotropy() || 16;
+    
+    // 3. 设置纹理格式为RGBA，确保透明度支持
+    texture.format = RGBAFormat;
+    
+    // 4. 禁用纹理压缩，保持原始质量
+    texture.generateMipmaps = false;
+    
+    // 5. 设置纹理类型为无符号字节，保持精确度
+    texture.type = UnsignedByteType;
 
     this.state.imgAspectRatio = (texture.image.naturalWidth || texture.image.width) / (texture.image.naturalHeight || texture.image.height);
 

@@ -3,6 +3,11 @@
  * 提供与 Puppeteer 自动化脚本的通信接口
  */
 
+import { useRouter } from "vue-router";
+import _router from "@/modules/main/router";
+import { useEventBus } from '@vueuse/core';
+
+
 interface NavigationOptions {
   timeout?: number;
   waitUntil?: 'load' | 'domcontentloaded' | 'networkidle0' | 'networkidle2';
@@ -86,10 +91,11 @@ class PuppeteerBridge {
    */
   async navigateTo(path: string, options: NavigationOptions = {}): Promise<void> {
     const { timeout = 30000, waitUntil = 'networkidle2' } = options;
-    
     try {
+
       // 使用 Vue Router 进行导航
-      const router = (window as any).$router || (window as any).__VUE_ROUTER__;
+      const router = _router
+
       if (router) {
         await router.push(path);
         console.log(`导航到页面: ${path}`);
@@ -101,6 +107,30 @@ class PuppeteerBridge {
       console.error('导航失败:', error);
       throw error;
     }
+  }
+
+
+  async gotoDesignPage(){
+     if (window.location.pathname === '/design') {
+       // 已在design页面，直接等待事件
+       return new Promise((resolve) => {
+         const bus = useEventBus('design-page-loaded');
+         const stop = bus.on(() => {
+           stop();
+           resolve(true);
+         });
+       });
+     } else {
+       await this.navigateTo('/design');
+       // 监听页面加载完成事件
+       return new Promise((resolve) => {
+         const bus = useEventBus('design-page-loaded');
+         const stop = bus.on(() => {
+           stop(); // 只监听一次
+           resolve(true);
+         });
+       });
+     }
   }
 
   /**

@@ -29,7 +29,7 @@
   <AutomationOverlay />
 </template>
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
 import headerMenu from "./view/base/header/index.vue";
@@ -42,6 +42,7 @@ import antZh from 'ant-design-vue/es/locale/zh_CN';
 import { Modal } from 'ant-design-vue'
 import loginForm from '@/modules/main/view/user/login/index.vue'
 import { openLoginDialog, showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
+import { useEventBus } from '@vueuse/core';
 
 
 const antLocale = computed(() => {
@@ -93,6 +94,14 @@ const elementLocale = computed(() => {
   } else {
     return zhCn;
   }
+});
+
+onMounted(() => {
+  const bus = useEventBus('design-page-loaded');
+  bus.on(() => {
+    console.log('🎉 design-page-loaded 事件已收到，页面已挂载完成');
+    // 这里可以做后续处理
+  });
 });
 
 

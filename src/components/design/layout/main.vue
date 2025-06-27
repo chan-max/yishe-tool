@@ -255,6 +255,7 @@ import shareCardModal from "@/components/design/layout/shareCard/modal.vue";
 import material from "@/components/design/layout/material/index.vue";
 import autocreateModal from "./autocreate/modal.vue";
 import videoClip from "./videoClip/index.vue";
+import { useEventBus } from '@vueuse/core';
 
 const { component: stickerDetailModal } = useStickerDetailModal();
 const { component: customModelDetailModal } = useCustomModelDetailModal();
@@ -318,6 +319,9 @@ onMounted(async () => {
   modelController.render(mountContainer.value);
   await Utils.sleep(1200);
   isFirstPageLoading.value = false;
+  // 抛出页面加载完成事件
+  const designPageLoadedBus = useEventBus('design-page-loaded');
+  designPageLoadedBus.emit();
 });
 
 initAction();

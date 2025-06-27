@@ -62,6 +62,8 @@ import AnimateOnScroll from 'primevue/animateonscroll';
 import VueMagnifier from '@websitebeaver/vue-magnifier'
 import '@websitebeaver/vue-magnifier/styles.css'
 
+// 引入自动化遮罩层组件
+import AutomationOverlay from '@/components/automationOverlay.vue'
 
 import { useConfigStore, initConfigStoreBasicConfig } from '@/store/stores/config.ts';
 import { useLoginStatusStore, initLoginStoreUserInfo } from '@/store/stores/login';
@@ -85,6 +87,9 @@ async function setup() {
     app.component("InfiniteLoading", InfiniteLoading);
 
     app.component('s1Mangnifier', VueMagnifier)
+
+    // 注册自动化遮罩层组件
+    app.component('AutomationOverlay', AutomationOverlay)
 
     app.directive('animateonscroll', AnimateOnScroll);
 

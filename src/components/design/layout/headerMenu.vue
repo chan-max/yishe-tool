@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-27 19:20:45
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-18 21:49:54
+ * @LastEditTime: 2025-06-27 08:53:55
  * @FilePath: /1s/src/components/design/layout/headerMenu.vue
  * @Description: 
  * 
@@ -21,6 +21,8 @@
 
     <a-button size="small" type="text"> 快速指南 </a-button>
 
+    <!-- 连接状态显示 -->
+    <connection-status />
 
     <div class="flex items-center">
       <!-- <a-dropdown>
@@ -56,6 +58,10 @@
 
       <el-button @click="showUpload = true" round text bg :icon="Upload">
         素材上传
+      </el-button>
+
+      <el-button @click="toggleAutomation" round text bg >
+        {{ isAutomationRunning ? '关闭自动化' : '开启自动化' }}
       </el-button>
 
       <el-switch
@@ -99,7 +105,6 @@ import { onShortcutTrigger } from "../shortcut/index";
 import iconHelp from "@/icon/help.svg?component";
 import { useLoginStatusStore } from "@/store/stores/login";
 import { useDateFormat, useNow } from "@vueuse/core";
-import { Upload } from "@element-plus/icons-vue";
 import {
   LoadingOutlined,
   CheckOutlined,
@@ -112,6 +117,9 @@ import { useFileDialog } from "@vueuse/core";
 import { openLoginDialog } from "@/modules/main/view/user/login/index.tsx";
 import Utils from "@/common/utils";
 import { localFileListResource } from "@/components/design/store";
+import { isAutomationRunning, automationDescription } from "@/store/stores/app";
+import { startAutomation, stopAutomation } from "@/common/utils/automation";
+import connectionStatus from "@/components/connectionStatus.vue";
 
 const router = useRouter();
 
@@ -143,6 +151,13 @@ function openUplaodModal(file) {
 //
 function remove(file) {}
 
+function toggleAutomation() {
+  if (isAutomationRunning.value) {
+    stopAutomation();
+  } else {
+    startAutomation('手动开启的自动化操作');
+  }
+}
 
 </script>
 

@@ -24,6 +24,9 @@
     style="min-width:440px;" width="440px">
     <loginForm></loginForm>
   </a-modal>
+
+  <!-- 自动化操作遮罩层 -->
+  <AutomationOverlay />
 </template>
 <script setup>
 import { computed, ref } from "vue";

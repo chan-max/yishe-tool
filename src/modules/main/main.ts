@@ -1,8 +1,8 @@
 /*
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-20 08:07:02
- * @LastEditors: chan-max 2651308363@qq.com
- * @LastEditTime: 2024-02-21 15:06:56
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-27 06:06:52
  * @FilePath: /yishe/src/modules/main/main.ts
  * @Description: 
  * 
@@ -20,6 +20,8 @@ import i18n from '@/i18n/index.ts'
 import '@/style/base.less'
 import '@/style/vars.less'
 
+// 引入 Puppeteer 桥接对象
+import '@/common/utils/puppeteerBridge'
 
 import Antd from 'ant-design-vue'
 //  import "ant-design-vue/dist/antd.css";
@@ -60,6 +62,8 @@ import AnimateOnScroll from 'primevue/animateonscroll';
 import VueMagnifier from '@websitebeaver/vue-magnifier'
 import '@websitebeaver/vue-magnifier/styles.css'
 
+// 引入自动化遮罩层组件
+import AutomationOverlay from '@/components/automationOverlay.vue'
 
 import { useConfigStore, initConfigStoreBasicConfig } from '@/store/stores/config.ts';
 import { useLoginStatusStore, initLoginStoreUserInfo } from '@/store/stores/login';
@@ -83,6 +87,9 @@ async function setup() {
     app.component("InfiniteLoading", InfiniteLoading);
 
     app.component('s1Mangnifier', VueMagnifier)
+
+    // 注册自动化遮罩层组件
+    app.component('AutomationOverlay', AutomationOverlay)
 
     app.directive('animateonscroll', AnimateOnScroll);
 

@@ -7,6 +7,7 @@ import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-ob
 import Api from '@/api'
 import { message } from 'ant-design-vue'
 import { uploadToCOS, createDraft } from '@/api'
+import { saveAs } from 'file-saver';
 
 // 当前实例
 export const currentModelController = shallowRef(null);
@@ -35,15 +36,18 @@ export function saveScreenshot() {
         createdTime: new Date(),
     })
 
-    // 上传到 COS 并保存到草稿箱
+    // 保存到本地
     const file = Utils.transform.base64ToPngFile(base64);
+    saveAs(file, `screenshot_${new Date().getTime()}.png`);
+
+    // 上传到 COS 并保存到草稿箱
     uploadToCOS({ file }).then(cos => {
         createDraft({
             url: cos.url,
             name: '模型截图',
             updateTime: new Date()
         }).then(() => {
-            message.success('截图已保存到草稿箱');
+            message.success('截图已保存到草稿箱和本地');
         }).catch(err => {
             message.error('保存到草稿箱失败');
             console.error(err);

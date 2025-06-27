@@ -366,6 +366,8 @@ async function uploadSingleFile(file) {
 
   if (Utils.type.isImageName(file.name)) {
     const fileCos = await uploadToCOS({ file: file.raw });
+
+    debugger;
     const params = {
       name: file.customName,
       size: file.size,
@@ -483,6 +485,7 @@ async function doUpload() {
     loading.value = false;
     fileList.value = [];
   } catch (e) {
+
     message.error("上传失败!");
     loading.value = false;
   }

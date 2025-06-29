@@ -16,22 +16,6 @@
       </div>
     </el-tooltip>
 
-    <!-- 本地浏览器状态 -->
-    <el-tooltip
-      :content="isLocalBrowserConnected ? '本地浏览器已启动' : '本地浏览器未启动'"
-      placement="bottom"
-    >
-      <div class="status-item">
-        <div
-          class="status-dot"
-          :class="{ 'connected': isLocalBrowserConnected, 'disconnected': !isLocalBrowserConnected }"
-        />
-        <span class="status-text" :class="{ 'connected': isLocalBrowserConnected, 'disconnected': !isLocalBrowserConnected }">
-          {{ isLocalBrowserConnected ? '本地浏览器已启动' : '本地浏览器未启动' }}
-        </span>
-      </div>
-    </el-tooltip>
-
     <!-- 远程服务状态 -->
     <el-tooltip
       :content="isRemoteConnected ? '远程服务已连接' : '远程服务未连接'"
@@ -54,13 +38,12 @@
 import { onMounted, onUnmounted } from 'vue'
 import { 
   isLocalConnected, 
-  isLocalBrowserConnected, 
   isRemoteConnected,
   startConnectionChecks,
   clearConnectionChecks
 } from '@/store/stores/connectionStatus'
 
-let timers: { localTimer: number, remoteTimer: number, localBrowserTimer: number } | null = null
+let timers: { localTimer: number, remoteTimer: number } | null = null
 
 onMounted(() => {
   timers = startConnectionChecks()

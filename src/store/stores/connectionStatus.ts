@@ -1,10 +1,15 @@
+/*
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-06-27 08:53:30
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-06-30 07:09:55
+ * @FilePath: /1s/src/store/stores/connectionStatus.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { ref } from 'vue'
 
 // 本地客户端连接状态
 export const isLocalConnected = ref(false)
-
-// 本地浏览器连接状态
-export const isLocalBrowserConnected = ref(false)
 
 // 远程服务连接状态
 export const isRemoteConnected = ref(false)
@@ -16,21 +21,6 @@ export const checkLocalConnection = async () => {
     isLocalConnected.value = response.ok
   } catch (error) {
     isLocalConnected.value = false
-  }
-}
-
-// 检查本地浏览器连接
-export const checkLocalBrowserConnection = async () => {
-  try {
-    const response = await fetch('http://127.0.0.1:9222/json/version', {
-      mode: 'no-cors',
-      headers: {
-        'Accept': 'application/json'
-      }
-    })
-    isLocalBrowserConnected.value = response.status === 0
-  } catch (error) {
-    isLocalBrowserConnected.value = false
   }
 }
 
@@ -48,28 +38,22 @@ export const checkRemoteConnection = async () => {
 export const startConnectionChecks = () => {
   checkLocalConnection()
   checkRemoteConnection()
-  checkLocalBrowserConnection()
   
   const localTimer = window.setInterval(checkLocalConnection, 5000)
   const remoteTimer = window.setInterval(checkRemoteConnection, 10000)
-  const localBrowserTimer = window.setInterval(checkLocalBrowserConnection, 5000)
 
   return {
     localTimer,
-    remoteTimer,
-    localBrowserTimer
+    remoteTimer
   }
 }
 
 // 清理所有定时器
-export const clearConnectionChecks = (timers: { localTimer: number, remoteTimer: number, localBrowserTimer: number }) => {
+export const clearConnectionChecks = (timers: { localTimer: number, remoteTimer: number }) => {
   if (timers.localTimer) {
     window.clearInterval(timers.localTimer)
   }
   if (timers.remoteTimer) {
     window.clearInterval(timers.remoteTimer)
-  }
-  if (timers.localBrowserTimer) {
-    window.clearInterval(timers.localBrowserTimer)
   }
 } 

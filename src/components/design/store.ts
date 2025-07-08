@@ -317,6 +317,8 @@ watch(online, (value) => {
 export const isEdit = ref(false)
 // 当前正在编辑的模型信息, 只有为编辑模型时才会赋值
 export const currentEditingModelInfo = ref()
+// 新增：当前正在编辑的模型ID
+export const currentEditingModelId = ref<string | null>(null)
 
 
 // 模型装饰品
@@ -512,5 +514,21 @@ export function startSyncDesignStorage() {
 export const showScreenshotDrawer = ref(false)
 
 export { currentHoveringDecalController } from '@/components/design/core/decalController'
+
+
+// 进入编辑模式
+export function enterEditMode(modelId: string, modelInfo?: any) {
+    isEdit.value = true;
+    currentEditingModelId.value = modelId;
+    if (modelInfo) {
+        currentEditingModelInfo.value = modelInfo;
+    }
+}
+// 退出编辑模式
+export function exitEditMode() {
+    isEdit.value = false;
+    currentEditingModelId.value = null;
+    currentEditingModelInfo.value = null;
+}
 
 

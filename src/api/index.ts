@@ -499,7 +499,12 @@ export const deleteFile = (data) => new Promise(async (resolve, reject) => {
 /*
  上传自定义的模型
 */
-export const createCustomModelApi = (data) => apiInstance.post(Url.UPLOAD_CUSTOM_MODEL, data);
+export const createCustomModelApi = (data) => new Promise(async (resolve, reject) => {
+  const res = await  apiInstance.post(Url.UPLOAD_CUSTOM_MODEL, data);
+  resolve(res.data.data)
+})
+
+
 
 
 export const getCustomModelList = (params) => new Promise(async (resolve, reject) => {

@@ -26,7 +26,6 @@ import Utils from '@/common/utils'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import { currentModelController, currentOperatingDecalController, showDecalControl } from '../store';
 import { useLoginStatusStore } from "@/store/stores/login";
-import { withAutomation } from '@/common/utils/automation';
 
 import Api from '@/api'
 import { useDebounceFn } from "@vueuse/core";
@@ -517,7 +516,10 @@ export class DecalController {
 
 
   async replaceSticker(stickerId) {
-    return withAutomation(async () => {
+    // 使用简单的 message loading 而不是全局自动化弹窗
+    message.loading({ content: '正在替换贴纸...', key: 'replaceSticker', duration: 0 });
+    
+    try {
       // 根据贴纸ID获取新的贴纸信息
       const stickerInfo = await Api.getStickerById(stickerId);
       
@@ -551,8 +553,11 @@ export class DecalController {
       // 重新创建贴纸
       await this.create();
 
-      message.success('贴纸替换成功');
-    }, '正在替换贴纸...');
+      message.success({ content: '贴纸替换成功', key: 'replaceSticker' });
+    } catch (error) {
+      message.error({ content: '贴纸替换失败', key: 'replaceSticker' });
+      console.error('替换贴纸失败:', error);
+    }
   }
 
   // 如果是本地创建的贴纸，则需要上传到远程

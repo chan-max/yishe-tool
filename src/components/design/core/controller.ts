@@ -252,6 +252,7 @@ export class ModelController {
         this.controller?.update();
 
         this.renderer.render(this.scene, this.camera);
+
     }
 
     public isMounted = false;
@@ -750,7 +751,32 @@ export class ModelController {
 
     getScreenshotBase64() {
         this.renderer.render(this.scene, this.camera); // 截取会出现白图片
-        return this.renderer.domElement.toDataURL("image/png");
+        const srcCanvas = this.renderer.domElement;
+        // 创建一个新的canvas用于合成水印
+        const canvas = document.createElement('canvas');
+        canvas.width = srcCanvas.width;
+        canvas.height = srcCanvas.height;
+        const ctx = canvas.getContext('2d');
+        // 先绘制threejs渲染内容
+        ctx.drawImage(srcCanvas, 0, 0);
+        // 再绘制水印
+        const text = 'Presented by 1s.design';
+        const fontSize = Math.floor(canvas.height * 0.025); // 更小的字号
+        ctx.save();
+        ctx.font = `italic bold ${fontSize}px sans-serif`; // 斜体
+        ctx.fillStyle = '#fff';
+        ctx.textBaseline = 'bottom';
+        ctx.textAlign = 'right';
+        const padding = fontSize * 1.2; // 更大的边距
+        // 阴影效果
+        ctx.shadowColor = 'rgba(0,0,0,0.45)';
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.fillText(text, canvas.width - padding, canvas.height - padding);
+        ctx.restore();
+        // 返回带水印的base64
+        return canvas.toDataURL('image/png');
     }
 
     downloadScreenshot() {
@@ -1226,6 +1252,7 @@ export class ModelController {
         this.state.canvasBackground.opacity = opacity;
         this.setBgColor(color, opacity);
     }
+
 }
 
 

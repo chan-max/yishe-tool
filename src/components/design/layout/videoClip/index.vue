@@ -329,7 +329,8 @@ const handleSaveToDraft = async () => {
     const savedDrafts = await Promise.all(uploadPromises);
 
     message.success({
-      content: `成功保存 ${savedDrafts.length} 张多角度图片到草稿箱`,
+      content: `成功
+      保存 ${savedDrafts.length} 张多角度图片到草稿箱`,
       key: "saveToDraft",
     });
   } catch (error) {

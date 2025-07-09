@@ -30,7 +30,7 @@
               </el-button>
               <template #overlay>
                 <a-menu>
-                  <a-menu-item @click="workspaceEdit(item)"> 在工作台中编辑 </a-menu-item>
+                  <a-menu-item @click="workspaceEdit(item)"> 复制到工作台 </a-menu-item>
                   <a-menu-item @click="edit(item)"> 编辑 </a-menu-item>
                   <a-menu-item @click="deleteItem(item)">
                     <span style="color: var(--el-color-danger)">删除</span>
@@ -39,6 +39,7 @@
                   <a-menu-item @click="openShareCardModal(item)">
                     生成分享卡片
                   </a-menu-item>
+                  <a-menu-item @click="editInWorkspace(item)">在工作台中编辑</a-menu-item>
                 </a-menu>
               </template>
             </a-dropdown>
@@ -98,7 +99,7 @@ import { ref, onBeforeMount } from "vue";
 import { Search, ArrowRightBold, Operation, ArrowRight, MoreFilled, Loading } from "@element-plus/icons-vue";
 import { getStickerList } from "@/api";
 import desimage from "@/components/image.vue";
-import { currentModelController, viewDisplayController } from "@/components/design/store";
+import { currentModelController, viewDisplayController, enterEditMode } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
@@ -220,6 +221,13 @@ function workspaceEdit(item) {
 
 function downloadThumbnail(item) {
   saveAs(item.thumbnail);
+}
+
+function editInWorkspace(item) {
+  // 进入编辑模式，并将模型信息加载到工作台
+  enterEditMode(item.id, item);
+  let modelInfo = item.meta.modelInfo;
+  currentModelController.value.useModelInfo(modelInfo);
 }
 </script>
 

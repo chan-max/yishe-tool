@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-27 19:20:45
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-27 08:53:55
+ * @LastEditTime: 2025-07-08 23:32:50
  * @FilePath: /1s/src/components/design/layout/headerMenu.vue
  * @Description: 
  * 
@@ -17,6 +17,11 @@
       <img src="/favicon.png" style="height: 32px" object-fit="contain" />
     </div>
 
+    <template v-if="isEdit">
+        <el-tag type="primary" class="mr-2">当前模型ID : {{ currentEditingModelId }}</el-tag>
+        <el-button type="danger" size="small" @click="exitEditMode">退出</el-button>
+      </template>
+
     <div style="flex-grow: 1"></div>
 
     <a-button size="small" type="text"> 快速指南 </a-button>
@@ -25,6 +30,7 @@
     <connection-status />
 
     <div class="flex items-center">
+
       <!-- <a-dropdown>
         <el-button link class="icon-btn" @click="openFileDialog">
           <s1-icon name="file-upload-up-arrow" :size="16"></s1-icon>
@@ -95,6 +101,9 @@ import {
   builtInCanvasBackgrounds,
   currentCanvasBackground,
   isDarkMode,
+  isEdit,
+  currentEditingModelId,
+  exitEditMode,
 } from "../store";
 
 import { openFileModal } from "@/components/design/layout/upload/index.tsx";

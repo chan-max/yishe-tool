@@ -499,7 +499,12 @@ export const deleteFile = (data) => new Promise(async (resolve, reject) => {
 /*
  上传自定义的模型
 */
-export const createCustomModelApi = (data) => apiInstance.post(Url.UPLOAD_CUSTOM_MODEL, data);
+export const createCustomModelApi = (data) => new Promise(async (resolve, reject) => {
+  const res = await  apiInstance.post(Url.UPLOAD_CUSTOM_MODEL, data);
+  resolve(res.data.data)
+})
+
+
 
 
 export const getCustomModelList = (params) => new Promise(async (resolve, reject) => {
@@ -615,9 +620,9 @@ export const deleteDraft = (data) => new Promise(async (resolve, reject) => {
 
 
 // 句子相关API
-export const getSentenceList = (params?: any) => new Promise(async (resolve, reject) => {
+export const getSentenceList = (data?: any) => new Promise(async (resolve, reject) => {
   try {
-    const res = await apiInstance.get('/api/sentences', { params });
+    const res = await apiInstance.post('/api/sentences/page',  data );
     resolve(res.data.data || res.data);
   } catch (error) {
     reject(error);

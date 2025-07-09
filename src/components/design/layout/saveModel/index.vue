@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-27 07:42:41
+ * @LastEditTime: 2025-07-08 23:39:13
  * @FilePath: /1s/src/components/design/layout/saveModel/index.vue
  * @Description: 
  * 
@@ -102,6 +102,9 @@ import {
   lastestScreenshot,
   screenshots,
   showSaveModel,
+  isEdit,
+  currentEditingModelId,
+  exitEditMode,
 } from "../../store";
 import { base64ToFile, base64ToPngFile } from "@/common/transform/base64ToFile";
 import { useLoginStatusStore } from "@/store/stores/login";
@@ -111,6 +114,7 @@ import { CircleCloseFilled } from "@element-plus/icons-vue";
 import Utils from "@/common/utils";
 import { saveCustomModel } from "./index.ts";
 import { customModelAutoplacementTags } from "../../components/tagsInput";
+import { updateCustomModelWithUpload } from "./index.ts";
 
 const loginStore = useLoginStatusStore();
 
@@ -146,8 +150,23 @@ const loadingMessage = ref("");
 async function save() {
   try {
     loading.value = true;
-    await saveCustomModel(form.value);
-    message.success("上传成功");
+    if (isEdit.value) {
+      // 编辑模式，弹窗提示
+      await ElMessageBox.confirm(
+        "当前为修改模式，将会影响到原模型，是否继续？",
+        "提示",
+        { confirmButtonText: "确定", cancelButtonText: "取消", type: "warning" }
+      );
+      await updateCustomModelWithUpload({
+        ...form.value,
+        id: currentEditingModelId.value,
+      });
+      message.success("模型修改成功");
+      // exitEditMode();
+    } else {
+      await saveCustomModel(form.value);
+      message.success("上传成功");
+    }
   } catch (e) {
   } finally {
     loading.value = false;
@@ -180,7 +199,7 @@ function autofillInfo() {
       keywords += "," + item.info.keywords;
     }
   });
-
+  
   form.value = {
     name,
     description,

@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-20 08:07:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-27 06:06:52
+ * @LastEditTime: 2025-07-10 06:30:10
  * @FilePath: /yishe/src/modules/main/main.ts
  * @Description: 
  * 
@@ -71,9 +71,68 @@ import to from 'await-to-js';
 import { NativeWindowMessenger } from '@/utils/nativeWindowMessenger'
 import { setAdminConnected } from '@/store/stores/connectionStatus'
 
+// 检查并处理 URL 参数中的 token
+async function handleUrlToken() {
+  // 解析 URL 参数，支持 hash 路由
+  let tokenFromUrl = null;
+  
+  // 方法1: 尝试从 search 参数获取
+  const urlParams = new URLSearchParams(window.location.search);
+  tokenFromUrl = urlParams.get('token');
+  
+  // 方法2: 如果 search 中没有，尝试从 hash 中获取
+  if (!tokenFromUrl && window.location.hash) {
+    const hashParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
+    tokenFromUrl = hashParams.get('token');
+  }
+  
+  // 方法3: 直接从完整 URL 中解析
+  if (!tokenFromUrl) {
+    const fullUrl = window.location.href;
+    const tokenMatch = fullUrl.match(/[?&]token=([^&#]+)/);
+    if (tokenMatch) {
+      tokenFromUrl = decodeURIComponent(tokenMatch[1]);
+    }
+  }
+
+  console.log('当前 URL:', window.location.href);
+  console.log('search 参数:', window.location.search);
+  console.log('hash 参数:', window.location.hash);
+  console.log('解析到的 token:', tokenFromUrl);
+
+  if (tokenFromUrl) {
+    console.log('处理urltoken')
+
+    const loginStore = useLoginStatusStore();
+    
+    // 使用虚拟登录方法设置 token 并获取用户信息
+    const loginSuccess = await loginStore.virtualLogin(tokenFromUrl);
+    
+    if (loginSuccess) {
+      console.log('从 URL 参数获取到 token 并完成虚拟登录');
+      
+      // 清除 URL 中的 token 参数（避免在地址栏显示）
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.delete('token');
+      
+      // 如果 hash 中有 token，也要清除
+      if (currentUrl.hash && currentUrl.hash.includes('token=')) {
+        const hashUrl = new URL('http://dummy.com' + currentUrl.hash);
+        hashUrl.searchParams.delete('token');
+        currentUrl.hash = hashUrl.pathname + hashUrl.search;
+      }
+      
+      window.history.replaceState({}, '', currentUrl.toString());
+    } else {
+      console.error('虚拟登录失败，token 可能无效');
+    }
+  } else {
+    console.log('无token')
+  }
+}
+
 
 async function setup() {
-
 
     // pc 端专有的拦截器
     apiInstance.interceptors.response.use(defaultResponseInterceptors);
@@ -113,6 +172,8 @@ async function setup() {
 
     await initConfigStoreBasicConfig()
 
+      // 处理 URL 参数中的 token
+      await handleUrlToken();
     app.mount('#app')
 
 }

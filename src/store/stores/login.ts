@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2024-02-07 14:09:46
+ * @LastEditTime: 2025-07-10 06:31:15
  * @FilePath: /1s/src/store/stores/login.ts
  * @Description: 
  * 
@@ -60,6 +60,39 @@ export const useLoginStatusStore = defineStore("login_status", () => {
     token.value = null
   }
 
+  // 虚拟登录方法：设置 token 并获取用户信息
+  async function virtualLogin(tokenValue: string) {
+    try {
+      // 清理 token 格式，确保不包含 Bearer 前缀
+      const cleanToken = tokenValue
+      
+      // 设置 token
+      token.value = cleanToken;
+
+
+      console.log('设置token',token.value)
+
+      // 设置登录状态
+      isLogin.value = true;
+      
+      // 设置登录时间
+      loginTime.value = new Date().toISOString();
+      
+      // 获取用户信息
+      await getUserInfo();
+      
+      console.log('虚拟登录成功，用户信息已获取');
+      return true;
+    } catch (error) {
+      console.error('虚拟登录失败:', error);
+      // 如果获取用户信息失败，回滚登录状态
+      isLogin.value = false;
+      token.value = null;
+      loginTime.value = null;
+      return false;
+    }
+  }
+
   return {
     isLogin, //
     userInfo,
@@ -68,7 +101,8 @@ export const useLoginStatusStore = defineStore("login_status", () => {
     once,
     isAdmin,
     logout,
-    getUserInfo
+    getUserInfo,
+    virtualLogin
   };
 });
 

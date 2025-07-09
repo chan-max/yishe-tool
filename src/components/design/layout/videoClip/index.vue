@@ -9,54 +9,36 @@
 <template>
   <div style="width: 340px; padding: 12px">
     <el-form>
-
       <el-form-item label="导出图片">
         <div>
           <!-- 角度选择器 -->
           <div class="mb-3">
             <!-- 快速选择按钮 -->
             <div class="flex flex-wrap gap-1 mb-3">
-              <el-button 
-                size="small" 
-                type="primary" 
-                plain
-                @click="selectDefaultAngles"
-              >
+              <el-button size="small" type="primary" plain @click="selectDefaultAngles">
                 默认(前后左右)
               </el-button>
-              <el-button 
-                size="small" 
-                type="primary" 
-                plain
-                @click="selectAllAngles"
-              >
+              <el-button size="small" type="primary" plain @click="selectAllAngles">
                 全选
               </el-button>
-              <el-button 
-                size="small" 
-                type="primary" 
-                plain
-                @click="clearAllAngles"
-              >
+              <el-button size="small" type="primary" plain @click="clearAllAngles">
                 清空
               </el-button>
             </div>
 
-
-              <div class="flex flex-wrap justify-center gap-2">
-                <div 
-                  v-for="angle in availableAngles" 
-                  :key="angle.name"
-                  class="custom-checkbox"
-                  :class="{ 'selected': selectedAngles.includes(angle.name) }"
-                  @click="toggleAngle(angle.name)"
-                >
-                  <div class="flex items-center gap-1">
-                    <span class="text-xs">{{ angle.label }}</span>
-                  </div>
+            <div class="flex flex-wrap justify-center gap-2">
+              <div
+                v-for="angle in availableAngles"
+                :key="angle.name"
+                class="custom-checkbox"
+                :class="{ selected: selectedAngles.includes(angle.name) }"
+                @click="toggleAngle(angle.name)"
+              >
+                <div class="flex items-center gap-1">
+                  <span class="text-xs">{{ angle.label }}</span>
                 </div>
               </div>
-   
+            </div>
 
             <!-- 选中数量显示 -->
             <div class="text-xs text-gray-500 mt-2">
@@ -66,24 +48,28 @@
 
           <!-- 导出按钮 -->
           <div class="flex gap-2">
-            <el-button 
+            <el-button
               class="w-full"
-              type="primary" 
-              round 
+              type="primary"
+              round
               :disabled="selectedAngles.length === 0"
               @click="handleExportImages"
             >
               下载多角度图 ({{ selectedAngles.length }}张)
             </el-button>
-            <el-button 
+            <el-button
               class="w-full"
-              type="success" 
-              round 
+              type="success"
+              round
               :disabled="selectedAngles.length === 0"
               :loading="isSavingToDraft"
               @click="handleSaveToDraft"
             >
-              {{ isSavingToDraft ? '保存中...' : `保存到草稿箱 (${selectedAngles.length}张)` }}
+              {{
+                isSavingToDraft
+                  ? "保存中..."
+                  : `保存到草稿箱 (${selectedAngles.length}张)`
+              }}
             </el-button>
           </div>
         </div>
@@ -92,37 +78,36 @@
       <el-form-item label="执行动画">
         <div>
           <div class="flex flex-wrap" style="gap: 8px">
-          <a-button
-            size="small"
-            v-for="item in animations"
-            class="cursor-pointer round"
-            @click="item.handle"
-          >
-            {{ item.title }}
-          </a-button>
-        </div>
+            <a-button
+              size="small"
+              v-for="item in animations"
+              class="cursor-pointer round"
+              @click="item.handle"
+            >
+              {{ item.title }}
+            </a-button>
+          </div>
 
-        <div>
-          <el-switch v-model="isRecordingEnabled" size="small" />
-          <div class="text-xs text-gray-500 mt-1">开启后执行动画时会自动录制视频</div>  
-        </div>
+          <div>
+            <el-switch v-model="isRecordingEnabled" size="small" />
+            <div class="text-xs text-gray-500 mt-1">开启后执行动画时会自动录制视频</div>
+          </div>
         </div>
       </el-form-item>
-
 
       <el-form-item label="录制视频">
         <div class="flex items-center gap-2">
-          <el-button 
-            type="primary" 
-            round 
-            :class="{ 'recording': isRecording }"
+          <el-button
+            type="primary"
+            round
+            :class="{ recording: isRecording }"
             @click="handleRecord"
           >
-            {{ isRecording ? `录制中 ${timeCount}s` : '开始录制' }}
+            {{ isRecording ? `录制中 ${timeCount}s` : "开始录制" }}
           </el-button>
         </div>
       </el-form-item>
-      
+
       <!-- <el-form-item label="调整视图">
         <div class="flex flex-wrap" style="gap: 8px">
           <a-button
@@ -145,11 +130,13 @@ import { ref, computed, onMounted } from "vue";
 import gsap from "gsap";
 import { message } from "ant-design-vue";
 import { uploadToCOS, createDraft } from "@/api";
-import { QuestionFilled } from '@element-plus/icons-vue';
+import { QuestionFilled } from "@element-plus/icons-vue";
 import {
   isRecordingEnabled,
   animations,
   modelControllerViewSetterOptions,
+  isEdit,
+  currentEditingModelInfo,
 } from "./index.ts";
 
 // 录制相关状态
@@ -180,7 +167,7 @@ const selectDefaultAngles = () => {
 
 // 全选所有角度
 const selectAllAngles = () => {
-  selectedAngles.value = availableAngles.value.map(angle => angle.name);
+  selectedAngles.value = availableAngles.value.map((angle) => angle.name);
 };
 
 // 清空所有选择
@@ -201,32 +188,32 @@ const toggleAngle = (angleName: string) => {
 // 处理导出图片
 const handleExportImages = async () => {
   if (selectedAngles.value.length === 0) {
-    message.warning('请至少选择一个角度');
+    message.warning("请至少选择一个角度");
     return;
   }
 
   try {
     message.loading({
       content: `正在生成 ${selectedAngles.value.length} 张多角度图片...`,
-      key: 'exportImages'
+      key: "exportImages",
     });
 
     await currentModelController.value.batchDownloadMultiAngleImages({
       angles: selectedAngles.value,
-      filename: 'model',
-      showProgress: true
+      filename: "model",
+      showProgress: true,
     });
 
     message.success({
       content: `成功导出 ${selectedAngles.value.length} 张图片`,
-      key: 'exportImages'
+      key: "exportImages",
     });
   } catch (error) {
     message.error({
-      content: '导出失败',
-      key: 'exportImages'
+      content: "导出失败",
+      key: "exportImages",
     });
-    console.error('导出图片失败:', error);
+    console.error("导出图片失败:", error);
   }
 };
 
@@ -242,12 +229,13 @@ const handleRecord = async () => {
     // 开始录制
     isRecording.value = true;
     currentModelController.value.startMediaRecord({
-      onStop: handleRecordedVideo
+      onStop: handleRecordedVideo,
     });
-    
+
     // 开始计时
     timeCountInterval = setInterval(() => {
-      if (timeCount.value >= 60) { // 最多录制60秒
+      if (timeCount.value >= 60) {
+        // 最多录制60秒
         handleRecord();
         return;
       }
@@ -260,21 +248,23 @@ const handleRecord = async () => {
 const handleRecordedVideo = async (blob: Blob) => {
   try {
     // 创建文件对象
-    const file = new File([blob], `录制视频_${new Date().getTime()}.webm`, { type: 'video/webm' });
-    
+    const file = new File([blob], `录制视频_${new Date().getTime()}.webm`, {
+      type: "video/webm",
+    });
+
     // 上传到 COS
     const cos = await uploadToCOS({ file });
-    
+
     // 保存到草稿箱
     await createDraft({
       url: cos.url,
-      name: '模型录制视频',
-      updateTime: new Date()
+      name: "模型录制视频",
+      updateTime: new Date(),
     });
-    
-    message.success('视频已保存到草稿箱');
+
+    message.success("视频已保存到草稿箱");
   } catch (err) {
-    message.error('保存视频失败');
+    message.error("保存视频失败");
     console.error(err);
   }
 };
@@ -282,7 +272,7 @@ const handleRecordedVideo = async (blob: Blob) => {
 // 处理保存到草稿箱
 const handleSaveToDraft = async () => {
   if (selectedAngles.value.length === 0) {
-    message.warning('请至少选择一个角度');
+    message.warning("请至少选择一个角度");
     return;
   }
 
@@ -291,39 +281,47 @@ const handleSaveToDraft = async () => {
   try {
     message.loading({
       content: `正在生成 ${selectedAngles.value.length} 张多角度图片...`,
-      key: 'saveToDraft'
+      key: "saveToDraft",
     });
 
     // 获取多角度图片
-    const images = await currentModelController.value.exportMultiAngleImages(selectedAngles.value);
-    
+    const images = await currentModelController.value.exportMultiAngleImages(
+      selectedAngles.value
+    );
+
     message.loading({
       content: `正在上传 ${images.length} 张图片到云端...`,
-      key: 'saveToDraft'
+      key: "saveToDraft",
     });
 
     // 并发上传所有图片
     const uploadPromises = images.map(async (image) => {
       // 将base64转换为文件
-      const base64Data = image.base64.split(',')[1];
+      const base64Data = image.base64.split(",")[1];
       const byteCharacters = atob(base64Data);
       const byteNumbers = new Array(byteCharacters.length);
       for (let j = 0; j < byteCharacters.length; j++) {
         byteNumbers[j] = byteCharacters.charCodeAt(j);
       }
       const byteArray = new Uint8Array(byteNumbers);
-      const file = new File([byteArray], `多角度图片_${image.label}.png`, { type: 'image/png' });
+      const file = new File([byteArray], `多角度图片_${image.label}.png`, {
+        type: "image/png",
+      });
 
       // 上传到 COS
       const cos = await uploadToCOS({ file });
-      
+
       // 保存到草稿箱
-      const draft = await createDraft({
+      const draftPayload = {
         url: cos.url,
         name: `多角度图片_${image.label}`,
-        updateTime: new Date()
-      });
-      
+        updateTime: new Date(),
+        customModelId:null,
+      };
+      if (isEdit?.value && currentEditingModelInfo?.value?.id) {
+        draftPayload.customModelId = currentEditingModelInfo.value.id;
+      }
+      const draft = await createDraft(draftPayload);
       return draft;
     });
 
@@ -332,14 +330,14 @@ const handleSaveToDraft = async () => {
 
     message.success({
       content: `成功保存 ${savedDrafts.length} 张多角度图片到草稿箱`,
-      key: 'saveToDraft'
+      key: "saveToDraft",
     });
   } catch (error) {
     message.error({
-      content: '保存到草稿箱失败',
-      key: 'saveToDraft'
+      content: "保存到草稿箱失败",
+      key: "saveToDraft",
     });
-    console.error('保存到草稿箱失败:', error);
+    console.error("保存到草稿箱失败:", error);
   } finally {
     isSavingToDraft.value = false;
   }

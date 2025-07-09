@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { currentModelController } from "../../store";
+import { isEdit, currentEditingModelInfo } from '../../store';
 import gsap from "gsap";
 import { FrontSide } from "three";
 import { message } from "ant-design-vue";
@@ -169,6 +170,8 @@ async function fadeInScene(scene, duration) {
     // 等待所有淡入动画完成
     await Promise.all(fadePromises);
 }
+
+export { isEdit, currentEditingModelInfo };
 
 
 

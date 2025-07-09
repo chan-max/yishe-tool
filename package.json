@@ -89,6 +89,7 @@
     "pg-hstore": "^2.3.4",
     "pinia": "^2.2.0",
     "png2ico": "^0.4.1",
+    "postmate": "^1.5.2",
     "primevue": "^4.1.1",
     "qr-border-plugin": "^0.0.9",
     "qr-code-styling": "^1.6.0-rc.1",

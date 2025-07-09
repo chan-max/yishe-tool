@@ -68,6 +68,7 @@ import AutomationOverlay from '@/components/automationOverlay.vue'
 import { useConfigStore, initConfigStoreBasicConfig } from '@/store/stores/config.ts';
 import { useLoginStatusStore, initLoginStoreUserInfo } from '@/store/stores/login';
 import to from 'await-to-js';
+import { NativeWindowMessenger } from '@/utils/nativeWindowMessenger'
 
 
 async function setup() {
@@ -123,6 +124,14 @@ if (Utils.isMobile) {
     createMobileApp()
 } else {
     setup()
+}
+
+if (window.opener) {
+  const messenger = new NativeWindowMessenger()
+  // 监听父窗口请求
+  messenger.on('test', () => {
+    messenger.send('customEvent', 'connected')
+  })
 }
 
 

@@ -64,7 +64,7 @@ export default defineConfig((config: any) => {
     plugins: [
       alias(),
       // https dev
-      basicSsl(),
+      // basicSsl(),
       Components({
         resolvers: [VantResolver()],
       }),

@@ -45,7 +45,7 @@ jobs:
           timeout: "10m"
           debug: true
 
-      - name: Deploy to 1s.design/design
+      - name: Deploy to 1s.design/tools
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -53,7 +53,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
           source: "www/**"
-          target: "/www/wwwroot/1s.design/design"
+          target: "/www/wwwroot/1s.design/tools"
           rm: false
           strip_components: 1
           overwrite: true

@@ -14,6 +14,12 @@ export const isLocalConnected = ref(false)
 // 远程服务连接状态
 export const isRemoteConnected = ref(false)
 
+// 管理系统连接状态
+export const isAdminConnected = ref(false)
+export const setAdminConnected = (val: boolean) => {
+  isAdminConnected.value = val
+}
+
 // 检查本地客户端连接
 export const checkLocalConnection = async () => {
   try {

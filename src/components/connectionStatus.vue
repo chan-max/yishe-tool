@@ -31,6 +31,22 @@
         </span>
       </div>
     </el-tooltip>
+
+    <!-- 管理系统状态 -->
+    <el-tooltip
+      :content="isAdminConnected ? '管理系统已连接' : '管理系统未连接'"
+      placement="bottom"
+    >
+      <div class="status-item">
+        <div
+          class="status-dot"
+          :class="{ 'connected': isAdminConnected, 'disconnected': !isAdminConnected }"
+        />
+        <span class="status-text" :class="{ 'connected': isAdminConnected, 'disconnected': !isAdminConnected }">
+          {{ isAdminConnected ? '管理系统已连接' : '管理系统未连接' }}
+        </span>
+      </div>
+    </el-tooltip>
   </div>
 </template>
 
@@ -39,6 +55,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { 
   isLocalConnected, 
   isRemoteConnected,
+  isAdminConnected,
   startConnectionChecks,
   clearConnectionChecks
 } from '@/store/stores/connectionStatus'

@@ -69,6 +69,7 @@ import { useConfigStore, initConfigStoreBasicConfig } from '@/store/stores/confi
 import { useLoginStatusStore, initLoginStoreUserInfo } from '@/store/stores/login';
 import to from 'await-to-js';
 import { NativeWindowMessenger } from '@/utils/nativeWindowMessenger'
+import { setAdminConnected } from '@/store/stores/connectionStatus'
 
 
 async function setup() {
@@ -132,6 +133,31 @@ if (window.opener) {
   messenger.on('test', () => {
     messenger.send('customEvent', 'connected')
   })
+  // 监听 ping 并回复 pong
+  messenger.on('ping', () => {
+    messenger.send('pong', null)
+  })
+  // 管理系统心跳检测
+  let adminPongTimeout: number | null = null
+  function sendAdminPing() {
+    messenger.send('adminPing', null)
+    // 超时未收到 adminPong 认为断开
+    adminPongTimeout = window.setTimeout(() => {
+      setAdminConnected(false)
+    }, 3000)
+  }
+  // 监听 adminPong
+  messenger.on('adminPong', () => {
+    setAdminConnected(true)
+    if (adminPongTimeout) {
+      clearTimeout(adminPongTimeout)
+      adminPongTimeout = null
+    }
+  })
+  // 定时发送 adminPing
+  setInterval(sendAdminPing, 5000)
+  // 首次立即检测
+  sendAdminPing()
 }
 
 

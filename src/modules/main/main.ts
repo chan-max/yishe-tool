@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-20 08:07:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-10 06:30:10
+ * @LastEditTime: 2025-07-10 08:17:35
  * @FilePath: /yishe/src/modules/main/main.ts
  * @Description: 
  * 
@@ -70,6 +70,7 @@ import { useLoginStatusStore, initLoginStoreUserInfo } from '@/store/stores/logi
 import to from 'await-to-js';
 import { NativeWindowMessenger } from '@/utils/nativeWindowMessenger'
 import { setAdminConnected } from '@/store/stores/connectionStatus'
+import { setupSingleTabManager } from '@/utils/singleTabManager'
 
 // 检查并处理 URL 参数中的 token
 async function handleUrlToken() {
@@ -133,6 +134,12 @@ async function handleUrlToken() {
 
 
 async function setup() {
+
+    // 启动单标签页管理器
+    const canContinue = setupSingleTabManager();
+    if (!canContinue) {
+        return; // 如果检测到其他活跃标签页，直接返回
+    }
 
     // pc 端专有的拦截器
     apiInstance.interceptors.response.use(defaultResponseInterceptors);

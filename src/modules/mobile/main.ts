@@ -45,8 +45,15 @@ import './index.less'
 
 
 import { mobileDefaultResponseInterceptors } from '@/api/apiInterception'
+import { setupSingleTabManager } from '@/utils/singleTabManager'
 
 export async function createMobileApp() {
+
+    // 启动单标签页管理器
+    const canContinue = setupSingleTabManager();
+    if (!canContinue) {
+        return; // 如果检测到其他活跃标签页，直接返回
+    }
 
     apiInstance.interceptors.response.use(mobileDefaultResponseInterceptors);
 

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:26
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-10 06:31:15
+ * @LastEditTime: 2025-07-10 08:00:40
  * @FilePath: /1s/src/store/stores/login.ts
  * @Description: 
  * 
@@ -14,6 +14,7 @@ import { defineStore } from "pinia";
 import { reactive, ref, watch, toRaw, isReactive, isRef, unref } from "vue";
 import Api from '@/api'
 import to from 'await-to-js';
+import { message } from "ant-design-vue";
 
 
 export async function initLoginStoreUserInfo() {
@@ -63,12 +64,17 @@ export const useLoginStatusStore = defineStore("login_status", () => {
   // 虚拟登录方法：设置 token 并获取用户信息
   async function virtualLogin(tokenValue: string) {
     try {
+      // 先清除原来的登录状态
+      isLogin.value = false;
+      userInfo.value = null;
+      loginTime.value = null;
+      isAdmin.value = false;
+      
       // 清理 token 格式，确保不包含 Bearer 前缀
       const cleanToken = tokenValue
       
-      // 设置 token
+      // 设置新的 token
       token.value = cleanToken;
-
 
       console.log('设置token',token.value)
 
@@ -82,6 +88,7 @@ export const useLoginStatusStore = defineStore("login_status", () => {
       await getUserInfo();
       
       console.log('虚拟登录成功，用户信息已获取');
+      message.success('自动登录成功')
       return true;
     } catch (error) {
       console.error('虚拟登录失败:', error);
@@ -89,6 +96,8 @@ export const useLoginStatusStore = defineStore("login_status", () => {
       isLogin.value = false;
       token.value = null;
       loginTime.value = null;
+      userInfo.value = null;
+      isAdmin.value = false;
       return false;
     }
   }

@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-27 19:20:45
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-08 23:32:50
+ * @LastEditTime: 2025-07-11 07:17:16
  * @FilePath: /1s/src/components/design/layout/headerMenu.vue
  * @Description: 
  * 
@@ -14,12 +14,12 @@
       class="designiy-header-logo flex items-center justify-center shrink-0"
       style="width: 64px; height: 100%"
     >
-      <img src="/favicon.png" style="height: 32px" object-fit="contain" />
+      <img src="/favicon.png" style="height: 32px; object-fit: contain;" />
     </div>
 
     <template v-if="isEdit">
-        <el-tag type="primary" class="mr-2">当前模型ID : {{ currentEditingModelId }}</el-tag>
-        <el-button type="danger" size="small" @click="exitEditMode">退出</el-button>
+        <span class="mr-2">当前模型ID : {{ currentEditingModelId }}</span>
+        <el-button type="danger" size="small" @click="confirmExitEditMode">退出</el-button>
       </template>
 
     <div style="flex-grow: 1"></div>
@@ -62,11 +62,11 @@
         </template>
       </a-dropdown> -->
 
-      <el-button @click="showUpload = true" round text bg :icon="Upload">
+      <el-button @click="showUpload = true" round text :icon="UploadFilled">
         素材上传
       </el-button>
 
-      <el-button @click="toggleAutomation" round text bg >
+      <el-button @click="toggleAutomation" round text>
         {{ isAutomationRunning ? '关闭自动化' : '开启自动化' }}
       </el-button>
 
@@ -89,6 +89,7 @@
 <script setup>
 import { getBaseModel, getBaseSkybox } from "@/api/index.ts";
 import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
+import { ElMessageBox } from "element-plus";
 import {
   canvasBgColor,
   canvasBgOpacity,
@@ -107,7 +108,7 @@ import {
 } from "../store";
 
 import { openFileModal } from "@/components/design/layout/upload/index.tsx";
-import { Share } from "@element-plus/icons-vue";
+import { Share, UploadFilled } from "@element-plus/icons-vue";
 import userAvatar from "@/components/user/userAvatar.vue";
 import headerMenuDropdown from "./headerMenuDropdown/index.vue";
 import { onShortcutTrigger } from "../shortcut/index";
@@ -166,6 +167,24 @@ function toggleAutomation() {
   } else {
     startAutomation('手动开启的自动化操作');
   }
+}
+
+function confirmExitEditMode() {
+  ElMessageBox.confirm(
+    '退出编辑模式后，所有改动不会影响到已保存的模型，截图也不会关联到该模型。确定要退出吗？',
+    '确认退出编辑模式',
+    {
+      confirmButtonText: '确定退出',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      exitEditMode();
+    })
+    .catch(() => {
+      // 用户取消退出
+    });
 }
 
 </script>

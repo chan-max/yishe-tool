@@ -9,7 +9,7 @@
           class="flex flex-col items-center justify-start h-[240px]"
         >
           <!-- 视频文件 -->
-          <div v-if="isVideo(item.url)" class="w-full !h-[180px] rounded-lg bg-[#f6f6f6] relative">
+          <div v-if="isVideo(item.url)" class="w-full !h-[180px] rounded-lg bg-[#f6f6f6] relative group">
             <video 
               class="w-full h-full object-contain"
               :src="item.url"
@@ -19,14 +19,50 @@
             <div class="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-sm">
               视频
             </div>
+            <!-- 自定义模型标识 -->
+            <div v-if="item.customModelInfo" class="absolute top-2 left-2">
+              <div class="bg-blue-500 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-lg cursor-help hover:bg-blue-600 transition-colors relative">
+                模型
+                <!-- 悬停提示 -->
+                <div class="absolute top-full left-0 mt-2 opacity-0 hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:opacity-100">
+                  <div class="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm shadow-lg whitespace-nowrap">
+                    <div class="font-medium mb-1">关联模型：</div>
+                    <div class="text-blue-300">{{ item.customModelInfo.name }}</div>
+                    <div class="text-gray-400 text-xs mt-1">ID: {{ item.customModelInfo.id }}</div>
+                    <div v-if="item.customModelInfo.description" class="text-gray-300 text-xs mt-1 max-w-48 break-words">
+                      {{ item.customModelInfo.description }}
+                    </div>
+                    <div class="absolute bottom-full left-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <!-- 图片文件 -->
           <s1-img
             v-else
             padding="5%"
             :src="item.url"
-            class="w-[240px] !h-[180px] rounded-lg bg-[#f6f6f6] flex-shrink-0"
+            class="w-[240px] !h-[180px] rounded-lg bg-[#f6f6f6] flex-shrink-0 relative group"
           >
+            <!-- 自定义模型标识 -->
+            <div v-if="item.customModelInfo" class="absolute top-2 left-2 z-10">
+              <div class="bg-blue-500 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-lg cursor-help hover:bg-blue-600 transition-colors relative">
+                模型
+                <!-- 悬停提示 -->
+                <div class="absolute top-full left-0 mt-2 opacity-0 hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:opacity-100">
+                  <div class="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm shadow-lg whitespace-nowrap">
+                    <div class="font-medium mb-1">关联模型：</div>
+                    <div class="text-blue-300">{{ item.customModelInfo.name }}</div>
+                    <div class="text-gray-400 text-xs mt-1">ID: {{ item.customModelInfo.id }}</div>
+                    <div v-if="item.customModelInfo.description" class="text-gray-300 text-xs mt-1 max-w-48 break-words">
+                      {{ item.customModelInfo.description }}
+                    </div>
+                    <div class="absolute bottom-full left-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </s1-img>
           <div class="bar flex items-center justify-between w-full mt-2 px-2">
             <div class="text-ellipsis max-w-[80px]">
@@ -43,6 +79,9 @@
               </el-button>
               <template #overlay>
                 <a-menu>
+                  <a-menu-item v-if="item.customModelInfo" @click="openRelatedModel(item)">
+                    <span style="color: var(--el-color-primary)">打开关联模型</span>
+                  </a-menu-item>
                   <a-menu-item @click="deleteItem(item)">
                     <span style="color: var(--el-color-danger)">删除</span>
                   </a-menu-item>
@@ -82,10 +121,11 @@
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
 import { MoreFilled, Loading } from "@element-plus/icons-vue";
-import { getDraftList, deleteDraft } from "@/api";
+import { getDraftList, deleteDraft, getCustomModelById } from "@/api";
 import Utils from "@/common/utils";
 import { message } from "ant-design-vue";
 import { s1Confirm } from "@/common/message";
+import { currentModelController, enterEditMode } from "@/components/design/store";
 
 // 分页相关
 const currentPage = ref(1);
@@ -100,6 +140,20 @@ function isVideo(url: string) {
   return url.toLowerCase().endsWith('.webm') || url.toLowerCase().endsWith('.mp4');
 }
 
+// 获取自定义模型信息
+async function getCustomModelInfo(customModelId: string) {
+  if (!customModelId) return null;
+  try {
+    console.log('正在获取模型信息，ID:', customModelId);
+    const modelInfo = await getCustomModelById(customModelId);
+    console.log('获取到的模型信息:', modelInfo);
+    return modelInfo;
+  } catch (error) {
+    console.error('获取自定义模型信息失败:', error);
+    return null;
+  }
+}
+
 // 获取列表数据
 async function getList() {
   loading.value = true;
@@ -108,7 +162,25 @@ async function getList() {
       currentPage: currentPage.value,
       pageSize: pageSize.value,
     });
-    list.value = res.list;
+    
+    // 为有 customModelId 的草稿获取模型信息
+    const listWithModelInfo = await Promise.all(
+      res.list.map(async (item) => {
+        console.log('处理草稿项:', item);
+        if (item.customModelId) {
+          console.log('草稿有关联模型，ID:', item.customModelId);
+          const modelInfo = await getCustomModelInfo(item.customModelId);
+          return {
+            ...item,
+            customModelInfo: modelInfo
+          };
+        }
+        console.log('草稿没有关联模型');
+        return item;
+      })
+    );
+    
+    list.value = listWithModelInfo;
     total.value = res.total;
     isEmpty.value = list.value.length === 0;
   } catch (error) {
@@ -149,6 +221,25 @@ async function deleteItem(item) {
   await deleteDraft({ids:[item.id]});
   reset();
   message.success("删除成功");
+}
+
+// 打开关联模型
+async function openRelatedModel(item) {
+  if (!item.customModelInfo) {
+    message.error("该草稿没有关联的模型");
+    return;
+  }
+
+  try {
+    // 进入编辑模式，并将模型信息加载到工作台
+    enterEditMode(item.customModelInfo.id, item.customModelInfo);
+    let modelInfo = item.customModelInfo.meta.modelInfo;
+    await currentModelController.value.useModelInfo(modelInfo);
+    message.success("已打开关联模型");
+  } catch (error) {
+    console.error('打开关联模型失败:', error);
+    message.error("打开关联模型失败");
+  }
 }
 </script>
 

@@ -1,5 +1,8 @@
 import { NativeWindowMessenger } from '@/utils/nativeWindowMessenger'
 import { setAdminConnected } from '@/store/stores/connectionStatus'
+import { useRouter } from 'vue-router'
+import { currentModelController } from '@/components/design/store'
+import { message } from 'ant-design-vue'
 
 export interface DesignModelData {
   materialIds: string[]
@@ -76,15 +79,51 @@ export class DesignToolReceiver {
     }
   }
 
-  private handleDesignModelData(data: DesignModelData) {
+  // 检查store是否可用
+  // private isStoreAvailable(): boolean {
+  //   try {
+  //     return currentModelController.value !== null && currentModelController.value !== undefined
+  //   } catch (error) {
+  //     console.warn('Store not available yet:', error)
+  //     return false
+  //   }
+  // }
+
+
+  private async handleDesignModelData(data: DesignModelData) {
     console.log('=== 设计模型数据接收成功 ===')
     console.log('素材ID数组:', data.materialIds)
     console.log('设计模型ID数组:', data.designModelIds)
     console.log('预计生成数量:', data.materialIds.length * data.designModelIds.length)
     console.log('========================')
     
-    // 这里可以添加具体的处理逻辑
-    // 比如跳转到设计页面、显示数据等
+    // 根据设计模型ID打开设计模型
+    // if (data.designModelIds && data.designModelIds.length > 0) {
+    //   try {
+    //     // 获取第一个设计模型ID（如果有多个，先处理第一个）
+    //     const modelId = data.designModelIds[0]
+        
+    //     // 使用controller中封装的openModelById方法
+    //     const success = await currentModelController.value.openModelById(modelId, {
+    //       showSuccessMessage: true,
+    //       showErrorMessage: true,
+    //       autoEnterEditMode: true
+    //     });
+        
+    //     if (success) {
+    //       console.log('设计模型加载完成')
+    //     } else {
+    //       console.error('设计模型加载失败')
+    //     }
+        
+    //   } catch (error) {
+    //     console.error('打开设计模型失败:', error)
+    //     message.error('打开设计模型失败，请检查模型ID是否正确')
+    //   }
+    // } else {
+    //   console.warn('没有提供设计模型ID')
+    //   message.warning('没有提供设计模型ID')
+    // }
   }
 
   // 销毁实例

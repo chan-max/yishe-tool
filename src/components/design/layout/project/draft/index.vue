@@ -127,7 +127,7 @@ import { getDraftList, deleteDraft, getCustomModelById } from "@/api";
 import Utils from "@/common/utils";
 import { message } from "ant-design-vue";
 import { s1Confirm } from "@/common/message";
-import { currentModelController, enterEditMode } from "@/components/design/store";
+import { currentModelController } from "@/components/design/store";
 
 // 分页相关
 const currentPage = ref(1);
@@ -233,21 +233,18 @@ async function openRelatedModel(item) {
   }
 
   try {
-    // 如果没有模型信息，先获取
-    let modelInfo = item.customModelInfo;
-    if (!modelInfo) {
-      modelInfo = await getCustomModelInfo(item.customModelId);
-      if (!modelInfo) {
-        message.error("无法获取关联模型信息");
-        return;
-      }
+    // 使用controller中封装的openModelById方法
+    const success = await currentModelController.value.openModelById(item.customModelId, {
+      showSuccessMessage: true,
+      showErrorMessage: true,
+      autoEnterEditMode: true
+    });
+    
+    if (success) {
+      console.log('关联模型打开成功');
+    } else {
+      console.error('关联模型打开失败');
     }
-
-    // 进入编辑模式，并将模型信息加载到工作台
-    enterEditMode(modelInfo.id, modelInfo);
-    let modelMetaInfo = modelInfo.meta.modelInfo;
-    await currentModelController.value.useModelInfo(modelMetaInfo);
-    message.success("已打开关联模型");
   } catch (error) {
     console.error('打开关联模型失败:', error);
     message.error("打开关联模型失败");

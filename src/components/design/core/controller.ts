@@ -44,7 +44,7 @@ import { ElMessage } from "element-plus";
 import { base64ToFile } from "@/common/transform/base64ToFile";
 import { DecalController } from "./decalController";
 import { _1stfExporterMixin } from "./1stf";
-import { currentModelController, isUsingClickDelaySticker, clickDelaySticker, viewDisplayController, currentCanvasBackgroundImageId, builtInCanvasBackgroundImages } from '@/components/design/store'
+import { currentModelController, isUsingClickDelaySticker, clickDelaySticker, viewDisplayController, currentCanvasBackgroundImageId, builtInCanvasBackgroundImages, enterEditMode } from '@/components/design/store'
 import { eventMixin } from "./event";
 import { meta } from '../meta'
 import { Base } from './base'
@@ -192,6 +192,64 @@ export class ModelController {
         this.isMobile = true
 
         this.cameraController = new CameraController(this)
+    }
+
+    /**
+     * 根据设计模型ID打开模型到控制台
+     * @param modelId 设计模型ID
+     * @param options 可选配置
+     * @returns Promise<boolean> 是否成功打开
+     */
+    async openModelById(modelId: string, options: {
+        showSuccessMessage?: boolean, // 是否显示成功消息
+        showErrorMessage?: boolean,   // 是否显示错误消息
+        autoEnterEditMode?: boolean   // 是否自动进入编辑模式
+    } = {}) {
+        const {
+            showSuccessMessage = true,
+            showErrorMessage = true,
+            autoEnterEditMode = true
+        } = options;
+
+        try {
+            console.log('准备打开设计模型:', modelId);
+            
+            // 获取设计模型详情
+            const modelInfo = await Api.getCustomModelById(modelId);
+            console.log('设计模型信息:', modelInfo);
+            
+            if (!modelInfo) {
+                if (showErrorMessage) {
+                    message.error('无法获取设计模型信息');
+                }
+                return false;
+            }
+            
+            // 自动进入编辑模式
+            if (autoEnterEditMode) {
+                enterEditMode(modelInfo.id, modelInfo);
+            }
+            
+            // 如果有模型元信息，加载到工作台
+            if (modelInfo.meta?.modelInfo) {
+                await this.useModelInfo(modelInfo.meta.modelInfo);
+            }
+            
+            // 显示成功消息
+            if (showSuccessMessage) {
+                message.success(`成功打开设计模型: ${modelInfo.name || modelId}`);
+            }
+            
+            console.log('设计模型加载完成');
+            return true;
+            
+        } catch (error) {
+            console.error('打开设计模型失败:', error);
+            if (showErrorMessage) {
+                message.error('打开设计模型失败，请检查模型ID是否正确');
+            }
+            return false;
+        }
     }
 
     // 初始化容器

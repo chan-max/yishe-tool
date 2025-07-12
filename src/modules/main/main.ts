@@ -2,7 +2,7 @@
  * @Author: chan-max 2651308363@qq.com
  * @Date: 2024-02-20 08:07:02
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-10 08:17:35
+ * @LastEditTime: 2025-07-12 07:27:30
  * @FilePath: /yishe/src/modules/main/main.ts
  * @Description: 
  * 
@@ -68,8 +68,7 @@ import AutomationOverlay from '@/components/automationOverlay.vue'
 import { useConfigStore, initConfigStoreBasicConfig } from '@/store/stores/config.ts';
 import { useLoginStatusStore, initLoginStoreUserInfo } from '@/store/stores/login';
 import to from 'await-to-js';
-import { NativeWindowMessenger } from '@/utils/nativeWindowMessenger'
-import { setAdminConnected } from '@/store/stores/connectionStatus'
+import { initDesignToolReceiver } from '@/utils/designToolReceiver'
 import { setupSingleTabManager } from '@/utils/singleTabManager'
 
 // 检查并处理 URL 参数中的 token
@@ -196,36 +195,8 @@ if (Utils.isMobile) {
 }
 
 if (window.opener) {
-  const messenger = new NativeWindowMessenger()
-  // 监听父窗口请求
-  messenger.on('test', () => {
-    messenger.send('customEvent', 'connected')
-  })
-  // 监听 ping 并回复 pong
-  messenger.on('ping', () => {
-    messenger.send('pong', null)
-  })
-  // 管理系统心跳检测
-  let adminPongTimeout: number | null = null
-  function sendAdminPing() {
-    messenger.send('adminPing', null)
-    // 超时未收到 adminPong 认为断开
-    adminPongTimeout = window.setTimeout(() => {
-      setAdminConnected(false)
-    }, 3000)
-  }
-  // 监听 adminPong
-  messenger.on('adminPong', () => {
-    setAdminConnected(true)
-    if (adminPongTimeout) {
-      clearTimeout(adminPongTimeout)
-      adminPongTimeout = null
-    }
-  })
-  // 定时发送 adminPing
-  setInterval(sendAdminPing, 5000)
-  // 首次立即检测
-  sendAdminPing()
+  // 初始化设计工具接收器
+  initDesignToolReceiver()
 }
 
 

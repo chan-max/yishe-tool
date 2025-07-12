@@ -8,7 +8,8 @@ export interface DesignModelData {
 
 export class DesignToolReceiver {
   private messenger: NativeWindowMessenger | null = null
-  private adminPongTimeout: number | null = null
+  private adminPingInterval: number | null = null
+  private adminPingTimeout: number | null = null
 
   constructor() {
     this.initMessenger()
@@ -28,47 +29,51 @@ export class DesignToolReceiver {
       this.messenger?.send('customEvent', 'connected')
     })
 
-    // 监听 ping 并回复 pong
-    this.messenger.on('ping', () => {
-      console.log('收到父窗口 ping，回复 pong')
-      this.messenger?.send('pong', null)
-    })
-
     // 监听设计模型数据
     this.messenger.on('designModelData', (data: DesignModelData) => {
       console.log('收到设计模型数据:', data)
       this.handleDesignModelData(data)
     })
 
-    // 管理系统心跳检测
-    this.setupAdminPing()
+    // 启动心跳检测
+    this.startHeartbeat()
   }
 
-  private setupAdminPing() {
-    function sendAdminPing() {
-      this.messenger?.send('adminPing', null)
-      // 超时未收到 adminPong 认为断开
-      this.adminPongTimeout = window.setTimeout(() => {
-        setAdminConnected(false)
-      }, 3000)
-    }
-
-    // 监听 adminPong
-    this.messenger?.on('adminPong', () => {
+  // 启动心跳检测
+  private startHeartbeat() {
+    // 监听 adminPing 并回复 adminPong
+    this.messenger?.on('adminPing', () => {
+      console.log('收到父窗口 adminPing，回复 adminPong')
+      this.messenger?.send('adminPong', null)
       setAdminConnected(true)
-      if (this.adminPongTimeout) {
-        clearTimeout(this.adminPongTimeout)
-        this.adminPongTimeout = null
+      
+      // 重置超时检测
+      if (this.adminPingTimeout) {
+        clearTimeout(this.adminPingTimeout)
+        this.adminPingTimeout = null
       }
+      
+      // 设置新的超时检测 - 如果长时间没收到adminPing，认为连接断开
+      this.adminPingTimeout = window.setTimeout(() => {
+        console.log('长时间未收到父窗口 adminPing，设置连接状态为false')
+        setAdminConnected(false)
+      }, 10000) // 10秒超时，比父端的5秒更长
     })
 
-    // 定时发送 adminPing
-    setInterval(() => {
-      sendAdminPing.call(this)
-    }, 5000)
+    // 子端不主动发送 adminPing，只响应父端的 adminPing
+    // 移除定时发送 adminPing 的逻辑
+  }
 
-    // 首次立即检测
-    sendAdminPing.call(this)
+  // 停止心跳检测
+  private stopHeartbeat() {
+    if (this.adminPingInterval) {
+      clearInterval(this.adminPingInterval)
+      this.adminPingInterval = null
+    }
+    if (this.adminPingTimeout) {
+      clearTimeout(this.adminPingTimeout)
+      this.adminPingTimeout = null
+    }
   }
 
   private handleDesignModelData(data: DesignModelData) {
@@ -88,10 +93,7 @@ export class DesignToolReceiver {
       this.messenger.destroy && this.messenger.destroy()
       this.messenger = null
     }
-    if (this.adminPongTimeout) {
-      clearTimeout(this.adminPongTimeout)
-      this.adminPongTimeout = null
-    }
+    this.stopHeartbeat()
   }
 }
 

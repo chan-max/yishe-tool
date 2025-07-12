@@ -1,8 +1,9 @@
 import { NativeWindowMessenger } from '@/utils/nativeWindowMessenger'
 import { setAdminConnected } from '@/store/stores/connectionStatus'
 import { useRouter } from 'vue-router'
-import { currentModelController } from '@/components/design/store'
+// import { currentModelController } from '@/components/design/store'
 import { message } from 'ant-design-vue'
+import {controllerOpenModelById } from '@/components/design/core/controller'
 
 export interface DesignModelData {
   materialIds: string[]
@@ -79,15 +80,6 @@ export class DesignToolReceiver {
     }
   }
 
-  // 检查store是否可用
-  // private isStoreAvailable(): boolean {
-  //   try {
-  //     return currentModelController.value !== null && currentModelController.value !== undefined
-  //   } catch (error) {
-  //     console.warn('Store not available yet:', error)
-  //     return false
-  //   }
-  // }
 
 
   private async handleDesignModelData(data: DesignModelData) {
@@ -98,32 +90,31 @@ export class DesignToolReceiver {
     console.log('========================')
     
     // 根据设计模型ID打开设计模型
-    // if (data.designModelIds && data.designModelIds.length > 0) {
-    //   try {
-    //     // 获取第一个设计模型ID（如果有多个，先处理第一个）
-    //     const modelId = data.designModelIds[0]
+    if (data.designModelIds && data.designModelIds.length > 0) {
+      try {
+        // 获取第一个设计模型ID（如果有多个，先处理第一个）
+        const modelId = data.designModelIds[0]
         
-    //     // 使用controller中封装的openModelById方法
-    //     const success = await currentModelController.value.openModelById(modelId, {
-    //       showSuccessMessage: true,
-    //       showErrorMessage: true,
-    //       autoEnterEditMode: true
-    //     });
+        const success = await controllerOpenModelById(modelId, {
+          showSuccessMessage: true,
+          showErrorMessage: true,
+          autoEnterEditMode: true
+        });
         
-    //     if (success) {
-    //       console.log('设计模型加载完成')
-    //     } else {
-    //       console.error('设计模型加载失败')
-    //     }
+        if (success) {
+          console.log('设计模型加载完成')
+        } else {
+          console.error('设计模型加载失败')
+        }
         
-    //   } catch (error) {
-    //     console.error('打开设计模型失败:', error)
-    //     message.error('打开设计模型失败，请检查模型ID是否正确')
-    //   }
-    // } else {
-    //   console.warn('没有提供设计模型ID')
-    //   message.warning('没有提供设计模型ID')
-    // }
+      } catch (error) {
+        console.error('打开设计模型失败:', error)
+        message.error('打开设计模型失败，请检查模型ID是否正确')
+      }
+    } else {
+      console.warn('没有提供设计模型ID')
+      message.warning('没有提供设计模型ID')
+    }
   }
 
   // 销毁实例

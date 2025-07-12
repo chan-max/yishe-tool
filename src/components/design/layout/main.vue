@@ -256,6 +256,7 @@ import material from "@/components/design/layout/material/index.vue";
 import autocreateModal from "./autocreate/modal.vue";
 import videoClip from "./videoClip/index.vue";
 import { useEventBus } from '@vueuse/core';
+import { initDesignToolReceiver } from "@/utils/designToolReceiver";
 
 const { component: stickerDetailModal } = useStickerDetailModal();
 const { component: customModelDetailModal } = useCustomModelDetailModal();
@@ -322,6 +323,9 @@ onMounted(async () => {
   // 抛出页面加载完成事件
   const designPageLoadedBus = useEventBus('design-page-loaded');
   designPageLoadedBus.emit();
+
+  // 页面挂载后初始化 designToolReceiver
+  initDesignToolReceiver();
 });
 
 initAction();

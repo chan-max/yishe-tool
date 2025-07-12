@@ -1314,4 +1314,8 @@ export class ModelController {
 }
 
 
+export function  controllerOpenModelById(...params){
+//    return currentModelController.value.openModelById(...params)
+}
+
 

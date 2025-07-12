@@ -179,13 +179,15 @@ async function setup() {
     await initConfigStoreBasicConfig()
 
       // 处理 URL 参数中的 token
-      await handleUrlToken();
+    await handleUrlToken();
     app.mount('#app')
 
 
     if (window.opener) {
       // 初始化设计工具接收器
-      initDesignToolReceiver()
+      setTimeout(() => {
+        initDesignToolReceiver()
+      }, 1000);
     }
 
 }

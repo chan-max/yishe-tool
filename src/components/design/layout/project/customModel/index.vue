@@ -30,7 +30,7 @@
               </el-button>
               <template #overlay>
                 <a-menu>
-                  <a-menu-item @click="workspaceEdit(item)"> 复制到工作台 </a-menu-item>
+                  <a-menu-item @click="workspaceEdit(item)"> 复制模型信息到工作台 </a-menu-item>
                   <a-menu-item @click="edit(item)"> 编辑 </a-menu-item>
                   <a-menu-item @click="deleteItem(item)">
                     <span style="color: var(--el-color-danger)">删除</span>

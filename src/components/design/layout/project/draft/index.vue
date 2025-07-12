@@ -20,16 +20,17 @@
               视频
             </div>
             <!-- 自定义模型标识 -->
-            <div v-if="item.customModelInfo" class="absolute top-2 left-2">
+            <div v-if="item.customModelId" class="absolute top-2 left-2">
               <div class="bg-blue-500 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-lg cursor-help hover:bg-blue-600 transition-colors relative">
                 模型
                 <!-- 悬停提示 -->
                 <div class="absolute top-full left-0 mt-2 opacity-0 hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:opacity-100">
                   <div class="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm shadow-lg whitespace-nowrap">
                     <div class="font-medium mb-1">关联模型：</div>
-                    <div class="text-blue-300">{{ item.customModelInfo.name }}</div>
-                    <div class="text-gray-400 text-xs mt-1">ID: {{ item.customModelInfo.id }}</div>
-                    <div v-if="item.customModelInfo.description" class="text-gray-300 text-xs mt-1 max-w-48 break-words">
+                    <div v-if="item.customModelInfo" class="text-blue-300">{{ item.customModelInfo.name }}</div>
+                    <div v-else class="text-yellow-300">加载中...</div>
+                    <div class="text-gray-400 text-xs mt-1">ID: {{ item.customModelId }}</div>
+                    <div v-if="item.customModelInfo?.description" class="text-gray-300 text-xs mt-1 max-w-48 break-words">
                       {{ item.customModelInfo.description }}
                     </div>
                     <div class="absolute bottom-full left-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800"></div>
@@ -46,16 +47,17 @@
             class="w-[240px] !h-[180px] rounded-lg bg-[#f6f6f6] flex-shrink-0 relative group"
           >
             <!-- 自定义模型标识 -->
-            <div v-if="item.customModelInfo" class="absolute top-2 left-2 z-10">
+            <div v-if="item.customModelId" class="absolute top-2 left-2 z-10">
               <div class="bg-blue-500 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-lg cursor-help hover:bg-blue-600 transition-colors relative">
                 模型
                 <!-- 悬停提示 -->
                 <div class="absolute top-full left-0 mt-2 opacity-0 hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:opacity-100">
                   <div class="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm shadow-lg whitespace-nowrap">
                     <div class="font-medium mb-1">关联模型：</div>
-                    <div class="text-blue-300">{{ item.customModelInfo.name }}</div>
-                    <div class="text-gray-400 text-xs mt-1">ID: {{ item.customModelInfo.id }}</div>
-                    <div v-if="item.customModelInfo.description" class="text-gray-300 text-xs mt-1 max-w-48 break-words">
+                    <div v-if="item.customModelInfo" class="text-blue-300">{{ item.customModelInfo.name }}</div>
+                    <div v-else class="text-yellow-300">加载中...</div>
+                    <div class="text-gray-400 text-xs mt-1">ID: {{ item.customModelId }}</div>
+                    <div v-if="item.customModelInfo?.description" class="text-gray-300 text-xs mt-1 max-w-48 break-words">
                       {{ item.customModelInfo.description }}
                     </div>
                     <div class="absolute bottom-full left-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800"></div>
@@ -66,7 +68,7 @@
           </s1-img>
           <div class="bar flex items-center justify-between w-full mt-2 px-2">
             <div class="text-ellipsis max-w-[80px]">
-              {{ item.name || "未命名" }}
+              {{ item.name || "未命名" }} {{ item.customModelId }}
             </div>
             <div class="flex-1"></div>
             <div class="timeago">{{ Utils.time.timeago(item.updateTime) }}</div>
@@ -79,7 +81,7 @@
               </el-button>
               <template #overlay>
                 <a-menu>
-                  <a-menu-item v-if="item.customModelInfo" @click="openRelatedModel(item)">
+                  <a-menu-item v-if="item.customModelId" @click="openRelatedModel(item)">
                     <span style="color: var(--el-color-primary)">打开关联模型</span>
                   </a-menu-item>
                   <a-menu-item @click="deleteItem(item)">
@@ -225,16 +227,26 @@ async function deleteItem(item) {
 
 // 打开关联模型
 async function openRelatedModel(item) {
-  if (!item.customModelInfo) {
+  if (!item.customModelId) {
     message.error("该草稿没有关联的模型");
     return;
   }
 
   try {
+    // 如果没有模型信息，先获取
+    let modelInfo = item.customModelInfo;
+    if (!modelInfo) {
+      modelInfo = await getCustomModelInfo(item.customModelId);
+      if (!modelInfo) {
+        message.error("无法获取关联模型信息");
+        return;
+      }
+    }
+
     // 进入编辑模式，并将模型信息加载到工作台
-    enterEditMode(item.customModelInfo.id, item.customModelInfo);
-    let modelInfo = item.customModelInfo.meta.modelInfo;
-    await currentModelController.value.useModelInfo(modelInfo);
+    enterEditMode(modelInfo.id, modelInfo);
+    let modelMetaInfo = modelInfo.meta.modelInfo;
+    await currentModelController.value.useModelInfo(modelMetaInfo);
     message.success("已打开关联模型");
   } catch (error) {
     console.error('打开关联模型失败:', error);

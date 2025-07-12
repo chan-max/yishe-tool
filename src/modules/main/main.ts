@@ -182,6 +182,12 @@ async function setup() {
       await handleUrlToken();
     app.mount('#app')
 
+
+    if (window.opener) {
+      // 初始化设计工具接收器
+      initDesignToolReceiver()
+    }
+
 }
 
 import { createMobileApp } from '@/modules/mobile/main'
@@ -194,10 +200,7 @@ if (Utils.isMobile) {
     setup()
 }
 
-if (window.opener) {
-  // 初始化设计工具接收器
-  initDesignToolReceiver()
-}
+
 
 
 

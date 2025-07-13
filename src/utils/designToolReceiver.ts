@@ -4,6 +4,8 @@ import { message } from 'ant-design-vue'
 import { controllerOpenModelAndReplaceStickers } from '@/components/design/core/controller'
 import { exitEditMode, enterEditMode } from '@/components/design/store'
 import { saveCustomModel } from '@/components/design/layout/saveModel/index.ts'
+import { uploadToCOS, createDraft } from '@/api'
+import { currentModelController } from '@/components/design/store'
 
 export interface DesignModelData {
   materialIds: string[]
@@ -165,10 +167,45 @@ export class DesignToolReceiver {
                 if (savedModel && savedModel.id) {
                   console.log('进入编辑模式')
                   enterEditMode(savedModel.id)
+                  // 新增：进入编辑模式后批量截图并保存草稿
+                  try {
+                    // 等待模型加载完成（如有异步加载可适当延迟或监听事件）
+                    message.loading({ content: '新模型：准备截图...', key: `modelScreenshot_${modelId}_${materialId}`, duration: 0 });
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    // 获取默认角度
+                    const angles = currentModelController.value.getDefaultSelectedAngles ? currentModelController.value.getDefaultSelectedAngles() : ['front', 'back', 'left', 'right'];
+                    message.loading({ content: `新模型：正在批量截图（共${angles.length}个角度）...`, key: `modelScreenshot_${modelId}_${materialId}`, duration: 0 });
+                    // 批量截图
+                    const images = await currentModelController.value.exportMultiAngleImages(angles);
+                    message.loading({ content: `新模型：截图完成，正在上传并保存草稿...`, key: `modelScreenshot_${modelId}_${materialId}`, duration: 0 });
+                    // 上传并保存草稿
+                    let uploadedCount = 0;
+                    const uploadPromises = images.map(async (image, idx) => {
+                      message.loading({ content: `新模型：上传第${idx+1}/${images.length}张截图...`, key: `modelScreenshot_${modelId}_${materialId}`, duration: 0 });
+                      const base64Data = image.base64.split(",")[1];
+                      const byteArray = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+                      const file = new File([byteArray], `多角度图片_${image.label}.png`, { type: "image/png" });
+                      const cos = await uploadToCOS({ file });
+                      const draftPayload = {
+                        url: cos.url,
+                        name: `多角度图片_${image.label}`,
+                        updateTime: new Date(),
+                        customModelId: savedModel.id,
+                      };
+                      const draft = await createDraft(draftPayload);
+                      uploadedCount++;
+                      message.loading({ content: `新模型：已完成${uploadedCount}/${images.length}张截图的上传与草稿保存...`, key: `modelScreenshot_${modelId}_${materialId}`, duration: 0 });
+                      return draft;
+                    });
+                    await Promise.all(uploadPromises);
+                    message.success({ content: `新模型：全部截图与草稿保存成功！`, key: `modelScreenshot_${modelId}_${materialId}` });
+                    // 全部成功后再通知父窗口
+                    this.messenger?.send && this.messenger.send('modelSaved', { modelId, materialId });
+                  } catch (screenshotError) {
+                    message.error({ content: '新模型截图或保存草稿失败', key: `modelScreenshot_${modelId}_${materialId}` });
+                    console.error('新模型截图或保存草稿失败:', screenshotError);
+                  }
                 }
-                
-                // 保存成功后，向父窗口发送消息
-                this.messenger?.send && this.messenger.send('modelSaved', { modelId, materialId })
                 
                 // 本地也弹出详细提示
                 message.success({

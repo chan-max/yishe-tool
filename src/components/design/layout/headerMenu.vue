@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-27 19:20:45
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-11 07:17:16
+ * @LastEditTime: 2025-07-14 07:07:39
  * @FilePath: /1s/src/components/design/layout/headerMenu.vue
  * @Description: 
  * 
@@ -18,9 +18,11 @@
     </div>
 
     <template v-if="isEdit">
-        <span class="mr-2">当前模型ID : {{ currentEditingModelId }}</span>
+      <div class="edit-mode-info flex items-center gap-2 shrink-0">
+        <span class="model-id-text">模型ID: {{ currentEditingModelId }}</span>
         <el-button type="danger" size="small" @click="confirmExitEditMode">退出</el-button>
-      </template>
+      </div>
+    </template>
 
     <div style="flex-grow: 1"></div>
 
@@ -29,57 +31,27 @@
     <!-- 连接状态显示 -->
     <connection-status />
 
-    <div class="flex items-center">
-
-      <!-- <a-dropdown>
-        <el-button link class="icon-btn" @click="openFileDialog">
-          <s1-icon name="file-upload-up-arrow" :size="16"></s1-icon>
-        </el-button>
-        <template #overlay>
-          <a-menu>
-            <a-sub-menu
-              v-for="item in localFileListResource"
-              :title="item.name"
-              :popupOffset="[0, 0]"
-            >
-              <a-menu-item> 详细信息 </a-menu-item>
-              <a-menu-item @click="openUplaodModal(item)"> 在上传窗口打开 </a-menu-item>
-              <a-menu-item @click="remove(item)" style="color: var(--el-color-danger)">
-                移除
-              </a-menu-item>
-            </a-sub-menu>
-            <a-menu-item v-if="!localFileListResource.length" @click="openFileDialog">
-              选取本地文件
-            </a-menu-item>
-            <a-menu-item v-if="localFileListResource.length"> 全部上传 </a-menu-item>
-            <a-menu-item
-              v-if="localFileListResource.length"
-              style="color: var(--el-color-danger)"
-            >
-              清空所有
-            </a-menu-item>
-          </a-menu>
-        </template>
-      </a-dropdown> -->
-
-      <el-button @click="showUpload = true" round text :icon="UploadFilled">
+    <div class="header-actions flex items-center gap-2 shrink-0">
+      <el-button @click="showUpload = true" round text :icon="UploadFilled" class="action-btn">
         素材上传
       </el-button>
 
-      <el-button @click="toggleAutomation" round text>
-        {{ isAutomationRunning ? '关闭自动化' : '开启自动化' }}
+      <el-button @click="toggleAutomation" round text class="action-btn" :icon="isAutomationRunning ? 'Close' : 'VideoPlay'">
+        <span>{{ isAutomationRunning ? '关闭自动化' : '开启自动化' }}</span>
       </el-button>
 
       <el-switch
         v-model="isDarkMode"
-        class="mx-8"
         inline-prompt
         style="--el-switch-off-color: #bbb"
         active-text="夜间"
         inactive-text="白天"
+        class="theme-switch"
       />
 
-      <el-button type="primary" @click="showSaveModel = true" round> 保存 </el-button>
+      <el-button type="primary" @click="showSaveModel = true" round class="save-btn" icon="Download">
+        <span>保存</span>
+      </el-button>
     </div>
     <user-avatar v-if="loginStatusStore.isLogin" />
     <el-button @click="login" v-else round type="primary"> 登 录 </el-button>
@@ -108,7 +80,7 @@ import {
 } from "../store";
 
 import { openFileModal } from "@/components/design/layout/upload/index.tsx";
-import { Share, UploadFilled } from "@element-plus/icons-vue";
+import { Share, UploadFilled, Close, VideoPlay, Download } from "@element-plus/icons-vue";
 import userAvatar from "@/components/user/userAvatar.vue";
 import headerMenuDropdown from "./headerMenuDropdown/index.vue";
 import { onShortcutTrigger } from "../shortcut/index";
@@ -198,6 +170,7 @@ function confirmExitEditMode() {
   align-items: center;
   column-gap: 1rem;
   padding-right: 1rem;
+  min-width: 0; // 防止flex子元素溢出
   // background: #121212;
 }
 
@@ -211,5 +184,138 @@ function confirmExitEditMode() {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.edit-mode-info {
+  min-width: 0;
+  
+  .model-id-text {
+    font-size: 10px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+}
+
+.header-actions {
+  min-width: 0;
+  flex-wrap: nowrap;
+  
+  .action-btn {
+    white-space: nowrap;
+  }
+  
+  .theme-switch {
+    flex-shrink: 0;
+  }
+  
+  .save-btn {
+    flex-shrink: 0;
+  }
+}
+
+// 响应式设计
+@media (max-width: 1200px) {
+  .edit-mode-info .model-id-text {
+    max-width: 150px;
+  }
+  
+  .header-actions .action-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .edit-mode-info .model-id-text {
+    max-width: 120px;
+  }
+  
+  .header-actions {
+    gap: 4px;
+    
+    .action-btn {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  .designiy-header {
+    column-gap: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .edit-mode-info .model-id-text {
+    max-width: 100px;
+    font-size: 12px;
+  }
+  
+  .header-actions {
+    gap: 2px;
+    
+    .action-btn {
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+    
+    .theme-switch {
+      transform: scale(0.9);
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .edit-mode-info {
+    .model-id-text {
+      display: none; // 在很小屏幕上隐藏模型ID文本
+    }
+  }
+  
+  .header-actions {
+    .action-btn {
+      padding: 4px 6px;
+      font-size: 10px;
+      min-width: 32px;
+      
+      // 隐藏按钮文字，只显示图标
+      span {
+        display: none;
+      }
+    }
+    
+    .save-btn {
+      min-width: 32px;
+      
+      span {
+        display: none;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .designiy-header {
+    column-gap: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  
+  .header-actions {
+    gap: 1px;
+    
+    .action-btn,
+    .save-btn {
+      padding: 3px 4px;
+      min-width: 28px;
+      height: 28px;
+    }
+    
+    .theme-switch {
+      transform: scale(0.8);
+    }
+  }
 }
 </style>

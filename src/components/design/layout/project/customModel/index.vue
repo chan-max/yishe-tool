@@ -30,6 +30,7 @@
               </el-button>
               <template #overlay>
                 <a-menu>
+                  <a-menu-item @click="viewRelatedDrafts(item)"> 查看相关截图 </a-menu-item>
                   <a-menu-item @click="workspaceEdit(item)"> 复制模型信息到工作台 </a-menu-item>
                   <a-menu-item @click="edit(item)"> 编辑 </a-menu-item>
                   <a-menu-item @click="deleteItem(item)">
@@ -91,6 +92,62 @@
         <tagsInput v-model="editForm.keywords" :string="true"> </tagsInput>
       </el-form-item>
     </el-form>
+  </a-modal>
+
+  <!-- 关联草稿弹窗 -->
+  <a-modal
+    v-model:open="draftModalVisible"
+    :centered="true"
+    :destroyOnClose="true"
+    width="80%"
+    title="关联草稿"
+    :footer="null"
+  >
+    <div class="draft-modal-content">
+      <div class="model-info mb-4">
+        <h3 class="text-lg font-medium mb-2">
+          模型：{{ currentModel?.name || currentModel?.id }}
+        </h3>
+        <p v-if="currentModel?.description" class="text-color-regular">
+          {{ currentModel.description }}
+        </p>
+      </div>
+      
+      <div v-if="relatedDrafts.length === 0" class="empty-state text-center py-8">
+        <a-empty description="暂无关联草稿" />
+      </div>
+      
+      <div v-else class="draft-grid">
+        <div 
+          v-for="draft in relatedDrafts" 
+          :key="draft.id" 
+          class="draft-item"
+        >
+          <div class="draft-preview">
+            <el-image 
+              :src="draft.url" 
+              fit="contain" 
+              class="w-full rounded-t-lg cursor-pointer bg-gray-50"
+              style="aspect-ratio: 4/3;"
+              :preview-src-list="[draft.url]"
+              :preview-teleported="true"
+              :z-index="9999"
+            />
+          </div>
+          <div class="draft-info p-4">
+            <div class="draft-name text-base font-semibold truncate mb-2">
+              {{ draft.name || '未命名' }}
+            </div>
+            <div v-if="draft.description" class="draft-desc text-sm text-color-regular mb-3 line-clamp-2">
+              {{ draft.description }}
+            </div>
+            <div class="draft-meta text-xs text-color-placeholder">
+              <span>{{ Utils.time.timeago(draft.createTime) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </a-modal>
 </template>
 
@@ -189,6 +246,9 @@ const showFormModal = ref(false);
 
 const submitLoading = ref(false);
 const editForm = ref({} as any);
+const draftModalVisible = ref(false);
+const currentModel = ref(null);
+const relatedDrafts = ref([]);
 // 编辑
 function edit(item) {
   editForm.value = {
@@ -229,6 +289,25 @@ function editInWorkspace(item) {
   let modelInfo = item.meta.modelInfo;
   currentModelController.value.useModelInfo(modelInfo);
 }
+
+// 查看关联草稿
+async function viewRelatedDrafts(model) {
+  currentModel.value = model;
+  draftModalVisible.value = true;
+  
+  try {
+    const res = await Api.getDraftList({
+      customModelId: model.id,
+      currentPage: 1,
+      pageSize: 100 // 获取较多数据
+    });
+    relatedDrafts.value = res.list || [];
+  } catch (error) {
+    console.error('获取关联草稿失败:', error);
+    message.error('获取关联草稿失败');
+    relatedDrafts.value = [];
+  }
+}
 </script>
 
 <style scoped lang="less">
@@ -253,5 +332,82 @@ function editInWorkspace(item) {
   color: #999;
   font-weight: bold;
   white-space: nowrap;
+}
+
+.draft-modal-content {
+  .draft-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 8px;
+  }
+  
+  .draft-item {
+    border: 1px solid var(--el-border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: var(--el-bg-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      transform: translateY(-4px);
+      border-color: var(--el-color-primary-light-7);
+    }
+  }
+  
+  .draft-preview {
+    position: relative;
+    background: var(--el-fill-color-lighter);
+    
+    .el-image {
+      transition: transform 0.3s ease;
+      background: var(--el-fill-color-lighter);
+      
+      &:hover {
+        transform: scale(1.02);
+      }
+    }
+  }
+  
+  .draft-info {
+    background: var(--el-bg-color);
+    border-top: 1px solid var(--el-border-color-lighter);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .draft-name {
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+    line-height: 1.4;
+  }
+  
+  .draft-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+    color: var(--el-text-color-regular);
+  }
+  
+  .draft-meta {
+    color: var(--el-text-color-placeholder);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+
+.empty-state {
+  color: var(--el-text-color-placeholder);
 }
 </style>

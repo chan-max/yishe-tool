@@ -1,7 +1,7 @@
 import { NativeWindowMessenger } from '@/utils/nativeWindowMessenger'
 import { setAdminConnected } from '@/store/stores/connectionStatus'
 import { useRouter } from 'vue-router'
-// import { currentModelController } from '@/components/design/store'
+import { currentModelController } from '@/components/design/store'
 import { message } from 'ant-design-vue'
 import {controllerOpenModelById } from '@/components/design/core/controller'
 
@@ -103,6 +103,10 @@ export class DesignToolReceiver {
         
         if (success) {
           console.log('设计模型加载完成')
+                    
+          // 替换贴纸为新素材
+          await this.replaceStickersWithMaterials(data.materialIds)
+          
         } else {
           console.error('设计模型加载失败')
         }
@@ -114,6 +118,85 @@ export class DesignToolReceiver {
     } else {
       console.warn('没有提供设计模型ID')
       message.warning('没有提供设计模型ID')
+    }
+  }
+
+  // 等待模型加载完成
+
+
+  // 替换贴纸为新素材
+  private async replaceStickersWithMaterials(materialIds: string[]) {
+    try {
+      // 获取当前模型控制器
+      const modelController = currentModelController?.value
+      if (!modelController || !modelController.decalControllers) {
+        console.warn('模型控制器或贴纸列表不存在')
+        return
+      }
+
+      const decalControllers = modelController.decalControllers
+      console.log('当前模型贴纸数量:', decalControllers.length)
+      console.log('素材ID数量:', materialIds.length)
+
+      // 如果贴纸数量为0，提示用户
+      if (decalControllers.length === 0) {
+        message.info('当前设计模型没有贴纸，无法进行替换')
+        return
+      }
+
+      // 如果素材数量为0，提示用户
+      if (materialIds.length === 0) {
+        message.warning('没有提供素材ID，无法进行替换')
+        return
+      }
+
+      // 显示替换进度
+      message.loading({
+        content: `正在替换贴纸 (0/${Math.min(decalControllers.length, materialIds.length)})`,
+        key: 'replaceStickers',
+        duration: 0
+      })
+
+      // 遍历贴纸控制器，替换为新素材
+      const replacePromises = decalControllers.map(async (decalController, index) => {
+        // 如果素材ID不够，循环使用
+        const materialId = materialIds[index % materialIds.length]
+        
+        try {
+          console.log(`正在替换第${index + 1}个贴纸，使用素材ID: ${materialId}`)
+          
+          // 使用贴纸控制器的replaceSticker方法
+          await decalController.replaceSticker(materialId)
+          
+          // 更新进度
+          message.loading({
+            content: `正在替换贴纸 (${index + 1}/${Math.min(decalControllers.length, materialIds.length)})`,
+            key: 'replaceStickers',
+            duration: 0
+          })
+          
+        } catch (error) {
+          console.error(`替换第${index + 1}个贴纸失败:`, error)
+        }
+      })
+
+      // 等待所有替换完成
+      await Promise.all(replacePromises)
+
+      // 显示完成消息
+      message.success({
+        content: `贴纸替换完成，共替换了${Math.min(decalControllers.length, materialIds.length)}个贴纸`,
+        key: 'replaceStickers'
+      })
+
+      console.log('贴纸替换完成')
+
+    } catch (error) {
+      console.error('替换贴纸失败:', error)
+      message.error({
+        content: '贴纸替换失败',
+        key: 'replaceStickers'
+      })
     }
   }
 

@@ -446,17 +446,17 @@ export const useDesignStore = defineStore('_1s_design', () => {
 
 
 
-const designStore = useDesignStore();
+// const designStore = useDesignStore();
 
 
-/*
- 单独记录时间
-*/
-designStore.$subscribe((mutation, state) => {
-    lastModifiedTime.value = new Date()
-}, {
-    deep: true
-})
+// /*
+//  单独记录时间
+// */
+// designStore.$subscribe((mutation, state) => {
+//     lastModifiedTime.value = new Date()
+// }, {
+//     deep: true
+// })
 
 /*
     同步工作区所有个人状态

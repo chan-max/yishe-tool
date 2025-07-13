@@ -1,9 +1,9 @@
 import { NativeWindowMessenger } from '@/utils/nativeWindowMessenger'
 import { setAdminConnected } from '@/store/stores/connectionStatus'
-import { useRouter } from 'vue-router'
-import { currentModelController } from '@/components/design/store'
 import { message } from 'ant-design-vue'
-import {controllerOpenModelById } from '@/components/design/core/controller'
+import { controllerOpenModelAndReplaceStickers } from '@/components/design/core/controller'
+import { exitEditMode, enterEditMode } from '@/components/design/store'
+import { saveCustomModel } from '@/components/design/layout/saveModel/index.ts'
 
 export interface DesignModelData {
   materialIds: string[]
@@ -89,116 +89,178 @@ export class DesignToolReceiver {
     console.log('预计生成数量:', data.materialIds.length * data.designModelIds.length)
     console.log('========================')
     
-    // 根据设计模型ID打开设计模型
-    if (data.designModelIds && data.designModelIds.length > 0) {
-      try {
-        // 获取第一个设计模型ID（如果有多个，先处理第一个）
-        const modelId = data.designModelIds[0]
-        
-        const success = await controllerOpenModelById(modelId, {
-          showSuccessMessage: true,
-          showErrorMessage: true,
-          autoEnterEditMode: true
-        });
-        
-        if (success) {
-          console.log('设计模型加载完成')
-                    
-          // 替换贴纸为新素材
-          await this.replaceStickersWithMaterials(data.materialIds)
-          
-        } else {
-          console.error('设计模型加载失败')
-        }
-        
-      } catch (error) {
-        console.error('打开设计模型失败:', error)
-        message.error('打开设计模型失败，请检查模型ID是否正确')
-      }
-    } else {
+    // 检查是否有设计模型ID和素材ID
+    if (!data.designModelIds || data.designModelIds.length === 0) {
       console.warn('没有提供设计模型ID')
       message.warning('没有提供设计模型ID')
+      return
+    }
+    
+    if (!data.materialIds || data.materialIds.length === 0) {
+      console.warn('没有提供素材ID')
+      message.warning('没有提供素材ID')
+      return
+    }
+
+    // 显示总体进度
+    const totalCombinations = data.materialIds.length * data.designModelIds.length
+    message.loading({
+      content: `开始处理 ${totalCombinations} 个组合 (0/${totalCombinations})`,
+      key: 'processCombinations',
+      duration: 0
+    })
+
+    let processedCount = 0
+    const results = []
+
+    try {
+      // 遍历所有设计模型和素材的组合
+      for (let modelIndex = 0; modelIndex < data.designModelIds.length; modelIndex++) {
+        const modelId = data.designModelIds[modelIndex]
+        
+        for (let materialIndex = 0; materialIndex < data.materialIds.length; materialIndex++) {
+          const materialId = data.materialIds[materialIndex]
+          processedCount++
+          
+          console.log(`=== 处理第 ${processedCount}/${totalCombinations} 个组合 ===`)
+          console.log(`设计模型ID: ${modelId}`)
+          console.log(`素材ID: ${materialId}`)
+          
+          // 更新进度
+          message.loading({
+            content: `正在处理第 ${processedCount}/${totalCombinations} 个组合`,
+            key: 'processCombinations',
+            duration: 0
+          })
+
+          try {
+            // 处理单个组合
+            const success = await controllerOpenModelAndReplaceStickers(modelId, materialId, {
+              showSuccessMessage: false, // 不显示单个成功消息，等全部完成后再显示
+              showErrorMessage: false,   // 不显示单个错误消息，记录到结果中
+              autoEnterEditMode: true
+            });
+            
+            if (success) {
+              console.log(`第 ${processedCount} 个组合处理成功，开始上传模型`)
+              
+              // 贴纸替换成功后，先退出编辑模式再保存模型
+              try {
+                // 先退出编辑模式
+                exitEditMode()
+                
+                // 生成模型信息
+                const modelInfo = {
+                  name: `模型_${modelId}_素材_${materialId}`,
+                  description: `基于设计模型 ${modelId} 和素材 ${materialId} 生成的模型`,
+                  keywords: `模型,素材,${modelId},${materialId}`
+                }
+                
+                // 上传模型
+                const savedModel = await saveCustomModel(modelInfo)
+                
+                // 主动进入新模型的编辑模式
+                if (savedModel && savedModel.id) {
+                  console.log('进入编辑模式')
+                  enterEditMode(savedModel.id)
+                }
+                
+                // 保存成功后，向父窗口发送消息
+                this.messenger?.send && this.messenger.send('modelSaved', { modelId, materialId })
+                
+                // 本地也弹出详细提示
+                message.success({
+                  content: `模型保存成功：模型ID=${modelId}，素材ID=${materialId}，进度：${processedCount}/${totalCombinations}`,
+                  duration: 4,
+                  key: `modelSaved_${modelId}_${materialId}`
+                })
+                
+                console.log(`第 ${processedCount} 个组合上传成功`)
+                
+                results.push({
+                  modelId,
+                  materialId,
+                  success: true,
+                  uploaded: true,
+                  index: processedCount
+                })
+                
+              } catch (uploadError) {
+                console.error(`第 ${processedCount} 个组合上传失败:`, uploadError)
+                results.push({
+                  modelId,
+                  materialId,
+                  success: true,
+                  uploaded: false,
+                  uploadError: uploadError.message,
+                  index: processedCount
+                })
+              }
+              
+            } else {
+              console.error(`第 ${processedCount} 个组合处理失败`)
+              results.push({
+                modelId,
+                materialId,
+                success: false,
+                uploaded: false,
+                index: processedCount
+              })
+            }
+            
+          } catch (error) {
+            console.error(`处理第 ${processedCount} 个组合时出错:`, error)
+            results.push({
+              modelId,
+              materialId,
+              success: false,
+              uploaded: false,
+              error: error.message,
+              index: processedCount
+            })
+          }
+        }
+      }
+
+      // 处理完成，显示结果统计
+      const successCount = results.filter(r => r.success).length
+      const uploadedCount = results.filter(r => r.uploaded).length
+      const failCount = results.filter(r => !r.success).length
+      
+      console.log('=== 所有组合处理完成 ===')
+      console.log(`成功: ${successCount} 个`)
+      console.log(`上传: ${uploadedCount} 个`)
+      console.log(`失败: ${failCount} 个`)
+      console.log(`总计: ${totalCombinations} 个`)
+      
+      // 显示最终结果
+      if (uploadedCount === totalCombinations) {
+        message.success({
+          content: `所有组合处理并上传成功！共处理了 ${totalCombinations} 个组合`,
+          key: 'processCombinations'
+        })
+      } else if (uploadedCount > 0) {
+        message.warning({
+          content: `部分组合处理完成。成功: ${successCount} 个，上传: ${uploadedCount} 个，失败: ${failCount} 个`,
+          key: 'processCombinations'
+        })
+      } else {
+        message.error({
+          content: `所有组合处理失败！共 ${totalCombinations} 个组合`,
+          key: 'processCombinations'
+        })
+      }
+      
+    } catch (error) {
+      console.error('处理设计模型数据时发生错误:', error)
+      message.error({
+        content: '处理设计模型数据时发生错误',
+        key: 'processCombinations'
+      })
     }
   }
 
   // 等待模型加载完成
-
-
-  // 替换贴纸为新素材
-  private async replaceStickersWithMaterials(materialIds: string[]) {
-    try {
-      // 获取当前模型控制器
-      const modelController = currentModelController?.value
-      if (!modelController || !modelController.decalControllers) {
-        console.warn('模型控制器或贴纸列表不存在')
-        return
-      }
-
-      const decalControllers = modelController.decalControllers
-      console.log('当前模型贴纸数量:', decalControllers.length)
-      console.log('素材ID数量:', materialIds.length)
-
-      // 如果贴纸数量为0，提示用户
-      if (decalControllers.length === 0) {
-        message.info('当前设计模型没有贴纸，无法进行替换')
-        return
-      }
-
-      // 如果素材数量为0，提示用户
-      if (materialIds.length === 0) {
-        message.warning('没有提供素材ID，无法进行替换')
-        return
-      }
-
-      // 显示替换进度
-      message.loading({
-        content: `正在替换贴纸 (0/${Math.min(decalControllers.length, materialIds.length)})`,
-        key: 'replaceStickers',
-        duration: 0
-      })
-
-      // 遍历贴纸控制器，替换为新素材
-      const replacePromises = decalControllers.map(async (decalController, index) => {
-        // 如果素材ID不够，循环使用
-        const materialId = materialIds[index % materialIds.length]
-        
-        try {
-          console.log(`正在替换第${index + 1}个贴纸，使用素材ID: ${materialId}`)
-          
-          // 使用贴纸控制器的replaceSticker方法
-          await decalController.replaceSticker(materialId)
-          
-          // 更新进度
-          message.loading({
-            content: `正在替换贴纸 (${index + 1}/${Math.min(decalControllers.length, materialIds.length)})`,
-            key: 'replaceStickers',
-            duration: 0
-          })
-          
-        } catch (error) {
-          console.error(`替换第${index + 1}个贴纸失败:`, error)
-        }
-      })
-
-      // 等待所有替换完成
-      await Promise.all(replacePromises)
-
-      // 显示完成消息
-      message.success({
-        content: `贴纸替换完成，共替换了${Math.min(decalControllers.length, materialIds.length)}个贴纸`,
-        key: 'replaceStickers'
-      })
-
-      console.log('贴纸替换完成')
-
-    } catch (error) {
-      console.error('替换贴纸失败:', error)
-      message.error({
-        content: '贴纸替换失败',
-        key: 'replaceStickers'
-      })
-    }
-  }
 
   // 销毁实例
   destroy() {

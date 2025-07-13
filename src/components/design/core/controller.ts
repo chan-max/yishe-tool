@@ -252,6 +252,140 @@ export class ModelController {
         }
     }
 
+    /**
+     * 根据设计模型ID打开模型并替换贴纸为新素材
+     * @param modelId 设计模型ID
+     * @param materialId 素材ID
+     * @param options 可选配置
+     * @returns Promise<boolean> 是否成功完成
+     */
+    async openModelAndReplaceStickers(modelId: string, materialId: string, options: {
+        showSuccessMessage?: boolean, // 是否显示成功消息
+        showErrorMessage?: boolean,   // 是否显示错误消息
+        autoEnterEditMode?: boolean   // 是否自动进入编辑模式
+    } = {}) {
+        const {
+            showSuccessMessage = true,
+            showErrorMessage = true,
+            autoEnterEditMode = true
+        } = options;
+
+        try {
+            console.log('=== 开始处理设计模型和素材替换 ===');
+            console.log('设计模型ID:', modelId);
+            console.log('素材ID:', materialId);
+            console.log('========================');
+
+            // 先打开设计模型
+            const success = await this.openModelById(modelId, {
+                showSuccessMessage: false, // 不显示成功消息，等全部完成后再显示
+                showErrorMessage,
+                autoEnterEditMode
+            });
+
+            if (!success) {
+                console.error('设计模型加载失败');
+                return false;
+            }
+
+            console.log('设计模型加载完成，开始替换贴纸');
+
+            // 替换贴纸为新素材
+            await this.replaceStickersWithMaterial(materialId);
+
+            // 显示成功消息
+            if (showSuccessMessage) {
+                message.success(`成功打开设计模型并替换贴纸: ${modelId}`);
+            }
+
+            console.log('=== 设计模型和素材替换完成 ===');
+            return true;
+
+        } catch (error) {
+            console.error('处理设计模型和素材替换失败:', error);
+            if (showErrorMessage) {
+                message.error('处理设计模型和素材替换失败，请检查参数是否正确');
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 替换当前模型的所有贴纸为同一个素材
+     * @param materialId 素材ID
+     * @returns Promise<void>
+     */
+    async replaceStickersWithMaterial(materialId: string) {
+        try {
+            // 检查模型控制器和贴纸列表
+            if (!this.decalControllers) {
+                console.warn('模型控制器或贴纸列表不存在');
+                return;
+            }
+
+            const decalControllers = this.decalControllers;
+            console.log('当前模型贴纸数量:', decalControllers.length);
+            console.log('素材ID:', materialId);
+
+            // 如果贴纸数量为0，提示用户
+            if (decalControllers.length === 0) {
+                message.info('当前设计模型没有贴纸，无法进行替换');
+                return;
+            }
+
+            // 如果素材ID为空，提示用户
+            if (!materialId) {
+                message.warning('没有提供素材ID，无法进行替换');
+                return;
+            }
+
+            // 显示替换进度
+            message.loading({
+                content: `正在替换贴纸 (0/${decalControllers.length})`,
+                key: 'replaceStickers',
+                duration: 0
+            });
+
+            // 遍历贴纸控制器，替换为新素材
+            const replacePromises = decalControllers.map(async (decalController, index) => {
+                try {
+                    console.log(`正在替换第${index + 1}个贴纸，使用素材ID: ${materialId}`);
+                    
+                    // 使用贴纸控制器的replaceSticker方法
+                    await decalController.replaceSticker(materialId);
+                    
+                    // 更新进度
+                    message.loading({
+                        content: `正在替换贴纸 (${index + 1}/${decalControllers.length})`,
+                        key: 'replaceStickers',
+                        duration: 0
+                    });
+                    
+                } catch (error) {
+                    console.error(`替换第${index + 1}个贴纸失败:`, error);
+                }
+            });
+
+            // 等待所有替换完成
+            await Promise.all(replacePromises);
+
+            // 显示完成消息
+            message.success({
+                content: `贴纸替换完成，共替换了${decalControllers.length}个贴纸`,
+                key: 'replaceStickers'
+            });
+
+            console.log('贴纸替换完成');
+
+        } catch (error) {
+            console.error('替换贴纸失败:', error);
+            message.error({
+                content: '贴纸替换失败',
+                key: 'replaceStickers'
+            });
+        }
+    }
+
     // 初始化容器
     private initCanvasContainer(canvasContainer: any) {
         this.canvasContainer = canvasContainer;
@@ -1316,6 +1450,14 @@ export class ModelController {
 
 export function  controllerOpenModelById(...params){
    return currentModelController.value.openModelById(...params)
+}
+
+export function controllerOpenModelAndReplaceStickers(modelId: string, materialId: string, options?: {
+    showSuccessMessage?: boolean,
+    showErrorMessage?: boolean,
+    autoEnterEditMode?: boolean
+}) {
+    return currentModelController.value.openModelAndReplaceStickers(modelId, materialId, options)
 }
 
 

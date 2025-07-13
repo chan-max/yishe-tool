@@ -44,6 +44,7 @@ export async function saveCustomModel(form) {
     if (data && data.id) {
         enterEditMode( data.id)
     }
+    return data;
 }
 
 export async function updateCustomModelWithUpload(form) {

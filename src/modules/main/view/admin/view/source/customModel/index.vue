@@ -180,9 +180,7 @@ async function handleDelete(row) {
       danger: true,
     },
   });
-  await Api.deleteCustomModel({
-    id: row.id,
-  });
+  await Api.deleteCustomModel([row.id]);
   refresh();
   message.success("删除成功");
 }

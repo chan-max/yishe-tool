@@ -519,9 +519,9 @@ export const getCustomModelById = (id: string) => new Promise(async (resolve, re
   resolve(data.data.data)
 })
 
-export const deleteCustomModel = (id) => new Promise(async (resolve, reject) => {
+export const deleteCustomModel = (ids: string | string[]) => new Promise(async (resolve, reject) => {
   let res = await apiInstance.post('/api/custom-model/delete', {
-    id: id
+    ids: ids
   })
   resolve(res.data.data)
 })

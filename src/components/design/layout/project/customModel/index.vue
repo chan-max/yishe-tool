@@ -177,7 +177,7 @@ async function deleteItem(item) {
     content: "确认删除该模型？",
   });
 
-  await Api.deleteCustomModel(item.id);
+  await Api.deleteCustomModel([item.id]);
   reset();
   await getList();
   message.success("删除成功");

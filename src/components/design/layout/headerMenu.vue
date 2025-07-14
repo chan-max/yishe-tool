@@ -49,7 +49,7 @@
         class="theme-switch"
       />
 
-      <el-button type="primary" @click="showSaveModel = true" round class="save-btn" icon="Download">
+      <el-button type="primary" @click="showSaveModel = true" round class="save-btn" :icon="Download">
         <span>保存</span>
       </el-button>
     </div>

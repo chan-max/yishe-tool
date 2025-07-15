@@ -515,8 +515,8 @@ export const getCustomModelList = (params) => new Promise(async (resolve, reject
 
 // 根据图片id来查询图片
 export const getCustomModelById = (id: string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.get('/api/custom-model', { params: { id } })
-  resolve(data.data.data)
+  const res = await apiInstance.post('/api/custom-model', {id})
+  resolve(res.data.data)
 })
 
 export const deleteCustomModel = (ids: string | string[]) => new Promise(async (resolve, reject) => {

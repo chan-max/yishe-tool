@@ -213,7 +213,7 @@ export class ModelController {
 
         try {
             console.log('准备打开设计模型:', modelId);
-            
+            debugger
             // 获取设计模型详情
             const modelInfo = await Api.getCustomModelById(modelId);
             console.log('设计模型信息:', modelInfo);

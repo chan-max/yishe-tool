@@ -129,6 +129,35 @@
             </div>
           </div>
           <div v-else class="no-material-thumb">无纹理</div>
+
+                    <!-- 新增：材质名称 -->
+                    <div class="material-row">
+            <span class="label">名称:</span>
+            <span class="value">{{ currentModelController.state.material.textureInfo?.name || '未设置' }}</span>
+          </div>
+          <!-- 新增：材质描述 -->
+          <div class="material-row">
+            <span class="label">描述:</span>
+            <span class="value">{{ currentModelController.state.material.textureInfo?.description || '未设置' }}</span>
+          </div>
+          <!-- 新增：材质标签 -->
+          <div class="material-row">
+            <span class="label">标签:</span>
+            <div class="tags">
+              <template v-if="currentModelController.state.material.textureInfo?.keywords">
+                <el-tag 
+                  v-for="(keyword, index) in currentModelController.state.material.textureInfo.keywords.split(',')" 
+                  :key="`material-${index}-${keyword.trim()}`"
+                  size="small"
+                  class="tag-item"
+                >
+                  {{ keyword.trim() }}
+                </el-tag>
+              </template>
+              <span v-else class="no-data">未设置</span>
+            </div>
+          </div>
+
           <div class="material-row">
             <span class="label">密度:</span>
             <span class="value">{{ currentModelController.state.material.textureRepeat || 0 }}</span>
@@ -151,6 +180,7 @@
               <span class="color-value">{{ currentModelController.state.material.color }}</span>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -191,18 +221,20 @@
             ></s1-tagsInput>
           </el-form-item>
           
-          <el-form-item>
-            <el-button
-              type="default"
-              size="small"
-              title="根据基础模型和贴纸信息自动生成模型信息"
-              @click="autofillInfo"
-            >
-              自动生成信息
-            </el-button>
-          </el-form-item>
         </el-form>
 
+        <!-- 保存按钮上方新增AI生成内容按钮 -->
+        <div class="ai-gen-button-container" style="padding: 0 12px 8px 12px;">
+          <el-button 
+            @click="aiGenerateContent" 
+            type="success" 
+            class="ai-gen-button" 
+            round 
+            size="default"
+          >
+            AI生成内容
+          </el-button>
+        </div>
         <!-- 保存按钮 -->
         <div class="save-button-container">
           <el-button 
@@ -314,32 +346,27 @@ function removeScreenshot(item) {
 }
 
 /**
- * @method 自动从基础模型和贴纸中填充信息
+ * @method AI生成内容，打印模型、贴纸、材质信息
  */
-function autofillInfo() {
-  let name = currentOperatingBaseModelInfo.value.name || "";
-  let description = currentOperatingBaseModelInfo.value.description || "";
-  let keywords = currentOperatingBaseModelInfo.value.keywords || "";
-
-  currentModelController.value.decalControllers.map((item) => {
-    if (item.info.name) {
-      name += "," + item.info.name;
-    }
-
-    if (item.info.description) {
-      description += "," + item.info.description || "";
-    }
-
-    if (item.info.keywords) {
-      keywords += "," + item.info.keywords;
-    }
-  });
-  
-  form.value = {
-    name,
-    description,
-    keywords,
-  };
+function aiGenerateContent() {
+  // 模型信息
+  const modelInfo = form.value;
+  // 贴纸信息
+  const decals = currentModelController.value?.decalControllers || [];
+  // 材质信息
+  const material = currentModelController.value?.state?.material || null;
+  console.log('AI生成内容：');
+  console.log('模型信息:', modelInfo);
+  if (decals.length > 0) {
+    console.log('贴纸信息:', decals.map(d => d.info));
+  } else {
+    console.log('贴纸信息: 无');
+  }
+  if (material) {
+    console.log('材质信息:', material);
+  } else {
+    console.log('材质信息: 无');
+  }
 }
 </script>
 <style lang="less" scoped>
@@ -629,7 +656,7 @@ function autofillInfo() {
 
 /* 材质信息样式 */
 .material-card {
-  margin-top: 8px;
+  margin-top: 2px;
 }
 .material-info {
   padding: 8px 12px;

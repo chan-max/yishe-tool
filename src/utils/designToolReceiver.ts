@@ -173,7 +173,7 @@ export class DesignToolReceiver {
                     message.loading({ content: '新模型：准备截图...', key: `modelScreenshot_${modelId}_${materialId}`, duration: 0 });
                     await new Promise(resolve => setTimeout(resolve, 500));
                     // 获取默认角度
-                    const angles = currentModelController.value.getDefaultSelectedAngles ? currentModelController.value.getDefaultSelectedAngles() : ['front', 'back', 'left', 'right'];
+                    const angles = currentModelController.value.getDefaultSelectedAngles ? currentModelController.value.getDefaultSelectedAngles() : ['front',];
                     message.loading({ content: `新模型：正在批量截图（共${angles.length}个角度）...`, key: `modelScreenshot_${modelId}_${materialId}`, duration: 0 });
                     // 批量截图
                     const images = await currentModelController.value.exportMultiAngleImages(angles);

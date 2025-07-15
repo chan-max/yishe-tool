@@ -1316,20 +1316,10 @@ export class ModelController {
         return this.angleConfigs;
     }
 
-    // 获取角度组配置
-    getAngleGroups() {
-        return [
-            { key: 'front', label: '正方向', description: '前、后、左、右、上、下' },
-            { key: '45deg', label: '45度斜角', description: '水平面和垂直面45度视角' },
-            { key: '30deg', label: '30度斜角', description: '30度视角组合' },
-            { key: '60deg', label: '60度斜角', description: '60度视角组合' },
-            { key: 'diagonal', label: '三维对角线', description: '45度三维对角线视角' }
-        ];
-    }
 
     // 获取默认选中的角度（前后左右）
     getDefaultSelectedAngles() {
-        return ['front', 'back', 'left', 'right'];
+        return ['front'];
     }
 
     // 导出多角度图片

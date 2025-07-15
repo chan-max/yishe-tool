@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-15 07:30:04
+ * @LastEditTime: 2025-07-15 08:36:29
  * @FilePath: /1s/src/components/design/layout/saveModel/index.vue
  * @Description: 
  * 
@@ -131,15 +131,15 @@
           <div v-else class="no-material-thumb">无纹理</div>
           <div class="material-row">
             <span class="label">密度:</span>
-            <span class="value">{{ currentModelController.state.material.textureRepeat }}</span>
+            <span class="value">{{ currentModelController.state.material.textureRepeat || 0 }}</span>
           </div>
           <div class="material-row">
             <span class="label">粗糙度:</span>
-            <span class="value">{{ currentModelController.state.material.roughness }}</span>
+            <span class="value">{{ currentModelController.state.material.roughness || 0 }}</span>
           </div>
           <div class="material-row">
             <span class="label">金属感:</span>
-            <span class="value">{{ currentModelController.state.material.metailness }}</span>
+            <span class="value">{{ currentModelController.state.material.metailness || 0 }}</span>
           </div>
           <div class="material-row">
             <span class="label">颜色:</span>
@@ -414,11 +414,17 @@ function autofillInfo() {
 }
 
 /* 卡片通用样式 */
-.info-card,
-.form-card {
+.info-card {
   background: white;
   border-radius: 8px;
   border: 1px solid #e9ecef;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.form-card {
+  background: white;
+  border-radius: 8px;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -709,56 +715,185 @@ function autofillInfo() {
 /* 响应式设计 */
 @media (max-width: 1200px) {
   .save-model-container {
-    flex-direction: column;
-    height: auto;
-    max-height: none;
+    gap: 8px;
+    padding: 8px;
   }
   
   .left-section {
-    flex: none;
+    flex: 0 0 35%;
   }
   
   .preview-section {
-    height: 200px;
+    height: 150px;
   }
   
-  .right-section {
-    overflow-y: visible;
+  .preview-image {
+    max-height: 100px;
   }
-  
+}
 
+@media (max-width: 900px) {
+  .save-model-container {
+    gap: 6px;
+    padding: 6px;
+  }
+  
+  .left-section {
+    flex: 0 0 38%;
+  }
+  
+  .preview-section {
+    height: 140px;
+  }
+  
+  .preview-image {
+    max-height: 90px;
+  }
+  
+  .card-header {
+    padding: 6px 8px 4px;
+  }
+  
+  .card-header h3 {
+    font-size: 12px;
+  }
+  
+  .info-card {
+    border-radius: 6px;
+  }
+  
+  .form-card {
+    border-radius: 6px;
+  }
 }
 
 @media (max-width: 768px) {
   .save-model-container {
-    padding: 8px;
-    gap: 8px;
+    gap: 4px;
+    padding: 4px;
+  }
+  
+  .left-section {
+    flex: 0 0 42%;
   }
   
   .preview-section {
-    height: 160px;
+    height: 120px;
   }
   
-  .info-row {
-    flex-direction: column;
-    align-items: flex-start;
+  .preview-image {
+    max-height: 80px;
+  }
+  
+  .card-header {
+    padding: 4px 6px 3px;
+  }
+  
+  .card-header h3 {
+    font-size: 11px;
+  }
+  
+  .info-label {
+    font-size: 11px;
   }
   
   .label {
-    flex: none;
-    margin-bottom: 1px;
+    font-size: 10px;
+    min-width: 32px;
   }
   
-  .sticker-item {
-    flex-direction: column;
-    align-items: flex-start;
+  .value {
+    font-size: 10px;
   }
   
-  .sticker-preview {
-    align-self: center;
-    margin-bottom: 4px;
+  .sticker-name {
+    font-size: 10px;
   }
   
+  .sticker-desc {
+    font-size: 9px;
+  }
+  
+  .compact-form {
+    padding: 6px 8px;
+  }
+  
+  .compact-form .el-form-item__label {
+    font-size: 10px;
+  }
+  
+  .save-button-container {
+    padding: 6px 8px;
+  }
+}
 
+@media (max-width: 600px) {
+  .save-model-container {
+    gap: 3px;
+    padding: 3px;
+  }
+  
+  .left-section {
+    flex: 0 0 45%;
+  }
+  
+  .preview-section {
+    height: 100px;
+  }
+  
+  .preview-image {
+    max-height: 70px;
+  }
+  
+  .card-header {
+    padding: 3px 4px 2px;
+  }
+  
+  .card-header h3 {
+    font-size: 10px;
+  }
+  
+  .info-label {
+    font-size: 10px;
+  }
+  
+  .label {
+    font-size: 9px;
+    min-width: 28px;
+  }
+  
+  .value {
+    font-size: 9px;
+  }
+  
+  .sticker-name {
+    font-size: 9px;
+  }
+  
+  .sticker-desc {
+    font-size: 8px;
+  }
+  
+  .compact-form {
+    padding: 4px 6px;
+  }
+  
+  .compact-form .el-form-item__label {
+    font-size: 9px;
+  }
+  
+  .save-button-container {
+    padding: 4px 6px;
+  }
+  
+  .material-thumb {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .sticker-image {
+    width: 20px;
+    height: 20px;
+  }
 }
 </style>

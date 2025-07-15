@@ -63,6 +63,8 @@ export async function createMaterialFromOptions(options) {
 
         let texture = await textureLoader.loadAsync(textrue.url)
 
+        console.log('服装材质加载url',textrue.url)
+
         // 该段代码可以将纹理均匀的显示
         texture.wrapS = RepeatWrapping; // 设置水平重复
         texture.wrapT = RepeatWrapping; // 设置垂直重复
@@ -121,6 +123,7 @@ export function initBasicLight(scene) {
 
 
 import { getSvgTextContentByUrl, svgToBase64, svgToPngFile } from '@/common/transform';
+import { url } from 'inspector';
 
 
 export function createReflectiveSphere(scene) {

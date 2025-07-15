@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-20 06:50:38
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-21 12:09:25
+ * @LastEditTime: 2025-07-15 08:06:18
  * @FilePath: /1s/src/components/design/layout/material/drawer.vue
  * @Description: 材质选择drawer组件
 -->
@@ -80,13 +80,13 @@
       </div>
       
       <!-- 分页组件 -->
-      <div style="padding: 12px; border-top: 1px solid #eee;">
+      <div style="padding: 12px; border-top: 1px solid #eee; overflow: hidden;">
         <el-pagination
           v-model:current-page="currentPage"
           v-model:page-size="pageSize"
           :page-sizes="[12, 24, 36, 48]"
           :total="total"
-          layout="total, sizes, prev, pager, next"
+          layout="prev, pager, next, sizes"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           small
@@ -181,12 +181,15 @@ onMounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  overflow: hidden;
 }
 
 .material-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
 }
 
 .material-item-row {
@@ -197,6 +200,8 @@ onMounted(() => {
   border-radius: 8px;
   background: #fafafa;
   transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
   
   &:hover {
     background: #f0f0f0;
@@ -215,10 +220,12 @@ onMounted(() => {
   flex-direction: column;
   justify-content: space-between;
   min-height: 80px;
+  min-width: 0; /* 防止flex子元素溢出 */
 }
 
 .material-info {
   flex: 1;
+  min-width: 0; /* 防止flex子元素溢出 */
   
   .material-name {
     margin: 0 0 4px 0;
@@ -226,6 +233,9 @@ onMounted(() => {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   .material-description {
@@ -237,10 +247,12 @@ onMounted(() => {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    word-break: break-word;
   }
 }
 
 .material-actions {
   margin-top: 8px;
+  flex-shrink: 0;
 }
 </style> 

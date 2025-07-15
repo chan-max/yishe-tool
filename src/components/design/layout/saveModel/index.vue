@@ -2,45 +2,173 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-13 23:25:36
+ * @LastEditTime: 2025-07-15 07:30:04
  * @FilePath: /1s/src/components/design/layout/saveModel/index.vue
  * @Description: 
  * 
  * Copyright (c) 2024 by 1s, All Rights Reserved. 
 -->
 <template>
-  <div class="flex flex-col h-full overflow-y-auto" style="padding: 24px 0; width: 100%;">
-    <!-- 主要内容区域 -->
-    <div class="flex flex-col gap-8" style="min-height: 0; padding: 0 24px;">
-      <!-- 顶部预览区域 -->
-      <div class="w-full">
-        <div class="mb-4">
-          <h3 class="text-lg font-medium mb-2">模型预览</h3>
+  <div class="save-model-container">
+    <!-- 左侧信息展示区域 -->
+    <div class="left-section">
+      <!-- 模型预览区域 -->
+      <div class="preview-section">
+        <div class="preview-header">
+          <h3 class="text-base font-medium">模型预览</h3>
         </div>
-        <s1-image
-          style="
-            width: 100%;
-            height: 400px;
-            background: #f5f6f7;
-            border-radius: 12px;
-            object-fit: contain;
-          "
-          :src="displayThumbnail"
-        ></s1-image>
+        <div class="preview-content">
+          <s1-image
+            class="preview-image"
+            :src="displayThumbnail"
+          ></s1-image>
+        </div>
       </div>
 
-      <!-- 底部表单区域 -->
-      <div class="flex flex-col w-full">
-        <div class="mb-4">
-          <h3 class="text-lg font-medium mb-2">模型信息</h3>
+      <!-- 模型组成信息 -->
+      <div class="info-card">
+        <div class="card-header">
+          <h3 class="text-base font-medium">模型组成</h3>
         </div>
         
-        <el-form label-position="top" class="w-full">
+        <!-- 基本模型信息 -->
+        <div class="model-info">
+          <div class="info-label">
+            <span class="dot blue"></span>
+            <span>基本模型</span>
+          </div>
+          <div class="info-content">
+            <div class="info-row">
+              <span class="label">名称:</span>
+              <span class="value">{{ currentOperatingBaseModelInfo?.name || '未设置' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">描述:</span>
+              <span class="value">{{ currentOperatingBaseModelInfo?.description || '未设置' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">标签:</span>
+              <div class="tags">
+                <template v-if="currentOperatingBaseModelInfo?.keywords">
+                  <el-tag 
+                    v-for="(keyword, index) in currentOperatingBaseModelInfo.keywords.split(',')" 
+                    :key="`base-${index}-${keyword.trim()}`"
+                    size="small"
+                    class="tag-item"
+                  >
+                    {{ keyword.trim() }}
+                  </el-tag>
+                </template>
+                <span v-else class="no-data">未设置</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 贴纸信息 -->
+        <div class="sticker-info">
+          <div class="info-label">
+            <span class="dot green"></span>
+            <span>贴纸 ({{ currentModelController?.decalControllers?.length || 0 }}个)</span>
+          </div>
+          
+          <template v-if="currentModelController?.decalControllers?.length">
+            <div class="sticker-list">
+              <div 
+                v-for="(decal, index) in currentModelController.decalControllers" 
+                :key="decal.id && decal.id.value ? decal.id.value : index"
+                class="sticker-item"
+              >
+                <div class="sticker-preview">
+                  <s1-image
+                    :src="decal.state.src"
+                    class="sticker-image"
+                  ></s1-image>
+                </div>
+                <div class="sticker-details">
+                  <div class="sticker-name">{{ decal.info?.name || '未设置' }}</div>
+                  <div class="sticker-desc">{{ decal.info?.description || '未设置' }}</div>
+                  <div class="sticker-tags">
+                    <template v-if="decal.info?.keywords">
+                      <el-tag 
+                        v-for="(keyword, tagIndex) in decal.info.keywords.split(',')" 
+                        :key="`decal-${decal.id && decal.id.value ? decal.id.value : index}-${keyword.trim()}`"
+                        size="small"
+                        class="tag-item"
+                      >
+                        {{ keyword.trim() }}
+                      </el-tag>
+                    </template>
+                    <span v-else class="no-data">未设置</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+          
+          <template v-else>
+            <div class="empty-stickers">
+              <span>暂无贴纸</span>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- 材质信息展示卡片 -->
+      <div class="material-card info-card">
+        <div class="card-header">
+          <h3 class="text-base font-medium">材质信息</h3>
+        </div>
+        <div class="material-info">
+          <div v-if="currentModelController.state.material.textureInfo">
+            <div class="material-thumb-wrap">
+              <s1-img
+                :src="currentModelController.state.material.textureInfo.url"
+                class="material-thumb"
+              ></s1-img>
+            </div>
+          </div>
+          <div v-else class="no-material-thumb">无纹理</div>
+          <div class="material-row">
+            <span class="label">密度:</span>
+            <span class="value">{{ currentModelController.state.material.textureRepeat }}</span>
+          </div>
+          <div class="material-row">
+            <span class="label">粗糙度:</span>
+            <span class="value">{{ currentModelController.state.material.roughness }}</span>
+          </div>
+          <div class="material-row">
+            <span class="label">金属感:</span>
+            <span class="value">{{ currentModelController.state.material.metailness }}</span>
+          </div>
+          <div class="material-row">
+            <span class="label">颜色:</span>
+            <div class="color-display">
+              <div 
+                class="color-preview" 
+                :style="{ background: currentModelController.state.material.color }"
+              ></div>
+              <span class="color-value">{{ currentModelController.state.material.color }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧表单区域 -->
+    <div class="right-section">
+      <!-- 模型信息表单 -->
+      <div class="form-card">
+        <div class="card-header">
+          <h3 class="text-base font-medium">模型信息</h3>
+        </div>
+        
+        <el-form label-position="top" class="compact-form">
           <el-form-item label="模型名称">
             <el-input 
               v-model="form.name" 
               placeholder="请输入模型名称"
-              size="default"
+              size="small"
             ></el-input>
           </el-form-item>
           
@@ -49,24 +177,24 @@
               v-model="form.description"
               placeholder="请输入模型描述"
               type="textarea"
-              :autosize="{ minRows: 4, maxRows: 8 }"
-              size="default"
+              :autosize="{ minRows: 2, maxRows: 4 }"
+              size="small"
             ></el-input>
           </el-form-item>
 
-          <el-form-item label="模型标签" prop="keywords">
+          <el-form-item label="模型标签">
             <s1-tagsInput
               v-model="form.keywords"
               :string="true"
               :autocompleteTags="customModelAutoplacementTags"
-              :autocompleteWidth="400"
+              :autocompleteWidth="300"
             ></s1-tagsInput>
           </el-form-item>
           
-          <el-form-item label="辅助操作">
+          <el-form-item>
             <el-button
               type="default"
-              size="default"
+              size="small"
               title="根据基础模型和贴纸信息自动生成模型信息"
               @click="autofillInfo"
             >
@@ -75,12 +203,12 @@
           </el-form-item>
         </el-form>
 
-        <!-- 底部操作区域 -->
-        <div class="mt-8 pt-6 border-t border-gray-200">
+        <!-- 保存按钮 -->
+        <div class="save-button-container">
           <el-button 
             @click="save" 
             type="primary" 
-            class="w-full" 
+            class="save-button" 
             round 
             :loading="loading"
             size="default"
@@ -162,12 +290,19 @@ async function save() {
         id: currentEditingModelId.value,
       });
       message.success("模型修改成功");
+      showSaveModel.value = false; // 关闭弹窗
       // exitEditMode();
     } else {
       await saveCustomModel(form.value);
       message.success("上传成功");
+      showSaveModel.value = false; // 关闭弹窗
     }
   } catch (e) {
+    // 如果用户取消操作，不显示错误信息
+    if (e && e.toString().includes('cancel')) {
+      return;
+    }
+    console.error('保存失败:', e);
   } finally {
     loading.value = false;
   }
@@ -208,65 +343,422 @@ function autofillInfo() {
 }
 </script>
 <style lang="less" scoped>
-/* 滚动条样式 */
-.overflow-y-auto {
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e0 #f7fafc;
+/* 主容器布局 */
+.save-model-container {
+  display: flex;
+  height: 100vh;
+  max-height: 90vh;
+  overflow: auto;
+  gap: 12px;
+  padding: 12px;
+  box-sizing: border-box;
 }
 
-.overflow-y-auto::-webkit-scrollbar {
-  width: 6px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: #f7fafc;
-  border-radius: 3px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #cbd5e0;
-  border-radius: 3px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #a0aec0;
-}
-
-/* 响应式布局 */
-@media (max-width: 768px) {
-  .w-full s1-image {
-    height: 300px !important;
-  }
-  
-  .text-2xl {
-    font-size: 1.5rem;
-  }
-  
-  .text-lg {
-    font-size: 1.125rem;
-  }
-}
-
-/* 确保内容区域不会溢出 */
-.flex-1 {
+/* 左侧信息展示区域 */
+.left-section {
+  flex: 0 0 40%; /* 左侧更宽 */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
   min-height: 0;
 }
 
-/* 表单区域样式优化 */
-.el-form {
-  .el-form-item {
-    margin-bottom: 20px;
-  }
-  
-  .el-form-item__label {
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 8px;
-  }
+/* 右侧表单区域 */
+.right-section {
+  flex: 1; /* 右侧自适应 */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  min-height: 0;
 }
 
-/* 按钮样式优化 */
-.el-button--default {
+/* 左侧预览区域 */
+.preview-section {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 0;
+  height: 170px;
+  max-height: 180px;
+}
+
+.preview-header {
+  padding: 6px 10px 4px;
+  border-bottom: 1px solid #e9ecef;
+  background: white;
+  flex-shrink: 0;
+}
+
+.preview-content {
+  flex: 1;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  background: #f5f6f7;
+  border-radius: 6px;
+  object-fit: contain;
+  max-height: 120px;
+}
+
+/* 卡片通用样式 */
+.info-card,
+.form-card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.card-header {
+  padding: 8px 12px 6px;
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+  flex-shrink: 0;
+}
+
+.card-header h3 {
+  font-size: 13px;
+  margin: 0;
+}
+
+/* 模型信息样式 */
+.model-info,
+.sticker-info {
+  padding: 8px 12px;
+}
+
+.model-info {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
   font-weight: 500;
+  color: #495057;
+  font-size: 12px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  margin-right: 5px;
+  flex-shrink: 0;
+}
+
+.dot.blue {
+  background: #007bff;
+}
+
+.dot.green {
+  background: #28a745;
+}
+
+.info-content {
+  margin-left: 10px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 4px;
+  align-items: flex-start;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  flex: 0 0 45px;
+  font-size: 11px;
+  color: #6c757d;
+  margin-right: 4px;
+}
+
+.value {
+  flex: 1;
+  font-size: 11px;
+  color: #212529;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.tags {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.tag-item {
+  margin: 0;
+  font-size: 10px;
+}
+
+.no-data {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 11px;
+}
+
+/* 贴纸列表样式 */
+.sticker-list {
+  margin-left: 10px;
+  overflow-y: visible;
+}
+
+.sticker-item {
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  background: #f8f9fa;
+}
+
+.sticker-item:last-child {
+  margin-bottom: 0;
+}
+
+.sticker-preview {
+  flex-shrink: 0;
+}
+
+.sticker-image {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  object-fit: cover;
+  border: 1px solid #dee2e6;
+}
+
+.sticker-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.sticker-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: #212529;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sticker-desc {
+  font-size: 10px;
+  color: #6c757d;
+  margin-bottom: 3px;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sticker-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+}
+
+.empty-stickers {
+  margin-left: 10px;
+  padding: 12px;
+  text-align: center;
+  color: #6c757d;
+  font-size: 11px;
+}
+
+/* 表单样式 */
+.compact-form {
+  padding: 8px 12px;
+}
+
+.compact-form .el-form-item {
+  margin-bottom: 8px;
+}
+
+.compact-form .el-form-item:last-child {
+  margin-bottom: 0;
+}
+
+.compact-form .el-form-item__label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 3px;
+}
+
+/* 保存按钮 */
+.save-button-container {
+  padding: 8px 12px;
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+  flex-shrink: 0;
+}
+
+.save-button {
+  width: 100%;
+}
+
+/* 材质信息样式 */
+.material-card {
+  margin-top: 8px;
+}
+.material-info {
+  padding: 8px 12px;
+}
+.material-thumb-wrap {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.material-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #eee;
+  background: #f7f7f7;
+}
+.no-material-thumb {
+  color: #aaa;
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+.material-row {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.material-row .label {
+  color: #6c757d;
+  margin-right: 6px;
+  min-width: 36px;
+}
+.material-row .value {
+  color: #212529;
+}
+
+/* 颜色显示样式 */
+.color-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.color-preview {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.color-value {
+  font-size: 11px;
+  color: #212529;
+}
+
+/* 滚动条样式 */
+.info-section::-webkit-scrollbar,
+.sticker-list::-webkit-scrollbar {
+  width: 3px;
+}
+
+.info-section::-webkit-scrollbar-track,
+.sticker-list::-webkit-scrollbar-track {
+  background: #f1f3f4;
+  border-radius: 2px;
+}
+
+.info-section::-webkit-scrollbar-thumb,
+.sticker-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.info-section::-webkit-scrollbar-thumb:hover,
+.sticker-list::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .save-model-container {
+    flex-direction: column;
+    height: auto;
+    max-height: none;
+  }
+  
+  .left-section {
+    flex: none;
+  }
+  
+  .preview-section {
+    height: 200px;
+  }
+  
+  .right-section {
+    overflow-y: visible;
+  }
+  
+
+}
+
+@media (max-width: 768px) {
+  .save-model-container {
+    padding: 8px;
+    gap: 8px;
+  }
+  
+  .preview-section {
+    height: 160px;
+  }
+  
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .label {
+    flex: none;
+    margin-bottom: 1px;
+  }
+  
+  .sticker-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .sticker-preview {
+    align-self: center;
+    margin-bottom: 4px;
+  }
+  
+
 }
 </style>

@@ -31,7 +31,7 @@
               <template #overlay>
                 <a-menu>
                   <a-menu-item @click="viewRelatedDrafts(item)"> 查看相关截图 </a-menu-item>
-                  <a-menu-item @click="workspaceEdit(item)"> 复制模型信息到工作台 </a-menu-item>
+                  <a-menu-item @click="copyToWorkspace(item)"> 复制模型信息到工作台 </a-menu-item>
                   <a-menu-item @click="edit(item)"> 编辑 </a-menu-item>
                   <a-menu-item @click="deleteItem(item)">
                     <span style="color: var(--el-color-danger)">删除</span>
@@ -156,7 +156,7 @@ import { ref, onBeforeMount } from "vue";
 import { Search, ArrowRightBold, Operation, ArrowRight, MoreFilled, Loading } from "@element-plus/icons-vue";
 import { getStickerList } from "@/api";
 import desimage from "@/components/image.vue";
-import { currentModelController, viewDisplayController, enterEditMode } from "@/components/design/store";
+import { currentModelController, viewDisplayController, enterEditMode, selectedAngles } from "@/components/design/store";
 import { initDraggableElement } from "@/components/design/utils/draggable";
 import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
@@ -274,8 +274,12 @@ async function ok() {
 /**
  * 工作台编辑
  */
-function workspaceEdit(item) {
+function copyToWorkspace(item) {
   let modelInfo = item.meta.modelInfo;
+  // 恢复角度选择
+  if (item.meta && Array.isArray(item.meta.selectedAngles)) {
+    selectedAngles.value = [...item.meta.selectedAngles];
+  }
   currentModelController.value.useModelInfo(modelInfo);
 }
 
@@ -287,6 +291,10 @@ function editInWorkspace(item) {
   // 进入编辑模式，并将模型信息加载到工作台
   enterEditMode(item.id, item);
   let modelInfo = item.meta.modelInfo;
+  // 恢复角度选择
+  if (item.meta && Array.isArray(item.meta.selectedAngles)) {
+    selectedAngles.value = [...item.meta.selectedAngles];
+  }
   currentModelController.value.useModelInfo(modelInfo);
 }
 

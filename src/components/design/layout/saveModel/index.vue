@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-15 08:36:29
+ * @LastEditTime: 2025-07-16 07:41:07
  * @FilePath: /1s/src/components/design/layout/saveModel/index.vue
  * @Description: 
  * 
@@ -265,6 +265,7 @@ import {
   isEdit,
   currentEditingModelId,
   exitEditMode,
+  selectedAngles,
 } from "../../store";
 import { base64ToFile, base64ToPngFile } from "@/common/transform/base64ToFile";
 import { useLoginStatusStore } from "@/store/stores/login";
@@ -320,12 +321,16 @@ async function save() {
       await updateCustomModelWithUpload({
         ...form.value,
         id: currentEditingModelId.value,
+        selectedAngles: selectedAngles.value,
       });
       message.success("模型修改成功");
       showSaveModel.value = false; // 关闭弹窗
       // exitEditMode();
     } else {
-      await saveCustomModel(form.value);
+      await saveCustomModel({
+        ...form.value,
+        selectedAngles: selectedAngles.value,
+      });
       message.success("上传成功");
       showSaveModel.value = false; // 关闭弹窗
     }

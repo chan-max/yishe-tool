@@ -6,7 +6,7 @@
  * @FilePath: /1s/src/components/design/layout/saveModel/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { currentModelController, lastestScreenshot, screenshots,currentEditingModelId ,enterEditMode} from "../../store";
+import { currentModelController, lastestScreenshot, screenshots,currentEditingModelId ,enterEditMode, selectedAngles} from "../../store";
 import { createCustomModelApi, uploadToCOS, updateCustomModel } from "@/api";
 import Utils from "@/common/utils";
 import { useLoginStatusStore } from "@/store/stores/login";
@@ -35,6 +35,7 @@ export async function saveCustomModel(form) {
         thumbnail: cos.url,
         meta: {
             modelInfo,
+            selectedAngles: form.selectedAngles || [],
         },
         uploaderId: loginStore.userInfo?.id,
     };
@@ -69,6 +70,7 @@ export async function updateCustomModelWithUpload(form) {
         thumbnail: cos.url,
         meta: {
             modelInfo,
+            selectedAngles: form.selectedAngles || [],
         },
         uploaderId: loginStore.userInfo?.id,
     };

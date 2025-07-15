@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-20 06:50:38
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-19 00:48:09
+ * @LastEditTime: 2025-07-16 07:39:12
  * @FilePath: /1s/src/components/design/layout/videoClip/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -127,6 +127,7 @@
 <script setup lang="ts">
 import { currentModelController } from "../../store";
 import { ref, computed, onMounted } from "vue";
+import { selectedAngles } from '../../store';
 import gsap from "gsap";
 import { message } from "ant-design-vue";
 import { uploadToCOS, createDraft } from "@/api";
@@ -144,8 +145,7 @@ const isRecording = ref(false);
 const timeCount = ref(0);
 let timeCountInterval: any = null;
 
-// 角度选择相关状态
-const selectedAngles = ref<string[]>([]);
+// 角度选择相关状态由 store 提供
 const availableAngles = ref<any[]>([]);
 const isSavingToDraft = ref(false);
 

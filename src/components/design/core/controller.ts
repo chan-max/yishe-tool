@@ -67,6 +67,7 @@ import Utils from '@/common/utils'
 
 import { createMaterialFromOptions, initBasicLight, initHdr } from './controllerHelper'
 import { CameraController } from "./cameraController";
+import { selectedAngles } from '../store';
 
 const mixins = [
     _1stfExporterMixin,
@@ -213,7 +214,7 @@ export class ModelController {
 
         try {
             console.log('准备打开设计模型:', modelId);
-            debugger
+
             // 获取设计模型详情
             const modelInfo = await Api.getCustomModelById(modelId);
             console.log('设计模型信息:', modelInfo);
@@ -230,6 +231,10 @@ export class ModelController {
                 enterEditMode(modelInfo.id, modelInfo);
             }
             
+            // 恢复角度选择
+            if (modelInfo.meta && Array.isArray(modelInfo.meta.selectedAngles)) {
+                selectedAngles.value = [...modelInfo.meta.selectedAngles];
+            }
             // 如果有模型元信息，加载到工作台
             if (modelInfo.meta?.modelInfo) {
                 await this.useModelInfo(modelInfo.meta.modelInfo);
@@ -1326,13 +1331,13 @@ export class ModelController {
     async exportMultiAngleImages(angleNames?: string[]) {
         const allAngles = this.getAvailableAngles();
         let anglesToExport = allAngles;
-
-        // 如果传递了角度name数组，则只导出这些角度
-        if (Array.isArray(angleNames) && angleNames.length > 0) {
-            anglesToExport = allAngles.filter(angle => angleNames.includes(angle.name));
+        // 优先用参数，其次用全局 store
+        const useAngles = Array.isArray(angleNames) && angleNames.length > 0
+            ? angleNames
+            : (Array.isArray(selectedAngles.value) && selectedAngles.value.length > 0 ? selectedAngles.value : undefined);
+        if (useAngles) {
+            anglesToExport = allAngles.filter(angle => useAngles.includes(angle.name));
         }
-
-        // 如果没有角度要导出，返回空数组
         if (anglesToExport.length === 0) {
             return [];
         }
@@ -1402,10 +1407,12 @@ export class ModelController {
         filename?: string // 文件名前缀，默认为 'model'
     } = {}) {
         const filename = options.filename || 'model';
-
         try {
-            const images = await this.exportMultiAngleImages(options.angles);
-            
+            // 优先用 options.angles，其次用全局 store
+            const useAngles = Array.isArray(options.angles) && options.angles.length > 0
+                ? options.angles
+                : (Array.isArray(selectedAngles.value) && selectedAngles.value.length > 0 ? selectedAngles.value : undefined);
+            const images = await this.exportMultiAngleImages(useAngles);
             // 批量下载
             for (let i = 0; i < images.length; i++) {
                 const image = images[i];
@@ -1415,13 +1422,11 @@ export class ModelController {
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                
                 // 添加小延迟避免浏览器阻止多个下载
                 if (i < images.length - 1) {
                     await new Promise(resolve => setTimeout(resolve, 100));
                 }
             }
-
             return images;
         } catch (error) {
             throw error;

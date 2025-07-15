@@ -532,3 +532,6 @@ export function exitEditMode() {
 }
 
 
+// 角度选择全局状态
+export const selectedAngles = ref<string[]>([]);
+

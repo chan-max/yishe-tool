@@ -28,7 +28,6 @@
                   <div class="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm shadow-lg whitespace-nowrap">
                     <div class="font-medium mb-1">关联模型：</div>
                     <div v-if="item.customModelInfo" class="text-blue-300">{{ item.customModelInfo.name }}</div>
-                    <div v-else class="text-yellow-300">加载中...</div>
                     <div class="text-gray-400 text-xs mt-1">ID: {{ item.customModelId }}</div>
                     <div v-if="item.customModelInfo?.description" class="text-gray-300 text-xs mt-1 max-w-48 break-words">
                       {{ item.customModelInfo.description }}
@@ -55,7 +54,6 @@
                   <div class="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm shadow-lg whitespace-nowrap">
                     <div class="font-medium mb-1">关联模型：</div>
                     <div v-if="item.customModelInfo" class="text-blue-300">{{ item.customModelInfo.name }}</div>
-                    <div v-else class="text-yellow-300">加载中...</div>
                     <div class="text-gray-400 text-xs mt-1">ID: {{ item.customModelId }}</div>
                     <div v-if="item.customModelInfo?.description" class="text-gray-300 text-xs mt-1 max-w-48 break-words">
                       {{ item.customModelInfo.description }}
@@ -165,24 +163,8 @@ async function getList() {
       pageSize: pageSize.value,
     });
     
-    // 为有 customModelId 的草稿获取模型信息
-    const listWithModelInfo = await Promise.all(
-      res.list.map(async (item) => {
-        console.log('处理草稿项:', item);
-        if (item.customModelId) {
-          console.log('草稿有关联模型，ID:', item.customModelId);
-          const modelInfo = await getCustomModelInfo(item.customModelId);
-          return {
-            ...item,
-            customModelInfo: modelInfo
-          };
-        }
-        console.log('草稿没有关联模型');
-        return item;
-      })
-    );
-    
-    list.value = listWithModelInfo;
+    // 直接赋值，不再处理 customModelInfo
+    list.value = res.list;
     total.value = res.total;
     isEmpty.value = list.value.length === 0;
   } catch (error) {

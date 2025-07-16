@@ -29,12 +29,12 @@ export class DesignToolReceiver {
 
     this.messenger = new NativeWindowMessenger()
     // 主动告知父窗口已连接，提升连接鲁棒性
-    this.messenger.send('customEvent', 'connected')
+    this.messenger.send('customEvent', '设计工具连接成功')
     
     // 监听父窗口请求
     this.messenger.on('test', () => {
       console.log('收到父窗口测试消息')
-      this.messenger?.send('customEvent', 'connected')
+      this.messenger?.send('customEvent', '设计工具连接成功')
     })
 
     // 监听设计模型数据

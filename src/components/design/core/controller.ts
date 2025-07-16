@@ -68,6 +68,7 @@ import Utils from '@/common/utils'
 import { createMaterialFromOptions, initBasicLight, initHdr } from './controllerHelper'
 import { CameraController } from "./cameraController";
 import { selectedAngles } from '../store';
+import { openCustomModel } from '../utils/openCustomModel';
 
 const mixins = [
     _1stfExporterMixin,
@@ -226,19 +227,7 @@ export class ModelController {
                 return false;
             }
             
-            // 自动进入编辑模式
-            if (autoEnterEditMode) {
-                enterEditMode(modelInfo.id, modelInfo);
-            }
-            
-            // 恢复角度选择
-            if (modelInfo.meta && Array.isArray(modelInfo.meta.selectedAngles)) {
-                selectedAngles.value = [...modelInfo.meta.selectedAngles];
-            }
-            // 如果有模型元信息，加载到工作台
-            if (modelInfo.meta?.modelInfo) {
-                await this.useModelInfo(modelInfo.meta.modelInfo);
-            }
+            await openCustomModel(modelInfo, { editMode: autoEnterEditMode, id: modelInfo.id });
             
             // 显示成功消息
             if (showSuccessMessage) {
@@ -1322,9 +1311,9 @@ export class ModelController {
     }
 
 
-    // 获取默认选中的角度（前后左右）
+    // 获取默认选中的角度（优先返回系统当前保存的截图角度）
     getDefaultSelectedAngles() {
-        return ['front'];
+        return Array.isArray(selectedAngles.value) && selectedAngles.value.length > 0 ? selectedAngles.value : ['front'];
     }
 
     // 导出多角度图片

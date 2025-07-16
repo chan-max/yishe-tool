@@ -168,6 +168,7 @@ import { message } from "ant-design-vue";
 import { useCustomModelDetailModal } from "@/components/design/layout/project/customModel/customModelModal";
 import { openShareCardModal } from "@/components/design/layout/shareCard/index.ts";
 import { saveAs } from "file-saver";
+import { openCustomModel } from '@/components/design/utils/openCustomModel';
 
 const { open } = useCustomModelDetailModal();
 
@@ -275,12 +276,7 @@ async function ok() {
  * 工作台编辑
  */
 function copyToWorkspace(item) {
-  let modelInfo = item.meta.modelInfo;
-  // 恢复角度选择
-  if (item.meta && Array.isArray(item.meta.selectedAngles)) {
-    selectedAngles.value = [...item.meta.selectedAngles];
-  }
-  currentModelController.value.useModelInfo(modelInfo);
+  openCustomModel(item);
 }
 
 function downloadThumbnail(item) {
@@ -288,14 +284,7 @@ function downloadThumbnail(item) {
 }
 
 function editInWorkspace(item) {
-  // 进入编辑模式，并将模型信息加载到工作台
-  enterEditMode(item.id, item);
-  let modelInfo = item.meta.modelInfo;
-  // 恢复角度选择
-  if (item.meta && Array.isArray(item.meta.selectedAngles)) {
-    selectedAngles.value = [...item.meta.selectedAngles];
-  }
-  currentModelController.value.useModelInfo(modelInfo);
+  openCustomModel(item, { editMode: true });
 }
 
 // 查看关联草稿

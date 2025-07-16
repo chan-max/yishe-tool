@@ -368,6 +368,14 @@ async function uploadSingleFile(file) {
     const fileCos = await uploadToCOS({ file: file.raw });
 
     debugger;
+    // 自动识别后缀
+    let suffix = '';
+    if (file.name) {
+      const match = file.name.match(/\.([a-zA-Z0-9]+)$/);
+      if (match) {
+        suffix = match[1].toLowerCase();
+      }
+    }
     const params = {
       name: file.customName,
       size: file.size,
@@ -377,6 +385,7 @@ async function uploadSingleFile(file) {
       isPublic: file.isPublic,
       isTexture:file.isTexture,
       uploaderId: loginStore.userInfo.id,
+      suffix // 新增字段，图片类型后缀
     };
     await createSticker(params);
   }

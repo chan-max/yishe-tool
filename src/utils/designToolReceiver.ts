@@ -4,7 +4,7 @@ import { message } from 'ant-design-vue'
 import { controllerOpenModelAndReplaceStickers } from '@/components/design/core/controller'
 import { exitEditMode, enterEditMode } from '@/components/design/store'
 import { saveCustomModel } from '@/components/design/layout/saveModel/index.ts'
-import { uploadToCOS, createDraft } from '@/api'
+import { uploadToCOS, createDraft, getCustomModelById } from '@/api'
 import { currentModelController } from '@/components/design/store'
 
 export interface DesignModelData {
@@ -41,6 +41,24 @@ export class DesignToolReceiver {
     this.messenger.on('designModelData', (data: DesignModelData) => {
       console.log('收到设计模型数据:', data)
       this.handleDesignModelData(data)
+    })
+
+    // 监听“进入设计工具查看”消息
+    this.messenger.on('openDesignModel', async (data: { designModelId: string }) => {
+      if (data && data.designModelId) {
+        try {
+          const modelInfo = await getCustomModelById(data.designModelId)
+          enterEditMode(data.designModelId, modelInfo)
+          if (currentModelController.value && currentModelController.value.useModelInfo) {
+            await currentModelController.value.useModelInfo(modelInfo)
+          }
+          message.success(`已打开模型 ${data.designModelId} 并进入编辑模式`)
+        } catch (e) {
+          message.error('获取模型信息失败，无法进入编辑模式')
+        }
+      } else {
+        message.warning('未收到有效的设计模型ID')
+      }
     })
 
     // 启动心跳检测

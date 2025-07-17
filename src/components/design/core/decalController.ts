@@ -528,10 +528,12 @@ export class DecalController {
         return;
       }
 
+      debugger
+
       // 更新贴纸信息
       this.state.id = stickerId;
       this.state.info = stickerInfo;
-      this.state.src = this.state.url = stickerInfo.url || stickerInfo.thumbnail?.url;
+      this.state.src = this.state.url = stickerInfo.url;
       this.state.isLocalResource = false;
       this.info = stickerInfo;
 

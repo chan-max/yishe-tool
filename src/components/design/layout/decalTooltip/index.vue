@@ -18,10 +18,6 @@
         <label>添加时间:</label>
         {{ formatDate(currentHoveringDecalController.createTime) }}
       </div>
-      <div>
-        <label> 图片状态: </label>
-        {{ currentHoveringDecalController.state.isLocalResource ? "未上传" : "已上传" }}
-      </div>
 
       <div>
         <label> 图片名称: </label>

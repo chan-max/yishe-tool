@@ -70,7 +70,6 @@ export class DecalController {
   state = reactive({
     id: null,
     info: null,
-    isLocalResource: false,
     url: null, // 贴纸的路径，用于贴花和展示
     src: null, // 等同于 url
 
@@ -116,13 +115,9 @@ export class DecalController {
     }
 
     this.state.id = this.id.value = (info.id || v4()) // 如果是本地的贴纸，随机分配一个id
-    this.state.isLocalResource = info.isLocalResource
     this.state.src = this.state.url = info.url || info.src || info.img?.src || info.base64
     this.info = info
     this.state.info = info
-    if (this.state.isLocalResource) {
-      this.info.src = this.info.base64
-    }
     this.img = info.img
 
 
@@ -249,19 +244,11 @@ export class DecalController {
     let sourceUrl = this.img?.src || this.info.src || this.info.url
     
 
-    // 本地穿件的图片
-    if (this.state.isLocalResource) {
-      const image = new Image();
-      image.src = this.info.base64;
-      // 创建纹理
-
-      texture = new Texture(image);
-      image.onload = function () {
-        texture.needsUpdate = true; // 更新纹理
-      };
-    } else {
-      texture = await textureLoader.loadAsync(sourceUrl)
+    // 本地穿件的图片相关逻辑移除
+    if (sourceUrl) {
+      sourceUrl += (sourceUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
     }
+    texture = await textureLoader.loadAsync(sourceUrl)
 
     // 这羊可以让图片颜色看起来更好
     texture.colorSpace = SRGBColorSpace;
@@ -528,32 +515,33 @@ export class DecalController {
         return;
       }
 
-      debugger
-
       // 更新贴纸信息
       this.state.id = stickerId;
       this.state.info = stickerInfo;
       this.state.src = this.state.url = stickerInfo.url;
-      this.state.isLocalResource = false;
+      // replaceSticker 相关赋值移除
+      // this.state.isLocalResource = false;
       this.info = stickerInfo;
+      this.img = stickerInfo.img || null;
 
-      // 清除旧的材质
-      if (this.material) {
-        this.material.dispose();
-        this.material = null;
+      // 清除旧的材质和 mesh
+      if (this.mesh) {
+        if (this.mesh.material) this.mesh.material.dispose();
+        if (this.mesh.geometry) this.mesh.geometry.dispose();
+        currentModelController.value.scene.remove(this.mesh);
+        this.mesh = null;
       }
 
       // 重新初始化材质
       await this.initTexture();
 
-      // 重新创建贴纸几何体和网格
-      if (this.mesh) {
-        // 移除旧的网格
-        currentModelController.value.scene.remove(this.mesh);
+      // 重新创建贴纸 mesh
+      if (this.parentMesh && this.state.position && this.state.rotation) {
+        this.geometry = new DecalGeometry(this.parentMesh, this.state.position, this.state.rotation, this.size.value);
+        this.mesh = new Mesh(this.geometry, this.material);
+        this.mesh.renderOrder = globalRenderOrder.value++;
+        currentModelController.value.scene.add(this.mesh);
       }
-
-      // 重新创建贴纸
-      await this.create();
 
       message.success({ content: '贴纸替换成功', key: 'replaceSticker' });
     } catch (error) {
@@ -563,35 +551,27 @@ export class DecalController {
   }
 
   // 如果是本地创建的贴纸，则需要上传到远程
-  public async upload() {
-    if (!this.state.isLocalResource) {
-      return Promise.resolve(void 0);
-    }
-
-    let loginStore = useLoginStatusStore()
-
-    const file = Utils.transform.base64ToPngFile(this.info.base64)
-
-    const cos = await Api.uploadToCOS({
-      file: file
-    })
-
-    let data = await Api.createDraft({
-      url: cos.url,
-      name: '贴纸草稿',
-      type: 'composition',
-      meta: {
-        data: this.info.data
-      },
-      updateTime: new Date(),
-      uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null
-    })
-
-    this.state.isDraft = true
-    this.state.isLocalResource = false
-    this.state.id = data.id
-    return data
-  }
+  // upload 相关逻辑移除
+  // public async upload() {
+  //   if (!this.state.isLocalResource) {
+  //     return Promise.resolve(void 0);
+  //   }
+  //   let loginStore = useLoginStatusStore()
+  //   const file = Utils.transform.base64ToPngFile(this.info.base64)
+  //   const cos = await Api.uploadToCOS({ file: file })
+  //   let data = await Api.createDraft({
+  //     url: cos.url,
+  //     name: '贴纸草稿',
+  //     type: 'composition',
+  //     meta: { data: this.info.data },
+  //     updateTime: new Date(),
+  //     uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null
+  //   })
+  //   this.state.isDraft = true
+  //   this.state.isLocalResource = false
+  //   this.state.id = data.id
+  //   return data
+  // }
 
 
   resetPosition() {
@@ -632,7 +612,8 @@ export class DecalController {
       return
     }
 
-    await this.upload()
+    // upload 相关逻辑移除
+    // await this.upload()
 
     const position = {
       x: this.state.position.x,

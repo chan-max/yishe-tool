@@ -466,6 +466,8 @@ export class CanvasController {
     initDraggable() {
         let self = this
 
+        return
+
         let base64 = this.base64
         initDraggableElement(
             this.el,

@@ -170,9 +170,6 @@
         >在贴纸制作中使用该贴纸模版</el-button
       >
     </div>
-    <div v-if="currentOperatingDecalController.state.isLocalResource">
-      <el-button @click="upload" plain round class="bottom-btn"> 点击上传 </el-button>
-    </div>
     <div>
       <el-button @click="showDecalList = !showDecalList" round plain class="bottom-btn">
         贴纸列表
@@ -332,7 +329,6 @@ watch(
   }
 );
 
-function upload() {}
 
 function moveTop() {
   currentOperatingDecalController.value.moveTop();

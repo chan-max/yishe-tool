@@ -25,16 +25,6 @@
       >
         <template v-for="item in decals">
           <div class="item" @click="decalClick(item)">
-            <el-tooltip content="该贴纸还未上传" placement="top">
-              <el-button
-                v-if="item.state.isLocalResource"
-                @click="unUpload"
-                style="position: absolute; top: 4px; right: 4px; z-index: 99"
-                link
-              >
-                <s1-icon name="un-upload" size="16"></s1-icon>
-              </el-button>
-            </el-tooltip>
             <s1-image :src="item.state.url"></s1-image>
           </div>
         </template>

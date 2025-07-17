@@ -15,14 +15,14 @@ export async function saveCustomModel(form) {
     const loginStore = useLoginStatusStore();
 
     // 上传本地贴纸 , 过滤出本地的贴纸
-    let localDecals = currentModelController.value.decalControllers.filter(
-        (decal) => decal.state.isLocalResource
-    );
+    // let localDecals = currentModelController.value.decalControllers.filter(
+    //     (decal) => decal.state.isLocalResource
+    // );
 
     // 只负责把贴纸上传即可
-    if (localDecals.length) {
-        // 提示存在未上传的贴纸
-    }
+    // if (localDecals.length) {
+    //     // 提示存在未上传的贴纸
+    // }
 
     const thumbnail = currentModelController.value.getScreenShotFile();
 
@@ -52,14 +52,14 @@ export async function updateCustomModelWithUpload(form) {
     const loginStore = useLoginStatusStore();
 
     // 上传本地贴纸 , 过滤出本地的贴纸
-    let localDecals = currentModelController.value.decalControllers.filter(
-        (decal) => decal.state.isLocalResource
-    );
+    // let localDecals = currentModelController.value.decalControllers.filter(
+    //     (decal) => decal.state.isLocalResource
+    // );
 
     // 只负责把贴纸上传即可
-    if (localDecals.length) {
-        // 提示存在未上传的贴纸
-    }
+    // if (localDecals.length) {
+    //     // 提示存在未上传的贴纸
+    // }
 
     const thumbnail = currentModelController.value.getScreenShotFile();
     const cos = await uploadToCOS({ file: thumbnail });

@@ -38,14 +38,16 @@ export function saveScreenshot() {
 
     // 保存到本地
     const file = Utils.transform.base64ToPngFile(base64);
-    saveAs(file, `screenshot_${new Date().getTime()}.png`);
+
+    // saveAs(file, `screenshot_${new Date().getTime()}.png`);
 
     // 上传到 COS 并保存到草稿箱
     uploadToCOS({ file }).then(cos => {
         createDraft({
             url: cos.url,
             name: '模型截图',
-            updateTime: new Date()
+            updateTime: new Date(),
+            ...(isEdit.value && currentEditingModelId.value ? { customModelId: currentEditingModelId.value } : {})
         }).then(() => {
             message.success('截图已保存到草稿箱和本地');
         }).catch(err => {

@@ -248,86 +248,84 @@ export const useViewer = (gltfViewerRef, props, emits) => {
             loadingMessage.value = '正在加载贴纸...'
 
             await Promise.all(modelInfo.decals.map((decal) => {
+                return new Promise(async (resolve) => {
+                    try {
+                        var { id, position, rotation, size, isDraft } = decal;
+                        if (!id) return resolve(void 0);
 
-                return new Promise(async (resolve, reject) => {
+                        loading.value = true;
+                        loadingMessage.value = '正在获取贴纸信息...';
 
-                    var { id, position, rotation, size, isDraft } = decal;
+                        let sticker;
+                        try {
+                            sticker = decal.fetchResult || (await getStickerById(id));
+                        } catch (e) {
+                            console.error('获取贴纸信息失败', e);
+                            return resolve(void 0);
+                        }
 
-                    if (!id) {
-                        return resolve(void 0);
+                        var { url } = sticker || {};
+                        if (!url) {
+                            console.warn('贴纸无图片', sticker);
+                            return resolve(void 0);
+                        }
+
+                        position = new Vector3(position.x, position.y, position.z);
+
+                        var raycaster = new Raycaster();
+                        raycaster.set(position, new Vector3(0, -1, 0));
+                        var intersects = raycaster.intersectObject(mesh);
+                        if (intersects.length <= 0) {
+                            console.log("贴花位置错误");
+                            return resolve(void 0);
+                        }
+
+                        rotation = new Euler(rotation.x, rotation.y, rotation.z);
+                        size = new Vector3(size.x, size.y, size.z);
+
+                        const textureLoader = new TextureLoader();
+                        let imgUrl = Utils.formatUrl(url, { nocache: true });
+
+                        loading.value = true;
+                        loadingMessage.value = '正在获取贴纸...';
+
+                        let texture;
+                        try {
+                            texture = await textureLoader.loadAsync(imgUrl);
+                         
+                        } catch (e) {
+                            console.error('贴纸图片加载失败', e);
+                            return resolve(void 0);
+                        }
+
+                        texture.colorSpace = SRGBColorSpace;
+
+                        const material = new MeshStandardMaterial({
+                            map: texture,
+                            transparent: true,
+                            depthTest: true,
+                            depthWrite: true,
+                            polygonOffset: true,
+                            polygonOffsetFactor: -1,
+                            wireframe: false,
+                            metalness: decal.metalness,
+                            roughness: decal.roughness,
+                        });
+
+                        const decalGeometry = new DecalGeometry(mesh, position, rotation, size);
+                        var decalMesh = new Mesh(decalGeometry, material);
+                        scene.add(decalMesh);
+                        decalMesh.frustumCulled = false;
+                        decalMesh.renderOrder = 1;
+                    } catch (e) {
+                        console.error('贴纸渲染异常', e);
+                    } finally {
+                        loading.value = false;
+                        loadingMessage.value = '';
+                        resolve(void 0);
                     }
-
-                    loading.value = true
-                    loadingMessage.value = '正在获取贴纸信息...'
-
-                    const sticker = decal.fetchResult || (isDraft ? await getDraftById(id) : await getStickerById(id))
-
-                    var { thumbnail } = sticker
-
-                    position = new Vector3(position.x, position.y, position.z);
-
-                    // 判断是否在网格上
-                    var raycaster = new Raycaster();
-                    raycaster.set(position, new Vector3(0, -1, 0));
-
-                    // 使用射线投射器检查模型是否与射线相交。
-                    var intersects = raycaster.intersectObject(mesh);
-                    // 如果有交点，那么这个点就在模型上。
-                    if (intersects.length <= 0) {
-                        console.log("贴花位置错误");
-                        resolve(void 0)
-                        // return;
-                    }
-
-                    rotation = new Euler(rotation.x, rotation.y, rotation.z);
-                    size = new Vector3(size.x, size.y, size.z);
-
-
-                    const textureLoader = new TextureLoader();
-
-                    /*
-                        there is a strange bug in the texture loader
-                        while use cache it render error
-                        we need to fouce load new url 
-                        we will fix it
-                    */
-
-                    let url = Utils.formatUrl(thumbnail, { nocache: true })
-
-                    loading.value = true
-                    loadingMessage.value = '正在获取贴纸...'
-
-                    console.log('before')
-                    const texture = await textureLoader.loadAsync(url);
-
-                    texture.colorSpace = SRGBColorSpace;
-
-                    const material = new MeshStandardMaterial({
-                        map: texture,
-                        transparent: true,
-                        depthTest: true,
-                        depthWrite: true,
-                        polygonOffset: true,
-                        polygonOffsetFactor: -1,
-                        wireframe: false,
-                        metalness:decal.metalness,
-                        roughness:decal.roughness,
-                    });
-
-                    const decalGeometry = new DecalGeometry(mesh, position, rotation, size);
-                    var decalMesh = new Mesh(decalGeometry, material);
-                    scene.add(decalMesh);
-                    decalMesh.frustumCulled = false;
-                    decalMesh.renderOrder = 1
-                    loading.value = false
-                    loadingMessage.value = ''
-                    resolve(void 0)
-                })
+                });
             }))
-
-
-
-
         }
 
 

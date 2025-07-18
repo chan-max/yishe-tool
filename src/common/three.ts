@@ -33,35 +33,42 @@ function findMainMeshFromGltf(gltf) {
 
 function findMainMeshFromGltfAndMergeGeometries(gltf) {
     let mesh = null;
-    let geometries = []
+    let geometries = [];
+    let materials = [];
+    let groups = [];
+    let indexOffset = 0;
 
     gltf.scene.traverse((child) => {
-
         if (child.isMesh) {
             const geometry = child.geometry.clone();
-            geometry.applyMatrix4(child.matrixWorld); // 应用世界变换
+            geometry.applyMatrix4(child.matrixWorld);
+            
+            // 记录当前 geometry 的索引范围
+            const count = geometry.index ? geometry.index.count : geometry.attributes.position.count;
             geometries.push(geometry);
+            materials.push(child.material);
+            groups.push({
+                start: indexOffset,
+                count: count,
+                materialIndex: materials.length - 1
+            });
+            indexOffset += count;
         }
-
         if (child.isMesh && !mesh) {
-            mesh = child
+            mesh = child;
         }
-
     });
 
-    /**
-     * @description 这里负责合并所有的几何体，目的是为了让其能够贴图准确，但是，合并后，之前的模型材质都会失效，原因不知道该应用哪一个
-     * */
+    // 合并几何体，不自动合并 groups
+    let merged = mergeGeometries(geometries, false);
+    // 设置 groups 信息
+    merged.groups = groups;
 
-    let merged = mergeGeometries(geometries)
+    // 创建合并后的网格，传入材质数组
+    const mergedMesh = new Mesh(merged, materials);
+    gltf.scene = mergedMesh;
 
-    const material = createDefaultMaterial()
-
-    // 创建合并后的网格
-    const mergedMesh = new Mesh(merged, material);
-    gltf.scene = mergedMesh
-
-    return { mergedMesh }
+    return { mergedMesh };
 }
 
 

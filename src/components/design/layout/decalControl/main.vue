@@ -3,8 +3,9 @@
     <div style="padding: 0.75rem">
       <s1-img
         :src="currentOperatingDecalController.state.src"
-        style="width: 48px; height: 48px"
         class="png-background"
+        @click="handleStickerImgClick"
+        style="cursor: pointer; width: 100%"
       ></s1-img>
     </div>
 
@@ -246,6 +247,9 @@
       </div>
     </div>
   </el-dialog>
+
+  <!-- 贴纸详情弹窗 -->
+  <sticker-detail-modal v-if="showStickerDetailModal" />
 </template>
 
 <script setup lang="ts">
@@ -261,6 +265,8 @@ import { Top, Bottom, Back, Right, RefreshRight, Search } from "@element-plus/ic
 import { canvasStickerOptions } from "../canvas";
 import { clothingPaintMethods } from ".";
 import { getStickerList } from "@/api";
+import { useStickerDetailModal } from "../project/sticker/stickerModal.ts";
+import stickerDetailModal from "../project/sticker/stickerDetailModal.vue";
 
 // 替换贴纸弹窗相关
 const showReplaceDialog = ref(false);
@@ -360,6 +366,25 @@ function useCurrentSticker() {
 }
 
 const clothingPaintMethod = ref();
+
+// 新增：贴纸详情弹窗逻辑
+const { show: showStickerDetailModal, open: openStickerDetailModal } = useStickerDetailModal();
+
+function handleStickerImgClick() {
+  // 取state和info合并，优先info
+  const state = currentOperatingDecalController.value?.state || {};
+  const info = currentOperatingDecalController.value?.info || {};
+  // 兼容stickerDetailModal.vue所需字段
+  openStickerDetailModal({
+    ...info,
+    url: state.url || state.src,
+    name: info.name || '',
+    description: info.description || '',
+    keywords: info.keywords || '',
+    updateTime: info.updateTime || '',
+    id: state.id || info.id || '',
+  });
+}
 </script>
 
 <style scoped lang="less">

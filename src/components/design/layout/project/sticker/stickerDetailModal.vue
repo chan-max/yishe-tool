@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-20 06:50:38
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-02 19:59:25
+ * @LastEditTime: 2025-07-22 19:51:34
  * @FilePath: /1s/src/components/design/layout/project/sticker/stickerDetailModal.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -29,9 +29,12 @@
         <h6>{{ detailInfo.updateTime }}</h6>
         <div class="color-palette flex" style="column-gap: 12px">
           <div
-            style="width: 24px; height: 24px; border-radius: 12px"
             v-for="color in colors"
+            :key="color"
+            style="width: 24px; height: 24px; border-radius: 12px; cursor: pointer; border: 1px solid #eee;"
             :style="{ background: color }"
+            @click="copyColor(color)"
+            :title="'点击复制 ' + color"
           ></div>
         </div>
       </div>
@@ -42,6 +45,7 @@
 import { useStickerDetailModal } from "./stickerModal.ts";
 import { ref } from "vue";
 import Utils from "@/common/utils";
+import { message } from "ant-design-vue";
 
 const { show, detailInfo } = useStickerDetailModal();
 
@@ -51,6 +55,24 @@ const colors = ref([]);
 
 function close() {
   colors.value = [];
+}
+
+// 复制颜色到剪贴板并提示
+function copyColor(color: string) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(color).then(() => {
+      message.success("已复制: " + color);
+    });
+  } else {
+    // fallback
+    const input = document.createElement('input');
+    input.value = color;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    document.body.removeChild(input);
+    message.success("已复制: " + color);
+  }
 }
 
 // 图片加载完成

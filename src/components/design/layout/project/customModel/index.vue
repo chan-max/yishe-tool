@@ -407,4 +407,20 @@ async function viewRelatedDrafts(model) {
 .empty-state {
   color: var(--el-text-color-placeholder);
 }
+
+.custom-model-modal .ant-modal {
+  top: 32px !important;
+  margin: 0 auto;
+  padding-bottom: 0;
+}
+.custom-model-modal .ant-modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+@media (max-width: 600px) {
+  .custom-model-modal .ant-modal {
+    width: 98vw !important;
+    min-width: unset !important;
+  }
+}
 </style>

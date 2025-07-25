@@ -13,15 +13,6 @@
       <div></div>
       <div>
         <el-button class="button" plain @click="dialogVisible = true">
-          资源上传
-        </el-button>
-      </div>
-    </div>
-
-    <div class="bar">
-      <div></div>
-      <div>
-        <el-button class="button" plain @click="dialogVisible = true">
           制作文字贴纸
         </el-button>
       </div>

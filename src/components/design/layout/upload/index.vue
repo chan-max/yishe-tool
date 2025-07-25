@@ -362,20 +362,19 @@ async function uploadSingleFile(file) {
   file = toRaw(file);
   const keywords = file.tags && file.tags.join(",");
 
-
+  // 自动识别文件后缀
+  let suffix = '';
+  if (file.name) {
+    const match = file.name.match(/\.([a-zA-Z0-9]+)$/);
+    if (match) {
+      suffix = match[1].toLowerCase();
+    }
+  }
 
   if (Utils.type.isImageName(file.name)) {
     const fileCos = await uploadToCOS({ file: file.raw });
 
     debugger;
-    // 自动识别后缀
-    let suffix = '';
-    if (file.name) {
-      const match = file.name.match(/\.([a-zA-Z0-9]+)$/);
-      if (match) {
-        suffix = match[1].toLowerCase();
-      }
-    }
     const params = {
       name: file.customName,
       size: file.size,
@@ -385,7 +384,7 @@ async function uploadSingleFile(file) {
       isPublic: file.isPublic,
       isTexture:file.isTexture,
       uploaderId: loginStore.userInfo.id,
-      suffix // 新增字段，图片类型后缀
+      suffix // 图片类型后缀
     };
     await createSticker(params);
   }
@@ -412,6 +411,7 @@ async function uploadSingleFile(file) {
       isPublic: file.isPublic,
       uploaderId: loginStore.userInfo.id,
       type: file.name.split(".").pop(),
+      suffix // 字体类型后缀
     };
 
     await uploadFont(params);
@@ -437,6 +437,7 @@ async function uploadSingleFile(file) {
       description: file.description,
       isPublic: file.isPublic,
       uploaderId: loginStore.userInfo.id,
+      suffix // 模型类型后缀
     };
 
     await Api.createProductModel(params);
@@ -456,6 +457,7 @@ async function uploadSingleFile(file) {
       isPublic: file.isPublic,
       uploaderId: loginStore.userInfo.id,
       type: file.name.split(".").pop(),
+      suffix // PSD文件后缀
     };
     await uploadFile(params);
   }

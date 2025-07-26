@@ -254,7 +254,7 @@
 </template>
 <script setup>
 import { ref, onBeforeMount, computed, watch } from "vue";
-import { createCustomModelApi, uploadToCOS } from "@/api";
+import { createCustomModelApi, uploadToCOS, getCustomModelById } from "@/api";
 import { ElMessageBox } from "element-plus";
 import {
   currentModelController,
@@ -292,17 +292,59 @@ function updateThumbnail() {
   displayThumbnail.value = currentModelController.value.getScreenshotBase64();
 }
 
+// 填充表单数据（编辑模式）
+async function fillFormWithExistingData() {
+  if (isEdit.value && currentEditingModelId.value) {
+    try {
+      const modelInfo = await getCustomModelById(currentEditingModelId.value);
+      if (modelInfo) {
+        form.value = {
+          name: modelInfo.name || '',
+          description: modelInfo.description || '',
+          keywords: modelInfo.keywords || '',
+        };
+      }
+    } catch (error) {
+      console.error('获取模型信息失败:', error);
+    }
+  }
+}
+
 // 监听弹窗显示状态，每次显示时重新生成截图
 watch(showSaveModel, (newVal) => {
   if (newVal) {
     // 弹窗显示时重新生成截图
     updateThumbnail();
+    
+    // 如果是编辑模式，填充原有数据到表单
+    if (isEdit.value) {
+      fillFormWithExistingData();
+    }
+  }
+});
+
+// 监听编辑状态变化，确保编辑模式下填充数据
+watch(isEdit, (newVal) => {
+  if (newVal && showSaveModel.value) {
+    fillFormWithExistingData();
+  } else if (!newVal) {
+    // 退出编辑模式时清空表单
+    form.value = {
+      name: '',
+      description: '',
+      keywords: '',
+    };
   }
 });
 
 // 初始化时获取截图
 onBeforeMount(() => {
   updateThumbnail();
+  
+  // 如果是编辑模式，填充原有数据到表单
+  if (isEdit.value) {
+    fillFormWithExistingData();
+  }
 });
 
 const loading = ref(false);

@@ -331,9 +331,12 @@ onMounted(async () => {
 initAction();
 
 async function initAction() {
-  // 提示用户登录
+
+
+  setTimeout(() => {
+      // 提示用户登录
   if (!loginStore.isLogin) {
-    await Modal.confirm({
+     Modal.confirm({
       content: <div>请登录</div>,
       icon: createVNode(ExclamationCircleOutlined),
       onOk() {
@@ -346,33 +349,9 @@ async function initAction() {
       },
     });
   }
+  },1999)
 }
 
-/**
- * 画布右键菜单
- */
-function onContextMenu(e) {
-  return;
-  //prevent the browser's default menu
-  e.preventDefault();
-  //show your menu
-  ContextMenu.showContextMenu({
-    x: e.x,
-    y: e.y,
-    items: [
-      {
-        label: "A menu item",
-        onClick: () => {
-          alert("You click a menu item");
-        },
-      },
-      {
-        label: "A submenu",
-        children: [{ label: "Item1" }, { label: "Item2" }, { label: "Item3" }],
-      },
-    ],
-  });
-}
 </script>
 
 <style lang="less">

@@ -1,3 +1,5 @@
+
+
 <!--
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-07-17 18:51:54
@@ -13,7 +15,7 @@
     :footer="null"
     :centered="true"
     :destroyOnClose="true"
-    width="1080px"
+    width="880px"
     style="min-width: 1080px"
   >
     <el-row style="height: 640px; margin: 24px 12px; overflow: auto" :gutter="24">
@@ -23,7 +25,7 @@
             <h1>{{ detailInfo.name || "--" }}</h1>
             <div>{{ detailInfo.description || "......" }}</div>
             <div v-if="detailInfo.thumbnail" style="margin: 16px 0;">
-              <el-image :src="detailInfo.thumbnail" style="max-width: 320px; max-height: 180px; border-radius: 8px; box-shadow: 0 2px 8px #0001;" fit="contain" :preview-src-list="[detailInfo.thumbnail]" :preview-teleported="true" />
+              <el-image :src="detailInfo.thumbnail" style=" border-radius: 8px; box-shadow: 0 2px 8px #0001;" fit="contain" :preview-src-list="[detailInfo.thumbnail]" :preview-teleported="true" />
             </div>
           </el-col>
           <el-col>

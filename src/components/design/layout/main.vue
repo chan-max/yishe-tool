@@ -32,7 +32,7 @@
         <screenshot ref="screenshotInstance"></screenshot>
 
         <!-- 画布区域 -->
-        <div style="flex: 1; position: relative; min-height: 0">
+        <div style="flex: 1; position: relative; min-height: 0" class="threejs-canvas-container-container">
           <div 
             v-show="showThreeCanvas && !showBasicCanvas"
             class="threejs-canvas-container" 
@@ -472,5 +472,13 @@ async function initAction() {
   padding: 1px;
   border-radius: 2px;
   width: 120px;
+}
+
+.threejs-canvas-container-container {
+  background-image: 
+    linear-gradient(rgba(200, 200, 200, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 200, 200, 0.3) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-color: #f8f8f8;
 }
 </style>

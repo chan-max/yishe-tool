@@ -150,13 +150,9 @@ watch(
 
 // 改变画布背景颜色
 watchEffect(() => {
-
     if (!currentModelController.value) {
         return
     }
-
-    return
-    currentModelController.value.setBgColor(canvasBgColor.value, canvasBgOpacity.value)
 });
 
 
@@ -470,71 +466,6 @@ export const useDesignStore = defineStore('_1s_design', () => {
         viewDisplayController: useLocalStorage('_1s_viewDisplayController', viewDisplayController)
     }
 })
-
-
-
-// const designStore = useDesignStore();
-
-
-// /*
-//  单独记录时间
-// */
-// designStore.$subscribe((mutation, state) => {
-//     lastModifiedTime.value = new Date()
-// }, {
-//     deep: true
-// })
-
-/*
-    同步工作区所有个人状态
-*/
-
-/*
-    开始同步 
-    bug 请李缓存也会视为更改页面状态，也会触发更新
-*/
-
-
-// 同步状态
-export const syncState = ref({
-    loading: false, // 正在保存中
-    success: false, // 成功
-    failed: false // 失败
-})
-
-export function startSyncDesignStorage() {
-
-    let sync = useDebounceFn(function sync(state) {
-
-        let currentState = Utils.deepUnref(state)
-
-        try {
-            Api.updateUserMeta({
-                metaKey: 'designStorage',
-                data: {
-                    ...currentState,
-                    lastModifiedTime: lastModifiedTime.value
-                }
-            })
-            syncState.value.success = true
-        } catch (e) {
-            syncState.value.failed = true
-        } finally {
-            syncState.value.loading = false
-        }
-
-    }, 999)
-
-
-
-    designStore.$subscribe((mutation, state) => {
-        syncState.value.loading = true
-        sync(state)
-    }, {
-        deep: true,
-    })
-
-}
 
 
 // 是否展示截屏抽屉

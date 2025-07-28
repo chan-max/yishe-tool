@@ -197,7 +197,6 @@ import {
   showSvgCanvas,
   showCanvasLayout,
   viewDisplayController,
-  startSyncDesignStorage,
   lastModifiedTime,
   currentCanvasBackground,
 } from "../store";

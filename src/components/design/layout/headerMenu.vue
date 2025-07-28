@@ -70,7 +70,6 @@ import {
   showUpload,
   lastModifiedTime,
   storageName,
-  syncState,
   builtInCanvasBackgrounds,
   currentCanvasBackground,
   isDarkMode,

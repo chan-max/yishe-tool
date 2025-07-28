@@ -33,21 +33,36 @@
 
         <!-- 画布区域 -->
         <div style="flex: 1; position: relative; min-height: 0">
-          <div
-            v-show="showThreeCanvas"
-            style="position: absolute; top: 0; left: 0; z-index: 2; width: 100%"
-            class="flex justify-center"
-          >
-            <!-- <threeCanvasTopBar></threeCanvasTopBar> -->
-          </div>
-
-          <div
+          <div 
             v-show="showThreeCanvas && !showBasicCanvas"
-            id="threejs-canvas"
-            style="width: 100%; height: 100%"
-            ref="mountContainer"
-            :style="{ background: currentCanvasBackground?.backgroundCss }"
-          ></div>
+            class="threejs-canvas-container" 
+            ref="canvasContainerRef"
+            :style="canvasContainerStyle"
+          >
+            <div
+              id="threejs-canvas"
+              style="width: 100%; height: 100%"
+              ref="mountContainer"
+              :style="{ background: currentCanvasBackground?.backgroundCss }"
+            ></div>
+            
+            <!-- 比例选择菜单 -->
+            <div class="aspect-ratio-selector">
+              <el-select 
+                v-model="selectedAspectRatio" 
+                size="small"
+                style=" font-size: 12px; width: 100%;"
+                @change="updateAspectRatio"
+              >
+                <el-option
+                  v-for="ratio in aspectRatioOptions"
+                  :key="ratio.value"
+                  :label="ratio.label"
+                  :value="ratio.value"
+                />
+              </el-select>
+            </div>
+          </div>
 
           <basic-canvas
             v-show="showBasicCanvas"
@@ -83,11 +98,11 @@
     <base-model-select></base-model-select>
   </a-modal>
 
-  <el-drawer 
-    v-model="showSceneControl" 
-    :modal="true" 
-    :size="360" 
-    :with-header="true" 
+  <el-drawer
+    v-model="showSceneControl"
+    :modal="true"
+    :size="360"
+    :with-header="true"
     :append-to-body="true"
     :wrapper-closable="true"
     modal-class="bg-transparent"
@@ -161,6 +176,7 @@
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
+import { useElementSize, useLocalStorage } from "@vueuse/core";
 import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
@@ -253,7 +269,7 @@ import shareCardModal from "@/components/design/layout/shareCard/modal.vue";
 import material from "@/components/design/layout/material/index.vue";
 import autocreateModal from "./autocreate/modal.vue";
 import videoClip from "./videoClip/index.vue";
-import { useEventBus } from '@vueuse/core';
+import { useEventBus } from "@vueuse/core";
 import { initDesignToolReceiver } from "@/utils/designToolReceiver";
 
 const { component: stickerDetailModal } = useStickerDetailModal();
@@ -308,6 +324,46 @@ const rightComponent = computed(() => {
 // 挂载容器
 const mountContainer = ref();
 
+// 画布容器引用
+const canvasContainerRef = ref();
+
+// 使用useElementSize获取容器尺寸
+const { width: containerWidth, height: containerHeight } = useElementSize(canvasContainerRef);
+
+// 比例选择相关
+const aspectRatioOptions = [
+  { label: '1:1 (正方形)', value: 1 },
+  { label: '4:3 (传统)', value: 4/3 },
+  { label: '16:9 (宽屏)', value: 16/9 },
+  { label: '3:2 (照片)', value: 3/2 },
+  { label: '2:1 (超宽)', value: 2 },
+  { label: '3:4 (竖屏)', value: 3/4 },
+  { label: '9:16 (手机)', value: 9/16 },
+];
+
+// 使用本地存储保存选择的比例
+const selectedAspectRatio = useLocalStorage('canvas-aspect-ratio', 1);
+
+// 更新比例的函数
+const updateAspectRatio = () => {
+  // 比例改变时会自动触发canvasContainerStyle的重新计算
+};
+
+// 计算画布容器样式：根据选择的比例计算宽度
+const canvasContainerStyle = computed(() => {
+  const height = containerHeight.value;
+  const width = height * selectedAspectRatio.value; // 根据比例计算宽度
+  
+  return {
+    position: 'relative' as const,
+    height: '100%',
+    width: `${width}px`,
+    margin: '0 auto', // 居中显示
+    display: 'flex',
+    justifyContent: 'center'
+  };
+});
+
 // 渲染动画
 
 isFirstPageLoading.value = true;
@@ -319,7 +375,7 @@ onMounted(async () => {
   await Utils.sleep(1200);
   isFirstPageLoading.value = false;
   // 抛出页面加载完成事件
-  const designPageLoadedBus = useEventBus('design-page-loaded');
+  const designPageLoadedBus = useEventBus("design-page-loaded");
   designPageLoadedBus.emit();
 
   // 页面挂载后初始化 designToolReceiver
@@ -329,27 +385,24 @@ onMounted(async () => {
 initAction();
 
 async function initAction() {
-
-
   setTimeout(() => {
-      // 提示用户登录
-  if (!loginStore.isLogin) {
-     Modal.confirm({
-      content: <div>请登录</div>,
-      icon: createVNode(ExclamationCircleOutlined),
-      onOk() {
-        openLoginDialog();
-      },
-      okText: <div>登录</div>,
-      cancelText: "暂不",
-      onCancel() {
-        Modal.destroyAll();
-      },
-    });
-  }
-  },1999)
+    // 提示用户登录
+    if (!loginStore.isLogin) {
+      Modal.confirm({
+        content: <div>请登录</div>,
+        icon: createVNode(ExclamationCircleOutlined),
+        onOk() {
+          openLoginDialog();
+        },
+        okText: <div>登录</div>,
+        cancelText: "暂不",
+        onCancel() {
+          Modal.destroyAll();
+        },
+      });
+    }
+  }, 1999);
 }
-
 </script>
 
 <style lang="less">
@@ -395,8 +448,8 @@ async function initAction() {
   z-index: 4;
 }
 
-.bg-transparent{
-  background: transparent!important;
+.bg-transparent {
+  background: transparent !important;
 }
 
 .auto-width-modal {
@@ -408,5 +461,16 @@ async function initAction() {
     width: fit-content;
     min-width: 360px;
   }
+}
+
+.aspect-ratio-selector {
+  display: inline-block;
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  z-index: 10;
+  padding: 1px;
+  border-radius: 2px;
+  width: 120px;
 }
 </style>

@@ -597,6 +597,7 @@ export class ModelController {
 
     // 设置背景图片
     public setBackground(imageUrl: string = '') {
+
         // hdr 和 jpg 的效果是一样的
         console.log('开始加载背景图片:', imageUrl);
         

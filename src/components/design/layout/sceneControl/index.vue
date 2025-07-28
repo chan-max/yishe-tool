@@ -199,7 +199,6 @@ function useCurrentBackground(item) {
   .background-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
   }
 
   .background-option {
@@ -222,13 +221,11 @@ function useCurrentBackground(item) {
   .canvas-background-control {
     display: flex;
     align-items: center;
-    gap: 12px;
   }
 
   .background-image-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
   }
 
   .background-image-option {

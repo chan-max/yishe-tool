@@ -1,6 +1,6 @@
 import { setFullscreen } from "@/common/browser";
 import { useDebounceFn, useLocalStorage } from "@vueuse/core";
-import { computed, ref, shallowRef, watchEffect, watch, nextTick, reactive, toRaw } from "vue"
+import { computed, ref, shallowRef, watchEffect, watch, nextTick, reactive, toRaw, Ref } from "vue"
 import { defineStore } from "pinia";
 import Utils from '@/common/utils'
 import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
@@ -10,7 +10,7 @@ import { uploadToCOS, createDraft } from '@/api'
 import { saveAs } from 'file-saver';
 
 // 当前实例
-export const currentModelController = shallowRef(null);
+export const currentModelController:Ref<ModelController> = shallowRef(null);
 
 // 截屏组件实例
 export const screenshotInstance = ref();
@@ -207,6 +207,30 @@ export const builtInCanvasBackgroundImages = ref([
         url: '/3d-static-bg/2.jpg',
         description: ''
     },
+    {
+        id: 'lv-gray-bg',
+        name: 'LV灰白背景',
+        url: '/3d-static-bg/lv-gray-bg.png',
+        description: ''
+    },
+    {
+        id: 'cosmic-dark',
+        name: '宇宙深空',
+        url: '/3d-static-bg/adrian-infernus-GLf7bAwCdYg-unsplash.jpg',
+        description: '深色渐变背景，具有神秘宇宙感'
+    },
+    {
+        id: 'studio-3d',
+        name: '3D工作室',
+        url: '/3d-static-bg/background-grey-studio-wall-room-3d-podium-with-light-shadow-on-floor-minimal-backdrop-display-with-stand-mock-up-for-product-presentation-in-autumn-summer-winter-sale-promote-vecto.jpg',
+        description: '灰色墙壁和白色地板的3D工作室背景'
+    },
+    {
+        id: 'vibrant-gradient',
+        name: '活力渐变',
+        url: '/3d-static-bg/codioful-formerly-gradienta-rKv4HduvzIE-unsplash.jpg',
+        description: '多彩渐变背景，充满现代活力感'
+    },
 ])
 
 export const currentCanvasBackgroundImageId = useLocalStorage('_1s_canvasBackgroundImageId', builtInCanvasBackgroundImages.value[0].id)
@@ -400,6 +424,7 @@ import { canvasStickerOptions, currentOperatingCanvasChildId } from '@/component
 
 import { stickerQueryTags, stickerQueryParams } from "@/components/design/layout/sticker/index.tsx";
 import { showMainCanvas } from "@/components/design/layout/canvas/index.tsx";
+import { ModelController } from "./core/controller";
 
 
 // 当前仓库的名字

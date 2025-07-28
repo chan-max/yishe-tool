@@ -1263,10 +1263,10 @@ export class ModelController {
         // 先绘制threejs渲染内容
         ctx.drawImage(srcCanvas, 0, 0);
         // 再绘制水印
-        const text = 'Presented by 1s.design';
-        const fontSize = Math.floor(canvas.height * 0.025); // 更小的字号
+        const text = 'Designed  by  1s.design';
+        const fontSize = Math.floor(canvas.height * 0.020); // 更小的字号
         ctx.save();
-        ctx.font = `italic bold ${fontSize}px sans-serif`; // 斜体
+        ctx.font = `${fontSize}px sans-serif`; // 斜体
         ctx.fillStyle = '#fff';
         ctx.textBaseline = 'bottom';
         ctx.textAlign = 'right';

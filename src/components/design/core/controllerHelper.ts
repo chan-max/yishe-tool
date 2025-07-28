@@ -47,7 +47,7 @@ export async function createMaterialFromOptions(options) {
     } = options
 
     color ||= '#ffffff'
-
+    
     // message.loading({ content: `正在生成材质...`, key: 'loadingmaterial', duration: 0 });
 
     let map = null
@@ -81,16 +81,14 @@ export async function createMaterialFromOptions(options) {
 
     const material = new MeshStandardMaterial({
         map: map,
-        // color: 0x777777, // 布料颜色
         metalness: metalness,    // 金属
         roughness: roughness,   // 粗糙度
         side: DoubleSide,
         color: color,
         emissive: null, // 发光色
-        opacity:1,
-        // polygonOffset: true,
-        // polygonOffsetFactor: -2,
-        transparent: true // 设置该属性 才可以设置 opacity
+        opacity: 1,
+        transparent: true, // 设置该属性 才可以设置 opacity
+        envMapIntensity: 1.5  // 增强环境反射强度，让白色更纯
     });
 
     // message.destroy('loadingmaterial');

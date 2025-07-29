@@ -18,7 +18,7 @@
     width="1200px"
     style="min-width: 1200px"
   >
-    <el-row style="height: 500px; margin: 24px 12px; overflow: auto" :gutter="24">
+    <el-row style="height: 560px; margin: 24px 12px; overflow: auto" :gutter="24">
       <!-- 左侧：3D模型预览 -->
       <el-col :span="14" style="height: 100%;">
         <div style="height: 100%; background: #f5f5f5; border-radius: 8px; overflow: hidden;">

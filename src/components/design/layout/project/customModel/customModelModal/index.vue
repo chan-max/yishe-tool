@@ -15,30 +15,58 @@
     :footer="null"
     :centered="true"
     :destroyOnClose="true"
-    width="880px"
-    style="min-width: 1080px"
+    width="1200px"
+    style="min-width: 1200px"
   >
-    <el-row style="height: 640px; margin: 24px 12px; overflow: auto" :gutter="24">
-      <el-col :span="24">
-        <el-row style="row-gap: 2rem">
-          <el-col>
-            <h1>{{ detailInfo.name || "--" }}</h1>
-            <div>{{ detailInfo.description || "......" }}</div>
-            <div v-if="detailInfo.thumbnail" style="margin: 16px 0;">
-              <el-image :src="detailInfo.thumbnail" style=" border-radius: 8px; box-shadow: 0 2px 8px #0001;" fit="contain" :preview-src-list="[detailInfo.thumbnail]" :preview-teleported="true" />
+    <el-row style="height: 500px; margin: 24px 12px; overflow: auto" :gutter="24">
+      <!-- 左侧：3D模型预览 -->
+      <el-col :span="14" style="height: 100%;">
+        <div style="height: 100%; background: #f5f5f5; border-radius: 8px; overflow: hidden;">
+          <gltf-viewer
+            v-if="show && detailInfo"
+            :model="detailInfo.meta.modelInfo"
+            style="width: 100%; height: 100%;"
+          />
+        </div>
+      </el-col>
+      
+      <!-- 右侧：模型信息 -->
+      <el-col :span="10" style="height: 100%;">
+        <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+          <!-- 模型基本信息 -->
+          <div>
+            <h1 style="margin-bottom: 16px; font-size: 24px; font-weight: bold;">
+              {{ detailInfo.name || "--" }}
+            </h1>
+            <p style="margin-bottom: 24px; color: #666; line-height: 1.6;">
+              {{ detailInfo.description || "暂无描述" }}
+            </p>
+            
+            <!-- 缩略图 -->
+            <div v-if="detailInfo.thumbnail" style="margin-bottom: 24px;">
+              <el-image 
+                :src="detailInfo.thumbnail" 
+                style="width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" 
+                fit="cover"
+                :preview-src-list="[detailInfo.thumbnail]" 
+                :preview-teleported="true" 
+              />
             </div>
-          </el-col>
-          <el-col>
-            <div class="flex items-center" style="column-gap: 2rem">
-              <a-avatar size="large" :src="detailInfo?.uploader?.avatar" alt="?">
-                <template #icon>
-                  <UserOutlined />
-                </template>
-              </a-avatar>
-              {{ detailInfo.uploader.name || "--" }}
+          </div>
+          
+          <!-- 上传者信息 -->
+          <div class="flex items-center" style="column-gap: 1rem; padding-top: 16px; border-top: 1px solid #eee;">
+            <a-avatar size="large" :src="detailInfo?.uploader?.avatar" alt="?">
+              <template #icon>
+                <UserOutlined />
+              </template>
+            </a-avatar>
+            <div>
+              <div style="font-weight: bold;">{{ detailInfo.uploader?.name || "--" }}</div>
+              <div style="font-size: 12px; color: #999;">上传者</div>
             </div>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </el-col>
     </el-row>
   </a-modal>

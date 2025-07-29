@@ -13,7 +13,6 @@ import { format1stf } from "@/api/format";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 import Utils from '@/common/utils'
 
-
 import {
     Box3,
     BoxGeometry,
@@ -65,7 +64,7 @@ import { ModelController } from "@/components/design/core/controller";
 import { createMaterialFromOptions, initBasicLight, initHdr } from "@/components/design/core/controllerHelper";
 
 function initImportedModel(gltf) {
-    let flag = 1;
+    let flag = 1.5;
     let object = gltf.scene;
     // 先处理尺寸，再居中
     const sizeBox = new Box3().setFromObject(object);
@@ -108,15 +107,62 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
     var mesh = null;
 
-
     const renderer = new WebGLRenderer({
         alpha: true, // 透明背景
     });
 
     renderer.setPixelRatio(window.devicePixelRatio)
 
-    // initBasicLight(scene)
-    initHdr(renderer, scene)
+    // 初始化白色服装专用灯光系统
+    function initSceneLight() {
+        // 1. 主光源 - 模拟太阳光或主要光源
+        const mainLight = new DirectionalLight(0xffffff, 1.6);
+        mainLight.position.set(2, 3, 2);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 2048;
+        mainLight.shadow.mapSize.height = 2048;
+        scene.add(mainLight);
+        
+        // 2. 填充光 - 减少阴影的硬边
+        const fillLight = new DirectionalLight(0xffffff, 1.1);
+        fillLight.position.set(-1, 2, -1);
+        scene.add(fillLight);
+        
+        // 3. 环境光 - 提供基础照明
+        const ambientLight = new AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+        
+        // 4. 顶部光 - 模拟天空光
+        const topLight = new DirectionalLight(0xffffff, 1.2);
+        topLight.position.set(0, 4, 0);
+        scene.add(topLight);
+        
+        // 5. 前方光 - 确保模型正面明亮
+        const frontLight = new DirectionalLight(0xffffff, 0.6);
+        frontLight.position.set(0, 1, 2);
+        scene.add(frontLight);
+        
+        // 6. 侧边光 - 增加细节
+        const sideLight1 = new DirectionalLight(0xffffff, 0.8);
+        sideLight1.position.set(3, 1, 0);
+        scene.add(sideLight1);
+        
+        const sideLight2 = new DirectionalLight(0xffffff, 0.8);
+        sideLight2.position.set(-3, 1, 0);
+        scene.add(sideLight2);
+        
+        // 7. 点光源 - 增加局部高光
+        const pointLight = new PointLight(0xffffff, 1.5, 12);
+        pointLight.position.set(0, 2, 3);
+        scene.add(pointLight);
+        
+        // 8. 暖色调补光 - 模拟室内灯光，但强度较低
+        const warmLight = new PointLight(0xfff4e6, 0.4, 8);
+        warmLight.position.set(-2, 1, -2);
+        scene.add(warmLight);
+    }
+
+    initSceneLight();
 
     const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
 
@@ -136,14 +182,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
     controller.addEventListener('start', function () {
         emits('dragStart')
     });
-
-    function enableController() {
-        controller.enabled = true;
-    }
-
-    function disableController() {
-        controller.enabled = false;
-    }
 
     async function initModel() {
         emits('beforeLoad')
@@ -168,7 +206,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
             renderer.setClearColor(0xeeeeee, 0);
         }
 
-
         let url = Utils.formatUrl(baseModel.url, { nocache: false })
 
         loading.value = true
@@ -176,17 +213,14 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
         let gltf: any = await gltfLoader(url);
 
-
         loading.value = false
         loadingMessage.value = ''
-
 
         let mesher = Utils.three.findMainMeshFromGltfAndMergeGeometries(gltf);
 
         mesh = mesher.mergedMesh
 
         // 同步摄像机位置
-
         if (modelInfo.camera) {
             camera.position.set(
                 modelInfo.camera.position.x,
@@ -219,7 +253,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
         resetCameraAspect();
 
-
         const resizeOb = new ResizeObserver(debounce(resetCameraAspect));
 
         el && resizeOb.observe(el);
@@ -230,8 +263,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
 
         scene.add(gltf.scene);
 
-        // 初始化贴纸
-
         if (modelInfo.state?.material) {
             let material = await createMaterialFromOptions(modelInfo.state.material)
             if (!material) {
@@ -241,7 +272,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
             mesh.material = material
         }
 
-
         if (modelInfo.decals?.length) {
 
             loading.value = true
@@ -250,7 +280,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
             await Promise.all(modelInfo.decals.map((decal) => {
                 return new Promise(async (resolve) => {
                     try {
-                        var { id, position, rotation, size, isDraft } = decal;
+                        var { id, position, rotation, size, } = decal;
                         if (!id) return resolve(void 0);
 
                         loading.value = true;
@@ -270,13 +300,65 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                             return resolve(void 0);
                         }
 
-                        position = new Vector3(position.x, position.y, position.z);
+                        // 根据模型缩放调整贴纸位置
+                        let scaleFactor = 1.0; // 默认缩放因子
+                        
+                        // 安全地计算缩放因子
+                        if (mesh && mesh.geometry) {
+                            if (mesh.geometry.boundingSphere && mesh.geometry.boundingSphere.radius) {
+                                scaleFactor = 1.5 / mesh.geometry.boundingSphere.radius;
+                            } else {
+                                // 如果没有boundingSphere，使用boundingBox计算
+                                const box = new Box3().setFromObject(mesh);
+                                const size = new Vector3();
+                                box.getSize(size);
+                                const length = size.length();
+                                if (length > 0) {
+                                    scaleFactor = 1.5 / length;
+                                }
+                            }
+                        }
+                        
+                        position = new Vector3(
+                            position.x * scaleFactor,
+                            position.y * scaleFactor,
+                            position.z * scaleFactor
+                        );
+
+                        // 确保mesh的世界矩阵是最新的
+                        mesh.updateMatrixWorld();
+
+                        // 改进的射线检测策略 - 尝试多个方向
+                        const directions = [
+                            new Vector3(0, -1, 0),  // 向下
+                            new Vector3(0, 1, 0),   // 向上
+                            new Vector3(1, 0, 0),   // 向右
+                            new Vector3(-1, 0, 0),  // 向左
+                            new Vector3(0, 0, 1),   // 向前
+                            new Vector3(0, 0, -1),  // 向后
+                        ];
 
                         var raycaster = new Raycaster();
-                        raycaster.set(position, new Vector3(0, -1, 0));
-                        var intersects = raycaster.intersectObject(mesh);
-                        if (intersects.length <= 0) {
-                            console.log("贴花位置错误");
+                        let validIntersection = null;
+                        let finalPosition = position;
+
+                        for (const direction of directions) {
+                            raycaster.set(position, direction);
+                            const intersects = raycaster.intersectObject(mesh, true);
+                            if (intersects.length > 0) {
+                                validIntersection = intersects[0];
+                                finalPosition = validIntersection.point;
+                                break;
+                            }
+                        }
+
+                        // 如果所有方向都失败，提示错误并跳过
+                        if (!validIntersection) {
+                            console.error("贴纸位置错误：无法在模型表面找到有效位置", {
+                                originalPosition: position,
+                                meshName: mesh.name || 'unknown',
+                                decalId: id
+                            });
                             return resolve(void 0);
                         }
 
@@ -292,7 +374,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                         let texture;
                         try {
                             texture = await textureLoader.loadAsync(imgUrl);
-                         
                         } catch (e) {
                             console.error('贴纸图片加载失败', e);
                             return resolve(void 0);
@@ -312,7 +393,7 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                             roughness: decal.roughness,
                         });
 
-                        const decalGeometry = new DecalGeometry(mesh, position, rotation, size);
+                        const decalGeometry = new DecalGeometry(mesh, finalPosition, rotation, size);
                         var decalMesh = new Mesh(decalGeometry, material);
                         scene.add(decalMesh);
                         decalMesh.frustumCulled = false;
@@ -327,7 +408,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
                 });
             }))
         }
-
 
         function render() {
             requestAnimationFrame(render);
@@ -346,7 +426,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         emits("loaded");
     }
 
-
     function screenshot() {
         renderer.render(scene, camera); // 截取会出现白图片
         var img = renderer.domElement.toDataURL("image/png"); // base64
@@ -354,7 +433,6 @@ export const useViewer = (gltfViewerRef, props, emits) => {
         // win.document.write('<img src="' + img + '"/>');
         emits("screenshot", img);
     }
-
 
     watch(
         () => props.model,

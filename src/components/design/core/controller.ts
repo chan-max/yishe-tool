@@ -556,7 +556,7 @@ export class ModelController {
         // initHdr(this.renderer, this.scene)
         
         // 初始化灯光系统 - 使用白色服装专用版本
-        this.initWhiteFashionLight();
+        this.initSceneLight();
 
         // 设置默认背景
 
@@ -644,80 +644,8 @@ export class ModelController {
         this.canvasContainer.style.background = background;
     }
 
-    // 初始化灯光系统 - 创建更真实的灯光效果
-    public initLight() {
-        // 清除现有的灯光
-        this.clearLights();
-        
-        // 1. 主光源 - 模拟太阳光或主要光源
-        const mainLight = new DirectionalLight(0xffffff, 1.4);
-        mainLight.position.set(2, 3, 2);
-        mainLight.castShadow = true;
-        mainLight.shadow.mapSize.width = 2048;
-        mainLight.shadow.mapSize.height = 2048;
-        mainLight.shadow.camera.near = 0.5;
-        mainLight.shadow.camera.far = 50;
-        mainLight.shadow.camera.left = -5;
-        mainLight.shadow.camera.right = 5;
-        mainLight.shadow.camera.top = 5;
-        mainLight.shadow.camera.bottom = -5;
-        mainLight.shadow.bias = -0.0001;
-        this.scene.add(mainLight);
-        
-        // 2. 填充光 - 减少阴影的硬边
-        const fillLight = new DirectionalLight(0xffffff, 0.8);
-        fillLight.position.set(-1, 2, -1);
-        this.scene.add(fillLight);
-        
-        // 3. 环境光 - 提供基础照明
-        const ambientLight = new AmbientLight(0xffffff, 0.6);
-        this.scene.add(ambientLight);
-        
-        // 4. 顶部补光 - 模拟天空光
-        const topLight = new DirectionalLight(0xffffff, 1.0);
-        topLight.position.set(0, 4, 0);
-        this.scene.add(topLight);
-        
-        // 5. 侧边补光 - 增加细节
-        const sideLight1 = new DirectionalLight(0xffffff, 0.5);
-        sideLight1.position.set(3, 1, 0);
-        this.scene.add(sideLight1);
-        
-        const sideLight2 = new DirectionalLight(0xffffff, 0.5);
-        sideLight2.position.set(-3, 1, 0);
-        this.scene.add(sideLight2);
-        
-        // 6. 点光源 - 增加局部高光
-        const pointLight = new PointLight(0xffffff, 1.0, 10);
-        pointLight.position.set(0, 2, 3);
-        this.scene.add(pointLight);
-        
-        // 7. 暖色调补光 - 模拟室内灯光
-        const warmLight = new PointLight(0xfff4e6, 0.5, 8);
-        warmLight.position.set(-2, 1, -2);
-        this.scene.add(warmLight);
-        
-        // 8. 额外的前方补光 - 确保模型正面明亮
-        const frontLight = new DirectionalLight(0xffffff, 0.6);
-        frontLight.position.set(0, 1, 2);
-        this.scene.add(frontLight);
-        
-        // 保存灯光引用以便后续管理
-        this.lights = {
-            main: mainLight,
-            fill: fillLight,
-            ambient: ambientLight,
-            top: topLight,
-            side1: sideLight1,
-            side2: sideLight2,
-            point: pointLight,
-            warm: warmLight,
-            front: frontLight
-        };
-        
-        console.log('灯光系统初始化完成 - 自然平衡版本');
-    }
-    
+
+
     // 清除所有灯光
     private clearLights() {
         if (this.lights) {
@@ -744,89 +672,9 @@ export class ModelController {
         }
     }
     
-    // 创建产品展示专用灯光
-    public initProductLight() {
-        this.clearLights();
-        
-        // 产品展示专用灯光配置（自然平衡）
-        const mainLight = new DirectionalLight(0xffffff, 1.5);
-        mainLight.position.set(1, 2, 1);
-        mainLight.castShadow = true;
-        mainLight.shadow.mapSize.width = 2048;
-        mainLight.shadow.mapSize.height = 2048;
-        this.scene.add(mainLight);
-        
-        const fillLight = new DirectionalLight(0xffffff, 0.7);
-        fillLight.position.set(-1, 1, -1);
-        this.scene.add(fillLight);
-        
-        const ambientLight = new AmbientLight(0xffffff, 0.6);
-        this.scene.add(ambientLight);
-        
-        const rimLight = new DirectionalLight(0xffffff, 1.0);
-        rimLight.position.set(0, 0, 2);
-        this.scene.add(rimLight);
-        
-        // 额外的前方补光
-        const frontLight = new DirectionalLight(0xffffff, 0.7);
-        frontLight.position.set(0, 1, 2);
-        this.scene.add(frontLight);
-        
-        this.lights = {
-            main: mainLight,
-            fill: fillLight,
-            ambient: ambientLight,
-            rim: rimLight,
-            front: frontLight
-        };
-        
-        console.log('产品展示灯光初始化完成 - 自然平衡版本');
-    }
-    
-    // 创建服装展示专用灯光
-    public initFashionLight() {
-        this.clearLights();
-        
-        // 服装展示专用灯光配置（自然平衡）
-        const mainLight = new DirectionalLight(0xffffff, 1.4);
-        mainLight.position.set(2, 3, 2);
-        mainLight.castShadow = true;
-        this.scene.add(mainLight);
-        
-        const fillLight = new DirectionalLight(0xffffff, 0.8);
-        fillLight.position.set(-1, 2, -1);
-        this.scene.add(fillLight);
-        
-        const ambientLight = new AmbientLight(0xffffff, 0.6);
-        this.scene.add(ambientLight);
-        
-        const warmLight = new PointLight(0xfff4e6, 0.8, 10);
-        warmLight.position.set(0, 2, 3);
-        this.scene.add(warmLight);
-        
-        const coolLight = new PointLight(0xe6f4ff, 0.6, 8);
-        coolLight.position.set(-2, 1, -2);
-        this.scene.add(coolLight);
-        
-        // 额外的前方补光
-        const frontLight = new DirectionalLight(0xffffff, 0.6);
-        frontLight.position.set(0, 1, 2);
-        this.scene.add(frontLight);
-        
-        this.lights = {
-            main: mainLight,
-            fill: fillLight,
-            ambient: ambientLight,
-            warm: warmLight,
-            cool: coolLight,
-            front: frontLight
-        };
-        
-        console.log('服装展示灯光初始化完成 - 自然平衡版本');
-    }
-    
-    // 创建白色服装专用灯光
-    public initWhiteFashionLight() {
+
+
+    public initSceneLight() {
         this.clearLights();
         
         // 白色服装专用灯光配置
@@ -880,75 +728,10 @@ export class ModelController {
             point: pointLight,
             warm: warmLight
         };
-        
-        console.log('白色服装专用灯光初始化完成');
+    
     }
     
-    // 创建自然平衡的灯光系统
-    public initNaturalLight() {
-        this.clearLights();
-        
-        // 自然平衡的灯光配置
-        const mainLight = new DirectionalLight(0xffffff, 1.2);
-        mainLight.position.set(2, 3, 2);
-        mainLight.castShadow = true;
-        mainLight.shadow.mapSize.width = 2048;
-        mainLight.shadow.mapSize.height = 2048;
-        mainLight.shadow.camera.near = 0.5;
-        mainLight.shadow.camera.far = 50;
-        mainLight.shadow.camera.left = -5;
-        mainLight.shadow.camera.right = 5;
-        mainLight.shadow.camera.top = 5;
-        mainLight.shadow.camera.bottom = -5;
-        mainLight.shadow.bias = -0.0001;
-        this.scene.add(mainLight);
-        
-        const fillLight = new DirectionalLight(0xffffff, 0.5);
-        fillLight.position.set(-1, 2, -1);
-        this.scene.add(fillLight);
-        
-        const ambientLight = new AmbientLight(0xffffff, 0.5);
-        this.scene.add(ambientLight);
-        
-        const topLight = new DirectionalLight(0xffffff, 0.8);
-        topLight.position.set(0, 4, 0);
-        this.scene.add(topLight);
-        
-        const frontLight = new DirectionalLight(0xffffff, 0.7);
-        frontLight.position.set(0, 1, 2);
-        this.scene.add(frontLight);
-        
-        const sideLight1 = new DirectionalLight(0xffffff, 0.4);
-        sideLight1.position.set(3, 1, 0);
-        this.scene.add(sideLight1);
-        
-        const sideLight2 = new DirectionalLight(0xffffff, 0.4);
-        sideLight2.position.set(-3, 1, 0);
-        this.scene.add(sideLight2);
-        
-        const pointLight = new PointLight(0xffffff, 0.8, 10);
-        pointLight.position.set(0, 2, 3);
-        this.scene.add(pointLight);
-        
-        // 轻微的暖色调补光
-        const warmLight = new PointLight(0xfff4e6, 0.3, 8);
-        warmLight.position.set(-2, 1, -2);
-        this.scene.add(warmLight);
-        
-        this.lights = {
-            main: mainLight,
-            fill: fillLight,
-            ambient: ambientLight,
-            top: topLight,
-            front: frontLight,
-            side1: sideLight1,
-            side2: sideLight2,
-            point: pointLight,
-            warm: warmLight
-        };
-        
-        console.log('自然平衡灯光初始化完成');
-    }
+
 
     // 主模型
     gltf: any = null;
@@ -1263,6 +1046,7 @@ export class ModelController {
         // 先绘制threejs渲染内容
         ctx.drawImage(srcCanvas, 0, 0);
         // 再绘制水印
+
         const text = 'Designed  by  1s.design';
         const fontSize = Math.floor(canvas.height * 0.020); // 更小的字号
         ctx.save();

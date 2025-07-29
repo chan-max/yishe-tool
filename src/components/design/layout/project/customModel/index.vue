@@ -40,9 +40,6 @@
                   <a-menu-item @click="openShareCardModal(item)">
                     生成分享卡片
                   </a-menu-item>
-                  <a-menu-item @click="view3DModel(item)">
-                    查看 3d 模型
-                  </a-menu-item>
                   <a-menu-item @click="editInWorkspace(item)">在工作台中编辑</a-menu-item>
                 </a-menu>
               </template>
@@ -152,25 +149,6 @@
       </div>
     </div>
   </a-modal>
-
-  <!-- 3D模型弹窗 -->
-  <a-modal
-    v-model:open="show3DModal"
-    :centered="true"
-    :destroyOnClose="true"
-    width="70%"
-    title="3D模型预览"
-    :footer="null"
-    :bodyStyle="{ padding: '0', height: '70vh' }"
-  >
-    <div class="model-3d-container">
-      <gltf-viewer
-        v-if="show3DModal && current3DModel"
-        :model="current3DModel.meta.modelInfo"
-        class="w-full h-full"
-      />
-    </div>
-  </a-modal>
 </template>
 
 <script setup lang="tsx">
@@ -191,7 +169,6 @@ import { useCustomModelDetailModal } from "@/components/design/layout/project/cu
 import { openShareCardModal } from "@/components/design/layout/shareCard/index.ts";
 import { saveAs } from "file-saver";
 import { openCustomModel } from '@/components/design/utils/openCustomModel';
-import GltfViewer from '@/components/model/gltfViewer/index.vue';
 
 const { open } = useCustomModelDetailModal();
 
@@ -327,15 +304,6 @@ async function viewRelatedDrafts(model) {
     message.error('获取关联草稿失败');
     relatedDrafts.value = [];
   }
-}
-
-const show3DModal = ref(false);
-const current3DModel = ref(null);
-
-// 查看3D模型
-function view3DModel(item) {
-  current3DModel.value = item;
-  show3DModal.value = true;
 }
 </script>
 

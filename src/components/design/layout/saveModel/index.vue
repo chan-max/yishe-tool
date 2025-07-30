@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-16 07:41:07
+ * @LastEditTime: 2025-07-30 19:12:20
  * @FilePath: /1s/src/components/design/layout/saveModel/index.vue
  * @Description: 
  * 
@@ -220,6 +220,12 @@
               :autocompleteWidth="300"
             ></s1-tagsInput>
           </el-form-item>
+
+          <el-form-item label="是否母版">
+            <el-switch 
+              v-model="form.isTemplate" 
+            />
+          </el-form-item>
           
         </el-form>
 
@@ -285,6 +291,7 @@ const form = ref({
   name: null,
   description: null,
   keywords: null,
+  isTemplate: false,
 });
 
 // 获取模型缩略图
@@ -302,6 +309,7 @@ async function fillFormWithExistingData() {
           name: modelInfo.name || '',
           description: modelInfo.description || '',
           keywords: modelInfo.keywords || '',
+          isTemplate: modelInfo.isTemplate || false,
         };
       }
     } catch (error) {
@@ -333,6 +341,7 @@ watch(isEdit, (newVal) => {
       name: '',
       description: '',
       keywords: '',
+      isTemplate: false,
     };
   }
 });

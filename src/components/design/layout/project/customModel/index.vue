@@ -108,6 +108,11 @@
       <el-form-item label="标签">
         <tagsInput v-model="editForm.keywords" :string="true"> </tagsInput>
       </el-form-item>
+      <el-form-item label="是否母版">
+        <el-switch 
+          v-model="editForm.isTemplate" 
+        />
+      </el-form-item>
     </el-form>
   </a-modal>
 
@@ -291,6 +296,7 @@ function edit(item) {
     description: item.description,
     name: item.name,
     keywords: item.keywords,
+    isTemplate: item.isTemplate,
   };
   currentItem.value = item;
   showFormModal.value = true;

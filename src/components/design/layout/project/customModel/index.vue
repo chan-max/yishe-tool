@@ -1,18 +1,35 @@
 <template>
   <div class="flex flex-col min-h-screen">
+    <!-- 过滤器区域 -->
+    <div class="bg-white border-b border-gray-200 px-4 py-3">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-600">只看母版</span>
+          <el-switch 
+            v-model="showTemplateOnly" 
+            @change="handleFilterChange"
+            size="small"
+          />
+        </div>
+      </div>
+    </div>
+
     <div class="flex-1 relative">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full mx-auto p-4">
         <div
           v-for="item in list"
-          class="flex flex-col items-center justify-start h-[240px]"
+          class="flex flex-col items-center justify-start h-[240px] relative"
         >
-          <s1-image
-            @click="openDetail(item)"
-            padding="5%"
-            :src="item.thumbnail"
-            class="w-[240px] !h-[180px] rounded-lg bg-[#f6f6f6] flex-shrink-0"
-          >
-          </s1-image>
+          <div class="relative">
+            <s1-image
+              @click="openDetail(item)"
+              padding="5%"
+              :src="item.thumbnail"
+              class="w-[240px] !h-[180px] rounded-lg bg-[#f6f6f6] flex-shrink-0"
+            >
+            </s1-image>
+            <div class="template-corner-tag" v-if="item.isTemplate">母版</div>
+          </div>
           <div class="bar flex items-center justify-between w-full mt-2 px-2">
             <div class="text-ellipsis max-w-[80px]">
               {{ item.name || "未命名" }}
@@ -153,6 +170,7 @@
 
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
+import { useLocalStorage } from "@vueuse/core";
 import { Search, ArrowRightBold, Operation, ArrowRight, MoreFilled, Loading } from "@element-plus/icons-vue";
 import { getStickerList } from "@/api";
 import desimage from "@/components/image.vue";
@@ -186,14 +204,24 @@ const list = ref([]);
 const loading = ref(false);
 const isEmpty = ref(false);
 
+// 过滤器相关
+const showTemplateOnly = useLocalStorage('_1s_custom_model_show_template_only', false);
+
 // 获取列表数据
 async function getList() {
   loading.value = true;
   try {
-    const res = await Api.getCustomModelList({
+    const params = {
       currentPage: currentPage.value,
       pageSize: pageSize.value,
-    });
+    };
+    
+    // 当开启只看母版时，添加 isTemplate 参数
+    if (showTemplateOnly.value) {
+      params.isTemplate = true;
+    }
+    
+    const res = await Api.getCustomModelList(params);
     list.value = res.list;
     total.value = res.total;
     isEmpty.value = list.value.length === 0;
@@ -213,6 +241,12 @@ function handleCurrentChange(val: number) {
 // 处理每页条数改变
 function handleSizeChange(val: number) {
   pageSize.value = val;
+  currentPage.value = 1;
+  getList();
+}
+
+// 处理过滤器改变
+function handleFilterChange() {
   currentPage.value = 1;
   getList();
 }
@@ -322,6 +356,21 @@ async function viewRelatedDrafts(model) {
   font-size: 0.8rem;
   font-weight: bold;
   white-space: nowrap;
+}
+
+.template-corner-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #f39c12;
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .timeago {

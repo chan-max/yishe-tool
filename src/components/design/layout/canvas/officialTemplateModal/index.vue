@@ -1,3 +1,11 @@
+<!--
+ * @Author: chan-max jackieontheway666@gmail.com
+ * @Date: 2025-05-20 06:50:38
+ * @LastEditors: chan-max jackieontheway666@gmail.com
+ * @LastEditTime: 2025-08-04 06:36:51
+ * @FilePath: /yishe-scripts/Users/jackie/workspace/1s/src/components/design/layout/canvas/officialTemplateModal/index.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <a-modal
     v-bind="$attrs"
@@ -30,7 +38,7 @@
               <el-col :span="4" v-for="item in list">
                 <div style="margin: 20px">
                   <s1-img
-                    :src="item.thumbnail?.url"
+                    :src="item.url"
                     style="width: 100px; height: 100px"
                   ></s1-img>
                 </div>

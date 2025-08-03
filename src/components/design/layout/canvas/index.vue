@@ -145,7 +145,7 @@
   >
     <el-form
       style="padding: 12px"
-      label-width="80px"
+      label-width="100px"
       :inline-message="false"
       :show-message="false"
       label-position="left"
@@ -177,13 +177,15 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="保存到草稿箱:">
+
+      <el-form-item label="自动去除白色边框:">
         <a-switch
-          v-model:checked="editForm.isDraft"
+          v-model:checked="editForm.autoTrim"
           checked-children="是"
           un-checked-children="否"
         />
       </el-form-item>
+
       <!-- <el-form-item label="是否共享:">
         <a-switch
           v-model:checked="editForm.isPublic"
@@ -242,6 +244,7 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { stickerAutoplacementTags } from "@/components/design/components/tagsInput/index.ts";
 import Utils from "@/common/utils";
+import { imageDataToFile } from '@/common/transform';
 import officialTemplateModal from "./officialTemplateModal/index.vue";
 import {
   currentFocusingStickerId,
@@ -249,7 +252,6 @@ import {
 } from "@/components/design/layout/canvas/components/childViewHelper/index";
 
 import { officialStickerTemplateOptions } from "./officialTemplateModal";
-import { createDraft } from "@/api";
 
 const loginStore = useLoginStatusStore();
 
@@ -336,53 +338,60 @@ const editForm = ref({
   description: "",
   keywords: [],
   group: "",
-  isPublic: false,
-  isDraft: true,
+  autoTrim: true, // 默认开启自动去除白色边框
 });
 
 async function doUpload() {
   submitLoading.value = true;
 
   try {
-    const file = await canvasController.toPngFile();
+    // 先更新画布确保内容是最新的
+    await canvasController.activeUpdateRenderingCanvas();
+    
+    // 等待画布更新完成
+    while (canvasController.loading.value || renderingLoading.value) {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    
+    // 根据是否去除白色边框来决定使用哪个方法获取文件
+    let file;
+    if (editForm.value.autoTrim) {
+      // 使用去除白色边框的方法
+      const imageData = canvasController.ctx.getImageData(0, 0, canvasController.canvasEl.width, canvasController.canvasEl.height);
+      const trimmed = Utils.trimImageData(imageData);
+      file = imageDataToFile(trimmed);
+    } else {
+      // 使用原始方法
+      const imageData = canvasController.ctx.getImageData(0, 0, canvasController.canvasEl.width, canvasController.canvasEl.height);
+      file = imageDataToFile(imageData);
+    }
 
+    // 上传文件到COS
     const cos = await Api.uploadToCOS({
       file: file,
     });
 
-    if (editForm.value.isDraft) {
-      // 保存到草稿箱
-      await createDraft({
-        url: cos.url,
-        name: editForm.value.name,
-        description: editForm.value.description,
-        keywords: editForm.value.keywords.join(","),
-        group: editForm.value.group,
-        meta: {
-          data: canvasStickerOptions.value,
-        },
-        updateTime: new Date()
-      });
-      message.success("已保存到草稿箱");
-    } else {
-      // 正常保存
-      await Api.createSticker({
-        url: cos.url,
-        ...editForm.value,
-        keywords: editForm.value.keywords.join(","),
-        meta: {
-          data: canvasStickerOptions.value,
-        },
-        uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null,
-      });
-      message.success("保存成功");
-    }
+    // 直接保存到素材
+    await Api.createSticker({
+      url: cos.url,
+      ...editForm.value,
+      keywords: editForm.value.keywords.join(","),
+      isCustom: true, // 标识为自定义贴纸
+      meta: {
+        data: canvasStickerOptions.value,
+        source: 'design_canvas', // 来源标识
+        isCustom: true
+      },
+      uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null,
+    });
+    message.success("保存成功");
 
     submitLoading.value = false;
     showUploadModal.value = false;
   } catch (e) {
+    console.error('保存失败:', e);
     submitLoading.value = false;
-    message.error("保存失败");
+    message.error("保存失败: " + (e.message || e));
   }
 }
 

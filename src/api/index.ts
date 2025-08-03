@@ -440,6 +440,12 @@ export const getStickerList = (data) => new Promise(async (resolve, reject) => {
   resolve(res.data.data)
 })
 
+// 获取自定义贴纸列表
+export const getCustomStickerList = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/sticker/page', { ...data, isCustom: true })
+  resolve(res.data.data)
+})
+
 
 export const deleteSticker = (data) => new Promise(async (resolve, reject) => {
   let res = await apiInstance.post('/api/sticker/delete', data)
@@ -665,6 +671,52 @@ export const getSentenceById = (id) => new Promise(async (resolve, reject) => {
   }
 });
 
+// 爬虫素材相关API
+export const createCrawlerMaterial = (data) => new Promise(async (resolve, reject) => {
+  try {
+    const res = await apiInstance.post('/api/crawler/material/add', data);
+    resolve(res.data.data || res.data);
+  } catch (error) {
+    reject(error);
+  }
+});
+
+export const getCrawlerMaterialList = (data) => new Promise(async (resolve, reject) => {
+  try {
+    const res = await apiInstance.post('/api/crawler/material/page', data);
+    resolve(res.data.data || res.data);
+  } catch (error) {
+    reject(error);
+  }
+});
+
+export const updateCrawlerMaterial = (data) => new Promise(async (resolve, reject) => {
+  try {
+    const res = await apiInstance.post('/api/crawler/material/update', data);
+    resolve(res.data.data || res.data);
+  } catch (error) {
+    reject(error);
+  }
+});
+
+export const deleteCrawlerMaterial = (data) => new Promise(async (resolve, reject) => {
+  try {
+    const res = await apiInstance.post('/api/crawler/material/delete', data);
+    resolve(res.data.data || res.data);
+  } catch (error) {
+    reject(error);
+  }
+});
+
+export const getCrawlerMaterialById = (id) => new Promise(async (resolve, reject) => {
+  try {
+    const res = await apiInstance.get(`/api/crawler/material?id=${id}`);
+    resolve(res.data.data || res.data);
+  } catch (error) {
+    reject(error);
+  }
+});
+
 class Api {
 
   // 测试服务是否联通
@@ -719,6 +771,8 @@ class Api {
   getUserInfo = getUserInfo
 
   getStickerList = getStickerList
+
+  getCustomStickerList = getCustomStickerList
 
   updateSticker = updateSticker
 
@@ -776,6 +830,13 @@ class Api {
   updateSentence = updateSentence
   deleteSentence = deleteSentence
   getSentenceById = getSentenceById
+
+  // 爬虫素材相关方法
+  createCrawlerMaterial = createCrawlerMaterial
+  getCrawlerMaterialList = getCrawlerMaterialList
+  updateCrawlerMaterial = updateCrawlerMaterial
+  deleteCrawlerMaterial = deleteCrawlerMaterial
+  getCrawlerMaterialById = getCrawlerMaterialById
 }
 
 export default new Api()

@@ -1,5 +1,26 @@
 <template>
   <div class="flex flex-col min-h-screen">
+    <!-- 过滤区域 -->
+    <div class="bg-white border-b border-gray-200 p-4">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-medium">自定义标识:</span>
+          <el-select 
+            v-model="queryParams.isCustom" 
+            placeholder="请选择类型" 
+            style="width: 120px" 
+            clearable 
+            @change="getList"
+          >
+            <el-option label="全部" :value="null" />
+            <el-option label="是" :value="true" />
+            <el-option label="否" :value="false" />
+          </el-select>
+        </div>
+        <el-button type="primary" @click="reset">重置</el-button>
+      </div>
+    </div>
+    
     <div class="flex-1 relative">
       <div
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full mx-auto p-4"
@@ -32,6 +53,13 @@
                 v-if="item?.uploader?.account == loginStore.userInfo?.account"
               >
                 我
+              </div>
+              <div 
+                class="label-tag" 
+                :class="item.isCustom ? 'bg-green-500' : 'bg-gray-500'"
+                v-if="item.isCustom !== undefined"
+              >
+                {{ item.isCustom ? '自定义' : '系统' }}
               </div>
             </div>
             <div class="timeago">{{ Utils.time.timeago(item.updateTime) }}</div>
@@ -224,6 +252,11 @@ const list = ref([]);
 const loading = ref(false);
 const isEmpty = ref(false);
 
+// 查询参数
+const queryParams = ref({
+  isCustom: null, // 自定义标识过滤
+});
+
 // 获取列表数据
 async function getList() {
   loading.value = true;
@@ -231,6 +264,7 @@ async function getList() {
     const res = await getStickerList({
       currentPage: currentPage.value,
       pageSize: pageSize.value,
+      ...queryParams.value,
     });
     list.value = res.list;
     total.value = res.total;
@@ -258,6 +292,7 @@ function handleSizeChange(val: number) {
 // 重置
 function reset() {
   currentPage.value = 1;
+  queryParams.value.isCustom = null;
   getList();
 }
 

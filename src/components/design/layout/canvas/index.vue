@@ -379,8 +379,6 @@ async function doUpload() {
       isCustom: true, // 标识为自定义贴纸
       meta: {
         data: canvasStickerOptions.value,
-        source: 'design_canvas', // 来源标识
-        isCustom: true
       },
       uploaderId: loginStore.isLogin ? loginStore.userInfo.id : null,
     });

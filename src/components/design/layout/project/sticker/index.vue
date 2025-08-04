@@ -4,7 +4,7 @@
     <div class="bg-white border-b border-gray-200 p-4">
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-2">
-          <span class="text-sm font-medium">自定义标识:</span>
+          <span class="text-sm font-medium">自定义贴纸:</span>
           <el-select 
             v-model="queryParams.isCustom" 
             placeholder="请选择类型" 
@@ -254,7 +254,7 @@ const isEmpty = ref(false);
 
 // 查询参数
 const queryParams = ref({
-  isCustom: null, // 自定义标识过滤
+  isCustom: null, // 自定义贴纸过滤
 });
 
 // 获取列表数据

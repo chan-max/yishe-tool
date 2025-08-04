@@ -542,7 +542,7 @@ export const updateCustomModel = (data) => new Promise(async (resolve, reject) =
 
 // 根据图片id来查询图片
 export const getProductModelById = (id: string) => new Promise(async (resolve, reject) => {
-  const data = await apiInstance.get('/api/product-model', { params: { id } })
+  const data = await apiInstance.get(`/api/product-model/${id}`)
   resolve(data.data.data)
 })
 

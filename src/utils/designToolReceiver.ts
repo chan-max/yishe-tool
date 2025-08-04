@@ -29,12 +29,12 @@ export class DesignToolReceiver {
 
     this.messenger = new NativeWindowMessenger()
     // 主动告知父窗口已连接，提升连接鲁棒性
-    this.messenger.send('customEvent', '设计工具连接成功')
+    this.messenger.send('connectionSuccess', '设计工具连接成功')
     
     // 监听父窗口请求
-    this.messenger.on('test', () => {
+    this.messenger.on('testConnection', () => {
       console.log('收到父窗口测试消息')
-      this.messenger?.send('customEvent', '设计工具连接成功')
+      this.messenger?.send('connectionSuccess', '设计工具连接成功')
     })
 
     // 监听设计模型数据
@@ -47,7 +47,7 @@ export class DesignToolReceiver {
     this.messenger.on('openDesignModel', async (data: { designModelId: string }) => {
       if (data && data.designModelId) {
         try {
-          const modelInfo = await getCustomModelById(data.designModelId)
+          const modelInfo = (await getCustomModelById(data.designModelId)).meta.modelInfo
           enterEditMode(data.designModelId, modelInfo)
           if (currentModelController.value && currentModelController.value.useModelInfo) {
             await currentModelController.value.useModelInfo(modelInfo)

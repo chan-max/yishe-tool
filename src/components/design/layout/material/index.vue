@@ -82,7 +82,7 @@ import { builtInClothingColors } from "./index.ts";
 
 <style scoped lang="less">
 .content {
-  width: 340px;
+  width: 360px;
   height: 100%;
 }
 

@@ -46,6 +46,8 @@ export function saveScreenshot() {
         createDraft({
             url: cos.url,
             name: '模型截图',
+            type: 'image',
+            suffix: 'png',
             updateTime: new Date(),
             ...(isEdit.value && currentEditingModelId.value ? { customModelId: currentEditingModelId.value } : {})
         }).then(() => {

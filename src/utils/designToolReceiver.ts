@@ -207,6 +207,8 @@ export class DesignToolReceiver {
                       const draftPayload = {
                         url: cos.url,
                         name: `多角度图片_${image.label}`,
+                        type: 'image',
+                        suffix: 'png',
                         updateTime: new Date(),
                         customModelId: savedModel.id,
                       };

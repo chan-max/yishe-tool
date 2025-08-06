@@ -436,7 +436,7 @@ function genSticker() {
 }
 
 .container {
-  width: 340px;
+  width: 360px;
   height: 100%;
   display: flex;
   flex-direction: column;

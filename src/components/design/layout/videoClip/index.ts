@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { currentModelController } from "../../store";
+import { currentModelController, currentEditingModelId } from "../../store";
 import { isEdit, currentEditingModelInfo } from '../../store';
 import gsap from "gsap";
 import { FrontSide } from "three";
@@ -32,7 +32,10 @@ const handleRecordedVideo = async (blob: Blob) => {
     await createDraft({
       url: cos.url,
       name: '模型录制视频',
-      updateTime: new Date()
+      type: 'video',
+      suffix: 'webm',
+      updateTime: new Date(),
+      ...(isEdit.value && currentEditingModelId.value ? { customModelId: currentEditingModelId.value } : {})
     });
     
     message.success('视频已保存到草稿箱');

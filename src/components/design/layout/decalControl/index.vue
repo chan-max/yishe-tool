@@ -13,7 +13,7 @@ import decalMain from './main.vue';
 </script>
 <style lang="less">
 .designiy-decal-control {
-  width: 340px;
+  width: 360px;
   display: flex;
   flex-direction: column;
   height: 100%;

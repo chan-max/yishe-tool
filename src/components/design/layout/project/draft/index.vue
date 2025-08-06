@@ -22,7 +22,7 @@
             <!-- 自定义模型标识 -->
             <div v-if="item.customModelId" class="absolute top-2 left-2">
               <div class="bg-blue-500 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-lg cursor-help hover:bg-blue-600 transition-colors relative">
-                模型
+                模型关联
                 <!-- 悬停提示 -->
                 <div class="absolute top-full left-0 mt-2 opacity-0 hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:opacity-100">
                   <div class="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm shadow-lg whitespace-nowrap">
@@ -48,7 +48,7 @@
             <!-- 自定义模型标识 -->
             <div v-if="item.customModelId" class="absolute top-2 left-2 z-10">
               <div class="bg-blue-500 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-lg cursor-help hover:bg-blue-600 transition-colors relative">
-                模型
+                模型关联
                 <!-- 悬停提示 -->
                 <div class="absolute top-full left-0 mt-2 opacity-0 hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:opacity-100">
                   <div class="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm shadow-lg whitespace-nowrap">

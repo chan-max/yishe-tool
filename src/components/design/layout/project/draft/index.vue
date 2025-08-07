@@ -65,7 +65,7 @@
             </div>
           </s1-img>
           <div class="bar flex items-center justify-between w-full mt-2 px-2">
-            <div class="text-ellipsis max-w-[80px]">
+            <div class="text-ellipsis max-w-[160px]">
               {{ item.name || "未命名" }} {{ item.customModelId }}
             </div>
             <div class="flex-1"></div>

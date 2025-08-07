@@ -39,18 +39,22 @@ export const stopAllAnimations = () => {
 };
 
 // 处理录制结束后的视频保存
-const handleRecordedVideo = async (blob: Blob) => {
+const handleRecordedVideo = async (blob: Blob, animationName?: string) => {
   try {
-    // 创建文件对象
-    const file = new File([blob], `录制视频_${new Date().getTime()}.webm`, { type: 'video/webm' });
+    // 创建文件对象，文件名包含动画名称
+    const timestamp = new Date().getTime();
+    const animationSuffix = animationName ? `_${animationName}` : '';
+    const fileName = `录制视频${animationSuffix}_${timestamp}.webm`;
+    const file = new File([blob], fileName, { type: 'video/webm' });
     
     // 上传到 COS
     const cos = await uploadToCOS({ file });
     
-    // 保存到草稿箱
+    // 保存到草稿箱，名称也包含动画信息
+    const draftName = animationName ? `模型录制视频_${animationName}` : '模型录制视频';
     await createDraft({
       url: cos.url,
-      name: '模型录制视频',
+      name: draftName,
       type: 'video',
       suffix: 'webm',
       updateTime: new Date(),
@@ -64,13 +68,13 @@ const handleRecordedVideo = async (blob: Blob) => {
   }
 };
 
-function startRecord() {
+function startRecord(animationName?: string) {
     if (!isRecordingEnabled.value) {
         return;
     }
 
     currentModelController.value.startMediaRecord({
-        onStop: handleRecordedVideo
+        onStop: (blob) => handleRecordedVideo(blob, animationName)
     });
 }
 
@@ -86,7 +90,7 @@ export const animations = [
         title: "拉远再拉近",
         handle() {
             if (isRecordingEnabled.value) {
-                startRecord();
+                startRecord("拉远再拉近");
             }
             startAnimation();
             let camera = currentModelController.value.camera;
@@ -114,7 +118,7 @@ export const animations = [
         title: "淡入",
         async handle() {
             if (isRecordingEnabled.value) {
-                startRecord();
+                startRecord("淡入");
             }
             startAnimation();
             await fadeInScene(currentModelController.value.scene, 4);
@@ -128,7 +132,7 @@ export const animations = [
         title: "摇晃",
         async handle() {
             if (isRecordingEnabled.value) {
-                startRecord();
+                startRecord("摇晃");
             }
             startAnimation();
             
@@ -173,7 +177,7 @@ export const animations = [
         title: "360度旋转展示",
         async handle() {
             if (isRecordingEnabled.value) {
-                startRecord();
+                startRecord("360度旋转展示");
             }
             startAnimation();
             
@@ -202,7 +206,7 @@ export const animations = [
         title: "缩放展示",
         async handle() {
             if (isRecordingEnabled.value) {
-                startRecord();
+                startRecord("缩放展示");
             }
             startAnimation();
             
@@ -234,7 +238,7 @@ export const animations = [
         title: "上下浮动",
         async handle() {
             if (isRecordingEnabled.value) {
-                startRecord();
+                startRecord("上下浮动");
             }
             startAnimation();
             
@@ -278,7 +282,7 @@ export const animations = [
         title: "螺旋上升",
         async handle() {
             if (isRecordingEnabled.value) {
-                startRecord();
+                startRecord("螺旋上升");
             }
             startAnimation();
             
@@ -308,7 +312,7 @@ export const animations = [
         title: "细节特写",
         async handle() {
             if (isRecordingEnabled.value) {
-                startRecord();
+                startRecord("细节特写");
             }
             startAnimation();
             

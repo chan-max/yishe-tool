@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2025-05-20 06:50:38
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-08-07 04:41:12
+ * @LastEditTime: 2025-08-08 06:15:22
  * @FilePath: /1s/src/components/design/layout/videoClip/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -82,6 +82,8 @@
               size="small"
               v-for="item in animations"
               class="cursor-pointer round"
+              :class="{ 'disabled-button': isAnimationRunning }"
+              :disabled="isAnimationRunning"
               @click="item.handle"
             >
               {{ item.title }}
@@ -138,6 +140,8 @@ import {
   modelControllerViewSetterOptions,
   isEdit,
   currentEditingModelInfo,
+  isAnimationRunning,
+  stopAllAnimations,
 } from "./index.ts";
 
 // 录制相关状态
@@ -390,5 +394,15 @@ const handleSaveToDraft = async () => {
 .custom-checkbox.selected:hover {
   background-color: #337ecc;
   border-color: #337ecc;
+}
+
+.disabled-button {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.disabled-button:hover {
+  opacity: 0.5;
+  cursor: not-allowed !important;
 }
 </style>

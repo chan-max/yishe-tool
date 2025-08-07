@@ -2,7 +2,7 @@
  * @Author: chan-max jackieontheway666@gmail.com
  * @Date: 2023-12-16 12:40:25
  * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-07-30 19:12:20
+ * @LastEditTime: 2025-08-08 05:45:18
  * @FilePath: /1s/src/components/design/layout/saveModel/index.vue
  * @Description: 
  * 
@@ -230,7 +230,7 @@
         </el-form>
 
         <!-- 保存按钮上方新增AI生成内容按钮 -->
-        <div class="ai-gen-button-container" style="padding: 0 12px 8px 12px;">
+        <!-- <div class="ai-gen-button-container" style="padding: 0 12px 8px 12px;">
           <el-button 
             @click="aiGenerateContent" 
             type="success" 
@@ -240,7 +240,7 @@
           >
             AI生成内容
           </el-button>
-        </div>
+        </div> -->
         <!-- 保存按钮 -->
         <div class="save-button-container">
           <el-button 

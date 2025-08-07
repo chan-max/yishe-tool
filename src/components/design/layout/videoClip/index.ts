@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { currentModelController, currentEditingModelId } from "../../store";
 import { isEdit, currentEditingModelInfo } from '../../store';
 import gsap from "gsap";
@@ -18,6 +18,25 @@ export const modelControllerViewSetterOptions = ref([
 export const isRecordingEnabled = ref(false);
 
 const isAnimating = ref(false);
+
+// 检查是否正在执行动画
+export const isAnimationRunning = computed(() => isAnimating.value);
+
+// 开始动画
+const startAnimation = () => {
+    isAnimating.value = true;
+};
+
+// 结束动画
+const endAnimation = () => {
+    isAnimating.value = false;
+};
+
+// 停止所有动画
+export const stopAllAnimations = () => {
+    gsap.killTweensOf("*"); // 停止所有GSAP动画
+    endAnimation();
+};
 
 // 处理录制结束后的视频保存
 const handleRecordedVideo = async (blob: Blob) => {
@@ -69,7 +88,10 @@ export const animations = [
             if (isRecordingEnabled.value) {
                 startRecord();
             }
+            startAnimation();
             let camera = currentModelController.value.camera;
+            const originalPosition = camera.position.clone();
+            
             gsap.to(camera.position, {
                 x: 5 * Math.cos(Math.PI / 4), // 初始位置
                 z: 5 * Math.sin(Math.PI / 4),
@@ -78,9 +100,12 @@ export const animations = [
                 repeat: 1,
                 yoyo: true,
                 onComplete: () => {
+                    // 恢复相机原始位置
+                    camera.position.copy(originalPosition);
                     if (isRecordingEnabled.value) {
                         stopRecord();
                     }
+                    endAnimation();
                 },
             });
         },
@@ -91,10 +116,12 @@ export const animations = [
             if (isRecordingEnabled.value) {
                 startRecord();
             }
+            startAnimation();
             await fadeInScene(currentModelController.value.scene, 4);
             if (isRecordingEnabled.value) {
                 stopRecord();
             }
+            endAnimation();
         },
     },
     {
@@ -103,21 +130,226 @@ export const animations = [
             if (isRecordingEnabled.value) {
                 startRecord();
             }
-            let mesh = currentModelController.value.mesh;
+            startAnimation();
+            
+            // 获取场景中所有需要摇晃的对象
+            const allObjects = [];
+            const originalRotations = [];
+            currentModelController.value.scene.traverse((object) => {
+                if (object && 'isMesh' in object && object.isMesh) {
+                    allObjects.push(object);
+                    originalRotations.push(object.rotation.clone());
+                }
+            });
 
-            // 使用 GSAP 实现左右摇晃动画
-            gsap.to(mesh.rotation, {
-                duration: 2,
-                y: `+=${1}`, // 向右摇晃
-                yoyo: true, // 动画反向播放
-                repeat: 3, // 无限重复
-                ease: "sine.inOut", // 缓动效果
+            // 为所有对象创建同步的摇晃动画
+            const shakePromises = allObjects.map((obj, index) => {
+                return new Promise<void>((resolve) => {
+                    gsap.to(obj.rotation, {
+                        duration: 2,
+                        y: `+=${1}`, // 向右摇晃
+                        yoyo: true, // 动画反向播放
+                        repeat: 3, // 重复3次
+                        ease: "sine.inOut", // 缓动效果
+                        onComplete: () => {
+                            // 恢复原始旋转
+                            obj.rotation.copy(originalRotations[index]);
+                            resolve();
+                        }
+                    });
+                });
+            });
+
+            // 等待所有摇晃动画完成
+            await Promise.all(shakePromises);
+            
+            if (isRecordingEnabled.value) {
+                stopRecord();
+            }
+            endAnimation();
+        },
+    },
+    {
+        title: "360度旋转展示",
+        async handle() {
+            if (isRecordingEnabled.value) {
+                startRecord();
+            }
+            startAnimation();
+            
+            const camera = currentModelController.value.camera;
+            const target = currentModelController.value.mesh.position;
+            const originalPosition = camera.position.clone();
+            
+            // 相机围绕模型进行360度旋转
+            gsap.to(camera.position, {
+                duration: 6,
+                x: target.x + 3 * Math.cos(Math.PI * 2),
+                z: target.z + 3 * Math.sin(Math.PI * 2),
+                ease: "power2.inOut",
                 onComplete: () => {
+                    // 恢复相机原始位置
+                    camera.position.copy(originalPosition);
                     if (isRecordingEnabled.value) {
                         stopRecord();
                     }
+                    endAnimation();
                 }
             });
+        },
+    },
+    {
+        title: "缩放展示",
+        async handle() {
+            if (isRecordingEnabled.value) {
+                startRecord();
+            }
+            startAnimation();
+            
+            const camera = currentModelController.value.camera;
+            const target = currentModelController.value.mesh.position;
+            const originalPosition = camera.position.clone();
+            
+            // 相机从远到近，再从近到远
+            gsap.to(camera.position, {
+                duration: 4,
+                x: target.x + 0.5,
+                y: target.y + 0.5,
+                z: target.z + 0.5,
+                ease: "power2.inOut",
+                yoyo: true,
+                repeat: 1,
+                onComplete: () => {
+                    // 恢复相机原始位置
+                    camera.position.copy(originalPosition);
+                    if (isRecordingEnabled.value) {
+                        stopRecord();
+                    }
+                    endAnimation();
+                }
+            });
+        },
+    },
+    {
+        title: "上下浮动",
+        async handle() {
+            if (isRecordingEnabled.value) {
+                startRecord();
+            }
+            startAnimation();
+            
+            const allObjects = [];
+            const originalPositions = [];
+            currentModelController.value.scene.traverse((object) => {
+                if (object && 'isMesh' in object && object.isMesh) {
+                    allObjects.push(object);
+                    originalPositions.push(object.position.clone());
+                }
+            });
+
+            // 所有对象一起上下浮动
+            const floatPromises = allObjects.map((obj, index) => {
+                return new Promise<void>((resolve) => {
+                    const originalY = obj.position.y;
+                    gsap.to(obj.position, {
+                        duration: 2,
+                        y: originalY + 0.3,
+                        ease: "sine.inOut",
+                        yoyo: true,
+                        repeat: 2,
+                        onComplete: () => {
+                            // 恢复原始位置
+                            obj.position.copy(originalPositions[index]);
+                            resolve();
+                        }
+                    });
+                });
+            });
+
+            await Promise.all(floatPromises);
+            
+            if (isRecordingEnabled.value) {
+                stopRecord();
+            }
+            endAnimation();
+        },
+    },
+    {
+        title: "螺旋上升",
+        async handle() {
+            if (isRecordingEnabled.value) {
+                startRecord();
+            }
+            startAnimation();
+            
+            const camera = currentModelController.value.camera;
+            const target = currentModelController.value.mesh.position;
+            const originalPosition = camera.position.clone();
+            
+            // 相机螺旋上升展示
+            gsap.to(camera.position, {
+                duration: 5,
+                x: target.x + 2 * Math.cos(Math.PI * 3),
+                y: target.y + 2,
+                z: target.z + 2 * Math.sin(Math.PI * 3),
+                ease: "power2.inOut",
+                onComplete: () => {
+                    // 恢复相机原始位置
+                    camera.position.copy(originalPosition);
+                    if (isRecordingEnabled.value) {
+                        stopRecord();
+                    }
+                    endAnimation();
+                }
+            });
+        },
+    },
+    {
+        title: "细节特写",
+        async handle() {
+            if (isRecordingEnabled.value) {
+                startRecord();
+            }
+            startAnimation();
+            
+            const camera = currentModelController.value.camera;
+            const target = currentModelController.value.mesh.position;
+            const originalPosition = camera.position.clone();
+            
+            // 相机移动到不同角度进行细节特写
+            const positions = [
+                { x: target.x + 1, y: target.y + 0.5, z: target.z },
+                { x: target.x, y: target.y + 1, z: target.z + 1 },
+                { x: target.x - 1, y: target.y + 0.5, z: target.z },
+                { x: target.x, y: target.y - 0.5, z: target.z - 1 }
+            ];
+            
+            let currentIndex = 0;
+            
+            const moveToNextPosition = () => {
+                if (currentIndex < positions.length) {
+                    gsap.to(camera.position, {
+                        duration: 1.5,
+                        ...positions[currentIndex],
+                        ease: "power2.inOut",
+                        onComplete: () => {
+                            currentIndex++;
+                            if (currentIndex < positions.length) {
+                                moveToNextPosition();
+                            } else {
+                                // 恢复相机原始位置
+                                camera.position.copy(originalPosition);
+                                if (isRecordingEnabled.value) {
+                                    stopRecord();
+                                }
+                                endAnimation();
+                            }
+                        }
+                    });
+                }
+            };
+            
+            moveToNextPosition();
         },
     },
 ];
@@ -174,7 +406,10 @@ async function fadeInScene(scene, duration) {
     await Promise.all(fadePromises);
 }
 
+// 重新导出从 store 导入的变量
 export { isEdit, currentEditingModelInfo };
+
+
 
 
 

@@ -146,7 +146,9 @@
           class="draft-item"
         >
           <div class="draft-preview">
+            <!-- 图片类型 -->
             <el-image 
+              v-if="draft.type !== 'video'"
               :src="draft.url" 
               fit="contain" 
               class="w-full rounded-t-lg cursor-pointer bg-gray-50"
@@ -155,6 +157,29 @@
               :preview-teleported="true"
               :z-index="9999"
             />
+            <!-- 视频类型 -->
+            <div 
+              v-else
+              class="video-preview w-full rounded-t-lg cursor-pointer bg-gray-50"
+              style="aspect-ratio: 4/3;"
+            >
+              <video 
+                :src="draft.url" 
+                class="w-full h-full object-contain rounded-t-lg"
+                controls
+                preload="metadata"
+                @click.stop
+              >
+                您的浏览器不支持视频播放
+              </video>
+              <div class="video-overlay">
+                <div class="video-icon">
+                  <el-icon size="24">
+                    <VideoPlay />
+                  </el-icon>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="draft-info p-4">
             <div class="draft-name text-base font-semibold truncate mb-2">
@@ -163,8 +188,11 @@
             <div v-if="draft.description" class="draft-desc text-sm text-color-regular mb-3 line-clamp-2">
               {{ draft.description }}
             </div>
-            <div class="draft-meta text-xs text-color-placeholder">
+            <div class="draft-meta text-xs text-color-placeholder flex items-center gap-2">
               <span>{{ Utils.time.timeago(draft.createTime) }}</span>
+              <span v-if="draft.type" class="type-tag">
+                {{ draft.type === 'video' ? '视频' : '图片' }}
+              </span>
             </div>
           </div>
         </div>
@@ -176,7 +204,7 @@
 <script setup lang="tsx">
 import { ref, onBeforeMount } from "vue";
 import { useLocalStorage } from "@vueuse/core";
-import { Search, ArrowRightBold, Operation, ArrowRight, MoreFilled, Loading } from "@element-plus/icons-vue";
+import { Search, ArrowRightBold, Operation, ArrowRight, MoreFilled, Loading, VideoPlay } from "@element-plus/icons-vue";
 import { getStickerList } from "@/api";
 import desimage from "@/components/image.vue";
 import { currentModelController, viewDisplayController, enterEditMode, selectedAngles } from "@/components/design/store";
@@ -456,6 +484,50 @@ async function viewRelatedDrafts(model) {
     color: var(--el-text-color-placeholder);
     font-size: 12px;
     line-height: 1.4;
+  }
+  
+  .video-preview {
+    position: relative;
+    overflow: hidden;
+    
+    &:hover .video-overlay {
+      opacity: 1;
+    }
+  }
+  
+  .video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  .video-icon {
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .type-tag {
+    background: var(--el-color-primary);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
   }
 }
 

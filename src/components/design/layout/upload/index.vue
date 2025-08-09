@@ -1,5 +1,6 @@
 <template>
   <div class="upload-container">
+    <div class="content">
     <div v-if="uploadTabType == 'local'">
       <el-upload
         ref="uploadRef"
@@ -130,6 +131,7 @@
     <div v-if="uploadTabType == 'scan'" class="flex flex-col justify-center items-center">
       <div class="qrcode" style="width: 10rem; height: 10rem"></div>
       <div class="tip">打开app扫码上传</div>
+    </div>
     </div>
 
     <div class="footer">
@@ -466,12 +468,12 @@ async function uploadSingleFile(file) {
 /**
  * 防止拷贝时多余的样式影响
  */
-function fontContainerPaste(e) {
+function fontContainerPaste(e: ClipboardEvent) {
   // 阻止默认的粘贴行为
-  event.preventDefault();
+  e.preventDefault();
 
   // 获取剪贴板中的纯文本
-  const text = (event.clipboardData || window.clipboardData).getData("text/plain");
+  const text = e.clipboardData?.getData("text/plain") ?? "";
   // 将纯文本插入到光标位置
   document.execCommand("insertText", false, text);
 }
@@ -509,8 +511,19 @@ async function doUpload() {
 <style lang="less" scoped>
 .upload-container {
   padding: 1rem;
-  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  // max-height: 70vh; 
+  overflow: hidden;
   width: 100%;
+}
+
+.content {
+  flex: 1 1 auto;
+  min-height: 0; // 使内部滚动生效
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .placeholder {
@@ -561,6 +574,8 @@ async function doUpload() {
   display: flex;
   align-items: center;
   padding: 3rem 1rem 1rem 1rem;
+  background: #fff;
+  border-top: 1px solid #f0f0f0;
 }
 
 :deep(.el-upload-list) {

@@ -138,10 +138,6 @@ export function applyHtmlTemplateToTarget(target: any, template: HtmlTemplateDef
     category: template.category,
     description: template.description,
     tags: template.tags || [],
-    difficulty: template.difficulty,
-    sceneDescription: template.sceneDescription,
-    suitableProducts: template.suitableProducts || [],
-    printStyle: template.printStyle,
     sortOrder: template.sortOrder,
     source: template.source || "builtin",
   } satisfies HtmlTemplateMeta;

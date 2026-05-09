@@ -25,7 +25,7 @@
           v-model="searchKeyword"
           clearable
           size="large"
-          placeholder="搜索模板名称、印花方式、适用商品、场景"
+          placeholder="搜索模板名称、标签、描述"
           class="html-template-library__search"
         >
           <template #prefix>
@@ -46,33 +46,6 @@
               :key="cat"
               :label="cat"
               :value="cat"
-            />
-          </el-select>
-
-          <el-select
-            v-model="filterDifficulty"
-            clearable
-            placeholder="难度"
-            size="large"
-            class="html-template-library__filter-select"
-          >
-            <el-option label="简单" value="simple" />
-            <el-option label="中等" value="intermediate" />
-            <el-option label="复杂" value="advanced" />
-          </el-select>
-
-          <el-select
-            v-model="filterPrintStyle"
-            clearable
-            placeholder="印花方式"
-            size="large"
-            class="html-template-library__filter-select"
-          >
-            <el-option
-              v-for="style in printStyleOptions"
-              :key="style"
-              :label="getPrintStyleLabel(style)"
-              :value="style"
             />
           </el-select>
 
@@ -128,27 +101,11 @@
             <div class="html-template-library__card-body">
               <div class="html-template-library__card-topline">
                 <div class="html-template-library__card-category">{{ template.category }}</div>
-                <div class="html-template-library__card-badges">
-                  <span v-if="template.printStyle">
-                    {{ getPrintStyleLabel(template.printStyle) }}
-                  </span>
-                  <span v-if="template.difficulty">
-                    {{ getDifficultyLabel(template.difficulty) }}
-                  </span>
-                </div>
               </div>
               <div class="html-template-library__card-title">{{ template.name }}</div>
               <div class="html-template-library__card-desc">{{ template.description }}</div>
-              <div v-if="template.sceneDescription" class="html-template-library__card-scene">
-                {{ template.sceneDescription }}
-              </div>
-              <div class="html-template-library__card-products">
-                <span>适用商品</span>
-                <strong>{{ formatSuitableProducts(template.suitableProducts) }}</strong>
-              </div>
               <div class="html-template-library__card-tags">
                 <span v-for="tag in template.tags || []" :key="tag">{{ tag }}</span>
-                <span class="is-source">{{ getSourceLabel(template.source) }}</span>
               </div>
             </div>
           </div>
@@ -157,7 +114,7 @@
         <div v-else class="html-template-library__empty">
           <div class="html-template-library__empty-title">没有找到匹配模板</div>
           <div class="html-template-library__empty-desc">
-            试试搜索商品名、印花方式、风格关键词，或切换分类筛选。
+            试试搜索关键词，或切换分类筛选。
           </div>
         </div>
       </div>
@@ -166,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { Search, Star, StarFilled } from "@element-plus/icons-vue";
 import icon from "@/components/design/assets/icon/project.svg?component";
 import operateFormItem from "@/components/design/layout/canvas/operate/operateFormItem.vue";
@@ -179,15 +136,9 @@ import {
   ensureHtmlTemplateOptions,
 } from "@/components/design/layout/canvas/htmlTemplate/runtime.ts";
 import {
-  HTML_TEMPLATE_DIFFICULTY_LABEL_MAP,
-  HTML_TEMPLATE_PRINT_STYLE_LABEL_MAP,
   type HtmlTemplateDefinition,
-  type HtmlTemplateDifficulty,
-  type HtmlTemplatePrintStyle,
-  type HtmlTemplateSource,
 } from "@/components/design/layout/canvas/htmlTemplate/types";
 
-// 收藏管理
 const FAVORITES_STORAGE_KEY = "_1s_html_template_favorites";
 
 function getFavorites(): Set<string> {
@@ -200,25 +151,23 @@ function getFavorites(): Set<string> {
   }
 }
 
-function saveFavorites(favorites: Set<string>) {
+function saveFavorites(favs: Set<string>) {
   try {
-    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...favorites]));
-  } catch (e) {
-    console.warn("Failed to save favorites:", e);
-  }
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...favs]));
+  } catch {}
 }
 
 const favorites = ref<Set<string>>(getFavorites());
 
-function isFavorite(templateId: string): boolean {
-  return favorites.value.has(templateId);
+function isFavorite(id: string): boolean {
+  return favorites.value.has(id);
 }
 
-function toggleFavorite(templateId: string) {
-  if (favorites.value.has(templateId)) {
-    favorites.value.delete(templateId);
+function toggleFavorite(id: string) {
+  if (favorites.value.has(id)) {
+    favorites.value.delete(id);
   } else {
-    favorites.value.add(templateId);
+    favorites.value.add(id);
   }
   saveFavorites(favorites.value);
 }
@@ -232,50 +181,26 @@ const loading = ref(false);
 const searchKeyword = ref("");
 const templateList = ref<HtmlTemplateDefinition[]>([]);
 
-// 筛选条件
 const filterCategory = ref("");
-const filterDifficulty = ref<HtmlTemplateDifficulty | "">("");
-const filterPrintStyle = ref<HtmlTemplatePrintStyle | "">("");
 const showFavoritesOnly = ref(false);
 
-// 分类选项
 const categoryOptions = computed(() => {
   const categories = new Set(templateList.value.map(t => t.category));
   return Array.from(categories).sort();
 });
 
-// 印花方式 选项
-const printStyleOptions = computed(() => {
-  const styles = new Set(templateList.value.flatMap(t => t.printStyle ? [t.printStyle] : []));
-  return Array.from(styles).sort();
-});
-
-// 筛选逻辑
 const filteredTemplates = computed(() => {
   const keyword = searchKeyword.value.trim().toLowerCase();
 
   return templateList.value.filter((item) => {
-    // 收藏筛选
     if (showFavoritesOnly.value && !favorites.value.has(item.id)) {
       return false;
     }
 
-    // 分类筛选
     if (filterCategory.value && item.category !== filterCategory.value) {
       return false;
     }
 
-    // 难度筛选
-    if (filterDifficulty.value && item.difficulty !== filterDifficulty.value) {
-      return false;
-    }
-
-    // 印花方式筛选
-    if (filterPrintStyle.value && item.printStyle !== filterPrintStyle.value) {
-      return false;
-    }
-
-    // 搜索
     if (!keyword) {
       return true;
     }
@@ -284,11 +209,7 @@ const filteredTemplates = computed(() => {
       item.name,
       item.category,
       item.description,
-      item.sceneDescription,
-      getPrintStyleLabel(item.printStyle),
-      getDifficultyLabel(item.difficulty),
       ...(item.tags || []),
-      ...(item.suitableProducts || []),
     ]
       .filter(Boolean)
       .join(" ")
@@ -342,38 +263,6 @@ function applyTemplate(template: HtmlTemplateDefinition) {
   applyHtmlTemplateToTarget(model.value, template);
   dialogVisible.value = false;
 }
-
-function getDifficultyLabel(difficulty?: HtmlTemplateDifficulty) {
-  if (!difficulty) {
-    return "";
-  }
-  return HTML_TEMPLATE_DIFFICULTY_LABEL_MAP[difficulty] || difficulty;
-}
-
-function getPrintStyleLabel(printStyle?: HtmlTemplatePrintStyle) {
-  if (!printStyle) {
-    return "";
-  }
-  return HTML_TEMPLATE_PRINT_STYLE_LABEL_MAP[printStyle] || printStyle;
-}
-
-function getSourceLabel(source?: HtmlTemplateSource) {
-  if (source === "local") {
-    return "本地";
-  }
-  if (source === "remote") {
-    return "远程";
-  }
-  return "内置";
-}
-
-function formatSuitableProducts(products?: string[]) {
-  if (!products?.length) {
-    return "通用 POD 场景";
-  }
-  return products.join(" / ");
-}
-
 </script>
 
 <style scoped lang="less">
@@ -428,7 +317,7 @@ function formatSuitableProducts(products?: string[]) {
   overflow: auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-  grid-auto-rows: 590px;
+  grid-auto-rows: 480px;
   gap: 18px;
   padding-right: 6px;
   padding-bottom: 8px;
@@ -511,21 +400,6 @@ function formatSuitableProducts(products?: string[]) {
   border-radius: 999px;
 }
 
-.html-template-library__card-badges {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 6px;
-}
-
-.html-template-library__card-badges span {
-  font-size: 11px;
-  color: #475569;
-  background: #f8fafc;
-  padding: 5px 8px;
-  border-radius: 999px;
-}
-
 .html-template-library__card-title {
   margin-top: 12px;
   font-size: 16px;
@@ -538,33 +412,6 @@ function formatSuitableProducts(products?: string[]) {
   font-size: 12px;
   line-height: 1.6;
   color: #6b7280;
-}
-
-.html-template-library__card-scene {
-  margin-top: 10px;
-  font-size: 12px;
-  line-height: 1.6;
-  color: #475569;
-  min-height: 38px;
-}
-
-.html-template-library__card-products {
-  margin-top: 12px;
-  display: grid;
-  gap: 4px;
-}
-
-.html-template-library__card-products span {
-  font-size: 11px;
-  color: #94a3b8;
-  letter-spacing: 0.04em;
-}
-
-.html-template-library__card-products strong {
-  font-size: 12px;
-  line-height: 1.6;
-  color: #0f172a;
-  font-weight: 600;
 }
 
 .html-template-library__card-tags {
@@ -580,11 +427,6 @@ function formatSuitableProducts(products?: string[]) {
   background: #f8fafc;
   border-radius: 999px;
   padding: 5px 9px;
-}
-
-.html-template-library__card-tags .is-source {
-  color: #0f766e;
-  background: #ecfeff;
 }
 
 .html-template-library__empty {
@@ -634,11 +476,6 @@ function formatSuitableProducts(products?: string[]) {
     align-items: stretch;
   }
 
-  .html-template-library__meta {
-    align-items: flex-start;
-    text-align: left;
-  }
-
   .html-template-library__search {
     max-width: none;
   }
@@ -649,7 +486,7 @@ function formatSuitableProducts(products?: string[]) {
   }
 
   .html-template-library__grid {
-    grid-auto-rows: 560px;
+    grid-auto-rows: 450px;
   }
 }
 </style>

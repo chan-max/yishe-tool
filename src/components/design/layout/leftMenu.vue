@@ -133,6 +133,17 @@
         <span>操作</span>
       </div>
     </el-tooltip>
+
+    <el-tooltip :hide-after="0" content="查看数据结构" placement="right">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showCanvasStructure }"
+        @click="showCanvasStructure = !showCanvasStructure"
+      >
+        <div class="menu-bar-item-icon"><CodeOutlined /></div>
+        <span>数据</span>
+      </div>
+    </el-tooltip>
   </div>
 </template>
 <script setup>
@@ -154,6 +165,7 @@ import {
   viewDisplayController,
   clearLeftLayout,
   showOperationsModal,
+  showCanvasStructure,
   menuState,
   menuItems,
   setActiveMenu,
@@ -184,7 +196,7 @@ import iconSvgCanvas from "@/components/design/assets/icon/svg-canvas.svg?compon
 import iconCanvas from "@/components/design/assets/icon/canvas.svg?component";
 import iconProject from "@/components/design/assets/icon/project.svg?component";
 import Utils from "@/common/utils";
-import { VideoCameraOutlined, ThunderboltOutlined } from "@ant-design/icons-vue";
+import { VideoCameraOutlined, ThunderboltOutlined, CodeOutlined } from "@ant-design/icons-vue";
 import desimage from "@/components/image.vue";
 import { DESIGN_3D_ENABLED } from "../featureFlags";
 

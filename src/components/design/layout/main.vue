@@ -117,6 +117,17 @@
     <scene-control></scene-control>
   </el-drawer>
 
+  <a-modal
+    title="数据结构"
+    v-model:open="showCanvasStructure"
+    width="100%"
+    :footer="null"
+    wrap-class-name="full-modal"
+    :destroyOnClose="true"
+  >
+    <canvas-structure />
+  </a-modal>
+
   <fontModal></fontModal>
   <imageEditorModal></imageEditorModal>
 
@@ -219,6 +230,7 @@ import {
   lastModifiedTime,
   currentCanvasBackground,
   showOperationsModal,
+  showCanvasStructure,
   menuState,
   menuItems,
 } from "../store";
@@ -270,6 +282,7 @@ import material from "@/components/design/layout/material/index.vue";
 import autocreateModal from "./autocreate/modal.vue";
 import videoClip from "./videoClip/index.vue";
 import operationsPanel from "./operations/index.vue";
+import canvasStructure from "./canvasStructure/index.vue";
 import { useEventBus } from "@vueuse/core";
 import { DESIGN_3D_ENABLED } from "../featureFlags";
 

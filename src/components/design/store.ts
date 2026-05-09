@@ -400,6 +400,7 @@ export const menuState = ref({
 
 // 菜单项配置
 export const showOperationsModal = ref(false)
+export const showCanvasStructure = ref(false)
 
 export const menuItems = {
     workspace: 'workspace',

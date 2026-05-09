@@ -1,5 +1,9 @@
 <template>
   <el-collapse v-model="htmlCollapseActives">
+    <el-collapse-item name="0" title="AI 生成">
+      <ai-html-generator v-model="currentOperatingCanvasChild" />
+    </el-collapse-item>
+
     <el-collapse-item name="1" title="模板库">
       <operate-item-html-template-library
         v-model="currentOperatingCanvasChild"
@@ -28,6 +32,7 @@ import { computed, ref, watch } from "vue";
 import operateItemHtmlInput from "@/components/design/layout/canvas/operate/htmlInput.vue";
 import operateItemHtmlTemplateLibrary from "@/components/design/layout/canvas/operate/htmlTemplate/templateLibrary.vue";
 import operateItemHtmlBindingsEditor from "@/components/design/layout/canvas/operate/htmlTemplate/bindingsEditor.vue";
+import aiHtmlGenerator from "@/components/design/layout/canvas/operate/aiHtmlGenerator.vue";
 import { currentOperatingCanvasChild } from "../index.tsx";
 import {
   detachHtmlTemplateFromTarget,
@@ -36,7 +41,7 @@ import {
   syncHtmlTemplateFieldsFromContent,
 } from "@/components/design/layout/canvas/htmlTemplate/runtime.ts";
 
-const htmlCollapseActives = ref(["1", "2", "3"]);
+const htmlCollapseActives = ref(["0", "1", "2", "3"]);
 
 const hasTemplateBindings = computed(() => {
   ensureHtmlTemplateOptions(currentOperatingCanvasChild.value);

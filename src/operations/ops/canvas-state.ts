@@ -1,0 +1,43 @@
+import { registerOperation } from '../registry'
+
+registerOperation({
+  id: 'canvas.getState',
+  name: '获取画布状态',
+  description: '获取当前画布的完整状态信息，包括尺寸、背景色、所有元素列表',
+  group: '画布',
+  params: [],
+  execute(_params, ctx) {
+    const size = ctx.getCanvasSize()
+    const bgColor = ctx.getCanvasBackgroundColor()
+    const children = ctx.getCanvasChildren()
+
+    const elements = children
+      .filter((c: any) => c.type !== 'canvas')
+      .map((c: any) => ({
+        id: c.id,
+        type: c.type,
+        zIndex: c.zIndex,
+        textContent: c.textContent || undefined,
+        position: c.position
+          ? {
+              center: c.position.center,
+              left: c.position.left,
+              top: c.position.top,
+            }
+          : undefined,
+        width: typeof c.width === 'object' ? c.width.value : c.width,
+        height: typeof c.height === 'object' ? c.height.value : c.height,
+      }))
+
+    return {
+      success: true,
+      message: `画布尺寸 ${size.width}x${size.height}${size.unit}，背景色 ${bgColor}，共 ${elements.length} 个元素`,
+      data: {
+        canvasSize: size,
+        backgroundColor: bgColor,
+        totalChildren: children.length,
+        elements,
+      },
+    }
+  },
+})

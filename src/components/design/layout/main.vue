@@ -84,6 +84,17 @@
   </div>
 
   <a-modal
+    title="AI 操作"
+    v-model:open="showOperationsModal"
+    width="100%"
+    :footer="null"
+    wrap-class-name="full-modal"
+    :destroyOnClose="true"
+  >
+    <operationsPanel></operationsPanel>
+  </a-modal>
+
+  <a-modal
     title="选择基础模型"
     v-model:open="showBaseModelSelect"
     width="100%"
@@ -207,6 +218,7 @@ import {
   showSvgCanvas,
   lastModifiedTime,
   currentCanvasBackground,
+  showOperationsModal,
   menuState,
   menuItems,
 } from "../store";
@@ -257,6 +269,7 @@ import shareCardModal from "@/components/design/layout/shareCard/modal.vue";
 import material from "@/components/design/layout/material/index.vue";
 import autocreateModal from "./autocreate/modal.vue";
 import videoClip from "./videoClip/index.vue";
+import operationsPanel from "./operations/index.vue";
 import { useEventBus } from "@vueuse/core";
 import { DESIGN_3D_ENABLED } from "../featureFlags";
 

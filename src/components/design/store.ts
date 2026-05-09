@@ -399,6 +399,8 @@ export const menuState = ref({
 })
 
 // 菜单项配置
+export const showOperationsModal = ref(false)
+
 export const menuItems = {
     workspace: 'workspace',
     sticker: 'sticker', 
@@ -408,7 +410,7 @@ export const menuItems = {
     decoration: 'decoration',
     font: 'font',
     scene: 'scene',
-    imageEditor: 'imageEditor' // 图片编辑
+    imageEditor: 'imageEditor', // 图片编辑
 } as const
 
 // 切换菜单状态

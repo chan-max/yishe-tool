@@ -27,7 +27,16 @@
 
     <a-button size="small" type="text" class="header-link">快速指南</a-button>
 
-    <!-- 连接状态显示 (已移除) -->
+    <el-tooltip
+      :content="wsStatusTooltip"
+      placement="bottom"
+      :show-after="200"
+    >
+      <div class="ws-status-indicator" :class="`ws-status--${wsStatus}`">
+        <span class="ws-status-dot" />
+        <span class="ws-status-label">{{ wsStatusLabel }}</span>
+      </div>
+    </el-tooltip>
     
     <div class="header-actions flex items-center gap-2 shrink-0">
       <!-- <el-button @click="showUpload = true" round text :icon="UploadFilled" class="action-btn">
@@ -93,6 +102,24 @@ import { useFileDialog } from "@vueuse/core";
 import { openLoginDialog } from "@/modules/main/view/user/login/index.tsx";
 import Utils from "@/common/utils";
 import { localFileListResource } from "@/components/design/store";
+import { websocketClient } from "@/services/websocketClient";
+
+const wsStatus = computed(() => websocketClient.state.status);
+const wsStatusLabel = computed(() => {
+  switch (wsStatus.value) {
+    case "connected": return "已连接";
+    case "connecting": return "连接中";
+    case "reconnecting": return "重连中";
+    case "error": return "异常";
+    case "disconnected": return "已断开";
+    default: return "未连接";
+  }
+});
+const wsStatusTooltip = computed(() => {
+  const latency = websocketClient.state.lastLatencyMs;
+  const latencyText = latency != null ? ` · 延迟 ${latency}ms` : "";
+  return `服务连接: ${wsStatusLabel.value}${latencyText}`;
+});
 
 const router = useRouter();
 
@@ -231,6 +258,76 @@ function confirmExitEditMode() {
 
 :deep(.el-switch__label) {
   font-size: 9px;
+}
+
+.ws-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  cursor: default;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.ws-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ws-status-label {
+  font-size: 10px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.ws-status--connected {
+  .ws-status-dot {
+    background: #52c41a;
+    box-shadow: 0 0 4px rgba(82, 196, 26, 0.5);
+  }
+  .ws-status-label {
+    color: #52c41a;
+  }
+}
+
+.ws-status--connecting,
+.ws-status--reconnecting {
+  .ws-status-dot {
+    background: #faad14;
+    animation: ws-pulse 1.2s ease-in-out infinite;
+  }
+  .ws-status-label {
+    color: #faad14;
+  }
+}
+
+.ws-status--error {
+  .ws-status-dot {
+    background: #ff4d4f;
+    animation: ws-pulse 1.2s ease-in-out infinite;
+  }
+  .ws-status-label {
+    color: #ff4d4f;
+  }
+}
+
+.ws-status--disconnected,
+.ws-status--idle {
+  .ws-status-dot {
+    background: rgba(128, 128, 128, 0.5);
+  }
+  .ws-status-label {
+    color: var(--1s-text-color-secondary, #999);
+  }
+}
+
+@keyframes ws-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
 // 响应式设计

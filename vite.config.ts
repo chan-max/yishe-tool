@@ -86,6 +86,11 @@ export default defineConfig(({ mode }) => {
           secure: false, // 防止证书引发的
           rewrite: (path) => path.replace(/^\/api/, ""),
         },
+        "/socket.io": {
+          target: proxyTarget,
+          changeOrigin: true,
+          ws: true,
+        },
       },
     },
     resolve: {

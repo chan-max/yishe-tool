@@ -42,6 +42,7 @@ import AutomationOverlay from '@/components/automationOverlay.vue'
 
 import { normalizeTokenValue, useLoginStatusStore, initLoginStoreUserInfo } from '@/store/stores/login';
 import { initConfigStoreBasicConfig } from '@/store/stores/config.ts';
+import { startDesignToolWebSocket } from '@/services/connectionStatus';
 import { setupSingleTabManager } from '@/utils/singleTabManager'
 
 const EMBED_RUNTIME_KEY = 'yishe_tool_embed_runtime'
@@ -164,6 +165,8 @@ async function setup() {
   } catch (error) {
     console.error('初始化基础配置失败:', error);
   }
+
+  startDesignToolWebSocket();
 
   app.use(router)
   await router.isReady()

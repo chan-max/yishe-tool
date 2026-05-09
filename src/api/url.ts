@@ -127,5 +127,29 @@ export enum Url {
 
     GET_MY_COMMUNICATION_LIST = 'getMyCommunicationList',
 
-    GET_COMMUNICATION_MESSAGE = 'getCommunicationMessage'
+    GET_COMMUNICATION_MESSAGE = 'getCommunicationMessage',
+
+    // AI 对话（通用）
+    AI_CHAT = '/api/ai/chat',
+
+    // AI 文本生成
+    AI_TEXT = '/api/ai/text',
+
+    // AI 图文理解
+    AI_VISION = '/api/ai/vision',
+
+    // AI 文生图
+    AI_TTI = '/api/ai/tti',
+
+    // AI 文生图任务状态
+    AI_TTI_TASK_STATUS = '/api/ai/tti/task-status',
+
+    // AI 语音合成
+    AI_TTS = '/api/ai/tts',
+
+    // AI API Key 可用选项
+    AI_API_KEY_USAGE_OPTIONS = '/api/system/ai-api-key/usage-options',
+
+    // AI 功能清单
+    AI_FEATURE_REGISTRY = '/api/system/ai-api-key/feature-registry',
 }

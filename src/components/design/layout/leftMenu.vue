@@ -122,6 +122,17 @@
         <span>场景</span>
       </div>
     </el-tooltip>
+
+    <el-tooltip :hide-after="0" content="AI 操作" placement="right">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showOperationsModal }"
+        @click="showOperationsModal = !showOperationsModal"
+      >
+        <div class="menu-bar-item-icon"><ThunderboltOutlined /></div>
+        <span>操作</span>
+      </div>
+    </el-tooltip>
   </div>
 </template>
 <script setup>
@@ -142,6 +153,7 @@ import {
   currentOperatingBaseModelInfo,
   viewDisplayController,
   clearLeftLayout,
+  showOperationsModal,
   menuState,
   menuItems,
   setActiveMenu,
@@ -172,7 +184,7 @@ import iconSvgCanvas from "@/components/design/assets/icon/svg-canvas.svg?compon
 import iconCanvas from "@/components/design/assets/icon/canvas.svg?component";
 import iconProject from "@/components/design/assets/icon/project.svg?component";
 import Utils from "@/common/utils";
-import { VideoCameraOutlined } from "@ant-design/icons-vue";
+import { VideoCameraOutlined, ThunderboltOutlined } from "@ant-design/icons-vue";
 import desimage from "@/components/image.vue";
 import { DESIGN_3D_ENABLED } from "../featureFlags";
 

@@ -26,56 +26,53 @@
     <div class="html-editor-dialog__layout">
       <div class="html-editor-dialog__toolbar">
         <div class="html-editor-dialog__hint">
-          支持直接输入 HTML，也可以在代码里内联 <code>&lt;style&gt;</code>，并使用
-          <code v-pre>{{text.title}}</code> 这类魔术变量。
-        </div>
-        <div class="html-editor-dialog__meta">{{ draftSummary }}</div>
-      </div>
-
-      <div class="html-editor-dialog__variables">
-        <div class="html-editor-dialog__variables-header">
-          <div class="html-editor-dialog__variables-title">可用魔术变量</div>
-          <div class="html-editor-dialog__variables-tip">
-            系统变量始终可用；模板变量会随当前模板变化。
-          </div>
-        </div>
-
-        <div class="html-editor-dialog__variable-section">
-          <div class="html-editor-dialog__variable-section-name">系统变量</div>
-          <div class="html-editor-dialog__variable-list">
-            <div
-              v-for="item in systemMagicVariableItems"
-              :key="item.token"
-              class="html-editor-dialog__variable-item"
-            >
-              <code>{{ item.token }}</code>
-              <span>{{ item.description }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="html-editor-dialog__variable-section">
-          <div class="html-editor-dialog__variable-section-name">
-            当前模板变量
-            <span v-if="templateMagicVariableItems.length">
-              · {{ templateMagicVariableItems.length }} 项
-            </span>
-          </div>
-          <div v-if="templateMagicVariableItems.length" class="html-editor-dialog__variable-list">
-            <div
-              v-for="item in templateMagicVariableItems"
-              :key="item.token"
-              class="html-editor-dialog__variable-item"
-            >
-              <code>{{ item.token }}</code>
-              <span>{{ item.description }}</span>
-            </div>
-          </div>
-          <div v-else class="html-editor-dialog__variable-empty">
-            当前没有模板变量。你可以直接写纯 HTML / CSS，或先从模板库选择带变量的模板。
-          </div>
+          支持 HTML + 内联 <code>&lt;style&gt;</code>，可使用
+          <code v-pre>{{text.title}}</code> 等魔术变量。
+          <span class="html-editor-dialog__meta">{{ draftSummary }}</span>
         </div>
       </div>
+
+      <el-collapse v-model="variablesExpanded" class="html-editor-dialog__variables-collapse">
+        <el-collapse-item name="vars" title="可用魔术变量">
+          <div class="html-editor-dialog__variables">
+            <div class="html-editor-dialog__variable-section">
+              <div class="html-editor-dialog__variable-section-name">系统变量</div>
+              <div class="html-editor-dialog__variable-list">
+                <div
+                  v-for="item in systemMagicVariableItems"
+                  :key="item.token"
+                  class="html-editor-dialog__variable-item"
+                >
+                  <code>{{ item.token }}</code>
+                  <span>{{ item.description }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="html-editor-dialog__variable-section">
+              <div class="html-editor-dialog__variable-section-name">
+                当前模板变量
+                <span v-if="templateMagicVariableItems.length">
+                  · {{ templateMagicVariableItems.length }} 项
+                </span>
+              </div>
+              <div v-if="templateMagicVariableItems.length" class="html-editor-dialog__variable-list">
+                <div
+                  v-for="item in templateMagicVariableItems"
+                  :key="item.token"
+                  class="html-editor-dialog__variable-item"
+                >
+                  <code>{{ item.token }}</code>
+                  <span>{{ item.description }}</span>
+                </div>
+              </div>
+              <div v-else class="html-editor-dialog__variable-empty">
+                当前没有模板变量。你可以直接写纯 HTML / CSS，或先从模板库选择带变量的模板。
+              </div>
+            </div>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
 
       <div v-if="editorError" class="html-editor-dialog__error">
         <span>{{ editorError }}</span>
@@ -256,6 +253,7 @@ const editorError = ref("");
 const draftValue = ref("");
 const editorContainerRef = ref<HTMLElement | null>(null);
 const editorInstance = shallowRef<any>(null);
+const variablesExpanded = ref<string[]>([]);
 
 const draftSummary = computed(() => {
   const value = String(draftValue.value ?? "");
@@ -515,122 +513,125 @@ onBeforeUnmount(() => {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .html-editor-dialog__toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding: 12px 14px;
+  gap: 12px;
+  padding: 6px 12px;
   border: 1px solid var(--el-border-color-lighter);
-  border-radius: 14px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
 }
 
 .html-editor-dialog__hint {
   flex: 1;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--el-text-color-regular);
+  line-height: 1.5;
 }
 
 .html-editor-dialog__hint code {
-  padding: 2px 6px;
-  border-radius: 6px;
+  padding: 1px 4px;
+  border-radius: 4px;
   background: var(--el-fill-color-light);
   color: var(--el-color-primary);
+  font-size: 11px;
 }
 
 .html-editor-dialog__meta {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--el-text-color-secondary);
+  margin-left: 4px;
+}
+
+.html-editor-dialog__variables-collapse {
+  flex-shrink: 0;
+}
+
+:deep(.html-editor-dialog__variables-collapse .el-collapse-item__header) {
+  padding: 0 12px;
+  height: 32px;
+  line-height: 32px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 8px;
+}
+
+:deep(.html-editor-dialog__variables-collapse .el-collapse-item__wrap) {
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+:deep(.html-editor-dialog__variables-collapse .el-collapse-item__content) {
+  padding: 8px 12px 12px;
 }
 
 .html-editor-dialog__variables {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px 14px;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
-}
-
-.html-editor-dialog__variables-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.html-editor-dialog__variables-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.html-editor-dialog__variables-tip {
-  font-size: 11px;
-  color: #64748b;
+  gap: 8px;
 }
 
 .html-editor-dialog__variable-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .html-editor-dialog__variable-section-name {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #334155;
 }
 
 .html-editor-dialog__variable-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 8px;
-  max-height: 160px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 4px;
+  max-height: 140px;
   overflow: auto;
   padding-right: 4px;
 }
 
 .html-editor-dialog__variable-item {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
   gap: 6px;
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
   border: 1px solid rgba(226, 232, 240, 0.86);
   background: #f8fafc;
 }
 
 .html-editor-dialog__variable-item code {
   width: fit-content;
-  padding: 4px 8px;
-  border-radius: 8px;
+  padding: 1px 5px;
+  border-radius: 4px;
   background: #ffffff;
   color: var(--el-color-primary);
-  font-size: 12px;
+  font-size: 11px;
+  flex-shrink: 0;
 }
 
 .html-editor-dialog__variable-item span {
   font-size: 11px;
-  line-height: 1.55;
   color: #64748b;
 }
 
 .html-editor-dialog__variable-empty {
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
   background: #f8fafc;
-  font-size: 12px;
-  line-height: 1.6;
+  font-size: 11px;
+  line-height: 1.5;
   color: #64748b;
 }
 
@@ -652,21 +653,18 @@ onBeforeUnmount(() => {
   flex: 1 1 auto;
   min-height: 0;
   max-height: 100%;
-  padding: 12px;
+  padding: 4px;
   border: 1px solid rgba(148, 163, 184, 0.24);
-  border-radius: 18px;
+  border-radius: 10px;
   overflow: hidden;
   background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.72),
-    0 18px 40px rgba(15, 23, 42, 0.08);
 }
 
 .html-editor-dialog__editor {
   width: 100%;
   height: 100%;
   border: 1px solid rgba(226, 232, 240, 0.95);
-  border-radius: 14px;
+  border-radius: 8px;
   overflow: hidden;
   background: #ffffff;
 }

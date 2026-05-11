@@ -1,0 +1,518 @@
+export interface SizePreset {
+  id: string
+  name: string
+  nameEn: string
+  category: string
+  width: number
+  height: number
+  unit: string
+  description: string
+  tags: string[]
+  dpi?: number
+  printArea?: { width: number; height: number; unit: string }
+}
+
+export const SIZE_PRESET_CATEGORIES = [
+  'T恤/服饰',
+  '杯子/马克杯',
+  '手机壳',
+  '海报/画框',
+  '贴纸',
+  '鼠标垫/桌垫',
+  '帆布袋/托特袋',
+  '帽子',
+  '抱枕/靠垫',
+  '包装/卡片',
+  '社交媒体',
+] as const
+
+export type SizePresetCategory = typeof SIZE_PRESET_CATEGORIES[number]
+
+export const sizePresets: SizePreset[] = [
+  // ── T恤/服饰 ──
+  {
+    id: 'tee-front-small',
+    name: 'T恤胸前小图',
+    nameEn: 'T-Shirt Front Chest',
+    category: 'T恤/服饰',
+    width: 4000,
+    height: 4000,
+    unit: 'px',
+    description: 'T恤左胸/右胸印花区域，通常 10x10cm',
+    tags: ['tshirt', 'tee', '胸前', '小图', 'logo'],
+    dpi: 300,
+    printArea: { width: 10, height: 10, unit: 'cm' },
+  },
+  {
+    id: 'tee-front-large',
+    name: 'T恤前胸大图',
+    nameEn: 'T-Shirt Front Full',
+    category: 'T恤/服饰',
+    width: 4800,
+    height: 5600,
+    unit: 'px',
+    description: 'T恤前胸大面积印花，约 35x40cm',
+    tags: ['tshirt', 'tee', '前胸', '大图', '主图'],
+    dpi: 300,
+    printArea: { width: 35, height: 40, unit: 'cm' },
+  },
+  {
+    id: 'tee-back',
+    name: 'T恤后背大图',
+    nameEn: 'T-Shirt Back',
+    category: 'T恤/服饰',
+    width: 4800,
+    height: 5600,
+    unit: 'px',
+    description: 'T恤后背大面积印花，约 35x40cm',
+    tags: ['tshirt', 'tee', '后背', 'back'],
+    dpi: 300,
+    printArea: { width: 35, height: 40, unit: 'cm' },
+  },
+  {
+    id: 'hoodie-front',
+    name: '卫衣前胸大图',
+    nameEn: 'Hoodie Front',
+    category: 'T恤/服饰',
+    width: 4800,
+    height: 5600,
+    unit: 'px',
+    description: '卫衣/连帽衫前胸印花',
+    tags: ['hoodie', '卫衣', '连帽衫', '前胸'],
+    dpi: 300,
+    printArea: { width: 35, height: 40, unit: 'cm' },
+  },
+  {
+    id: 'hoodie-back',
+    name: '卫衣后背大图',
+    nameEn: 'Hoodie Back',
+    category: 'T恤/服饰',
+    width: 4800,
+    height: 5600,
+    unit: 'px',
+    description: '卫衣/连帽衫后背大面积印花',
+    tags: ['hoodie', '卫衣', '连帽衫', '后背'],
+    dpi: 300,
+    printArea: { width: 35, height: 40, unit: 'cm' },
+  },
+  {
+    id: 'sweatshirt-front',
+    name: '运动衫前胸',
+    nameEn: 'Sweatshirt Front',
+    category: 'T恤/服饰',
+    width: 4800,
+    height: 5600,
+    unit: 'px',
+    description: '运动衫前胸印花区域',
+    tags: ['sweatshirt', '运动衫'],
+    dpi: 300,
+    printArea: { width: 35, height: 40, unit: 'cm' },
+  },
+
+  // ── 杯子/马克杯 ──
+  {
+    id: 'mug-11oz',
+    name: '标准马克杯 11oz',
+    nameEn: 'Standard Mug 11oz',
+    category: '杯子/马克杯',
+    width: 2700,
+    height: 1050,
+    unit: 'px',
+    description: '11oz 标准白色马克杯印花区域',
+    tags: ['mug', '马克杯', '杯子', '11oz'],
+    dpi: 300,
+    printArea: { width: 22.5, height: 8.5, unit: 'cm' },
+  },
+  {
+    id: 'mug-15oz',
+    name: '大号马克杯 15oz',
+    nameEn: 'Large Mug 15oz',
+    category: '杯子/马克杯',
+    width: 2850,
+    height: 1050,
+    unit: 'px',
+    description: '15oz 大号马克杯印花区域',
+    tags: ['mug', '马克杯', '杯子', '15oz', '大杯'],
+    dpi: 300,
+    printArea: { width: 24, height: 8.5, unit: 'cm' },
+  },
+
+  // ── 手机壳 ──
+  {
+    id: 'phone-iphone-15',
+    name: 'iPhone 15 手机壳',
+    nameEn: 'iPhone 15 Case',
+    category: '手机壳',
+    width: 1800,
+    height: 3600,
+    unit: 'px',
+    description: 'iPhone 15 手机壳印花区域',
+    tags: ['phone', 'iphone', '手机壳', 'iphone15'],
+    dpi: 300,
+    printArea: { width: 7.5, height: 15, unit: 'cm' },
+  },
+  {
+    id: 'phone-iphone-15-pro-max',
+    name: 'iPhone 15 Pro Max 手机壳',
+    nameEn: 'iPhone 15 Pro Max Case',
+    category: '手机壳',
+    width: 1950,
+    height: 3900,
+    unit: 'px',
+    description: 'iPhone 15 Pro Max 手机壳印花区域',
+    tags: ['phone', 'iphone', '手机壳', 'iphone15', 'promax'],
+    dpi: 300,
+    printArea: { width: 8, height: 16, unit: 'cm' },
+  },
+  {
+    id: 'phone-samsung-s24',
+    name: 'Samsung Galaxy S24 手机壳',
+    nameEn: 'Samsung Galaxy S24 Case',
+    category: '手机壳',
+    width: 1800,
+    height: 3600,
+    unit: 'px',
+    description: 'Samsung Galaxy S24 手机壳印花区域',
+    tags: ['phone', 'samsung', '手机壳', 's24'],
+    dpi: 300,
+    printArea: { width: 7.5, height: 15, unit: 'cm' },
+  },
+
+  // ── 海报/画框 ──
+  {
+    id: 'poster-a4',
+    name: 'A4 海报',
+    nameEn: 'A4 Poster',
+    category: '海报/画框',
+    width: 2480,
+    height: 3508,
+    unit: 'px',
+    description: 'A4 尺寸海报 (21x29.7cm)',
+    tags: ['poster', '海报', 'a4'],
+    dpi: 300,
+    printArea: { width: 21, height: 29.7, unit: 'cm' },
+  },
+  {
+    id: 'poster-a3',
+    name: 'A3 海报',
+    nameEn: 'A3 Poster',
+    category: '海报/画框',
+    width: 3508,
+    height: 4961,
+    unit: 'px',
+    description: 'A3 尺寸海报 (29.7x42cm)',
+    tags: ['poster', '海报', 'a3'],
+    dpi: 300,
+    printArea: { width: 29.7, height: 42, unit: 'cm' },
+  },
+  {
+    id: 'poster-a2',
+    name: 'A2 海报',
+    nameEn: 'A2 Poster',
+    category: '海报/画框',
+    width: 4961,
+    height: 7016,
+    unit: 'px',
+    description: 'A2 尺寸海报 (42x59.4cm)',
+    tags: ['poster', '海报', 'a2'],
+    dpi: 300,
+    printArea: { width: 42, height: 59.4, unit: 'cm' },
+  },
+  {
+    id: 'poster-18x24',
+    name: '18×24 英寸海报',
+    nameEn: '18×24" Poster',
+    category: '海报/画框',
+    width: 5400,
+    height: 7200,
+    unit: 'px',
+    description: '18×24 英寸海报',
+    tags: ['poster', '海报', '18x24'],
+    dpi: 300,
+    printArea: { width: 45.72, height: 60.96, unit: 'cm' },
+  },
+  {
+    id: 'poster-24x36',
+    name: '24×36 英寸海报',
+    nameEn: '24×36" Poster',
+    category: '海报/画框',
+    width: 7200,
+    height: 10800,
+    unit: 'px',
+    description: '24×36 英寸海报',
+    tags: ['poster', '海报', '24x36'],
+    dpi: 300,
+    printArea: { width: 60.96, height: 91.44, unit: 'cm' },
+  },
+  {
+    id: 'frame-12x16',
+    name: '12×16 英寸画框',
+    nameEn: '12×16" Frame',
+    category: '海报/画框',
+    width: 3600,
+    height: 4800,
+    unit: 'px',
+    description: '12×16 英寸画框内衬',
+    tags: ['frame', '画框', '12x16'],
+    dpi: 300,
+    printArea: { width: 30.48, height: 40.64, unit: 'cm' },
+  },
+
+  // ── 贴纸 ──
+  {
+    id: 'sticker-3x3',
+    name: '3×3 英寸圆形贴纸',
+    nameEn: '3×3" Round Sticker',
+    category: '贴纸',
+    width: 900,
+    height: 900,
+    unit: 'px',
+    description: '3英寸圆形贴纸',
+    tags: ['sticker', '贴纸', '圆形', '3inch'],
+    dpi: 300,
+    printArea: { width: 7.62, height: 7.62, unit: 'cm' },
+  },
+  {
+    id: 'sticker-4x4',
+    name: '4×4 英寸贴纸',
+    nameEn: '4×4" Sticker',
+    category: '贴纸',
+    width: 1200,
+    height: 1200,
+    unit: 'px',
+    description: '4英寸贴纸',
+    tags: ['sticker', '贴纸', '4inch'],
+    dpi: 300,
+    printArea: { width: 10.16, height: 10.16, unit: 'cm' },
+  },
+  {
+    id: 'sticker-sheet-letter',
+    name: 'Letter 贴纸页',
+    nameEn: 'Letter Sticker Sheet',
+    category: '贴纸',
+    width: 2550,
+    height: 3300,
+    unit: 'px',
+    description: 'Letter 尺寸贴纸页 (8.5×11")',
+    tags: ['sticker', '贴纸', '贴纸页', 'letter'],
+    dpi: 300,
+    printArea: { width: 21.59, height: 27.94, unit: 'cm' },
+  },
+
+  // ── 鼠标垫/桌垫 ──
+  {
+    id: 'mousepad-standard',
+    name: '标准鼠标垫',
+    nameEn: 'Standard Mouse Pad',
+    category: '鼠标垫/桌垫',
+    width: 2700,
+    height: 2400,
+    unit: 'px',
+    description: '标准鼠标垫 (9×7.5")',
+    tags: ['mousepad', '鼠标垫'],
+    dpi: 300,
+    printArea: { width: 22.86, height: 19.05, unit: 'cm' },
+  },
+  {
+    id: 'mousepad-xl',
+    name: '加大鼠标垫',
+    nameEn: 'XL Mouse Pad',
+    category: '鼠标垫/桌垫',
+    width: 3600,
+    height: 1800,
+    unit: 'px',
+    description: '加大桌面鼠标垫 (12×6")',
+    tags: ['mousepad', '鼠标垫', '加大', '桌面'],
+    dpi: 300,
+    printArea: { width: 30.48, height: 15.24, unit: 'cm' },
+  },
+  {
+    id: 'deskmat-xl',
+    name: '超大桌垫',
+    nameEn: 'Extended Desk Mat',
+    category: '鼠标垫/桌垫',
+    width: 4500,
+    height: 2400,
+    unit: 'px',
+    description: '超大桌垫 (15×8")',
+    tags: ['deskmat', '桌垫', '超大'],
+    dpi: 300,
+    printArea: { width: 38.1, height: 20.32, unit: 'cm' },
+  },
+
+  // ── 帆布袋/托特袋 ──
+  {
+    id: 'tote-standard',
+    name: '标准帆布袋',
+    nameEn: 'Standard Tote Bag',
+    category: '帆布袋/托特袋',
+    width: 3600,
+    height: 3600,
+    unit: 'px',
+    description: '标准帆布袋正面印花 (12×12")',
+    tags: ['tote', '帆布袋', '托特袋'],
+    dpi: 300,
+    printArea: { width: 30.48, height: 30.48, unit: 'cm' },
+  },
+  {
+    id: 'tote-large',
+    name: '大号帆布袋',
+    nameEn: 'Large Tote Bag',
+    category: '帆布袋/托特袋',
+    width: 4200,
+    height: 4200,
+    unit: 'px',
+    description: '大号帆布袋正面印花 (14×14")',
+    tags: ['tote', '帆布袋', '托特袋', '大号'],
+    dpi: 300,
+    printArea: { width: 35.56, height: 35.56, unit: 'cm' },
+  },
+
+  // ── 帽子 ──
+  {
+    id: 'cap-front',
+    name: '棒球帽正面',
+    nameEn: 'Cap Front',
+    category: '帽子',
+    width: 2400,
+    height: 1200,
+    unit: 'px',
+    description: '棒球帽/鸭舌帽正面刺绣或印花区域',
+    tags: ['cap', '帽子', '棒球帽', '鸭舌帽'],
+    dpi: 300,
+    printArea: { width: 10, height: 5, unit: 'cm' },
+  },
+
+  // ── 抱枕/靠垫 ──
+  {
+    id: 'pillow-18x18',
+    name: '18×18 英寸抱枕',
+    nameEn: '18×18" Pillow',
+    category: '抱枕/靠垫',
+    width: 5400,
+    height: 5400,
+    unit: 'px',
+    description: '18×18 英寸方形抱枕',
+    tags: ['pillow', '抱枕', '靠垫', '18x18'],
+    dpi: 300,
+    printArea: { width: 45.72, height: 45.72, unit: 'cm' },
+  },
+  {
+    id: 'pillow-20x20',
+    name: '20×20 英寸抱枕',
+    nameEn: '20×20" Pillow',
+    category: '抱枕/靠垫',
+    width: 6000,
+    height: 6000,
+    unit: 'px',
+    description: '20×20 英寸方形抱枕',
+    tags: ['pillow', '抱枕', '靠垫', '20x20'],
+    dpi: 300,
+    printArea: { width: 50.8, height: 50.8, unit: 'cm' },
+  },
+
+  // ── 包装/卡片 ──
+  {
+    id: 'business-card',
+    name: '名片',
+    nameEn: 'Business Card',
+    category: '包装/卡片',
+    width: 1050,
+    height: 600,
+    unit: 'px',
+    description: '标准名片 (3.5×2")',
+    tags: ['card', '名片', 'business'],
+    dpi: 300,
+    printArea: { width: 8.89, height: 5.08, unit: 'cm' },
+  },
+  {
+    id: 'postcard',
+    name: '明信片',
+    nameEn: 'Postcard',
+    category: '包装/卡片',
+    width: 1800,
+    height: 1200,
+    unit: 'px',
+    description: '标准明信片 (6×4")',
+    tags: ['postcard', '明信片'],
+    dpi: 300,
+    printArea: { width: 15.24, height: 10.16, unit: 'cm' },
+  },
+  {
+    id: 'greeting-card-5x7',
+    name: '5×7 英寸贺卡',
+    nameEn: '5×7" Greeting Card',
+    category: '包装/卡片',
+    width: 1500,
+    height: 2100,
+    unit: 'px',
+    description: '5×7 英寸贺卡',
+    tags: ['card', '贺卡', 'greeting'],
+    dpi: 300,
+    printArea: { width: 12.7, height: 17.78, unit: 'cm' },
+  },
+
+  // ── 社交媒体 ──
+  {
+    id: 'social-square',
+    name: '社交媒体方形图',
+    nameEn: 'Social Square',
+    category: '社交媒体',
+    width: 1080,
+    height: 1080,
+    unit: 'px',
+    description: 'Instagram/微信方形图 1:1',
+    tags: ['social', '社交媒体', 'instagram', '方形', '1:1'],
+  },
+  {
+    id: 'social-story',
+    name: '社交媒体竖版故事',
+    nameEn: 'Social Story',
+    category: '社交媒体',
+    width: 1080,
+    height: 1920,
+    unit: 'px',
+    description: 'Instagram/微信竖版故事 9:16',
+    tags: ['social', '社交媒体', 'story', '竖版', '9:16'],
+  },
+  {
+    id: 'social-landscape',
+    name: '社交媒体横版图',
+    nameEn: 'Social Landscape',
+    category: '社交媒体',
+    width: 1200,
+    height: 628,
+    unit: 'px',
+    description: 'Facebook/Twitter 横版封面',
+    tags: ['social', '社交媒体', '横版', 'cover'],
+  },
+]
+
+export const sizePresetMap = new Map<string, SizePreset>(
+  sizePresets.map((p) => [p.id, p])
+)
+
+export function findPresetsByCategory(category: string): SizePreset[] {
+  return sizePresets.filter((p) => p.category === category)
+}
+
+export function searchPresets(query: string): SizePreset[] {
+  const q = query.toLowerCase().trim()
+  if (!q) return sizePresets
+  return sizePresets.filter((p) => {
+    return (
+      p.id.includes(q) ||
+      p.name.toLowerCase().includes(q) ||
+      p.nameEn.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.tags.some((t) => t.includes(q))
+    )
+  })
+}
+
+export const SIZE_PRESET_LIST_FOR_PROMPT = sizePresets.map((p) =>
+  `[${p.id}] ${p.name} (${p.nameEn}) — ${p.width}x${p.height}${p.unit}` +
+  (p.printArea ? ` | 印刷区 ${p.printArea.width}x${p.printArea.height}${p.printArea.unit}` : '') +
+  ` | ${p.category} | ${p.description}`
+).join('\n')

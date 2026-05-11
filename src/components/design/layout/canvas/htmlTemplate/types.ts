@@ -23,11 +23,12 @@ export interface HtmlTemplateFieldDefinition {
 export interface HtmlTemplateMeta {
   id: string;
   name: string;
-  category: string;
+  category?: string;
   description?: string;
   tags?: string[];
   source?: HtmlTemplateSource;
   sortOrder?: number;
+  difficulty?: 'easy' | 'medium' | 'hard' | 'complex';
 }
 
 export interface HtmlTemplateDefinition extends HtmlTemplateMeta {

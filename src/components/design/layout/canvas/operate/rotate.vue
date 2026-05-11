@@ -41,9 +41,9 @@ import { ref } from 'vue'
 
 
 
-const x = defineModel('x', { default: '' })
-const y = defineModel('y', { default: '' })
-const z = defineModel('z', { default: '' })
+const x = defineModel('x', { default: 0 })
+const y = defineModel('y', { default: 0 })
+const z = defineModel('z', { default: 0 })
 
 const marks = ref({
     '45':'',

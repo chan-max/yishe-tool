@@ -5,12 +5,25 @@ import { saveAs } from 'file-saver';
 import { buildCOSKey, extractCOSFilename, extractCOSObjectKey } from '@/utils/cosPath';
 
 var _cos
-export const getCOS = () => {
 
+export const resetCOS = () => {
+    _cos = undefined
+}
+
+export const getCOS = async () => {
     let configStore = useConfigStore()
 
     if (_cos) {
         return _cos
+    }
+
+    if (!configStore.cos?.SecretId) {
+        const { initConfigStoreBasicConfig } = await import('@/store/stores/config')
+        await initConfigStoreBasicConfig()
+    }
+
+    if (!configStore.cos?.SecretId) {
+        throw new Error('COS 配置未加载，请检查网络或重新登录')
     }
 
     _cos = new COS({
@@ -53,8 +66,8 @@ export async function uploadToCOS({
     entityId?: string | number
     isThumbnail?: boolean
 }) {
-    const cos = getCOS();
-    
+    const cos = await getCOS();
+
     let finalKey = key
     if (!finalKey) {
         finalKey = buildCOSKey({
@@ -93,12 +106,12 @@ export async function uploadToCOS({
 }
 
 
-export function deleteCOSFile(key) {
+export async function deleteCOSFile(key) {
 
+    const cos = await getCOS();
+
+    key = extractCOSObjectKey(String(key))
     return new Promise((resolve, reject) => {
-        const cos = getCOS();
-
-        key = extractCOSObjectKey(String(key))
         cos.deleteObject({
             Bucket: cos.options.Bucket,
             Region: cos.options.Region,

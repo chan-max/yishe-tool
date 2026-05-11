@@ -141,6 +141,10 @@ export function formatToNativeSizeString(size, relativeElementSize = null) {
 }
 
 export function formatToNativeSizeOption(size, relativeElementSize = null) {
+    if (!size || typeof size !== 'object') {
+        return { value: '0', unit: 'px' }
+    }
+
     let { value, unit } = size
 
     if (!value) {

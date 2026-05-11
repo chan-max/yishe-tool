@@ -1,5 +1,44 @@
 <template>
   <el-collapse v-model="canvasCollapseActives">
+    <el-collapse-item name="5" title="快捷操作">
+      <div class="canvas-actions">
+        <el-button
+          type="primary"
+          size="small"
+          :icon="CloudUploadOutlined"
+          :loading="saveLoading"
+          @click="handleSaveSticker"
+        >
+          保存贴纸
+        </el-button>
+        <el-button
+          size="small"
+          :icon="DownloadOutlined"
+          :loading="exportLoading"
+          @click="handleExportPng"
+        >
+          导出PNG
+        </el-button>
+        <el-popconfirm
+          title="确定清空画布？所有元素将被删除，此操作不可撤销。"
+          confirm-button-text="清空"
+          cancel-button-text="取消"
+          :icon="DeleteOutlined"
+          icon-color="#ff4d4f"
+          @confirm="handleClearCanvas"
+        >
+          <template #reference>
+            <el-button
+              size="small"
+              :icon="DeleteOutlined"
+              danger
+            >
+              清空画布
+            </el-button>
+          </template>
+        </el-popconfirm>
+      </div>
+    </el-collapse-item>
     <el-collapse-item name="1" title="画布配置">
       <operateItemAbsoluteSize label="画布尺寸(px)" v-model:width="currentOperatingCanvasChild.width"
         v-model:height="currentOperatingCanvasChild.height">
@@ -38,6 +77,13 @@
     
 <script setup lang='ts'>
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
+import { message } from "ant-design-vue";
+import { CloudUploadOutlined, DownloadOutlined, DeleteOutlined } from "@ant-design/icons-vue";
+import { canvasToFile, downloadByFile } from '@/common/transform';
+import { uploadToCOS } from '@/api/cos';
+import { createSticker } from '@/api';
+import { useLoginStatusStore } from '@/store/stores/login';
+import Utils from '@/common/utils';
 import operateAspectRatio from '@/components/design/layout/canvas/operate/aspectRatio.vue';
 import operateCanvasSizePresets from '@/components/design/layout/canvas/operate/size/canvasSizePresets.vue';
 import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
@@ -86,11 +132,14 @@ import {
   showMainCanvas,
   currentOperatingCanvasChild,
   CanvasChildType,
-  updateRenderingCanvas
+  updateRenderingCanvas,
+  renderingLoading
 } from "../index.tsx";
 
+const saveLoading = ref(false)
+const exportLoading = ref(false)
 
-const canvasCollapseActives = ref(["1", "2", "3", "4", '5'])
+const canvasCollapseActives = ref(["1", "2", "3", "4", "5"])
 
 
 function absoluteUnitChange(unit) {
@@ -117,6 +166,130 @@ function handlePresetSelect(preset: { width: number, height: number }) {
   }
 }
 
+async function waitForRender(controller: any) {
+  await new Promise<void>((resolve, reject) => {
+    let attempts = 0
+    const check = () => {
+      if (!controller.loading.value && !renderingLoading.value) {
+        resolve()
+        return
+      }
+      attempts++
+      if (attempts > 200) {
+        reject(new Error('画布渲染超时'))
+        return
+      }
+      setTimeout(check, 50)
+    }
+    check()
+  })
+}
+
+async function handleSaveSticker() {
+  const controller = currentCanvasControllerInstance.value
+  if (!controller) {
+    message.error('画布控制器未初始化')
+    return
+  }
+
+  const loginStore = useLoginStatusStore()
+  if (!loginStore.isLogin) {
+    message.warning('请先登录后再保存贴纸到素材库')
+    return
+  }
+
+  saveLoading.value = true
+  try {
+    await controller.activeUpdateRenderingCanvas()
+    await waitForRender(controller)
+
+    const canvasEl = controller.canvasEl
+    if (!canvasEl) {
+      message.error('画布元素未找到')
+      return
+    }
+
+    const trimmedCanvas = Utils.trimCanvas(canvasEl)
+    const file = await canvasToFile(trimmedCanvas)
+
+    const cos = await uploadToCOS({
+      file,
+      category: 'sticker',
+      account: loginStore.userInfo?.account || loginStore.userInfo?.name || undefined,
+      userId: loginStore.userInfo?.id,
+    })
+
+    const name = `贴纸_${new Date().toLocaleString().replace(/[/:]/g, '-')}`
+    await createSticker({
+      url: cos.url,
+      suffix: 'png',
+      name,
+      description: '',
+      keywords: '',
+      isCustom: true,
+      meta: {
+        data: JSON.parse(JSON.stringify(canvasStickerOptions.value)),
+      },
+      userId: loginStore.userInfo?.id || null,
+    })
+
+    message.success(`贴纸「${name}」已保存到素材库`)
+  } catch (err: any) {
+    message.error(`保存失败: ${err?.message || '未知错误'}`)
+  } finally {
+    saveLoading.value = false
+  }
+}
+
+function handleClearCanvas() {
+  const canvasChild = canvasStickerOptions.value.children.find((c: any) => c.type === 'canvas')
+  if (!canvasChild) {
+    message.error('画布未初始化')
+    return
+  }
+  const count = canvasStickerOptions.value.children.filter((c: any) => c.type !== 'canvas').length
+  canvasStickerOptions.value.children = [canvasChild]
+  currentOperatingCanvasChildId.value = canvasChild.id
+  message.success(`已清空画布，共删除 ${count} 个元素`)
+}
+
+async function handleExportPng() {
+  const controller = currentCanvasControllerInstance.value
+  if (!controller) {
+    message.error('画布控制器未初始化')
+    return
+  }
+
+  exportLoading.value = true
+  try {
+    await controller.activeUpdateRenderingCanvas()
+    await waitForRender(controller)
+
+    const canvasEl = controller.canvasEl
+    if (!canvasEl) {
+      message.error('画布元素未找到')
+      return
+    }
+
+    const trimmedCanvas = Utils.trimCanvas(canvasEl)
+    const filename = `design_${new Date().toLocaleString().replace(/[/:]/g, '-')}`
+    const file = await canvasToFile(trimmedCanvas, `${filename}.png`)
+    downloadByFile(file)
+
+    message.success(`已导出 ${filename}.png`)
+  } catch (err: any) {
+    message.error(`导出失败: ${err?.message || '未知错误'}`)
+  } finally {
+    exportLoading.value = false
+  }
+}
+
 </script>
-    
-<style></style>
+
+<style lang="less" scoped>
+.canvas-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+</style>

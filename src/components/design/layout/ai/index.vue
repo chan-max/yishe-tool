@@ -1,7 +1,7 @@
 <template>
   <div class="ai-generate-panel">
     <div class="ai-generate-panel__header">
-      <span class="ai-generate-panel__title">AI 生成贴纸</span>
+      <span class="ai-generate-panel__title">AI 设计助手</span>
       <el-button link size="small" @click="isAiPanelOpen = false">
         <CloseOutlined />
       </el-button>
@@ -24,7 +24,7 @@
       </div>
 
       <div class="ai-generate-panel__section">
-        <div class="ai-generate-panel__section-title">描述你想要的贴纸</div>
+        <div class="ai-generate-panel__section-title">描述你想要的设计</div>
         <a-textarea
           v-model:value="inputText"
           :rows="4"
@@ -42,7 +42,7 @@
         :disabled="!inputText.trim()"
         @click="handleGenerate"
       >
-        {{ processing ? 'AI 生成中...' : '生成贴纸' }}
+        {{ processing ? 'AI 生成中...' : '生成设计' }}
       </a-button>
 
       <div v-if="results.length > 0" class="ai-generate-panel__section">
@@ -81,19 +81,20 @@ import {
   stripOperationBlocks,
   executeOperation,
   createDesignOperationContext,
+  extractAiResponseText,
 } from '@/operations'
 import type { OperationResult } from '@/operations'
 
 const quickTemplates = [
-  { icon: '🎯', label: '简约标题', prompt: '创建一个简约风格的贴纸，画布 1000x1000，白色背景，主文字写 "HELLO"，黑色粗体大字，居中显示' },
-  { icon: '🎂', label: '生日快乐', prompt: '做一个粉色生日快乐贴纸，画布 1000x1000，粉色背景，主文字 "生日快乐" 紫色大字居中，副文字 "Happy Birthday" 白色小字' },
-  { icon: '💪', label: '加油励志', prompt: '创建一个黑色背景的励志贴纸，画布 1000x1000，主文字 "加油" 红色粗体特大字居中' },
-  { icon: '🎉', label: '节日庆祝', prompt: '做一个节日庆祝贴纸，画布 1000x1000，黄色背景，主文字 "新年快乐" 红色大字居中，副文字 "2026" 黑色中等字' },
-  { icon: '🔥', label: '爆款推荐', prompt: '创建一个潮流风格贴纸，画布 1000x1000，黑色背景，主文字 "爆款" 白色粗体大字居中，副文字 "HOT" 红色小字' },
-  { icon: '🏷️', label: '促销标签', prompt: '做一个促销标签贴纸，画布 1000x1000，红色背景，主文字 "限时特惠" 白色大字居中，副文字 "全场五折" 白色中等字' },
+  { icon: '👕', label: 'T恤印花', prompt: '为 T恤前胸创建一个印花设计，主图案是一只简约线条猫，居中，大尺寸，黑底白线' },
+  { icon: '☕', label: '马克杯', prompt: '为马克杯创建一个印花设计，写 "GOOD MORNING"，手写风格，棕色配米白背景' },
+  { icon: '📱', label: '手机壳', prompt: '为手机壳创建一个后背设计，星空渐变背景，中间一个简约月亮图案' },
+  { icon: '🎨', label: '海报设计', prompt: '创建一个 A3 海报设计，极简风格，黑底白字 "EXHIBITION"，大字号排版' },
+  { icon: '🏷️', label: '贴纸', prompt: '创建一个圆形贴纸，红色背景，白色 "SALE 50%" 粗体大字居中' },
+  { icon: '🛍️', label: '帆布袋', prompt: '为帆布袋创建正面印花设计，植物花卉线描插画，黑白线条风格，居中大面积' },
 ]
 
-const placeholder = '例如：做一个写着"加油"的红色励志贴纸，黑色背景，白色粗体大字居中'
+const placeholder = '描述产品和设计，例如：T恤前胸印花、马克杯印花设计、手机壳后背图案、海报设计、帆布袋印花... AI 会自动匹配正确的产品尺寸'
 
 const inputText = ref('')
 const processing = ref(false)
@@ -122,8 +123,7 @@ async function handleGenerate() {
       systemPrompt,
     })
 
-    const rawContent = response?.choices?.[0]?.message?.content || ''
-    const content = typeof rawContent === 'string' ? rawContent : JSON.stringify(rawContent)
+    const content = extractAiResponseText(response)
 
     const opCalls = parseOperationCalls(content)
     const opResults: OperationResult[] = []

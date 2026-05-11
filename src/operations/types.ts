@@ -61,3 +61,57 @@ export interface OperationListItem {
   group: string
   params: OperationParamDef[]
 }
+
+export interface JsonSchemaProperty {
+  type: string
+  description?: string
+  default?: any
+  enum?: (string | number)[]
+  minimum?: number
+  maximum?: number
+}
+
+export interface JsonSchema {
+  type: 'object'
+  properties: Record<string, JsonSchemaProperty>
+  required: string[]
+  additionalProperties: false
+}
+
+export interface OperationTool {
+  name: string
+  description: string
+  input_schema: JsonSchema
+}
+
+function paramTypeToJsonSchema(type: OperationParamType): string {
+  switch (type) {
+    case 'number': return 'number'
+    case 'boolean': return 'boolean'
+    case 'color': return 'string'
+    case 'select': return 'string'
+    default: return 'string'
+  }
+}
+
+export function buildInputSchema(params: OperationParamDef[]): JsonSchema {
+  const properties: Record<string, JsonSchemaProperty> = {}
+  const required: string[] = []
+
+  for (const p of params) {
+    const prop: JsonSchemaProperty = {
+      type: paramTypeToJsonSchema(p.type),
+    }
+
+    if (p.description) prop.description = p.description
+    if (p.default !== undefined) prop.default = p.default
+    if (p.options && p.options.length > 0) prop.enum = p.options.map((o) => o.value)
+    if (p.min !== undefined) prop.minimum = p.min
+    if (p.max !== undefined) prop.maximum = p.max
+
+    properties[p.name] = prop
+    if (p.required) required.push(p.name)
+  }
+
+  return { type: 'object', properties, required, additionalProperties: false }
+}

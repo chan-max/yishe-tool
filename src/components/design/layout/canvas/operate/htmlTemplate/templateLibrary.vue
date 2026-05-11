@@ -33,33 +33,6 @@
           </template>
         </el-input>
 
-        <div class="html-template-library__filters">
-          <el-select
-            v-model="filterCategory"
-            clearable
-            placeholder="分类"
-            size="large"
-            class="html-template-library__filter-select"
-          >
-            <el-option
-              v-for="cat in categoryOptions"
-              :key="cat"
-              :label="cat"
-              :value="cat"
-            />
-          </el-select>
-
-          <el-tooltip content="我的收藏" placement="bottom">
-            <el-button
-              :type="showFavoritesOnly ? 'warning' : 'default'"
-              size="large"
-              :icon="Star"
-              circle
-              @click="showFavoritesOnly = !showFavoritesOnly"
-            />
-          </el-tooltip>
-        </div>
-
         <div class="html-template-library__stats">
           {{ filteredTemplates.length }} / {{ templateList.length }} 个模板
         </div>
@@ -75,7 +48,6 @@
             class="html-template-library__card"
             :class="{
               'is-active': model?.htmlTemplateMeta?.id === template.id,
-              'is-favorite': isFavorite(template.id),
             }"
             @click="applyTemplate(template)"
           >
@@ -89,19 +61,8 @@
                   v-html="previewPayloadMap[template.id]?.previewMarkup"
                 ></div>
               </div>
-              <el-button
-                class="html-template-library__favorite-btn"
-                :type="isFavorite(template.id) ? 'warning' : 'default'"
-                :icon="isFavorite(template.id) ? StarFilled : Star"
-                circle
-                size="small"
-                @click.stop="toggleFavorite(template.id)"
-              />
             </div>
             <div class="html-template-library__card-body">
-              <div class="html-template-library__card-topline">
-                <div class="html-template-library__card-category">{{ template.category }}</div>
-              </div>
               <div class="html-template-library__card-title">{{ template.name }}</div>
               <div class="html-template-library__card-desc">{{ template.description }}</div>
               <div class="html-template-library__card-tags">
@@ -114,7 +75,7 @@
         <div v-else class="html-template-library__empty">
           <div class="html-template-library__empty-title">没有找到匹配模板</div>
           <div class="html-template-library__empty-desc">
-            试试搜索关键词，或切换分类筛选。
+            试试其他关键词搜索。
           </div>
         </div>
       </div>
@@ -124,7 +85,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { Search, Star, StarFilled } from "@element-plus/icons-vue";
+import { Search } from "@element-plus/icons-vue";
 import icon from "@/components/design/assets/icon/project.svg?component";
 import operateFormItem from "@/components/design/layout/canvas/operate/operateFormItem.vue";
 import {
@@ -139,39 +100,6 @@ import {
   type HtmlTemplateDefinition,
 } from "@/components/design/layout/canvas/htmlTemplate/types";
 
-const FAVORITES_STORAGE_KEY = "_1s_html_template_favorites";
-
-function getFavorites(): Set<string> {
-  try {
-    const data = localStorage.getItem(FAVORITES_STORAGE_KEY);
-    if (!data) return new Set();
-    return new Set(JSON.parse(data));
-  } catch {
-    return new Set();
-  }
-}
-
-function saveFavorites(favs: Set<string>) {
-  try {
-    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...favs]));
-  } catch {}
-}
-
-const favorites = ref<Set<string>>(getFavorites());
-
-function isFavorite(id: string): boolean {
-  return favorites.value.has(id);
-}
-
-function toggleFavorite(id: string) {
-  if (favorites.value.has(id)) {
-    favorites.value.delete(id);
-  } else {
-    favorites.value.add(id);
-  }
-  saveFavorites(favorites.value);
-}
-
 const model = defineModel({
   default: {} as any,
 });
@@ -181,33 +109,16 @@ const loading = ref(false);
 const searchKeyword = ref("");
 const templateList = ref<HtmlTemplateDefinition[]>([]);
 
-const filterCategory = ref("");
-const showFavoritesOnly = ref(false);
-
-const categoryOptions = computed(() => {
-  const categories = new Set(templateList.value.map(t => t.category));
-  return Array.from(categories).sort();
-});
-
 const filteredTemplates = computed(() => {
   const keyword = searchKeyword.value.trim().toLowerCase();
 
+  if (!keyword) {
+    return templateList.value;
+  }
+
   return templateList.value.filter((item) => {
-    if (showFavoritesOnly.value && !favorites.value.has(item.id)) {
-      return false;
-    }
-
-    if (filterCategory.value && item.category !== filterCategory.value) {
-      return false;
-    }
-
-    if (!keyword) {
-      return true;
-    }
-
     const searchText = [
       item.name,
-      item.category,
       item.description,
       ...(item.tags || []),
     ]
@@ -294,17 +205,6 @@ function applyTemplate(template: HtmlTemplateDefinition) {
   min-width: 280px;
 }
 
-.html-template-library__filters {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.html-template-library__filter-select {
-  width: 120px;
-}
-
 .html-template-library__stats {
   font-size: 12px;
   color: #6b7280;
@@ -335,7 +235,6 @@ function applyTemplate(template: HtmlTemplateDefinition) {
   flex-direction: column;
   min-height: 0;
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-  position: relative;
 }
 
 .html-template-library__card:hover,
@@ -349,7 +248,6 @@ function applyTemplate(template: HtmlTemplateDefinition) {
   flex: 0 0 auto;
   background: linear-gradient(180deg, #f8fafc, #eef2ff);
   padding: 14px;
-  position: relative;
 }
 
 .html-template-library__preview-inner {
@@ -365,17 +263,6 @@ function applyTemplate(template: HtmlTemplateDefinition) {
   height: 100%;
 }
 
-.html-template-library__favorite-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(4px);
-  &:hover {
-    transform: scale(1.1);
-  }
-}
-
 .html-template-library__card-body {
   flex: 1;
   min-height: 0;
@@ -384,24 +271,7 @@ function applyTemplate(template: HtmlTemplateDefinition) {
   scrollbar-gutter: stable;
 }
 
-.html-template-library__card-topline {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.html-template-library__card-category {
-  flex-shrink: 0;
-  font-size: 11px;
-  color: #4338ca;
-  background: #eef2ff;
-  padding: 5px 9px;
-  border-radius: 999px;
-}
-
 .html-template-library__card-title {
-  margin-top: 12px;
   font-size: 16px;
   font-weight: 700;
   color: #111827;
@@ -478,11 +348,6 @@ function applyTemplate(template: HtmlTemplateDefinition) {
 
   .html-template-library__search {
     max-width: none;
-  }
-
-  .html-template-library__filters {
-    width: 100%;
-    justify-content: flex-start;
   }
 
   .html-template-library__grid {

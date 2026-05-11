@@ -35,8 +35,8 @@
 import icon from "@/components/design/assets/icon/skew.svg?component";
 import { ref } from 'vue'
 
-const x = defineModel('x', { default: '' })
-const y = defineModel('y', { default: '' })
+const x = defineModel('x', { default: 0 })
+const y = defineModel('y', { default: 0 })
 </script>
   
 <style></style>

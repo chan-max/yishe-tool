@@ -191,6 +191,9 @@
 
   <!-- 自动创建弹层 -->
   <autocreateModal></autocreateModal>
+
+  <!-- 浮动 AI 对话框 -->
+  <float-chat></float-chat>
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -283,6 +286,7 @@ import autocreateModal from "./autocreate/modal.vue";
 import videoClip from "./videoClip/index.vue";
 import operationsPanel from "./operations/index.vue";
 import canvasStructure from "./canvasStructure/index.vue";
+import floatChat from "./ai/float-chat.vue";
 import { useEventBus } from "@vueuse/core";
 import { DESIGN_3D_ENABLED } from "../featureFlags";
 

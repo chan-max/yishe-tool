@@ -42,9 +42,9 @@
 import icon from "@/components/design/assets/icon/scale.svg?component";
 import { ref } from 'vue'
 
-const x = defineModel('x', { default: '' })
-const y = defineModel('y', { default: '' })
-const z = defineModel('z', { default: '' })
+const x = defineModel('x', { default: 1 })
+const y = defineModel('y', { default: 1 })
+const z = defineModel('z', { default: 1 })
 
 
 function formatTooltip(val) {

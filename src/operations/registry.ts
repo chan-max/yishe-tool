@@ -1,4 +1,5 @@
-import type { OperationDef, OperationListItem, OperationContext, OperationResult } from './types'
+import type { OperationDef, OperationListItem, OperationContext, OperationResult, OperationTool } from './types'
+import { buildInputSchema } from './types'
 
 const operations = new Map<string, OperationDef>()
 
@@ -36,6 +37,14 @@ export function getOperationGroups(): string[] {
   return Array.from(groups)
 }
 
+export function getOperationTools(): OperationTool[] {
+  return getAllOperations().map((op) => ({
+    name: op.id,
+    description: `${op.name}: ${op.description}`,
+    input_schema: buildInputSchema(op.params),
+  }))
+}
+
 export async function executeOperation(
   id: string,
   params: Record<string, any>,
@@ -69,6 +78,20 @@ export async function executeOperation(
       }
       if (def.max !== undefined && mergedParams[def.name] > def.max) {
         return { success: false, message: `参数 ${def.label} 不能大于 ${def.max}` }
+      }
+    }
+    if (def.options && def.options.length > 0 && mergedParams[def.name] !== undefined) {
+      const validValues = def.options.map((o) => o.value)
+      if (!validValues.includes(mergedParams[def.name])) {
+        return {
+          success: false,
+          message: `参数 ${def.label} 的值 "${mergedParams[def.name]}" 不合法，可选值: ${validValues.join(', ')}`,
+        }
+      }
+    }
+    if (def.type === 'boolean' && mergedParams[def.name] !== undefined) {
+      if (typeof mergedParams[def.name] === 'string') {
+        mergedParams[def.name] = mergedParams[def.name] === 'true'
       }
     }
   }

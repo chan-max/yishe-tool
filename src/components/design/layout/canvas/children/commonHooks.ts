@@ -25,10 +25,10 @@ const canvasChildDOMMap = shallowReactive({
 
 })
 
+const CLICK_DISTANCE_THRESHOLD = 4
+
 function processBasicElEvent(payload) {
     let { targetEl, options } = payload;
-
-    // 忽略该元素的事件处理
 
     watch(targetEl, (el) => {
         if (!el) {
@@ -41,16 +41,26 @@ function processBasicElEvent(payload) {
 
         el.style.cursor = 'pointer'
 
-        // 为当前元素添加id，方便通过id 找到该元素
         el.id = options.id
 
         canvasChildDOMMap[options.id] = el
 
-        el.onclick = (e) => {
-            e.stopPropagation();
-            console.log('click')
-            currentOperatingCanvasChildId.value = options.id
-        }
+        let startX = 0
+        let startY = 0
+
+        el.addEventListener('mousedown', (e) => {
+            startX = e.clientX
+            startY = e.clientY
+        }, true)
+
+        el.addEventListener('mouseup', (e) => {
+            const dx = e.clientX - startX
+            const dy = e.clientY - startY
+            if (Math.abs(dx) < CLICK_DISTANCE_THRESHOLD && Math.abs(dy) < CLICK_DISTANCE_THRESHOLD) {
+                e.stopPropagation();
+                currentOperatingCanvasChildId.value = options.id
+            }
+        }, true)
 
         el._EventsReady = true
     })

@@ -27,16 +27,23 @@
         <template #file="{ file, url }">
           <div class="file-bar">
             <div class="file-bar-header">
-              <s1-img
-                v-if="Utils.type.isImageName(file.name)"
-                @focus="null"
-                :src="file.url"
-                style="height: 32px; width: 32px"
-                fit="contain"
-              ></s1-img>
-              <el-icon v-else size="32px">
-                <component :is="fileTypeIcons[getFileSuffix(file.name)]"></component>
-              </el-icon>
+              <button
+                type="button"
+                class="file-preview-trigger"
+                title="预览文件"
+                @click.stop="openFilePreview(file)"
+              >
+                <s1-img
+                  v-if="Utils.type.isImageName(file.name)"
+                  @focus="null"
+                  :src="file.url"
+                  class="file-preview-thumb"
+                  fit="contain"
+                ></s1-img>
+                <el-icon v-else size="32px">
+                  <component :is="fileTypeIcons[getFileSuffix(file.name)] || Document"></component>
+                </el-icon>
+              </button>
 
               <div style="font-size: 12px">{{ file.name }}</div>
 
@@ -179,6 +186,60 @@
     </a-textarea>
     <p>请确保输入完成的地址，以防止加载失败，目前只支持图片和字体类型</p>
   </a-modal>
+
+  <a-modal
+    v-model:open="previewModalOpen"
+    :title="previewFile?.name || '文件预览'"
+    width="100vw"
+    :footer="null"
+    centered
+    destroy-on-close
+    wrap-class-name="file-preview-fullscreen-modal"
+    :body-style="{ padding: 0 }"
+  >
+    <div class="file-preview-shell" v-if="previewFile">
+      <img
+        v-if="previewKind === 'image'"
+        :src="previewFile.url"
+        class="file-preview-image"
+        :alt="previewFile.name"
+      />
+      <iframe
+        v-else-if="previewKind === 'pdf' || previewKind === 'text'"
+        :src="previewFile.url"
+        class="file-preview-frame"
+        :title="previewFile.name"
+      ></iframe>
+      <video
+        v-else-if="previewKind === 'video'"
+        :src="previewFile.url"
+        class="file-preview-media"
+        controls
+      ></video>
+      <audio
+        v-else-if="previewKind === 'audio'"
+        :src="previewFile.url"
+        class="file-preview-audio"
+        controls
+      ></audio>
+      <div v-else-if="previewKind === 'model'" class="file-preview-model">
+        <base-gltf-viewer :src="previewFile.url"></base-gltf-viewer>
+      </div>
+      <div v-else class="file-preview-fallback">
+        <el-icon size="80px">
+          <component :is="fileTypeIcons[getFileSuffix(previewFile.name)] || Document"></component>
+        </el-icon>
+        <div class="file-preview-fallback-name">{{ previewFile.name }}</div>
+        <div class="file-preview-fallback-meta">
+          {{ getFileSuffix(previewFile.name).toUpperCase() || 'FILE' }}
+          <span v-if="previewFile.displaySize"> · {{ previewFile.displaySize }}</span>
+        </div>
+        <a :href="previewFile.url" :download="previewFile.name" class="file-preview-download">
+          下载文件
+        </a>
+      </div>
+    </div>
+  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -195,6 +256,7 @@ import {
   Warning,
   Iphone,
   Link,
+  Document,
 } from "@element-plus/icons-vue";
 import iconFileUpload from "@/icon/file-upload.svg";
 import iconImg from "@/icon/fileType/img.svg";
@@ -287,13 +349,40 @@ function getFileSuffix(filename) {
 
 const fileTypeIcons = {
   jpg: iconImg,
+  jpeg: iconImg,
   png: iconImg,
+  webp: iconImg,
   svg: iconImg,
   ttf: iconFont,
   glb: iconGlb,
+  gltf: iconGlb,
   otf: iconFont,
+  woff: iconFont,
+  woff2: iconFont,
   psd: iconPsd,
 };
+
+const previewModalOpen = ref(false);
+const previewFile = ref<any>(null);
+const previewKind = ref("file");
+
+function getPreviewKind(file) {
+  const suffix = getFileSuffix(file?.name || "").toLowerCase();
+  const type = String(file?.raw?.type || file?.type || "").toLowerCase();
+  if (Utils.type.isImageName(file?.name || "")) return "image";
+  if (suffix === "pdf" || type === "application/pdf") return "pdf";
+  if (["mp4", "webm", "ogg", "mov"].includes(suffix) || type.startsWith("video/")) return "video";
+  if (["mp3", "wav", "ogg", "m4a", "aac"].includes(suffix) || type.startsWith("audio/")) return "audio";
+  if (["txt", "csv", "json", "md", "html", "css", "js", "ts"].includes(suffix) || type.startsWith("text/")) return "text";
+  if (Utils.type.isModelName(file?.name || "")) return "model";
+  return "file";
+}
+
+function openFilePreview(file) {
+  previewFile.value = file;
+  previewKind.value = getPreviewKind(file);
+  previewModalOpen.value = true;
+}
 
 /**
  * @description 暂时不支持多个文件上传
@@ -603,6 +692,31 @@ async function doUpload() {
   font-size: 1rem;
 }
 
+.file-preview-trigger {
+  width: 40px;
+  height: 40px;
+  padding: 4px;
+  border: 1px solid #ececec;
+  border-radius: 6px;
+  background: #fafafa;
+  color: #555;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.file-preview-trigger:hover {
+  border-color: var(--el-color-primary);
+  color: var(--el-color-primary);
+}
+
+.file-preview-thumb {
+  width: 32px;
+  height: 32px;
+}
+
 .footer {
   display: flex;
   align-items: center;
@@ -633,5 +747,109 @@ async function doUpload() {
   color: #000;
   background: transparent;
   padding: 0;
+}
+</style>
+
+<style lang="less">
+.file-preview-fullscreen-modal {
+  .ant-modal {
+    top: 0;
+    max-width: 100vw;
+    width: 100vw !important;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ant-modal-content {
+    height: 100vh;
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .ant-modal-header {
+    height: 48px;
+    margin: 0;
+    padding: 0 48px 0 18px;
+    display: flex;
+    align-items: center;
+  }
+
+  .ant-modal-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ant-modal-body {
+    height: calc(100vh - 48px);
+    overflow: hidden;
+  }
+
+  .file-preview-shell {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .file-preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .file-preview-frame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+  }
+
+  .file-preview-media {
+    width: min(100%, 1200px);
+    max-height: 100%;
+  }
+
+  .file-preview-audio {
+    width: min(720px, calc(100% - 48px));
+  }
+
+  .file-preview-model {
+    width: 100%;
+    height: 100%;
+  }
+
+  .file-preview-fallback {
+    color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .file-preview-fallback-name {
+    max-width: min(680px, calc(100vw - 48px));
+    overflow-wrap: anywhere;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .file-preview-fallback-meta {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 13px;
+  }
+
+  .file-preview-download {
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    border-radius: 6px;
+    padding: 7px 14px;
+  }
 }
 </style>

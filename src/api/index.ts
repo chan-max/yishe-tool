@@ -388,14 +388,12 @@ export const uploadFile = (params) => new Promise(async (resolve, reject) => {
 
   const data = {
     ...params,
-    thumbnail: params.thumbnail,
     name: params.name,
-    type: params.type,
-    size: params.size,
+    suffix: params.suffix || params.type,
     meta: params.meta || {},
   }
 
-  await apiInstance.post('/api/file/create', data)
+  await apiInstance.post('/api/file-resource/create', data)
   resolve(void 0)
 })
 
@@ -506,12 +504,12 @@ export const updateSticker = (data) => new Promise(async (resolve, reject) => {
  * 获取文件列表
 */
 export const getFileList = (params) => new Promise(async (resolve, reject) => {
-  const res = await apiInstance.post('/api/file/page', params)
+  const res = await apiInstance.post('/api/file-resource/page', params)
   resolve(res.data.data)
 })
 
 export const updateFile = (data) => new Promise(async (resolve, reject) => {
-  let res = await apiInstance.post('/api/file/update', data)
+  let res = await apiInstance.post('/api/file-resource/update', data)
   resolve(res.data.data)
 })
 
@@ -519,17 +517,17 @@ export const updateFile = (data) => new Promise(async (resolve, reject) => {
 
 /* 获取字体列表 */
 export const getFontListApi = (params) => new Promise(async (resolve, reject) => {
-  const res = await apiInstance.post('/api/file/page', {
+  const res = await apiInstance.post('/api/file-resource/page', {
     ...params,
-    type: 'ttf,woff,otf'
+    suffix: 'ttf,woff,otf'
   })
   resolve(res.data.data)
 })
 
 
 export const deleteFile = (data) => new Promise(async (resolve, reject) => {
-  let res = await apiInstance.post('/api/file/delete', {
-    id: data
+  let res = await apiInstance.post('/api/file-resource/delete', {
+    ids: data
   })
   resolve(res.data.data)
 })

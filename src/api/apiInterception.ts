@@ -25,7 +25,7 @@ const ownershipWriteKeywords = [
   '/api/psd-template',
   '/api/font-template',
   '/api/custom-model',
-  '/api/clip-material',
+  '/api/file-resource',
   '/api/draft',
   '/api/crawler/material/add',
   '/api/crawler/material/update',

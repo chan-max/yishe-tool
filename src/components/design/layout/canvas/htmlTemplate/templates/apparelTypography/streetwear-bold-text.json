@@ -14,7 +14,7 @@
     { "key": "text.sub", "label": "副标语", "type": "text", "placeholder": "Est. 2024", "description": "可选：年份、系列名或副标题" },
     { "key": "color.text", "label": "文字颜色", "type": "color" },
     { "key": "color.bg", "label": "背景色", "type": "color" },
-    { "key": "style.spacing", "label": "行间距", "type": "number", "min": 0, "max": 100, "step": 5 }
+    { "key": "style.spacing", "label": "行间距", "type": "text", "placeholder": "18", "description": "请输入数值，如 18" }
   ],
   "defaults": {
     "text": { "main": "STAY WILD", "sub": "Est. 2024" },

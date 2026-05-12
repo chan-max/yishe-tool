@@ -24,19 +24,181 @@
     @open="handleDialogOpen"
   >
     <div class="html-editor-dialog__layout">
-      <div class="html-editor-dialog__toolbar">
-        <div class="html-editor-dialog__hint">
-          支持 HTML + 内联 <code>&lt;style&gt;</code>，可使用
-          <code v-pre>{{text.title}}</code> 等魔术变量。
-          <span class="html-editor-dialog__meta">{{ draftSummary }}</span>
+      <div class="html-editor-dialog__main">
+        <div class="html-editor-dialog__toolbar">
+          <div class="html-editor-dialog__hint">
+            支持 HTML + 内联 <code>&lt;style&gt;</code>，推荐使用
+            <code v-pre>{{text.title}}</code>、<code v-pre>{{color.primary}}</code>、
+            <code v-pre>{{image.logo.url}}</code> 这类变量写法。
+            <span class="html-editor-dialog__meta">{{ draftSummary }}</span>
+          </div>
+        </div>
+
+        <div v-if="editorError" class="html-editor-dialog__error">
+          <span>{{ editorError }}</span>
+          <el-button size="small" type="primary" link @click="retryLoadEditor">重新加载</el-button>
+        </div>
+
+        <div v-loading="loadingEditor" class="html-editor-dialog__editor-shell">
+          <div v-show="!editorError" ref="editorContainerRef" class="html-editor-dialog__editor"></div>
         </div>
       </div>
 
-      <el-collapse v-model="variablesExpanded" class="html-editor-dialog__variables-collapse">
-        <el-collapse-item name="vars" title="可用魔术变量">
-          <div class="html-editor-dialog__variables">
+      <div class="html-editor-dialog__sidebar">
+        <div class="html-editor-dialog__sidebar-header">
+          <h3>魔术变量</h3>
+        </div>
+        <div class="html-editor-dialog__sidebar-content">
+          <div class="html-editor-dialog__doc-section">
+            <div class="html-editor-dialog__doc-title">支持范围</div>
+            <div class="html-editor-dialog__doc-content">
+              <div class="html-editor-dialog__doc-item">
+                <strong>可写内容：</strong>普通 HTML 标签 + 内联 <code>&lt;style&gt;</code>。
+              </div>
+              <div class="html-editor-dialog__doc-item">
+                <strong>样式处理：</strong><code>&lt;style&gt;</code> 里的选择器会自动限定到当前贴纸元素，不会直接污染整个画布。
+              </div>
+              <div class="html-editor-dialog__doc-item">
+                <strong>安全过滤：</strong><code>&lt;script&gt;</code>、<code>iframe</code>、事件属性（如 <code>onclick</code>）以及危险链接会被清理。
+              </div>
+              <div class="html-editor-dialog__doc-item">
+                <strong>布局限制：</strong><code>position: fixed</code> 会被改写为 <code>position: absolute</code>。
+              </div>
+              <div class="html-editor-dialog__doc-note">
+                右侧下方“当前模板变量”列表，才是这一个元素当前真正可用的变量全集。
+              </div>
+            </div>
+          </div>
+
+          <div class="html-editor-dialog__doc-section">
+            <div class="html-editor-dialog__doc-title">变量从哪里来</div>
+            <div class="html-editor-dialog__doc-content">
+              <div class="html-editor-dialog__doc-type">
+                <div class="html-editor-dialog__doc-type-name">系统变量</div>
+                <div class="html-editor-dialog__doc-type-desc">
+                  固定支持 <code v-pre>{{canvas.width}}</code>、<code v-pre>{{canvas.heightCss}}</code>、
+                  <code v-pre>{{element.id}}</code>、<code v-pre>{{element.zIndex}}</code>。
+                </div>
+              </div>
+
+              <div class="html-editor-dialog__doc-type">
+                <div class="html-editor-dialog__doc-type-name">模板库变量</div>
+                <div class="html-editor-dialog__doc-type-desc">
+                  从“模板库”选中的模板自带字段而来，保存后可在“模板绑定”里改内容、颜色、图片、字体等。
+                </div>
+              </div>
+
+              <div class="html-editor-dialog__doc-type">
+                <div class="html-editor-dialog__doc-type-name">手写 HTML 自动识别变量</div>
+                <div class="html-editor-dialog__doc-type-desc">
+                  直接在 HTML 中写变量并保存后，会自动识别一部分变量并生成“模板绑定”面板。
+                </div>
+              </div>
+
+              <div class="html-editor-dialog__doc-type">
+                <div class="html-editor-dialog__doc-type-name">旧写法提醒</div>
+                <div class="html-editor-dialog__doc-type-syntax">
+                  <code v-pre>{{title}}</code>
+                </div>
+                <div class="html-editor-dialog__doc-type-desc">
+                  这类没有类型前缀的写法，不适合作为手写 HTML 的通用定义方式；请改成
+                  <code v-pre>{{text.title}}</code> 这类带前缀写法。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="html-editor-dialog__doc-section">
+            <div class="html-editor-dialog__doc-title">手写 HTML 时推荐写法</div>
+            <div class="html-editor-dialog__doc-content">
+              <div class="html-editor-dialog__doc-type">
+                <div class="html-editor-dialog__doc-type-name">文本 / 多行文本</div>
+                <div class="html-editor-dialog__doc-type-syntax">
+                  <code v-pre>{{text.title}}</code>、<code v-pre>{{text.desc}}</code>
+                </div>
+                <div class="html-editor-dialog__doc-type-desc">用于标题、正文、说明文案；多行文本同样写成 <code v-pre>{{text.xxx}}</code>。</div>
+              </div>
+
+              <div class="html-editor-dialog__doc-type">
+                <div class="html-editor-dialog__doc-type-name">颜色</div>
+                <div class="html-editor-dialog__doc-type-syntax">
+                  <code v-pre>{{color.primary}}</code>、<code v-pre>{{color.primary.css}}</code>
+                </div>
+                <div class="html-editor-dialog__doc-type-desc">可直接用于文字色、背景色、边框色；<code>.css</code> 也会输出颜色值。</div>
+              </div>
+
+              <div class="html-editor-dialog__doc-type">
+                <div class="html-editor-dialog__doc-type-name">图片</div>
+                <div class="html-editor-dialog__doc-type-syntax">
+                  <code v-pre>{{image.logo.url}}</code>、<code v-pre>{{image.logo.src}}</code>、<code v-pre>{{image.logo.name}}</code>
+                </div>
+                <div class="html-editor-dialog__doc-type-desc">通常把 <code>.url</code> / <code>.src</code> 放到 <code>img src</code>，把 <code>.name</code> 放到 <code>alt</code>。</div>
+              </div>
+
+              <div class="html-editor-dialog__doc-type">
+                <div class="html-editor-dialog__doc-type-name">字体</div>
+                <div class="html-editor-dialog__doc-type-syntax">
+                  <code v-pre>{{font.brand.family}}</code>、<code v-pre>{{font.brand.name}}</code>
+                </div>
+                <div class="html-editor-dialog__doc-type-desc">推荐在 CSS 的 <code>font-family</code> 中使用 <code>.family</code>。</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="html-editor-dialog__doc-section">
+            <div class="html-editor-dialog__doc-title">模板库变量如何继续使用</div>
+            <div class="html-editor-dialog__doc-content">
+              <div class="html-editor-dialog__doc-item">
+                <strong>沿用现有 key：</strong>如果模板库里原本就是 <code v-pre>{{style.size}}</code>、
+                <code v-pre>{{text.title}}</code> 这类 key，编辑 HTML 时继续原样使用即可。
+              </div>
+              <div class="html-editor-dialog__doc-item">
+                <strong>修改入口：</strong>模板自带字段请到“模板绑定”里改值，不需要在 HTML 里重新定义字段结构。
+              </div>
+              <div class="html-editor-dialog__doc-item">
+                <strong>新增变量建议：</strong>如果是手写 HTML 新增变量，优先使用
+                <code>text</code>、<code>color</code>、<code>image</code>、<code>font</code>
+                这几类前缀，保存后更容易自动生成绑定项。
+              </div>
+              <div class="html-editor-dialog__doc-note">
+                像 <code v-pre>{{style.xxx}}</code> 这种模板自带变量可以正常渲染，但更适合由模板库预先定义，而不是作为手写 HTML 的通用新增写法。
+              </div>
+            </div>
+          </div>
+
+          <div class="html-editor-dialog__doc-section">
+            <div class="html-editor-dialog__doc-title">常见示例</div>
+            <div class="html-editor-dialog__doc-content">
+              <div class="html-editor-dialog__doc-example">
+                <div class="html-editor-dialog__doc-example-title">标题文字</div>
+                <div class="html-editor-dialog__doc-example-code">
+                  <code v-pre>&lt;h1&gt;{{text.title}}&lt;/h1&gt;</code>
+                </div>
+              </div>
+
+              <div class="html-editor-dialog__doc-example">
+                <div class="html-editor-dialog__doc-example-title">图片</div>
+                <div class="html-editor-dialog__doc-example-code">
+                  <code v-pre>&lt;img src="{{image.logo.url}}" alt="{{image.logo.name}}"&gt;</code>
+                </div>
+              </div>
+
+              <div class="html-editor-dialog__doc-example">
+                <div class="html-editor-dialog__doc-example-title">字体 + 样式块</div>
+                <div class="html-editor-dialog__doc-example-code">
+                  <code v-pre>&lt;style&gt;.title { font-family: {{font.brand.family}}, sans-serif; color: {{color.primary}}; }&lt;/style&gt;</code>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="html-editor-dialog__doc-section">
+            <div class="html-editor-dialog__doc-title">当前模板变量</div>
             <div class="html-editor-dialog__variable-section">
-              <div class="html-editor-dialog__variable-section-name">系统变量</div>
+              <div class="html-editor-dialog__variable-section-name">
+                系统变量
+                <span>· {{ systemMagicVariableItems.length }} 项</span>
+              </div>
               <div class="html-editor-dialog__variable-list">
                 <div
                   v-for="item in systemMagicVariableItems"
@@ -51,7 +213,7 @@
 
             <div class="html-editor-dialog__variable-section">
               <div class="html-editor-dialog__variable-section-name">
-                当前模板变量
+                模板变量
                 <span v-if="templateMagicVariableItems.length">
                   · {{ templateMagicVariableItems.length }} 项
                 </span>
@@ -71,16 +233,7 @@
               </div>
             </div>
           </div>
-        </el-collapse-item>
-      </el-collapse>
-
-      <div v-if="editorError" class="html-editor-dialog__error">
-        <span>{{ editorError }}</span>
-        <el-button size="small" type="primary" link @click="retryLoadEditor">重新加载</el-button>
-      </div>
-
-      <div v-loading="loadingEditor" class="html-editor-dialog__editor-shell">
-        <div v-show="!editorError" ref="editorContainerRef" class="html-editor-dialog__editor"></div>
+        </div>
       </div>
     </div>
 
@@ -253,7 +406,6 @@ const editorError = ref("");
 const draftValue = ref("");
 const editorContainerRef = ref<HTMLElement | null>(null);
 const editorInstance = shallowRef<any>(null);
-const variablesExpanded = ref<string[]>([]);
 
 const draftSummary = computed(() => {
   const value = String(draftValue.value ?? "");
@@ -316,13 +468,6 @@ function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition) {
         {
           token: `{{${field.key}.name}}`,
           description: `${field.label}，字体名称`,
-        },
-      ];
-    case "number":
-      return [
-        {
-          token: `{{${field.key}}}`,
-          description: `${field.label}，数值变量`,
         },
       ];
     case "textarea":
@@ -512,8 +657,216 @@ onBeforeUnmount(() => {
   flex: 1;
   min-height: 0;
   display: flex;
+  gap: 16px;
+  height: 100%;
+}
+
+.html-editor-dialog__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
   flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.html-editor-dialog__sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: calc(100vh - 180px);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.html-editor-dialog__sidebar-header {
+  flex-shrink: 0;
+  padding: 16px 20px;
+  background: rgba(248, 250, 252, 0.9);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.html-editor-dialog__sidebar-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.html-editor-dialog__sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 20px;
+  max-height: calc(100vh - 240px);
+}
+
+.html-editor-dialog__doc-section {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.html-editor-dialog__doc-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.html-editor-dialog__doc-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.html-editor-dialog__doc-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.html-editor-dialog__doc-item {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #64748b;
+}
+
+.html-editor-dialog__doc-item strong {
+  color: #475569;
+}
+
+.html-editor-dialog__doc-item code {
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: #f1f5f9;
+  color: #0369a1;
+  font-size: 10px;
+}
+
+.html-editor-dialog__doc-note {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(239, 246, 255, 0.9);
+  border: 1px solid rgba(147, 197, 253, 0.7);
+  color: #1e40af;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.html-editor-dialog__doc-note code {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1d4ed8;
+  font-size: 10px;
+}
+
+.html-editor-dialog__field-config {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.html-editor-dialog__field-config-item {
+  display: flex;
+  align-items: center;
   gap: 8px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #64748b;
+}
+
+.html-editor-dialog__field-config-item:last-child {
+  margin-bottom: 0;
+}
+
+.html-editor-dialog__field-config-item code {
+  min-width: 60px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #0369a1;
+  font-size: 10px;
+  border: 1px solid #e2e8f0;
+  font-weight: 600;
+}
+
+.html-editor-dialog__doc-type {
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.html-editor-dialog__doc-type-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
+.html-editor-dialog__doc-type-syntax {
+  margin-bottom: 4px;
+}
+
+.html-editor-dialog__doc-type-syntax code {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #0369a1;
+  font-size: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.html-editor-dialog__doc-type-desc {
+  font-size: 10px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.html-editor-dialog__doc-example {
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.html-editor-dialog__doc-example:last-child {
+  margin-bottom: 0;
+}
+
+.html-editor-dialog__doc-example-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
+.html-editor-dialog__doc-example-code {
+  font-family: 'SFMono-Regular', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+.html-editor-dialog__doc-example-code code {
+  display: block;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 10px;
+  line-height: 1.4;
+  border: 1px solid #e2e8f0;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .html-editor-dialog__toolbar {
@@ -547,38 +900,6 @@ onBeforeUnmount(() => {
   margin-left: 4px;
 }
 
-.html-editor-dialog__variables-collapse {
-  flex-shrink: 0;
-}
-
-:deep(.html-editor-dialog__variables-collapse .el-collapse-item__header) {
-  padding: 0 12px;
-  height: 32px;
-  line-height: 32px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #334155;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 8px;
-}
-
-:deep(.html-editor-dialog__variables-collapse .el-collapse-item__wrap) {
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  background: rgba(255, 255, 255, 0.9);
-}
-
-:deep(.html-editor-dialog__variables-collapse .el-collapse-item__content) {
-  padding: 8px 12px 12px;
-}
-
-.html-editor-dialog__variables {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
 
 .html-editor-dialog__variable-section {
   display: flex;
@@ -594,10 +915,8 @@ onBeforeUnmount(() => {
 
 .html-editor-dialog__variable-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: 1fr;
   gap: 4px;
-  max-height: 140px;
-  overflow: auto;
   padding-right: 4px;
 }
 
@@ -651,18 +970,20 @@ onBeforeUnmount(() => {
 
 .html-editor-dialog__editor-shell {
   flex: 1 1 auto;
-  min-height: 0;
-  max-height: 100%;
+  min-height: 400px;
+  max-height: calc(100vh - 180px);
+  height: 100%;
   padding: 4px;
   border: 1px solid rgba(148, 163, 184, 0.24);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: auto;
   background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
 }
 
 .html-editor-dialog__editor {
   width: 100%;
   height: 100%;
+  min-height: 400px;
   border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 8px;
   overflow: hidden;
@@ -694,10 +1015,18 @@ onBeforeUnmount(() => {
   background: linear-gradient(180deg, #f8fafc 0%, #eff4fa 100%);
 }
 
+:deep(.html-editor-dialog .el-dialog) {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+}
+
 :deep(.html-editor-dialog .el-dialog__header) {
   flex-shrink: 0;
   margin: 0;
-  padding: 16px 20px;
+  padding: 12px 20px;
   border-bottom: 1px solid rgba(226, 232, 240, 0.9);
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(10px);
@@ -708,7 +1037,8 @@ onBeforeUnmount(() => {
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  padding: 16px 20px;
+  padding: 12px 20px;
+  height: calc(100vh - 100px);
 }
 
 :deep(.html-editor-dialog .el-dialog__footer) {
@@ -720,11 +1050,12 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(12px);
   box-shadow: 0 -12px 30px rgba(15, 23, 42, 0.06);
-  padding: 12px 20px 16px;
+  padding: 8px 20px 12px;
 }
 
 :deep(.html-editor-dialog__editor .CodeMirror) {
-  height: 100%;
+  height: 100% !important;
+  min-height: 400px;
   font-size: 14px;
   line-height: 1.6;
   color: #0f172a;
@@ -749,6 +1080,9 @@ onBeforeUnmount(() => {
 }
 
 :deep(.html-editor-dialog__editor .CodeMirror-scroll) {
+  height: 100% !important;
+  min-height: 400px;
+  overflow-y: auto !important;
   background: #ffffff;
 }
 
@@ -774,9 +1108,8 @@ onBeforeUnmount(() => {
     flex-direction: column;
   }
 
-  .html-editor-dialog__variables-header {
-    align-items: flex-start;
-    flex-direction: column;
+  .html-editor-dialog__sidebar {
+    display: none;
   }
 
   .html-editor-dialog__variable-list {

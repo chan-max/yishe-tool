@@ -15,7 +15,7 @@
     { "key": "text.year", "label": "年份", "type": "text", "placeholder": "2024", "description": "可选：入学年份或纪念年份" },
     { "key": "color.primary", "label": "主色", "type": "color" },
     { "key": "color.accent", "label": "辅助色", "type": "color" },
-    { "key": "style.arc", "label": "弧形强度", "type": "number", "min": 0, "max": 100, "step": 10 }
+    { "key": "style.arc", "label": "弧形强度", "type": "text", "placeholder": "60", "description": "请输入数值，如 60" }
   ],
   "defaults": {
     "text": { "school": "UNIVERSITY", "sport": "ATHLETICS", "year": "2024" },

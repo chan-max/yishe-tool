@@ -36,6 +36,10 @@ export function createDefaultCanvasChildcanvasStickerOptions() {
             unit:'px',
             value:2000
         },
+        fontSize: {
+            unit: 'px',
+            value: 32
+        },
         undeletable: true, // 不可删除
         filter: createFilterDefaultOptions('px'),
         backgroundColor: {
@@ -143,7 +147,16 @@ export const Canvas = defineComponent({
                         </foreignObject>
                     </svg> */}
                     
-                    <div>
+                    <div
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            overflow: 'hidden',
+                        }}
+                    >
                      {ctx.slots.default()}
                     </div>
 

@@ -3,7 +3,7 @@
  */
 
 import { canvasStickerOptionsOnlyChild, updateRenderingCanvas } from "../index.tsx";
-import { createFilterFromOptions, createTransformString } from "../helper.tsx";
+import { createFilterFromOptions, createTransformString, formatToNativeSizeString } from "../helper.tsx";
 import { computed, defineComponent, ref, watchEffect } from "vue";
 import {
   createFilterDefaultOptions,
@@ -67,6 +67,11 @@ export const Html = defineComponent({
 
     return () => {
       const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit;
+      const canvasWidthCss = formatToNativeSizeString(canvasStickerOptionsOnlyChild.value.width);
+      const canvasHeightCss = formatToNativeSizeString(canvasStickerOptionsOnlyChild.value.height);
+      const canvasFontSizeCss = formatToNativeSizeString(
+        canvasStickerOptionsOnlyChild.value.fontSize || { value: 32, unit: "px" }
+      );
       const filterOptions =
         props.options?.filter || createFilterDefaultOptions(canvasUnit);
 
@@ -79,6 +84,11 @@ export const Html = defineComponent({
       };
 
       const style: Record<string, string | number> = {
+        "--canvas-html-width": canvasWidthCss,
+        "--canvas-html-height": canvasHeightCss,
+        "--canvas-html-vw": `calc(${canvasWidthCss} / 100)`,
+        "--canvas-html-vh": `calc(${canvasHeightCss} / 100)`,
+        "--canvas-font-size": canvasFontSizeCss,
         flexShrink: 0,
         width: "100%",
         height: "100%",
@@ -87,6 +97,9 @@ export const Html = defineComponent({
         zIndex: props.options?.zIndex ?? 0,
         overflow: "hidden",
         boxSizing: "border-box",
+        position: "relative",
+        minWidth: "100%",
+        minHeight: "100%",
       };
 
       onBeforeReturnRender({
@@ -101,12 +114,44 @@ export const Html = defineComponent({
             style={style}
             ref={targetElRef}
           >
+            <style>{`
+              .${renderPayload.value.scopeClassName} .canvas-html-child__content,
+              .${renderPayload.value.scopeClassName} .canvas-html-child__content * {
+                all: revert;
+                box-sizing: border-box;
+              }
+
+              .${renderPayload.value.scopeClassName} .canvas-html-child__content {
+                display: block;
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                inset: 0;
+                overflow: hidden;
+              }
+
+              .${renderPayload.value.scopeClassName} .canvas-html-child__content style,
+              .${renderPayload.value.scopeClassName} .canvas-html-child__content script {
+                display: none;
+              }
+            `}</style>
             {renderPayload.value.scopedCss ? <style>{renderPayload.value.scopedCss}</style> : null}
 
             {renderPayload.value.sanitizedHtml ? (
               <div
                 class="canvas-html-child__content"
-                style={{ width: "100%", height: "100%" }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute",
+                  inset: "0",
+                  display: "block",
+                  overflow: "hidden",
+                  boxSizing: "border-box",
+                  fontSize: "var(--canvas-font-size)",
+                  minWidth: "100%",
+                  minHeight: "100%"
+                }}
                 innerHTML={renderPayload.value.sanitizedHtml}
               ></div>
             ) : (

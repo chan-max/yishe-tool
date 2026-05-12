@@ -1,7 +1,6 @@
 export type HtmlTemplateFieldType =
   | "text"
   | "textarea"
-  | "number"
   | "color"
   | "image"
   | "font";

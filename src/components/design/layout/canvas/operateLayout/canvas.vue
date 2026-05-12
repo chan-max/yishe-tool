@@ -65,7 +65,8 @@
       <operateItemColor label="画布背景颜色" tooltip="画布背景颜色" v-model="currentOperatingCanvasChild.backgroundColor">
       </operateItemColor>
 
-      <a-alert message="我们更希望你使用一个新的背景元素，而不是直接更改画布的背景颜色或其他效果，虽然最终实现的效果相同" banner closable />
+      <operateItemFontSize label="画布基础字号" v-model="currentOperatingCanvasChild.fontSize">
+      </operateItemFontSize>
 
     </el-collapse-item>
     <el-collapse-item name="4" title="画布滤镜效果">
@@ -140,6 +141,18 @@ const saveLoading = ref(false)
 const exportLoading = ref(false)
 
 const canvasCollapseActives = ref(["1", "2", "3", "4", "5"])
+
+watchEffect(() => {
+  const canvasChild = currentOperatingCanvasChild.value
+  if (!canvasChild || canvasChild.type !== 'canvas' || canvasChild.fontSize) {
+    return
+  }
+
+  canvasChild.fontSize = {
+    unit: 'px',
+    value: 32,
+  }
+})
 
 
 function absoluteUnitChange(unit) {

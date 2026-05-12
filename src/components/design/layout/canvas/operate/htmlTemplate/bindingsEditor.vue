@@ -12,7 +12,7 @@
 
     <template v-for="field in bindingFields" :key="field.key">
       <operate-form-item
-        v-if="field.type === 'text' || field.type === 'textarea' || field.type === 'number'"
+        v-if="field.type === 'text' || field.type === 'textarea'"
         :style="{ alignItems: 'flex-start' }"
       >
         <template #icon>
@@ -29,23 +29,12 @@
               @update:model-value="updateFieldValue(field, $event)"
             />
             <el-input
-              v-else-if="field.type === 'textarea'"
+              v-else
               :model-value="getFieldValue(field)"
               type="textarea"
               :rows="field.rows || 3"
               resize="none"
               :placeholder="field.placeholder || '请输入内容'"
-              @update:model-value="updateFieldValue(field, $event)"
-            />
-            <el-input
-              v-else
-              :model-value="getFieldValue(field)"
-              type="number"
-              size="small"
-              :min="field.min"
-              :max="field.max"
-              :step="field.step || 1"
-              :placeholder="field.placeholder || '请输入数值'"
               @update:model-value="updateFieldValue(field, $event)"
             />
             <div v-if="field.description" class="html-template-bindings__desc">
@@ -83,7 +72,6 @@
 <script setup lang="ts">
 import { computed, watchEffect } from "vue";
 import iconText from "@/components/design/assets/icon/text-content.svg?component";
-import iconSize from "@/components/design/assets/icon/size.svg?component";
 import operateFormItem from "@/components/design/layout/canvas/operate/operateFormItem.vue";
 import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
 import operateItemImageSelect from "@/components/design/layout/canvas/operate/imageSelect/index.vue";
@@ -143,9 +131,6 @@ function resetBindings() {
 }
 
 function getFieldIcon(type: string) {
-  if (type === "number") {
-    return iconSize;
-  }
   return iconText;
 }
 </script>

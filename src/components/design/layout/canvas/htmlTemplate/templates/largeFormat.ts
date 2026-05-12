@@ -5,7 +5,6 @@ import {
   createTemplate,
   defaultFontBinding,
   fontField,
-  numberField,
   textField,
   textareaField,
 } from "./shared";
@@ -33,13 +32,7 @@ export const largeFormatTemplates: HtmlTemplateDefinition[] = [
       colorField("color.secondary", "副渐变色"),
       colorField("color.tertiary", "第三渐变色"),
       fontField("font.title", "标题字体"),
-      numberField("number.speed", "动画速度", {
-        min: 8,
-        max: 40,
-        step: 1,
-        placeholder: "18",
-        description: "控制极光渐变流动速度，数值越大越慢。",
-      }),
+      textField("style.speed", "动画速度", "18", "请输入数值，控制极光渐变流动速度，数值越大越慢。"),
     ],
     {
       text: {
@@ -56,7 +49,7 @@ export const largeFormatTemplates: HtmlTemplateDefinition[] = [
       font: {
         title: defaultFontBinding,
       },
-      number: {
+      style: {
         speed: 18,
       },
     },
@@ -82,7 +75,7 @@ export const largeFormatTemplates: HtmlTemplateDefinition[] = [
         linear-gradient(120deg, {{color.background}}, {{color.primary}}, {{color.secondary}}, {{color.tertiary}}, {{color.background}});
         background-size:180% 180%;
         filter:blur(6px) saturate(120%);
-        animation:auroraDeskShift calc({{number.speed}} * 1s) ease infinite;}
+        animation:auroraDeskShift calc({{style.speed}} * 1s) ease infinite;}
       .aurora-mat__orb{position:absolute;border-radius:50%;filter:blur(22px);opacity:.46;}
       .aurora-mat__orb--a{width:34%;aspect-ratio:1/1;left:6%;top:16%;background:{{color.primary}};animation:auroraDeskFloatA 15s ease-in-out infinite;}
       .aurora-mat__orb--b{width:42%;aspect-ratio:1/1;right:6%;bottom:10%;background:{{color.secondary}};animation:auroraDeskFloatB 17s ease-in-out infinite;}
@@ -443,13 +436,7 @@ export const largeFormatTemplates: HtmlTemplateDefinition[] = [
       colorField("color.primary", "主线条色"),
       colorField("color.secondary", "辅助色"),
       fontField("font.title", "标题字体"),
-      numberField("number.density", "纹理密度", {
-        min: 8,
-        max: 30,
-        step: 1,
-        placeholder: "16",
-        description: "控制背景线条的密度。",
-      }),
+      textField("style.density", "纹理密度", "16", "请输入数值，控制背景线条的密度。"),
     ],
     {
       text: {
@@ -465,7 +452,7 @@ export const largeFormatTemplates: HtmlTemplateDefinition[] = [
       font: {
         title: defaultFontBinding,
       },
-      number: {
+      style: {
         density: 16,
       },
     },
@@ -476,8 +463,8 @@ export const largeFormatTemplates: HtmlTemplateDefinition[] = [
       }
       .silk-echo{width:100%;height:100%;position:relative;overflow:hidden;padding:7%;box-sizing:border-box;background:{{color.background}};}
       .silk-echo::before{content:"";position:absolute;inset:0;background:
-        repeating-linear-gradient(90deg, rgba(107,33,168,.08) 0 1px, transparent 1px calc({{number.density}} * 1px)),
-        repeating-linear-gradient(0deg, rgba(15,118,110,.08) 0 1px, transparent 1px calc(({{number.density}} * 1px) + 8px)),
+        repeating-linear-gradient(90deg, rgba(107,33,168,.08) 0 1px, transparent 1px calc({{style.density}} * 1px)),
+        repeating-linear-gradient(0deg, rgba(15,118,110,.08) 0 1px, transparent 1px calc(({{style.density}} * 1px) + 8px)),
         radial-gradient(circle at 50% 50%, rgba(255,255,255,.6), transparent 56%);
         mix-blend-mode:multiply;animation:silkMoireShift 10s ease-in-out infinite;}
       .silk-echo__wave{position:absolute;inset:12% 8%;border-radius:40px;background:

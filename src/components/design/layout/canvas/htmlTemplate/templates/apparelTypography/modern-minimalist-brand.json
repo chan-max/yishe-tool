@@ -14,7 +14,7 @@
     { "key": "text.tagline", "label": "标语", "type": "text", "placeholder": "Design & Craft", "description": "可选：品牌标语或副标题" },
     { "key": "color.text", "label": "文字颜色", "type": "color" },
     { "key": "color.dot", "label": "装饰点颜色", "type": "color" },
-    { "key": "style.weight", "label": "字重", "type": "number", "min": 100, "max": 900, "step": 100 }
+    { "key": "style.weight", "label": "字重", "type": "text", "placeholder": "700", "description": "请输入数值，如 700" }
   ],
   "defaults": {
     "text": { "brand": "STUDIO.", "tagline": "Design & Craft" },

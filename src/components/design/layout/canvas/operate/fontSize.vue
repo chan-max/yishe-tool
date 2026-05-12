@@ -3,7 +3,7 @@
     <template #icon>
       <icon></icon>
     </template>
-    <template #name> 文字大小 </template>
+    <template #name> {{ label }} </template>
     <template #content>
       <el-popover trigger="click" popper-class="el-popover-operation">
         <template #reference>
@@ -40,6 +40,9 @@ import { ref, computed } from "vue";
 import { canvasStickerOptions,canvasStickerOptionsOnlyChild} from "@/components/design/layout/canvas/index.tsx";
 
 const props = defineProps({
+  label: {
+    default: "文字大小",
+  },
   tooltip: {
     default: "",
   },

@@ -104,9 +104,6 @@ export function normalizeHtmlTemplateBindings(
           type: "pure",
         });
         break;
-      case "number":
-        setValueByPath(normalized, field.key, 0);
-        break;
       case "font":
       case "image":
         setValueByPath(normalized, field.key, null);
@@ -168,10 +165,6 @@ function inferHtmlTemplateFieldType(path = ""): HtmlTemplateFieldType | null {
     return "text";
   }
 
-  if (path.startsWith("number.")) {
-    return "number";
-  }
-
   if (path.startsWith("color.")) {
     return "color";
   }
@@ -211,7 +204,6 @@ function createInferredHtmlTemplateFieldLabel(key: string, type: HtmlTemplateFie
   const typeLabelMap: Record<HtmlTemplateFieldType, string> = {
     text: "文本",
     textarea: "多行文本",
-    number: "数值",
     color: "颜色",
     image: "图片",
     font: "字体",
@@ -224,7 +216,6 @@ function createInferredHtmlTemplateFieldDescription(key: string, type: HtmlTempl
   const variableTokenMap: Record<HtmlTemplateFieldType, string> = {
     text: `{{${key}}}`,
     textarea: `{{${key}}}`,
-    number: `{{${key}}}`,
     color: `{{${key}}}`,
     image: `{{${key}.url}}`,
     font: `{{${key}.family}}`,
@@ -397,6 +388,9 @@ export function createHtmlTemplateContext(options: any) {
 
   const canvasWidth = formatToNativeSizeString(canvasStickerOptionsOnlyChild.value.width);
   const canvasHeight = formatToNativeSizeString(canvasStickerOptionsOnlyChild.value.height);
+  const canvasFontSize = formatToNativeSizeString(
+    canvasStickerOptionsOnlyChild.value.fontSize || { value: 32, unit: "px" }
+  );
 
   return {
     ...bindings,
@@ -407,6 +401,9 @@ export function createHtmlTemplateContext(options: any) {
       heightUnit: canvasStickerOptionsOnlyChild.value.height.unit,
       widthCss: canvasWidth,
       heightCss: canvasHeight,
+      fontSize: canvasStickerOptionsOnlyChild.value.fontSize?.value ?? 32,
+      fontSizeUnit: canvasStickerOptionsOnlyChild.value.fontSize?.unit ?? "px",
+      fontSizeCss: canvasFontSize,
     },
     element: {
       id: options?.id || "",
@@ -473,6 +470,12 @@ function sanitizeInlineStyle(rawStyle = "") {
     .replace(/behavior\s*:[^;]+;?/gi, "")
     .replace(/url\(\s*(['"]?)\s*javascript:[^)]+\)/gi, "none")
     .replace(/position\s*:\s*fixed/gi, "position: absolute")
+    .replace(/(-?(?:\d+|\d*\.\d+))v([wh])\b/gi, (_, value, axis) => {
+      const variableName = String(axis).toLowerCase() === "w"
+        ? "--canvas-html-vw"
+        : "--canvas-html-vh";
+      return `calc(${value} * var(${variableName}))`;
+    })
     .trim();
 }
 
@@ -539,6 +542,12 @@ function sanitizeCssContent(rawCss = "") {
     .replace(/behavior\s*:[^;]+;?/gi, "")
     .replace(/url\(\s*(['"]?)\s*javascript:[^)]+\)/gi, "none")
     .replace(/position\s*:\s*fixed/gi, "position: absolute")
+    .replace(/(-?(?:\d+|\d*\.\d+))v([wh])\b/gi, (_, value, axis) => {
+      const variableName = String(axis).toLowerCase() === "w"
+        ? "--canvas-html-vw"
+        : "--canvas-html-vh";
+      return `calc(${value} * var(${variableName}))`;
+    })
     .trim();
 }
 

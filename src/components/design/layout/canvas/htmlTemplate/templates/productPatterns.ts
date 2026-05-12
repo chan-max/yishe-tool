@@ -3,7 +3,7 @@ import {
   colorField,
   createPureColor,
   createTemplate,
-  numberField,
+  textField,
 } from "./shared";
 
 export const productPatternTemplates: HtmlTemplateDefinition[] = [
@@ -25,13 +25,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
       colorField("color.primary", "主渐变色"),
       colorField("color.secondary", "副渐变色"),
       colorField("color.tertiary", "第三渐变色"),
-      numberField("number.blur", "流体柔化", {
-        min: 12,
-        max: 48,
-        step: 1,
-        placeholder: "26",
-        description: "控制色块边缘的柔和程度。",
-      }),
+      textField("style.blur", "流体柔化", "26", "请输入数值，控制色块边缘的柔和程度。"),
     ],
     {
       color: {
@@ -40,7 +34,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
         secondary: createPureColor("#8b5cf6"),
         tertiary: createPureColor("#fb7185"),
       },
-      number: {
+      style: {
         blur: 26,
       },
     },
@@ -57,7 +51,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
         radial-gradient(circle at 76% 18%, {{color.secondary}}, transparent 30%),
         radial-gradient(circle at 54% 76%, {{color.tertiary}}, transparent 28%),
         radial-gradient(circle at 22% 78%, rgba(255,255,255,.42), transparent 24%);
-        filter:blur(calc({{number.blur}} * 1px)) saturate(120%);
+        filter:blur(calc({{style.blur}} * 1px)) saturate(120%);
         opacity:.92;
         animation:spectrumFlowDrift 18s ease-in-out infinite;}
       .pattern-spectrum::after{content:"";position:absolute;inset:0;background:
@@ -84,13 +78,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
       colorField("color.primary", "主线条色"),
       colorField("color.secondary", "副线条色"),
       colorField("color.highlight", "高光色"),
-      numberField("number.spacing", "线条密度", {
-        min: 18,
-        max: 52,
-        step: 1,
-        placeholder: "28",
-        description: "控制波浪线之间的间距。",
-      }),
+      textField("style.spacing", "线条密度", "28", "请输入数值，控制波浪线之间的间距。"),
     ],
     {
       color: {
@@ -99,7 +87,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
         secondary: createPureColor("#38bdf8"),
         highlight: createPureColor("#c084fc"),
       },
-      number: {
+      style: {
         spacing: 28,
       },
     },
@@ -116,7 +104,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
         radial-gradient(120% 92% at 18% 54%, transparent 56%, rgba(34,211,238,.28) 57% 58%, transparent 59%),
         radial-gradient(120% 92% at 44% 54%, transparent 56%, rgba(56,189,248,.24) 57% 58%, transparent 59%),
         radial-gradient(120% 92% at 70% 54%, transparent 56%, rgba(192,132,252,.22) 57% 58%, transparent 59%);
-        background-size:calc({{number.spacing}} * 6px) 100%;
+        background-size:calc({{style.spacing}} * 6px) 100%;
         animation:neonWaveShift 16s ease-in-out infinite;
         filter:drop-shadow(0 0 10px rgba(34,211,238,.18));}
       .pattern-wave::after{content:"";position:absolute;inset:0;background:
@@ -144,13 +132,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
       colorField("color.background", "底色"),
       colorField("color.primary", "网格色"),
       colorField("color.secondary", "斜切光色"),
-      numberField("number.grid", "网格间距", {
-        min: 16,
-        max: 40,
-        step: 1,
-        placeholder: "22",
-        description: "控制网格密度。",
-      }),
+      textField("style.grid", "网格间距", "22", "请输入数值，控制网格密度。"),
     ],
     {
       color: {
@@ -158,7 +140,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
         primary: createPureColor("#38bdf8"),
         secondary: createPureColor("#f97316"),
       },
-      number: {
+      style: {
         grid: 22,
       },
     },
@@ -174,7 +156,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
       .pattern-speed::before{content:"";position:absolute;inset:0;background:
         linear-gradient(rgba(56,189,248,.2) 1px, transparent 1px),
         linear-gradient(90deg, rgba(56,189,248,.16) 1px, transparent 1px);
-        background-size:calc({{number.grid}} * 1px) calc({{number.grid}} * 1px);
+        background-size:calc({{style.grid}} * 1px) calc({{style.grid}} * 1px);
         transform:perspective(900px) rotateX(72deg) scale(1.4);
         transform-origin:center 80%;
         opacity:.5;}
@@ -401,13 +383,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
       colorField("color.background", "底色"),
       colorField("color.primary", "主图案色"),
       colorField("color.secondary", "辅助图案色"),
-      numberField("number.tile", "图案密度", {
-        min: 20,
-        max: 80,
-        step: 1,
-        placeholder: "42",
-        description: "控制棋盘和纹理的大小。",
-      }),
+      textField("style.tile", "图案密度", "42", "请输入数值，控制棋盘和纹理的大小。"),
     ],
     {
       color: {
@@ -415,7 +391,7 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
         primary: createPureColor("#111827"),
         secondary: createPureColor("#0f766e"),
       },
-      number: {
+      style: {
         tile: 42,
       },
     },
@@ -429,8 +405,8 @@ export const productPatternTemplates: HtmlTemplateDefinition[] = [
         linear-gradient(45deg, rgba(17,24,39,.08) 25%, transparent 25%, transparent 75%, rgba(17,24,39,.08) 75%, rgba(17,24,39,.08)),
         linear-gradient(45deg, rgba(15,118,110,.08) 25%, transparent 25%, transparent 75%, rgba(15,118,110,.08) 75%, rgba(15,118,110,.08)),
         radial-gradient(circle at 50% 50%, rgba(255,255,255,.42), transparent 58%);
-        background-size:calc({{number.tile}} * 1px) calc({{number.tile}} * 1px), calc({{number.tile}} * 1px) calc({{number.tile}} * 1px), 100% 100%;
-        background-position:0 0, calc(({{number.tile}} * 1px) / 2) calc(({{number.tile}} * 1px) / 2), 50% 50%;
+        background-size:calc({{style.tile}} * 1px) calc({{style.tile}} * 1px), calc({{style.tile}} * 1px) calc({{style.tile}} * 1px), 100% 100%;
+        background-position:0 0, calc(({{style.tile}} * 1px) / 2) calc(({{style.tile}} * 1px) / 2), 50% 50%;
         animation:moireTileShift 9s ease-in-out infinite;
         mix-blend-mode:multiply;}
       .pattern-moire::after{content:"";position:absolute;inset:0;background:

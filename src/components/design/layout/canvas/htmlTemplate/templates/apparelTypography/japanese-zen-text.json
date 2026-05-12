@@ -15,7 +15,7 @@
     { "key": "text.desc", "label": "短描述", "type": "textarea", "placeholder": "Beauty in imperfection", "rows": 2 },
     { "key": "color.ink", "label": "墨色", "type": "color" },
     { "key": "color.paper", "label": "纸色/背景", "type": "color" },
-    { "key": "style.size", "label": "汉字大小", "type": "number", "min": 60, "max": 150, "step": 10 }
+    { "key": "style.size", "label": "汉字大小", "type": "text", "placeholder": "110", "description": "请输入数值，如 110" }
   ],
   "defaults": {
     "text": { "kanji": "侘寂", "reading": "WABI-SABI", "desc": "Beauty in imperfection" },

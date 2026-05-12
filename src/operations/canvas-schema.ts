@@ -33,7 +33,7 @@ const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一�
 {"children":[{"type":"canvas","width":{"value":2000,"unit":"px"},"height":{"value":2000,"unit":"px"},"backgroundColor":{"color":"#FF0000"}},{"type":"background","backgroundColor":{"type":"pure","color":"#FF0000"},"zIndex":0},{"type":"text","textContent":"你好世界","fontSize":{"value":120,"unit":"px"},"fontColor":{"type":"pure","color":"#FFFFFF"},"position":{"center":true,"verticalCenter":true,"horizontalCenter":true},"zIndex":1}]}
 
 ## 可用元素类型
-- canvas: 画布底板（必需，唯一）。width/height 只能 px
+- canvas: 画布底板（必需，唯一）。width/height 只能 px，可设置 fontSize 作为 HTML 元素 em 的基础字号
 - background: 背景层，默认铺满画布。支持 backgroundColor(type+color)、customBackground
 - text: 文字。支持 textContent, fontSize(px), fontWeight("100"~"900"数字字符串，不可用bold/normal), fontColor, textAlign, writingMode, textShadow[], textStrokeWidth+textStrokeColor, isRoundText, isTraditionalChinese, lineHeight, letterSpacing
 - image: 图片。imageInfo.url, objectFit, printEffect
@@ -234,6 +234,7 @@ export const CANVAS_DESIGN_SCHEMA = {
         type: { const: 'canvas' },
         width: { type: 'object', description: '画布宽度（只能用 px）', properties: { value: { type: 'number', minimum: 1 }, unit: { const: 'px' } }, required: ['value', 'unit'], additionalProperties: false },
         height: { type: 'object', description: '画布高度（只能用 px）', properties: { value: { type: 'number', minimum: 1 }, unit: { const: 'px' } }, required: ['value', 'unit'], additionalProperties: false },
+        fontSize: { type: 'object', description: '画布基础字号，HTML 元素可用 em 继承缩放', properties: { value: { type: 'number', minimum: 1 }, unit: { type: 'string', enum: ['px', 'vw', 'vh'], default: 'px' } }, required: ['value', 'unit'], additionalProperties: false },
         backgroundColor: { type: 'object', description: '画布背景色（注意：无 type 字段，直接 color）', properties: { color: { type: 'string', description: 'CSS颜色值' } }, required: ['color'], additionalProperties: false },
         filter: { $ref: '#/definitions/Filter' },
       },

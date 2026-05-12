@@ -12,7 +12,7 @@
 
         <div class="ai-float-chat__messages" ref="messagesRef">
           <div v-if="messages.length === 0" class="ai-float-chat__empty">
-            <div class="ai-float-chat__empty-icon">🎨</div>
+            <div class="ai-float-chat__empty-icon">AI</div>
             <div>用一句话描述你想要的设计</div>
             <div class="ai-float-chat__quick-list">
               <div
@@ -84,16 +84,20 @@
       </div>
     </transition>
 
-    <div class="ai-float-chat__trigger" @click="open = !open" :class="{ 'ai-float-chat__trigger--active': open }">
-      <RobotOutlined v-if="!open" />
-      <CloseOutlined v-else />
+    <div
+      class="ai-float-chat__trigger"
+      @click="open = !open"
+      :class="{ 'ai-float-chat__trigger--active': open }"
+    >
+      <div class="ai-float-chat__trigger-mark">AI</div>
+      <div class="ai-float-chat__trigger-text">设计助手</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, nextTick } from 'vue'
-import { RobotOutlined, CloseOutlined, DeleteOutlined, SendOutlined } from '@ant-design/icons-vue'
+import { DeleteOutlined, SendOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { aiChat } from '@/ai/api'
 import { DESIGN_TOOL_FEATURE_CODES } from '@/ai/feature-codes'
@@ -129,10 +133,10 @@ const messagesRef = ref<HTMLElement>()
 const designMode = ref<'operation' | 'direct'>('operation')
 
 const quickPrompts = [
-  { label: '🏷️ 圆形贴纸', prompt: '创建一个圆形贴纸，红色背景，白色 "SALE 50%" 粗体大字居中' },
-  { label: '👕 T恤印花', prompt: '为 T恤前胸创建一个印花设计，主图案是一只简约线条猫，居中，黑底白线' },
-  { label: '☕ 马克杯', prompt: '为马克杯创建一个印花设计，写 "GOOD MORNING"，手写风格' },
-  { label: '🎨 海报', prompt: '创建一个 A3 海报设计，极简风格，黑底白字 "EXHIBITION"' },
+  { label: '圆形贴纸', prompt: '创建一个圆形贴纸，红色背景，白色 "SALE 50%" 粗体大字居中' },
+  { label: 'T恤印花', prompt: '为 T恤前胸创建一个印花设计，主图案是一只简约线条猫，居中，黑底白线' },
+  { label: '马克杯', prompt: '为马克杯创建一个印花设计，写 "GOOD MORNING"，手写风格' },
+  { label: '海报', prompt: '创建一个 A3 海报设计，极简风格，黑底白字 "EXHIBITION"' },
 ]
 
 function scrollToBottom() {
@@ -277,47 +281,76 @@ async function handleOperationDesign(text: string) {
 <style lang="less" scoped>
 .ai-float-chat {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  left: 24px;
+  bottom: 24px;
   z-index: 10000;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .ai-float-chat__trigger {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
+  width: 132px;
+  height: 44px;
+  padding: 0 14px 0 8px;
+  border: 1px solid rgba(102, 126, 234, 0.34);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(246, 248, 255, 0.94));
+  box-shadow: 0 14px 34px rgba(37, 47, 88, 0.18);
+  color: #26315f;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
-  transition: all 0.3s;
-  font-size: 20px;
-  margin-left: auto;
+  gap: 8px;
+  backdrop-filter: blur(12px);
 
   &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.6);
+    transform: translateY(-2px);
+    border-color: rgba(102, 126, 234, 0.6);
+    box-shadow: 0 18px 42px rgba(37, 47, 88, 0.24);
   }
 
   &--active {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    box-shadow: 0 4px 16px rgba(245, 87, 108, 0.4);
+    color: #fff;
+    border-color: rgba(118, 75, 162, 0.36);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
+}
+
+.ai-float-chat__trigger-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+  flex-shrink: 0;
+
+  .ai-float-chat__trigger--active & {
+    background: rgba(255, 255, 255, 0.18);
+  }
+}
+
+.ai-float-chat__trigger-text {
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .ai-float-chat__panel {
   position: absolute;
   bottom: 56px;
-  right: 0;
+  left: 0;
   width: 360px;
   height: 480px;
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 18px;
+  box-shadow: 0 22px 56px rgba(15, 23, 42, 0.18);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -327,12 +360,13 @@ async function handleOperationDesign(text: string) {
   display: flex;
   align-items: center;
   padding: 12px 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
+  background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+  color: #1f2937;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   gap: 8px;
   flex-shrink: 0;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.92);
 }
 
 .ai-float-chat__typing {
@@ -343,10 +377,10 @@ async function handleOperationDesign(text: string) {
 
 .ai-float-chat__clear-btn {
   margin-left: auto;
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: #64748b !important;
 
   &:hover {
-    color: #fff !important;
+    color: #1f2937 !important;
   }
 }
 
@@ -371,7 +405,16 @@ async function handleOperationDesign(text: string) {
 }
 
 .ai-float-chat__empty-icon {
-  font-size: 40px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
 .ai-float-chat__quick-list {

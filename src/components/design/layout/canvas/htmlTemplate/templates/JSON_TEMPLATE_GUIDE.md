@@ -156,7 +156,7 @@ templates/
 ### number
 数字输入
 ```json
-{ "key": "style.size", "label": "大小", "type": "number", "min": 0, "max": 100, "step": 5 }
+{ "key": "style.size", "label": "大小", "type": "text", "placeholder": "72", "description": "请输入数值，如 72" }
 ```
 
 ### color

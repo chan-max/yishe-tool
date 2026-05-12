@@ -5,7 +5,6 @@ import {
   createTemplate,
   defaultFontBinding,
   fontField,
-  numberField,
   textField,
   textareaField,
 } from "./shared";
@@ -32,13 +31,7 @@ export const allOverPrintTemplates: HtmlTemplateDefinition[] = [
       colorField("color.accent", "强调色"),
       colorField("color.secondary", "辅助色"),
       fontField("font.title", "标题字体"),
-      numberField("number.gridOpacity", "网格透明度", {
-        min: 8,
-        max: 40,
-        step: 1,
-        placeholder: "18",
-        description: "控制背景网格的强弱，数值越大越明显。",
-      }),
+      textField("style.gridOpacity", "网格透明度", "18", "请输入数值，控制背景网格的强弱，数值越大越明显。"),
     ],
     {
       text: {
@@ -54,7 +47,7 @@ export const allOverPrintTemplates: HtmlTemplateDefinition[] = [
       font: {
         title: defaultFontBinding,
       },
-      number: {
+      style: {
         gridOpacity: 18,
       },
     },
@@ -63,8 +56,8 @@ export const allOverPrintTemplates: HtmlTemplateDefinition[] = [
         radial-gradient(circle at 12% 18%, rgba(255,255,255,.08), transparent 20%),
         linear-gradient(125deg, {{color.background}}, #111827);}
       .desk-mat::before{content:"";position:absolute;inset:0;background:
-        linear-gradient(rgba(255,255,255,calc({{number.gridOpacity}} / 100)) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,calc({{number.gridOpacity}} / 100)) 1px, transparent 1px);
+        linear-gradient(rgba(255,255,255,calc({{style.gridOpacity}} / 100)) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,calc({{style.gridOpacity}} / 100)) 1px, transparent 1px);
         background-size:clamp(18px,2.8vw,26px) clamp(18px,2.8vw,26px);
         opacity:.72;}
       .desk-mat::after{content:"";position:absolute;inset:auto -6% -24% auto;width:50%;aspect-ratio:1/1;border-radius:50%;background:radial-gradient(circle, rgba(249,115,22,.34), transparent 66%);filter:blur(8px);}
@@ -112,13 +105,7 @@ export const allOverPrintTemplates: HtmlTemplateDefinition[] = [
       colorField("color.accent", "主线条色"),
       colorField("color.secondary", "副线条色"),
       fontField("font.title", "标题字体"),
-      numberField("number.arc", "轨道粗细", {
-        min: 6,
-        max: 28,
-        step: 1,
-        placeholder: "16",
-        description: "控制圆弧轨道的粗细。",
-      }),
+      textField("style.arc", "轨道粗细", "16", "请输入数值，控制圆弧轨道的粗细。"),
     ],
     {
       text: {
@@ -134,7 +121,7 @@ export const allOverPrintTemplates: HtmlTemplateDefinition[] = [
       font: {
         title: defaultFontBinding,
       },
-      number: {
+      style: {
         arc: 16,
       },
     },
@@ -144,8 +131,8 @@ export const allOverPrintTemplates: HtmlTemplateDefinition[] = [
         {{color.background}};}
       .mug-wrap__orbit{position:absolute;inset:-10% -8%;background:
         radial-gradient(circle at 20% 52%, transparent 0 26%, rgba(124,58,237,.08) 26.5% 27.2%, transparent 27.8%),
-        radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(124,58,237,.18) 34.4% calc(34.4% + {{number.arc}}px), transparent calc(35.2% + {{number.arc}}px)),
-        radial-gradient(circle at 74% 46%, transparent 0 42%, rgba(236,72,153,.24) 42.5% calc(42.5% + {{number.arc}}px), transparent calc(43.2% + {{number.arc}}px));
+        radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(124,58,237,.18) 34.4% calc(34.4% + {{style.arc}}px), transparent calc(35.2% + {{style.arc}}px)),
+        radial-gradient(circle at 74% 46%, transparent 0 42%, rgba(236,72,153,.24) 42.5% calc(42.5% + {{style.arc}}px), transparent calc(43.2% + {{style.arc}}px));
         filter:blur(.1px);}
       .mug-wrap__content{position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
       .mug-wrap__subtitle{font-size:clamp(12px,1.6vw,14px);font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:{{color.accent}};}
@@ -188,13 +175,7 @@ export const allOverPrintTemplates: HtmlTemplateDefinition[] = [
       colorField("color.primary", "主纹样色"),
       colorField("color.secondary", "副纹样色"),
       fontField("font.title", "字母字体"),
-      numberField("number.tile", "纹样尺寸", {
-        min: 72,
-        max: 180,
-        step: 2,
-        placeholder: "118",
-        description: "控制每个重复模块的尺寸。",
-      }),
+      textField("style.tile", "纹样尺寸", "118", "请输入数值，控制每个重复模块的尺寸。"),
     ],
     {
       text: {
@@ -209,7 +190,7 @@ export const allOverPrintTemplates: HtmlTemplateDefinition[] = [
       font: {
         title: defaultFontBinding,
       },
-      number: {
+      style: {
         tile: 118,
       },
     },
@@ -219,7 +200,7 @@ export const allOverPrintTemplates: HtmlTemplateDefinition[] = [
       .repeat-swatch__cell{display:grid;place-items:center;position:relative;overflow:hidden;}
       .repeat-swatch__cell:nth-child(odd){background:rgba(15,23,42,.03);}
       .repeat-swatch__cell:nth-child(3n){background:rgba(56,189,248,.08);}
-      .repeat-swatch__letter{font-size:min(calc({{number.tile}} * 1px), 18vw);line-height:1;font-weight:900;letter-spacing:-.08em;color:{{color.primary}};font-family:{{font.title.family}}, "Arial Black", sans-serif;opacity:.92;}
+      .repeat-swatch__letter{font-size:min(calc({{style.tile}} * 1px), 18vw);line-height:1;font-weight:900;letter-spacing:-.08em;color:{{color.primary}};font-family:{{font.title.family}}, "Arial Black", sans-serif;opacity:.92;}
       .repeat-swatch__cell:nth-child(even) .repeat-swatch__letter{color:{{color.secondary}};}
       .repeat-swatch__cell::after{content:"";position:absolute;inset:auto 10% 16% 10%;height:10%;border-radius:999px;background:linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent);opacity:.55;}
       .repeat-swatch__meta{position:absolute;left:4.5%;right:4.5%;bottom:5%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 14px;border-radius:18px;background:rgba(255,255,255,.72);backdrop-filter:blur(14px);box-shadow:0 14px 26px rgba(15,23,42,.08);}

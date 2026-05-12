@@ -116,29 +116,6 @@ export function textareaField(
   };
 }
 
-export function numberField(
-  key: string,
-  label: string,
-  options: {
-    min?: number;
-    max?: number;
-    step?: number;
-    placeholder?: string;
-    description?: string;
-  } = {}
-): HtmlTemplateFieldDefinition {
-  return {
-    key,
-    label,
-    type: "number",
-    min: options.min,
-    max: options.max,
-    step: options.step,
-    placeholder: options.placeholder,
-    description: options.description,
-  };
-}
-
 export function colorField(
   key: string,
   label: string,

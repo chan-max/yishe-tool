@@ -8,16 +8,25 @@
             <div class="size-inputs-wrapper">
                 <div class="input-group">
                     <span class="label-text">宽</span>
-                    <el-input class="size-input" size="small" v-model.number="width.value" step="10" placeholder="宽" type="number">
+                    <el-input class="size-input" size="small" v-model.number="width.value" step="10" placeholder="宽" type="number" @input="onWidthChange">
                         <template #suffix>
                             <span class="unit-text">{{ canvasStickerOptions.unit }}</span>
                         </template>
                     </el-input>
                 </div>
+
+                <el-tooltip :content="locked ? '点击解锁比例' : '点击锁定比例'" placement="top">
+                    <div class="lock-btn" :class="{ 'lock-btn--active': locked }" @click="toggleLock">
+                        <el-icon :size="14">
+                            <Lock v-if="locked" />
+                            <Unlock v-else />
+                        </el-icon>
+                    </div>
+                </el-tooltip>
                 
                 <div class="input-group input-group--secondary">
                     <span class="label-text">高</span>
-                    <el-input class="size-input" size="small" v-model.number="height.value" step="10" placeholder="高" type="number">
+                    <el-input class="size-input" size="small" v-model.number="height.value" step="10" placeholder="高" type="number" @input="onHeightChange">
                         <template #suffix>
                             <span class="unit-text">{{ canvasStickerOptions.unit }}</span>
                         </template>
@@ -31,6 +40,8 @@
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/size.svg?component";
 import { canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
+import { Lock, Unlock } from "@element-plus/icons-vue";
+import { ref } from 'vue'
 
 const props = defineProps({
     label: {
@@ -40,6 +51,39 @@ const props = defineProps({
 
 const width = defineModel<any>("width", { default: { value: 0 } });
 const height = defineModel<any>("height", { default: { value: 0 } });
+
+const locked = ref(false)
+let lockedRatio = 1
+let updating = false
+
+function toggleLock() {
+    if (!locked.value) {
+        const w = Number(width.value?.value) || 0
+        const h = Number(height.value?.value) || 0
+        lockedRatio = h === 0 ? 1 : w / h
+    }
+    locked.value = !locked.value
+}
+
+function onWidthChange() {
+    if (!locked.value || updating) return
+    const w = Number(width.value?.value) || 0
+    if (w <= 0) return
+    updating = true
+    const newH = Math.round(w / lockedRatio)
+    height.value = { ...height.value, value: newH || 1 }
+    updating = false
+}
+
+function onHeightChange() {
+    if (!locked.value || updating) return
+    const h = Number(height.value?.value) || 0
+    if (h <= 0) return
+    updating = true
+    const newW = Math.round(h * lockedRatio)
+    width.value = { ...width.value, value: newW || 1 }
+    updating = false
+}
 </script>
 
 <style scoped lang="less">
@@ -77,6 +121,33 @@ const height = defineModel<any>("height", { default: { value: 0 } });
 .unit-text {
     font-size: 9px;
     color: #ccc;
+}
+
+.lock-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #bbb;
+    flex-shrink: 0;
+    transition: all 0.15s;
+
+    &:hover {
+        color: #666;
+        background: #f0f0f0;
+    }
+
+    &--active {
+        color: var(--el-color-primary, #409eff);
+        background: rgba(64, 158, 255, 0.08);
+
+        &:hover {
+            background: rgba(64, 158, 255, 0.15);
+        }
+    }
 }
 
 @media (max-width: 1080px) {

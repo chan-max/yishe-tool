@@ -16,7 +16,7 @@
     { "key": "text.year", "label": "年份", "type": "text", "placeholder": "1990", "description": "可选：成立年份或纪念年份" },
     { "key": "color.primary", "label": "主色", "type": "color" },
     { "key": "color.secondary", "label": "次要色", "type": "color" },
-    { "key": "style.size", "label": "中心文字大小", "type": "number", "min": 40, "max": 100, "step": 5 }
+    { "key": "style.size", "label": "中心文字大小", "type": "text", "placeholder": "72", "description": "请输入数值，如 72" }
   ],
   "defaults": {
     "text": { "top": "AUTHENTIC", "center": "BRAND", "bottom": "SINCE 1990", "year": "1990" },

@@ -29,104 +29,107 @@
       </div>
     </div>
 
-    <div
-      class="flex"
-      style="width: 100%; padding: 10px; padding-top: 20px; column-gap: 10px"
-    >
-      <el-button 
-        plain 
-        link 
-        @click="handleUploadClick"
-        :disabled="shouldUpdateCanvasSticker && !isUpdatingSticker"
-      >
-        <CloudUploadOutlined style="font-size: 1.2em; margin-right: 4px" />
-        上传
-      </el-button>
-
-      <a-dropdown arrow placement="bottom" :disabled="shouldUpdateCanvasSticker && !isUpdatingSticker">
-        <div>
-          <el-button link plain :disabled="shouldUpdateCanvasSticker && !isUpdatingSticker">
-            <LinkOutlined style="font-size: 1.2em; margin-right: 4px" />
-            导出
-          </el-button>
-        </div>
-        <template #overlay>
-          <a-menu>
-            <a-menu-item @click="exportPng"> 导出原始图 </a-menu-item>
-            <a-menu-item @click="exportTrimmedPng"> 自动去除空白边框 </a-menu-item>
-            <!-- <a-menu-item @click="exportIco"> 导出ico </a-menu-item> -->
-          </a-menu>
-        </template>
-      </a-dropdown>
-
-      <a-dropdown arrow placement="bottom">
-        <div>
-          <el-button link plain> 更多 </el-button>
-        </div>
-        <template #overlay>
-          <a-menu>
-            <a-menu-item @click="removeAllChildren"> 移除所有子元素 </a-menu-item>
-            <a-menu-item @click="consoleStikcerOptions">
-              在控制台打印贴纸信息
-            </a-menu-item>
-          </a-menu>
-        </template>
-      </a-dropdown>
-
-      <div style="flex: 1"></div>
-      <div>
-        <el-button link @click="showOfficialTemplate">
-          <span>模版</span>
+    <div class="canvas-actions-panel">
+      <div class="canvas-actions-panel__row">
+        <el-button
+          class="canvas-action-button"
+          plain
+          size="small"
+          @click="handleUploadClick"
+          :disabled="shouldUpdateCanvasSticker && !isUpdatingSticker"
+        >
+          保存贴纸
         </el-button>
+
+        <el-button
+          class="canvas-action-button"
+          plain
+          size="small"
+          @click="exportPng"
+          :disabled="shouldUpdateCanvasSticker && !isUpdatingSticker"
+        >
+          导出PNG
+        </el-button>
+
+        <el-popconfirm
+          title="确定清空画布？所有元素将被删除，此操作不可撤销。"
+          confirm-button-text="清空"
+          cancel-button-text="取消"
+          @confirm="clearCanvasChildren"
+        >
+          <template #reference>
+            <el-button class="canvas-action-button" plain size="small" type="danger">
+              清空画布
+            </el-button>
+          </template>
+        </el-popconfirm>
+
+        <a-dropdown arrow placement="bottom">
+          <div class="canvas-actions-panel__dropdown-trigger">
+            <el-button class="canvas-action-button" plain size="small">
+              更多
+            </el-button>
+          </div>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item @click="exportTrimmedPng"> 自动去除空白边框导出 </a-menu-item>
+              <a-menu-item @click="consoleStikcerOptions">
+                在控制台打印贴纸信息
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+
+        <el-tooltip
+          v-if="shouldUpdateCanvasSticker && !isUpdatingSticker"
+          content="画布内容已更改，请先更新贴纸后再进行上传或导出操作"
+          placement="top"
+        >
+          <span class="canvas-actions-panel__tooltip-trigger">
+            <el-button
+              class="canvas-action-button"
+              plain
+              size="small"
+              @click="genSticker"
+              :loading="isUpdatingSticker"
+              :disabled="isUpdatingSticker"
+              :class="{ 'update-required': shouldUpdateCanvasSticker }"
+            >
+              <template v-if="isUpdatingSticker">
+                正在更新...
+              </template>
+              <template v-else>
+                {{ shouldUpdateCanvasSticker ? "更新贴纸" : "贴纸已更新" }}
+              </template>
+            </el-button>
+          </span>
+        </el-tooltip>
+        <el-button
+          v-else
+          class="canvas-action-button"
+          plain
+          size="small"
+          @click="genSticker"
+          :loading="isUpdatingSticker"
+          :disabled="isUpdatingSticker"
+          :class="{ 'update-required': shouldUpdateCanvasSticker }"
+        >
+          <template v-if="isUpdatingSticker">
+            正在更新...
+          </template>
+          <template v-else>
+            {{ shouldUpdateCanvasSticker ? "更新贴纸" : "贴纸已更新" }}
+          </template>
+        </el-button>
+
+        <div class="canvas-actions-panel__spacer"></div>
+
         <addPopover>
-          <el-button type="primary" link>
-            <span>添加元素</span>
+          <el-button class="canvas-action-button canvas-action-button--primary" type="primary" size="small">
+            添加元素
           </el-button>
         </addPopover>
       </div>
-    </div>
-
-    <div class="flex items-center" style="width: 100%; padding: 10px; column-gap: 10px">
-      <div style="flex: 1"></div>
-      <el-tooltip
-        v-if="shouldUpdateCanvasSticker && !isUpdatingSticker"
-        content="画布内容已更改，请先更新贴纸后再进行上传或导出操作"
-        placement="top"
-      >
-        <span>
-          <el-button 
-            size="small" 
-            @click="genSticker" 
-            link
-            :loading="isUpdatingSticker"
-            :disabled="isUpdatingSticker"
-            :class="{ 'update-required': shouldUpdateCanvasSticker }"
-          >
-            <template v-if="isUpdatingSticker">
-              正在更新贴纸...
-            </template>
-            <template v-else>
-              {{ shouldUpdateCanvasSticker ? "点击更新贴纸" : "贴纸已更新" }}
-            </template>
-          </el-button>
-        </span>
-      </el-tooltip>
-      <el-button 
-        v-else
-        size="small" 
-        @click="genSticker" 
-        link
-        :loading="isUpdatingSticker"
-        :disabled="isUpdatingSticker"
-        :class="{ 'update-required': shouldUpdateCanvasSticker }"
-      >
-        <template v-if="isUpdatingSticker">
-          正在更新贴纸...
-        </template>
-        <template v-else>
-          {{ shouldUpdateCanvasSticker ? "点击更新贴纸" : "贴纸已更新" }}
-        </template>
-      </el-button>
     </div>
 
     <div style="width: 100%; padding: 1rem">
@@ -225,7 +228,6 @@
     </el-form>
   </a-modal>
 
-  <officialTemplateModal></officialTemplateModal>
   <ChildViewHelperComponent></ChildViewHelperComponent>
 </template>
 
@@ -247,23 +249,9 @@ import operateLayout from "./operateLayout/index.vue";
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 
 import {
-  Delete,
-  Plus,
-  DeleteFilled,
   CircleCloseFilled,
-  Link,
-  CirclePlusFilled,
   FullScreen,
-  WarningFilled,
 } from "@element-plus/icons-vue";
-import {
-  StarOutlined,
-  StarFilled,
-  StarTwoTone,
-  CloudUploadOutlined,
-  LinkOutlined,
-  PlusCircleOutlined,
-} from "@ant-design/icons-vue";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import addPopover from "./addPopover.vue";
 import Api from "@/api";
@@ -273,7 +261,6 @@ import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { stickerAutoplacementTags } from "@/components/design/components/tagsInput/index.ts";
 import Utils from "@/common/utils";
 import { imageDataToFile, canvasToFile } from '@/common/transform';
-import officialTemplateModal from "./officialTemplateModal/index.vue";
 import {
   currentFocusingStickerId,
   ChildViewHelperComponent,
@@ -323,9 +310,13 @@ function remove(id) {
   removeCavnasChild(id);
 }
 
-function removeAllChildren() {
+function clearCanvasChildren() {
   // 除了画布，其他全移除
-  canvasStickerOptions.value.children = [canvasStickerOptions.value.children[0]];
+  const canvasChild = canvasStickerOptions.value.children.find((child) => child.type === 'canvas') || canvasStickerOptions.value.children[0];
+  const count = canvasStickerOptions.value.children.filter((child) => child.type !== 'canvas').length;
+  canvasStickerOptions.value.children = [canvasChild];
+  currentOperatingCanvasChildId.value = canvasChild.id;
+  message.success(`已清空画布，共删除 ${count} 个元素`);
 }
 
 /**
@@ -333,15 +324,6 @@ function removeAllChildren() {
  */
 function consoleStikcerOptions() {
   console.log(JSON.parse(JSON.stringify(canvasStickerOptions.value)));
-}
-
-/**
- * @method 展示设计模板模版
- */
-
-import { showOfficialTempalteModal } from "./officialTemplateModal";
-function showOfficialTemplate() {
-  showOfficialTempalteModal.value = true;
 }
 
 /**
@@ -519,6 +501,51 @@ function genSticker() {
   transition: all 0.2s;
 }
 
+.canvas-actions-panel {
+  width: 100%;
+  padding: 10px 12px 8px;
+}
+
+.canvas-actions-panel__row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.canvas-action-button {
+  margin-left: 0 !important;
+  height: 28px;
+  min-width: 76px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.canvas-actions-panel__dropdown-trigger {
+  display: inline-flex;
+}
+
+.canvas-actions-panel__spacer {
+  flex: 1 1 24px;
+  min-width: 12px;
+}
+
+.canvas-actions-panel__tooltip-trigger {
+  display: inline-flex;
+}
+
+.canvas-action-button--primary {
+  min-width: 84px;
+}
+
 .operate {
   flex: 1;
   width: 100%;
@@ -542,6 +569,20 @@ function genSticker() {
   &:hover {
     color: #f56c6c !important;
     opacity: 0.8;
+  }
+}
+
+@media (max-width: 1080px) {
+  .canvas-actions-panel {
+    padding-inline: 10px;
+  }
+
+  .canvas-actions-panel__row {
+    gap: 6px;
+  }
+
+  .canvas-actions-panel__spacer {
+    display: none;
   }
 }
 </style>

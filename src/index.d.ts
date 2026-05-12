@@ -21,3 +21,8 @@ declare module '*.svg' {
     const content: any;
     export default content;
 }
+
+declare module 'wordcloud' {
+    const WordCloud: any;
+    export default WordCloud;
+}

@@ -89,15 +89,16 @@
       @click="open = !open"
       :class="{ 'ai-float-chat__trigger--active': open }"
     >
-      <div class="ai-float-chat__trigger-mark">AI</div>
-      <div class="ai-float-chat__trigger-text">设计助手</div>
+      <div class="ai-float-chat__trigger-mark">
+        <RobotOutlined />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, nextTick } from 'vue'
-import { DeleteOutlined, SendOutlined } from '@ant-design/icons-vue'
+import { DeleteOutlined, RobotOutlined, SendOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { aiChat } from '@/ai/api'
 import { DESIGN_TOOL_FEATURE_CODES } from '@/ai/feature-codes'
@@ -288,11 +289,11 @@ async function handleOperationDesign(text: string) {
 }
 
 .ai-float-chat__trigger {
-  width: 132px;
-  height: 44px;
-  padding: 0 14px 0 8px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
   border: 1px solid rgba(102, 126, 234, 0.34);
-  border-radius: 999px;
+  border-radius: 50%;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(246, 248, 255, 0.94));
   box-shadow: 0 14px 34px rgba(37, 47, 88, 0.18);
   color: #26315f;
@@ -301,7 +302,7 @@ async function handleOperationDesign(text: string) {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
   backdrop-filter: blur(12px);
 
   &:hover {
@@ -318,14 +319,14 @@ async function handleOperationDesign(text: string) {
 }
 
 .ai-float-chat__trigger-mark {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: 0;
   flex-shrink: 0;
@@ -335,15 +336,9 @@ async function handleOperationDesign(text: string) {
   }
 }
 
-.ai-float-chat__trigger-text {
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
 .ai-float-chat__panel {
   position: absolute;
-  bottom: 56px;
+  bottom: 48px;
   left: 0;
   width: 360px;
   height: 480px;

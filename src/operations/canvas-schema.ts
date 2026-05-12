@@ -7,6 +7,8 @@ import { createDefaultCanvasChildSvgRectOptions, createDefaultCanvasChildSvgElli
 import { createDefaultCanvasChildQrcodeOptions } from '@/components/design/layout/canvas/children/qrcode.tsx'
 import { createDefaultCanvasChildBarcodeOptions } from '@/components/design/layout/canvas/children/barcode/index.tsx'
 import { createDefaultCanvasChildHtmlOptions } from '@/components/design/layout/canvas/children/html.tsx'
+import { createDefaultCanvasChildRawCanvasOptions } from '@/components/design/layout/canvas/children/rawCanvas.tsx'
+import { createDefaultCanvasChildWordCloudOptions } from '@/components/design/layout/canvas/children/wordCloud/index.tsx'
 
 export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   canvas: createDefaultCanvasChildcanvasStickerOptions,
@@ -18,6 +20,8 @@ export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   qrcode: createDefaultCanvasChildQrcodeOptions,
   barcode: createDefaultCanvasChildBarcodeOptions,
   html: createDefaultCanvasChildHtmlOptions,
+  rawCanvas: createDefaultCanvasChildRawCanvasOptions,
+  wordCloud: createDefaultCanvasChildWordCloudOptions,
 }
 
 const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一任务：根据用户需求，输出一个完整的 JSON 对象来定义画布设计。
@@ -42,6 +46,8 @@ const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一�
 - qrcode: 二维码。qrcodeContent, qrCodeColor, qrcodeDotType, errorCorrectionLevel
 - barcode: 条形码。barcodeContent, lineColor, barcodeFormat
 - html: HTML元素。htmlContent
+- rawCanvas: Canvas元素。用于后续程序化绘制，当前支持作为透明画布容器参与布局和导出
+- wordCloud: 词云元素。当前 engine=wordcloud2，所有词云参数放在 wordCloud.engines.wordcloud2 下
 
 ## 公共属性（除 canvas 外所有元素可选）
 width/height, zIndex(数字越大越靠前), position({center:true}居中), transform, filter`
@@ -212,7 +218,7 @@ export const CANVAS_DESIGN_SCHEMA = {
       description: '画布子元素，由 type 字段区分类型。只提供你需要设定的字段，其余自动使用默认值。',
       required: ['type'],
       properties: {
-        type: { type: 'string', enum: ['canvas', 'text', 'background', 'image', 'rect', 'ellipse', 'qrcode', 'barcode', 'html'] },
+        type: { type: 'string', enum: ['canvas', 'text', 'background', 'image', 'rect', 'ellipse', 'qrcode', 'barcode', 'html', 'rawCanvas', 'wordCloud'] },
       },
       oneOf: [
         { $ref: '#/definitions/CanvasBase' },
@@ -224,6 +230,8 @@ export const CANVAS_DESIGN_SCHEMA = {
         { $ref: '#/definitions/QrcodeChild' },
         { $ref: '#/definitions/BarcodeChild' },
         { $ref: '#/definitions/HtmlChild' },
+        { $ref: '#/definitions/RawCanvasChild' },
+        { $ref: '#/definitions/WordCloudChild' },
       ],
     },
     CanvasBase: {
@@ -413,6 +421,106 @@ export const CANVAS_DESIGN_SCHEMA = {
         zIndex: { type: 'number', default: 0 },
         transform: { $ref: '#/definitions/Transform' },
         filter: { $ref: '#/definitions/Filter' },
+      },
+      additionalProperties: false,
+    },
+    RawCanvasChild: {
+      type: 'object',
+      description: 'Canvas元素。作为受控程序化绘制容器，绘制逻辑由系统组件执行，导出时参与 html-to-image 捕获。',
+      required: ['type'],
+      properties: {
+        type: { const: 'rawCanvas' },
+        width: { $ref: '#/definitions/SizeValue' },
+        height: { $ref: '#/definitions/SizeValue' },
+        zIndex: { type: 'number', default: 0 },
+        position: { $ref: '#/definitions/Position' },
+        transform: { $ref: '#/definitions/Transform' },
+        filter: { $ref: '#/definitions/Filter' },
+        drawConfig: {
+          type: 'object',
+          description: '预留绘制配置。当前 type=empty 表示透明画布，后续可扩展为纹理/粒子/程序图案等。',
+          properties: {
+            type: { type: 'string', default: 'empty' },
+            version: { type: 'number', default: 0 },
+          },
+          additionalProperties: true,
+        },
+      },
+      additionalProperties: false,
+    },
+    WordCloudListItem: {
+      type: 'array',
+      description: 'wordcloud2 list 项，格式为 [word, size, ...extraData]',
+      minItems: 2,
+      items: [
+        { type: 'string' },
+        { type: 'number', minimum: 0 },
+      ],
+      additionalItems: true,
+    },
+    WordCloud2EngineOptions: {
+      type: 'object',
+      description: 'wordcloud2.js 参数。事件/交互回调不作为可保存 meta 暴露。',
+      properties: {
+        list: { type: 'array', items: { $ref: '#/definitions/WordCloudListItem' } },
+        fontFamilyInfo: { type: ['object', 'null'], description: '字体资源信息。存在 id 时渲染为 font_${id}', additionalProperties: true },
+        fontFamily: { type: 'string', default: 'sans-serif' },
+        fontWeight: { type: ['string', 'number'], default: '600' },
+        colorMode: { type: 'string', enum: ['fixed', 'palette', 'random-dark', 'random-light'], default: 'palette' },
+        color: { type: 'string', default: '#111111' },
+        colors: { type: 'array', items: { type: 'string' } },
+        minSize: { type: 'number', minimum: 0, default: 8 },
+        weightFactor: { type: 'number', minimum: 0, default: 1 },
+        clearCanvas: { type: 'boolean', default: true },
+        backgroundColor: { type: 'string', default: 'rgba(0,0,0,0)' },
+        gridSize: { type: 'number', minimum: 1, default: 8 },
+        origin: { type: ['array', 'null'], items: { type: 'number' }, minItems: 2, maxItems: 2 },
+        drawOutOfBound: { type: 'boolean', default: false },
+        shrinkToFit: { type: 'boolean', default: true },
+        drawMask: { type: 'boolean', default: false },
+        maskColor: { type: 'string', default: 'rgba(255,0,0,0.3)' },
+        maskGapWidth: { type: 'number', minimum: 0, default: 0.3 },
+        wait: { type: 'number', minimum: 0, default: 0 },
+        abortThreshold: { type: 'number', minimum: 0, default: 0 },
+        minRotation: { type: 'number', default: -1.5707963267948966 },
+        maxRotation: { type: 'number', default: 1.5707963267948966 },
+        rotationSteps: { type: 'number', minimum: 0, default: 2 },
+        shuffle: { type: 'boolean', default: true },
+        rotateRatio: { type: 'number', minimum: 0, maximum: 1, default: 0.35 },
+        shape: { type: 'string', enum: ['circle', 'cardioid', 'diamond', 'square', 'triangle-forward', 'triangle', 'pentagon', 'star'], default: 'circle' },
+        ellipticity: { type: 'number', minimum: 0, default: 1 },
+      },
+      additionalProperties: false,
+    },
+    WordCloudChild: {
+      type: 'object',
+      description: '词云元素。当前使用 wordcloud2 引擎绘制到 canvas，导出时捕获 canvas 像素。',
+      required: ['type'],
+      properties: {
+        type: { const: 'wordCloud' },
+        width: { $ref: '#/definitions/SizeValue' },
+        height: { $ref: '#/definitions/SizeValue' },
+        zIndex: { type: 'number', default: 0 },
+        position: { $ref: '#/definitions/Position' },
+        transform: { $ref: '#/definitions/Transform' },
+        filter: { $ref: '#/definitions/Filter' },
+        wordCloud: {
+          type: 'object',
+          properties: {
+            version: { type: 'number', default: 1 },
+            engine: { type: 'string', enum: ['wordcloud2'], default: 'wordcloud2' },
+            engines: {
+              type: 'object',
+              properties: {
+                wordcloud2: { $ref: '#/definitions/WordCloud2EngineOptions' },
+              },
+              required: ['wordcloud2'],
+              additionalProperties: true,
+            },
+          },
+          required: ['engine', 'engines'],
+          additionalProperties: false,
+        },
       },
       additionalProperties: false,
     },

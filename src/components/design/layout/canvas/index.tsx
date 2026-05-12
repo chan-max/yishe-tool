@@ -23,6 +23,7 @@ import { formatSizeOptionToPixelValue } from './helper.tsx';
 
 
 import { createCanvasChildRawCanvas, createDefaultCanvasChildRawCanvasOptions } from './children/rawCanvas.tsx'
+import { createCanvasChildWordCloud, createDefaultCanvasChildWordCloudOptions } from './children/wordCloud/index.tsx'
 
 import { createDefaultCanvasChildcanvasStickerOptions } from './children/canvas'
 
@@ -115,12 +116,13 @@ import backgroundLayout from './operateLayout/background.vue'
 import canvasLayout from './operateLayout/canvas.vue'
 import textLayout from './operateLayout/text.vue'
 import imageLayout from './operateLayout/image.vue'
-// import rawCanvasLayout from './operateLayout/rawCanvas.vue'
+import rawCanvasLayout from './operateLayout/rawCanvas.vue'
 import qrcodeLayout from './operateLayout/qrcode.vue'
 import rectLayout from './operateLayout/rect.vue'
 import ellipseLayout from './operateLayout/ellipse.vue'
 import barcodeLayout from './operateLayout/barcode.vue'
 import htmlLayout from './operateLayout/html.vue'
+import wordCloudLayout from './operateLayout/wordCloud.vue'
 
 import { createCanvasChildBarcode, createDefaultCanvasChildBarcodeOptions } from './children/barcode/index.tsx';
 import { createCanvasChildHtml, createDefaultCanvasChildHtmlOptions } from './children/html.tsx';
@@ -157,6 +159,24 @@ defineCanvasChild({
     defaultOptionsCreator: createDefaultCanvasChildImageOptions,
     renderer: createCanvasChildImage,
     operationLayout: imageLayout
+})
+
+defineCanvasChild({
+    typeName: 'rawCanvas',
+    typeKey: 'rawCanvas',
+    label: 'Canvas',
+    defaultOptionsCreator: createDefaultCanvasChildRawCanvasOptions,
+    renderer: createCanvasChildRawCanvas,
+    operationLayout: rawCanvasLayout
+})
+
+defineCanvasChild({
+    typeName: 'wordCloud',
+    typeKey: 'wordCloud',
+    label: '词云',
+    defaultOptionsCreator: createDefaultCanvasChildWordCloudOptions,
+    renderer: createCanvasChildWordCloud,
+    operationLayout: wordCloudLayout
 })
 
 

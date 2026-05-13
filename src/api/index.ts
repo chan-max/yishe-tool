@@ -448,6 +448,11 @@ export const getProductModelList = (data) => new Promise(async (resolve, reject)
   resolve(res.data.data)
 })
 
+export const getAsset3dList = (data) => new Promise(async (resolve, reject) => {
+  let res = await apiInstance.post('/api/asset-3d/page', data)
+  resolve(res.data.data)
+})
+
 
 export const createProductModel = (data) => new Promise(async (resolve, reject) => {
   let res = await apiInstance.post('api/product-model/create', data)

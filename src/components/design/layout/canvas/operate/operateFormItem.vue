@@ -15,19 +15,24 @@
         <slot name="icon"></slot>
       </div>
       <div class="operate-form-item-title">
-        <slot name="name"></slot>
+        <slot name="name">{{ label || name }}</slot>
         <!-- <el-icon><Warning /></el-icon> -->
       </div>
     </div>
     <!-- <div style="flex: 1"></div> -->
     <div class="operate-form-item-content">
-      <slot name="content"> </slot>
+      <slot name="content">
+        <slot></slot>
+      </slot>
     </div>
   </div>
 </template>
 <script setup>
 import { Warning } from "@element-plus/icons-vue";
 const props = defineProps({
+  label: {
+    default: "",
+  },
   name: {
     default: "",
   },

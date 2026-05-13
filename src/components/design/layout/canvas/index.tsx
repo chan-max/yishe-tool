@@ -25,6 +25,7 @@ import { formatSizeOptionToPixelValue } from './helper.tsx';
 import { createCanvasChildRawCanvas, createDefaultCanvasChildRawCanvasOptions } from './children/rawCanvas.tsx'
 import { createCanvasChildWordCloud, createDefaultCanvasChildWordCloudOptions } from './children/wordCloud/index.tsx'
 import { createCanvasChildThreeScene, createDefaultCanvasChildThreeSceneOptions } from './children/threeScene/index.tsx'
+import { createCanvasChildEchart, createDefaultCanvasChildEchartOptions } from './children/echart/index.tsx'
 
 import { createDefaultCanvasChildcanvasStickerOptions } from './children/canvas'
 
@@ -125,6 +126,7 @@ import barcodeLayout from './operateLayout/barcode.vue'
 import htmlLayout from './operateLayout/html.vue'
 import wordCloudLayout from './operateLayout/wordCloud.vue'
 import threeSceneLayout from './operateLayout/threeScene.vue'
+import echartLayout from './operateLayout/echart.vue'
 
 import { createCanvasChildBarcode, createDefaultCanvasChildBarcodeOptions } from './children/barcode/index.tsx';
 import { createCanvasChildHtml, createDefaultCanvasChildHtmlOptions } from './children/html.tsx';
@@ -188,6 +190,15 @@ defineCanvasChild({
     defaultOptionsCreator: createDefaultCanvasChildThreeSceneOptions,
     renderer: createCanvasChildThreeScene,
     operationLayout: threeSceneLayout
+})
+
+defineCanvasChild({
+    typeName: 'echart',
+    typeKey: 'echart',
+    label: 'ECharts',
+    defaultOptionsCreator: createDefaultCanvasChildEchartOptions,
+    renderer: createCanvasChildEchart,
+    operationLayout: echartLayout
 })
 
 

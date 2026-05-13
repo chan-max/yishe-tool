@@ -10,6 +10,7 @@ import { createDefaultCanvasChildHtmlOptions } from '@/components/design/layout/
 import { createDefaultCanvasChildRawCanvasOptions } from '@/components/design/layout/canvas/children/rawCanvas.tsx'
 import { createDefaultCanvasChildWordCloudOptions } from '@/components/design/layout/canvas/children/wordCloud/index.tsx'
 import { createDefaultCanvasChildThreeSceneOptions } from '@/components/design/layout/canvas/children/threeScene/index.tsx'
+import { createDefaultCanvasChildEchartOptions } from '@/components/design/layout/canvas/children/echart/index.tsx'
 
 export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   canvas: createDefaultCanvasChildcanvasStickerOptions,
@@ -24,6 +25,7 @@ export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   rawCanvas: createDefaultCanvasChildRawCanvasOptions,
   wordCloud: createDefaultCanvasChildWordCloudOptions,
   threeScene: createDefaultCanvasChildThreeSceneOptions,
+  echart: createDefaultCanvasChildEchartOptions,
 }
 
 const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一任务：根据用户需求，输出一个完整的 JSON 对象来定义画布设计。
@@ -51,6 +53,7 @@ const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一�
 - rawCanvas: Canvas元素。用于后续程序化绘制，当前支持作为透明画布容器参与布局和导出
 - wordCloud: 词云元素。当前 engine=wordcloud2，所有词云参数放在 wordCloud.engines.wordcloud2 下
 - threeScene: Three.js元素。当前 engine=threejs，作为贴纸子元素渲染 3D 场景到独立 canvas，所有参数放在 threeScene.engines.threejs 下
+- echart: ECharts元素。当前 engine=echarts，直接将原生 ECharts option 放在 echart.engines.echarts.option 下；只使用 JSON 对象，不写函数
 
 ## 公共属性（除 canvas 外所有元素可选）
 width/height, zIndex(数字越大越靠前), position({center:true}居中), transform, filter`
@@ -221,7 +224,7 @@ export const CANVAS_DESIGN_SCHEMA = {
       description: '画布子元素，由 type 字段区分类型。只提供你需要设定的字段，其余自动使用默认值。',
       required: ['type'],
       properties: {
-        type: { type: 'string', enum: ['canvas', 'text', 'background', 'image', 'rect', 'ellipse', 'qrcode', 'barcode', 'html', 'rawCanvas', 'wordCloud', 'threeScene'] },
+        type: { type: 'string', enum: ['canvas', 'text', 'background', 'image', 'rect', 'ellipse', 'qrcode', 'barcode', 'html', 'rawCanvas', 'wordCloud', 'threeScene', 'echart'] },
       },
       oneOf: [
         { $ref: '#/definitions/CanvasBase' },
@@ -236,6 +239,7 @@ export const CANVAS_DESIGN_SCHEMA = {
         { $ref: '#/definitions/RawCanvasChild' },
         { $ref: '#/definitions/WordCloudChild' },
         { $ref: '#/definitions/ThreeSceneChild' },
+        { $ref: '#/definitions/EchartChild' },
       ],
     },
     CanvasBase: {
@@ -647,6 +651,51 @@ export const CANVAS_DESIGN_SCHEMA = {
                 threejs: { $ref: '#/definitions/ThreeSceneThreejsEngineOptions' },
               },
               required: ['threejs'],
+              additionalProperties: true,
+            },
+          },
+          required: ['engine', 'engines'],
+          additionalProperties: false,
+        },
+      },
+      additionalProperties: false,
+    },
+    EchartChild: {
+      type: 'object',
+      description: 'ECharts 子元素。直接透传原生 ECharts option，保持最大通用性；option 必须是可序列化 JSON 对象。',
+      required: ['type'],
+      properties: {
+        type: { const: 'echart' },
+        width: { $ref: '#/definitions/SizeValue' },
+        height: { $ref: '#/definitions/SizeValue' },
+        zIndex: { type: 'number', default: 0 },
+        position: { $ref: '#/definitions/Position' },
+        transform: { $ref: '#/definitions/Transform' },
+        filter: { $ref: '#/definitions/Filter' },
+        echart: {
+          type: 'object',
+          properties: {
+            version: { type: 'number', default: 1 },
+            engine: { type: 'string', enum: ['echarts'], default: 'echarts' },
+            engines: {
+              type: 'object',
+              properties: {
+                echarts: {
+                  type: 'object',
+                  properties: {
+                    renderer: { type: 'string', enum: ['canvas', 'svg'], default: 'canvas' },
+                    theme: { type: 'string', default: '' },
+                    option: {
+                      type: 'object',
+                      description: '原生 ECharts setOption(option) 配置。只能使用 JSON，可包含任意 ECharts 支持的配置字段。',
+                      additionalProperties: true,
+                    },
+                  },
+                  required: ['option'],
+                  additionalProperties: true,
+                },
+              },
+              required: ['echarts'],
               additionalProperties: true,
             },
           },

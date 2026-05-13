@@ -9,6 +9,7 @@ import { createDefaultCanvasChildBarcodeOptions } from '@/components/design/layo
 import { createDefaultCanvasChildHtmlOptions } from '@/components/design/layout/canvas/children/html.tsx'
 import { createDefaultCanvasChildRawCanvasOptions } from '@/components/design/layout/canvas/children/rawCanvas.tsx'
 import { createDefaultCanvasChildWordCloudOptions } from '@/components/design/layout/canvas/children/wordCloud/index.tsx'
+import { createDefaultCanvasChildThreeSceneOptions } from '@/components/design/layout/canvas/children/threeScene/index.tsx'
 
 export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   canvas: createDefaultCanvasChildcanvasStickerOptions,
@@ -22,6 +23,7 @@ export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   html: createDefaultCanvasChildHtmlOptions,
   rawCanvas: createDefaultCanvasChildRawCanvasOptions,
   wordCloud: createDefaultCanvasChildWordCloudOptions,
+  threeScene: createDefaultCanvasChildThreeSceneOptions,
 }
 
 const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一任务：根据用户需求，输出一个完整的 JSON 对象来定义画布设计。
@@ -48,6 +50,7 @@ const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一�
 - html: HTML元素。htmlContent
 - rawCanvas: Canvas元素。用于后续程序化绘制，当前支持作为透明画布容器参与布局和导出
 - wordCloud: 词云元素。当前 engine=wordcloud2，所有词云参数放在 wordCloud.engines.wordcloud2 下
+- threeScene: Three.js元素。当前 engine=threejs，作为贴纸子元素渲染 3D 场景到独立 canvas，所有参数放在 threeScene.engines.threejs 下
 
 ## 公共属性（除 canvas 外所有元素可选）
 width/height, zIndex(数字越大越靠前), position({center:true}居中), transform, filter`
@@ -218,7 +221,7 @@ export const CANVAS_DESIGN_SCHEMA = {
       description: '画布子元素，由 type 字段区分类型。只提供你需要设定的字段，其余自动使用默认值。',
       required: ['type'],
       properties: {
-        type: { type: 'string', enum: ['canvas', 'text', 'background', 'image', 'rect', 'ellipse', 'qrcode', 'barcode', 'html', 'rawCanvas', 'wordCloud'] },
+        type: { type: 'string', enum: ['canvas', 'text', 'background', 'image', 'rect', 'ellipse', 'qrcode', 'barcode', 'html', 'rawCanvas', 'wordCloud', 'threeScene'] },
       },
       oneOf: [
         { $ref: '#/definitions/CanvasBase' },
@@ -232,6 +235,7 @@ export const CANVAS_DESIGN_SCHEMA = {
         { $ref: '#/definitions/HtmlChild' },
         { $ref: '#/definitions/RawCanvasChild' },
         { $ref: '#/definitions/WordCloudChild' },
+        { $ref: '#/definitions/ThreeSceneChild' },
       ],
     },
     CanvasBase: {
@@ -515,6 +519,134 @@ export const CANVAS_DESIGN_SCHEMA = {
                 wordcloud2: { $ref: '#/definitions/WordCloud2EngineOptions' },
               },
               required: ['wordcloud2'],
+              additionalProperties: true,
+            },
+          },
+          required: ['engine', 'engines'],
+          additionalProperties: false,
+        },
+      },
+      additionalProperties: false,
+    },
+    ThreeSceneThreejsEngineOptions: {
+      type: 'object',
+      description: 'threejs 引擎参数。用于在子元素内渲染基础 3D 场景。',
+      properties: {
+        background: { type: 'string', default: 'transparent', description: 'transparent 或 CSS 颜色值' },
+        camera: {
+          type: 'object',
+          properties: {
+            fov: { type: 'number', minimum: 1, maximum: 120, default: 45 },
+            near: { type: 'number', minimum: 0.001, default: 0.1 },
+            far: { type: 'number', minimum: 1, default: 1000 },
+            position: {
+              type: 'object',
+              properties: {
+                x: { type: 'number', default: 0 },
+                y: { type: 'number', default: 0 },
+                z: { type: 'number', default: 3.5 },
+              },
+              additionalProperties: false,
+            },
+          },
+          additionalProperties: false,
+        },
+        lights: {
+          type: 'object',
+          properties: {
+            ambient: {
+              type: 'object',
+              properties: {
+                color: { type: 'string', default: '#ffffff' },
+                intensity: { type: 'number', minimum: 0, default: 0.9 },
+              },
+              additionalProperties: false,
+            },
+            directional: {
+              type: 'object',
+              properties: {
+                color: { type: 'string', default: '#ffffff' },
+                intensity: { type: 'number', minimum: 0, default: 1.1 },
+                position: {
+                  type: 'object',
+                  properties: {
+                    x: { type: 'number', default: 2 },
+                    y: { type: 'number', default: 2 },
+                    z: { type: 'number', default: 3 },
+                  },
+                  additionalProperties: false,
+                },
+              },
+              additionalProperties: false,
+            },
+          },
+          additionalProperties: false,
+        },
+        object: {
+          type: 'object',
+          properties: {
+            shape: { type: 'string', enum: ['box', 'sphere', 'torus', 'plane'], default: 'box' },
+            color: { type: 'string', default: '#4f46e5' },
+            metalness: { type: 'number', minimum: 0, maximum: 1, default: 0.25 },
+            roughness: { type: 'number', minimum: 0, maximum: 1, default: 0.35 },
+            wireframe: { type: 'boolean', default: false },
+            scale: {
+              type: 'object',
+              properties: {
+                x: { type: 'number', default: 1 },
+                y: { type: 'number', default: 1 },
+                z: { type: 'number', default: 1 },
+              },
+              additionalProperties: false,
+            },
+            rotation: {
+              type: 'object',
+              properties: {
+                x: { type: 'number', default: 0 },
+                y: { type: 'number', default: 0 },
+                z: { type: 'number', default: 0 },
+              },
+              additionalProperties: false,
+            },
+          },
+          additionalProperties: false,
+        },
+        animation: {
+          type: 'object',
+          properties: {
+            autoRotate: { type: 'boolean', default: true },
+            speedX: { type: 'number', default: 0.01 },
+            speedY: { type: 'number', default: 0.02 },
+            speedZ: { type: 'number', default: 0 },
+          },
+          additionalProperties: false,
+        },
+      },
+      additionalProperties: false,
+    },
+    ThreeSceneChild: {
+      type: 'object',
+      description: 'Three.js 子元素。当前使用 threejs 引擎渲染到子 canvas，导出时捕获其像素。',
+      required: ['type'],
+      properties: {
+        type: { const: 'threeScene' },
+        width: { $ref: '#/definitions/SizeValue' },
+        height: { $ref: '#/definitions/SizeValue' },
+        zIndex: { type: 'number', default: 0 },
+        position: { $ref: '#/definitions/Position' },
+        transform: { $ref: '#/definitions/Transform' },
+        filter: { $ref: '#/definitions/Filter' },
+        threeScene: {
+          type: 'object',
+          properties: {
+            version: { type: 'number', default: 1 },
+            engine: { type: 'string', enum: ['threejs'], default: 'threejs' },
+            engines: {
+              type: 'object',
+              properties: {
+                threejs: { $ref: '#/definitions/ThreeSceneThreejsEngineOptions' },
+              },
+              required: ['threejs'],
               additionalProperties: true,
             },
           },

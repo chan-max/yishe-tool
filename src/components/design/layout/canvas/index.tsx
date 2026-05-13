@@ -24,6 +24,7 @@ import { formatSizeOptionToPixelValue } from './helper.tsx';
 
 import { createCanvasChildRawCanvas, createDefaultCanvasChildRawCanvasOptions } from './children/rawCanvas.tsx'
 import { createCanvasChildWordCloud, createDefaultCanvasChildWordCloudOptions } from './children/wordCloud/index.tsx'
+import { createCanvasChildThreeScene, createDefaultCanvasChildThreeSceneOptions } from './children/threeScene/index.tsx'
 
 import { createDefaultCanvasChildcanvasStickerOptions } from './children/canvas'
 
@@ -123,6 +124,7 @@ import ellipseLayout from './operateLayout/ellipse.vue'
 import barcodeLayout from './operateLayout/barcode.vue'
 import htmlLayout from './operateLayout/html.vue'
 import wordCloudLayout from './operateLayout/wordCloud.vue'
+import threeSceneLayout from './operateLayout/threeScene.vue'
 
 import { createCanvasChildBarcode, createDefaultCanvasChildBarcodeOptions } from './children/barcode/index.tsx';
 import { createCanvasChildHtml, createDefaultCanvasChildHtmlOptions } from './children/html.tsx';
@@ -177,6 +179,15 @@ defineCanvasChild({
     defaultOptionsCreator: createDefaultCanvasChildWordCloudOptions,
     renderer: createCanvasChildWordCloud,
     operationLayout: wordCloudLayout
+})
+
+defineCanvasChild({
+    typeName: 'threeScene',
+    typeKey: 'threeScene',
+    label: 'Three.js',
+    defaultOptionsCreator: createDefaultCanvasChildThreeSceneOptions,
+    renderer: createCanvasChildThreeScene,
+    operationLayout: threeSceneLayout
 })
 
 

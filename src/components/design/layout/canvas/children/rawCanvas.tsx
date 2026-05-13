@@ -25,7 +25,7 @@ export const createDefaultCanvasChildRawCanvasOptions = () => {
         ...createBasicDefaultOptions(),
         transform: createTransformDefaultOptions(canvasUnit),
         drawConfig: {
-            type: 'test',
+            type: 'empty',
             version: 0,
         },
     }
@@ -148,60 +148,7 @@ export function drawRawCanvas(payload: {
     context.clearRect(0, 0, canvas.width, canvas.height)
 
     const drawType = options?.drawConfig?.type || 'empty'
-    if (drawType !== 'test') {
+    if (drawType === 'empty') {
         return
     }
-
-    drawTestCanvas(context, canvas.width, canvas.height)
-}
-
-function drawTestCanvas(context: CanvasRenderingContext2D, width: number, height: number) {
-    const gridSize = Math.max(16, Math.round(Math.min(width, height) / 8))
-
-    context.save()
-
-    context.fillStyle = 'rgba(255, 255, 255, 0.72)'
-    context.fillRect(0, 0, width, height)
-
-    for (let y = 0; y < height; y += gridSize) {
-        for (let x = 0; x < width; x += gridSize) {
-            context.fillStyle = ((x / gridSize + y / gridSize) % 2 === 0)
-                ? 'rgba(0, 176, 255, 0.32)'
-                : 'rgba(255, 64, 129, 0.24)'
-            context.fillRect(x, y, gridSize, gridSize)
-        }
-    }
-
-    context.strokeStyle = 'rgba(0, 0, 0, 0.62)'
-    context.lineWidth = Math.max(2, Math.round(Math.min(width, height) / 80))
-    context.beginPath()
-    context.moveTo(0, 0)
-    context.lineTo(width, height)
-    context.moveTo(width, 0)
-    context.lineTo(0, height)
-    context.stroke()
-
-    const radius = Math.max(8, Math.min(width, height) * 0.16)
-    const gradient = context.createRadialGradient(
-        width / 2,
-        height / 2,
-        radius * 0.2,
-        width / 2,
-        height / 2,
-        radius,
-    )
-    gradient.addColorStop(0, 'rgba(255, 214, 0, 0.95)')
-    gradient.addColorStop(1, 'rgba(255, 112, 67, 0.82)')
-    context.fillStyle = gradient
-    context.beginPath()
-    context.arc(width / 2, height / 2, radius, 0, Math.PI * 2)
-    context.fill()
-
-    context.fillStyle = 'rgba(0, 0, 0, 0.76)'
-    context.font = `${Math.max(12, Math.round(Math.min(width, height) / 12))}px sans-serif`
-    context.textAlign = 'center'
-    context.textBaseline = 'middle'
-    context.fillText('CANVAS', width / 2, height / 2)
-
-    context.restore()
 }

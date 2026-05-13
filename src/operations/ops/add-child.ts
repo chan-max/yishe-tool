@@ -3,7 +3,7 @@ import { registerOperation } from '../registry'
 registerOperation({
   id: 'canvas.addChild',
   name: '添加元素',
-  description: '向画布添加一个新元素，支持文字、背景、图片、矩形、椭圆、二维码、条形码等类型',
+  description: '向画布添加一个新元素，支持文字、背景、图片、矩形、椭圆、二维码、条形码、Three.js 等类型',
   group: '画布',
   params: [
     {
@@ -19,6 +19,7 @@ registerOperation({
         { label: '椭圆', value: 'ellipse' },
         { label: '二维码', value: 'qrcode' },
         { label: '条形码', value: 'barcode' },
+        { label: 'Three.js', value: 'threeScene' },
       ],
       description: '要添加的元素类型',
     },

@@ -310,6 +310,7 @@ import operateItemSize from '@/components/design/layout/canvas/operate/size/rela
 import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue'
 import operateFormItem from '@/components/design/layout/canvas/operate/operateFormItem.vue'
 import { getAsset3dList } from '@/api'
+import { message } from 'ant-design-vue'
 import { currentOperatingCanvasChild } from '../index.tsx'
 import {
     createDebugCubeObject,
@@ -532,6 +533,11 @@ async function loadAsset3dList() {
         const records = data?.records || data?.list || data?.data || []
         asset3dList.value = records
         asset3dPagination.value.total = Number(data?.total ?? data?.count ?? records.length)
+    } catch (error: any) {
+        console.warn('3D asset list loading failed:', error)
+        asset3dList.value = []
+        asset3dPagination.value.total = 0
+        message.error(error?.message || '资源库加载失败，请稍后重试')
     } finally {
         asset3dLoading.value = false
     }

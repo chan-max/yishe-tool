@@ -110,6 +110,12 @@ type ThreejsEngineConfig = {
         animation: {
             enabled: boolean
         }
+        interaction: {
+            dragToRotate: {
+                enabled: boolean
+                sensitivity: number
+            }
+        }
     }
     resources: {
         models: Array<{
@@ -210,6 +216,12 @@ export const createDefaultThreejsEngineOptions = (): ThreejsEngineConfig => {
             animation: {
                 enabled: true,
             },
+            interaction: {
+                dragToRotate: {
+                    enabled: true,
+                    sensitivity: 0.008,
+                },
+            },
         },
         resources: {
             models: [],
@@ -252,6 +264,14 @@ export function normalizeThreejsEngineOptions(rawOptions: any): ThreejsEngineCon
                 lights: Array.isArray(raw.scene?.lights) ? raw.scene.lights : defaults.scene.lights,
                 objects: Array.isArray(raw.scene?.objects) ? raw.scene.objects : [],
                 animation: { ...defaults.scene.animation, ...(raw.scene?.animation || {}) },
+                interaction: {
+                    ...defaults.scene.interaction,
+                    ...(raw.scene?.interaction || {}),
+                    dragToRotate: {
+                        ...defaults.scene.interaction.dragToRotate,
+                        ...(raw.scene?.interaction?.dragToRotate || {}),
+                    },
+                },
             },
             resources: {
                 ...defaults.resources,
@@ -340,6 +360,7 @@ function normalizeLegacyThreejsOptions(raw: any, defaults: ThreejsEngineConfig):
             animation: {
                 enabled: true,
             },
+            interaction: defaults.scene.interaction,
         },
     }
 }
@@ -386,6 +407,8 @@ export const ThreeSceneChild = defineComponent({
         const modelLoadingText = ref('模型加载中...')
         const modelLoadError = ref('')
         const gltfLoader = new GLTFLoader()
+        const raycaster = new THREE.Raycaster()
+        const pointerNdc = new THREE.Vector2()
 
         let renderer: THREE.WebGLRenderer | null = null
         let scene: THREE.Scene | null = null
@@ -394,6 +417,22 @@ export const ThreeSceneChild = defineComponent({
         let sceneObjectGroup: THREE.Group | null = null
         let lightGroup: THREE.Group | null = null
         let objectBuildToken = 0
+        let skipNextOptionsRefresh = false
+        let dragState: {
+            active: boolean
+            pointerId: number
+            lastX: number
+            lastY: number
+            object: THREE.Object3D | null
+            objectConfig: ThreeObjectConfig | null
+        } = {
+            active: false,
+            pointerId: -1,
+            lastX: 0,
+            lastY: 0,
+            object: null,
+            objectConfig: null,
+        }
 
         onCanvasChildSetup({
             targetEl: canvasRef,
@@ -717,15 +756,175 @@ export const ThreeSceneChild = defineComponent({
             animationFrameId = requestAnimationFrame(tick)
         }
 
+        function bindPointerEvents() {
+            const canvas = canvasRef.value
+            if (!canvas) {
+                return
+            }
+            canvas.addEventListener('pointerdown', handlePointerDown)
+            canvas.addEventListener('pointermove', handlePointerMove)
+            canvas.addEventListener('pointerup', handlePointerUp)
+            canvas.addEventListener('pointercancel', handlePointerUp)
+            canvas.addEventListener('lostpointercapture', handlePointerUp)
+        }
+
+        function unbindPointerEvents() {
+            const canvas = canvasRef.value
+            if (!canvas) {
+                return
+            }
+            canvas.removeEventListener('pointerdown', handlePointerDown)
+            canvas.removeEventListener('pointermove', handlePointerMove)
+            canvas.removeEventListener('pointerup', handlePointerUp)
+            canvas.removeEventListener('pointercancel', handlePointerUp)
+            canvas.removeEventListener('lostpointercapture', handlePointerUp)
+        }
+
+        function handlePointerDown(event: PointerEvent) {
+            if (!isDragToRotateEnabled()) {
+                return
+            }
+
+            const target = findPointerSceneObject(event)
+            if (!target) {
+                return
+            }
+
+            event.preventDefault()
+            event.stopPropagation()
+            canvasRef.value?.setPointerCapture?.(event.pointerId)
+            dragState = {
+                active: true,
+                pointerId: event.pointerId,
+                lastX: event.clientX,
+                lastY: event.clientY,
+                object: target.object,
+                objectConfig: target.objectConfig,
+            }
+            if (canvasRef.value) {
+                canvasRef.value.style.cursor = 'grabbing'
+            }
+        }
+
+        function handlePointerMove(event: PointerEvent) {
+            if (!dragState.active || dragState.pointerId !== event.pointerId || !dragState.object) {
+                return
+            }
+
+            event.preventDefault()
+            event.stopPropagation()
+            const sensitivity = getDragRotateSensitivity()
+            const deltaX = event.clientX - dragState.lastX
+            const deltaY = event.clientY - dragState.lastY
+            dragState.lastX = event.clientX
+            dragState.lastY = event.clientY
+            dragState.object.rotation.y += deltaX * sensitivity
+            dragState.object.rotation.x += deltaY * sensitivity
+            renderSnapshot()
+        }
+
+        function handlePointerUp(event: PointerEvent) {
+            if (!dragState.active || dragState.pointerId !== event.pointerId) {
+                return
+            }
+
+            event.preventDefault()
+            event.stopPropagation()
+            canvasRef.value?.releasePointerCapture?.(event.pointerId)
+            if (dragState.object && dragState.objectConfig) {
+                if (!dragState.objectConfig.transform) {
+                    dragState.objectConfig.transform = {}
+                }
+                skipNextOptionsRefresh = true
+                dragState.objectConfig.transform.rotation = [
+                    normalizeAngle(dragState.object.rotation.x),
+                    normalizeAngle(dragState.object.rotation.y),
+                    normalizeAngle(dragState.object.rotation.z),
+                ]
+            }
+            dragState = {
+                active: false,
+                pointerId: -1,
+                lastX: 0,
+                lastY: 0,
+                object: null,
+                objectConfig: null,
+            }
+            if (canvasRef.value) {
+                canvasRef.value.style.cursor = isDragToRotateEnabled() ? 'grab' : ''
+            }
+        }
+
+        function findPointerSceneObject(event: PointerEvent) {
+            if (!sceneObjectGroup || !camera || !canvasRef.value) {
+                return null
+            }
+
+            const rect = canvasRef.value.getBoundingClientRect()
+            if (!rect.width || !rect.height) {
+                return null
+            }
+            pointerNdc.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+            pointerNdc.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
+            raycaster.setFromCamera(pointerNdc, camera)
+            const hits = raycaster.intersectObjects(sceneObjectGroup.children, true)
+
+            for (const hit of hits) {
+                const root = findSceneObjectRoot(hit.object)
+                const objectConfig = root?.userData.threeSceneObjectConfig as ThreeObjectConfig | undefined
+                if (root && objectConfig) {
+                    return { object: root, objectConfig }
+                }
+            }
+
+            return null
+        }
+
+        function findSceneObjectRoot(object: THREE.Object3D) {
+            let current: THREE.Object3D | null = object
+            while (current && current.parent !== sceneObjectGroup) {
+                current = current.parent
+            }
+            return current
+        }
+
+        function isDragToRotateEnabled() {
+            const config = getEngineOptions()
+            return config.scene.interaction?.dragToRotate?.enabled !== false
+        }
+
+        function getDragRotateSensitivity() {
+            const config = getEngineOptions()
+            return Number(config.scene.interaction?.dragToRotate?.sensitivity ?? 0.008) || 0.008
+        }
+
+        function normalizeAngle(value: number) {
+            const circle = Math.PI * 2
+            return ((value + Math.PI) % circle + circle) % circle - Math.PI
+        }
+
         const refresh = useDebounceFn(async () => {
             await applySceneOptions()
             startAnimationLoop()
+            if (canvasRef.value) {
+                canvasRef.value.style.cursor = isDragToRotateEnabled() ? 'grab' : ''
+            }
         }, 80)
 
-        onMounted(refresh)
-        watch(() => props.options, refresh, { deep: true })
+        onMounted(() => {
+            bindPointerEvents()
+            refresh()
+        })
+        watch(() => props.options, () => {
+            if (skipNextOptionsRefresh) {
+                skipNextOptionsRefresh = false
+                return
+            }
+            refresh()
+        }, { deep: true })
 
         onBeforeUnmount(() => {
+            unbindPointerEvents()
             stopAnimationLoop()
             objectBuildToken += 1
             if (sceneObjectGroup) {
@@ -781,6 +980,7 @@ export const ThreeSceneChild = defineComponent({
                     width={canvasPixelSize.value.width}
                     height={canvasPixelSize.value.height}
                     data-three-scene-engine={props.options?.threeScene?.engine || 'threejs'}
+                    title={getEngineOptions().scene.interaction.dragToRotate.enabled ? '拖动对象旋转角度' : undefined}
                 ></canvas>
                 {(isModelLoading.value || modelLoadError.value) ? <div style={{
                     position: 'absolute',

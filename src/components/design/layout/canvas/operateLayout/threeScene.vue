@@ -20,6 +20,19 @@
             <operate-form-item label="全局动画">
                 <el-switch v-model="threejs.scene.animation.enabled" />
             </operate-form-item>
+
+            <operate-form-item label="拖动旋转">
+                <el-switch v-model="threejs.scene.interaction.dragToRotate.enabled" />
+            </operate-form-item>
+
+            <operate-form-item v-if="threejs.scene.interaction.dragToRotate.enabled" label="旋转灵敏度">
+                <el-slider
+                    v-model="threejs.scene.interaction.dragToRotate.sensitivity"
+                    :min="0.002"
+                    :max="0.02"
+                    :step="0.001"
+                />
+            </operate-form-item>
         </el-collapse-item>
 
         <el-collapse-item name="3" title="场景项">
@@ -658,6 +671,21 @@ function ensureSceneDefaults(config) {
     }
     if (!config.scene.activeCameraId) {
         config.scene.activeCameraId = config.scene.cameras[0].id
+    }
+    if (!config.scene.interaction) {
+        config.scene.interaction = {}
+    }
+    if (!config.scene.interaction.dragToRotate) {
+        config.scene.interaction.dragToRotate = {
+            enabled: true,
+            sensitivity: 0.008,
+        }
+    }
+    if (typeof config.scene.interaction.dragToRotate.enabled !== 'boolean') {
+        config.scene.interaction.dragToRotate.enabled = true
+    }
+    if (!Number(config.scene.interaction.dragToRotate.sensitivity)) {
+        config.scene.interaction.dragToRotate.sensitivity = 0.008
     }
     config.scene.camera = config.scene.cameras.find((item) => item.id === config.scene.activeCameraId) || config.scene.cameras[0]
 }

@@ -18,6 +18,16 @@ import {
 import { onBeforeReturnRender, onCanvasChildSetup } from '../commonHooks.ts'
 
 const DEFAULT_ECHART_OPTION = {}
+const STATIC_ECHART_OPTION = {
+    animation: false,
+    animationDuration: 0,
+    animationDurationUpdate: 0,
+    animationEasing: 'linear',
+    animationEasingUpdate: 'linear',
+    stateAnimation: {
+        duration: 0,
+    },
+}
 
 export const createDefaultEchartEngineOptions = () => {
     return {
@@ -120,7 +130,7 @@ export const EchartChild = defineComponent({
                     height: pixelSize.value.height,
                 })
                 instance.clear()
-                instance.setOption(cloneOption(engineOptions.option || {}), true)
+                instance.setOption(toStaticEchartOption(engineOptions.option || {}), true)
                 updateRenderingCanvas()
             } catch (error: any) {
                 renderError.value = error?.message || 'ECharts 配置渲染失败'
@@ -161,6 +171,7 @@ export const EchartChild = defineComponent({
                 zIndex: props.options.zIndex,
                 overflow: 'hidden',
                 position: 'relative',
+                pointerEvents: 'none',
                 ..._style,
             }
 
@@ -269,4 +280,12 @@ export function cloneOption<T>(value: T, seen = new WeakMap<object, any>()): T {
         result[key] = cloneOption((value as Record<string, any>)[key], seen)
     })
     return result as T
+}
+
+export function toStaticEchartOption(option: Record<string, any>) {
+    const cloned = cloneOption(option || {})
+    return {
+        ...cloned,
+        ...STATIC_ECHART_OPTION,
+    }
 }

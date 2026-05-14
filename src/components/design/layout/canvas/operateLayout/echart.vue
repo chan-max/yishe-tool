@@ -112,6 +112,7 @@ import {
   ensureEchartOptions,
 } from '../children/echart/index.tsx'
 import { generateEchartOption } from '../children/echart/aiEchartService'
+import { formatSizeOptionToPixelValue } from '../helper'
 
 const activeNames = ref(['ai', 'basic', 'option', 'common'])
 const optionText = ref('')
@@ -253,10 +254,13 @@ async function generateOptionByAi() {
 
   try {
     const canvasChild = canvasStickerOptionsOnlyChild.value
+    const chartChild = currentOperatingCanvasChild.value
     const result = await generateEchartOption(prompt, echartsOptions.value.option || {}, {
       width: Number(canvasChild?.width?.value),
       height: Number(canvasChild?.height?.value),
       unit: canvasChild?.width?.unit || 'px',
+      chartWidth: Number(formatSizeOptionToPixelValue(chartChild?.width)),
+      chartHeight: Number(formatSizeOptionToPixelValue(chartChild?.height)),
     })
     echartsOptions.value.option = result.option
     optionText.value = stringifyOption(result.option)

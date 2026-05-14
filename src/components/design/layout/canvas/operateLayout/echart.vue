@@ -107,7 +107,7 @@ import * as echarts from 'echarts'
 import { computed, ref, watch } from 'vue'
 import operateItemSize from '@/components/design/layout/canvas/operate/size/relativeSize.vue'
 import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue'
-import { currentOperatingCanvasChild } from '../index.tsx'
+import { canvasStickerOptionsOnlyChild, currentOperatingCanvasChild } from '../index.tsx'
 import {
   ensureEchartOptions,
 } from '../children/echart/index.tsx'
@@ -252,7 +252,12 @@ async function generateOptionByAi() {
   aiError.value = ''
 
   try {
-    const result = await generateEchartOption(prompt, echartsOptions.value.option || {})
+    const canvasChild = canvasStickerOptionsOnlyChild.value
+    const result = await generateEchartOption(prompt, echartsOptions.value.option || {}, {
+      width: Number(canvasChild?.width?.value),
+      height: Number(canvasChild?.height?.value),
+      unit: canvasChild?.width?.unit || 'px',
+    })
     echartsOptions.value.option = result.option
     optionText.value = stringifyOption(result.option)
     aiPrompt.value = ''

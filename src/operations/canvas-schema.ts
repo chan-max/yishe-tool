@@ -11,6 +11,7 @@ import { createDefaultCanvasChildRawCanvasOptions } from '@/components/design/la
 import { createDefaultCanvasChildWordCloudOptions } from '@/components/design/layout/canvas/children/wordCloud/index.tsx'
 import { createDefaultCanvasChildThreeSceneOptions } from '@/components/design/layout/canvas/children/threeScene/index.tsx'
 import { createDefaultCanvasChildEchartOptions } from '@/components/design/layout/canvas/children/echart/index.tsx'
+import { createDefaultCanvasChildMathOptions } from '@/components/design/layout/canvas/children/math.tsx'
 
 export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   canvas: createDefaultCanvasChildcanvasStickerOptions,
@@ -26,6 +27,7 @@ export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   wordCloud: createDefaultCanvasChildWordCloudOptions,
   threeScene: createDefaultCanvasChildThreeSceneOptions,
   echart: createDefaultCanvasChildEchartOptions,
+  math: createDefaultCanvasChildMathOptions,
 }
 
 const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一任务：根据用户需求，输出一个完整的 JSON 对象来定义画布设计。
@@ -54,6 +56,7 @@ const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一�
 - wordCloud: 词云元素。当前 engine=wordcloud2，所有词云参数放在 wordCloud.engines.wordcloud2 下
 - threeScene: Three.js元素。当前 engine=threejs，作为贴纸子元素渲染 3D 场景到独立 canvas，所有参数放在 threeScene.engines.threejs 下
 - echart: ECharts元素。当前 engine=echarts，直接将原生 ECharts option 放在 echart.engines.echarts.option 下；只使用 JSON 对象，不写函数
+- math: 数学公式。当前 engine=katex，formula 写 LaTeX 字符串；支持 displayMode、fontSize、fontFamilyInfo、fontColor、backgroundColor、textAlign
 
 ## 公共属性（除 canvas 外所有元素可选）
 width/height, zIndex(数字越大越靠前), position({center:true}居中), transform, filter`
@@ -224,7 +227,7 @@ export const CANVAS_DESIGN_SCHEMA = {
       description: '画布子元素，由 type 字段区分类型。只提供你需要设定的字段，其余自动使用默认值。',
       required: ['type'],
       properties: {
-        type: { type: 'string', enum: ['canvas', 'text', 'background', 'image', 'rect', 'ellipse', 'qrcode', 'barcode', 'html', 'rawCanvas', 'wordCloud', 'threeScene', 'echart'] },
+        type: { type: 'string', enum: ['canvas', 'text', 'background', 'image', 'rect', 'ellipse', 'qrcode', 'barcode', 'html', 'rawCanvas', 'wordCloud', 'threeScene', 'echart', 'math'] },
       },
       oneOf: [
         { $ref: '#/definitions/CanvasBase' },
@@ -240,6 +243,7 @@ export const CANVAS_DESIGN_SCHEMA = {
         { $ref: '#/definitions/WordCloudChild' },
         { $ref: '#/definitions/ThreeSceneChild' },
         { $ref: '#/definitions/EchartChild' },
+        { $ref: '#/definitions/MathChild' },
       ],
     },
     CanvasBase: {
@@ -702,6 +706,32 @@ export const CANVAS_DESIGN_SCHEMA = {
           required: ['engine', 'engines'],
           additionalProperties: false,
         },
+      },
+      additionalProperties: false,
+    },
+    MathChild: {
+      type: 'object',
+      description: '数学公式子元素。使用 KaTeX 渲染 LaTeX 公式，适合静态公式贴纸。',
+      required: ['type', 'formula'],
+      properties: {
+        type: { const: 'math' },
+        formula: { type: 'string', description: 'LaTeX 公式字符串，例如 E=mc^2 或 \\frac{a}{b}=c。JSON 中反斜杠需要转义。' },
+        displayMode: { type: 'boolean', default: true, description: '是否使用块级公式显示' },
+        throwOnError: { type: 'boolean', default: false, description: '公式错误时是否抛出错误' },
+        strict: { type: 'string', enum: ['warn', 'ignore', 'error'], default: 'warn' },
+        trust: { type: 'boolean', default: false, description: '是否信任 KaTeX HTML/URL 等命令' },
+        fontSize: { type: 'object', description: '公式整体字号', properties: { value: { type: 'number', minimum: 1 }, unit: { const: 'px' } }, required: ['value', 'unit'], additionalProperties: false },
+        fontFamilyInfo: { type: ['object', 'null'], description: '字体资源信息。存在 id 时渲染为 font_${id}，存在 url 时会尝试加载字体', properties: { id: { type: 'string' }, url: { type: 'string' }, name: { type: 'string' } }, additionalProperties: true },
+        fontFamily: { type: 'string', default: '', description: 'CSS 字体族兜底值，例如 serif 或 sans-serif；fontFamilyInfo 优先' },
+        fontColor: { $ref: '#/definitions/ColorValue' },
+        backgroundColor: { $ref: '#/definitions/ColorValue' },
+        textAlign: { type: 'string', enum: ['left', 'center', 'right'], default: 'center' },
+        width: { $ref: '#/definitions/SizeValue' },
+        height: { $ref: '#/definitions/SizeValue' },
+        zIndex: { type: 'number', default: 0 },
+        position: { $ref: '#/definitions/Position' },
+        transform: { $ref: '#/definitions/Transform' },
+        filter: { $ref: '#/definitions/Filter' },
       },
       additionalProperties: false,
     },

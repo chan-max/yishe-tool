@@ -26,6 +26,7 @@ import { createCanvasChildRawCanvas, createDefaultCanvasChildRawCanvasOptions } 
 import { createCanvasChildWordCloud, createDefaultCanvasChildWordCloudOptions } from './children/wordCloud/index.tsx'
 import { createCanvasChildThreeScene, createDefaultCanvasChildThreeSceneOptions } from './children/threeScene/index.tsx'
 import { createCanvasChildEchart, createDefaultCanvasChildEchartOptions } from './children/echart/index.tsx'
+import { createCanvasChildMath, createDefaultCanvasChildMathOptions } from './children/math.tsx'
 
 import { createDefaultCanvasChildcanvasStickerOptions } from './children/canvas'
 
@@ -127,6 +128,7 @@ import htmlLayout from './operateLayout/html.vue'
 import wordCloudLayout from './operateLayout/wordCloud.vue'
 import threeSceneLayout from './operateLayout/threeScene.vue'
 import echartLayout from './operateLayout/echart.vue'
+import mathLayout from './operateLayout/mathFormula.vue'
 
 import { createCanvasChildBarcode, createDefaultCanvasChildBarcodeOptions } from './children/barcode/index.tsx';
 import { createCanvasChildHtml, createDefaultCanvasChildHtmlOptions } from './children/html.tsx';
@@ -199,6 +201,15 @@ defineCanvasChild({
     defaultOptionsCreator: createDefaultCanvasChildEchartOptions,
     renderer: createCanvasChildEchart,
     operationLayout: echartLayout
+})
+
+defineCanvasChild({
+    typeName: 'math',
+    typeKey: 'math',
+    label: '数学公式',
+    defaultOptionsCreator: createDefaultCanvasChildMathOptions,
+    renderer: createCanvasChildMath,
+    operationLayout: mathLayout
 })
 
 

@@ -17,7 +17,7 @@ const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按
 - 画布是设计的基础，所有元素都叠加在画布上
 - 画布有宽高（单位 px），背景颜色默认透明
 - 每个元素有唯一 ID（添加后返回），层级（zIndex），位置（position），变换（transform）等属性
-- 元素类型：文字(text)、背景(background)、图片(image)、矩形(rect)、椭圆(ellipse)、二维码(qrcode)、条形码(barcode)
+- 元素类型：文字(text)、背景(background)、图片(image)、矩形(rect)、椭圆(ellipse)、二维码(qrcode)、条形码(barcode)、数学公式(math)
 
 ## 设计执行流程
 

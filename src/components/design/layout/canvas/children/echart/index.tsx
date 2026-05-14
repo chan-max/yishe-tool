@@ -232,6 +232,41 @@ export function ensureEchartOptions(target: any) {
     return target.echart.engines.echarts
 }
 
-export function cloneOption<T>(value: T): T {
-    return JSON.parse(JSON.stringify(value))
+export function cloneOption<T>(value: T, seen = new WeakMap<object, any>()): T {
+    if (value === null || typeof value !== 'object') {
+        return value
+    }
+
+    if (typeof value === 'function') {
+        return value
+    }
+
+    if (value instanceof Date) {
+        return new Date(value.getTime()) as T
+    }
+
+    if (seen.has(value as object)) {
+        return seen.get(value as object)
+    }
+
+    if (Array.isArray(value)) {
+        const result: any[] = []
+        seen.set(value, result)
+        value.forEach((item) => {
+            result.push(cloneOption(item, seen))
+        })
+        return result as T
+    }
+
+    const proto = Object.getPrototypeOf(value)
+    if (proto && proto !== Object.prototype) {
+        return value
+    }
+
+    const result: Record<string, any> = {}
+    seen.set(value as object, result)
+    Object.keys(value as Record<string, any>).forEach((key) => {
+        result[key] = cloneOption((value as Record<string, any>)[key], seen)
+    })
+    return result as T
 }

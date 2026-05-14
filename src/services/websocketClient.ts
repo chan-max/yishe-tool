@@ -3,7 +3,7 @@ import { reactive } from "vue";
 
 type WsStatus = "idle" | "connecting" | "connected" | "reconnecting" | "disconnected" | "error";
 
-const CLIENT_SOURCE = "设计工具";
+const CLIENT_SOURCE = "设计端";
 const HEARTBEAT_INTERVAL = 15_000;
 const HEARTBEAT_TIMEOUT = 30_000;
 
@@ -92,6 +92,7 @@ const clientInfo = reactive({
   timestamp: new Date().toISOString(),
   app: {
     name: "yishe-tool",
+    displayName: "设计端",
     version: (import.meta.env.VITE_APP_VERSION as string | undefined) || undefined,
     mode: import.meta.env.MODE,
   },

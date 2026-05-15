@@ -24,6 +24,9 @@ import { createDefaultCanvasChildMoleculeOptions } from "@/components/design/lay
 import { createDefaultCanvasChildThreeMolOptions } from "@/components/design/layout/canvas/children/threeMol.tsx";
 import { createDefaultCanvasChildAbcNotationOptions } from "@/components/design/layout/canvas/children/abcNotation.tsx";
 import { createDefaultCanvasChildVexFlowOptions } from "@/components/design/layout/canvas/children/vexFlow.tsx";
+import { createDefaultCanvasChildCytoscapeOptions } from "@/components/design/layout/canvas/children/cytoscape.tsx";
+import { createDefaultCanvasChildVueDataUiOptions } from "@/components/design/layout/canvas/children/vueDataUi.tsx";
+import { createDefaultCanvasChildD3Options } from "@/components/design/layout/canvas/children/d3.tsx";
 
 export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   canvas: createDefaultCanvasChildcanvasStickerOptions,
@@ -46,6 +49,9 @@ export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   threeMol: createDefaultCanvasChildThreeMolOptions,
   abcNotation: createDefaultCanvasChildAbcNotationOptions,
   vexFlow: createDefaultCanvasChildVexFlowOptions,
+  cytoscape: createDefaultCanvasChildCytoscapeOptions,
+  vueDataUi: createDefaultCanvasChildVueDataUiOptions,
+  d3: createDefaultCanvasChildD3Options,
 };
 
 const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一任务：根据用户需求，输出一个完整的 JSON 对象来定义画布设计。
@@ -81,6 +87,9 @@ const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一�
 - threeMol: 3D分子 (3Dmol.js)。data 写 PDB/SDF/XYZ/MOL2 数据，format 写格式标识，pdbId 写 PDB 数据库 ID（自动下载），style 写渲染样式（stick/sphere/cartoon/line/cross）；适合 3D 交互式分子可视化
 - abcNotation: 乐谱 (abcjs)。source 写 ABC 记谱法文本；适合简单乐谱、民谣、儿歌
 - vexFlow: 五线谱 (VexFlow)。notes 写音符数组 [{keys:['c/4'],duration:'q'}]，clef 写谱号（treble/bass/alto/tenor），timeSignature 写拍号；适合专业五线谱
+- cytoscape: 关系图 (Cytoscape.js)。elements 写节点和边数组 [{data:{id:'A',label:'开始'}},{data:{source:'A',target:'B'}}]，layout 写布局算法（preset/grid/circle/concentric/breadthfirst/cose）；适合关系网络、流程图、组织架构图
+- vueDataUi: 数据可视化 (vue-data-ui)。component 写组件名（如 VueUiDonut/VueUiRadar/VueUiXy 等），dataset 写数据数组，config 写配置对象；支持 60+ 种图表类型
+- d3: 自定义图表 (D3.js)。code 写 D3.js 代码，可用 d3、container、width、height 变量；完全自由定制，适合复杂可视化
 
 ## 公共属性（除 canvas 外所有元素可选）
 width/height, zIndex(数字越大越靠前), position({center:true}居中), transform, filter`;
@@ -1529,6 +1538,125 @@ export const CANVAS_DESIGN_SCHEMA = {
           type: "string",
           default: "4/4",
           description: "拍号，例如 4/4、3/4、6/8",
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    CytoscapeChild: {
+      type: "object",
+      description:
+        "Cytoscape.js 关系图子元素。使用 Cytoscape.js 渲染关系网络图、流程图、组织架构图。",
+      required: ["type"],
+      properties: {
+        type: { const: "cytoscape" },
+        elements: {
+          type: "array",
+          description: "节点和边的数组",
+          items: {
+            type: "object",
+            properties: {
+              data: {
+                type: "object",
+                description: "元素数据",
+                properties: {
+                  id: { type: "string", description: "节点 ID" },
+                  label: { type: "string", description: "节点标签" },
+                  source: { type: "string", description: "边的源节点 ID" },
+                  target: { type: "string", description: "边的目标节点 ID" },
+                },
+                additionalProperties: true,
+              },
+              position: {
+                type: "object",
+                description: "节点位置（preset 布局时使用）",
+                properties: {
+                  x: { type: "number" },
+                  y: { type: "number" },
+                },
+              },
+            },
+            required: ["data"],
+          },
+        },
+        layout: {
+          type: "string",
+          enum: ["preset", "grid", "circle", "concentric", "breadthfirst", "cose"],
+          default: "preset",
+          description: "布局算法",
+        },
+        style: {
+          type: "object",
+          description: "样式配置",
+          properties: {
+            nodeColor: { type: "string", default: "#4A90D9", description: "节点颜色" },
+            nodeBorderColor: { type: "string", default: "#2C6FAC", description: "节点边框颜色" },
+            edgeColor: { type: "string", default: "#666666", description: "边颜色" },
+            labelColor: { type: "string", default: "#333333", description: "文字颜色" },
+          },
+          additionalProperties: true,
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    VueDataUiChild: {
+      type: "object",
+      description:
+        "vue-data-ui 数据可视化子元素。支持 60+ 种图表类型，通过配置渲染各种数据图表。",
+      required: ["type"],
+      properties: {
+        type: { const: "vueDataUi" },
+        component: {
+          type: "string",
+          default: "VueUiDonut",
+          description: "vue-data-ui 组件名，如 VueUiDonut、VueUiRadar、VueUiXy 等",
+        },
+        dataset: {
+          type: "array",
+          description: "数据集，根据组件类型不同而不同",
+          items: {
+            type: "object",
+            additionalProperties: true,
+          },
+        },
+        config: {
+          type: "object",
+          description: "组件配置，透传给 vue-data-ui 组件",
+          additionalProperties: true,
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    D3Child: {
+      type: "object",
+      description:
+        "D3.js 自定义图表子元素。使用 D3.js 代码完全自由定制可视化图表。",
+      required: ["type"],
+      properties: {
+        type: { const: "d3" },
+        code: {
+          type: "string",
+          description: "D3.js 代码，可用变量：d3 (D3.js 库), container (DOM 容器), width (宽度), height (高度)",
         },
         backgroundColor: { $ref: "#/definitions/ColorValue" },
         width: { $ref: "#/definitions/SizeValue" },

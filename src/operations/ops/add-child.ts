@@ -243,6 +243,57 @@ registerOperation({
       description: "仅 VexFlow 五线谱类型有效",
     },
     {
+      name: "cytoscapeElements",
+      label: "元素数据",
+      type: "string",
+      placeholder: '[{"data":{"id":"A","label":"开始"}},{"data":{"source":"A","target":"B"}}]',
+      description: "仅 Cytoscape 关系图类型有效，JSON 格式的节点和边数组",
+    },
+    {
+      name: "cytoscapeLayout",
+      label: "布局算法",
+      type: "select",
+      default: "preset",
+      options: [
+        { label: "预设位置", value: "preset" },
+        { label: "网格", value: "grid" },
+        { label: "圆形", value: "circle" },
+        { label: "同心圆", value: "concentric" },
+        { label: "层级", value: "breadthfirst" },
+        { label: "力导向", value: "cose" },
+      ],
+      description: "仅 Cytoscape 关系图类型有效",
+    },
+    {
+      name: "vueDataUiComponent",
+      label: "图表组件",
+      type: "string",
+      default: "VueUiDonut",
+      placeholder: "VueUiDonut",
+      description: "仅 vue-data-ui 类型有效，如 VueUiDonut、VueUiRadar、VueUiXy 等",
+    },
+    {
+      name: "vueDataUiDataset",
+      label: "数据集",
+      type: "string",
+      placeholder: '[{"name":"项目A","values":[30]}]',
+      description: "仅 vue-data-ui 类型有效，JSON 格式的数据数组",
+    },
+    {
+      name: "vueDataUiConfig",
+      label: "组件配置",
+      type: "string",
+      placeholder: '{"style":{"chart":{"title":{"text":"标题"}}}}',
+      description: "仅 vue-data-ui 类型有效，JSON 格式的配置对象",
+    },
+    {
+      name: "d3Code",
+      label: "D3.js 代码",
+      type: "string",
+      placeholder: "// D3.js 代码\nconst svg = d3.select(container)...",
+      description: "仅 D3.js 类型有效，可用变量：d3, container, width, height",
+    },
+    {
       name: "width",
       label: "宽度",
       type: "number",
@@ -287,6 +338,12 @@ registerOperation({
       vexFlowNotes,
       vexFlowClef,
       vexFlowTimeSignature,
+      cytoscapeElements,
+      cytoscapeLayout,
+      vueDataUiComponent,
+      vueDataUiDataset,
+      vueDataUiConfig,
+      d3Code,
       width,
       height,
     } = params;
@@ -386,6 +443,51 @@ registerOperation({
       }
       if (vexFlowClef !== undefined) extraOptions.clef = vexFlowClef;
       if (vexFlowTimeSignature !== undefined) extraOptions.timeSignature = vexFlowTimeSignature;
+      if (width !== undefined)
+        extraOptions.width = { value: width, unit: "px" };
+      if (height !== undefined)
+        extraOptions.height = { value: height, unit: "px" };
+    }
+
+    if (type === "cytoscape") {
+      if (cytoscapeElements !== undefined) {
+        try {
+          extraOptions.elements = JSON.parse(cytoscapeElements);
+        } catch {
+          return { success: false, message: "元素数据 JSON 格式错误" };
+        }
+      }
+      if (cytoscapeLayout !== undefined) extraOptions.layout = cytoscapeLayout;
+      if (width !== undefined)
+        extraOptions.width = { value: width, unit: "px" };
+      if (height !== undefined)
+        extraOptions.height = { value: height, unit: "px" };
+    }
+
+    if (type === "vueDataUi") {
+      if (vueDataUiComponent !== undefined) extraOptions.component = vueDataUiComponent;
+      if (vueDataUiDataset !== undefined) {
+        try {
+          extraOptions.dataset = JSON.parse(vueDataUiDataset);
+        } catch {
+          return { success: false, message: "数据集 JSON 格式错误" };
+        }
+      }
+      if (vueDataUiConfig !== undefined) {
+        try {
+          extraOptions.config = JSON.parse(vueDataUiConfig);
+        } catch {
+          return { success: false, message: "配置 JSON 格式错误" };
+        }
+      }
+      if (width !== undefined)
+        extraOptions.width = { value: width, unit: "px" };
+      if (height !== undefined)
+        extraOptions.height = { value: height, unit: "px" };
+    }
+
+    if (type === "d3") {
+      if (d3Code !== undefined) extraOptions.code = d3Code;
       if (width !== undefined)
         extraOptions.width = { value: width, unit: "px" };
       if (height !== undefined)

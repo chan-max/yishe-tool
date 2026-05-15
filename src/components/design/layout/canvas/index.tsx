@@ -91,6 +91,18 @@ import {
   createCanvasChildVexFlow,
   createDefaultCanvasChildVexFlowOptions,
 } from "./children/vexFlow.tsx";
+import {
+  createCanvasChildCytoscape,
+  createDefaultCanvasChildCytoscapeOptions,
+} from "./children/cytoscape.tsx";
+import {
+  createCanvasChildVueDataUi,
+  createDefaultCanvasChildVueDataUiOptions,
+} from "./children/vueDataUi.tsx";
+import {
+  createCanvasChildD3,
+  createDefaultCanvasChildD3Options,
+} from "./children/d3.tsx";
 
 import { createDefaultCanvasChildcanvasStickerOptions } from "./children/canvas";
 
@@ -196,6 +208,9 @@ import moleculeLayout from "./operateLayout/molecule.vue";
 import threeMolLayout from "./operateLayout/threeMol.vue";
 import abcNotationLayout from "./operateLayout/abcNotation.vue";
 import vexFlowLayout from "./operateLayout/vexFlow.vue";
+import cytoscapeLayout from "./operateLayout/cytoscape.vue";
+import vueDataUiLayout from "./operateLayout/vueDataUi.vue";
+import d3Layout from "./operateLayout/d3.vue";
 
 import {
   createCanvasChildBarcode,
@@ -380,6 +395,33 @@ defineCanvasChild({
   defaultOptionsCreator: createDefaultCanvasChildVexFlowOptions,
   renderer: createCanvasChildVexFlow,
   operationLayout: vexFlowLayout,
+});
+
+defineCanvasChild({
+  typeName: "cytoscape",
+  typeKey: "cytoscape",
+  label: "关系图 (Cytoscape.js)",
+  defaultOptionsCreator: createDefaultCanvasChildCytoscapeOptions,
+  renderer: createCanvasChildCytoscape,
+  operationLayout: cytoscapeLayout,
+});
+
+defineCanvasChild({
+  typeName: "vueDataUi",
+  typeKey: "vueDataUi",
+  label: "数据图表 (vue-data-ui)",
+  defaultOptionsCreator: createDefaultCanvasChildVueDataUiOptions,
+  renderer: createCanvasChildVueDataUi,
+  operationLayout: vueDataUiLayout,
+});
+
+defineCanvasChild({
+  typeName: "d3",
+  typeKey: "d3",
+  label: "自定义图表 (D3.js)",
+  defaultOptionsCreator: createDefaultCanvasChildD3Options,
+  renderer: createCanvasChildD3,
+  operationLayout: d3Layout,
 });
 
 /*

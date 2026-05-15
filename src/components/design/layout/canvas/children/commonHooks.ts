@@ -56,8 +56,8 @@ function processBasicElEvent(payload) {
         el.addEventListener('mouseup', (e) => {
             const dx = e.clientX - startX
             const dy = e.clientY - startY
+            // 只有在点击（没有移动）时才选择元素
             if (Math.abs(dx) < CLICK_DISTANCE_THRESHOLD && Math.abs(dy) < CLICK_DISTANCE_THRESHOLD) {
-                e.stopPropagation();
                 currentOperatingCanvasChildId.value = options.id
             }
         }, true)

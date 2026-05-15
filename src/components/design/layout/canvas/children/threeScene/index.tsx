@@ -792,6 +792,7 @@ export const ThreeSceneChild = defineComponent({
 
             event.preventDefault()
             event.stopPropagation()
+            
             canvasRef.value?.setPointerCapture?.(event.pointerId)
             dragState = {
                 active: true,
@@ -830,6 +831,7 @@ export const ThreeSceneChild = defineComponent({
 
             event.preventDefault()
             event.stopPropagation()
+            
             canvasRef.value?.releasePointerCapture?.(event.pointerId)
             if (dragState.object && dragState.objectConfig) {
                 if (!dragState.objectConfig.transform) {

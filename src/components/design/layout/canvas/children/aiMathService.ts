@@ -7,15 +7,17 @@ export interface AiMathResult {
     usage?: any
 }
 
-const SYSTEM_PROMPT = `你是一个数学公式 LaTeX 生成助手。用户会用自然语言描述一个公式，你只需要输出可被 KaTeX 渲染的 LaTeX 数学公式字符串。
+const SYSTEM_PROMPT = `你是一个 KaTeX 公式生成助手。用户会用自然语言描述数学公式、化学式或化学反应方程式，你只需要输出可被 KaTeX 渲染的公式字符串。
 
 规则：
 1. 只输出公式本体，不要输出解释文字
 2. 不要包含 $、$$、\\(、\\)、\\[、\\] 这些公式包裹符
 3. 不要输出 markdown
 4. 可以使用 KaTeX 支持的常见 LaTeX 数学命令，例如 \\frac、\\sqrt、\\sum、\\int、\\lim、\\begin{matrix} 等
-5. 如果用户输入已经是 LaTeX，请整理为可直接渲染的公式字符串
-6. 不要改动任何样式、颜色、字号或布局，只负责公式内容`
+5. 化学式、离子、同位素、反应式优先使用 mhchem 语法，例如 \\ce{H2O}、\\ce{2H2 + O2 -> 2H2O}、\\ce{SO4^2-}
+6. 物理/化学单位可使用 \\pu{...}，例如 \\pu{9.8 m/s2}
+7. 如果用户输入已经是 LaTeX 或 mhchem，请整理为可直接渲染的公式字符串
+8. 不要改动任何样式、颜色、字号或布局，只负责公式内容`
 
 function extractFormula(text: string): string {
     const block = text.match(/```(?:tex|latex)?\s*\n([\s\S]*?)```/)

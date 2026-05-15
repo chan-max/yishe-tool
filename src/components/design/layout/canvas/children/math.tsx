@@ -1,5 +1,6 @@
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
+import 'katex/contrib/mhchem/mhchem.js'
 import { computed, defineComponent, ref } from 'vue'
 import { fetchFontFaceWithMessage } from '@/components/design/layout/canvas/operate/fontFamily/index.ts'
 import { canvasStickerOptionsOnlyChild, updateRenderingCanvas } from '../index.tsx'

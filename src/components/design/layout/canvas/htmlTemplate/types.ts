@@ -27,7 +27,7 @@ export interface HtmlTemplateMeta {
   tags?: string[];
   source?: HtmlTemplateSource;
   sortOrder?: number;
-  difficulty?: 'easy' | 'medium' | 'hard' | 'complex';
+  difficulty?: 'easy' | 'simple' | 'medium' | 'intermediate' | 'hard' | 'advanced' | 'complex';
 }
 
 export interface HtmlTemplateDefinition extends HtmlTemplateMeta {

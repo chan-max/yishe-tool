@@ -12,6 +12,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AbcNotation: typeof import('./src/components/design/layout/canvas/operateLayout/abcNotation.vue')['default']
     AbsoluteSize: typeof import('./src/components/design/layout/canvas/operate/size/absoluteSize.vue')['default']
     AbsoluteUnitSelect: typeof import('./src/components/design/layout/canvas/operate/absoluteUnitSelect.vue')['default']
     AddPopover: typeof import('./src/components/design/layout/canvas/addPopover.vue')['default']
@@ -39,6 +40,7 @@ declare module 'vue' {
     CanvasSizePresets: typeof import('./src/components/design/layout/canvas/operate/size/canvasSizePresets.vue')['default']
     CanvasStructure: typeof import('./src/components/design/layout/canvasStructure/index.vue')['default']
     ClipPath: typeof import('./src/components/design/layout/canvas/operate/clipPath/index.vue')['default']
+    CodeBlock: typeof import('./src/components/design/layout/canvas/operateLayout/codeBlock.vue')['default']
     Color: typeof import('./src/components/design/layout/canvas/operate/color/index.vue')['default']
     ColorPicker: typeof import('./src/components/design/components/colorPicker/colorPicker.vue')['default']
     CommonGroup: typeof import('./src/components/design/layout/canvas/operate/commonGroup.vue')['default']
@@ -106,6 +108,7 @@ declare module 'vue' {
     Modal: typeof import('./src/components/design/components/colorPicker/modal.vue')['default']
     ModelCardViewer: typeof import('./src/components/model/modelCardViewer/index.vue')['default']
     ModelInfo: typeof import('./src/components/design/layout/modelInfo/index.vue')['default']
+    Molecule: typeof import('./src/components/design/layout/canvas/operateLayout/molecule.vue')['default']
     ObjectFit: typeof import('./src/components/design/layout/canvas/operate/objectFit.vue')['default']
     OfficialTemplateModal: typeof import('./src/components/design/layout/canvas/officialTemplateModal/index.vue')['default']
     OnlinePoint: typeof import('./src/components/design/components/onlinePoint.vue')['default']
@@ -169,6 +172,7 @@ declare module 'vue' {
     TextSticker: typeof import('./src/components/design/layout/textSticker/index.vue')['default']
     TextStroke: typeof import('./src/components/design/layout/canvas/operate/text/textStroke.vue')['default']
     ThreeCanvasTopBar: typeof import('./src/components/design/layout/threeCanvasTopBar/index.vue')['default']
+    ThreeMol: typeof import('./src/components/design/layout/canvas/operateLayout/threeMol.vue')['default']
     ThreeScene: typeof import('./src/components/design/layout/canvas/operateLayout/threeScene.vue')['default']
     TopBar: typeof import('./src/components/design/layout/topBar/index.vue')['default']
     Translate: typeof import('./src/components/design/layout/canvas/operate/transform/translate.vue')['default']
@@ -177,6 +181,7 @@ declare module 'vue' {
     Url: typeof import('./src/components/design/layout/canvas/operate/filter/url/index.vue')['default']
     UserAvatar: typeof import('./src/components/user/userAvatar.vue')['default']
     UserAvatarForm: typeof import('./src/components/user/userAvatarForm.vue')['default']
+    VexFlow: typeof import('./src/components/design/layout/canvas/operateLayout/vexFlow.vue')['default']
     VideoClip: typeof import('./src/components/design/layout/videoClip/index.vue')['default']
     Vue3TagsInput: typeof import('./src/components/design/components/tagsInput/src/vue3-tags-input.vue')['default']
     Waterfall: typeof import('./src/components/layout/waterfall/index.vue')['default']
@@ -190,6 +195,7 @@ declare module 'vue' {
 
 // For TSX support
 declare global {
+  const AbcNotation: typeof import('./src/components/design/layout/canvas/operateLayout/abcNotation.vue')['default']
   const AbsoluteSize: typeof import('./src/components/design/layout/canvas/operate/size/absoluteSize.vue')['default']
   const AbsoluteUnitSelect: typeof import('./src/components/design/layout/canvas/operate/absoluteUnitSelect.vue')['default']
   const AddPopover: typeof import('./src/components/design/layout/canvas/addPopover.vue')['default']
@@ -217,6 +223,7 @@ declare global {
   const CanvasSizePresets: typeof import('./src/components/design/layout/canvas/operate/size/canvasSizePresets.vue')['default']
   const CanvasStructure: typeof import('./src/components/design/layout/canvasStructure/index.vue')['default']
   const ClipPath: typeof import('./src/components/design/layout/canvas/operate/clipPath/index.vue')['default']
+  const CodeBlock: typeof import('./src/components/design/layout/canvas/operateLayout/codeBlock.vue')['default']
   const Color: typeof import('./src/components/design/layout/canvas/operate/color/index.vue')['default']
   const ColorPicker: typeof import('./src/components/design/components/colorPicker/colorPicker.vue')['default']
   const CommonGroup: typeof import('./src/components/design/layout/canvas/operate/commonGroup.vue')['default']
@@ -284,6 +291,7 @@ declare global {
   const Modal: typeof import('./src/components/design/components/colorPicker/modal.vue')['default']
   const ModelCardViewer: typeof import('./src/components/model/modelCardViewer/index.vue')['default']
   const ModelInfo: typeof import('./src/components/design/layout/modelInfo/index.vue')['default']
+  const Molecule: typeof import('./src/components/design/layout/canvas/operateLayout/molecule.vue')['default']
   const ObjectFit: typeof import('./src/components/design/layout/canvas/operate/objectFit.vue')['default']
   const OfficialTemplateModal: typeof import('./src/components/design/layout/canvas/officialTemplateModal/index.vue')['default']
   const OnlinePoint: typeof import('./src/components/design/components/onlinePoint.vue')['default']
@@ -347,6 +355,7 @@ declare global {
   const TextSticker: typeof import('./src/components/design/layout/textSticker/index.vue')['default']
   const TextStroke: typeof import('./src/components/design/layout/canvas/operate/text/textStroke.vue')['default']
   const ThreeCanvasTopBar: typeof import('./src/components/design/layout/threeCanvasTopBar/index.vue')['default']
+  const ThreeMol: typeof import('./src/components/design/layout/canvas/operateLayout/threeMol.vue')['default']
   const ThreeScene: typeof import('./src/components/design/layout/canvas/operateLayout/threeScene.vue')['default']
   const TopBar: typeof import('./src/components/design/layout/topBar/index.vue')['default']
   const Translate: typeof import('./src/components/design/layout/canvas/operate/transform/translate.vue')['default']
@@ -355,6 +364,7 @@ declare global {
   const Url: typeof import('./src/components/design/layout/canvas/operate/filter/url/index.vue')['default']
   const UserAvatar: typeof import('./src/components/user/userAvatar.vue')['default']
   const UserAvatarForm: typeof import('./src/components/user/userAvatarForm.vue')['default']
+  const VexFlow: typeof import('./src/components/design/layout/canvas/operateLayout/vexFlow.vue')['default']
   const VideoClip: typeof import('./src/components/design/layout/videoClip/index.vue')['default']
   const Vue3TagsInput: typeof import('./src/components/design/components/tagsInput/src/vue3-tags-input.vue')['default']
   const Waterfall: typeof import('./src/components/layout/waterfall/index.vue')['default']

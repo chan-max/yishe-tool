@@ -1,609 +1,735 @@
-import { ref, computed, shallowRef, nextTick, watch, defineAsyncComponent, defineComponent, shallowReactive } from 'vue'
+import {
+  ref,
+  computed,
+  shallowRef,
+  nextTick,
+  watch,
+  defineAsyncComponent,
+  defineComponent,
+  shallowReactive,
+} from "vue";
 // 使用 html-to-image
-import { toPng, toJpeg, toBlob, toPixelData, toSvg, toCanvas, getFontEmbedCSS } from "html-to-image";
-import { downloadByFile } from '@/common/transform'
-import { useDebounceFn } from '@vueuse/core'
-import { waitImage } from '@/common'
-import { createCanvasChildSvg } from './children/svg/svg.tsx'
-
-import { createCanvasChildText, createDefaultCanvasChildTextOptions } from './children/text/text.tsx'
-import { createCanvasChildBackground, createDefaultCanvasChildBackgroundOptions } from './children/background/index.tsx'
-import { createDefaultCanvasChildQrcodeOptions, createCanvasChildQrcode, } from './children/qrcode.tsx'
 import {
-    createDefaultCanvasChildSvgRectOptions,
-    createCanvasChildRect,
-    createCanvasChildEllipse,
-    createDefaultCanvasChildSvgEllipseOptions
-} from './children/svg/svg.tsx'
+  toPng,
+  toJpeg,
+  toBlob,
+  toPixelData,
+  toSvg,
+  toCanvas,
+  getFontEmbedCSS,
+} from "html-to-image";
+import { downloadByFile } from "@/common/transform";
+import { useDebounceFn } from "@vueuse/core";
+import { waitImage } from "@/common";
+import { createCanvasChildSvg } from "./children/svg/svg.tsx";
+
 import {
-    createCanvasChildImage,
-    createDefaultCanvasChildImageOptions
-} from './children/image.tsx'
-import { formatSizeOptionToPixelValue } from './helper.tsx';
+  createCanvasChildText,
+  createDefaultCanvasChildTextOptions,
+} from "./children/text/text.tsx";
+import {
+  createCanvasChildBackground,
+  createDefaultCanvasChildBackgroundOptions,
+} from "./children/background/index.tsx";
+import {
+  createDefaultCanvasChildQrcodeOptions,
+  createCanvasChildQrcode,
+} from "./children/qrcode.tsx";
+import {
+  createDefaultCanvasChildSvgRectOptions,
+  createCanvasChildRect,
+  createCanvasChildEllipse,
+  createDefaultCanvasChildSvgEllipseOptions,
+} from "./children/svg/svg.tsx";
+import {
+  createCanvasChildImage,
+  createDefaultCanvasChildImageOptions,
+} from "./children/image.tsx";
+import { formatSizeOptionToPixelValue } from "./helper.tsx";
 
+import {
+  createCanvasChildRawCanvas,
+  createDefaultCanvasChildRawCanvasOptions,
+} from "./children/rawCanvas.tsx";
+import {
+  createCanvasChildWordCloud,
+  createDefaultCanvasChildWordCloudOptions,
+} from "./children/wordCloud/index.tsx";
+import {
+  createCanvasChildThreeScene,
+  createDefaultCanvasChildThreeSceneOptions,
+} from "./children/threeScene/index.tsx";
+import {
+  createCanvasChildEchart,
+  createDefaultCanvasChildEchartOptions,
+} from "./children/echart/index.tsx";
+import {
+  createCanvasChildMath,
+  createDefaultCanvasChildMathOptions,
+} from "./children/math.tsx";
+import {
+  createCanvasChildMermaid,
+  createDefaultCanvasChildMermaidOptions,
+} from "./children/mermaid.tsx";
+import {
+  createCanvasChildCodeBlock,
+  createDefaultCanvasChildCodeBlockOptions,
+} from "./children/codeBlock.tsx";
+import {
+  createCanvasChildMolecule,
+  createDefaultCanvasChildMoleculeOptions,
+} from "./children/molecule.tsx";
+import {
+  createCanvasChildThreeMol,
+  createDefaultCanvasChildThreeMolOptions,
+} from "./children/threeMol.tsx";
+import {
+  createCanvasChildAbcNotation,
+  createDefaultCanvasChildAbcNotationOptions,
+} from "./children/abcNotation.tsx";
+import {
+  createCanvasChildVexFlow,
+  createDefaultCanvasChildVexFlowOptions,
+} from "./children/vexFlow.tsx";
 
-import { createCanvasChildRawCanvas, createDefaultCanvasChildRawCanvasOptions } from './children/rawCanvas.tsx'
-import { createCanvasChildWordCloud, createDefaultCanvasChildWordCloudOptions } from './children/wordCloud/index.tsx'
-import { createCanvasChildThreeScene, createDefaultCanvasChildThreeSceneOptions } from './children/threeScene/index.tsx'
-import { createCanvasChildEchart, createDefaultCanvasChildEchartOptions } from './children/echart/index.tsx'
-import { createCanvasChildMath, createDefaultCanvasChildMathOptions } from './children/math.tsx'
-import { createCanvasChildMermaid, createDefaultCanvasChildMermaidOptions } from './children/mermaid.tsx'
+import { createDefaultCanvasChildcanvasStickerOptions } from "./children/canvas";
 
-import { createDefaultCanvasChildcanvasStickerOptions } from './children/canvas'
+import { Canvas } from "./children/canvas.tsx";
+import { createFilterDefaultOptions } from "./children/defaultOptions.tsx";
 
-import { Canvas } from './children/canvas.tsx'
-import { createFilterDefaultOptions } from './children/defaultOptions.tsx'
+import Utils from "@/common/utils";
 
-import Utils from '@/common/utils'
+import { currentModelController } from "@/components/design/store";
 
-import { currentModelController } from '@/components/design/store'
+import { imageDataToFile, canvasToFile } from "@/common/transform";
+import { defineCanvasChild } from "./children/define.tsx";
 
-import { imageDataToFile, canvasToFile } from '@/common/transform'
-import { defineCanvasChild } from './children/define.tsx';
-
-import { currentFocusingStickerId, ChildViewHelperComponent } from '@/components/design/layout/canvas/components/childViewHelper/index'
-
+import {
+  currentFocusingStickerId,
+  ChildViewHelperComponent,
+} from "@/components/design/layout/canvas/components/childViewHelper/index";
 
 // import { PngIcoConverter } from "/public/lib/png2icojs"; // 导入库
-
-
-
 
 /*
     画布参数
 */
 
-
 export var canvasStickerOptions = ref({
-    unit: 'px', // 这个单位还是要保留，当作整个部分的单位
-    showCanvasRealSize: false,
-    supportBackgroundColor: {
-        type: 'pure',
-        color: 'rgba(0,0,0,0)'
-    },
-    svgFilter: {
-        // 正在操作的自定义的滤镜元素， 只存在一个
-        children: [],
+  unit: "px", // 这个单位还是要保留，当作整个部分的单位
+  showCanvasRealSize: false,
+  supportBackgroundColor: {
+    type: "pure",
+    color: "rgba(0,0,0,0)",
+  },
+  svgFilter: {
+    // 正在操作的自定义的滤镜元素， 只存在一个
+    children: [],
 
-        // 内置的滤镜
-        // builtInSvgFilters: [],
-    },
-    children: [
-        // 默认会存在一个画布元素
-        createDefaultCanvasChildcanvasStickerOptions()
-    ],
-})
-
+    // 内置的滤镜
+    // builtInSvgFilters: [],
+  },
+  children: [
+    // 默认会存在一个画布元素
+    createDefaultCanvasChildcanvasStickerOptions(),
+  ],
+});
 
 export const canvasStickerOptionsOnlyChild = computed(() => {
-    return canvasStickerOptions.value.children.find((c) => c.type == 'canvas')
-})
-
-
+  return canvasStickerOptions.value.children.find((c) => c.type == "canvas");
+});
 
 // 获取子元素最高层级的元素，而不是获取该层级 ， 有多个返回第一个
 export function getCanvasTopZIndexChild() {
-    let children = canvasStickerOptions.value.children
+  let children = canvasStickerOptions.value.children;
 
-    const maxIndex = Math.max(...children.map((item: any) => item.zIndex).filter(Boolean));
-    let maxChild: any = children.find((item: any) => item.zIndex == maxIndex);
+  const maxIndex = Math.max(
+    ...children.map((item: any) => item.zIndex).filter(Boolean),
+  );
+  let maxChild: any = children.find((item: any) => item.zIndex == maxIndex);
 
-    return maxChild
+  return maxChild;
 }
 
 export function getCanvasChildTopZIndex() {
-    return getCanvasTopZIndexChild()?.zIndex || 0
+  return getCanvasTopZIndexChild()?.zIndex || 0;
 }
 
 /**
  * 这里会默认的留一个画布元素
-*/
+ */
 
 // 定义所有出现的类型
 export const CanvasChildType = {
-    canvas: 'canvas', // 画布
-}
+  canvas: "canvas", // 画布
+};
 
 export const canvasChildLabelMap = {
-    [CanvasChildType.canvas]: '画布',
-}
+  [CanvasChildType.canvas]: "画布",
+};
 
 export const canvasChildDefaultOptionsMap = {
-    [CanvasChildType.canvas]: null,
-}
+  [CanvasChildType.canvas]: null,
+};
 
 export const canvasChildRenderMap = {
-    [CanvasChildType.canvas]: null,
-}
+  [CanvasChildType.canvas]: null,
+};
 
-import backgroundLayout from './operateLayout/background.vue'
-import canvasLayout from './operateLayout/canvas.vue'
-import textLayout from './operateLayout/text.vue'
-import imageLayout from './operateLayout/image.vue'
-import rawCanvasLayout from './operateLayout/rawCanvas.vue'
-import qrcodeLayout from './operateLayout/qrcode.vue'
-import rectLayout from './operateLayout/rect.vue'
-import ellipseLayout from './operateLayout/ellipse.vue'
-import barcodeLayout from './operateLayout/barcode.vue'
-import htmlLayout from './operateLayout/html.vue'
-import wordCloudLayout from './operateLayout/wordCloud.vue'
-import threeSceneLayout from './operateLayout/threeScene.vue'
-import echartLayout from './operateLayout/echart.vue'
-import mathLayout from './operateLayout/mathFormula.vue'
-import mermaidLayout from './operateLayout/mermaid.vue'
+import backgroundLayout from "./operateLayout/background.vue";
+import canvasLayout from "./operateLayout/canvas.vue";
+import textLayout from "./operateLayout/text.vue";
+import imageLayout from "./operateLayout/image.vue";
+import rawCanvasLayout from "./operateLayout/rawCanvas.vue";
+import qrcodeLayout from "./operateLayout/qrcode.vue";
+import rectLayout from "./operateLayout/rect.vue";
+import ellipseLayout from "./operateLayout/ellipse.vue";
+import barcodeLayout from "./operateLayout/barcode.vue";
+import htmlLayout from "./operateLayout/html.vue";
+import wordCloudLayout from "./operateLayout/wordCloud.vue";
+import threeSceneLayout from "./operateLayout/threeScene.vue";
+import echartLayout from "./operateLayout/echart.vue";
+import mathLayout from "./operateLayout/mathFormula.vue";
+import mermaidLayout from "./operateLayout/mermaid.vue";
+import codeBlockLayout from "./operateLayout/codeBlock.vue";
+import moleculeLayout from "./operateLayout/molecule.vue";
+import threeMolLayout from "./operateLayout/threeMol.vue";
+import abcNotationLayout from "./operateLayout/abcNotation.vue";
+import vexFlowLayout from "./operateLayout/vexFlow.vue";
 
-import { createCanvasChildBarcode, createDefaultCanvasChildBarcodeOptions } from './children/barcode/index.tsx';
-import { createCanvasChildHtml, createDefaultCanvasChildHtmlOptions } from './children/html.tsx';
-
+import {
+  createCanvasChildBarcode,
+  createDefaultCanvasChildBarcodeOptions,
+} from "./children/barcode/index.tsx";
+import {
+  createCanvasChildHtml,
+  createDefaultCanvasChildHtmlOptions,
+} from "./children/html.tsx";
 
 export const CanvasChildOperationComponentMap = {
-    [CanvasChildType.canvas]: canvasLayout
-}
-
+  [CanvasChildType.canvas]: canvasLayout,
+};
 
 // 文字
 defineCanvasChild({
-    typeName: 'text',
-    typeKey: 'text',
-    label: '文字',
-    defaultOptionsCreator: createDefaultCanvasChildTextOptions,
-    renderer: createCanvasChildText,
-    operationLayout: textLayout
-})
+  typeName: "text",
+  typeKey: "text",
+  label: "文字",
+  defaultOptionsCreator: createDefaultCanvasChildTextOptions,
+  renderer: createCanvasChildText,
+  operationLayout: textLayout,
+});
 
 defineCanvasChild({
-    typeName: 'background',
-    typeKey: 'background',
-    label: '背景',
-    defaultOptionsCreator: createDefaultCanvasChildBackgroundOptions,
-    renderer: createCanvasChildBackground,
-    operationLayout: backgroundLayout
-})
+  typeName: "background",
+  typeKey: "background",
+  label: "背景",
+  defaultOptionsCreator: createDefaultCanvasChildBackgroundOptions,
+  renderer: createCanvasChildBackground,
+  operationLayout: backgroundLayout,
+});
 
 defineCanvasChild({
-    typeName: 'image',
-    typeKey: 'image',
-    label: '图片',
-    defaultOptionsCreator: createDefaultCanvasChildImageOptions,
-    renderer: createCanvasChildImage,
-    operationLayout: imageLayout
-})
+  typeName: "image",
+  typeKey: "image",
+  label: "图片",
+  defaultOptionsCreator: createDefaultCanvasChildImageOptions,
+  renderer: createCanvasChildImage,
+  operationLayout: imageLayout,
+});
 
 defineCanvasChild({
-    typeName: 'rawCanvas',
-    typeKey: 'rawCanvas',
-    label: '程序画布 (Canvas)',
-    defaultOptionsCreator: createDefaultCanvasChildRawCanvasOptions,
-    renderer: createCanvasChildRawCanvas,
-    operationLayout: rawCanvasLayout
-})
+  typeName: "rawCanvas",
+  typeKey: "rawCanvas",
+  label: "程序画布 (Canvas)",
+  defaultOptionsCreator: createDefaultCanvasChildRawCanvasOptions,
+  renderer: createCanvasChildRawCanvas,
+  operationLayout: rawCanvasLayout,
+});
 
 defineCanvasChild({
-    typeName: 'wordCloud',
-    typeKey: 'wordCloud',
-    label: '词云 (wordcloud2)',
-    defaultOptionsCreator: createDefaultCanvasChildWordCloudOptions,
-    renderer: createCanvasChildWordCloud,
-    operationLayout: wordCloudLayout
-})
+  typeName: "wordCloud",
+  typeKey: "wordCloud",
+  label: "词云 (wordcloud2)",
+  defaultOptionsCreator: createDefaultCanvasChildWordCloudOptions,
+  renderer: createCanvasChildWordCloud,
+  operationLayout: wordCloudLayout,
+});
 
 defineCanvasChild({
-    typeName: 'threeScene',
-    typeKey: 'threeScene',
-    label: '3D模型 (Three.js)',
-    defaultOptionsCreator: createDefaultCanvasChildThreeSceneOptions,
-    renderer: createCanvasChildThreeScene,
-    operationLayout: threeSceneLayout
-})
+  typeName: "threeScene",
+  typeKey: "threeScene",
+  label: "3D模型 (Three.js)",
+  defaultOptionsCreator: createDefaultCanvasChildThreeSceneOptions,
+  renderer: createCanvasChildThreeScene,
+  operationLayout: threeSceneLayout,
+});
 
 defineCanvasChild({
-    typeName: 'echart',
-    typeKey: 'echart',
-    label: '图表 (ECharts)',
-    defaultOptionsCreator: createDefaultCanvasChildEchartOptions,
-    renderer: createCanvasChildEchart,
-    operationLayout: echartLayout
-})
+  typeName: "echart",
+  typeKey: "echart",
+  label: "图表 (ECharts)",
+  defaultOptionsCreator: createDefaultCanvasChildEchartOptions,
+  renderer: createCanvasChildEchart,
+  operationLayout: echartLayout,
+});
 
 defineCanvasChild({
-    typeName: 'math',
-    typeKey: 'math',
-    label: '数学公式 (KaTeX)',
-    defaultOptionsCreator: createDefaultCanvasChildMathOptions,
-    renderer: createCanvasChildMath,
-    operationLayout: mathLayout
-})
+  typeName: "math",
+  typeKey: "math",
+  label: "数学公式 (KaTeX)",
+  defaultOptionsCreator: createDefaultCanvasChildMathOptions,
+  renderer: createCanvasChildMath,
+  operationLayout: mathLayout,
+});
 
 defineCanvasChild({
-    typeName: 'mermaid',
-    typeKey: 'mermaid',
-    label: '流程图 (Mermaid)',
-    defaultOptionsCreator: createDefaultCanvasChildMermaidOptions,
-    renderer: createCanvasChildMermaid,
-    operationLayout: mermaidLayout
-})
-
-
-defineCanvasChild({
-    typeName: 'ellipse',
-    typeKey: 'ellipse',
-    label: '圆和椭圆',
-    defaultOptionsCreator: createDefaultCanvasChildSvgEllipseOptions,
-    renderer: createCanvasChildEllipse,
-    operationLayout: ellipseLayout
-})
-
+  typeName: "mermaid",
+  typeKey: "mermaid",
+  label: "流程图 (Mermaid)",
+  defaultOptionsCreator: createDefaultCanvasChildMermaidOptions,
+  renderer: createCanvasChildMermaid,
+  operationLayout: mermaidLayout,
+});
 
 defineCanvasChild({
-    typeName: 'rect',
-    typeKey: 'rect',
-    label: '矩形',
-    defaultOptionsCreator: createDefaultCanvasChildSvgRectOptions,
-    renderer: createCanvasChildRect,
-    operationLayout: rectLayout
-})
+  typeName: "codeBlock",
+  typeKey: "codeBlock",
+  label: "代码块 (Shiki)",
+  defaultOptionsCreator: createDefaultCanvasChildCodeBlockOptions,
+  renderer: createCanvasChildCodeBlock,
+  operationLayout: codeBlockLayout,
+});
 
 defineCanvasChild({
-    typeName: 'qrcode',
-    typeKey: 'qrcode',
-    label: '二维码',
-    defaultOptionsCreator: createDefaultCanvasChildQrcodeOptions,
-    renderer: createCanvasChildQrcode,
-    operationLayout: qrcodeLayout
-})
-
-
-defineCanvasChild({
-    typeName: 'barcode',
-    typeKey: 'barcode',
-    label: '条形码',
-    defaultOptionsCreator: createDefaultCanvasChildBarcodeOptions,
-    renderer: createCanvasChildBarcode,
-    operationLayout: barcodeLayout
-})
+  typeName: "ellipse",
+  typeKey: "ellipse",
+  label: "圆和椭圆",
+  defaultOptionsCreator: createDefaultCanvasChildSvgEllipseOptions,
+  renderer: createCanvasChildEllipse,
+  operationLayout: ellipseLayout,
+});
 
 defineCanvasChild({
-    typeName: 'html',
-    typeKey: 'html',
-    label: 'HTML代码 (HTML)',
-    defaultOptionsCreator: createDefaultCanvasChildHtmlOptions,
-    renderer: createCanvasChildHtml,
-    operationLayout: htmlLayout
-})
+  typeName: "rect",
+  typeKey: "rect",
+  label: "矩形",
+  defaultOptionsCreator: createDefaultCanvasChildSvgRectOptions,
+  renderer: createCanvasChildRect,
+  operationLayout: rectLayout,
+});
+
+defineCanvasChild({
+  typeName: "qrcode",
+  typeKey: "qrcode",
+  label: "二维码",
+  defaultOptionsCreator: createDefaultCanvasChildQrcodeOptions,
+  renderer: createCanvasChildQrcode,
+  operationLayout: qrcodeLayout,
+});
+
+defineCanvasChild({
+  typeName: "barcode",
+  typeKey: "barcode",
+  label: "条形码",
+  defaultOptionsCreator: createDefaultCanvasChildBarcodeOptions,
+  renderer: createCanvasChildBarcode,
+  operationLayout: barcodeLayout,
+});
+
+defineCanvasChild({
+  typeName: "html",
+  typeKey: "html",
+  label: "HTML代码 (HTML)",
+  defaultOptionsCreator: createDefaultCanvasChildHtmlOptions,
+  renderer: createCanvasChildHtml,
+  operationLayout: htmlLayout,
+});
+
+defineCanvasChild({
+  typeName: "molecule",
+  typeKey: "molecule",
+  label: "分子结构 (RDKit.js)",
+  defaultOptionsCreator: createDefaultCanvasChildMoleculeOptions,
+  renderer: createCanvasChildMolecule,
+  operationLayout: moleculeLayout,
+});
+
+defineCanvasChild({
+  typeName: "threeMol",
+  typeKey: "threeMol",
+  label: "3D分子 (3Dmol.js)",
+  defaultOptionsCreator: createDefaultCanvasChildThreeMolOptions,
+  renderer: createCanvasChildThreeMol,
+  operationLayout: threeMolLayout,
+});
+
+defineCanvasChild({
+  typeName: "abcNotation",
+  typeKey: "abcNotation",
+  label: "乐谱 (abcjs)",
+  defaultOptionsCreator: createDefaultCanvasChildAbcNotationOptions,
+  renderer: createCanvasChildAbcNotation,
+  operationLayout: abcNotationLayout,
+});
+
+defineCanvasChild({
+  typeName: "vexFlow",
+  typeKey: "vexFlow",
+  label: "五线谱 (VexFlow)",
+  defaultOptionsCreator: createDefaultCanvasChildVexFlowOptions,
+  renderer: createCanvasChildVexFlow,
+  operationLayout: vexFlowLayout,
+});
 
 /*
     是否展示主画布
 */
-export var showMainCanvas = ref(true)
+export var showMainCanvas = ref(true);
 
 export function addCanvasChild(options) {
-    options = {
-        ...canvasChildDefaultOptionsMap[options.type].call(null),
-        ...options,
-        id: '_' + String(new Date().getTime()), // 这里要兼容 选择器规范
-    }
+  options = {
+    ...canvasChildDefaultOptionsMap[options.type].call(null),
+    ...options,
+    id: "_" + String(new Date().getTime()), // 这里要兼容 选择器规范
+  };
 
-    canvasStickerOptions.value.children.push(options)
-    currentOperatingCanvasChildId.value = options.id
+  canvasStickerOptions.value.children.push(options);
+  currentOperatingCanvasChildId.value = options.id;
 }
 
-
-
 // 当前正在操作的元素id
-export var currentOperatingCanvasChildId = ref('this_is_canvas_id')
+export var currentOperatingCanvasChildId = ref("this_is_canvas_id");
 
 export const currentOperatingCanvasChild: any = computed(() => {
-    let child = canvasStickerOptions.value.children.find((c) => c.id == currentOperatingCanvasChildId.value)
+  let child = canvasStickerOptions.value.children.find(
+    (c) => c.id == currentOperatingCanvasChildId.value,
+  );
 
-    if (!child) {
-        currentOperatingCanvasChildId.value = canvasStickerOptions.value.children[0].id
-        return canvasStickerOptions.value.children[0]
-    }
-    return child
-})
-
+  if (!child) {
+    currentOperatingCanvasChildId.value =
+      canvasStickerOptions.value.children[0].id;
+    return canvasStickerOptions.value.children[0];
+  }
+  return child;
+});
 
 /**
  * @todo 增加最近删除功能
-*/
+ */
 export function removeCavnasChild(id) {
-    let child = canvasStickerOptions.value.children.find(child => child.id == id)
-    let index = canvasStickerOptions.value.children.indexOf(child)
-    canvasStickerOptions.value.children.splice(index, 1)
-    currentFocusingStickerId.value = null
+  let child = canvasStickerOptions.value.children.find(
+    (child) => child.id == id,
+  );
+  let index = canvasStickerOptions.value.children.indexOf(child);
+  canvasStickerOptions.value.children.splice(index, 1);
+  currentFocusingStickerId.value = null;
 }
 
-
-
-export const currentCanvasControllerInstance = shallowRef(null)
-
+export const currentCanvasControllerInstance = shallowRef(null);
 
 export function updateRenderingCanvas() {
-    currentCanvasControllerInstance.value?.updateRenderingCanvas()
+  currentCanvasControllerInstance.value?.updateRenderingCanvas();
 }
 
 function createCanvasChild(options) {
-    if (!canvasChildRenderMap[options.type]) {
-        return
-    }
-    return canvasChildRenderMap[options.type]?.call(null, options)
+  if (!canvasChildRenderMap[options.type]) {
+    return;
+  }
+  return canvasChildRenderMap[options.type]?.call(null, options);
 }
 
-
-
-export const renderingLoading = ref(false)
+export const renderingLoading = ref(false);
 
 // 二维的画布控制器
 
 export class CanvasController {
+  target = null;
 
-    target = null
+  constructor(params) {
+    currentCanvasControllerInstance.value = this;
 
-    constructor(params) {
-        currentCanvasControllerInstance.value = this
+    // 先不自动控制
+    // this.updateRenderingCanvas = useDebounceFn(this.updateRenderingCanvas, 666).bind(this)
+    this.maxDisplaySize = params.max;
+  }
 
-        // 先不自动控制
-        // this.updateRenderingCanvas = useDebounceFn(this.updateRenderingCanvas, 666).bind(this)
-        this.maxDisplaySize = params.max
+  // 保存最近的画布base64 格式
+  base64 = null;
+
+  maxDisplaySize = null;
+
+  loading = ref(false);
+
+  async toPngFile() {
+    // 等待字体加载完成
+    await this.waitForFontsLoaded();
+
+    // 使用 html-to-image
+    const blob = await toBlob(this.el, {
+      quality: 1,
+      pixelRatio: 1,
+      backgroundColor: null,
+      fontEmbedCSS: await getFontEmbedCSS(this.el),
+    });
+
+    return new File([blob], "canvas.png", { type: "image/png" });
+  }
+
+  // 等待所有字体加载完成
+  async waitForFontsLoaded() {
+    // 等待 document.fonts API 加载完成
+    if (document.fonts && document.fonts.ready) {
+      try {
+        await document.fonts.ready;
+      } catch (e) {
+        console.warn("Font loading check failed:", e);
+      }
     }
 
-    // 保存最近的画布base64 格式
-    base64 = null
+    // 检查所有使用的字体是否已加载
+    const fontElements =
+      this.el?.querySelectorAll('[style*="font-family"]') || [];
+    const fontPromises: Promise<void>[] = [];
 
-    maxDisplaySize = null
+    fontElements.forEach((el: HTMLElement) => {
+      const computedStyle = window.getComputedStyle(el);
+      const fontFamily = computedStyle.fontFamily;
 
-    loading = ref(false)
-
-    async toPngFile() {
-        // 等待字体加载完成
-        await this.waitForFontsLoaded()
-
-        // 使用 html-to-image
-        const blob = await toBlob(this.el, {
-            quality: 1,
-            pixelRatio: 1,
-            backgroundColor: null,
-            fontEmbedCSS: await getFontEmbedCSS(this.el)
-        })
-
-        return new File([blob], 'canvas.png', { type: 'image/png' })
-    }
+      // 检查是否是自定义字体（以 font_ 开头）
+      if (fontFamily && fontFamily.includes("font_")) {
+        // 提取字体名称
+        const fontName = fontFamily.match(/font_\d+/)?.[0];
+        if (fontName && document.fonts) {
+          // 检查字体是否已加载
+          const fontCheck = document.fonts.check(`12px ${fontName}`);
+          if (!fontCheck) {
+            // 如果字体未加载，等待它加载
+            const fontPromise = new Promise<void>((resolve) => {
+              let attempts = 0;
+              const maxAttempts = 50; // 最多等待5秒
+              const checkInterval = setInterval(() => {
+                attempts++;
+                if (
+                  document.fonts.check(`12px ${fontName}`) ||
+                  attempts >= maxAttempts
+                ) {
+                  clearInterval(checkInterval);
+                  resolve();
+                }
+              }, 100);
+            });
+            fontPromises.push(fontPromise);
+          }
+        }
+      }
+    });
 
     // 等待所有字体加载完成
-    async waitForFontsLoaded() {
-        // 等待 document.fonts API 加载完成
-        if (document.fonts && document.fonts.ready) {
-            try {
-                await document.fonts.ready
-            } catch (e) {
-                console.warn('Font loading check failed:', e)
-            }
-        }
-
-        // 检查所有使用的字体是否已加载
-        const fontElements = this.el?.querySelectorAll('[style*="font-family"]') || []
-        const fontPromises: Promise<void>[] = []
-
-        fontElements.forEach((el: HTMLElement) => {
-            const computedStyle = window.getComputedStyle(el)
-            const fontFamily = computedStyle.fontFamily
-
-            // 检查是否是自定义字体（以 font_ 开头）
-            if (fontFamily && fontFamily.includes('font_')) {
-                // 提取字体名称
-                const fontName = fontFamily.match(/font_\d+/)?.[0]
-                if (fontName && document.fonts) {
-                    // 检查字体是否已加载
-                    const fontCheck = document.fonts.check(`12px ${fontName}`)
-                    if (!fontCheck) {
-                        // 如果字体未加载，等待它加载
-                        const fontPromise = new Promise<void>((resolve) => {
-                            let attempts = 0
-                            const maxAttempts = 50 // 最多等待5秒
-                            const checkInterval = setInterval(() => {
-                                attempts++
-                                if (document.fonts.check(`12px ${fontName}`) || attempts >= maxAttempts) {
-                                    clearInterval(checkInterval)
-                                    resolve()
-                                }
-                            }, 100)
-                        })
-                        fontPromises.push(fontPromise)
-                    }
-                }
-            }
-        })
-
-        // 等待所有字体加载完成
-        if (fontPromises.length > 0) {
-            await Promise.all(fontPromises)
-        }
-
-        // 额外等待一段时间确保字体完全应用
-        await new Promise(resolve => setTimeout(resolve, 200))
+    if (fontPromises.length > 0) {
+      await Promise.all(fontPromises);
     }
 
-    async downloadTrimmedPng() {
-        const trimmedCanvas = Utils.trimCanvas(this.canvasEl);
-        downloadByFile(await canvasToFile(trimmedCanvas));
+    // 额外等待一段时间确保字体完全应用
+    await new Promise((resolve) => setTimeout(resolve, 200));
+  }
+
+  async downloadTrimmedPng() {
+    const trimmedCanvas = Utils.trimCanvas(this.canvasEl);
+    downloadByFile(await canvasToFile(trimmedCanvas));
+  }
+
+  async downloadPng() {
+    await this.activeUpdateRenderingCanvas();
+    downloadByFile(await canvasToFile(this.canvasEl));
+  }
+
+  // async downloadIco() {
+  //     const imageData = this.ctx.getImageData(0, 0, this.canvasEl.width, this.canvasEl.height);
+  //     let file = imageDataToFile(imageData)
+
+  //     // 使用 PNG2ICOjs 转换为 ICO 格式
+  //     const converter = new PngIcoConverter();
+  //     const resultBlob = await converter.convertToBlobAsync([{ png: file }]);
+
+  //     // 创建下载链接
+  //     const url = URL.createObjectURL(resultBlob);
+  //     const a = document.createElement('a');
+  //     a.href = url;
+  //     a.download = 'favicon.ico';
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     document.body.removeChild(a);
+  // }
+
+  canvasId = "canvas-render-helper-el";
+
+  rawId = "this_is_canvas_id";
+
+  get el() {
+    return document.querySelector("#" + this.rawId) as any;
+  }
+
+  get canvasEl() {
+    return document.querySelector("#" + this?.canvasId) as any;
+  }
+
+  get ctx() {
+    if (!this.canvasEl) {
+      return null;
+    }
+    return this.canvasEl.getContext("2d");
+  }
+
+  getBase64() {
+    return this.canvasEl.toDataURL("image/png");
+  }
+
+  async getPalette() {
+    return Utils.color.getPalette(this.getBase64());
+  }
+
+  // 需要组件渲染后再更新
+  async updateRenderingCanvas() {
+    this.shouldUpdateCanvasSticker.value = true;
+
+    return;
+
+    this.loading.value = true;
+    renderingLoading.value = true;
+
+    this.debouncedUpdateJob();
+  }
+
+  // 是否应该更新贴纸
+  shouldUpdateCanvasSticker = ref(true);
+
+  // 主动触发更新贴纸
+  async activeUpdateRenderingCanvas() {
+    this.loading.value = true;
+    renderingLoading.value = true;
+    this.debouncedUpdateJob();
+    // await this.updateRenderingCanvasJob()
+  }
+
+  debouncedUpdateJob = useDebounceFn(
+    this.updateRenderingCanvasJob.bind(this),
+    11,
+  );
+
+  async updateRenderingCanvasJob() {
+    if (!this.el) {
+      console.log("miss canvas el");
+      this.loading.value = false;
+      renderingLoading.value = false;
+      return;
     }
 
-    async downloadPng() {
-        await this.activeUpdateRenderingCanvas()
-        downloadByFile(await canvasToFile(this.canvasEl))
+    async function update() {
+      console.time("updateRenderingCanvas");
+
+      try {
+        // 等待字体加载完成
+        await this.waitForFontsLoaded();
+
+        // 使用 html-to-image
+        // 获取字体嵌入 CSS
+        const fontEmbedCSS = await getFontEmbedCSS(this.el);
+
+        // 转换为 canvas
+        let _canvas = await toCanvas(this.el, {
+          quality: 1,
+          pixelRatio: 1,
+          backgroundColor: null,
+          fontEmbedCSS: fontEmbedCSS,
+        });
+        console.log("html-to-image toCanvas");
+
+        this.base64 = _canvas.toDataURL("image/png");
+
+        let width = Number(
+          formatSizeOptionToPixelValue(
+            canvasStickerOptionsOnlyChild.value.width,
+          ),
+        );
+        let height = Number(
+          formatSizeOptionToPixelValue(
+            canvasStickerOptionsOnlyChild.value.height,
+          ),
+        );
+
+        // OLD: 使用 imageData 方式 (已注释，保留用于回溯)
+        // let _ctx = _canvas.getContext('2d')
+        // const imageData = _ctx.getImageData(0, 0, width, height);
+        // this.ctx.putImageData(imageData, 0, 0);
+
+        this.clearCanvas();
+
+        this.ctx.drawImage(
+          _canvas,
+          0,
+          0,
+          _canvas.width,
+          _canvas.height,
+          0,
+          0,
+          width,
+          height,
+        );
+
+        this.loading.value = false;
+        renderingLoading.value = false;
+
+        this.shouldUpdateCanvasSticker.value = false;
+
+        console.timeEnd("updateRenderingCanvas");
+      } catch (e) {
+        throw Error("元素转换失败", e.message);
+      }
     }
 
-    // async downloadIco() {
-    //     const imageData = this.ctx.getImageData(0, 0, this.canvasEl.width, this.canvasEl.height);
-    //     let file = imageDataToFile(imageData)
+    try {
+      await update.call(this);
+      console.warn("画布渲染成功");
+    } catch (e) {
+      console.error("画布渲染：存在丢失的元素");
+      this.loading.value = false;
+      renderingLoading.value = false;
+    }
+  }
 
-    //     // 使用 PNG2ICOjs 转换为 ICO 格式
-    //     const converter = new PngIcoConverter();
-    //     const resultBlob = await converter.convertToBlobAsync([{ png: file }]);
+  clearCanvas() {
+    if (!this.canvasEl) {
+      return;
+    }
+    this.canvasEl.width = this.canvasEl?.width;
+  }
 
-    //     // 创建下载链接
-    //     const url = URL.createObjectURL(resultBlob);
-    //     const a = document.createElement('a');
-    //     a.href = url;
-    //     a.download = 'favicon.ico';
-    //     document.body.appendChild(a);
-    //     a.click();
-    //     document.body.removeChild(a);
-    // }
+  // 画布元素是否在加载中
+  pending = ref(false);
 
-    canvasId = 'canvas-render-helper-el'
+  getRender() {
+    // 改为异步组件
+    function render() {
+      const children = canvasStickerOptions.value.children.map(
+        (childOptions) => {
+          return createCanvasChild(childOptions);
+        },
+      );
 
-    rawId = 'this_is_canvas_id'
+      this.updateRenderingCanvas();
 
-    get el() {
-        return document.querySelector('#' + this.rawId) as any
+      return (
+        <Canvas
+          options={canvasStickerOptions.value.children.find(
+            (item) => item.type == "canvas",
+          )}
+        >
+          {children}
+        </Canvas>
+      );
     }
 
-
-    get canvasEl() {
-        return document.querySelector('#' + this?.canvasId) as any
-    }
-
-
-    get ctx() {
-        if (!this.canvasEl) {
-            return null
-        }
-        return this.canvasEl.getContext('2d')
-    }
-
-    getBase64() {
-        return this.canvasEl.toDataURL('image/png')
-    }
-
-
-    async getPalette() {
-        return Utils.color.getPalette(this.getBase64())
-    }
-
-    // 需要组件渲染后再更新
-    async updateRenderingCanvas() {
-
-        this.shouldUpdateCanvasSticker.value = true
-
-        return
-
-        this.loading.value = true
-        renderingLoading.value = true
-
-        this.debouncedUpdateJob()
-    }
-
-
-    // 是否应该更新贴纸 
-    shouldUpdateCanvasSticker = ref(true)
-
-    // 主动触发更新贴纸
-    async activeUpdateRenderingCanvas() {
-        this.loading.value = true
-        renderingLoading.value = true
-        this.debouncedUpdateJob()
-        // await this.updateRenderingCanvasJob()
-    }
-
-    debouncedUpdateJob = useDebounceFn(this.updateRenderingCanvasJob.bind(this), 11)
-
-    async updateRenderingCanvasJob() {
-
-        if (!this.el) {
-            console.log('miss canvas el')
-            this.loading.value = false
-            renderingLoading.value = false
-            return
-        }
-
-        async function update() {
-
-            console.time('updateRenderingCanvas')
-
-            try {
-                // 等待字体加载完成
-                await this.waitForFontsLoaded()
-
-                // 使用 html-to-image
-                // 获取字体嵌入 CSS
-                const fontEmbedCSS = await getFontEmbedCSS(this.el)
-
-                // 转换为 canvas
-                let _canvas = await toCanvas(this.el, {
-                    quality: 1,
-                    pixelRatio: 1,
-                    backgroundColor: null,
-                    fontEmbedCSS: fontEmbedCSS
-                })
-                console.log('html-to-image toCanvas')
-
-                this.base64 = _canvas.toDataURL('image/png')
-
-                let width = Number(formatSizeOptionToPixelValue(canvasStickerOptionsOnlyChild.value.width))
-                let height = Number(formatSizeOptionToPixelValue(canvasStickerOptionsOnlyChild.value.height))
-
-                // OLD: 使用 imageData 方式 (已注释，保留用于回溯)
-                // let _ctx = _canvas.getContext('2d')
-                // const imageData = _ctx.getImageData(0, 0, width, height);
-                // this.ctx.putImageData(imageData, 0, 0);
-
-                this.clearCanvas()
-
-                this.ctx.drawImage(_canvas, 0, 0, _canvas.width, _canvas.height, 0, 0, width, height);
-
-
-                this.loading.value = false
-                renderingLoading.value = false
-
-                this.shouldUpdateCanvasSticker.value = false
-
-                console.timeEnd('updateRenderingCanvas')
-            } catch (e) {
-                throw Error('元素转换失败', e.message)
-            }
-        }
-
-
-        try {
-            await update.call(this)
-            console.warn('画布渲染成功')
-        } catch (e) {
-            console.error('画布渲染：存在丢失的元素')
-            this.loading.value = false
-            renderingLoading.value = false
-        }
-    }
-
-
-    clearCanvas() {
-        if (!this.canvasEl) {
-            return
-        }
-        this.canvasEl.width = this.canvasEl?.width
-    }
-
-
-    // 画布元素是否在加载中
-    pending = ref(false)
-
-    getRender() {
-
-        // 改为异步组件
-        function render() {
-
-            const children = canvasStickerOptions.value.children.map((childOptions) => {
-                return createCanvasChild(childOptions)
-            })
-
-            this.updateRenderingCanvas()
-
-            return <Canvas options={canvasStickerOptions.value.children.find((item) => item.type == 'canvas')}>
-                {children}
-            </Canvas>
-        }
-
-        return render.bind(this)
-    }
+    return render.bind(this);
+  }
 }
-

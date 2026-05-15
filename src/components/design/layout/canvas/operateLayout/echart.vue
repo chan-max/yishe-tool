@@ -299,7 +299,11 @@ watch(
 .echart-ai-generator__actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 4px;
+
+  :deep(.el-button + .el-button) {
+    margin-left: 0;
+  }
 }
 
 .echart-option-editor {

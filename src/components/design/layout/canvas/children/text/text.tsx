@@ -1,272 +1,304 @@
-import { canvasStickerOptions, canvasStickerOptionsOnlyChild, currentCanvasControllerInstance, updateRenderingCanvas } from "../../index.tsx"
-import { getPositionInfoFromOptions, formatToNativeSizeOption, parseTextShadowOptionsToCSS, formatSizeOptionToPixelValue, formatToNativeSizeString, createFilterFromOptions, createTransformString } from '../../helper.tsx'
-import { defineComponent, onMounted, onUpdated, ref, watchEffect, nextTick, watch } from "vue"
+import {
+  canvasStickerOptions,
+  canvasStickerOptionsOnlyChild,
+  currentCanvasControllerInstance,
+  updateRenderingCanvas,
+} from "../../index.tsx";
+import {
+  getPositionInfoFromOptions,
+  formatToNativeSizeOption,
+  parseTextShadowOptionsToCSS,
+  formatSizeOptionToPixelValue,
+  formatToNativeSizeString,
+  createFilterFromOptions,
+  createTransformString,
+} from "../../helper.tsx";
+import {
+  defineComponent,
+  onMounted,
+  onUpdated,
+  ref,
+  watchEffect,
+  nextTick,
+  watch,
+} from "vue";
 // import CircleType from "circletype";
-import { findEllipseDistancePoint, getEllipsePos, getRoundPos, findRoundDistancePoint } from './calc.tsx'
-import { tify, sify } from 'chinese-conv';
-import { createFilterDefaultOptions, createTransformDefaultOptions, createPositionDefaultOptions } from "../defaultOptions.tsx";
-import { fetchFontFaceWithMessage } from '@/components/design/layout/canvas/operate/fontFamily/index.ts'
+import { tify, sify } from "chinese-conv";
+import {
+  createFilterDefaultOptions,
+  createTransformDefaultOptions,
+  createPositionDefaultOptions,
+} from "../defaultOptions.tsx";
+import { fetchFontFaceWithMessage } from "@/components/design/layout/canvas/operate/fontFamily/index.ts";
 import Utils from "@/common/utils.ts";
 import { defineCanvasChild } from "../define.tsx";
 import { onCanvasChildSetup, onBeforeReturnRender } from "../commonHooks.ts";
 
 export interface TextCanvasChildOptions {
-    center: boolean | null | undefined
+  center: boolean | null | undefined;
 }
 
 enum WritingMode {
-    HTB = 'horizontal-tb',
-    VLR = 'vertical-lr',
-    VRL = 'vertical-rl'
+  HTB = "horizontal-tb",
+  VLR = "vertical-lr",
+  VRL = "vertical-rl",
 }
 
 export const createDefaultCanvasChildTextOptions = () => {
+  const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit;
 
-    const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit
+  return {
+    type: "text",
+    fontColor: {
+      color: "#000",
+      type: "pure",
+    },
+    zIndex: 0,
+    position: createPositionDefaultOptions(canvasUnit),
+    fontSize: {
+      value: 160,
+      unit: canvasUnit,
+    },
+    textShadow: [],
+    fontWeight: "500",
+    lineHeight: 1,
+    letterSpacing: 0,
+    textContent: "do something special",
+    writingMode: "htb",
+    isRoundText: false,
+    roundTextRadius: {
+      unit: canvasUnit,
+      value: 200,
+    },
+    roundTextStartDeg: 0,
+    isCounterclockwise: false,
 
-    return {
-        type: 'text',
-        fontColor: {
-            color: "#000",
-            type: 'pure'
-        },
-        zIndex: 0,
-        position: createPositionDefaultOptions(canvasUnit),
-        fontSize: {
-            value: 160,
-            unit: canvasUnit
-        },
-        textShadow: [],
-        fontWeight: '500',
-        lineHeight: 1,
-        letterSpacing: 0,
-        textContent: 'do something special',
-        writingMode: 'htb',
-        isRoundText: false,
-        isMultipleLineOutExpand: false, // 当开启圆形文字并且多行时，是否想向部扩张
-        roundTextHorizontalRadius: {
-            unit: canvasUnit,
-            value: 100,
-        },
-        roundTextVerticalRadius: {
-            unit: canvasUnit,
-            value: 100,
-        },
-        roundTextStartDeg: 0,
-        isCounterclockwise: false, // 文字是否指向圆心，默认为否
-        isPointingToCenter: true, // 是否指向圆心
-        isReverseLetter: false, // 是否将文字旋转180度 ， 可以用于凹凸文字
+    textStrokeWidth: {
+      unit: canvasUnit,
+      value: 0,
+    },
+    textStrokeColor: {
+      type: "pure",
+      color: "#fff",
+    },
+    transform: createTransformDefaultOptions(canvasUnit),
+    filter: createFilterDefaultOptions(canvasUnit),
+    // 是否使用繁体字
+    isTraditionalChinese: false,
+    // 文字对齐方式
+    textAlign: "left",
+    containerEl: null,
+    targetComputedWidth: 0,
+    targetComputedHeight: 0,
 
-        textStrokeWidth: {
-            unit: canvasUnit,
-            value: 0,
-        },
-        textStrokeColor: {
-            type: 'pure',
-            color: '#fff',
-        },
-        transform: createTransformDefaultOptions(canvasUnit),
-        filter: createFilterDefaultOptions(canvasUnit),
-        // 是否使用繁体字
-        isTraditionalChinese: false,
-        // 文字对齐方式
-        textAlign: 'left',
-        containerEl: null,
-        targetComputedWidth: 0,
-        targetComputedHeight: 0,
-
-        imageInfo: null // 文字背景图
-    }
-}
+    imageInfo: null, // 文字背景图
+  };
+};
 
 export function createCanvasChildText(options) {
-    return <Text options={options} onVnodeUpdated={updateRenderingCanvas} onVnodeMounted={updateRenderingCanvas}></Text>
+  return (
+    <Text
+      options={options}
+      onVnodeUpdated={updateRenderingCanvas}
+      onVnodeMounted={updateRenderingCanvas}
+    ></Text>
+  );
 }
 
 export const Text = defineComponent({
-    props: {
-        options: null
-    },
-    setup(props, ctx) {
+  props: {
+    options: null,
+  },
+  setup(props, ctx) {
+    // 文字容器，用于布局
+    const targetElRef = ref();
 
-        // 文字容器，用于布局
-        const targetElRef = ref()
+    onCanvasChildSetup({
+      targetEl: targetElRef,
+      options: props.options,
+      props: props,
+    });
 
+    // 用来包裹文字单元块
 
-        onCanvasChildSetup({
-            targetEl: targetElRef,
-            options: props.options,
-            props: props
-        })
+    const roundTextContainer = ref();
+    const roundTextInnerContainerRef = ref();
 
+    // 文字单元格
+    const textContentCells = ref([]);
 
-        // 用来包裹文字单元块
+    // key值，用于更新
+    const key = ref(0);
 
-        const roundTextContainer = ref()
-        const roundTextInnerContainerRef = ref()
+    watchEffect(() => {
+      let el = roundTextInnerContainerRef.value;
+      let container = roundTextContainer.value;
 
-        // 文字单元格
-        const textContentCells = ref([])
+      if (!el || !container) {
+        return;
+      }
 
-        // key值，用于更新
-        const key = ref(0)
+      if (props.options.isRoundText) {
+        createRoundText(container, el, props.options, textContentCells.value);
+      }
+    });
 
-        watchEffect(() => {
-            let el = roundTextInnerContainerRef.value
-            let container = roundTextContainer.value
+    return () => {
+      const { containerStyle: _containerStyle, style: _style } =
+        getPositionInfoFromOptions(props.options.position);
 
-            if (!el || !container) {
-                return
-            }
+      var containerStyle: any = {
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        ..._containerStyle,
+      };
 
-            if (props.options.isRoundText) {
-                createRoundText(container, el, props.options, textContentCells.value)
-            }
-        })
+      var style: any = {
+        flexShrink: 0,
+        fontSize: formatToNativeSizeString(props.options.fontSize),
+        fontWeight: props.options.fontWeight,
+        fontStyle: props.options.italic ? "italic" : "normal",
+        lineHeight: props.options.lineHeight + "em",
+        letterSpacing: props.options.letterSpacing + "em",
+        fontFamily: "undefined", // 默认设置为一个不存在的字体，防止被本地字体影响
+        writingMode:
+          props.options.writingMode == "htb"
+            ? WritingMode.HTB
+            : props.options.writingMode == "vlr"
+              ? WritingMode.VLR
+              : props.options.writingMode == "vrl"
+                ? WritingMode.VRL
+                : null,
+        filter: createFilterFromOptions(props.options.filter),
+        textShadow: parseTextShadowOptionsToCSS(props.options.textShadow),
+        textStroke:
+          formatToNativeSizeString(props.options.textStrokeWidth) +
+          " " +
+          props.options.textStrokeColor.color,
+        perspective: formatToNativeSizeString(
+          props.options.transform.perspective,
+        ),
+        // 用于显示换行
+        whiteSpace: "pre-wrap",
+        textWrap: "nowrap",
+        textAlign: props.options.textAlign || "left",
+        zIndex: props.options.zIndex,
+        ..._style,
+      };
 
-        return () => {
-            const {
-                containerStyle: _containerStyle,
-                style: _style
-            } = getPositionInfoFromOptions(props.options.position)
+      // 文字字体
+      if (props.options.fontFamilyInfo) {
+        style.fontFamily = `font_${props.options.fontFamilyInfo.id}`;
+        // 由于不确定字体是否加载，需要初始化一下
+        fetchFontFaceWithMessage(props.options.fontFamilyInfo);
+      }
 
-            var containerStyle: any = {
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                ..._containerStyle
-            }
-
-
-            var style: any = {
-                flexShrink: 0,
-                fontSize: formatToNativeSizeString(props.options.fontSize),
-                fontWeight: props.options.fontWeight,
-                fontStyle: props.options.italic ? 'italic' : 'normal',
-                lineHeight: props.options.lineHeight + 'em',
-                letterSpacing: props.options.letterSpacing + 'em',
-                fontFamily: 'undefined', // 默认设置为一个不存在的字体，防止被本地字体影响  
-                writingMode: props.options.writingMode == 'htb' ? WritingMode.HTB : props.options.writingMode == 'vlr' ? WritingMode.VLR : props.options.writingMode == 'vrl' ? WritingMode.VRL : null,
-                filter: createFilterFromOptions(props.options.filter),
-                textShadow: parseTextShadowOptionsToCSS(props.options.textShadow),
-                textStroke: formatToNativeSizeString(props.options.textStrokeWidth) + ' ' + props.options.textStrokeColor.color,
-                perspective: formatToNativeSizeString(props.options.transform.perspective),
-                // 用于显示换行
-                whiteSpace: 'pre-wrap',
-                textWrap: 'nowrap',
-                textAlign: props.options.textAlign || 'left',
-                zIndex: props.options.zIndex,
-                ..._style,
-            }
-
-
-
-            // 文字字体
-            if (props.options.fontFamilyInfo) {
-                style.fontFamily = `font_${props.options.fontFamilyInfo.id}`
-                // 由于不确定字体是否加载，需要初始化一下
-                fetchFontFaceWithMessage(props.options.fontFamilyInfo)
-            }
-
-            // 处理文字颜色
-            if (props.options.fontColor) {
-                if (props.options.fontColor.type == 'gradient') {
-                    style.background = props.options.fontColor.color
-                    style.backgroundClip = 'text'
-                    style.color = 'transparent';
-                } else {
-                    style.color = props.options.fontColor.color;
-                }
-            }
-
-            
-
-            // 文字背景图
-            if (props.options.imageInfo) {
-                style.background = `url(${props.options.imageInfo.url})`
-                style.backgroundClip = 'text'
-                style.color = 'transparent';
-                style.backgroundSize = 'cover'  // contain
-            }
-
-            const textContainerStyle = {
-                background: 'inherit',
-                color: 'inherit',
-                backgroundClip: 'inherit',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }
-
-            const innerStyle = {
-                background: 'inherit',
-                color: 'inherit',
-                backgroundClip: 'inherit',
-            }
-
-            const rowStyle = {
-                background: 'inherit',
-                color: 'inherit',
-                backgroundClip: 'inherit',
-            }
-
-            const cellStyle = {
-                display: 'inline-block',
-                background: 'inherit',
-                color: 'inherit',
-                backgroundClip: 'inherit',
-            }
-
-
-            var textContent = props.options.textContent
-
-            // 设置为繁体字
-            if (props.options.isTraditionalChinese) {
-                textContent = tify(textContent)
-            }
-
-
-            // 生成文字单元格
-            const rows = textContent.split('\n').filter((item) => item !== '')
-
-            textContentCells.value = rows.map((row) => {
-                return row.split('').map((content) => {
-                    return {
-                        content,
-                    }
-                })
-            })
-
-
-            let roundNode = <div ref={roundTextContainer} style={textContainerStyle}>
-                <div ref={roundTextInnerContainerRef} style={innerStyle}>
-                    {textContentCells.value.map((row, rowIndex) => {
-                        const cells = row.map((cell, columnIndex) => {
-                            return <div id={`row-${rowIndex}-col-${columnIndex}`} data-rowIndex={rowIndex} data-columnIndex={columnIndex} style={{ ...cellStyle, ...cell.style }}>{cell.content}</div>
-                        })
-                        return <div style={rowStyle}> {cells} </div>
-                    })}
-                </div>
-            </div>
-
-
-            onBeforeReturnRender({
-                containerStyle,
-                style,
-                options: props.options
-            })
-
-            return <div style={containerStyle} key={key.value}>
-                <div ref={targetElRef} style={style}>
-                    {props.options.isRoundText ? roundNode : textContent}
-                </div>
-            </div>
+      // 处理文字颜色
+      if (props.options.fontColor) {
+        if (props.options.fontColor.type == "gradient") {
+          style.background = props.options.fontColor.color;
+          style.backgroundClip = "text";
+          style.color = "transparent";
+        } else {
+          style.color = props.options.fontColor.color;
         }
-    }
-})
+      }
 
+      // 文字背景图
+      if (props.options.imageInfo) {
+        style.background = `url(${props.options.imageInfo.url})`;
+        style.backgroundClip = "text";
+        style.color = "transparent";
+        style.backgroundSize = "cover"; // contain
+      }
+
+      const textContainerStyle = {
+        background: "inherit",
+        color: "inherit",
+        backgroundClip: "inherit",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      };
+
+      const innerStyle = {
+        background: "inherit",
+        color: "inherit",
+        backgroundClip: "inherit",
+      };
+
+      const rowStyle = {
+        background: "inherit",
+        color: "inherit",
+        backgroundClip: "inherit",
+      };
+
+      const cellStyle = {
+        display: "inline-block",
+        background: "inherit",
+        color: "inherit",
+        backgroundClip: "inherit",
+      };
+
+      var textContent = props.options.textContent;
+
+      // 设置为繁体字
+      if (props.options.isTraditionalChinese) {
+        textContent = tify(textContent);
+      }
+
+      // 生成文字单元格
+      const rows = textContent.split("\n").filter((item) => item !== "");
+
+      textContentCells.value = rows.map((row) => {
+        return row.split("").map((content) => {
+          return {
+            content,
+          };
+        });
+      });
+
+      let roundNode = (
+        <div ref={roundTextContainer} style={textContainerStyle}>
+          <div ref={roundTextInnerContainerRef} style={innerStyle}>
+            {textContentCells.value.map((row, rowIndex) => {
+              const cells = row.map((cell, columnIndex) => {
+                return (
+                  <div
+                    id={`row-${rowIndex}-col-${columnIndex}`}
+                    data-rowIndex={rowIndex}
+                    data-columnIndex={columnIndex}
+                    style={{ ...cellStyle, ...cell.style }}
+                  >
+                    {cell.content}
+                  </div>
+                );
+              });
+              return <div style={rowStyle}> {cells} </div>;
+            })}
+          </div>
+        </div>
+      );
+
+      onBeforeReturnRender({
+        containerStyle,
+        style,
+        options: props.options,
+      });
+
+      return (
+        <div style={containerStyle} key={key.value}>
+          <div ref={targetElRef} style={style}>
+            {props.options.isRoundText ? roundNode : textContent}
+          </div>
+        </div>
+      );
+    };
+  },
+});
 
 /*
     input
@@ -277,140 +309,87 @@ export const Text = defineComponent({
     换行文字已最外行为基准 
 */
 
+function createRoundText(container, innerContainer, options, textContentCells) {
+  innerContainer.style.position = "relative";
 
-async function createRoundText(container, innerContainer, options, textContentCells) {
+  const startDeg = options.roundTextStartDeg;
+  const isCounterclockwise = options.isCounterclockwise;
+  const radius = formatSizeOptionToPixelValue(options.roundTextRadius);
+  const fontSize = options.fontSize.value;
+  const lineHeightPixelValue = formatSizeOptionToPixelValue({
+    value: options.lineHeight * fontSize,
+    unit: options.fontSize.unit,
+  });
+  const letterSpacingPixelValue = formatSizeOptionToPixelValue({
+    value: options.letterSpacing * fontSize,
+    unit: options.fontSize.unit,
+  });
 
-    innerContainer.style.position = 'relative'
+  const dir = isCounterclockwise ? -1 : 1;
 
-    // 文字起始角度
-    let startDeg = options.roundTextStartDeg
+  // 元素插入页面后再计算真实宽度
+  textContentCells.forEach((row, rowIndex) => {
+    row.forEach((item, columnIndex) => {
+      const el = innerContainer.querySelector(
+        `#row-${rowIndex}-col-${columnIndex}`,
+      );
+      if (!el) return;
+      el.style.position = "absolute";
+      item.el = el;
 
-    let isCounterclockwise = options.isCounterclockwise
+      const width = Utils.getComputedWidth(el);
+      const height = Utils.getComputedHeight(el);
+      item.width = width;
+      item.height = height;
+      item.rawWidth = width - letterSpacingPixelValue;
+    });
+  });
 
-    let isPointingToCenter = options.isPointingToCenter
+  textContentCells.forEach((row, rowIndex) => {
+    // 多行时半径递减
+    const r = radius - rowIndex * lineHeightPixelValue;
+    if (r < 10) return;
 
-    // 水平半径
-    const horizontalRadius = formatSizeOptionToPixelValue(options.roundTextHorizontalRadius)
+    // CircleType: innerRadius = radius - lineHeight
+    const innerRadius = r - lineHeightPixelValue;
 
-    // 垂直半径
-    const verticalRadius = formatSizeOptionToPixelValue(options.roundTextVerticalRadius)
+    // CircleType: originY = dir === -1 ? (-radius + lineHeight) : radius
+    const originY = dir === -1 ? -r + lineHeightPixelValue : r;
+    const origin = `center ${originY / fontSize}em`;
 
-    container.style.width = horizontalRadius * 2 + 'px'
-    container.style.height = verticalRadius * 2 + 'px'
+    // 计算每个字符的旋转角（参照 getLetterRotations）
+    const rotations: number[] = [];
+    let totalAngle = 0;
+    row.forEach((item) => {
+      const rotationDeg = (item.width / innerRadius) * (180 / Math.PI);
+      rotations.push(totalAngle + rotationDeg / 2);
+      totalAngle += rotationDeg;
+    });
 
-    let lineHeightPixelValue = formatSizeOptionToPixelValue({
-        value: options.lineHeight * options.fontSize.value,
-        unit: options.fontSize.unit,
-    })
+    row.forEach((item, index) => {
+      if (!item.el) return;
 
-    let letterSpacingPixelValue = formatSizeOptionToPixelValue({
-        value: options.letterSpacing * options.fontSize.value,
-        unit: options.fontSize.unit,
-    })
+      // CircleType: rotate = ((θ * -0.5) + rotations[index]) * dir
+      const rotate =
+        (totalAngle * -0.5 + rotations[index]) * dir + startDeg * dir;
 
-    let isCircle = horizontalRadius == verticalRadius
+      // CircleType: translateX = (width * -0.5) / fontSize (em 单位)
+      const translateX = (item.width * -0.5) / fontSize;
 
-    // 元素插入页面后再计算真实宽度
-    textContentCells.forEach((row, rowIndex) => {
-        row.forEach((item, columnIndex) => {
-            let el = innerContainer.querySelector(`#row-${rowIndex}-col-${columnIndex}`)
-            el.style.position = 'absolute'
+      item.el.style.left = "50%";
+      item.el.style.bottom = dir === -1 ? "0" : "auto";
+      item.el.style.top = dir === -1 ? "auto" : "0";
+      item.el.style.transform = `translateX(${translateX}em) rotate(${rotate}deg)`;
+      item.el.style.transformOrigin = origin;
+    });
 
-            // item.style.position = 'absolute'
-            item.el = el
-
-            // 由于获取真实尺寸，始终为像素值，所以需要把所有涉及到的单位统一为像素
-            let width = Utils.getComputedWidth(item.el)
-            let height = Utils.getComputedHeight(item.el)
-            item.width = width
-            item.height = height
-
-            // 元素自己的宽度
-            item.rawWidth = width - letterSpacingPixelValue
-            /*
-              该宽高是包括行高和字间距的
-            */
-        })
-    })
-
-    // 计算位置和角度
-    textContentCells.forEach((row, rowIndex) => {
-
-        let rows = textContentCells.length
-
-        // 弧形的起始坐标
-        let startPosition = isCircle ? getRoundPos(horizontalRadius, startDeg) : getEllipsePos(horizontalRadius, verticalRadius, startDeg)
-
-
-        // 水平和垂直半径 
-        /**
-         *  多行文字时，考虑是向内扩张还是向外扩张
-        */
-
-        // 多行文字时向外扩张
-
-        let hr, vr
-
-
-        // 多行时，是否向外扩张
-        if (options.isMultipleLineOutExpand) {
-            hr = horizontalRadius + (rows - rowIndex - 1) * lineHeightPixelValue
-            vr = verticalRadius + (rows - rowIndex - 1) * lineHeightPixelValue
-        } else {
-            hr = horizontalRadius - rowIndex * lineHeightPixelValue
-            vr = verticalRadius - rowIndex * lineHeightPixelValue
-        }
-
-
-        // 文字平均宽
-        let averageWidth = row.reduce((x, y) => {
-            return x + y.width
-        }, 0) / row.length
-
-
-        row.forEach((item, index) => {
-
-            var distance = 0
-
-            for (let i = 0; i <= index; i++) {
-                let item = row[i - 1]
-                if (item) {
-                    distance += item.width
-                }
-            }
-
-            let pos = isCircle
-                ? findRoundDistancePoint(hr, startPosition.x, startPosition.y, distance, !isCounterclockwise)
-                : findEllipseDistancePoint(hr, vr, startPosition.x, startPosition.y, distance, !isCounterclockwise, isPointingToCenter)
-
-            item.x = pos.x
-            item.y = pos.y
-            item.deg = pos.deg
-
-            // 将文字旋转180度
-            if (options.isReverseLetter) {
-                item.deg += 180
-            }
-
-            if (isCircle) {
-                // 圆
-                // 这里需要计算一下平均宽度
-                item.el.style.left = (item.x - averageWidth / 2) + 'px'
-
-                // 行高
-                item.el.style.bottom = (item.y - lineHeightPixelValue / 2) + 'px'
-                item.el.style.transform = `rotate(${item.deg}deg)`
-            } else {
-                // 椭圆
-                item.el.style.left = (item.x - averageWidth / 2) + 'px'
-                item.el.style.bottom = (item.y - lineHeightPixelValue / 2) + 'px'
-                item.el.style.transform = `rotate(${item.deg}deg)`
-            }
-        })
-    })
+    // CircleType: 用 sagitta 算容器高度
+    const sagitta = (radius: number, angleDeg: number) =>
+      radius * (1 - Math.cos((angleDeg * Math.PI) / 360));
+    const height =
+      totalAngle > 180
+        ? sagitta(r, totalAngle)
+        : sagitta(innerRadius, totalAngle) + lineHeightPixelValue;
+    container.style.height = `${height / fontSize}em`;
+  });
 }
-
-
-
-
-

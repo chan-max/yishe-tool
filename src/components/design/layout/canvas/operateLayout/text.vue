@@ -23,7 +23,9 @@
       <operateItemLineHeight v-model="currentOperatingCanvasChild.lineHeight">
       </operateItemLineHeight>
 
-      <operateItemLetterSpacing v-model="currentOperatingCanvasChild.letterSpacing">
+      <operateItemLetterSpacing
+        v-model="currentOperatingCanvasChild.letterSpacing"
+      >
       </operateItemLetterSpacing>
 
       <operateItemFontFamily
@@ -76,11 +78,69 @@
       >
       </operateItemSwitch>
 
-      <operateItemEllipseTextRadius
-        v-model:horizontal="currentOperatingCanvasChild.roundTextHorizontalRadius"
-        v-model:vertical="currentOperatingCanvasChild.roundTextVerticalRadius"
-      >
-      </operateItemEllipseTextRadius>
+      <operate-form-item>
+        <template #name>环形文字</template>
+        <template #content>
+          <div class="round-text-ai">
+            <el-popover
+              v-model:visible="aiPopoverVisible"
+              trigger="click"
+              placement="right-start"
+              width="340"
+            >
+              <div class="round-text-ai-popover">
+                <el-input
+                  v-model="aiPrompt"
+                  type="textarea"
+                  :rows="4"
+                  resize="vertical"
+                  spellcheck="false"
+                  :disabled="aiLoading"
+                  placeholder="描述想要的文字风格，例如：励志座右铭、咖啡品牌标语、新年祝福"
+                  @keydown.enter.ctrl="generateRoundTextByAi"
+                ></el-input>
+
+                <div class="round-text-ai-popover__actions">
+                  <el-button size="small" @click="aiPopoverVisible = false"
+                    >取消</el-button
+                  >
+                  <el-button
+                    size="small"
+                    type="primary"
+                    :loading="aiLoading"
+                    :disabled="!aiPrompt.trim() || aiLoading"
+                    @click="generateRoundTextByAi"
+                  >
+                    确定
+                  </el-button>
+                </div>
+
+                <div v-if="aiError" class="round-text-ai-error">
+                  {{ aiError }}
+                </div>
+              </div>
+
+              <template #reference>
+                <el-button size="small" type="primary" plain @click.stop
+                  >AI 生成文字</el-button
+                >
+              </template>
+            </el-popover>
+          </div>
+        </template>
+      </operate-form-item>
+
+      <operate-form-item>
+        <template #name>半径</template>
+        <template #content>
+          <el-input-number
+            v-model="currentOperatingCanvasChild.roundTextRadius.value"
+            :min="50"
+            :max="1000"
+            size="small"
+          ></el-input-number>
+        </template>
+      </operate-form-item>
 
       <operateItemRoundTextStartDeg
         v-model="currentOperatingCanvasChild.roundTextStartDeg"
@@ -88,26 +148,8 @@
       </operateItemRoundTextStartDeg>
 
       <operateItemSwitch
-        label="是否使用逆时针排列"
+        label="逆时针排列"
         v-model="currentOperatingCanvasChild.isCounterclockwise"
-      >
-      </operateItemSwitch>
-
-      <operateItemSwitch
-        label="多行时文字是否向外扩张"
-        v-model="currentOperatingCanvasChild.isMultipleLineOutExpand"
-      >
-      </operateItemSwitch>
-
-      <operateItemSwitch
-        label="是否指向圆心"
-        v-model="currentOperatingCanvasChild.isPointingToCenter"
-      >
-      </operateItemSwitch>
-
-      <operateItemSwitch
-        label="反向文字"
-        v-model="currentOperatingCanvasChild.isReverseLetter"
       >
       </operateItemSwitch>
     </el-collapse-item>
@@ -123,7 +165,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
+import {
+  onMounted,
+  ref,
+  computed,
+  watch,
+  reactive,
+  watchEffect,
+  nextTick,
+} from "vue";
 
 import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
 import operateItemTextContent from "@/components/design/layout/canvas/operate/textContent.vue";
@@ -151,7 +201,6 @@ import operateItemRectBorderRadius from "@/components/design/layout/canvas/opera
 import operateItemAbsoluteUnitSelect from "@/components/design/layout/canvas/operate/absoluteUnitSelect.vue";
 import operateItemTextShadow from "@/components/design/layout/canvas/operate/text-shadow/index.vue";
 import operateItemRoundTextStartDeg from "@/components/design/layout/canvas/operate/text/roundTextStartDeg.vue";
-import operateItemEllipseTextRadius from "@/components/design/layout/canvas/operate/text/ellipseTextRadius.vue";
 import operateItemTextStroke from "@/components/design/layout/canvas/operate/text/textStroke.vue";
 import operateItemFilterGroup from "@/components/design/layout/canvas/operate/filter/group.vue";
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
@@ -171,11 +220,68 @@ import {
   updateRenderingCanvas,
 } from "../index.tsx";
 
+import { generateRoundText } from "../children/text/aiRoundTextService";
+
 const textCollapseActives = ref(["1", "1.5", "2", "3", "4", "5"]);
+
+const aiPopoverVisible = ref(false);
+const aiPrompt = ref("");
+const aiLoading = ref(false);
+const aiError = ref("");
 
 function fontLoad() {
   updateRenderingCanvas();
 }
+
+async function generateRoundTextByAi() {
+  const prompt = aiPrompt.value.trim();
+  if (!prompt || aiLoading.value) return;
+
+  aiLoading.value = true;
+  aiError.value = "";
+
+  try {
+    const result = await generateRoundText(
+      prompt,
+      currentOperatingCanvasChild.value?.textContent || "",
+    );
+    currentOperatingCanvasChild.value.textContent = result.text;
+    aiPrompt.value = "";
+    aiPopoverVisible.value = false;
+  } catch (error: any) {
+    aiError.value = error?.message || "AI 生成失败，请重试";
+  } finally {
+    aiLoading.value = false;
+  }
+}
 </script>
 
-<style></style>
+<style scoped>
+.round-text-ai {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.round-text-ai-popover {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.round-text-ai-popover__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+
+  :deep(.el-button + .el-button) {
+    margin-left: 0;
+  }
+}
+
+.round-text-ai-error {
+  color: #c45656;
+  font-size: 12px;
+  line-height: 1.4;
+}
+</style>

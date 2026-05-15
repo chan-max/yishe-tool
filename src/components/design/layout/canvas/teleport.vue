@@ -48,6 +48,7 @@ import {
 } from '@element-plus/icons-vue'
 import panzoom from 'panzoom'
 import Utils from '@/common/utils'
+import { setPanzoomInstance } from './panzoomStore'
 
 const panzoomRef = ref()
 const panzoomContainerRef = ref()
@@ -115,6 +116,7 @@ watch(show, async (val) => {
                 console.warn('Panzoom dispose error:', e)
             }
             panzoomInstance = null
+            setPanzoomInstance(null)
         }
         return
     }
@@ -140,6 +142,9 @@ watch(show, async (val) => {
             boundsPadding: 0.1,
             zoomSpeed: 0.065, // 调优后的缩放速度，更丝滑
         })
+        
+        // 存储 panzoom 实例到共享 store
+        setPanzoomInstance(panzoomInstance)
         
         // 初始化后立即居中
         setTimeout(resetPanzoom, 50);

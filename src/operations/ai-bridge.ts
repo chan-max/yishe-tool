@@ -1,6 +1,6 @@
-import { getOperationTools } from './registry'
-import type { OperationResult, OperationTool } from './types'
-import { SIZE_PRESET_LIST_FOR_PROMPT } from './ops/size-presets'
+import { getOperationTools } from "./registry";
+import type { OperationResult, OperationTool } from "./types";
+import { SIZE_PRESET_LIST_FOR_PROMPT } from "./ops/size-presets";
 
 const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按需印刷）产品设计 AI 助手。你运行在一个设计工具内部，拥有调用底层画布操作的能力。你的职责是**直接执行**用户的设计请求，而不是提供建议或讨论。
 
@@ -17,7 +17,7 @@ const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按
 - 画布是设计的基础，所有元素都叠加在画布上
 - 画布有宽高（单位 px），背景颜色默认透明
 - 每个元素有唯一 ID（添加后返回），层级（zIndex），位置（position），变换（transform）等属性
-- 元素类型：文字(text)、背景(background)、图片(image)、矩形(rect)、椭圆(ellipse)、二维码(qrcode)、条形码(barcode)、数学公式 (KaTeX, math)、流程图 (Mermaid, mermaid)、图表 (ECharts, echart)、3D模型 (Three.js, threeScene)
+- 元素类型：文字(text)、背景(background)、图片(image)、矩形(rect)、椭圆(ellipse)、二维码(qrcode)、条形码(barcode)、数学公式 (KaTeX, math)、流程图 (Mermaid, mermaid)、代码块 (Shiki, codeBlock)、图表 (ECharts, echart)、3D模型 (Three.js, threeScene)、分子结构 (RDKit.js, molecule)、3D分子 (3Dmol.js, threeMol)
 
 ## 设计执行流程
 
@@ -56,120 +56,135 @@ const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按
 {"op": "canvas.addText", "params": {"content": "FLORAL", "fontSize": 200, "color": "#8B008B", "fontWeight": "600", "zIndex": 2}}
 \`\`\`
 
-注意：以上是示例格式，实际请根据用户需求设计具体内容。`
+注意：以上是示例格式，实际请根据用户需求设计具体内容。`;
 
 export function buildOperationsPrompt(): string {
-  const tools = getOperationTools()
+  const tools = getOperationTools();
   const lines: string[] = [
     STICKER_DESIGN_SYSTEM,
-    '',
-    '## 可用操作列表（标准 JSON Schema 定义）',
-    '',
-    '每个操作的参数严格遵循 input_schema 定义。调用时参数名和类型必须匹配。',
-    '',
-  ]
+    "",
+    "## 可用操作列表（标准 JSON Schema 定义）",
+    "",
+    "每个操作的参数严格遵循 input_schema 定义。调用时参数名和类型必须匹配。",
+    "",
+  ];
 
   for (const tool of tools) {
-
-    lines.push(`### ${tool.name}`)
-    lines.push(tool.description)
-    lines.push('')
-    lines.push('```json')
-    lines.push(JSON.stringify({
-      name: tool.name,
-      description: tool.description,
-      input_schema: tool.input_schema,
-    }, null, 2))
-    lines.push('```')
-    lines.push('')
+    lines.push(`### ${tool.name}`);
+    lines.push(tool.description);
+    lines.push("");
+    lines.push("```json");
+    lines.push(
+      JSON.stringify(
+        {
+          name: tool.name,
+          description: tool.description,
+          input_schema: tool.input_schema,
+        },
+        null,
+        2,
+      ),
+    );
+    lines.push("```");
+    lines.push("");
   }
 
-  lines.push('## 操作调用格式')
-  lines.push('')
-  lines.push('**每次回复必须包含操作调用。** 使用以下 JSON 格式：')
-  lines.push('```operation')
-  lines.push(JSON.stringify({ op: '操作ID', params: { 参数名: '参数值' } }, null, 2))
-  lines.push('```')
-  lines.push('')
-  lines.push('调用规则：')
-  lines.push('- 参数名和类型必须严格匹配 input_schema 定义')
-  lines.push('- required 字段的参数必须提供')
-  lines.push('- enum 字段的参数只能使用列出的可选值')
-  lines.push('- number 类型参数不能超出 minimum/maximum 范围')
-  lines.push('- 多个操作用多个 ```operation 代码块依次输出，按顺序执行')
-  lines.push('- 操作之间不要插入任何文字，操作完成后简短说明')
-  lines.push('')
-  lines.push('## 重要提醒')
-  lines.push('')
-  lines.push('- 当用户描述产品类型时，优先使用 canvas.smartSize 或 canvas.setSizeByPreset 匹配预设尺寸')
-  lines.push('- 当用户给出了明确的数值尺寸时，使用 canvas.setSize')
-  lines.push('- 注意使用 zIndex 控制元素层级：背景 zIndex=0，文字 zIndex=1+')
-  lines.push('- 元素默认居中，如果不指定位置就是居中的')
-  lines.push('- 颜色值使用 CSS 颜色格式，如 #ff0000, rgb(255,0,0)')
-  lines.push('- 文字字号单位是 px，160 是正常大小，300+ 是标题大小')
-  lines.push('- 当用户要求保存/导出/完成设计时，最后一步使用 canvas.updateAndSaveSticker 保存到素材库，或 canvas.exportPng 导出下载')
-  lines.push('- 设计完成后主动提示用户是否保存')
-  lines.push('')
-  lines.push('## 可用产品尺寸预设（用于 canvas.smartSize / canvas.setSizeByPreset）')
-  lines.push('')
-  lines.push(SIZE_PRESET_LIST_FOR_PROMPT)
+  lines.push("## 操作调用格式");
+  lines.push("");
+  lines.push("**每次回复必须包含操作调用。** 使用以下 JSON 格式：");
+  lines.push("```operation");
+  lines.push(
+    JSON.stringify({ op: "操作ID", params: { 参数名: "参数值" } }, null, 2),
+  );
+  lines.push("```");
+  lines.push("");
+  lines.push("调用规则：");
+  lines.push("- 参数名和类型必须严格匹配 input_schema 定义");
+  lines.push("- required 字段的参数必须提供");
+  lines.push("- enum 字段的参数只能使用列出的可选值");
+  lines.push("- number 类型参数不能超出 minimum/maximum 范围");
+  lines.push("- 多个操作用多个 ```operation 代码块依次输出，按顺序执行");
+  lines.push("- 操作之间不要插入任何文字，操作完成后简短说明");
+  lines.push("");
+  lines.push("## 重要提醒");
+  lines.push("");
+  lines.push(
+    "- 当用户描述产品类型时，优先使用 canvas.smartSize 或 canvas.setSizeByPreset 匹配预设尺寸",
+  );
+  lines.push("- 当用户给出了明确的数值尺寸时，使用 canvas.setSize");
+  lines.push("- 注意使用 zIndex 控制元素层级：背景 zIndex=0，文字 zIndex=1+");
+  lines.push("- 元素默认居中，如果不指定位置就是居中的");
+  lines.push("- 颜色值使用 CSS 颜色格式，如 #ff0000, rgb(255,0,0)");
+  lines.push("- 文字字号单位是 px，160 是正常大小，300+ 是标题大小");
+  lines.push(
+    "- 当用户要求保存/导出/完成设计时，最后一步使用 canvas.updateAndSaveSticker 保存到素材库，或 canvas.exportPng 导出下载",
+  );
+  lines.push("- 设计完成后主动提示用户是否保存");
+  lines.push("");
+  lines.push(
+    "## 可用产品尺寸预设（用于 canvas.smartSize / canvas.setSizeByPreset）",
+  );
+  lines.push("");
+  lines.push(SIZE_PRESET_LIST_FOR_PROMPT);
 
-  return lines.join('\n')
+  return lines.join("\n");
 }
 
 export function buildOperationTools(): OperationTool[] {
-  return getOperationTools()
+  return getOperationTools();
 }
 
-const OPERATION_BLOCK_RE = /```operation\s*\n([\s\S]*?)```/g
+const OPERATION_BLOCK_RE = /```operation\s*\n([\s\S]*?)```/g;
 
-export function parseOperationCalls(text: string): Array<{ op: string; params: Record<string, any> }> {
-  const calls: Array<{ op: string; params: Record<string, any> }> = []
-  let match: RegExpExecArray | null
+export function parseOperationCalls(
+  text: string,
+): Array<{ op: string; params: Record<string, any> }> {
+  const calls: Array<{ op: string; params: Record<string, any> }> = [];
+  let match: RegExpExecArray | null;
 
   while ((match = OPERATION_BLOCK_RE.exec(text)) !== null) {
     try {
-      const parsed = JSON.parse(match[1].trim())
+      const parsed = JSON.parse(match[1].trim());
       if (parsed.op) {
-        calls.push({ op: parsed.op, params: parsed.params || {} })
+        calls.push({ op: parsed.op, params: parsed.params || {} });
       }
     } catch {
       // skip malformed blocks
     }
   }
 
-  return calls
+  return calls;
 }
 
 export function stripOperationBlocks(text: string): string {
-  return text.replace(/```operation\s*\n[\s\S]*?```/g, '').trim()
+  return text.replace(/```operation\s*\n[\s\S]*?```/g, "").trim();
 }
 
 export function extractAiResponseText(response: any): string {
-  if (!response) return ''
+  if (!response) return "";
 
   // Server wrapper: { data: "text", code: 0, status: true }
-  if (typeof response.data === 'string') return response.data
+  if (typeof response.data === "string") return response.data;
 
   // Server wrapper: { data: { choices: [...] } }
-  const inner = response.data || response
+  const inner = response.data || response;
 
   // OpenAI format: { choices: [{ message: { content } }] }
   if (inner.choices?.[0]?.message?.content) {
-    const c = inner.choices[0].message.content
-    return typeof c === 'string' ? c : JSON.stringify(c)
+    const c = inner.choices[0].message.content;
+    return typeof c === "string" ? c : JSON.stringify(c);
   }
 
   // Direct string
-  if (typeof response === 'string') return response
+  if (typeof response === "string") return response;
 
   // Fallback: stringify entire response
-  return JSON.stringify(response)
+  return JSON.stringify(response);
 }
 
 export function formatOperationResult(result: OperationResult): string {
   if (result.success) {
-    return `✅ ${result.message}`
+    return `✅ ${result.message}`;
   }
-  return `❌ ${result.message}`
+  return `❌ ${result.message}`;
 }

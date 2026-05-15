@@ -35,7 +35,7 @@
 
     <el-collapse-item name="5">
       <template #title>
-        <div class="title">印花增强</div>
+        <div class="title">图片平铺</div>
       </template>
       <operateItemImagePrintGroup
         v-model="currentOperatingCanvasChild"

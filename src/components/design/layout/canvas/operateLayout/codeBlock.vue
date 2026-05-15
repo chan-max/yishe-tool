@@ -1,18 +1,18 @@
 <template>
   <el-collapse v-model="activeNames">
-    <el-collapse-item name="source" title="源码">
+    <el-collapse-item name="source" title="代码">
       <operate-form-item>
-        <template #name>Mermaid</template>
+        <template #name>源码</template>
         <template #content>
-          <div class="mermaid-source-editor">
-            <div class="mermaid-source-editor__toolbar">
+          <div class="code-block-source-editor">
+            <div class="code-block-source-editor__toolbar">
               <el-popover
                 v-model:visible="aiPopoverVisible"
                 trigger="click"
                 placement="right-start"
                 width="340"
               >
-                <div class="mermaid-ai-popover">
+                <div class="code-block-ai-popover">
                   <el-input
                     v-model="aiPrompt"
                     type="textarea"
@@ -20,24 +20,24 @@
                     resize="vertical"
                     spellcheck="false"
                     :disabled="aiLoading"
-                    placeholder="描述图表，例如：生成一个 AI 绘图流程图，包含输入、模型、审核、输出"
-                    @keydown.enter.ctrl="generateSourceByAi"
+                    placeholder="描述代码，例如：写一个 Vue 组合式函数，处理倒计时"
+                    @keydown.enter.ctrl="generateCodeByAi"
                   ></el-input>
 
-                  <div class="mermaid-ai-popover__actions">
+                  <div class="code-block-ai-popover__actions">
                     <el-button size="small" @click="aiPopoverVisible = false">取消</el-button>
                     <el-button
                       size="small"
                       type="primary"
                       :loading="aiLoading"
                       :disabled="!aiPrompt.trim() || aiLoading"
-                      @click="generateSourceByAi"
+                      @click="generateCodeByAi"
                     >
                       确定
                     </el-button>
                   </div>
 
-                  <div v-if="aiError" class="mermaid-error">{{ aiError }}</div>
+                  <div v-if="aiError" class="code-block-error">{{ aiError }}</div>
                 </div>
 
                 <template #reference>
@@ -52,8 +52,8 @@
               :rows="10"
               resize="vertical"
               spellcheck="false"
-              placeholder="flowchart TD&#10;  A[开始] --> B[完成]"
-              class="mermaid-source-editor__input"
+              placeholder="const message = 'Hello Shiki'"
+              class="code-block-source-editor__input"
             ></el-input>
           </div>
         </template>
@@ -68,19 +68,109 @@
       ></operateItemSize>
 
       <operate-form-item>
-        <template #name>主题</template>
+        <template #name>语言</template>
         <template #content>
-          <el-select v-model="mermaidConfig.theme" size="small">
-            <el-option label="Default" value="default"></el-option>
-            <el-option label="Base" value="base"></el-option>
-            <el-option label="Dark" value="dark"></el-option>
-            <el-option label="Forest" value="forest"></el-option>
-            <el-option label="Neutral" value="neutral"></el-option>
+          <el-select
+            v-model="currentOperatingCanvasChild.language"
+            size="small"
+            filterable
+            allow-create
+          >
+            <el-option
+              v-for="lang in CODE_BLOCK_LANGUAGES"
+              :key="lang"
+              :label="lang"
+              :value="lang"
+            ></el-option>
           </el-select>
         </template>
       </operate-form-item>
 
+      <operate-form-item>
+        <template #name>主题</template>
+        <template #content>
+          <el-select
+            v-model="currentOperatingCanvasChild.theme"
+            size="small"
+            filterable
+            allow-create
+          >
+            <el-option
+              v-for="theme in CODE_BLOCK_THEMES"
+              :key="theme"
+              :label="theme"
+              :value="theme"
+            ></el-option>
+          </el-select>
+        </template>
+      </operate-form-item>
+
+      <operate-form-item>
+        <template #name>文件名</template>
+        <template #content>
+          <el-input v-model="currentOperatingCanvasChild.filename" size="small" placeholder="example.ts"></el-input>
+        </template>
+      </operate-form-item>
+
+      <operate-form-item>
+        <template #name>显示项</template>
+        <template #content>
+          <div class="code-block-switches">
+            <el-checkbox v-model="currentOperatingCanvasChild.showHeader" size="small">标题栏</el-checkbox>
+            <el-checkbox v-model="currentOperatingCanvasChild.showLineNumbers" size="small">行号</el-checkbox>
+            <el-checkbox v-model="currentOperatingCanvasChild.wrap" size="small">换行</el-checkbox>
+          </div>
+        </template>
+      </operate-form-item>
+    </el-collapse-item>
+
+    <el-collapse-item name="style" title="样式">
+      <operateItemFontSize
+        label="代码字号"
+        v-model="currentOperatingCanvasChild.fontSize"
+      ></operateItemFontSize>
+      <operateItemFontFamily
+        label="代码字体"
+        v-model="currentOperatingCanvasChild.fontFamilyInfo"
+      ></operateItemFontFamily>
       <operateItemBackgroundColor v-model="currentOperatingCanvasChild.backgroundColor"></operateItemBackgroundColor>
+
+      <operate-form-item>
+        <template #name>行高</template>
+        <template #content>
+          <el-input-number
+            v-model="currentOperatingCanvasChild.lineHeight"
+            size="small"
+            :min="0.8"
+            :max="3"
+            :step="0.05"
+          ></el-input-number>
+        </template>
+      </operate-form-item>
+
+      <operate-form-item>
+        <template #name>内边距</template>
+        <template #content>
+          <el-input-number
+            v-model="currentOperatingCanvasChild.padding.value"
+            size="small"
+            :min="0"
+            :max="1000"
+          ></el-input-number>
+        </template>
+      </operate-form-item>
+
+      <operate-form-item>
+        <template #name>圆角</template>
+        <template #content>
+          <el-input-number
+            v-model="currentOperatingCanvasChild.borderRadius.value"
+            size="small"
+            :min="0"
+            :max="1000"
+          ></el-input-number>
+        </template>
+      </operate-form-item>
     </el-collapse-item>
 
     <el-collapse-item name="config" title="Config">
@@ -99,62 +189,21 @@
 
   <el-dialog
     v-model="configDialogVisible"
-    title="编辑 Mermaid Config"
+    title="编辑 Shiki Config"
     fullscreen
     append-to-body
     destroy-on-close
-    class="mermaid-config-dialog"
+    class="code-block-config-dialog"
   >
-    <div class="mermaid-config-editor">
-      <div class="mermaid-config-editor__toolbar">
-        <el-popover
-          v-model:visible="configAiPopoverVisible"
-          trigger="click"
-          placement="right-start"
-          width="360"
-        >
-          <div class="mermaid-ai-popover">
-            <el-input
-              v-model="configAiPrompt"
-              type="textarea"
-              :rows="4"
-              resize="vertical"
-              spellcheck="false"
-              :disabled="configAiLoading"
-              placeholder="描述配置风格，例如：白底蓝紫科技风，文字大一些，线条更粗"
-              @keydown.enter.ctrl="generateConfigByAi"
-            ></el-input>
-
-            <div class="mermaid-ai-popover__actions">
-              <el-button size="small" @click="configAiPopoverVisible = false">取消</el-button>
-              <el-button
-                size="small"
-                type="primary"
-                :loading="configAiLoading"
-                :disabled="!configAiPrompt.trim() || configAiLoading"
-                @click="generateConfigByAi"
-              >
-                确定
-              </el-button>
-            </div>
-
-            <div v-if="configAiError" class="mermaid-error">{{ configAiError }}</div>
-          </div>
-
-          <template #reference>
-            <el-button size="small" type="primary" plain>AI 生成配置</el-button>
-          </template>
-        </el-popover>
-      </div>
-
+    <div class="code-block-config-editor">
       <el-input
         v-model="configText"
         type="textarea"
         spellcheck="false"
         resize="none"
-        placeholder="{ theme: 'base', themeVariables: { fontSize: '28px' } }"
+        placeholder="{ transformers: [] }"
       ></el-input>
-      <div v-if="configError" class="mermaid-error">{{ configError }}</div>
+      <div v-if="configError" class="code-block-error">{{ configError }}</div>
     </div>
 
     <template #footer>
@@ -166,15 +215,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import operateItemSize from '@/components/design/layout/canvas/operate/size/relativeSize.vue'
 import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue'
+import operateItemFontSize from '@/components/design/layout/canvas/operate/fontSize.vue'
+import operateItemFontFamily from '@/components/design/layout/canvas/operate/fontFamily/fontFamily.vue'
 import operateItemBackgroundColor from '@/components/design/layout/canvas/operate/backgroundColor.vue'
-import { canvasStickerOptionsOnlyChild, currentOperatingCanvasChild } from '../index.tsx'
-import { formatSizeOptionToPixelValue } from '../helper'
-import { generateMermaidConfig, generateMermaidSource } from '../children/aiMermaidService'
+import { currentOperatingCanvasChild } from '../index.tsx'
+import { CODE_BLOCK_LANGUAGES, CODE_BLOCK_THEMES } from '../children/codeBlock'
+import { generateCodeBlockSource } from '../children/aiCodeBlockService'
 
-const activeNames = ref(['source', 'basic', 'config', 'common'])
+const activeNames = ref(['source', 'basic', 'style', 'config', 'common'])
 const aiPopoverVisible = ref(false)
 const aiPrompt = ref('')
 const aiLoading = ref(false)
@@ -182,24 +233,9 @@ const aiError = ref('')
 const configDialogVisible = ref(false)
 const configText = ref('')
 const configError = ref('')
-const configAiPopoverVisible = ref(false)
-const configAiPrompt = ref('')
-const configAiLoading = ref(false)
-const configAiError = ref('')
-
-const mermaidConfig = computed(() => {
-  const child = currentOperatingCanvasChild.value
-  if (!child.config || typeof child.config !== 'object' || Array.isArray(child.config)) {
-    child.config = {}
-  }
-  if (!child.config.theme) {
-    child.config.theme = 'default'
-  }
-  return child.config
-})
 
 function syncConfigText() {
-  configText.value = stringifyConfig(mermaidConfig.value || {})
+  configText.value = stringifyConfig(currentOperatingCanvasChild.value?.config || {})
   configError.value = ''
 }
 
@@ -301,7 +337,7 @@ function stringifyConfig(value: any, indent = 0, seen = new WeakSet<object>()): 
   return `{\n${entries.join(',\n')}\n${space}}`
 }
 
-async function generateSourceByAi() {
+async function generateCodeByAi() {
   const prompt = aiPrompt.value.trim()
   if (!prompt || aiLoading.value) return
 
@@ -309,15 +345,11 @@ async function generateSourceByAi() {
   aiError.value = ''
 
   try {
-    const canvasChild = canvasStickerOptionsOnlyChild.value
-    const mermaidChild = currentOperatingCanvasChild.value
-    const result = await generateMermaidSource(prompt, mermaidChild?.source || '', {
-      canvasWidth: Number(canvasChild?.width?.value),
-      canvasHeight: Number(canvasChild?.height?.value),
-      unit: canvasChild?.width?.unit || 'px',
-      elementWidth: Number(formatSizeOptionToPixelValue(mermaidChild?.width)),
-      elementHeight: Number(formatSizeOptionToPixelValue(mermaidChild?.height)),
-    })
+    const result = await generateCodeBlockSource(
+      prompt,
+      currentOperatingCanvasChild.value?.language || 'text',
+      currentOperatingCanvasChild.value?.source || '',
+    )
     currentOperatingCanvasChild.value.source = result.source
     aiPrompt.value = ''
     aiPopoverVisible.value = false
@@ -328,75 +360,36 @@ async function generateSourceByAi() {
   }
 }
 
-async function generateConfigByAi() {
-  const prompt = configAiPrompt.value.trim()
-  if (!prompt || configAiLoading.value) return
-
-  configAiLoading.value = true
-  configAiError.value = ''
-
-  try {
-    const canvasChild = canvasStickerOptionsOnlyChild.value
-    const mermaidChild = currentOperatingCanvasChild.value
-    let currentConfig = mermaidConfig.value || {}
-    try {
-      currentConfig = parseConfigText(configText.value)
-      configError.value = ''
-    } catch (error: any) {
-      configError.value = error?.message || '当前配置解析失败，AI 已基于已应用配置生成'
-    }
-
-    const result = await generateMermaidConfig(prompt, mermaidChild?.source || '', currentConfig, {
-      canvasWidth: Number(canvasChild?.width?.value),
-      canvasHeight: Number(canvasChild?.height?.value),
-      unit: canvasChild?.width?.unit || 'px',
-      elementWidth: Number(formatSizeOptionToPixelValue(mermaidChild?.width)),
-      elementHeight: Number(formatSizeOptionToPixelValue(mermaidChild?.height)),
-    })
-
-    currentOperatingCanvasChild.value.config = result.config
-    configText.value = stringifyConfig(result.config)
-    configError.value = ''
-    configAiPrompt.value = ''
-    configAiPopoverVisible.value = false
-  } catch (error: any) {
-    configAiError.value = error?.message || 'AI 生成失败，请重试'
-  } finally {
-    configAiLoading.value = false
-  }
-}
-
 watch(
   () => currentOperatingCanvasChild.value?.id,
   () => {
     syncConfigText()
     aiError.value = ''
-    configAiError.value = ''
   },
   { immediate: true },
 )
 </script>
 
 <style scoped>
-.mermaid-source-editor {
+.code-block-source-editor {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.mermaid-source-editor__toolbar {
+.code-block-source-editor__toolbar {
   display: flex;
   justify-content: flex-end;
 }
 
-.mermaid-ai-popover {
+.code-block-ai-popover {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.mermaid-ai-popover__actions {
+.code-block-ai-popover__actions {
   display: flex;
   justify-content: flex-end;
   gap: 4px;
@@ -406,20 +399,26 @@ watch(
   }
 }
 
-.mermaid-error {
+.code-block-error {
   color: #c45656;
   font-size: 12px;
   line-height: 1.4;
 }
 
-.mermaid-source-editor__input :deep(.el-textarea__inner),
-.mermaid-config-editor :deep(.el-textarea__inner) {
+.code-block-switches {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.code-block-source-editor__input :deep(.el-textarea__inner),
+.code-block-config-editor :deep(.el-textarea__inner) {
   font-family: Consolas, Monaco, "Courier New", monospace;
   font-size: 13px;
   line-height: 1.55;
 }
 
-.mermaid-config-editor {
+.code-block-config-editor {
   height: calc(100vh - 142px);
   display: flex;
   flex-direction: column;
@@ -427,13 +426,8 @@ watch(
   min-height: 0;
 }
 
-.mermaid-config-editor__toolbar {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.mermaid-config-editor :deep(.el-textarea),
-.mermaid-config-editor :deep(.el-textarea__inner) {
+.code-block-config-editor :deep(.el-textarea),
+.code-block-config-editor :deep(.el-textarea__inner) {
   flex: 1;
   min-height: 0;
   height: 100%;

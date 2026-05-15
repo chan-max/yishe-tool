@@ -9,7 +9,7 @@
               <el-popover
                 v-model:visible="aiPopoverVisible"
                 trigger="click"
-                placement="left-start"
+                placement="right-start"
                 width="320"
               >
                 <div class="math-ai-popover">
@@ -20,7 +20,7 @@
                     resize="vertical"
                     spellcheck="false"
                     :disabled="aiLoading"
-                    placeholder="描述公式，例如：二次方程求根公式"
+                    placeholder="描述公式，例如：二次方程求根公式 / 水的生成反应"
                     @keydown.enter.ctrl="generateFormulaByAi"
                   ></el-input>
 
@@ -52,7 +52,7 @@
               :rows="5"
               resize="vertical"
               spellcheck="false"
-              placeholder="\frac{a}{b}=c"
+              placeholder="\frac{a}{b}=c 或 \ce{2H2 + O2 -> 2H2O}"
             ></el-input>
           </div>
         </template>
@@ -147,7 +147,11 @@ async function generateFormulaByAi() {
 .math-ai-popover__actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 4px;
+
+  :deep(.el-button + .el-button) {
+    margin-left: 0;
+  }
 }
 
 .math-ai-popover__error {

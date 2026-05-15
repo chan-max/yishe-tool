@@ -57,36 +57,6 @@
           </div>
         </template>
       </operate-form-item>
-
-      <operate-form-item>
-        <template #name>显示模式</template>
-        <template #content>
-          <el-radio-group v-model="currentOperatingCanvasChild.displayMode" size="small">
-            <el-radio-button :value="true">块级</el-radio-button>
-            <el-radio-button :value="false">行内</el-radio-button>
-          </el-radio-group>
-        </template>
-      </operate-form-item>
-
-      <operate-form-item>
-        <template #name>错误提示</template>
-        <template #content>
-          <el-radio-group v-model="currentOperatingCanvasChild.throwOnError" size="small">
-            <el-radio-button :value="false">容错</el-radio-button>
-            <el-radio-button :value="true">严格</el-radio-button>
-          </el-radio-group>
-        </template>
-      </operate-form-item>
-
-      <operate-form-item>
-        <template #name>信任命令</template>
-        <template #content>
-          <el-radio-group v-model="currentOperatingCanvasChild.trust" size="small">
-            <el-radio-button :value="false">关</el-radio-button>
-            <el-radio-button :value="true">开</el-radio-button>
-          </el-radio-group>
-        </template>
-      </operate-form-item>
     </el-collapse-item>
 
     <el-collapse-item name="style" title="样式">

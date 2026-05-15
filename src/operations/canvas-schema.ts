@@ -12,6 +12,7 @@ import { createDefaultCanvasChildWordCloudOptions } from '@/components/design/la
 import { createDefaultCanvasChildThreeSceneOptions } from '@/components/design/layout/canvas/children/threeScene/index.tsx'
 import { createDefaultCanvasChildEchartOptions } from '@/components/design/layout/canvas/children/echart/index.tsx'
 import { createDefaultCanvasChildMathOptions } from '@/components/design/layout/canvas/children/math.tsx'
+import { createDefaultCanvasChildMermaidOptions } from '@/components/design/layout/canvas/children/mermaid.tsx'
 
 export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   canvas: createDefaultCanvasChildcanvasStickerOptions,
@@ -28,6 +29,7 @@ export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   threeScene: createDefaultCanvasChildThreeSceneOptions,
   echart: createDefaultCanvasChildEchartOptions,
   math: createDefaultCanvasChildMathOptions,
+  mermaid: createDefaultCanvasChildMermaidOptions,
 }
 
 const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一任务：根据用户需求，输出一个完整的 JSON 对象来定义画布设计。
@@ -52,11 +54,12 @@ const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一�
 - qrcode: 二维码。qrcodeContent, qrCodeColor, qrcodeDotType, errorCorrectionLevel
 - barcode: 条形码。barcodeContent, lineColor, barcodeFormat
 - html: HTML元素。htmlContent
-- rawCanvas: Canvas元素。用于后续程序化绘制，当前支持作为透明画布容器参与布局和导出
-- wordCloud: 词云元素。当前 engine=wordcloud2，所有词云参数放在 wordCloud.engines.wordcloud2 下
-- threeScene: Three.js元素。当前 engine=threejs，作为贴纸子元素渲染 3D 场景到独立 canvas，所有参数放在 threeScene.engines.threejs 下
-- echart: ECharts元素。当前 engine=echarts，直接将原生 ECharts option 放在 echart.engines.echarts.option 下；只使用 JSON 对象，不写函数
-- math: 数学公式。当前 engine=katex，formula 写 LaTeX 字符串；支持 displayMode、fontSize、fontFamilyInfo、fontColor、backgroundColor、textAlign
+- rawCanvas: 程序画布 (Canvas)。用于后续程序化绘制，当前支持作为透明画布容器参与布局和导出
+- wordCloud: 词云 (wordcloud2)。当前 engine=wordcloud2，所有词云参数放在 wordCloud.engines.wordcloud2 下
+- threeScene: 3D模型 (Three.js)。当前 engine=threejs，作为贴纸子元素渲染 3D 场景到独立 canvas，所有参数放在 threeScene.engines.threejs 下
+- echart: 图表 (ECharts)。当前 engine=echarts，直接将原生 ECharts option 放在 echart.engines.echarts.option 下；只使用 JSON 对象，不写函数
+- math: 数学公式 (KaTeX)。当前 engine=katex，formula 写 LaTeX 字符串；支持 displayMode、fontSize、fontFamilyInfo、fontColor、backgroundColor、textAlign
+- mermaid: 流程图 (Mermaid)。source 写 Mermaid DSL，config 写 Mermaid 原生配置对象；适合流程图、时序图、类图、ER 图、甘特图、思维导图、时间轴等静态图
 
 ## 公共属性（除 canvas 外所有元素可选）
 width/height, zIndex(数字越大越靠前), position({center:true}居中), transform, filter`
@@ -227,7 +230,7 @@ export const CANVAS_DESIGN_SCHEMA = {
       description: '画布子元素，由 type 字段区分类型。只提供你需要设定的字段，其余自动使用默认值。',
       required: ['type'],
       properties: {
-        type: { type: 'string', enum: ['canvas', 'text', 'background', 'image', 'rect', 'ellipse', 'qrcode', 'barcode', 'html', 'rawCanvas', 'wordCloud', 'threeScene', 'echart', 'math'] },
+        type: { type: 'string', enum: ['canvas', 'text', 'background', 'image', 'rect', 'ellipse', 'qrcode', 'barcode', 'html', 'rawCanvas', 'wordCloud', 'threeScene', 'echart', 'math', 'mermaid'] },
       },
       oneOf: [
         { $ref: '#/definitions/CanvasBase' },
@@ -244,6 +247,7 @@ export const CANVAS_DESIGN_SCHEMA = {
         { $ref: '#/definitions/ThreeSceneChild' },
         { $ref: '#/definitions/EchartChild' },
         { $ref: '#/definitions/MathChild' },
+        { $ref: '#/definitions/MermaidChild' },
       ],
     },
     CanvasBase: {
@@ -726,6 +730,29 @@ export const CANVAS_DESIGN_SCHEMA = {
         fontColor: { $ref: '#/definitions/ColorValue' },
         backgroundColor: { $ref: '#/definitions/ColorValue' },
         textAlign: { type: 'string', enum: ['left', 'center', 'right'], default: 'center' },
+        width: { $ref: '#/definitions/SizeValue' },
+        height: { $ref: '#/definitions/SizeValue' },
+        zIndex: { type: 'number', default: 0 },
+        position: { $ref: '#/definitions/Position' },
+        transform: { $ref: '#/definitions/Transform' },
+        filter: { $ref: '#/definitions/Filter' },
+      },
+      additionalProperties: false,
+    },
+    MermaidChild: {
+      type: 'object',
+      description: 'Mermaid 图表子元素。使用 Mermaid DSL 渲染静态 SVG，适合流程图、时序图、类图、ER 图、甘特图、思维导图、时间轴等结构化视觉。',
+      required: ['type', 'source'],
+      properties: {
+        type: { const: 'mermaid' },
+        source: { type: 'string', description: 'Mermaid DSL 源码，例如 flowchart TD\\n  A[开始] --> B[完成]。JSON 中换行可用 \\n。' },
+        config: {
+          type: 'object',
+          description: 'Mermaid 原生配置对象，可写 theme、themeVariables、flowchart、sequence、gantt、securityLevel 等 Mermaid 支持字段。',
+          additionalProperties: true,
+        },
+        fontSize: { type: 'object', description: '容器基础字号，主要用于错误提示；Mermaid 图中文字建议通过 config.themeVariables.fontSize 控制', properties: { value: { type: 'number', minimum: 1 }, unit: { const: 'px' } }, required: ['value', 'unit'], additionalProperties: false },
+        backgroundColor: { $ref: '#/definitions/ColorValue' },
         width: { $ref: '#/definitions/SizeValue' },
         height: { $ref: '#/definitions/SizeValue' },
         zIndex: { type: 'number', default: 0 },

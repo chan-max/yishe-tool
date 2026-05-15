@@ -27,6 +27,7 @@ import { createCanvasChildWordCloud, createDefaultCanvasChildWordCloudOptions } 
 import { createCanvasChildThreeScene, createDefaultCanvasChildThreeSceneOptions } from './children/threeScene/index.tsx'
 import { createCanvasChildEchart, createDefaultCanvasChildEchartOptions } from './children/echart/index.tsx'
 import { createCanvasChildMath, createDefaultCanvasChildMathOptions } from './children/math.tsx'
+import { createCanvasChildMermaid, createDefaultCanvasChildMermaidOptions } from './children/mermaid.tsx'
 
 import { createDefaultCanvasChildcanvasStickerOptions } from './children/canvas'
 
@@ -129,6 +130,7 @@ import wordCloudLayout from './operateLayout/wordCloud.vue'
 import threeSceneLayout from './operateLayout/threeScene.vue'
 import echartLayout from './operateLayout/echart.vue'
 import mathLayout from './operateLayout/mathFormula.vue'
+import mermaidLayout from './operateLayout/mermaid.vue'
 
 import { createCanvasChildBarcode, createDefaultCanvasChildBarcodeOptions } from './children/barcode/index.tsx';
 import { createCanvasChildHtml, createDefaultCanvasChildHtmlOptions } from './children/html.tsx';
@@ -170,7 +172,7 @@ defineCanvasChild({
 defineCanvasChild({
     typeName: 'rawCanvas',
     typeKey: 'rawCanvas',
-    label: 'Canvas',
+    label: '程序画布 (Canvas)',
     defaultOptionsCreator: createDefaultCanvasChildRawCanvasOptions,
     renderer: createCanvasChildRawCanvas,
     operationLayout: rawCanvasLayout
@@ -179,7 +181,7 @@ defineCanvasChild({
 defineCanvasChild({
     typeName: 'wordCloud',
     typeKey: 'wordCloud',
-    label: '词云',
+    label: '词云 (wordcloud2)',
     defaultOptionsCreator: createDefaultCanvasChildWordCloudOptions,
     renderer: createCanvasChildWordCloud,
     operationLayout: wordCloudLayout
@@ -188,7 +190,7 @@ defineCanvasChild({
 defineCanvasChild({
     typeName: 'threeScene',
     typeKey: 'threeScene',
-    label: 'Three.js',
+    label: '3D模型 (Three.js)',
     defaultOptionsCreator: createDefaultCanvasChildThreeSceneOptions,
     renderer: createCanvasChildThreeScene,
     operationLayout: threeSceneLayout
@@ -197,7 +199,7 @@ defineCanvasChild({
 defineCanvasChild({
     typeName: 'echart',
     typeKey: 'echart',
-    label: 'ECharts',
+    label: '图表 (ECharts)',
     defaultOptionsCreator: createDefaultCanvasChildEchartOptions,
     renderer: createCanvasChildEchart,
     operationLayout: echartLayout
@@ -206,10 +208,19 @@ defineCanvasChild({
 defineCanvasChild({
     typeName: 'math',
     typeKey: 'math',
-    label: '数学公式',
+    label: '数学公式 (KaTeX)',
     defaultOptionsCreator: createDefaultCanvasChildMathOptions,
     renderer: createCanvasChildMath,
     operationLayout: mathLayout
+})
+
+defineCanvasChild({
+    typeName: 'mermaid',
+    typeKey: 'mermaid',
+    label: '流程图 (Mermaid)',
+    defaultOptionsCreator: createDefaultCanvasChildMermaidOptions,
+    renderer: createCanvasChildMermaid,
+    operationLayout: mermaidLayout
 })
 
 
@@ -254,7 +265,7 @@ defineCanvasChild({
 defineCanvasChild({
     typeName: 'html',
     typeKey: 'html',
-    label: 'HTML代码',
+    label: 'HTML代码 (HTML)',
     defaultOptionsCreator: createDefaultCanvasChildHtmlOptions,
     renderer: createCanvasChildHtml,
     operationLayout: htmlLayout

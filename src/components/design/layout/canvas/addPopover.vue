@@ -1,8 +1,8 @@
 <template>
-    <el-popover trigger="click" width="260">
+    <el-popover trigger="click" width="340">
         <div class="addchild">
             <template v-for="v, k in canvasChildLabelMap">
-                <el-button  v-if="k !== 'canvas'" size="small" @click="add(k)" round> {{ v }} </el-button>
+                <el-button v-if="k !== 'canvas'" size="small" @click="add(k)" round> {{ v }} </el-button>
             </template>
       
             <div style="flex: 1"></div>
@@ -36,11 +36,16 @@ function add(type) {
 .addchild {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: flex-start;
     gap: .8em 0.4em;
 
     :deep(.el-button + .el-button) {
         margin-left: 0;
+    }
+
+    :deep(.el-button) {
+        max-width: 100%;
+        min-width: 0;
     }
 }
 </style>

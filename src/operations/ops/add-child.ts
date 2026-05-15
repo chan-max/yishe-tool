@@ -3,7 +3,7 @@ import { registerOperation } from '../registry'
 registerOperation({
   id: 'canvas.addChild',
   name: '添加元素',
-  description: '向画布添加一个新元素，支持文字、背景、图片、矩形、椭圆、二维码、条形码、ECharts、Three.js、数学公式等类型',
+  description: '向画布添加一个新元素，支持文字、背景、图片、矩形、椭圆、二维码、条形码、图表 (ECharts)、3D模型 (Three.js)、数学公式 (KaTeX)、流程图 (Mermaid) 等类型',
   group: '画布',
   params: [
     {
@@ -19,9 +19,10 @@ registerOperation({
         { label: '椭圆', value: 'ellipse' },
         { label: '二维码', value: 'qrcode' },
         { label: '条形码', value: 'barcode' },
-        { label: 'ECharts', value: 'echart' },
-        { label: 'Three.js', value: 'threeScene' },
-        { label: '数学公式', value: 'math' },
+        { label: '图表 (ECharts)', value: 'echart' },
+        { label: '3D模型 (Three.js)', value: 'threeScene' },
+        { label: '数学公式 (KaTeX)', value: 'math' },
+        { label: '流程图 (Mermaid)', value: 'mermaid' },
       ],
       description: '要添加的元素类型',
     },
@@ -93,6 +94,27 @@ registerOperation({
       description: '仅数学公式类型有效，单位 px',
     },
     {
+      name: 'mermaidSource',
+      label: 'Mermaid 源码',
+      type: 'string',
+      placeholder: 'flowchart TD\\n  A[开始] --> B[完成]',
+      description: '仅 Mermaid 类型有效，Mermaid DSL 源码',
+    },
+    {
+      name: 'mermaidTheme',
+      label: 'Mermaid 主题',
+      type: 'select',
+      default: 'default',
+      options: [
+        { label: 'Default', value: 'default' },
+        { label: 'Base', value: 'base' },
+        { label: 'Dark', value: 'dark' },
+        { label: 'Forest', value: 'forest' },
+        { label: 'Neutral', value: 'neutral' },
+      ],
+      description: '仅 Mermaid 类型有效',
+    },
+    {
       name: 'width',
       label: '宽度',
       type: 'number',
@@ -110,7 +132,7 @@ registerOperation({
     },
   ],
   execute(params, ctx) {
-    const { type, textContent, fontColor, fontSize, backgroundColor, formula, displayMode, throwOnError, mathFontColor, mathFontSize, width, height } = params
+    const { type, textContent, fontColor, fontSize, backgroundColor, formula, displayMode, throwOnError, mathFontColor, mathFontSize, mermaidSource, mermaidTheme, width, height } = params
 
     const extraOptions: Record<string, any> = {}
 
@@ -130,6 +152,22 @@ registerOperation({
       if (throwOnError !== undefined) extraOptions.throwOnError = throwOnError
       if (mathFontColor !== undefined) extraOptions.fontColor = { color: mathFontColor, type: 'pure' }
       if (mathFontSize !== undefined) extraOptions.fontSize = { value: mathFontSize, unit: 'px' }
+      if (width !== undefined) extraOptions.width = { value: width, unit: 'px' }
+      if (height !== undefined) extraOptions.height = { value: height, unit: 'px' }
+    }
+
+    if (type === 'mermaid') {
+      if (mermaidSource !== undefined) extraOptions.source = mermaidSource
+      if (mermaidTheme !== undefined) {
+        extraOptions.config = {
+          theme: mermaidTheme,
+          securityLevel: 'strict',
+          flowchart: {
+            htmlLabels: true,
+            curve: 'basis',
+          },
+        }
+      }
       if (width !== undefined) extraOptions.width = { value: width, unit: 'px' }
       if (height !== undefined) extraOptions.height = { value: height, unit: 'px' }
     }

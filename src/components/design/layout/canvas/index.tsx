@@ -96,6 +96,10 @@ import {
   createDefaultCanvasChildCytoscapeOptions,
 } from "./children/cytoscape.tsx";
 import {
+  createCanvasChildCytoscapeGraph,
+  createDefaultCanvasChildCytoscapeGraphOptions,
+} from "./children/cytoscapeGraph.tsx";
+import {
   createCanvasChildVueDataUi,
   createDefaultCanvasChildVueDataUiOptions,
 } from "./children/vueDataUi.tsx";
@@ -103,6 +107,66 @@ import {
   createCanvasChildD3,
   createDefaultCanvasChildD3Options,
 } from "./children/d3.tsx";
+import {
+  createCanvasChildD3Cloud,
+  createDefaultCanvasChildD3CloudOptions,
+} from "./children/d3Cloud.tsx";
+import {
+  createCanvasChildFiglet,
+  createDefaultCanvasChildFigletOptions,
+} from "./children/figlet.tsx";
+import {
+  createCanvasChildOpentypeText,
+  createDefaultCanvasChildOpentypeTextOptions,
+} from "./children/opentypeText.tsx";
+import {
+  createCanvasChildSimplexNoise,
+  createDefaultCanvasChildSimplexNoiseOptions,
+} from "./children/simplexNoise.tsx";
+import {
+  createCanvasChildGraphviz,
+  createDefaultCanvasChildGraphvizOptions,
+} from "./children/graphviz.tsx";
+import {
+  createCanvasChildDagreGraph,
+  createDefaultCanvasChildDagreGraphOptions,
+} from "./children/dagreGraph.tsx";
+import {
+  createCanvasChildRoughShape,
+  createDefaultCanvasChildRoughShapeOptions,
+} from "./children/roughShape.tsx";
+import {
+  createCanvasChildChartjs,
+  createDefaultCanvasChildChartjsOptions,
+} from "./children/chartjs.tsx";
+import {
+  createCanvasChildFrappeChart,
+  createDefaultCanvasChildFrappeChartOptions,
+} from "./children/frappeChart.tsx";
+import {
+  createCanvasChildChartXkcd,
+  createDefaultCanvasChildChartXkcdOptions,
+} from "./children/chartXkcd.tsx";
+import {
+  createCanvasChildPlotlyChart,
+  createDefaultCanvasChildPlotlyChartOptions,
+} from "./children/plotlyChart.tsx";
+import {
+  createCanvasChildVegaLite,
+  createDefaultCanvasChildVegaLiteOptions,
+} from "./children/vegaLite.tsx";
+import {
+  createCanvasChildWaveform,
+  createDefaultCanvasChildWaveformOptions,
+} from "./children/waveform.tsx";
+import {
+  createCanvasChildMarkmapChart,
+  createDefaultCanvasChildMarkmapChartOptions,
+} from "./children/markmapChart.tsx";
+import {
+  createCanvasChildParticlesEffect,
+  createDefaultCanvasChildParticlesEffectOptions,
+} from "./children/particlesEffect.tsx";
 
 import { createDefaultCanvasChildcanvasStickerOptions } from "./children/canvas";
 
@@ -209,8 +273,30 @@ import threeMolLayout from "./operateLayout/threeMol.vue";
 import abcNotationLayout from "./operateLayout/abcNotation.vue";
 import vexFlowLayout from "./operateLayout/vexFlow.vue";
 import cytoscapeLayout from "./operateLayout/cytoscape.vue";
+import cytoscapeGraphLayout from "./operateLayout/cytoscapeGraph.vue";
 import vueDataUiLayout from "./operateLayout/vueDataUi.vue";
 import d3Layout from "./operateLayout/d3.vue";
+import d3CloudLayout from "./operateLayout/d3Cloud.vue";
+import figletLayout from "./operateLayout/figlet.vue";
+import opentypeTextLayout from "./operateLayout/opentypeText.vue";
+import simplexNoiseLayout from "./operateLayout/simplexNoise.vue";
+import graphvizLayout from "./operateLayout/graphviz.vue";
+import dagreGraphLayout from "./operateLayout/dagreGraph.vue";
+import roughShapeLayout from "./operateLayout/roughShape.vue";
+import chartjsLayout from "./operateLayout/chartjs.vue";
+import frappeChartLayout from "./operateLayout/frappeChart.vue";
+import chartXkcdLayout from "./operateLayout/chartXkcd.vue";
+import plotlyChartLayout from "./operateLayout/plotlyChart.vue";
+import vegaLiteLayout from "./operateLayout/vegaLite.vue";
+import starChartLayout from "./operateLayout/starChart.vue";
+import waveformLayout from "./operateLayout/waveform.vue";
+import markmapChartLayout from "./operateLayout/markmapChart.vue";
+import particlesEffectLayout from "./operateLayout/particlesEffect.vue";
+
+import {
+  createCanvasChildStarChart,
+  createDefaultCanvasChildStarChartOptions,
+} from "./children/starChart.tsx";
 
 import {
   createCanvasChildBarcode,
@@ -305,6 +391,15 @@ defineCanvasChild({
   defaultOptionsCreator: createDefaultCanvasChildMermaidOptions,
   renderer: createCanvasChildMermaid,
   operationLayout: mermaidLayout,
+});
+
+defineCanvasChild({
+  typeName: "graphviz",
+  typeKey: "graphviz",
+  label: "Graphviz (DOT)",
+  defaultOptionsCreator: createDefaultCanvasChildGraphvizOptions,
+  renderer: createCanvasChildGraphviz,
+  operationLayout: graphvizLayout,
 });
 
 defineCanvasChild({
@@ -407,6 +502,15 @@ defineCanvasChild({
 });
 
 defineCanvasChild({
+  typeName: "cytoscapeGraph",
+  typeKey: "cytoscapeGraph",
+  label: "网络图 (Cytoscape Graph)",
+  defaultOptionsCreator: createDefaultCanvasChildCytoscapeGraphOptions,
+  renderer: createCanvasChildCytoscapeGraph,
+  operationLayout: cytoscapeGraphLayout,
+});
+
+defineCanvasChild({
   typeName: "vueDataUi",
   typeKey: "vueDataUi",
   label: "数据图表 (vue-data-ui)",
@@ -422,6 +526,141 @@ defineCanvasChild({
   defaultOptionsCreator: createDefaultCanvasChildD3Options,
   renderer: createCanvasChildD3,
   operationLayout: d3Layout,
+});
+
+defineCanvasChild({
+  typeName: "d3Cloud",
+  typeKey: "d3Cloud",
+  label: "词云 (D3-Cloud)",
+  defaultOptionsCreator: createDefaultCanvasChildD3CloudOptions,
+  renderer: createCanvasChildD3Cloud,
+  operationLayout: d3CloudLayout,
+});
+
+defineCanvasChild({
+  typeName: "figlet",
+  typeKey: "figlet",
+  label: "ASCII艺术字 (Figlet)",
+  defaultOptionsCreator: createDefaultCanvasChildFigletOptions,
+  renderer: createCanvasChildFiglet,
+  operationLayout: figletLayout,
+});
+
+defineCanvasChild({
+  typeName: "opentypeText",
+  typeKey: "opentypeText",
+  label: "字体转路径 (OpenType)",
+  defaultOptionsCreator: createDefaultCanvasChildOpentypeTextOptions,
+  renderer: createCanvasChildOpentypeText,
+  operationLayout: opentypeTextLayout,
+});
+
+defineCanvasChild({
+  typeName: "simplexNoise",
+  typeKey: "simplexNoise",
+  label: "噪声纹理 (Simplex Noise)",
+  defaultOptionsCreator: createDefaultCanvasChildSimplexNoiseOptions,
+  renderer: createCanvasChildSimplexNoise,
+  operationLayout: simplexNoiseLayout,
+});
+
+defineCanvasChild({
+  typeName: "roughShape",
+  typeKey: "roughShape",
+  label: "手绘图形 (Rough.js)",
+  defaultOptionsCreator: createDefaultCanvasChildRoughShapeOptions,
+  renderer: createCanvasChildRoughShape,
+  operationLayout: roughShapeLayout,
+});
+
+defineCanvasChild({
+  typeName: "dagreGraph",
+  typeKey: "dagreGraph",
+  label: "有向图布局 (dagre)",
+  defaultOptionsCreator: createDefaultCanvasChildDagreGraphOptions,
+  renderer: createCanvasChildDagreGraph,
+  operationLayout: dagreGraphLayout,
+});
+
+defineCanvasChild({
+  typeName: "chartjs",
+  typeKey: "chartjs",
+  label: "图表 (Chart.js)",
+  defaultOptionsCreator: createDefaultCanvasChildChartjsOptions,
+  renderer: createCanvasChildChartjs,
+  operationLayout: chartjsLayout,
+});
+
+defineCanvasChild({
+  typeName: "frappeChart",
+  typeKey: "frappeChart",
+  label: "图表 (Frappe Charts)",
+  defaultOptionsCreator: createDefaultCanvasChildFrappeChartOptions,
+  renderer: createCanvasChildFrappeChart,
+  operationLayout: frappeChartLayout,
+});
+
+defineCanvasChild({
+  typeName: "chartXkcd",
+  typeKey: "chartXkcd",
+  label: "手绘图表 (chart.xkcd)",
+  defaultOptionsCreator: createDefaultCanvasChildChartXkcdOptions,
+  renderer: createCanvasChildChartXkcd,
+  operationLayout: chartXkcdLayout,
+});
+
+defineCanvasChild({
+  typeName: "starChart",
+  typeKey: "starChart",
+  label: "星图 (Astronomy Engine)",
+  defaultOptionsCreator: createDefaultCanvasChildStarChartOptions,
+  renderer: createCanvasChildStarChart,
+  operationLayout: starChartLayout,
+});
+
+defineCanvasChild({
+  typeName: "plotlyChart",
+  typeKey: "plotlyChart",
+  label: "科学图表 (Plotly.js)",
+  defaultOptionsCreator: createDefaultCanvasChildPlotlyChartOptions,
+  renderer: createCanvasChildPlotlyChart,
+  operationLayout: plotlyChartLayout,
+});
+
+defineCanvasChild({
+  typeName: "vegaLite",
+  typeKey: "vegaLite",
+  label: "图表 (Vega-Lite)",
+  defaultOptionsCreator: createDefaultCanvasChildVegaLiteOptions,
+  renderer: createCanvasChildVegaLite,
+  operationLayout: vegaLiteLayout,
+});
+
+defineCanvasChild({
+  typeName: "waveform",
+  typeKey: "waveform",
+  label: "音频波形 (Wavesurfer.js)",
+  defaultOptionsCreator: createDefaultCanvasChildWaveformOptions,
+  renderer: createCanvasChildWaveform,
+  operationLayout: waveformLayout,
+});
+
+defineCanvasChild({
+  typeName: "markmapChart",
+  typeKey: "markmapChart",
+  label: "思维导图 (Markmap)",
+  defaultOptionsCreator: createDefaultCanvasChildMarkmapChartOptions,
+  renderer: createCanvasChildMarkmapChart,
+  operationLayout: markmapChartLayout,
+});
+
+defineCanvasChild({
+  typeName: "particlesEffect",
+  typeKey: "particlesEffect",
+  label: "粒子效果 (Particles.js)",
+  defaultOptionsCreator: createDefaultCanvasChildParticlesEffectOptions,
+  renderer: createCanvasChildParticlesEffect,
+  operationLayout: particlesEffectLayout,
 });
 
 /*

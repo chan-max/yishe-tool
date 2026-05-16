@@ -27,6 +27,25 @@ registerOperation({
         { label: "代码块 (Shiki)", value: "codeBlock" },
         { label: "分子结构 (RDKit.js)", value: "molecule" },
         { label: "3D分子 (3Dmol.js)", value: "threeMol" },
+        { label: "ASCII艺术字 (figlet)", value: "figlet" },
+        { label: "噪声纹理 (Simplex Noise)", value: "simplexNoise" },
+        { label: "字体转路径 (OpenType)", value: "opentypeText" },
+        { label: "手绘图形 (Rough.js)", value: "roughShape" },
+        { label: "图描述 (Graphviz)", value: "graphviz" },
+        { label: "网络图 (Cytoscape)", value: "cytoscapeGraph" },
+        { label: "图表 (Chart.js)", value: "chartjs" },
+        { label: "简洁图表 (Frappe Charts)", value: "frappeChart" },
+        { label: "有向图布局 (dagre)", value: "dagreGraph" },
+        { label: "星图 (Astronomy)", value: "starChart" },
+        { label: "手绘图表 (chart.xkcd)", value: "chartXkcd" },
+        { label: "科学图表 (Plotly)", value: "plotlyChart" },
+        { label: "音频波形 (Wavesurfer)", value: "waveform" },
+        { label: "交互图表 (ApexCharts)", value: "apexChart" },
+        { label: "图表语法 (Vega-Lite)", value: "vegaLite" },
+        { label: "思维导图 (Markmap)", value: "markmapChart" },
+        { label: "粒子效果 (Particles.js)", value: "particlesEffect" },
+        { label: "桑基图 (D3-Sankey)", value: "d3Sankey" },
+        { label: "词云 (D3-Cloud)", value: "d3Cloud" },
       ],
       description: "要添加的元素类型",
     },
@@ -208,6 +227,180 @@ registerOperation({
       description: "仅3D分子类型有效，通过 AI 自动生成 PDB 数据",
     },
     {
+      name: "figletText",
+      label: "文字",
+      type: "string",
+      placeholder: "Hello",
+      description: "仅ASCII艺术字类型有效",
+    },
+    {
+      name: "figletFont",
+      label: "字体",
+      type: "select",
+      default: "Standard",
+      options: [
+        { label: "Standard", value: "Standard" },
+        { label: "Ghost", value: "Ghost" },
+        { label: "Big", value: "Big" },
+        { label: "Banner", value: "Banner" },
+        { label: "Slant", value: "Slant" },
+      ],
+      description: "仅ASCII艺术字类型有效",
+    },
+    {
+      name: "simplexNoiseScale",
+      label: "缩放",
+      type: "number",
+      default: 50,
+      description: "仅噪声纹理类型有效",
+    },
+    {
+      name: "simplexNoiseOctaves",
+      label: "八度",
+      type: "number",
+      default: 4,
+      description: "仅噪声纹理类型有效",
+    },
+    {
+      name: "simplexNoiseColor1",
+      label: "颜色1",
+      type: "color",
+      default: "#000000",
+      description: "仅噪声纹理类型有效",
+    },
+    {
+      name: "simplexNoiseColor2",
+      label: "颜色2",
+      type: "color",
+      default: "#ffffff",
+      description: "仅噪声纹理类型有效",
+    },
+    {
+      name: "opentypeTextContent",
+      label: "文字",
+      type: "string",
+      placeholder: "Hello",
+      description: "仅字体转路径类型有效",
+    },
+    {
+      name: "opentypeFontUrl",
+      label: "字体URL",
+      type: "string",
+      placeholder: "https://example.com/font.ttf",
+      description: "仅字体转路径类型有效",
+    },
+    {
+      name: "roughShape",
+      label: "形状",
+      type: "select",
+      default: "rect",
+      options: [
+        { label: "矩形", value: "rect" },
+        { label: "圆形", value: "circle" },
+        { label: "线条", value: "line" },
+        { label: "椭圆", value: "ellipse" },
+      ],
+      description: "仅手绘图形类型有效",
+    },
+    {
+      name: "roughFill",
+      label: "填充色",
+      type: "color",
+      default: "#4ECDC4",
+      description: "仅手绘图形类型有效",
+    },
+    {
+      name: "graphvizDot",
+      label: "DOT语法",
+      type: "string",
+      placeholder: "digraph { a -> b }",
+      description: "仅Graphviz类型有效",
+    },
+    {
+      name: "cytoscapeElements2",
+      label: "元素JSON",
+      type: "string",
+      placeholder: '{"nodes":[...],"edges":[...]}',
+      description: "仅网络图类型有效",
+    },
+    {
+      name: "chartjsType",
+      label: "图表类型",
+      type: "select",
+      default: "bar",
+      options: [
+        { label: "柱状图", value: "bar" },
+        { label: "折线图", value: "line" },
+        { label: "饼图", value: "pie" },
+        { label: "环形图", value: "doughnut" },
+        { label: "雷达图", value: "radar" },
+      ],
+      description: "仅Chart.js图表类型有效",
+    },
+    {
+      name: "chartjsData",
+      label: "数据JSON",
+      type: "string",
+      placeholder: '{"labels":[...],"datasets":[...]}',
+      description: "仅Chart.js图表类型有效",
+    },
+    {
+      name: "dagreNodes",
+      label: "节点JSON",
+      type: "string",
+      placeholder: '[{"id":"a","label":"A"}]',
+      description: "仅有向图布局类型有效",
+    },
+    {
+      name: "dagreEdges",
+      label: "边JSON",
+      type: "string",
+      placeholder: '[{"from":"a","to":"b"}]',
+      description: "仅有向图布局类型有效",
+    },
+    {
+      name: "starChartDate",
+      label: "日期",
+      type: "string",
+      placeholder: "2024-01-01",
+      description: "仅星图类型有效",
+    },
+    {
+      name: "starChartLat",
+      label: "纬度",
+      type: "number",
+      default: 39.9,
+      description: "仅星图类型有效",
+    },
+    {
+      name: "starChartLng",
+      label: "经度",
+      type: "number",
+      default: 116.4,
+      description: "仅星图类型有效",
+    },
+    {
+      name: "audioUrl",
+      label: "音频URL",
+      type: "string",
+      placeholder: "https://example.com/audio.mp3",
+      description: "仅音频波形类型有效",
+    },
+    {
+      name: "vegaLiteSpec",
+      label: "Vega-Lite Spec",
+      type: "string",
+      placeholder: '{"$schema":"...","mark":"bar",...}',
+      description: "仅Vega-Lite类型有效",
+    },
+    {
+      name: "markmapMarkdown",
+      label: "Markdown",
+      type: "string",
+      placeholder: "# 主题\n## 分支",
+      description: "仅思维导图类型有效",
+    },
+    {
       name: "abcSource",
       label: "ABC 记谱法",
       type: "string",
@@ -218,7 +411,8 @@ registerOperation({
       name: "vexFlowNotes",
       label: "音符",
       type: "string",
-      placeholder: '[{"keys":["c/4"],"duration":"q"},{"keys":["d/4"],"duration":"q"}]',
+      placeholder:
+        '[{"keys":["c/4"],"duration":"q"},{"keys":["d/4"],"duration":"q"}]',
       description: "仅 VexFlow 五线谱类型有效，JSON 格式的音符数组",
     },
     {
@@ -246,7 +440,8 @@ registerOperation({
       name: "cytoscapeElements",
       label: "元素数据",
       type: "string",
-      placeholder: '[{"data":{"id":"A","label":"开始"}},{"data":{"source":"A","target":"B"}}]',
+      placeholder:
+        '[{"data":{"id":"A","label":"开始"}},{"data":{"source":"A","target":"B"}}]',
       description: "仅 Cytoscape 关系图类型有效，JSON 格式的节点和边数组",
     },
     {
@@ -270,7 +465,8 @@ registerOperation({
       type: "string",
       default: "VueUiDonut",
       placeholder: "VueUiDonut",
-      description: "仅 vue-data-ui 类型有效，如 VueUiDonut、VueUiRadar、VueUiXy 等",
+      description:
+        "仅 vue-data-ui 类型有效，如 VueUiDonut、VueUiRadar、VueUiXy 等",
     },
     {
       name: "vueDataUiDataset",
@@ -292,6 +488,41 @@ registerOperation({
       type: "string",
       placeholder: "// D3.js 代码\nconst svg = d3.select(container)...",
       description: "仅 D3.js 类型有效，可用变量：d3, container, width, height",
+    },
+    {
+      name: "particlesPreset",
+      label: "粒子预设",
+      type: "select",
+      default: "stars",
+      options: [
+        { label: "星空", value: "stars" },
+        { label: "气泡", value: "bubbles" },
+        { label: "雪花", value: "snow" },
+        { label: "火焰", value: "fire" },
+        { label: "自定义", value: "custom" },
+      ],
+      description: "仅粒子效果类型有效",
+    },
+    {
+      name: "d3SankeyNodes",
+      label: "节点JSON",
+      type: "string",
+      placeholder: '[{"id":"A","name":"Node A"}]',
+      description: "仅桑基图类型有效",
+    },
+    {
+      name: "d3SankeyLinks",
+      label: "链接JSON",
+      type: "string",
+      placeholder: '[{"source":"A","target":"B","value":10}]',
+      description: "仅桑基图类型有效",
+    },
+    {
+      name: "d3CloudWords",
+      label: "词语JSON",
+      type: "string",
+      placeholder: '[{"text":"Hello","size":40}]',
+      description: "仅词云类型有效",
     },
     {
       name: "width",
@@ -334,6 +565,28 @@ registerOperation({
       threeMolPdbId,
       threeMolStyle,
       threeMolAiPrompt,
+      figletText,
+      figletFont,
+      simplexNoiseScale,
+      simplexNoiseOctaves,
+      simplexNoiseColor1,
+      simplexNoiseColor2,
+      opentypeTextContent,
+      opentypeFontUrl,
+      roughShape,
+      roughFill,
+      graphvizDot,
+      cytoscapeElements2,
+      chartjsType,
+      chartjsData,
+      dagreNodes,
+      dagreEdges,
+      starChartDate,
+      starChartLat,
+      starChartLng,
+      audioUrl,
+      vegaLiteSpec,
+      markmapMarkdown,
       abcSource,
       vexFlowNotes,
       vexFlowClef,
@@ -344,6 +597,10 @@ registerOperation({
       vueDataUiDataset,
       vueDataUiConfig,
       d3Code,
+      particlesPreset,
+      d3SankeyNodes,
+      d3SankeyLinks,
+      d3CloudWords,
       width,
       height,
     } = params;
@@ -418,11 +675,85 @@ registerOperation({
       if (threeMolFormat !== undefined) extraOptions.format = threeMolFormat;
       if (threeMolPdbId !== undefined) extraOptions.pdbId = threeMolPdbId;
       if (threeMolStyle !== undefined) extraOptions.style = threeMolStyle;
-      if (threeMolAiPrompt !== undefined) extraOptions.aiPrompt = threeMolAiPrompt;
+      if (threeMolAiPrompt !== undefined)
+        extraOptions.aiPrompt = threeMolAiPrompt;
       if (width !== undefined)
         extraOptions.width = { value: width, unit: "px" };
       if (height !== undefined)
         extraOptions.height = { value: height, unit: "px" };
+    }
+
+    if (type === "figlet") {
+      if (figletText !== undefined) extraOptions.text = figletText;
+      if (figletFont !== undefined) extraOptions.font = figletFont;
+    }
+    if (type === "simplexNoise") {
+      if (simplexNoiseScale !== undefined)
+        extraOptions.scale = simplexNoiseScale;
+      if (simplexNoiseOctaves !== undefined)
+        extraOptions.octaves = simplexNoiseOctaves;
+      if (simplexNoiseColor1 !== undefined)
+        extraOptions.color1 = simplexNoiseColor1;
+      if (simplexNoiseColor2 !== undefined)
+        extraOptions.color2 = simplexNoiseColor2;
+    }
+    if (type === "opentypeText") {
+      if (opentypeTextContent !== undefined)
+        extraOptions.text = opentypeTextContent;
+      if (opentypeFontUrl !== undefined) extraOptions.fontUrl = opentypeFontUrl;
+    }
+    if (type === "roughShape") {
+      if (roughShape !== undefined) extraOptions.shape = roughShape;
+      if (roughFill !== undefined) extraOptions.fill = roughFill;
+    }
+    if (type === "graphviz") {
+      if (graphvizDot !== undefined) extraOptions.dot = graphvizDot;
+    }
+    if (type === "cytoscapeGraph") {
+      if (cytoscapeElements2 !== undefined) {
+        try {
+          extraOptions.elements = JSON.parse(cytoscapeElements2);
+        } catch {}
+      }
+    }
+    if (type === "chartjs") {
+      if (chartjsType !== undefined) extraOptions.chartType = chartjsType;
+      if (chartjsData !== undefined) {
+        try {
+          extraOptions.data = JSON.parse(chartjsData);
+        } catch {}
+      }
+    }
+    if (type === "dagreGraph") {
+      if (dagreNodes !== undefined) {
+        try {
+          extraOptions.nodes = JSON.parse(dagreNodes);
+        } catch {}
+      }
+      if (dagreEdges !== undefined) {
+        try {
+          extraOptions.edges = JSON.parse(dagreEdges);
+        } catch {}
+      }
+    }
+    if (type === "starChart") {
+      if (starChartDate !== undefined) extraOptions.date = starChartDate;
+      if (starChartLat !== undefined) extraOptions.latitude = starChartLat;
+      if (starChartLng !== undefined) extraOptions.longitude = starChartLng;
+    }
+    if (type === "waveform") {
+      if (audioUrl !== undefined) extraOptions.audioUrl = audioUrl;
+    }
+    if (type === "vegaLite") {
+      if (vegaLiteSpec !== undefined) {
+        try {
+          extraOptions.spec = JSON.parse(vegaLiteSpec);
+        } catch {}
+      }
+    }
+    if (type === "markmapChart") {
+      if (markmapMarkdown !== undefined)
+        extraOptions.markdown = markmapMarkdown;
     }
 
     if (type === "abcNotation") {
@@ -442,7 +773,8 @@ registerOperation({
         }
       }
       if (vexFlowClef !== undefined) extraOptions.clef = vexFlowClef;
-      if (vexFlowTimeSignature !== undefined) extraOptions.timeSignature = vexFlowTimeSignature;
+      if (vexFlowTimeSignature !== undefined)
+        extraOptions.timeSignature = vexFlowTimeSignature;
       if (width !== undefined)
         extraOptions.width = { value: width, unit: "px" };
       if (height !== undefined)
@@ -465,7 +797,8 @@ registerOperation({
     }
 
     if (type === "vueDataUi") {
-      if (vueDataUiComponent !== undefined) extraOptions.component = vueDataUiComponent;
+      if (vueDataUiComponent !== undefined)
+        extraOptions.component = vueDataUiComponent;
       if (vueDataUiDataset !== undefined) {
         try {
           extraOptions.dataset = JSON.parse(vueDataUiDataset);
@@ -492,6 +825,29 @@ registerOperation({
         extraOptions.width = { value: width, unit: "px" };
       if (height !== undefined)
         extraOptions.height = { value: height, unit: "px" };
+    }
+
+    if (type === "particlesEffect") {
+      if (particlesPreset !== undefined) extraOptions.preset = particlesPreset;
+    }
+    if (type === "d3Sankey") {
+      if (d3SankeyNodes !== undefined) {
+        try {
+          extraOptions.nodes = JSON.parse(d3SankeyNodes);
+        } catch {}
+      }
+      if (d3SankeyLinks !== undefined) {
+        try {
+          extraOptions.links = JSON.parse(d3SankeyLinks);
+        } catch {}
+      }
+    }
+    if (type === "d3Cloud") {
+      if (d3CloudWords !== undefined) {
+        try {
+          extraOptions.words = JSON.parse(d3CloudWords);
+        } catch {}
+      }
     }
 
     if (type === "rect" || type === "ellipse") {

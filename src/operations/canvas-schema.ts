@@ -21,12 +21,31 @@ import { createDefaultCanvasChildMathOptions } from "@/components/design/layout/
 import { createDefaultCanvasChildMermaidOptions } from "@/components/design/layout/canvas/children/mermaid.tsx";
 import { createDefaultCanvasChildCodeBlockOptions } from "@/components/design/layout/canvas/children/codeBlock.tsx";
 import { createDefaultCanvasChildMoleculeOptions } from "@/components/design/layout/canvas/children/molecule.tsx";
+import { createDefaultCanvasChildFigletOptions } from "@/components/design/layout/canvas/children/figlet.tsx";
+import { createDefaultCanvasChildSimplexNoiseOptions } from "@/components/design/layout/canvas/children/simplexNoise.tsx";
+import { createDefaultCanvasChildOpentypeTextOptions } from "@/components/design/layout/canvas/children/opentypeText.tsx";
+import { createDefaultCanvasChildRoughShapeOptions } from "@/components/design/layout/canvas/children/roughShape.tsx";
+import { createDefaultCanvasChildGraphvizOptions } from "@/components/design/layout/canvas/children/graphviz.tsx";
+import { createDefaultCanvasChildCytoscapeGraphOptions } from "@/components/design/layout/canvas/children/cytoscapeGraph.tsx";
+import { createDefaultCanvasChildChartjsOptions } from "@/components/design/layout/canvas/children/chartjs.tsx";
+import { createDefaultCanvasChildFrappeChartOptions } from "@/components/design/layout/canvas/children/frappeChart.tsx";
+import { createDefaultCanvasChildDagreGraphOptions } from "@/components/design/layout/canvas/children/dagreGraph.tsx";
+import { createDefaultCanvasChildStarChartOptions } from "@/components/design/layout/canvas/children/starChart.tsx";
+import { createDefaultCanvasChildChartXkcdOptions } from "@/components/design/layout/canvas/children/chartXkcd.tsx";
+import { createDefaultCanvasChildPlotlyChartOptions } from "@/components/design/layout/canvas/children/plotlyChart.tsx";
+import { createDefaultCanvasChildWaveformOptions } from "@/components/design/layout/canvas/children/waveform.tsx";
+import { createDefaultCanvasChildApexChartOptions } from "@/components/design/layout/canvas/children/apexChart.tsx";
+import { createDefaultCanvasChildVegaLiteOptions } from "@/components/design/layout/canvas/children/vegaLite.tsx";
+import { createDefaultCanvasChildMarkmapChartOptions } from "@/components/design/layout/canvas/children/markmapChart.tsx";
 import { createDefaultCanvasChildThreeMolOptions } from "@/components/design/layout/canvas/children/threeMol.tsx";
 import { createDefaultCanvasChildAbcNotationOptions } from "@/components/design/layout/canvas/children/abcNotation.tsx";
 import { createDefaultCanvasChildVexFlowOptions } from "@/components/design/layout/canvas/children/vexFlow.tsx";
 import { createDefaultCanvasChildCytoscapeOptions } from "@/components/design/layout/canvas/children/cytoscape.tsx";
 import { createDefaultCanvasChildVueDataUiOptions } from "@/components/design/layout/canvas/children/vueDataUi.tsx";
 import { createDefaultCanvasChildD3Options } from "@/components/design/layout/canvas/children/d3.tsx";
+import { createDefaultCanvasChildParticlesEffectOptions } from "@/components/design/layout/canvas/children/particlesEffect.tsx";
+import { createDefaultCanvasChildD3SankeyOptions } from "@/components/design/layout/canvas/children/d3Sankey.tsx";
+import { createDefaultCanvasChildD3CloudOptions } from "@/components/design/layout/canvas/children/d3Cloud.tsx";
 
 export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   canvas: createDefaultCanvasChildcanvasStickerOptions,
@@ -46,12 +65,31 @@ export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   mermaid: createDefaultCanvasChildMermaidOptions,
   codeBlock: createDefaultCanvasChildCodeBlockOptions,
   molecule: createDefaultCanvasChildMoleculeOptions,
+  figlet: createDefaultCanvasChildFigletOptions,
+  simplexNoise: createDefaultCanvasChildSimplexNoiseOptions,
+  opentypeText: createDefaultCanvasChildOpentypeTextOptions,
+  roughShape: createDefaultCanvasChildRoughShapeOptions,
+  graphviz: createDefaultCanvasChildGraphvizOptions,
+  cytoscapeGraph: createDefaultCanvasChildCytoscapeGraphOptions,
+  chartjs: createDefaultCanvasChildChartjsOptions,
+  frappeChart: createDefaultCanvasChildFrappeChartOptions,
+  dagreGraph: createDefaultCanvasChildDagreGraphOptions,
+  starChart: createDefaultCanvasChildStarChartOptions,
+  chartXkcd: createDefaultCanvasChildChartXkcdOptions,
+  plotlyChart: createDefaultCanvasChildPlotlyChartOptions,
+  waveform: createDefaultCanvasChildWaveformOptions,
+  apexChart: createDefaultCanvasChildApexChartOptions,
+  vegaLite: createDefaultCanvasChildVegaLiteOptions,
+  markmapChart: createDefaultCanvasChildMarkmapChartOptions,
   threeMol: createDefaultCanvasChildThreeMolOptions,
   abcNotation: createDefaultCanvasChildAbcNotationOptions,
   vexFlow: createDefaultCanvasChildVexFlowOptions,
   cytoscape: createDefaultCanvasChildCytoscapeOptions,
   vueDataUi: createDefaultCanvasChildVueDataUiOptions,
   d3: createDefaultCanvasChildD3Options,
+  particlesEffect: createDefaultCanvasChildParticlesEffectOptions,
+  d3Sankey: createDefaultCanvasChildD3SankeyOptions,
+  d3Cloud: createDefaultCanvasChildD3CloudOptions,
 };
 
 const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一任务：根据用户需求，输出一个完整的 JSON 对象来定义画布设计。
@@ -84,12 +122,31 @@ const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一�
 - mermaid: 流程图 (Mermaid)。source 写 Mermaid DSL，config 写 Mermaid 原生配置对象；适合流程图、时序图、类图、ER 图、甘特图、思维导图、时间轴等静态图
 - codeBlock: 代码块 (Shiki)。source 写代码内容，language 写语言标识，theme 写 Shiki 主题；适合生成漂亮的静态代码卡片
 - molecule: 分子结构 (RDKit.js)。inputType 为 'smiles' 或 'molblock'，source 写 SMILES 或 MolBlock 字符串；drawOptions 透传给 RDKit get_svg_with_highlights；适合化学分子、有机物、药物结构贴纸
+- figlet: ASCII 艺术字 (figlet.js)。text 写文字，font 写字体名；适合复古风、代码风文字贴纸
+- simplexNoise: 噪声纹理 (Simplex Noise)。scale 控制缩放，octaves 控制细节层数，persistence 控制持续度，color1/color2 为渐变色；适合抽象纹理背景
+- opentypeText: 字体转路径 (OpenType.js)。text 写文字，fontUrl 写字体文件URL，fontSize 写字号，fillColor 写填充色；适合艺术字、可变形文字
+- roughShape: 手绘图形 (Rough.js)。shape 为 rect/circle/line/ellipse，fill 填充色，stroke 描边色，roughness 粗糙度；适合草图风、可爱风贴纸
+- graphviz: 图描述 (Graphviz DOT)。dot 写 DOT 语法；适合有向图、流程图、状态机
+- cytoscapeGraph: 网络图 (Cytoscape.js)。elements 写 nodes+edges JSON，layout 写布局方式；适合关系网络、知识图谱
+- chartjs: 图表 (Chart.js)。chartType 为 bar/line/pie/doughnut/radar/scatter/polarArea，data 写数据JSON；适合数据可视化
+- frappeChart: 简洁图表 (Frappe Charts)。chartType 为 bar/line/pie/percentage/axis-mixed，labels 写标签数组，datasets 写数据集；适合简洁风格图表
+- dagreGraph: 有向图布局 (dagre)。nodes 写节点数组，edges 写边数组，rankdir 为 TB/LR/BT/RL；适合自动布局的有向图
+- starChart: 星图 (Astronomy Engine)。date 写日期，latitude/longitude 写经纬度，showConstellations 显示星座线；适合天文主题贴纸
+- chartXkcd: 手绘图表 (chart.xkcd)。chartType 为 bar/pie/line，data 写数据JSON；适合手绘风数据可视化
+- plotlyChart: 科学图表 (Plotly.js)。data 写数据数组，layout 写布局配置；适合科学数据可视化
+- waveform: 音频波形 (Wavesurfer.js)。audioUrl 写音频URL，waveColor 波形色，progressColor 进度色；适合音乐主题贴纸
+- apexChart: 交互图表 (ApexCharts)。options 写完整配置JSON；适合现代交互式图表
+- vegaLite: 图表语法 (Vega-Lite)。spec 写 Vega-Lite JSON 规范；适合声明式数据可视化
+- markmapChart: 思维导图 (Markmap)。markdown 写 Markdown 文本；适合知识梳理、脑图
 - threeMol: 3D分子 (3Dmol.js)。data 写 PDB/SDF/XYZ/MOL2 数据，format 写格式标识，pdbId 写 PDB 数据库 ID（自动下载），style 写渲染样式（stick/sphere/cartoon/line/cross）；适合 3D 交互式分子可视化
 - abcNotation: 乐谱 (abcjs)。source 写 ABC 记谱法文本；适合简单乐谱、民谣、儿歌
 - vexFlow: 五线谱 (VexFlow)。notes 写音符数组 [{keys:['c/4'],duration:'q'}]，clef 写谱号（treble/bass/alto/tenor），timeSignature 写拍号；适合专业五线谱
 - cytoscape: 关系图 (Cytoscape.js)。elements 写节点和边数组 [{data:{id:'A',label:'开始'}},{data:{source:'A',target:'B'}}]，layout 写布局算法（preset/grid/circle/concentric/breadthfirst/cose）；适合关系网络、流程图、组织架构图
 - vueDataUi: 数据可视化 (vue-data-ui)。component 写组件名（如 VueUiDonut/VueUiRadar/VueUiXy 等），dataset 写数据数组，config 写配置对象；支持 60+ 种图表类型
 - d3: 自定义图表 (D3.js)。code 写 D3.js 代码，可用 d3、container、width、height 变量；完全自由定制，适合复杂可视化
+- particlesEffect: 粒子效果 (Particles.js)。preset 为 stars/bubbles/snow/fire/custom，config 写自定义 JSON 配置；适合动态背景、装饰效果
+- d3Sankey: 桑基图 (D3-Sankey)。nodes 写节点数组，links 写链接数组（含 source/target/value）；适合流量分析、能量流动可视化
+- d3Cloud: 词云 (D3-Cloud)。words 写词语数组（含 text/size），fontFamily 写字体，colors 写颜色数组；适合词频可视化、标签云
 
 ## 公共属性（除 canvas 外所有元素可选）
 width/height, zIndex(数字越大越靠前), position({center:true}居中), transform, filter`;
@@ -292,7 +349,8 @@ export const CANVAS_DESIGN_SCHEMA = {
     },
     ImagePrintEffect: {
       type: "object",
-      description: "图片平铺配置。preset、outline、shadow 为历史兼容字段，新生成配置不建议使用；视觉滤镜请使用通用 filter。",
+      description:
+        "图片平铺配置。preset、outline、shadow 为历史兼容字段，新生成配置不建议使用；视觉滤镜请使用通用 filter。",
       properties: {
         preset: {
           type: "string",
@@ -305,7 +363,8 @@ export const CANVAS_DESIGN_SCHEMA = {
             "golden",
           ],
           default: "original",
-          description: "历史兼容字段，新生成配置保持 original；视觉风格请使用通用 filter。",
+          description:
+            "历史兼容字段，新生成配置保持 original；视觉风格请使用通用 filter。",
         },
         fillMode: {
           type: "string",
@@ -379,7 +438,26 @@ export const CANVAS_DESIGN_SCHEMA = {
             "mermaid",
             "codeBlock",
             "molecule",
+            "figlet",
+            "simplexNoise",
+            "opentypeText",
+            "roughShape",
+            "graphviz",
+            "cytoscapeGraph",
+            "chartjs",
+            "frappeChart",
+            "dagreGraph",
+            "starChart",
+            "chartXkcd",
+            "plotlyChart",
+            "waveform",
+            "apexChart",
+            "vegaLite",
+            "markmapChart",
             "threeMol",
+            "particlesEffect",
+            "d3Sankey",
+            "d3Cloud",
           ],
         },
       },
@@ -401,7 +479,26 @@ export const CANVAS_DESIGN_SCHEMA = {
         { $ref: "#/definitions/MermaidChild" },
         { $ref: "#/definitions/CodeBlockChild" },
         { $ref: "#/definitions/MoleculeChild" },
+        { $ref: "#/definitions/FigletChild" },
+        { $ref: "#/definitions/SimplexNoiseChild" },
+        { $ref: "#/definitions/OpentypeTextChild" },
+        { $ref: "#/definitions/RoughShapeChild" },
+        { $ref: "#/definitions/GraphvizChild" },
+        { $ref: "#/definitions/CytoscapeGraphChild" },
+        { $ref: "#/definitions/ChartjsChild" },
+        { $ref: "#/definitions/FrappeChartChild" },
+        { $ref: "#/definitions/DagreGraphChild" },
+        { $ref: "#/definitions/StarChartChild" },
+        { $ref: "#/definitions/ChartXkcdChild" },
+        { $ref: "#/definitions/PlotlyChartChild" },
+        { $ref: "#/definitions/WaveformChild" },
+        { $ref: "#/definitions/ApexChartChild" },
+        { $ref: "#/definitions/VegaLiteChild" },
+        { $ref: "#/definitions/MarkmapChartChild" },
         { $ref: "#/definitions/ThreeMolChild" },
+        { $ref: "#/definitions/ParticlesEffectChild" },
+        { $ref: "#/definitions/D3SankeyChild" },
+        { $ref: "#/definitions/D3CloudChild" },
       ],
     },
     CanvasBase: {
@@ -1437,6 +1534,390 @@ export const CANVAS_DESIGN_SCHEMA = {
       },
       additionalProperties: false,
     },
+    FigletChild: {
+      type: "object",
+      description:
+        "ASCII 艺术字子元素。使用 figlet.js 渲染文字为 ASCII 艺术字。",
+      required: ["type", "text"],
+      properties: {
+        type: { const: "figlet" },
+        text: { type: "string", description: "要渲染的文字内容" },
+        font: {
+          type: "string",
+          default: "Standard",
+          description: "figlet 字体名",
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    SimplexNoiseChild: {
+      type: "object",
+      description: "噪声纹理子元素。使用 Simplex Noise 生成抽象纹理背景。",
+      required: ["type"],
+      properties: {
+        type: { const: "simplexNoise" },
+        scale: { type: "number", default: 0.01, description: "噪声缩放比例" },
+        octaves: { type: "number", default: 4, description: "细节层数" },
+        persistence: { type: "number", default: 0.5, description: "持续度" },
+        color1: { $ref: "#/definitions/ColorValue" },
+        color2: { $ref: "#/definitions/ColorValue" },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    OpentypeTextChild: {
+      type: "object",
+      description:
+        "字体转路径子元素。使用 OpenType.js 将文字转为可变形的矢量路径。",
+      required: ["type", "text"],
+      properties: {
+        type: { const: "opentypeText" },
+        text: { type: "string", description: "要渲染的文字内容" },
+        fontUrl: { type: "string", description: "字体文件 URL" },
+        fontSize: { type: "number", default: 72, description: "字号" },
+        fillColor: { $ref: "#/definitions/ColorValue" },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    RoughShapeChild: {
+      type: "object",
+      description: "手绘图形子元素。使用 Rough.js 渲染草图风格的几何图形。",
+      required: ["type"],
+      properties: {
+        type: { const: "roughShape" },
+        shape: {
+          type: "string",
+          enum: ["rect", "circle", "line", "ellipse"],
+          default: "rect",
+          description: "图形类型",
+        },
+        fill: { $ref: "#/definitions/ColorValue" },
+        stroke: { $ref: "#/definitions/ColorValue" },
+        roughness: { type: "number", default: 1, description: "粗糙度" },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    GraphvizChild: {
+      type: "object",
+      description: "Graphviz DOT 图描述子元素。适合有向图、流程图、状态机。",
+      required: ["type", "dot"],
+      properties: {
+        type: { const: "graphviz" },
+        dot: { type: "string", description: "Graphviz DOT 语法" },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    CytoscapeGraphChild: {
+      type: "object",
+      description: "Cytoscape.js 网络图子元素。适合关系网络、知识图谱。",
+      required: ["type"],
+      properties: {
+        type: { const: "cytoscapeGraph" },
+        elements: {
+          type: "array",
+          description: "节点和边的数组",
+          items: { type: "object", additionalProperties: true },
+        },
+        layout: {
+          type: "string",
+          default: "preset",
+          description: "布局方式",
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    ChartjsChild: {
+      type: "object",
+      description: "Chart.js 图表子元素。适合数据可视化。",
+      required: ["type", "chartType", "data"],
+      properties: {
+        type: { const: "chartjs" },
+        chartType: {
+          type: "string",
+          enum: [
+            "bar",
+            "line",
+            "pie",
+            "doughnut",
+            "radar",
+            "scatter",
+            "polarArea",
+          ],
+          description: "图表类型",
+        },
+        data: {
+          type: "object",
+          description: "Chart.js 数据 JSON",
+          additionalProperties: true,
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    FrappeChartChild: {
+      type: "object",
+      description: "Frappe Charts 简洁图表子元素。适合简洁风格图表。",
+      required: ["type", "chartType"],
+      properties: {
+        type: { const: "frappeChart" },
+        chartType: {
+          type: "string",
+          enum: ["bar", "line", "pie", "percentage", "axis-mixed"],
+          description: "图表类型",
+        },
+        labels: {
+          type: "array",
+          items: { type: "string" },
+          description: "标签数组",
+        },
+        datasets: {
+          type: "array",
+          items: { type: "object", additionalProperties: true },
+          description: "数据集",
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    DagreGraphChild: {
+      type: "object",
+      description: "dagre 有向图布局子元素。适合自动布局的有向图。",
+      required: ["type"],
+      properties: {
+        type: { const: "dagreGraph" },
+        nodes: {
+          type: "array",
+          items: { type: "object", additionalProperties: true },
+          description: "节点数组",
+        },
+        edges: {
+          type: "array",
+          items: { type: "object", additionalProperties: true },
+          description: "边数组",
+        },
+        rankdir: {
+          type: "string",
+          enum: ["TB", "LR", "BT", "RL"],
+          default: "TB",
+          description: "布局方向",
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    StarChartChild: {
+      type: "object",
+      description: "星图子元素。使用 Astronomy Engine 渲染天文星图。",
+      required: ["type"],
+      properties: {
+        type: { const: "starChart" },
+        date: { type: "string", description: "日期" },
+        latitude: { type: "number", description: "纬度" },
+        longitude: { type: "number", description: "经度" },
+        showConstellations: {
+          type: "boolean",
+          default: true,
+          description: "显示星座线",
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    ChartXkcdChild: {
+      type: "object",
+      description: "chart.xkcd 手绘图表子元素。适合手绘风数据可视化。",
+      required: ["type", "chartType", "data"],
+      properties: {
+        type: { const: "chartXkcd" },
+        chartType: {
+          type: "string",
+          enum: ["bar", "pie", "line"],
+          description: "图表类型",
+        },
+        data: {
+          type: "object",
+          description: "数据 JSON",
+          additionalProperties: true,
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    PlotlyChartChild: {
+      type: "object",
+      description: "Plotly.js 科学图表子元素。适合科学数据可视化。",
+      required: ["type"],
+      properties: {
+        type: { const: "plotlyChart" },
+        data: {
+          type: "array",
+          items: { type: "object", additionalProperties: true },
+          description: "Plotly 数据数组",
+        },
+        layout: {
+          type: "object",
+          description: "Plotly 布局配置",
+          additionalProperties: true,
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    WaveformChild: {
+      type: "object",
+      description: "音频波形子元素。使用 Wavesurfer.js 渲染音频波形。",
+      required: ["type", "audioUrl"],
+      properties: {
+        type: { const: "waveform" },
+        audioUrl: { type: "string", description: "音频文件 URL" },
+        waveColor: { $ref: "#/definitions/ColorValue" },
+        progressColor: { $ref: "#/definitions/ColorValue" },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    ApexChartChild: {
+      type: "object",
+      description: "ApexCharts 交互图表子元素。适合现代交互式图表。",
+      required: ["type"],
+      properties: {
+        type: { const: "apexChart" },
+        options: {
+          type: "object",
+          description: "ApexCharts 完整配置 JSON",
+          additionalProperties: true,
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    VegaLiteChild: {
+      type: "object",
+      description: "Vega-Lite 图表语法子元素。适合声明式数据可视化。",
+      required: ["type", "spec"],
+      properties: {
+        type: { const: "vegaLite" },
+        spec: {
+          type: "object",
+          description: "Vega-Lite JSON 规范",
+          additionalProperties: true,
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    MarkmapChartChild: {
+      type: "object",
+      description: "Markmap 思维导图子元素。适合知识梳理、脑图。",
+      required: ["type", "markdown"],
+      properties: {
+        type: { const: "markmapChart" },
+        markdown: { type: "string", description: "Markdown 文本" },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
     ThreeMolChild: {
       type: "object",
       description:
@@ -1483,7 +1964,8 @@ export const CANVAS_DESIGN_SCHEMA = {
         type: { const: "abcNotation" },
         source: {
           type: "string",
-          description: "ABC 记谱法文本，例如 X:1\\nT:小星星\\nM:4/4\\nK:C\\nC C G G | A A G2",
+          description:
+            "ABC 记谱法文本，例如 X:1\\nT:小星星\\nM:4/4\\nK:C\\nC C G G | A A G2",
         },
         abcOptions: {
           type: "object",
@@ -1502,8 +1984,7 @@ export const CANVAS_DESIGN_SCHEMA = {
     },
     VexFlowChild: {
       type: "object",
-      description:
-        "VexFlow 五线谱子元素。使用 VexFlow 渲染专业五线谱。",
+      description: "VexFlow 五线谱子元素。使用 VexFlow 渲染专业五线谱。",
       required: ["type"],
       properties: {
         type: { const: "vexFlow" },
@@ -1522,7 +2003,8 @@ export const CANVAS_DESIGN_SCHEMA = {
                 type: "string",
                 enum: ["w", "h", "q", "8", "16"],
                 default: "q",
-                description: "音符时值：w=全音符, h=二分, q=四分, 8=八分, 16=十六分",
+                description:
+                  "音符时值：w=全音符, h=二分, q=四分, 8=八分, 16=十六分",
               },
             },
             required: ["keys"],
@@ -1587,7 +2069,14 @@ export const CANVAS_DESIGN_SCHEMA = {
         },
         layout: {
           type: "string",
-          enum: ["preset", "grid", "circle", "concentric", "breadthfirst", "cose"],
+          enum: [
+            "preset",
+            "grid",
+            "circle",
+            "concentric",
+            "breadthfirst",
+            "cose",
+          ],
           default: "preset",
           description: "布局算法",
         },
@@ -1595,10 +2084,26 @@ export const CANVAS_DESIGN_SCHEMA = {
           type: "object",
           description: "样式配置",
           properties: {
-            nodeColor: { type: "string", default: "#4A90D9", description: "节点颜色" },
-            nodeBorderColor: { type: "string", default: "#2C6FAC", description: "节点边框颜色" },
-            edgeColor: { type: "string", default: "#666666", description: "边颜色" },
-            labelColor: { type: "string", default: "#333333", description: "文字颜色" },
+            nodeColor: {
+              type: "string",
+              default: "#4A90D9",
+              description: "节点颜色",
+            },
+            nodeBorderColor: {
+              type: "string",
+              default: "#2C6FAC",
+              description: "节点边框颜色",
+            },
+            edgeColor: {
+              type: "string",
+              default: "#666666",
+              description: "边颜色",
+            },
+            labelColor: {
+              type: "string",
+              default: "#333333",
+              description: "文字颜色",
+            },
           },
           additionalProperties: true,
         },
@@ -1622,7 +2127,8 @@ export const CANVAS_DESIGN_SCHEMA = {
         component: {
           type: "string",
           default: "VueUiDonut",
-          description: "vue-data-ui 组件名，如 VueUiDonut、VueUiRadar、VueUiXy 等",
+          description:
+            "vue-data-ui 组件名，如 VueUiDonut、VueUiRadar、VueUiXy 等",
         },
         dataset: {
           type: "array",
@@ -1656,7 +2162,111 @@ export const CANVAS_DESIGN_SCHEMA = {
         type: { const: "d3" },
         code: {
           type: "string",
-          description: "D3.js 代码，可用变量：d3 (D3.js 库), container (DOM 容器), width (宽度), height (高度)",
+          description:
+            "D3.js 代码，可用变量：d3 (D3.js 库), container (DOM 容器), width (宽度), height (高度)",
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    ParticlesEffectChild: {
+      type: "object",
+      description:
+        "粒子效果子元素。使用 Particles.js 渲染动态粒子背景，适合装饰效果。",
+      required: ["type"],
+      properties: {
+        type: { const: "particlesEffect" },
+        preset: {
+          type: "string",
+          enum: ["stars", "bubbles", "snow", "fire", "custom"],
+          default: "stars",
+          description: "粒子效果预设",
+        },
+        config: {
+          type: "object",
+          description: "自定义 Particles.js 配置 JSON（preset=custom 时生效）",
+          additionalProperties: true,
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    D3SankeyChild: {
+      type: "object",
+      description:
+        "桑基图子元素。使用 D3-Sankey 渲染桑基图，适合流量分析、能量流动可视化。",
+      required: ["type"],
+      properties: {
+        type: { const: "d3Sankey" },
+        nodes: {
+          type: "array",
+          items: { type: "object", additionalProperties: true },
+          description: "节点数组，每个节点含 name 等属性",
+        },
+        links: {
+          type: "array",
+          items: { type: "object", additionalProperties: true },
+          description:
+            "链接数组，每个链接含 source(源节点索引)、target(目标节点索引)、value(流量值)",
+        },
+        nodeWidth: {
+          type: "number",
+          default: 15,
+          description: "节点矩形宽度",
+        },
+        nodePadding: {
+          type: "number",
+          default: 10,
+          description: "节点间距",
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    D3CloudChild: {
+      type: "object",
+      description:
+        "词云子元素。使用 D3-Cloud 布局算法渲染词云，适合词频可视化、标签云。",
+      required: ["type"],
+      properties: {
+        type: { const: "d3Cloud" },
+        words: {
+          type: "array",
+          items: { type: "object", additionalProperties: true },
+          description: "词语数组，每个词语含 text(文本) 和 size(字号)",
+        },
+        fontFamily: {
+          type: "string",
+          default: "sans-serif",
+          description: "字体",
+        },
+        colors: {
+          type: "array",
+          items: { type: "string" },
+          description: "颜色数组",
+        },
+        padding: {
+          type: "number",
+          default: 2,
+          description: "词语间距",
         },
         backgroundColor: { $ref: "#/definitions/ColorValue" },
         width: { $ref: "#/definitions/SizeValue" },

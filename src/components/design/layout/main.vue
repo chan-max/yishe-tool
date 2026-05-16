@@ -1,7 +1,11 @@
 <template>
   <loading v-if="isFirstPageLoading"></loading>
 
-  <div id="layout-container" class="design-layout" :class="{ 'has-header': showHeader }">
+  <div
+    id="layout-container"
+    class="design-layout"
+    :class="{ 'has-header': showHeader }"
+  >
     <div v-if="showHeader" id="layout-header" class="design-layout__header">
       <div class="design-layout__header-inner">
         <header-menu />
@@ -9,11 +13,19 @@
     </div>
 
     <div id="layout-body" class="design-layout__body">
-      <div v-if="showLeftMenu" id="layout-left-menu" class="design-layout__rail">
+      <div
+        v-if="showLeftMenu"
+        id="layout-left-menu"
+        class="design-layout__rail"
+      >
         <left-menu></left-menu>
       </div>
 
-      <div v-if="leftComponent" id="layout-left" class="design-layout__panel design-layout__panel--left">
+      <div
+        v-if="leftComponent"
+        id="layout-left"
+        class="design-layout__panel design-layout__panel--left"
+      >
         <div class="design-layout__panel-scroll">
           <keep-alive include="sticker">
             <component :is="leftComponent"></component>
@@ -29,7 +41,9 @@
         <div
           ref="canvasViewportRef"
           class="design-layout__canvas-stage threejs-canvas-container-container"
-          :class="{ 'design-layout__canvas-stage--main-canvas': showMainCanvas }"
+          :class="{
+            'design-layout__canvas-stage--main-canvas': showMainCanvas,
+          }"
         >
           <div
             v-if="isDesign3DEnabled"
@@ -75,7 +89,11 @@
         </div>
       </div>
 
-      <div v-if="rightComponent" id="layout-right" class="design-layout__panel design-layout__panel--right">
+      <div
+        v-if="rightComponent"
+        id="layout-right"
+        class="design-layout__panel design-layout__panel--right"
+      >
         <div class="design-layout__panel-scroll">
           <component :is="rightComponent"></component>
         </div>
@@ -192,8 +210,8 @@
   <!-- 自动创建弹层 -->
   <autocreateModal></autocreateModal>
 
-  <!-- 浮动 AI 对话框 -->
-  <float-chat></float-chat>
+  <!-- AI 设计助手抽屉 -->
+  <AiDrawer v-model:open="isAiPanelOpen" />
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -286,7 +304,8 @@ import autocreateModal from "./autocreate/modal.vue";
 import videoClip from "./videoClip/index.vue";
 import operationsPanel from "./operations/index.vue";
 import canvasStructure from "./canvasStructure/index.vue";
-import floatChat from "./ai/float-chat.vue";
+import AiDrawer from "./ai/AiDrawer.vue";
+import { isAiPanelOpen } from "@/ai/store";
 import { useEventBus } from "@vueuse/core";
 import { DESIGN_3D_ENABLED } from "../featureFlags";
 
@@ -309,7 +328,7 @@ const basicCanvasRef = ref();
 const leftComponent = computed(() => {
   // 使用新的统一菜单状态管理
   const activeMenu = menuState.value.activeMenu;
-  
+
   switch (activeMenu) {
     case menuItems.workspace:
       return workspace;
@@ -345,21 +364,22 @@ const mountContainer = ref();
 const canvasViewportRef = ref();
 
 // 使用useElementSize获取容器尺寸
-const { width: containerWidth, height: containerHeight } = useElementSize(canvasViewportRef);
+const { width: containerWidth, height: containerHeight } =
+  useElementSize(canvasViewportRef);
 
 // 比例选择相关
 const aspectRatioOptions = [
-  { label: '1:1 (正方形)', value: 1 },
-  { label: '4:3 (传统)', value: 4/3 },
-  { label: '16:9 (宽屏)', value: 16/9 },
-  { label: '3:2 (照片)', value: 3/2 },
-  { label: '2:1 (超宽)', value: 2 },
-  { label: '3:4 (竖屏)', value: 3/4 },
-  { label: '9:16 (手机)', value: 9/16 },
+  { label: "1:1 (正方形)", value: 1 },
+  { label: "4:3 (传统)", value: 4 / 3 },
+  { label: "16:9 (宽屏)", value: 16 / 9 },
+  { label: "3:2 (照片)", value: 3 / 2 },
+  { label: "2:1 (超宽)", value: 2 },
+  { label: "3:4 (竖屏)", value: 3 / 4 },
+  { label: "9:16 (手机)", value: 9 / 16 },
 ];
 
 // 使用本地存储保存选择的比例
-const selectedAspectRatio = useLocalStorage('canvas-aspect-ratio', 1);
+const selectedAspectRatio = useLocalStorage("canvas-aspect-ratio", 1);
 
 // 更新比例的函数
 const updateAspectRatio = () => {
@@ -371,17 +391,17 @@ const canvasContainerStyle = computed(() => {
   const height = Math.max(containerHeight.value - 2, 160);
   const width = Math.min(
     height * selectedAspectRatio.value,
-    Math.max(containerWidth.value - 24, 180)
+    Math.max(containerWidth.value - 24, 180),
   );
-  
+
   return {
-    position: 'relative' as const,
-    height: '100%',
+    position: "relative" as const,
+    height: "100%",
     width: `${width}px`,
-    maxWidth: '100%',
-    margin: '0 auto',
-    display: 'flex',
-    justifyContent: 'center'
+    maxWidth: "100%",
+    margin: "0 auto",
+    display: "flex",
+    justifyContent: "center",
   };
 });
 
@@ -404,16 +424,22 @@ onMounted(async () => {
   const designPageLoadedBus = useEventBus("design-page-loaded");
   designPageLoadedBus.emit();
 
-
   // 初始化时根据 shouldShowThreeCanvas 状态设置渲染
-  if (isDesign3DEnabled && modelController && !shouldShowThreeCanvas.value && modelController.isMounted) {
+  if (
+    isDesign3DEnabled &&
+    modelController &&
+    !shouldShowThreeCanvas.value &&
+    modelController.isMounted
+  ) {
     modelController.stopRender();
   }
 });
 
 // 计算是否应该显示和运行 Three.js 画布
 const shouldShowThreeCanvas = computed(() => {
-  return showThreeCanvas.value && menuState.value.activeMenu !== menuItems.canvas;
+  return (
+    showThreeCanvas.value && menuState.value.activeMenu !== menuItems.canvas
+  );
 });
 
 // 控制 Three.js 渲染的函数
@@ -426,15 +452,15 @@ function updateThreeCanvasRenderState() {
   if (!modelController || !modelController.renderer) {
     return;
   }
-  
+
   // 使用 nextTick 确保在渲染完成后执行
   nextTick(() => {
     if (!modelController.isMounted) {
       return;
     }
-    
+
     const shouldRender = shouldShowThreeCanvas.value;
-    
+
     if (shouldRender) {
       // 恢复渲染循环
       modelController.startRender();
@@ -451,9 +477,12 @@ watch(showThreeCanvas, () => {
 });
 
 // 监听菜单切换，当切换到贴纸画布时停止 Three.js 渲染
-watch(() => menuState.value.activeMenu, () => {
-  updateThreeCanvasRenderState();
-});
+watch(
+  () => menuState.value.activeMenu,
+  () => {
+    updateThreeCanvasRenderState();
+  },
+);
 
 initAction();
 
@@ -678,11 +707,3 @@ async function initAction() {
   }
 }
 </style>
-
-
-
-
-
-
-
-

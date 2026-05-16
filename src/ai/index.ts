@@ -1,5 +1,11 @@
-export { AI_FEATURE_REGISTRY, DESIGN_TOOL_FEATURE_CODES, getFeatureByCode, getFeaturesByGroup, getFeaturesByScene } from './feature-codes'
-export type { AiFeatureItem, DesignToolFeatureCode } from './feature-codes'
+export {
+  AI_FEATURE_REGISTRY,
+  DESIGN_TOOL_FEATURE_CODES,
+  getFeatureByCode,
+  getFeaturesByGroup,
+  getFeaturesByScene,
+} from "./feature-codes";
+export type { AiFeatureItem, DesignToolFeatureCode } from "./feature-codes";
 
 export type {
   AiChatMessage,
@@ -16,7 +22,7 @@ export type {
   AiRuntimeConfig,
   AiMessage,
   AiConversation,
-} from './types'
+} from "./types";
 
 export {
   aiChat,
@@ -26,7 +32,7 @@ export {
   aiGetTaskStatus,
   aiGetUsageOptions,
   aiGetFeatureRegistry,
-} from './api'
+} from "./api";
 
 export {
   aiConversations,
@@ -41,4 +47,15 @@ export {
   addMessage,
   updateMessage,
   appendToMessage,
-} from './store'
+} from "./store";
+
+export {
+  initAIConfig,
+  isAIInitialized,
+  getAIConfig,
+  clearAIConfigCache,
+  directChat,
+  directChatStream,
+} from "./direct-client";
+
+export { captureCanvasForAI, getCanvasStateSummary } from "./capture";

@@ -4,40 +4,43 @@
  * @LastEditors: chan-max jackieontheway666@gmail.com
  * @LastEditTime: 2025-06-12 07:06:15
  * @FilePath: /yishe/vite.config.ts
- * @Description: 
- * 
- * Copyright (c) 2023 by 1s, All Rights Reserved. 
+ * @Description:
+ *
+ * Copyright (c) 2023 by 1s, All Rights Reserved.
  */
 
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
-import { resolve } from 'path'
+import { resolve } from "path";
 import { fileURLToPath } from "node:url";
-import Components from 'unplugin-vue-components/vite';
+import Components from "unplugin-vue-components/vite";
 // 编译文件支持旧游览器
-import legacy from '@vitejs/plugin-legacy';
+import legacy from "@vitejs/plugin-legacy";
 // import AntdvResolver from 'antdv-component-resolver'
-import svgLoader from 'vite-svg-loader'
-import vueJsx from '@vitejs/plugin-vue-jsx'
+import svgLoader from "vite-svg-loader";
+import vueJsx from "@vitejs/plugin-vue-jsx";
 import AutoImport from "unplugin-auto-import/vite";
 
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const viteCacheDir = path.resolve("/tmp", `yishe-tool-vite-${process.getuid?.() || "user"}`);
+const viteCacheDir = path.resolve(
+  "/tmp",
+  `yishe-tool-vite-${process.getuid?.() || "user"}`,
+);
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, process.cwd(), "");
   const proxyTarget = env.VITE_PROXY_TARGET || "http://localhost:1520";
 
   const build = {
-    outDir: 'www',
-    assetsDir: './',
+    outDir: "www",
+    assetsDir: "./",
     rollupOptions: {
-      input: resolve(dirname, 'index.html'),
-    }
-  }
+      input: resolve(dirname, "index.html"),
+    },
+  };
 
   return {
     cacheDir: viteCacheDir,
@@ -49,26 +52,25 @@ export default defineConfig(({ mode }) => {
       }),
       legacy(),
       vue({
-        template: {  }
+        template: {},
       }),
       svgLoader(),
-      vueJsx({
-      }),
+      vueJsx({}),
 
       // 自动引入
       AutoImport({
         imports: ["vue", "vue-router"],
-        dts: "auto-imports.d.ts"
+        dts: "auto-imports.d.ts",
       }),
 
       createSvgIconsPlugin({
         // 指定需要缓存的图标文件夹
         iconDirs: [path.resolve(process.cwd(), "src/icon")],
         // 指定symbolId格式
-        symbolId: 'icon-[name]',
-      })
+        symbolId: "icon-[name]",
+      }),
     ],
-    base: '/',
+    base: "/",
     build,
     css: {
       preprocessorOptions: {
@@ -101,7 +103,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      '__DEV__': mode !== 'production',
-    }
-  }
+      __DEV__: mode !== "production",
+    },
+  };
 });

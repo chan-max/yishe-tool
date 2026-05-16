@@ -18,15 +18,27 @@ import mainView from "./layout/main.vue";
 import { isDarkMode, isEdit, currentEditingModelInfo } from "./store";
 import { usePreventScreenResize } from "./composition/preventScreenResize";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
-import { onBeforeMount, onMounted, onBeforeUnmount, ref, watchEffect } from "vue";
+import {
+  onBeforeMount,
+  onMounted,
+  onBeforeUnmount,
+  ref,
+  watchEffect,
+} from "vue";
 import { getModelById } from "@/api";
 import { useStats } from "@/common/use/stats";
 import { message, Modal } from "ant-design-vue";
 import { s1Confirm } from "@/common/message";
+import { initAIConfig } from "@/ai/direct-client";
 // useStats()
 
 // 阻止缩放屏幕影响使用体验
 usePreventScreenResize();
+
+onMounted(async () => {
+  // 初始化 AI 配置
+  initAIConfig();
+});
 
 // onBeforeMount(async () => {
 //   window.addEventListener("beforeunload", onbeforeunload);
@@ -42,7 +54,7 @@ function onbeforeunload(e) {
     e.returnValue = "关闭提示";
   }
 
-  return '关闭提示';
+  return "关闭提示";
 }
 
 watchEffect(() => {

@@ -11,10 +11,17 @@
       </div>
     </el-tooltip>
 
-    <el-tooltip v-if="isDesign3DEnabled" :hide-after="0" content="工作台" placement="right">
+    <el-tooltip
+      v-if="isDesign3DEnabled"
+      :hide-after="0"
+      content="工作台"
+      placement="right"
+    >
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': menuState.activeMenu === menuItems.workspace }"
+        :class="{
+          'menu-bar-item-focus': menuState.activeMenu === menuItems.workspace,
+        }"
         @click="setActiveMenu(menuItems.workspace)"
       >
         <div class="menu-bar-item-icon"><icon-workspace></icon-workspace></div>
@@ -25,7 +32,9 @@
     <el-tooltip :hide-after="0" content="许多贴纸哦～" placement="right">
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': menuState.activeMenu === menuItems.sticker }"
+        :class="{
+          'menu-bar-item-focus': menuState.activeMenu === menuItems.sticker,
+        }"
         @click="setActiveMenu(menuItems.sticker)"
       >
         <div class="menu-bar-item-icon"><icon-sticker></icon-sticker></div>
@@ -33,7 +42,12 @@
       </div>
     </el-tooltip>
 
-    <el-tooltip v-if="isDesign3DEnabled" :hide-after="0" content="选择模型" placement="right">
+    <el-tooltip
+      v-if="isDesign3DEnabled"
+      :hide-after="0"
+      content="选择模型"
+      placement="right"
+    >
       <div
         class="menu-bar-item"
         :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
@@ -47,14 +61,23 @@
         <div v-else class="menu-bar-item-icon">
           <icon-shirt></icon-shirt>
         </div>
-        <span>{{ currentOperatingBaseModelInfo?.id ? "切换模型" : "选择模型" }}</span>
+        <span>{{
+          currentOperatingBaseModelInfo?.id ? "切换模型" : "选择模型"
+        }}</span>
       </div>
     </el-tooltip>
 
-    <el-tooltip v-if="isDesign3DEnabled" :hide-after="0" content="服装材质" placement="right">
+    <el-tooltip
+      v-if="isDesign3DEnabled"
+      :hide-after="0"
+      content="服装材质"
+      placement="right"
+    >
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': menuState.activeMenu === menuItems.material }"
+        :class="{
+          'menu-bar-item-focus': menuState.activeMenu === menuItems.material,
+        }"
         @click="setActiveMenu(menuItems.material)"
       >
         <div class="menu-bar-item-icon">
@@ -67,7 +90,9 @@
     <el-tooltip :hide-after="0" content="制作贴纸" placement="right">
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': menuState.activeMenu === menuItems.canvas }"
+        :class="{
+          'menu-bar-item-focus': menuState.activeMenu === menuItems.canvas,
+        }"
         @click="setActiveMenu(menuItems.canvas)"
       >
         <div class="menu-bar-item-icon">
@@ -83,7 +108,9 @@
         :class="{ 'menu-bar-item-focus': showImageEditorModal }"
         @click="handleSpecialMenuClick(menuItems.imageEditor)"
       >
-        <div class="menu-bar-item-icon"><icon-image-editor></icon-image-editor></div>
+        <div class="menu-bar-item-icon">
+          <icon-image-editor></icon-image-editor>
+        </div>
         <span>图片编辑</span>
       </div>
     </el-tooltip>
@@ -99,10 +126,17 @@
       </div>
     </el-tooltip>
 
-    <el-tooltip v-if="isDesign3DEnabled" :hide-after="0" content="辅助视频剪辑" placement="right">
+    <el-tooltip
+      v-if="isDesign3DEnabled"
+      :hide-after="0"
+      content="辅助视频剪辑"
+      placement="right"
+    >
       <div
         class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': menuState.activeMenu === menuItems.videoClip }"
+        :class="{
+          'menu-bar-item-focus': menuState.activeMenu === menuItems.videoClip,
+        }"
         @click="setActiveMenu(menuItems.videoClip)"
       >
         <div class="menu-bar-item-icon">
@@ -112,7 +146,12 @@
       </div>
     </el-tooltip>
 
-    <el-tooltip v-if="isDesign3DEnabled" :hide-after="0" content="设置场景" placement="right">
+    <el-tooltip
+      v-if="isDesign3DEnabled"
+      :hide-after="0"
+      content="设置场景"
+      placement="right"
+    >
       <div
         class="menu-bar-item"
         :class="{ 'menu-bar-item-focus': showSceneControl }"
@@ -131,6 +170,17 @@
       >
         <div class="menu-bar-item-icon"><ThunderboltOutlined /></div>
         <span>操作</span>
+      </div>
+    </el-tooltip>
+
+    <el-tooltip :hide-after="0" content="AI 设计助手" placement="right">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': isAiPanelOpen }"
+        @click="isAiPanelOpen = !isAiPanelOpen"
+      >
+        <div class="menu-bar-item-icon"><RobotOutlined /></div>
+        <span>AI</span>
       </div>
     </el-tooltip>
 
@@ -171,6 +221,8 @@ import {
   setActiveMenu,
   clearAllMenus,
 } from "../store";
+import { isAiPanelOpen } from "@/ai/store";
+import { RobotOutlined } from "@ant-design/icons-vue";
 
 import iconWorkspace from "@/icon/workspace.svg?component";
 import iconSticker from "@/components/design/assets/icon/sticker.svg?component";
@@ -196,7 +248,11 @@ import iconSvgCanvas from "@/components/design/assets/icon/svg-canvas.svg?compon
 import iconCanvas from "@/components/design/assets/icon/canvas.svg?component";
 import iconProject from "@/components/design/assets/icon/project.svg?component";
 import Utils from "@/common/utils";
-import { VideoCameraOutlined, ThunderboltOutlined, CodeOutlined } from "@ant-design/icons-vue";
+import {
+  VideoCameraOutlined,
+  ThunderboltOutlined,
+  CodeOutlined,
+} from "@ant-design/icons-vue";
 import desimage from "@/components/image.vue";
 import { DESIGN_3D_ENABLED } from "../featureFlags";
 
@@ -244,7 +300,9 @@ function handleSpecialMenuClick(menuKey) {
   flex-shrink: 0;
   color: var(--1s-left-menu-item-text-color);
   border-radius: 10px;
-  transition: background-color 0.18s ease, color 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
 
   .menu-bar-item-icon {
     flex-shrink: 0;

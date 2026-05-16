@@ -4,152 +4,153 @@
  * @LastEditors: chan-max 2651308363@qq.com
  * @LastEditTime: 2024-02-15 11:37:40
  * @FilePath: /yishe/src/api/url.ts
- * @Description: 
- * 
- * Copyright (c) 2023 by 1s, All Rights Reserved. 
+ * @Description:
+ *
+ * Copyright (c) 2023 by 1s, All Rights Reserved.
  */
 
 function unifySlashes(input) {
-    return input.replace(/(\/+|\\+)/g, '/');
+  return input.replace(/(\/+|\\+)/g, "/");
 }
 
 export function toRealPath(path) {
-    path = unifySlashes(path)
-    return path.replace('api', '')
+  path = unifySlashes(path);
+  return path.replace("api", "");
 }
 
-
 export enum Url {
-    // 图片上传
-    UPLOAD_IMAGE = '/imageUpload',
+  // 图片上传
+  UPLOAD_IMAGE = "/imageUpload",
 
-    // 上传基础模型
-    UPLOAD_BASE_MODEL = '/uploadBaseModel',
+  // 上传基础模型
+  UPLOAD_BASE_MODEL = "/uploadBaseModel",
 
-    // 注册
-    SINGUP = '/api/user/register',
+  // 注册
+  SINGUP = "/api/user/register",
 
-    // 登录
-    LOGIN = '/api/auth/login',
+  // 登录
+  LOGIN = "/api/auth/login",
 
-    UPDATE_USER_META = '/api/user/updateMeta',
+  UPDATE_USER_META = "/api/user/updateMeta",
 
-    GET_USER_META = '/api/user/getMeta',
+  GET_USER_META = "/api/user/getMeta",
 
-    // 获取首页模型信息
-    GET_BANNER_MODEL = '/getBannerModel',
+  // 获取首页模型信息
+  GET_BANNER_MODEL = "/getBannerModel",
 
-    // 获取基本模型列表
-    GET_BASE_MODEL = '/getBaseModel',
+  // 获取基本模型列表
+  GET_BASE_MODEL = "/getBaseModel",
 
-    // 获取图片
-    GET_IMAGE_LIST = '/getImage',
+  // 获取图片
+  GET_IMAGE_LIST = "/getImage",
 
-    // 上传字体
-    UPLOAD_FONT = '/uploadFont',
+  // 上传字体
+  UPLOAD_FONT = "/uploadFont",
 
-    GET_FONTS = '/getFonts',
+  GET_FONTS = "/getFonts",
 
-    // 上传模型
-    UPLOAD_CUSTOM_MODEL = '/api/custom-model/create',
+  // 上传模型
+  UPLOAD_CUSTOM_MODEL = "/api/custom-model/create",
 
-    // 获取模型列表
-    GET_MODEL_LIST = '/getModelList',
+  // 获取模型列表
+  GET_MODEL_LIST = "/getModelList",
 
-    SEND_MAIL = '/sendEmail',
+  SEND_MAIL = "/sendEmail",
 
-    // 获取用户列表，后台使用
-    GET_USER_LIST = '/getUserList',
+  // 获取用户列表，后台使用
+  GET_USER_LIST = "/getUserList",
 
-    // 更新用户信息
-    UPDATE_USER_INFO = '/api/user/update',
+  // 更新用户信息
+  UPDATE_USER_INFO = "/api/user/update",
 
-    CREATE_TEXT_STICKER = '/uploadTextSticker',
+  CREATE_TEXT_STICKER = "/uploadTextSticker",
 
-    // 获取所有文字贴纸
-    GET_TEXT_STICKER = '/getTextSticker',
+  // 获取所有文字贴纸
+  GET_TEXT_STICKER = "/getTextSticker",
 
-    GET_ACCOUNT_STATUS = '/getAccountStatus',
+  GET_ACCOUNT_STATUS = "/getAccountStatus",
 
-    GET_IMAGE_BY_ID = '/getImageById',
+  GET_IMAGE_BY_ID = "/getImageById",
 
-    GET_BASE_MODEL_BY_ID = '/getProductModelById',
+  GET_BASE_MODEL_BY_ID = "/getProductModelById",
 
-    GET_TEXT_STICKER_BY_ID = '/getTextStickerById',
+  GET_TEXT_STICKER_BY_ID = "/getTextStickerById",
 
-    GET_FONT_BY_ID = '/getFontById',
+  GET_FONT_BY_ID = "/getFontById",
 
-    GET_MODEL_BY_ID = '/getModelById',
+  GET_MODEL_BY_ID = "/getModelById",
 
+  GET_BASIC_CONFIG = "/api/getBasicConfig",
 
-    GET_BASIC_CONFIG = '/api/getBasicConfig',
+  GET_LIST = "/getList",
 
-    GET_LIST = '/getList',
+  ADD_MODEL_COMMENT = "/addModelComment",
 
-    ADD_MODEL_COMMENT = '/addModelComment',
+  GET_MODEL_COMMENT = "/getModelComment",
 
-    GET_MODEL_COMMENT = '/getModelComment',
+  LIKE_MODEL = "/likeModel",
 
-    LIKE_MODEL = '/likeModel',
+  LIKE_MODEl_COMMENT = "/likeModelComment",
 
-    LIKE_MODEl_COMMENT = '/likeModelComment',
+  // 发布模型
+  PUBLISH_MODEL = "/publishAvailableModel",
 
-    // 发布模型
-    PUBLISH_MODEL = '/publishAvailableModel',
+  // 移除发布的模型
+  REMOVE_MODEL = "/removeAvailableModel",
 
-    // 移除发布的模型
-    REMOVE_MODEL = '/removeAvailableModel',
+  ADD_AVAILABLE_MODEL_COMMENT = "/addAvailableModelComment",
 
-    ADD_AVAILABLE_MODEL_COMMENT = '/addAvailableModelComment',
+  // 删除模型评论
+  DELETE_AVAILABLE_MODEL_COMMENT = "/deleteAvailableModelComment",
 
-    // 删除模型评论
-    DELETE_AVAILABLE_MODEL_COMMENT = '/deleteAvailableModelComment',
+  GET_AVAILABLE_MODEL_COMMENT = "/getAvailableModelComment",
 
-    GET_AVAILABLE_MODEL_COMMENT = '/getAvailableModelComment',
+  LIKE_AVAILABLE_MODEL = "/likeAvailableModel",
 
-    LIKE_AVAILABLE_MODEL = '/likeAvailableModel',
+  LIKE_AVAILABLE_MODEl_COMMENT = "/likeAvailableModelComment",
 
-    LIKE_AVAILABLE_MODEl_COMMENT = '/likeAvailableModelComment',
+  GET_AVAILABLE_MODEL = "/getAvailableModel",
 
-    GET_AVAILABLE_MODEL = '/getAvailableModel',
+  GET_INDEX_AVAILABLE_MODEL = "/getIndexAvailableModel",
 
-    GET_INDEX_AVAILABLE_MODEL = '/getIndexAvailableModel',
+  FOLLOW = "/api/user/follow",
 
-    FOLLOW = '/api/user/follow',
+  UNFOLLOW = "/api/user/unfollow",
 
-    UNFOLLOW = '/api/user/unfollow',
+  GET_MY_FRIENDS = "getMyFriends",
 
-    GET_MY_FRIENDS = 'getMyFriends',
+  GET_MY_FOLLOWERS = "getMyFollowers",
 
-    GET_MY_FOLLOWERS = 'getMyFollowers',
+  GET_MY_FOLLOWINGS = "getMyFollowings",
 
-    GET_MY_FOLLOWINGS = 'getMyFollowings',
+  GET_MY_COMMUNICATION_LIST = "getMyCommunicationList",
 
-    GET_MY_COMMUNICATION_LIST = 'getMyCommunicationList',
+  GET_COMMUNICATION_MESSAGE = "getCommunicationMessage",
 
-    GET_COMMUNICATION_MESSAGE = 'getCommunicationMessage',
+  // AI 对话（通用）
+  AI_CHAT = "/ai/chat",
 
-    // AI 对话（通用）
-    AI_CHAT = '/api/ai/chat',
+  // AI 文本生成
+  AI_TEXT = "/ai/text",
 
-    // AI 文本生成
-    AI_TEXT = '/api/ai/text',
+  // AI 图文理解
+  AI_VISION = "/ai/vision",
 
-    // AI 图文理解
-    AI_VISION = '/api/ai/vision',
+  // AI 文生图
+  AI_TTI = "/ai/tti",
 
-    // AI 文生图
-    AI_TTI = '/api/ai/tti',
+  // AI 文生图任务状态
+  AI_TTI_TASK_STATUS = "/ai/tti/task-status",
 
-    // AI 文生图任务状态
-    AI_TTI_TASK_STATUS = '/api/ai/tti/task-status',
+  // AI 语音合成
+  AI_TTS = "/ai/tts",
 
-    // AI 语音合成
-    AI_TTS = '/api/ai/tts',
+  // AI API Key 可用选项
+  AI_API_KEY_USAGE_OPTIONS = "/system/ai-api-key/usage-options",
 
-    // AI API Key 可用选项
-    AI_API_KEY_USAGE_OPTIONS = '/api/system/ai-api-key/usage-options',
+  // AI 功能清单
+  AI_FEATURE_REGISTRY = "/system/ai-api-key/feature-registry",
 
-    // AI 功能清单
-    AI_FEATURE_REGISTRY = '/api/system/ai-api-key/feature-registry',
+  // 获取用户的 API Key（通用，支持多种功能）
+  USER_GET_API_KEY = "/api/user/get-api-key",
 }

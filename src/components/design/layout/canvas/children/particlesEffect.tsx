@@ -1,11 +1,4 @@
-import {
-  computed,
-  defineComponent,
-  nextTick,
-  onBeforeUnmount,
-  ref,
-  watch,
-} from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount, watch } from "vue";
 import {
   canvasStickerOptionsOnlyChild,
   updateRenderingCanvas,
@@ -24,163 +17,46 @@ import {
 } from "./defaultOptions.tsx";
 import { onBeforeReturnRender, onCanvasChildSetup } from "./commonHooks.ts";
 
-export const PARTICLES_EFFECT_PRESETS = [
-  "stars",
-  "bubbles",
-  "snow",
-  "fire",
-  "custom",
-] as const;
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  opacity: number;
+  color: string;
+}
 
-const PRESET_CONFIGS: Record<string, any> = {
-  stars: {
-    particles: {
-      number: { value: 160, density: { enable: true, value_area: 800 } },
-      color: { value: "#ffffff" },
-      shape: { type: "circle" },
-      opacity: {
-        value: 1,
-        random: true,
-        anim: { enable: true, speed: 1, opacity_min: 0, sync: false },
-      },
-      size: { value: 3, random: true, anim: { enable: false } },
-      line_linked: { enable: false },
-      move: {
-        enable: true,
-        speed: 0.3,
-        direction: "none",
-        random: true,
-        straight: false,
-        out_mode: "out",
-      },
-    },
-    interactivity: {
-      detect_on: "canvas",
-      events: { onhover: { enable: false }, onclick: { enable: false } },
-    },
-  },
-  bubbles: {
-    particles: {
-      number: { value: 40, density: { enable: true, value_area: 800 } },
-      color: { value: "#ffffff" },
-      shape: { type: "circle" },
-      opacity: {
-        value: 0.5,
-        random: true,
-        anim: { enable: true, speed: 2, opacity_min: 0.1, sync: false },
-      },
-      size: {
-        value: 20,
-        random: true,
-        anim: { enable: true, speed: 5, size_min: 5, sync: false },
-      },
-      line_linked: { enable: false },
-      move: {
-        enable: true,
-        speed: 2,
-        direction: "top",
-        random: true,
-        straight: false,
-        out_mode: "out",
-      },
-    },
-    interactivity: {
-      detect_on: "canvas",
-      events: { onhover: { enable: false }, onclick: { enable: false } },
-    },
-  },
-  snow: {
-    particles: {
-      number: { value: 200, density: { enable: true, value_area: 800 } },
-      color: { value: "#ffffff" },
-      shape: { type: "circle" },
-      opacity: { value: 0.7, random: true },
-      size: { value: 4, random: true },
-      line_linked: { enable: false },
-      move: {
-        enable: true,
-        speed: 2,
-        direction: "bottom",
-        random: false,
-        straight: false,
-        out_mode: "out",
-      },
-    },
-    interactivity: {
-      detect_on: "canvas",
-      events: { onhover: { enable: false }, onclick: { enable: false } },
-    },
-  },
-  fire: {
-    particles: {
-      number: { value: 80, density: { enable: true, value_area: 400 } },
-      color: { value: ["#ff6600", "#ff3300", "#ff9900", "#ffcc00"] },
-      shape: { type: "circle" },
-      opacity: {
-        value: 0.8,
-        random: true,
-        anim: { enable: true, speed: 1, opacity_min: 0, sync: false },
-      },
-      size: {
-        value: 6,
-        random: true,
-        anim: { enable: true, speed: 3, size_min: 1, sync: false },
-      },
-      line_linked: { enable: false },
-      move: {
-        enable: true,
-        speed: 4,
-        direction: "top",
-        random: true,
-        straight: false,
-        out_mode: "out",
-      },
-    },
-    interactivity: {
-      detect_on: "canvas",
-      events: { onhover: { enable: false }, onclick: { enable: false } },
-    },
-  },
+const PRESETS: Record<string, () => Partial<Particle>> = {
+  stars: () => ({
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: (Math.random() - 0.5) * 0.5,
+    size: Math.random() * 2 + 0.5,
+    opacity: Math.random() * 0.8 + 0.2,
+    color: `hsl(${Math.random() * 60 + 40}, 100%, ${Math.random() * 30 + 70}%)`,
+  }),
+  bubbles: () => ({
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: -Math.random() * 1 - 0.5,
+    size: Math.random() * 8 + 2,
+    opacity: Math.random() * 0.5 + 0.2,
+    color: `hsla(${Math.random() * 40 + 180}, 70%, 70%, 0.6)`,
+  }),
+  snow: () => ({
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: Math.random() * 1 + 0.3,
+    size: Math.random() * 3 + 1,
+    opacity: Math.random() * 0.6 + 0.4,
+    color: `hsla(0, 0%, 100%, ${Math.random() * 0.5 + 0.5})`,
+  }),
+  fire: () => ({
+    vx: (Math.random() - 0.5) * 1,
+    vy: -Math.random() * 2 - 1,
+    size: Math.random() * 4 + 2,
+    opacity: 1,
+    color: `hsl(${Math.random() * 30 + 10}, 100%, ${Math.random() * 30 + 40}%)`,
+  }),
 };
-
-function mergeDeep(target: any, source: any): any {
-  const output = { ...target };
-  if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach((key) => {
-      if (isObject(source[key])) {
-        if (!(key in target)) {
-          output[key] = source[key];
-        } else {
-          output[key] = mergeDeep(target[key], source[key]);
-        }
-      } else {
-        output[key] = source[key];
-      }
-    });
-  }
-  return output;
-}
-
-function isObject(item: any): boolean {
-  return item && typeof item === "object" && !Array.isArray(item);
-}
-
-function getConfigForPreset(preset: string, customConfig: any): any {
-  const baseConfig = {
-    fullScreen: false,
-    detectRetina: true,
-    background: { color: "transparent" },
-  };
-
-  let presetConfig = {};
-  if (preset !== "custom" && PRESET_CONFIGS[preset]) {
-    presetConfig = JSON.parse(JSON.stringify(PRESET_CONFIGS[preset]));
-  }
-
-  const userConfig = preset === "custom" ? customConfig || {} : {};
-
-  return mergeDeep(mergeDeep(baseConfig, presetConfig), userConfig);
-}
 
 export const createDefaultCanvasChildParticlesEffectOptions = () => {
   const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit;
@@ -188,19 +64,10 @@ export const createDefaultCanvasChildParticlesEffectOptions = () => {
   return {
     type: "particlesEffect",
     preset: "stars",
-    config: {},
-    backgroundColor: {
-      type: "pure",
-      color: "#000000",
-    },
-    width: {
-      value: 100,
-      unit: "vw",
-    },
-    height: {
-      value: 100,
-      unit: "vh",
-    },
+    particleCount: 80,
+    backgroundColor: { type: "pure", color: "#000000" },
+    width: { value: 100, unit: "vw" },
+    height: { value: 100, unit: "vh" },
     position: createPositionDefaultOptions(canvasUnit),
     filter: createFilterDefaultOptions(canvasUnit),
     zIndex: 0,
@@ -215,80 +82,116 @@ export function createCanvasChildParticlesEffect(options: any) {
       options={options}
       onVnodeUpdated={updateRenderingCanvas}
       onVnodeMounted={updateRenderingCanvas}
-    ></ParticlesEffectChild>
+    />
   );
 }
 
-let particlesJsInstance: any = null;
-
 export const ParticlesEffectChild = defineComponent({
-  props: {
-    options: null,
-  },
+  props: { options: null },
   setup(props) {
-    const targetRef = ref<HTMLElement>();
-    const containerRef = ref<HTMLElement>();
-    let currentInstance: any = null;
+    const canvasRef = ref<HTMLCanvasElement>();
+    const particles: Particle[] = [];
+    let animationId: number | null = null;
+    let renderToken = 0;
 
     onCanvasChildSetup({
-      targetEl: targetRef,
+      targetEl: canvasRef,
       options: props.options,
       props,
     });
 
-    const preset = computed(() => props.options?.preset || "stars");
-    const config = computed(() => props.options?.config || {});
+    function createParticle(width: number, height: number): Particle {
+      const preset = props.options?.preset || "stars";
+      const presetFn = PRESETS[preset] || PRESETS.stars;
+      const base = presetFn();
 
-    async function initParticles() {
-      if (!containerRef.value) return;
-
-      if (currentInstance) {
-        try {
-          currentInstance.destroys();
-        } catch {}
-        currentInstance = null;
-      }
-
-      try {
-        if (!particlesJsInstance) {
-          const module = await import("particles.js");
-          particlesJsInstance = module.default || (window as any).particlesJS;
-        }
-
-        const finalConfig = getConfigForPreset(preset.value, config.value);
-        const containerId = containerRef.value.id;
-
-        if (typeof particlesJsInstance === "function") {
-          particlesJsInstance(containerId, finalConfig);
-        } else if (particlesJsInstance.load) {
-          particlesJsInstance.load(containerId, finalConfig);
-        }
-
-        currentInstance = containerRef.value;
-      } catch (error) {
-        console.error("Particles effect init failed:", error);
-      }
-
-      nextTick(() => {
-        updateRenderingCanvas();
-      });
+      return {
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: base.vx || 0,
+        vy: base.vy || 0,
+        size: base.size || 2,
+        opacity: base.opacity || 1,
+        color: base.color || "#ffffff",
+      };
     }
 
-    watch(() => [preset.value, config.value], initParticles, {
-      immediate: true,
-      deep: true,
+    function animate() {
+      const token = renderToken;
+      const canvas = canvasRef.value;
+      if (!canvas || token !== renderToken) return;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const width = canvas.width;
+      const height = canvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < -10) p.x = width + 10;
+        if (p.x > width + 10) p.x = -10;
+        if (p.y < -10) p.y = height + 10;
+        if (p.y > height + 10) p.y = -10;
+
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.globalAlpha = 1;
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function initParticles() {
+      const canvas = canvasRef.value;
+      if (!canvas) return;
+
+      const parent = canvas.parentElement;
+      if (!parent) return;
+
+      const rect = parent.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.round(rect.width));
+      canvas.height = Math.max(1, Math.round(rect.height));
+
+      const count = props.options?.particleCount || 80;
+      particles.length = 0;
+      for (let i = 0; i < count; i++) {
+        particles.push(createParticle(canvas.width, canvas.height));
+      }
+
+      if (animationId) cancelAnimationFrame(animationId);
+      animate();
+    }
+
+    onMounted(() => {
+      const token = ++renderToken;
+      setTimeout(() => {
+        if (token === renderToken) initParticles();
+      }, 50);
     });
 
-    watch(containerRef, () => {
-      nextTick(initParticles);
-    });
+    watch(
+      () => [props.options?.preset, props.options?.particleCount],
+      () => {
+        const token = ++renderToken;
+        setTimeout(() => {
+          if (token === renderToken) initParticles();
+        }, 50);
+      },
+    );
 
     onBeforeUnmount(() => {
-      if (currentInstance) {
-        try {
-          currentInstance.destroys();
-        } catch {}
-        currentInstance = null;
+      renderToken++;
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
       }
     });
 
@@ -305,6 +208,8 @@ export const ParticlesEffectChild = defineComponent({
         ..._containerStyle,
       };
 
+      const bgColor = props.options?.backgroundColor?.color || "#000000";
+
       const style: any = {
         flexShrink: 0,
         width: formatToNativeSizeString(props.options.width),
@@ -312,33 +217,16 @@ export const ParticlesEffectChild = defineComponent({
         transform: createTransformString(props.options.transform),
         filter: createFilterFromOptions(props.options.filter),
         zIndex: props.options.zIndex,
-        background: props.options.backgroundColor?.color || "transparent",
+        background: bgColor,
         overflow: "hidden",
-        boxSizing: "border-box",
-        position: "relative",
         ..._style,
       };
 
-      onBeforeReturnRender({
-        style,
-        options: props.options,
-      });
-
-      const uniqueId = `particles-container-${props.options?.id || Math.random().toString(36).slice(2)}`;
+      onBeforeReturnRender({ style, options: props.options });
 
       return (
         <div style={containerStyle}>
-          <div
-            ref={targetRef}
-            class="canvas-particles-effect-child"
-            style={style}
-          >
-            <div
-              ref={containerRef}
-              id={uniqueId}
-              style={{ width: "100%", height: "100%" }}
-            ></div>
-          </div>
+          <canvas ref={canvasRef} style={style} />
         </div>
       );
     };

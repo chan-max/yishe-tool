@@ -58,7 +58,12 @@
           @confirm="clearCanvasChildren"
         >
           <template #reference>
-            <el-button class="canvas-action-button" plain size="small" type="danger">
+            <el-button
+              class="canvas-action-button"
+              plain
+              size="small"
+              type="danger"
+            >
               清空画布
             </el-button>
           </template>
@@ -72,7 +77,9 @@
           </div>
           <template #overlay>
             <a-menu>
-              <a-menu-item @click="exportTrimmedPng"> 自动去除空白边框导出 </a-menu-item>
+              <a-menu-item @click="exportTrimmedPng">
+                自动去除空白边框导出
+              </a-menu-item>
               <a-menu-item @click="consoleStikcerOptions">
                 在控制台打印贴纸信息
               </a-menu-item>
@@ -95,9 +102,7 @@
               :disabled="isUpdatingSticker"
               :class="{ 'update-required': shouldUpdateCanvasSticker }"
             >
-              <template v-if="isUpdatingSticker">
-                正在更新...
-              </template>
+              <template v-if="isUpdatingSticker"> 正在更新... </template>
               <template v-else>
                 {{ shouldUpdateCanvasSticker ? "更新贴纸" : "贴纸已更新" }}
               </template>
@@ -114,9 +119,7 @@
           :disabled="isUpdatingSticker"
           :class="{ 'update-required': shouldUpdateCanvasSticker }"
         >
-          <template v-if="isUpdatingSticker">
-            正在更新...
-          </template>
+          <template v-if="isUpdatingSticker"> 正在更新... </template>
           <template v-else>
             {{ shouldUpdateCanvasSticker ? "更新贴纸" : "贴纸已更新" }}
           </template>
@@ -125,7 +128,11 @@
         <div class="canvas-actions-panel__spacer"></div>
 
         <addPopover>
-          <el-button class="canvas-action-button canvas-action-button--primary" type="primary" size="small">
+          <el-button
+            class="canvas-action-button canvas-action-button--primary"
+            type="primary"
+            size="small"
+          >
             添加元素
           </el-button>
         </addPopover>
@@ -147,7 +154,12 @@
             :label="canvasChildLabelMap[item.type]"
           >
             <div
-              style="display: flex; align-items: center; font-size: 1rem; height: 100%"
+              style="
+                display: flex;
+                align-items: center;
+                font-size: 1rem;
+                height: 100%;
+              "
               @mouseenter="optionMouseenter(item)"
               @mouseleave="optionMouseleave(item)"
             >
@@ -246,12 +258,17 @@ import {
 } from "./index.tsx";
 
 import operateLayout from "./operateLayout/index.vue";
-import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
-
 import {
-  CircleCloseFilled,
-  FullScreen,
-} from "@element-plus/icons-vue";
+  onMounted,
+  ref,
+  computed,
+  watch,
+  reactive,
+  watchEffect,
+  nextTick,
+} from "vue";
+
+import { CircleCloseFilled, FullScreen } from "@element-plus/icons-vue";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import addPopover from "./addPopover.vue";
 import Api from "@/api";
@@ -260,7 +277,7 @@ import { useLoginStatusStore } from "@/store/stores/login";
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { stickerAutoplacementTags } from "@/components/design/components/tagsInput/index.ts";
 import Utils from "@/common/utils";
-import { imageDataToFile, canvasToFile } from '@/common/transform';
+import { imageDataToFile, canvasToFile } from "@/common/transform";
 import {
   currentFocusingStickerId,
   ChildViewHelperComponent,
@@ -305,15 +322,19 @@ function exportTrimmedPng() {
   canvasController.downloadTrimmedPng();
 }
 
-
 function remove(id) {
   removeCavnasChild(id);
 }
 
 function clearCanvasChildren() {
   // 除了画布，其他全移除
-  const canvasChild = canvasStickerOptions.value.children.find((child) => child.type === 'canvas') || canvasStickerOptions.value.children[0];
-  const count = canvasStickerOptions.value.children.filter((child) => child.type !== 'canvas').length;
+  const canvasChild =
+    canvasStickerOptions.value.children.find(
+      (child) => child.type === "canvas",
+    ) || canvasStickerOptions.value.children[0];
+  const count = canvasStickerOptions.value.children.filter(
+    (child) => child.type !== "canvas",
+  ).length;
   canvasStickerOptions.value.children = [canvasChild];
   currentOperatingCanvasChildId.value = canvasChild.id;
   message.success(`已清空画布，共删除 ${count} 个元素`);
@@ -358,16 +379,16 @@ async function doUpload() {
   try {
     // 先更新画布确保内容是最新的
     await canvasController.activeUpdateRenderingCanvas();
-    
+
     // 等待画布更新完成
     while (canvasController.loading.value || renderingLoading.value) {
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
     }
-    
+
     // 检查画布尺寸是否合法
     const canvasWidth = canvasController.canvasEl.width;
     const canvasHeight = canvasController.canvasEl.height;
-    
+
     if (canvasWidth <= 0 || canvasHeight <= 0) {
       throw new Error("无效的画布尺寸");
     }
@@ -389,13 +410,16 @@ async function doUpload() {
     }
 
     // 获取文件后缀
-    const suffix = file.name.split('.').pop() || 'png';
+    const suffix = file.name.split(".").pop() || "png";
 
     // 上传文件到COS，路径包含当前用户账号
     const cos = await Api.uploadToCOS({
       file: file,
-      category: 'sticker',
-      account: loginStore?.userInfo?.account || loginStore?.userInfo?.name || undefined,
+      category: "sticker",
+      account:
+        loginStore?.userInfo?.account ||
+        loginStore?.userInfo?.name ||
+        undefined,
       userId: loginStore?.userInfo?.id,
     });
 
@@ -416,7 +440,7 @@ async function doUpload() {
     submitLoading.value = false;
     showUploadModal.value = false;
   } catch (e) {
-    console.error('保存失败:', e);
+    console.error("保存失败:", e);
     submitLoading.value = false;
     message.error("保存失败: " + (e.message || e));
   }
@@ -442,8 +466,6 @@ function optionMouseleave(item) {
 async function getCanvasStickerColor() {
   let colors = await canvasController.getPalette();
 }
-
-
 
 /**
  * @methods 手动生成贴纸
@@ -491,7 +513,11 @@ function genSticker() {
   height: 48px;
   position: fixed;
   padding: 0 1rem;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
   position: absolute;
   // bottom: -48px;
   bottom: 0px;
@@ -565,7 +591,7 @@ function genSticker() {
 :deep(.update-required) {
   color: #f56c6c !important;
   font-weight: bold !important;
-  
+
   &:hover {
     color: #f56c6c !important;
     opacity: 0.8;

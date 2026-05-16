@@ -1,0 +1,180 @@
+import { defineComponent, ref, onMounted, watch } from "vue";
+import {
+  canvasStickerOptionsOnlyChild,
+  updateRenderingCanvas,
+} from "../index.tsx";
+import {
+  createFilterFromOptions,
+  createTransformString,
+  formatToNativeSizeString,
+  getPositionInfoFromOptions,
+} from "../helper.tsx";
+import {
+  createBasicDefaultOptions,
+  createFilterDefaultOptions,
+  createPositionDefaultOptions,
+  createTransformDefaultOptions,
+} from "./defaultOptions.tsx";
+import { onBeforeReturnRender, onCanvasChildSetup } from "./commonHooks.ts";
+import trianglify from "trianglify";
+
+export const createDefaultCanvasChildTrianglifyOptions = () => {
+  const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit;
+
+  return {
+    type: "trianglify",
+    cellSize: 40,
+    variance: 0.75,
+    seed: null,
+    xColors: "random",
+    yColors: "random",
+    palette: "YlGn",
+    strokeWidth: 1.51,
+    fill: true,
+    backgroundColor: { type: "pure", color: "transparent" },
+    width: { value: 100, unit: "vw" },
+    height: { value: 100, unit: "vh" },
+    position: createPositionDefaultOptions(canvasUnit),
+    filter: createFilterDefaultOptions(canvasUnit),
+    zIndex: 0,
+    ...createBasicDefaultOptions(),
+    transform: createTransformDefaultOptions(canvasUnit),
+  };
+};
+
+export function createCanvasChildTrianglify(options: any) {
+  return (
+    <TrianglifyChild
+      options={options}
+      onVnodeUpdated={updateRenderingCanvas}
+      onVnodeMounted={updateRenderingCanvas}
+    />
+  );
+}
+
+export const TrianglifyChild = defineComponent({
+  props: { options: null },
+  setup(props) {
+    const svgRef = ref<SVGSVGElement>();
+
+    onCanvasChildSetup({
+      targetEl: svgRef,
+      options: props.options,
+      props,
+    });
+
+    function render() {
+      if (!svgRef.value) return;
+
+      try {
+        const width = 600;
+        const height = 400;
+
+        const config: any = {
+          width,
+          height,
+          cellSize: props.options?.cellSize || 40,
+          variance: props.options?.variance ?? 0.75,
+          stroke: props.options?.strokeWidth
+            ? `rgba(0,0,0,${props.options.strokeWidth / 10})`
+            : null,
+          fill: props.options?.fill !== false,
+        };
+
+        if (props.options?.seed) {
+          config.seed = props.options.seed;
+        }
+
+        if (props.options?.xColors && props.options.xColors !== "random") {
+          config.xColors = props.options.xColors
+            .split(",")
+            .map((c: string) => c.trim());
+        } else if (props.options?.xColors === "random") {
+          config.xColors = "random";
+        }
+
+        if (props.options?.yColors && props.options.yColors !== "random") {
+          config.yColors = props.options.yColors
+            .split(",")
+            .map((c: string) => c.trim());
+        } else if (props.options?.yColors === "random") {
+          config.yColors = "random";
+        }
+
+        if (props.options?.palette) {
+          config.palette = props.options.palette;
+        }
+
+        const pattern = trianglify(config);
+        const svgElement = pattern.toSVG();
+
+        svgRef.value.innerHTML = "";
+        while (svgElement.firstChild) {
+          svgRef.value.appendChild(svgElement.firstChild);
+        }
+
+        updateRenderingCanvas();
+      } catch (e) {
+        console.error("Trianglify render error:", e);
+      }
+    }
+
+    onMounted(render);
+    watch(
+      () => [
+        props.options?.cellSize,
+        props.options?.variance,
+        props.options?.seed,
+        props.options?.xColors,
+        props.options?.yColors,
+        props.options?.palette,
+        props.options?.strokeWidth,
+        props.options?.fill,
+      ],
+      render,
+      { deep: true },
+    );
+
+    return () => {
+      const { containerStyle: _containerStyle, style: _style } =
+        getPositionInfoFromOptions(props.options.position);
+
+      const containerStyle: any = {
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        ..._containerStyle,
+      };
+
+      const style: any = {
+        flexShrink: 0,
+        width: formatToNativeSizeString(props.options.width),
+        height: formatToNativeSizeString(props.options.height),
+        transform: createTransformString(props.options.transform),
+        filter: createFilterFromOptions(props.options.filter),
+        zIndex: props.options.zIndex,
+        background: props.options.backgroundColor?.color || "transparent",
+        overflow: "hidden",
+        ..._style,
+      };
+
+      onBeforeReturnRender({ style, options: props.options });
+
+      return (
+        <div style={containerStyle}>
+          <div style={style}>
+            <svg
+              ref={svgRef}
+              width="100%"
+              height="100%"
+              viewBox="0 0 600 400"
+              preserveAspectRatio="xMidYMid slice"
+            />
+          </div>
+        </div>
+      );
+    };
+  },
+});

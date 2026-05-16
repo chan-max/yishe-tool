@@ -167,6 +167,14 @@ import {
   createCanvasChildParticlesEffect,
   createDefaultCanvasChildParticlesEffectOptions,
 } from "./children/particlesEffect.tsx";
+import {
+  createCanvasChildConfetti,
+  createDefaultCanvasChildConfettiOptions,
+} from "./children/confetti.tsx";
+import {
+  createCanvasChildTrianglify,
+  createDefaultCanvasChildTrianglifyOptions,
+} from "./children/trianglifyPattern.tsx";
 
 import { createDefaultCanvasChildcanvasStickerOptions } from "./children/canvas";
 
@@ -292,6 +300,8 @@ import starChartLayout from "./operateLayout/starChart.vue";
 import waveformLayout from "./operateLayout/waveform.vue";
 import markmapChartLayout from "./operateLayout/markmapChart.vue";
 import particlesEffectLayout from "./operateLayout/particlesEffect.vue";
+import confettiLayout from "./operateLayout/confetti.vue";
+import trianglifyPatternLayout from "./operateLayout/trianglifyPattern.vue";
 
 import {
   createCanvasChildStarChart,
@@ -661,6 +671,24 @@ defineCanvasChild({
   defaultOptionsCreator: createDefaultCanvasChildParticlesEffectOptions,
   renderer: createCanvasChildParticlesEffect,
   operationLayout: particlesEffectLayout,
+});
+
+defineCanvasChild({
+  typeName: "confetti",
+  typeKey: "confetti",
+  label: "撒花效果 (canvas-confetti)",
+  defaultOptionsCreator: createDefaultCanvasChildConfettiOptions,
+  renderer: createCanvasChildConfetti,
+  operationLayout: confettiLayout,
+});
+
+defineCanvasChild({
+  typeName: "trianglify",
+  typeKey: "trianglify",
+  label: "三角纹理 (Trianglify)",
+  defaultOptionsCreator: createDefaultCanvasChildTrianglifyOptions,
+  renderer: createCanvasChildTrianglify,
+  operationLayout: trianglifyPatternLayout,
 });
 
 /*

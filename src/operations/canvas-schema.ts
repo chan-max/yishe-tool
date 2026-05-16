@@ -46,6 +46,8 @@ import { createDefaultCanvasChildD3Options } from "@/components/design/layout/ca
 import { createDefaultCanvasChildParticlesEffectOptions } from "@/components/design/layout/canvas/children/particlesEffect.tsx";
 import { createDefaultCanvasChildD3SankeyOptions } from "@/components/design/layout/canvas/children/d3Sankey.tsx";
 import { createDefaultCanvasChildD3CloudOptions } from "@/components/design/layout/canvas/children/d3Cloud.tsx";
+import { createDefaultCanvasChildConfettiOptions } from "@/components/design/layout/canvas/children/confetti.tsx";
+import { createDefaultCanvasChildTrianglifyOptions } from "@/components/design/layout/canvas/children/trianglifyPattern.tsx";
 
 export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   canvas: createDefaultCanvasChildcanvasStickerOptions,
@@ -90,6 +92,8 @@ export const CHILD_DEFAULT_FACTORIES: Record<string, () => any> = {
   particlesEffect: createDefaultCanvasChildParticlesEffectOptions,
   d3Sankey: createDefaultCanvasChildD3SankeyOptions,
   d3Cloud: createDefaultCanvasChildD3CloudOptions,
+  confetti: createDefaultCanvasChildConfettiOptions,
+  trianglify: createDefaultCanvasChildTrianglifyOptions,
 };
 
 const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一任务：根据用户需求，输出一个完整的 JSON 对象来定义画布设计。
@@ -147,6 +151,8 @@ const STICKER_DESIGN_SYSTEM = `你是 POD 贴纸设计智能体。你的唯一�
 - particlesEffect: 粒子效果 (Particles.js)。preset 为 stars/bubbles/snow/fire/custom，config 写自定义 JSON 配置；适合动态背景、装饰效果
 - d3Sankey: 桑基图 (D3-Sankey)。nodes 写节点数组，links 写链接数组（含 source/target/value）；适合流量分析、能量流动可视化
 - d3Cloud: 词云 (D3-Cloud)。words 写词语数组（含 text/size），fontFamily 写字体，colors 写颜色数组；适合词频可视化、标签云
+- confetti: 撒花效果 (canvas-confetti)。preset 为 default/fireworks/snow/celebration/school，particleCount 控制粒子数量，spread 控制扩散角度，colors 控制颜色数组；适合庆祝、节日主题贴纸
+- trianglify: 三角纹理 (Trianglify)。cellSize 控制单元格大小，variance 控制随机度，xColors/yColors 控制颜色，fill 控制是否填充；适合抽象背景、几何纹理
 
 ## 公共属性（除 canvas 外所有元素可选）
 width/height, zIndex(数字越大越靠前), position({center:true}居中), transform, filter`;
@@ -458,6 +464,8 @@ export const CANVAS_DESIGN_SCHEMA = {
             "particlesEffect",
             "d3Sankey",
             "d3Cloud",
+            "confetti",
+            "trianglify",
           ],
         },
       },
@@ -499,6 +507,8 @@ export const CANVAS_DESIGN_SCHEMA = {
         { $ref: "#/definitions/ParticlesEffectChild" },
         { $ref: "#/definitions/D3SankeyChild" },
         { $ref: "#/definitions/D3CloudChild" },
+        { $ref: "#/definitions/ConfettiChild" },
+        { $ref: "#/definitions/TrianglifyChild" },
       ],
     },
     CanvasBase: {
@@ -2267,6 +2277,89 @@ export const CANVAS_DESIGN_SCHEMA = {
           type: "number",
           default: 2,
           description: "词语间距",
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    ConfettiChild: {
+      type: "object",
+      description: "撒花效果子元素。使用 canvas-confetti 渲染庆祝撒花效果。",
+      required: ["type"],
+      properties: {
+        type: { const: "confetti" },
+        preset: {
+          type: "string",
+          enum: ["default", "fireworks", "snow", "celebration", "school"],
+          default: "default",
+          description: "撒花效果预设",
+        },
+        particleCount: {
+          type: "number",
+          minimum: 1,
+          default: 100,
+          description: "粒子数量",
+        },
+        spread: {
+          type: "number",
+          minimum: 0,
+          default: 70,
+          description: "扩散角度",
+        },
+        colors: {
+          type: "array",
+          items: { type: "string" },
+          description: "颜色数组",
+        },
+        backgroundColor: { $ref: "#/definitions/ColorValue" },
+        width: { $ref: "#/definitions/SizeValue" },
+        height: { $ref: "#/definitions/SizeValue" },
+        zIndex: { type: "number", default: 0 },
+        position: { $ref: "#/definitions/Position" },
+        transform: { $ref: "#/definitions/Transform" },
+        filter: { $ref: "#/definitions/Filter" },
+      },
+      additionalProperties: false,
+    },
+    TrianglifyChild: {
+      type: "object",
+      description: "三角纹理子元素。使用 Trianglify 生成三角形几何纹理背景。",
+      required: ["type"],
+      properties: {
+        type: { const: "trianglify" },
+        cellSize: {
+          type: "number",
+          minimum: 1,
+          default: 40,
+          description: "单元格大小",
+        },
+        variance: {
+          type: "number",
+          minimum: 0,
+          maximum: 1,
+          default: 0.75,
+          description: "随机度",
+        },
+        xColors: {
+          type: "array",
+          items: { type: "string" },
+          description: "X轴颜色数组",
+        },
+        yColors: {
+          type: "array",
+          items: { type: "string" },
+          description: "Y轴颜色数组",
+        },
+        fill: {
+          type: "boolean",
+          default: true,
+          description: "是否填充",
         },
         backgroundColor: { $ref: "#/definitions/ColorValue" },
         width: { $ref: "#/definitions/SizeValue" },

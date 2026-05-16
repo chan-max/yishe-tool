@@ -46,6 +46,8 @@ registerOperation({
         { label: "粒子效果 (Particles.js)", value: "particlesEffect" },
         { label: "桑基图 (D3-Sankey)", value: "d3Sankey" },
         { label: "词云 (D3-Cloud)", value: "d3Cloud" },
+        { label: "撒花效果 (canvas-confetti)", value: "confetti" },
+        { label: "三角纹理 (Trianglify)", value: "trianglify" },
       ],
       description: "要添加的元素类型",
     },
@@ -525,6 +527,27 @@ registerOperation({
       description: "仅词云类型有效",
     },
     {
+      name: "confettiPreset",
+      label: "撒花预设",
+      type: "select",
+      default: "default",
+      options: [
+        { label: "默认", value: "default" },
+        { label: "烟花", value: "fireworks" },
+        { label: "雪花", value: "snow" },
+        { label: "庆祝", value: "celebration" },
+        { label: "校园", value: "school" },
+      ],
+      description: "仅撒花效果类型有效",
+    },
+    {
+      name: "trianglifyCellSize",
+      label: "单元格大小",
+      type: "number",
+      default: 40,
+      description: "仅三角纹理类型有效",
+    },
+    {
       name: "width",
       label: "宽度",
       type: "number",
@@ -601,6 +624,8 @@ registerOperation({
       d3SankeyNodes,
       d3SankeyLinks,
       d3CloudWords,
+      confettiPreset,
+      trianglifyCellSize,
       width,
       height,
     } = params;
@@ -848,6 +873,14 @@ registerOperation({
           extraOptions.words = JSON.parse(d3CloudWords);
         } catch {}
       }
+    }
+
+    if (type === "confetti") {
+      if (confettiPreset !== undefined) extraOptions.preset = confettiPreset;
+    }
+    if (type === "trianglify") {
+      if (trianglifyCellSize !== undefined)
+        extraOptions.cellSize = trianglifyCellSize;
     }
 
     if (type === "rect" || type === "ellipse") {

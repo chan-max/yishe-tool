@@ -75,34 +75,13 @@ export const TrianglifyChild = defineComponent({
           height,
           cellSize: props.options?.cellSize || 40,
           variance: props.options?.variance ?? 0.75,
-          stroke: props.options?.strokeWidth
-            ? `rgba(0,0,0,${props.options.strokeWidth / 10})`
-            : null,
+          strokeWidth: props.options?.strokeWidth || 1.51,
           fill: props.options?.fill !== false,
+          seed: props.options?.seed || null,
         };
 
         if (props.options?.seed) {
           config.seed = props.options.seed;
-        }
-
-        if (props.options?.xColors && props.options.xColors !== "random") {
-          config.xColors = props.options.xColors
-            .split(",")
-            .map((c: string) => c.trim());
-        } else if (props.options?.xColors === "random") {
-          config.xColors = "random";
-        }
-
-        if (props.options?.yColors && props.options.yColors !== "random") {
-          config.yColors = props.options.yColors
-            .split(",")
-            .map((c: string) => c.trim());
-        } else if (props.options?.yColors === "random") {
-          config.yColors = "random";
-        }
-
-        if (props.options?.palette) {
-          config.palette = props.options.palette;
         }
 
         const pattern = trianglify(config);

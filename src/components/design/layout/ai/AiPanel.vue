@@ -1,5 +1,5 @@
 <template>
-  <div v-if="open" class="ai-panel" :class="{ minimized: isMinimized }">
+  <div v-if="open || isOpen" class="ai-panel" :class="{ minimized: isMinimized }">
     <!-- 头部 -->
     <div class="panel-header">
       <div class="header-left">
@@ -7,13 +7,16 @@
         <span class="header-title">AI 设计助手</span>
       </div>
       <div class="header-right">
+        <button class="header-btn" @click="copyChatLog" title="复制对话日志">
+          📋
+        </button>
         <button class="header-btn" @click="isMinimized = !isMinimized" :title="isMinimized ? '展开' : '最小化'">
           {{ isMinimized ? '□' : '—' }}
         </button>
         <button class="header-btn" @click="clearChat" title="清空对话">
           🗑️
         </button>
-        <button class="header-btn close-btn" @click="$emit('close')" title="关闭">
+        <button class="header-btn close-btn" @click="handleClose" title="关闭">
           ✕
         </button>
       </div>
@@ -45,6 +48,14 @@
 
         <!-- 消息列表 -->
         <div v-else class="messages-list">
+          <!-- 调试模式开关 -->
+          <div class="debug-toggle">
+            <label class="debug-switch">
+              <input type="checkbox" v-model="debugMode">
+              <span class="debug-label">🔍 调试模式</span>
+            </label>
+          </div>
+
           <div
             v-for="msg in messages"
             :key="msg.id"
@@ -62,6 +73,12 @@
               <div class="message-header">
                 <span class="ai-avatar">AI</span>
                 <span class="ai-name">设计助手</span>
+                <span v-if="debugMode && msg.meta?.iteration" class="iteration-badge">
+                  第{{ msg.meta.iteration }}轮
+                </span>
+                <span v-if="debugMode && msg.meta?.duration" class="duration-badge">
+                  {{ msg.meta.duration }}ms
+                </span>
               </div>
               <div class="message-bubble ai-bubble">
                 <div v-if="msg.content" class="message-text">
@@ -77,6 +94,26 @@
                     <span>{{ formatToolName(call.function.name) }}</span>
                   </div>
                 </div>
+                
+                <!-- 调试面板：AI 消息详情 -->
+                <div v-if="debugMode" class="debug-panel">
+                  <div class="debug-header" @click="msg._showDebug = !msg._showDebug">
+                    <span>{{ msg._showDebug ? '▼' : '▶' }} 调试详情</span>
+                  </div>
+                  <div v-if="msg._showDebug" class="debug-content">
+                    <div v-if="msg.tool_calls?.length" class="debug-section">
+                      <div class="debug-title">工具调用：</div>
+                      <div v-for="call in msg.tool_calls" :key="call.id" class="debug-item">
+                        <div class="debug-name">{{ call.function.name }}</div>
+                        <pre class="debug-json">{{ formatJson(call.function.arguments) }}</pre>
+                      </div>
+                    </div>
+                    <div v-if="msg.meta?.llmResponse" class="debug-section">
+                      <div class="debug-title">LLM 响应：</div>
+                      <pre class="debug-json">{{ formatJson(msg.meta.llmResponse) }}</pre>
+                    </div>
+                  </div>
+                </div>
               </div>
             </template>
 
@@ -89,6 +126,30 @@
                   {{ parseResult(msg.content).success ? "✓" : "✗" }}
                 </span>
                 <span>{{ parseResult(msg.content).message }}</span>
+                <span v-if="debugMode && msg.meta?.duration" class="tool-duration">
+                  {{ msg.meta.duration }}ms
+                </span>
+              </div>
+              
+              <!-- 调试面板：工具详情 -->
+              <div v-if="debugMode" class="debug-panel tool-debug">
+                <div class="debug-header" @click="msg._showDebug = !msg._showDebug">
+                  <span>{{ msg._showDebug ? '▼' : '▶' }} 工具详情</span>
+                </div>
+                <div v-if="msg._showDebug" class="debug-content">
+                  <div v-if="msg.tool_name" class="debug-section">
+                    <div class="debug-title">工具名称：</div>
+                    <div class="debug-value">{{ msg.tool_name }}</div>
+                  </div>
+                  <div v-if="msg.meta?.toolArgs" class="debug-section">
+                    <div class="debug-title">调用参数：</div>
+                    <pre class="debug-json">{{ formatJson(msg.meta.toolArgs) }}</pre>
+                  </div>
+                  <div v-if="msg.meta?.toolResult" class="debug-section">
+                    <div class="debug-title">执行结果：</div>
+                    <pre class="debug-json">{{ formatJson(msg.meta.toolResult) }}</pre>
+                  </div>
+                </div>
               </div>
             </template>
           </div>
@@ -162,20 +223,41 @@
 
       <!-- 输入区域 -->
       <div class="input-area">
+        <!-- 图片预览 -->
+        <div v-if="selectedImage" class="image-preview">
+          <img :src="selectedImage.preview" alt="预览" />
+          <div class="image-info">
+            <span class="image-name">{{ selectedImage.name }}</span>
+            <button class="remove-image" @click="removeImage">✕</button>
+          </div>
+        </div>
+        
         <div class="input-wrapper">
           <textarea
             v-model="inputText"
             class="message-input"
-            placeholder="描述你想要的设计... (Ctrl+Enter 发送)"
-            :disabled="isProcessing"
+            :placeholder="isWaitingForUser ? '请输入您的选择...' : selectedImage ? '描述你想要的效果，或直接发送分析图片...' : '描述你想要的设计... (Ctrl+Enter 发送)'"
+            :disabled="isProcessing && !isWaitingForUser"
             @keydown="handleKeydown"
             rows="3"
           />
           <div class="input-footer">
-            <span class="input-hint">Ctrl+Enter 发送</span>
+            <div class="input-left-actions">
+              <button class="action-btn image-action" @click="triggerImageUpload" title="上传图片分析">
+                📷
+              </button>
+              <input
+                ref="imageInputRef"
+                type="file"
+                accept="image/*"
+                style="display: none"
+                @change="handleImageUpload"
+              />
+              <span class="input-hint">Ctrl+Enter 发送</span>
+            </div>
             <div class="input-actions">
               <button
-                v-if="isProcessing"
+                v-if="isProcessing && !isWaitingForUser"
                 class="action-btn stop-action"
                 @click="handleStop"
               >
@@ -183,7 +265,7 @@
               </button>
               <button
                 class="action-btn send-action"
-                :disabled="!inputText.trim() || isProcessing"
+                :disabled="(!inputText.trim() && !selectedImage) || (isProcessing && !isWaitingForUser)"
                 @click="handleSend"
               >
                 发送 ➤
@@ -198,8 +280,12 @@
 
 <script setup lang="ts">
 import { ref, computed, nextTick, watch, onMounted, onUnmounted } from "vue";
+import { useLocalStorage } from "@vueuse/core";
 import { designAgent } from "@/ai/langgraph";
 import type { AgentInteraction } from "@/ai/langgraph";
+
+// 使用 useLocalStorage 缓存显示状态
+const isOpen = useLocalStorage("_1s_ai_panel_open", false);
 
 const props = defineProps<{
   open: boolean;
@@ -209,6 +295,17 @@ const emit = defineEmits<{
   close: [];
 }>();
 
+// 同步外部 open 状态到本地
+watch(() => props.open, (val) => {
+  isOpen.value = val;
+});
+
+// 关闭时更新本地状态
+const handleClose = () => {
+  isOpen.value = false;
+  emit("close");
+};
+
 // Agent
 const agent = designAgent;
 
@@ -217,10 +314,18 @@ const inputText = ref("");
 const messagesRef = ref<HTMLElement>();
 const customAnswer = ref("");
 const isMinimized = ref(false);
+const debugMode = ref(false);  // 调试模式开关
+const imageInputRef = ref<HTMLInputElement>();  // 图片上传 input 引用
+const selectedImage = ref<{  // 选中的图片
+  file: File;
+  preview: string;  // base64
+  name: string;
+} | null>(null);
 
 // 计算属性
 const messages = computed(() => agent.state.messages);
 const isProcessing = computed(() => agent.isProcessing.value);
+const isWaitingForUser = computed(() => agent.isWaitingForUser.value);
 const interactionData = computed(() => agent.state.pendingInteraction);
 
 // 快捷提示
@@ -275,7 +380,34 @@ function handleKeydown(e: KeyboardEvent) {
 // 发送消息
 function handleSend() {
   const text = inputText.value.trim();
-  if (!text || isProcessing.value) return;
+  
+  // 如果有图片，发送图片分析
+  if (selectedImage.value) {
+    const imageData = selectedImage.value.preview;
+    const userMessage = text || "请分析这张图片的设计风格，然后创建一个类似的设计";
+    
+    // 调用 agent 的图片分析功能
+    agent.chatWithImage(userMessage, imageData);
+    
+    inputText.value = "";
+    selectedImage.value = null;
+    scrollToBottom();
+    return;
+  }
+  
+  if (!text) return;
+  
+  // 如果 agent 在等待用户响应，直接提交
+  if (isWaitingForUser.value) {
+    agent.submitUserResponse(text);
+    inputText.value = "";
+    scrollToBottom();
+    return;
+  }
+  
+  // 如果 agent 在处理中，忽略
+  if (isProcessing.value) return;
+  
   agent.chat(text);
   inputText.value = "";
   scrollToBottom();
@@ -284,6 +416,43 @@ function handleSend() {
 // 停止处理
 function handleStop() {
   agent.clearMessages();
+}
+
+// 触发图片上传
+function triggerImageUpload() {
+  imageInputRef.value?.click();
+}
+
+// 处理图片上传
+function handleImageUpload(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  // 检查文件大小（限制 10MB）
+  if (file.size > 10 * 1024 * 1024) {
+    alert("图片大小不能超过 10MB");
+    return;
+  }
+
+  // 转为 base64
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    selectedImage.value = {
+      file,
+      preview: e.target?.result as string,
+      name: file.name,
+    };
+  };
+  reader.readAsDataURL(file);
+  
+  // 清空 input 以便重复选择同一文件
+  input.value = "";
+}
+
+// 移除选中的图片
+function removeImage() {
+  selectedImage.value = null;
 }
 
 // 快捷发送
@@ -329,6 +498,105 @@ function parseResult(content: string) {
   } catch {
     return { success: true, message: content };
   }
+}
+
+// 格式化 JSON（用于调试面板）
+function formatJson(data: any): string {
+  if (!data) return "null";
+  if (typeof data === "string") {
+    try {
+      return JSON.stringify(JSON.parse(data), null, 2);
+    } catch {
+      return data;
+    }
+  }
+  return JSON.stringify(data, null, 2);
+}
+
+// 复制对话日志
+function copyChatLog() {
+  const logLines: string[] = [];
+  const timestamp = new Date().toLocaleString();
+  
+  logLines.push("=".repeat(60));
+  logLines.push(`AI 对话日志`);
+  logLines.push(`导出时间: ${timestamp}`);
+  logLines.push(`消息总数: ${messages.value.length}`);
+  logLines.push("=".repeat(60));
+  logLines.push("");
+
+  for (const msg of messages.value) {
+    const time = new Date(msg.timestamp).toLocaleTimeString();
+    const iteration = msg.meta?.iteration ? ` [第${msg.meta.iteration}轮]` : "";
+    const duration = msg.meta?.duration ? ` (${msg.meta.duration}ms)` : "";
+    
+    // 消息头
+    logLines.push(`--- ${msg.role.toUpperCase()}${iteration} | ${time}${duration} ---`);
+    
+    // 消息内容
+    if (msg.content) {
+      logLines.push(`内容: ${msg.content}`);
+    }
+    
+    // 工具调用
+    if (msg.tool_calls?.length) {
+      logLines.push(`工具调用:`);
+      for (const call of msg.tool_calls) {
+        logLines.push(`  - ${call.function.name}`);
+        try {
+          const args = typeof call.function.arguments === "string" 
+            ? JSON.parse(call.function.arguments) 
+            : call.function.arguments;
+          logLines.push(`    参数: ${JSON.stringify(args, null, 4).split("\n").join("\n    ")}`);
+        } catch {
+          logLines.push(`    参数: ${call.function.arguments}`);
+        }
+      }
+    }
+    
+    // 工具结果
+    if (msg.role === "tool") {
+      logLines.push(`工具: ${msg.tool_name}`);
+      if (msg.meta?.toolArgs) {
+        logLines.push(`调用参数: ${JSON.stringify(msg.meta.toolArgs, null, 2)}`);
+      }
+      if (msg.meta?.toolResult) {
+        logLines.push(`执行结果: ${JSON.stringify(msg.meta.toolResult, null, 2)}`);
+      } else {
+        logLines.push(`原始内容: ${msg.content}`);
+      }
+    }
+    
+    // 调试信息
+    if (msg.meta?.llmResponse) {
+      logLines.push(`LLM 响应: ${JSON.stringify(msg.meta.llmResponse, null, 2)}`);
+    }
+    
+    logLines.push("");
+  }
+
+  // 复制到剪贴板
+  const logText = logLines.join("\n");
+  navigator.clipboard.writeText(logText).then(() => {
+    // 显示成功提示
+    const btn = document.querySelector('[title="复制对话日志"]');
+    if (btn) {
+      const originalText = btn.textContent;
+      btn.textContent = "✓";
+      setTimeout(() => {
+        btn.textContent = originalText;
+      }, 2000);
+    }
+  }).catch((err) => {
+    console.error("复制失败:", err);
+    // 降级方案：创建临时 textarea
+    const textarea = document.createElement("textarea");
+    textarea.value = logText;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  });
 }
 
 // 滚动到底部
@@ -825,6 +1093,206 @@ watch(() => messages.value.length, scrollToBottom);
     &:hover {
       background: #ff7875;
     }
+  }
+}
+
+// 调试模式相关样式
+.debug-toggle {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 8px;
+}
+
+.debug-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #666;
+
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
+
+  .debug-label {
+    user-select: none;
+  }
+}
+
+.iteration-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #667eea;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 10px;
+  margin-left: 8px;
+}
+
+.duration-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #52c41a;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.tool-duration {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #faad14;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 10px;
+  margin-left: 8px;
+}
+
+.debug-panel {
+  margin-top: 8px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fafafa;
+
+  &.tool-debug {
+    margin-left: 24px;
+    margin-top: 4px;
+    border-color: #f0d0d0;
+  }
+}
+
+.debug-header {
+  padding: 6px 10px;
+  background: #f0f0f0;
+  cursor: pointer;
+  font-size: 11px;
+  color: #666;
+  user-select: none;
+
+  &:hover {
+    background: #e8e8e8;
+  }
+}
+
+.debug-content {
+  padding: 8px 10px;
+  font-size: 11px;
+}
+
+.debug-section {
+  margin-bottom: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.debug-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.debug-name {
+  font-weight: 500;
+  color: #667eea;
+  margin-bottom: 4px;
+}
+
+.debug-value {
+  color: #333;
+  word-break: break-all;
+}
+
+.debug-json {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  padding: 6px 8px;
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.4;
+  overflow-x: auto;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+}
+
+// 图片预览样式
+.image-preview {
+  margin-bottom: 8px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fafafa;
+
+  img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .image-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: #f0f0f0;
+    font-size: 11px;
+    color: #666;
+  }
+
+  .image-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    margin-right: 8px;
+  }
+
+  .remove-image {
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: #ff4d4f;
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+
+    &:hover {
+      background: #ff7875;
+    }
+  }
+}
+
+// 输入左侧操作区
+.input-left-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// 图片上传按钮
+.image-action {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 4px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #f0f0f0;
   }
 }
 </style>

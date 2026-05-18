@@ -3,7 +3,9 @@ export type OperationParamType =
   | "number"
   | "boolean"
   | "select"
-  | "color";
+  | "color"
+  | "object"
+  | "array";
 
 export interface OperationParamOption {
   label: string;

@@ -4,7 +4,7 @@ registerOperation({
   id: "canvas.addChild",
   name: "添加元素",
   description:
-    "向画布添加一个新元素，支持文字、背景、图片、矩形、椭圆、二维码、条形码、图表 (ECharts)、3D模型 (Three.js)、数学公式 (KaTeX)、流程图 (Mermaid)、代码块 (Shiki) 等类型",
+    "向画布添加一个新元素。【重要】对于文字、矩形、背景、图片等基础设计元素，请优先使用 HTML 类型实现，更灵活易维护。其他专业类型（图表、3D、流程图等）使用对应的专用类型。",
   group: "画布",
   params: [
     {
@@ -13,13 +13,7 @@ registerOperation({
       type: "select",
       required: true,
       options: [
-        { label: "文字", value: "text" },
-        { label: "背景", value: "background" },
-        { label: "图片", value: "image" },
-        { label: "矩形", value: "rect" },
-        { label: "椭圆", value: "ellipse" },
-        { label: "二维码", value: "qrcode" },
-        { label: "条形码", value: "barcode" },
+        { label: "HTML 模板 (推荐)", value: "html" },
         { label: "图表 (ECharts)", value: "echart" },
         { label: "3D模型 (Three.js)", value: "threeScene" },
         { label: "数学公式 (KaTeX)", value: "math" },
@@ -48,9 +42,21 @@ registerOperation({
         { label: "词云 (D3-Cloud)", value: "d3Cloud" },
         { label: "撒花效果 (canvas-confetti)", value: "confetti" },
         { label: "三角纹理 (Trianglify)", value: "trianglify" },
-        { label: "HTML 模板", value: "html" },
+        { label: "二维码", value: "qrcode" },
+        { label: "条形码", value: "barcode" },
+        { label: "乐谱 (abcjs)", value: "abcNotation" },
+        { label: "五线谱 (VexFlow)", value: "vexFlow" },
+        { label: "关系图 (Cytoscape.js)", value: "cytoscape" },
+        { label: "数据图表 (vue-data-ui)", value: "vueDataUi" },
+        { label: "自定义图表 (D3.js)", value: "d3" },
+        // 基础元素 - 不推荐 AI 使用，优先用 HTML
+        { label: "文字 (不推荐，用HTML)", value: "text" },
+        { label: "背景 (不推荐，用HTML)", value: "background" },
+        { label: "图片 (不推荐，用HTML)", value: "image" },
+        { label: "矩形 (不推荐，用HTML)", value: "rect" },
+        { label: "椭圆 (不推荐，用HTML)", value: "ellipse" },
       ],
-      description: "要添加的元素类型",
+      description: "要添加的元素类型。对于文字、矩形、背景、图片等基础元素，优先使用 HTML 类型。",
     },
     {
       name: "textContent",
@@ -556,6 +562,30 @@ registerOperation({
       description: "仅 HTML 模板类型有效，完整的 HTML 代码（包含 <style> 标签）",
     },
     {
+      name: "htmlBindings",
+      label: "模板绑定",
+      type: "object",
+      description: "HTML 模板的变量绑定数据，如字体、图片等资源对象",
+    },
+    {
+      name: "htmlTemplateFields",
+      label: "模板字段定义",
+      type: "array",
+      description: "定义模板中可被用户替换的字段列表",
+    },
+    {
+      name: "htmlTemplateDefaultBindings",
+      label: "模板默认绑定",
+      type: "object",
+      description: "模板字段的默认值",
+    },
+    {
+      name: "htmlTemplateMeta",
+      label: "模板元信息",
+      type: "object",
+      description: "模板的元数据信息",
+    },
+    {
       name: "width",
       label: "宽度",
       type: "number",
@@ -635,6 +665,10 @@ registerOperation({
       confettiPreset,
       trianglifyCellSize,
       htmlContent,
+      htmlBindings,
+      htmlTemplateFields,
+      htmlTemplateDefaultBindings,
+      htmlTemplateMeta,
       width,
       height,
     } = params;
@@ -653,6 +687,19 @@ registerOperation({
 
     if (type === "html" && htmlContent !== undefined) {
       extraOptions.htmlContent = htmlContent;
+      // 处理模板绑定
+      if (params.htmlBindings !== undefined) {
+        extraOptions.htmlBindings = params.htmlBindings;
+      }
+      if (params.htmlTemplateFields !== undefined) {
+        extraOptions.htmlTemplateFields = params.htmlTemplateFields;
+      }
+      if (params.htmlTemplateDefaultBindings !== undefined) {
+        extraOptions.htmlTemplateDefaultBindings = params.htmlTemplateDefaultBindings;
+      }
+      if (params.htmlTemplateMeta !== undefined) {
+        extraOptions.htmlTemplateMeta = params.htmlTemplateMeta;
+      }
     }
 
     if (type === "math") {

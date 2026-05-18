@@ -6,7 +6,11 @@
     size="480px"
     :close-on-click-modal="false"
     :modal="false"
+    :show-close="true"
     class="ai-drawer"
+    :with-modal="false"
+    :append-to-body="false"
+    :lock-scroll="false"
   >
     <template #header>
       <div class="drawer-header">
@@ -309,6 +313,16 @@ watch(() => messages.value.length, scrollToBottom);
 
 <style lang="less" scoped>
 .ai-drawer {
+  // 确保 drawer 不遮挡画布操作
+  :deep(.el-drawer__wrapper) {
+    pointer-events: none;
+  }
+
+  :deep(.el-drawer) {
+    pointer-events: auto;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+  }
+
   :deep(.el-drawer__header) {
     margin-bottom: 0;
     padding: 16px 20px;

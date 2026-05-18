@@ -210,8 +210,8 @@
   <!-- 自动创建弹层 -->
   <autocreateModal></autocreateModal>
 
-  <!-- AI 设计助手抽屉 -->
-  <AiDrawer v-model:open="isAiPanelOpen" />
+  <!-- AI 设计助手面板 -->
+  <AiPanel :open="isAiPanelOpen" @close="isAiPanelOpen = false" />
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -304,7 +304,7 @@ import autocreateModal from "./autocreate/modal.vue";
 import videoClip from "./videoClip/index.vue";
 import operationsPanel from "./operations/index.vue";
 import canvasStructure from "./canvasStructure/index.vue";
-import AiDrawer from "./ai/AiDrawer.vue";
+import AiPanel from "./ai/AiPanel.vue";
 import { isAiPanelOpen } from "@/ai/store";
 import { useEventBus } from "@vueuse/core";
 import { DESIGN_3D_ENABLED } from "../featureFlags";

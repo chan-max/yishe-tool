@@ -48,6 +48,7 @@ registerOperation({
         { label: "词云 (D3-Cloud)", value: "d3Cloud" },
         { label: "撒花效果 (canvas-confetti)", value: "confetti" },
         { label: "三角纹理 (Trianglify)", value: "trianglify" },
+        { label: "HTML 模板", value: "html" },
       ],
       description: "要添加的元素类型",
     },
@@ -548,6 +549,13 @@ registerOperation({
       description: "仅三角纹理类型有效",
     },
     {
+      name: "htmlContent",
+      label: "HTML 代码",
+      type: "string",
+      placeholder: '<div class="card">...</div>',
+      description: "仅 HTML 模板类型有效，完整的 HTML 代码（包含 <style> 标签）",
+    },
+    {
       name: "width",
       label: "宽度",
       type: "number",
@@ -626,6 +634,7 @@ registerOperation({
       d3CloudWords,
       confettiPreset,
       trianglifyCellSize,
+      htmlContent,
       width,
       height,
     } = params;
@@ -640,6 +649,10 @@ registerOperation({
 
     if (type === "background" && backgroundColor !== undefined) {
       extraOptions.backgroundColor = backgroundColor;
+    }
+
+    if (type === "html" && htmlContent !== undefined) {
+      extraOptions.htmlContent = htmlContent;
     }
 
     if (type === "math") {

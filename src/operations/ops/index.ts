@@ -21,3 +21,16 @@ import "./add/add-barcode";
 import "./save-sticker";
 import "./export-png";
 import "./analyze-canvas";
+
+// 新增工具
+import "./text-align";
+import "./text-spacing";
+import "./duplicate-element";
+import "./layer-management";
+import "./border";
+import "./shadow";
+import "./element-background";
+import "./border-radius";
+import "./flip";
+import "./lock-visibility";
+import "./self-test";

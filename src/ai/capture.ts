@@ -1,4 +1,30 @@
-import { currentCanvasControllerInstance } from "@/components/design/layout/canvas";
+import {
+  currentCanvasControllerInstance,
+  renderingLoading,
+} from "@/components/design/layout/canvas";
+
+/**
+ * 等待画布渲染完成
+ */
+async function waitForRender(controller: any, timeout = 5000): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const startTime = Date.now();
+    const check = () => {
+      if (!controller.loading.value && !renderingLoading.value) {
+        resolve();
+        return;
+      }
+      if (Date.now() - startTime > timeout) {
+        // 超时后也继续，避免卡住
+        console.warn("[AI Capture] 等待渲染超时，继续截图");
+        resolve();
+        return;
+      }
+      setTimeout(check, 50);
+    };
+    check();
+  });
+}
 
 /**
  * 截取当前画布为 base64 图片
@@ -13,7 +39,10 @@ export async function captureCanvasForAI(): Promise<string> {
   // 强制更新贴纸渲染
   await controller.activeUpdateRenderingCanvas();
 
-  // 等待一帧确保渲染完成
+  // 等待渲染完成
+  await waitForRender(controller);
+
+  // 额外等待一帧确保 DOM 更新
   await new Promise((resolve) => requestAnimationFrame(resolve));
 
   const canvasEl = controller.canvasEl;
@@ -21,13 +50,25 @@ export async function captureCanvasForAI(): Promise<string> {
     throw new Error("画布元素不存在");
   }
 
-  // 截图为 base64
-  const base64 = canvasEl.toDataURL("image/png");
-  if (!base64 || base64 === "data:,") {
-    throw new Error("画布截图失败");
+  // 检查 canvas 尺寸
+  if (canvasEl.width === 0 || canvasEl.height === 0) {
+    throw new Error("画布尺寸为 0，无法截图");
   }
 
-  return base64;
+  try {
+    // 截图为 base64
+    const base64 = canvasEl.toDataURL("image/png");
+    if (!base64 || base64 === "data:," || base64.length < 100) {
+      throw new Error("画布截图数据为空");
+    }
+
+    console.log("[AI Capture] 截图成功，大小:", Math.round(base64.length / 1024), "KB");
+    return base64;
+  } catch (err: any) {
+    // 如果 toDataURL 失败，可能是 canvas 被污染
+    console.error("[AI Capture] 截图失败:", err);
+    throw new Error(`画布截图失败: ${err?.message || "未知错误"}`);
+  }
 }
 
 /**

@@ -8,6 +8,7 @@ import {
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
 import { buildSystemPrompt, buildImageAnalysisPrompt } from "../prompts/system";
 import { resourceService } from "../services/resource";
+import { captureCanvasForAI, getCanvasStateSummary } from "../capture";
 
 // ============ 类型定义 ============
 
@@ -33,6 +34,13 @@ interface AgentInteraction {
   type: string;
   question: string;
   options?: string[];
+}
+
+interface SearchRecord {
+  tool: string;
+  query: string;
+  resultCount: number;
+  iteration: number;
 }
 
 // ============ 工具定义 ============
@@ -95,6 +103,7 @@ const agentState = reactive({
   messages: [] as AgentMessage[],
   pendingInteraction: null as AgentInteraction | null,
   error: null as string | null,
+  searchHistory: [] as SearchRecord[],
 });
 
 let waitForUserInputPromise: { resolve: (value: string) => void } | null = null;
@@ -119,6 +128,36 @@ function addMessage(msg: Partial<AgentMessage>): AgentMessage {
   return message;
 }
 
+// ============ 搜索去重 ============
+
+function isDuplicateSearch(toolName: string, args: Record<string, any>): SearchRecord | null {
+  const query = (args.query || "").toLowerCase().trim();
+  if (!query) return null;
+
+  return agentState.searchHistory.find(
+    (r) =>
+      r.tool === toolName &&
+      r.query.toLowerCase().trim() === query &&
+      r.resultCount > 0
+  ) || null;
+}
+
+function recordSearch(toolName: string, args: Record<string, any>, resultCount: number, iteration: number) {
+  agentState.searchHistory.push({
+    tool: toolName,
+    query: args.query || "",
+    resultCount,
+    iteration,
+  });
+}
+
+function buildSearchContext(): string {
+  const cachedSummary = resourceService.getCachedResultsSummary();
+  if (!cachedSummary) return "";
+
+  return `\n\n## 搜索缓存\n${cachedSummary}\n请优先使用缓存结果，不要重复搜索相同关键词。如果需要不同关键词的资源才进行新搜索。`;
+}
+
 // ============ Agent 循环 ============
 
 async function runAgentLoop(userMessage: string) {
@@ -130,9 +169,10 @@ async function runAgentLoop(userMessage: string) {
   // 添加用户消息
   addMessage({ role: "user", content: userMessage });
 
-  // 构建消息列表
+  // 构建消息列表（注入搜索上下文）
+  const systemPrompt = buildSystemPrompt() + buildSearchContext();
   const messagesForLLM: any[] = [
-    { role: "system", content: buildSystemPrompt() },
+    { role: "system", content: systemPrompt },
     ...agentState.messages.map((m) => ({
       role: m.role === "tool" ? "user" : m.role,
       content: m.content,
@@ -256,7 +296,23 @@ async function runAgentLoop(userMessage: string) {
         
         // 检查是否是资源工具
         if (resourceToolNames.includes(call.function.name)) {
-          result = await resourceService.executeTool(call.function.name, args);
+          // 检查是否是重复搜索
+          const duplicate = isDuplicateSearch(call.function.name, args);
+          if (duplicate) {
+            console.log(`[Agent] 跳过重复搜索: ${call.function.name}("${args.query}") (第${duplicate.iteration}轮已搜索)`);
+            result = {
+              success: true,
+              data: [],
+              total: duplicate.resultCount,
+              query: args.query,
+              message: `此搜索在第${duplicate.iteration}轮已执行过，找到${duplicate.resultCount}个结果。请使用之前的结果，不要重复搜索。`,
+            };
+          } else {
+            result = await resourceService.executeTool(call.function.name, args);
+            // 记录搜索结果
+            const resultCount = result?.data?.length || 0;
+            recordSearch(call.function.name, args, resultCount, iteration);
+          }
         } else {
           result = await executeOperation(call.function.name, args, ctx);
         }
@@ -501,6 +557,243 @@ function waitForUserInput(): Promise<string> {
   });
 }
 
+// ============ 自动评估 ============
+
+interface EvaluationResult {
+  score: number;
+  strengths: string[];
+  weaknesses: string[];
+  suggestions: string[];
+  shouldIterate: boolean;
+}
+
+async function runAutoEvaluation(): Promise<EvaluationResult | null> {
+  console.log("[Agent] 开始自动评估...");
+
+  try {
+    const imageBase64 = await captureCanvasForAI();
+    const stateSummary = getCanvasStateSummary();
+
+    const response = await directChat({
+      messages: [
+        {
+          role: "system",
+          content: "你是一个专业的设计评审专家。评估设计作品的质量，只输出 JSON。",
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `评估这个设计的质量。
+
+画布状态：
+${stateSummary}
+
+严格按 JSON 格式输出：
+{
+  "score": 综合分数(1-10整数),
+  "strengths": ["优点1", "优点2"],
+  "weaknesses": ["不足1", "不足2"],
+  "suggestions": ["具体改进建议1", "具体改进建议2"],
+  "shouldIterate": true/false
+}`,
+            },
+            { type: "image_url", image_url: { url: imageBase64, detail: "high" } },
+          ],
+        },
+      ],
+      temperature: 0.3,
+    });
+
+    let resultText = "";
+    const res = response as any;
+    if (res?.choices?.[0]?.message?.content) {
+      resultText = res.choices[0].message.content;
+    } else if (typeof res?.data === "string") {
+      resultText = res.data;
+    } else if (typeof res?.content === "string") {
+      resultText = res.content;
+    }
+
+    let evaluation: any;
+    try {
+      const jsonMatch = resultText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        evaluation = JSON.parse(jsonMatch[0]);
+      }
+    } catch {
+      evaluation = null;
+    }
+
+    if (!evaluation) {
+      console.warn("[Agent] 无法解析评估结果");
+      return null;
+    }
+
+    const result: EvaluationResult = {
+      score: evaluation.score || 5,
+      strengths: evaluation.strengths || [],
+      weaknesses: evaluation.weaknesses || [],
+      suggestions: evaluation.suggestions || [],
+      shouldIterate: evaluation.shouldIterate !== false && (evaluation.score || 5) < 8,
+    };
+
+    console.log("[Agent] 评估结果:", result);
+    return result;
+  } catch (error: any) {
+    console.error("[Agent] 自动评估失败:", error);
+    return null;
+  }
+}
+
+async function runAutoImprove(suggestions: string[]): Promise<void> {
+  const ctx = createDesignOperationContext();
+
+  for (const suggestion of suggestions.slice(0, 2)) {
+    try {
+      const result = await executeOperation(
+        "canvas.evaluateDesign",
+        { criteria: suggestion },
+        ctx
+      );
+      console.log("[Agent] 自动改进结果:", result);
+    } catch (error: any) {
+      console.error("[Agent] 自动改进失败:", error);
+    }
+  }
+}
+
+// ============ 自测流程 ============
+
+async function runSelfTest(): Promise<void> {
+  const maxRounds = 3;
+  let round = 0;
+
+  addMessage({
+    role: "assistant",
+    content: "开始自测：截图 → 评估 → 迭代优化...",
+    meta: { iteration: 0 },
+  });
+
+  while (round < maxRounds) {
+    round++;
+    console.log(`[SelfTest] 第 ${round} 轮评估`);
+
+    // 等待渲染
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const evaluation = await runAutoEvaluation();
+    if (!evaluation) {
+      addMessage({
+        role: "assistant",
+        content: `第 ${round} 轮评估失败，无法获取评估结果。`,
+        meta: { iteration: round },
+      });
+      break;
+    }
+
+    // 添加评估消息
+    const evalMsg = [
+      `**第 ${round} 轮评估 - 评分: ${evaluation.score}/10**`,
+      "",
+      evaluation.strengths.length > 0 ? `优点: ${evaluation.strengths.join("、")}` : "",
+      evaluation.weaknesses.length > 0 ? `不足: ${evaluation.weaknesses.join("、")}` : "",
+      evaluation.suggestions.length > 0 ? `建议: ${evaluation.suggestions.join("、")}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    addMessage({
+      role: "assistant",
+      content: evalMsg,
+      meta: { iteration: round },
+    });
+
+    // 如果分数够高或不需要迭代，结束
+    if (evaluation.score >= 8 || !evaluation.shouldIterate) {
+      addMessage({
+        role: "assistant",
+        content: `自测完成！最终评分: ${evaluation.score}/10${evaluation.score >= 8 ? "，质量达标。" : ""}`,
+        meta: { iteration: round },
+      });
+      break;
+    }
+
+    // 需要迭代优化，调用 Agent 让 AI 自动改进
+    addMessage({
+      role: "assistant",
+      content: `评分 ${evaluation.score}/10 未达标，自动优化中...`,
+      meta: { iteration: round },
+    });
+
+    // 用 LLM 生成改进指令并执行
+    try {
+      const improveResponse = await directChat({
+        messages: [
+          {
+            role: "system",
+            content: buildSystemPrompt(),
+          },
+          {
+            role: "user",
+            content: `当前设计评分 ${evaluation.score}/10，有以下问题：
+${evaluation.weaknesses.map((w, i) => `${i + 1}. ${w}`).join("\n")}
+
+改进建议：
+${evaluation.suggestions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
+
+请使用工具改进设计。只执行最关键的 1-2 个改进操作。`,
+          },
+        ],
+        tools: getTools(),
+      });
+
+      // 解析并执行改进操作
+      const res = improveResponse as any;
+      let msg: any = null;
+      if (res?.choices?.[0]?.message) {
+        msg = res.choices[0].message;
+      } else if (res?.data?.choices?.[0]?.message) {
+        msg = res.data.choices[0].message;
+      } else if (res?.content || res?.tool_calls) {
+        msg = res;
+      }
+
+      if (msg?.tool_calls && msg.tool_calls.length > 0) {
+        const ctx = createDesignOperationContext();
+        for (const call of msg.tool_calls) {
+          const args =
+            typeof call.function.arguments === "string"
+              ? JSON.parse(call.function.arguments)
+              : call.function.arguments;
+
+          try {
+            if (resourceToolNames.includes(call.function.name)) {
+              await resourceService.executeTool(call.function.name, args);
+            } else {
+              await executeOperation(call.function.name, args, ctx);
+            }
+          } catch (err) {
+            console.error("[SelfTest] 改进操作失败:", err);
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error("[SelfTest] 改进流程失败:", error);
+      break;
+    }
+  }
+
+  if (round >= maxRounds) {
+    addMessage({
+      role: "assistant",
+      content: `自测完成，共 ${maxRounds} 轮迭代。`,
+      meta: { iteration: round },
+    });
+  }
+}
+
 // ============ 导出 ============
 
 export const designAgent = {
@@ -578,10 +871,51 @@ export const designAgent = {
     }
   },
 
+  async selfTest(): Promise<void> {
+    if (agentState.status !== "idle") {
+      console.warn("[Agent] Agent is busy, status:", agentState.status);
+      return;
+    }
+
+    agentState.status = "thinking";
+    agentState.error = null;
+
+    try {
+      await runSelfTest();
+    } catch (error: any) {
+      console.error("[Agent] SelfTest error:", error);
+      agentState.error = error.message || "自测失败";
+      addMessage({ role: "assistant", content: `自测失败：${error.message}` });
+    } finally {
+      agentState.status = "idle";
+      emit({ type: "done", data: null });
+    }
+  },
+
+  async autoEvaluate(): Promise<EvaluationResult | null> {
+    if (agentState.status !== "idle") {
+      console.warn("[Agent] Agent is busy, status:", agentState.status);
+      return null;
+    }
+
+    agentState.status = "thinking";
+
+    try {
+      return await runAutoEvaluation();
+    } catch (error: any) {
+      console.error("[Agent] AutoEvaluate error:", error);
+      return null;
+    } finally {
+      agentState.status = "idle";
+    }
+  },
+
   clearMessages() {
     agentState.messages.length = 0;
     agentState.error = null;
     agentState.pendingInteraction = null;
+    agentState.searchHistory.length = 0;
     agentState.status = "idle";
+    resourceService.clearSearchCache();
   },
 };

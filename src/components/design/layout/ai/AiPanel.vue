@@ -7,6 +7,9 @@
         <span class="header-title">AI 设计助手</span>
       </div>
       <div class="header-right">
+        <button class="header-btn" @click="handleSelfTest" title="自测：截图评估+自动迭代" :disabled="isProcessing">
+          🔬
+        </button>
         <button class="header-btn" @click="copyChatLog" title="复制对话日志">
           📋
         </button>
@@ -416,6 +419,13 @@ function handleSend() {
 // 停止处理
 function handleStop() {
   agent.clearMessages();
+}
+
+// 自测
+function handleSelfTest() {
+  if (isProcessing.value) return;
+  agent.selfTest();
+  scrollToBottom();
 }
 
 // 触发图片上传

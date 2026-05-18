@@ -34,3 +34,4 @@ import "./border-radius";
 import "./flip";
 import "./lock-visibility";
 import "./self-test";
+import "./evaluate-design";

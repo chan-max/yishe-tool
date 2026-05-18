@@ -1,6 +1,39 @@
 import { directChat } from "@/ai/direct-client";
 import { apiInstance } from "@/api/apiInstance";
 
+// ============ 搜索缓存 ============
+
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const CACHE_TTL = 5 * 60 * 1000; // 5 分钟过期
+const searchCache = new Map<string, CacheEntry<any>>();
+
+function getCacheKey(tool: string, params: Record<string, any>): string {
+  const sorted = Object.keys(params)
+    .sort()
+    .filter((k) => params[k] !== undefined)
+    .map((k) => `${k}:${JSON.stringify(params[k])}`)
+    .join("|");
+  return `${tool}:${sorted}`;
+}
+
+function getFromCache<T>(key: string): T | null {
+  const entry = searchCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > CACHE_TTL) {
+    searchCache.delete(key);
+    return null;
+  }
+  return entry.data as T;
+}
+
+function setCache<T>(key: string, data: T): void {
+  searchCache.set(key, { data, timestamp: Date.now() });
+}
+
 // ============ 资源类型定义 ============
 
 export interface FontResource {
@@ -57,6 +90,13 @@ async function fetchApi(endpoint: string, params: Record<string, any> = {}) {
 export async function searchFontResources(
   params: FontSearchParams
 ): Promise<ResourceSearchResult> {
+  const cacheKey = getCacheKey("font", params);
+  const cached = getFromCache<ResourceSearchResult>(cacheKey);
+  if (cached) {
+    console.log("[ResourceService] 字体缓存命中:", params.query);
+    return cached;
+  }
+
   try {
     const result = await fetchApi("/api/font-template/page", {
       searchKeyword: params.query,
@@ -64,7 +104,7 @@ export async function searchFontResources(
       pageSize: params.limit || 10,
     });
 
-    return {
+    const searchResult: ResourceSearchResult = {
       items: (result.list || []).map((item: any) => ({
         id: item.id,
         name: item.name || "未命名字体",
@@ -75,6 +115,12 @@ export async function searchFontResources(
       total: result.total || 0,
       query: params.query || "",
     };
+
+    if (searchResult.items.length > 0) {
+      setCache(cacheKey, searchResult);
+    }
+
+    return searchResult;
   } catch (error) {
     console.error("[ResourceService] 搜索字体失败:", error);
     return { items: [], total: 0, query: params.query || "" };
@@ -86,6 +132,13 @@ export async function searchFontResources(
 export async function searchImageResources(
   params: ImageSearchParams
 ): Promise<ResourceSearchResult> {
+  const cacheKey = getCacheKey("image", params);
+  const cached = getFromCache<ResourceSearchResult>(cacheKey);
+  if (cached) {
+    console.log("[ResourceService] 图片缓存命中:", params.query);
+    return cached;
+  }
+
   try {
     const apiParams: Record<string, any> = {
       search: params.query,
@@ -97,7 +150,7 @@ export async function searchImageResources(
 
     const result = await fetchApi("/api/sticker/page", apiParams);
 
-    return {
+    const searchResult: ResourceSearchResult = {
       items: (result.list || []).map((item: any) => ({
         id: item.id,
         name: item.name || "未命名图片",
@@ -114,6 +167,12 @@ export async function searchImageResources(
       total: result.total || 0,
       query: params.query || "",
     };
+
+    if (searchResult.items.length > 0) {
+      setCache(cacheKey, searchResult);
+    }
+
+    return searchResult;
   } catch (error) {
     console.error("[ResourceService] 搜索图片失败:", error);
     return { items: [], total: 0, query: params.query || "" };
@@ -303,6 +362,44 @@ export async function executeResourceTool(
   }
 }
 
+// ============ 搜索历史导出 ============
+
+export interface SearchHistoryEntry {
+  tool: string;
+  query: string;
+  resultCount: number;
+  timestamp: number;
+}
+
+export function getSearchHistory(): SearchHistoryEntry[] {
+  const history: SearchHistoryEntry[] = [];
+  for (const [key, entry] of searchCache.entries()) {
+    const data = entry.data as ResourceSearchResult;
+    const tool = key.startsWith("font:") ? "resource.searchFont" : "resource.searchImage";
+    history.push({
+      tool,
+      query: data.query,
+      resultCount: data.items.length,
+      timestamp: entry.timestamp,
+    });
+  }
+  return history.sort((a, b) => b.timestamp - a.timestamp);
+}
+
+export function getCachedResultsSummary(): string {
+  const history = getSearchHistory();
+  if (history.length === 0) return "";
+
+  const lines = history.map(
+    (h) => `- ${h.tool}("${h.query}") → ${h.resultCount} 个结果`
+  );
+  return `已缓存的搜索结果（无需重复搜索）:\n${lines.join("\n")}`;
+}
+
+export function clearSearchCache(): void {
+  searchCache.clear();
+}
+
 // ============ 资源服务导出 ============
 
 export const resourceService = {
@@ -312,4 +409,7 @@ export const resourceService = {
   getImage: getImageResource,
   executeTool: executeResourceTool,
   tools: resourceTools,
+  getSearchHistory,
+  getCachedResultsSummary,
+  clearSearchCache,
 };

@@ -12,6 +12,84 @@ import Utils from '@/common/utils'
 import { captureCanvasForAI } from '@/ai/capture'
 import { directChat } from '@/ai/direct-client'
 
+// 批量任务状态
+let batchTaskState: {
+  total: number;
+  completed: number;
+  description: string;
+} | null = null;
+
+// 批量任务工具
+registerOperation({
+  id: 'canvas.startBatchTask',
+  name: '开始批量任务',
+  description: '开始一个批量创建任务。调用后系统会追踪任务进度，每次保存后会提示还需要完成多少个。在批量创建素材前必须先调用此工具。',
+  group: '贴纸',
+  params: [
+    {
+      name: 'total',
+      label: '总数',
+      type: 'number',
+      required: true,
+      description: '需要创建的素材总数',
+    },
+    {
+      name: 'description',
+      label: '任务描述',
+      type: 'string',
+      description: '任务描述，如：创建3个渐变素材',
+    },
+  ],
+  async execute(params) {
+    const { total, description } = params
+
+    if (!total || total < 1) {
+      return { success: false, message: '总数必须大于0' }
+    }
+
+    batchTaskState = {
+      total: Number(total),
+      completed: 0,
+      description: description || `创建${total}个素材`,
+    }
+
+    return {
+      success: true,
+      message: `批量任务已开始：${batchTaskState.description}`,
+      data: {
+        total: batchTaskState.total,
+        description: batchTaskState.description,
+        hint: `请开始创建第 1/${total} 个素材，完成后调用 canvas.updateAndSaveSticker 保存。`,
+      },
+    }
+  },
+})
+
+// 获取批量任务进度
+registerOperation({
+  id: 'canvas.getBatchProgress',
+  name: '获取批量任务进度',
+  description: '获取当前批量任务的进度信息。',
+  group: '贴纸',
+  params: [],
+  async execute() {
+    if (!batchTaskState) {
+      return { success: true, message: '当前没有进行中的批量任务', data: null }
+    }
+
+    return {
+      success: true,
+      message: '批量任务进度',
+      data: {
+        total: batchTaskState.total,
+        completed: batchTaskState.completed,
+        remaining: batchTaskState.total - batchTaskState.completed,
+        description: batchTaskState.description,
+      },
+    }
+  },
+})
+
 // AI 分析画布生成贴纸信息
 async function generateStickerMeta(): Promise<{ name: string; description: string; keywords: string }> {
   try {
@@ -194,7 +272,13 @@ registerOperation({
           keywords,
           url: cos.url, 
           cosKey: cos.key,
-          aiGenerated: needGenerate 
+          aiGenerated: needGenerate,
+          // 批量任务进度
+          batchProgress: batchTaskState ? {
+            total: batchTaskState.total,
+            completed: batchTaskState.completed,
+            remaining: batchTaskState.total - batchTaskState.completed,
+          } : null,
         },
       }
     } catch (err: any) {

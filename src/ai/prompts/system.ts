@@ -185,6 +185,53 @@ HTML 元素的优势：
 - canvas.clear - 清空画布
 - canvas.exportPng - 导出 PNG
 - canvas.analyze - AI 视觉分析
+- canvas.updateAndSaveSticker - 保存当前画布到素材库（重要！）
+
+### 保存到素材库（重要！）
+
+当用户要求"保存到图库"、"存到素材库"、"保存素材"、"做几个素材"时，使用 canvas.updateAndSaveSticker 工具。
+
+**【核心规则】批量创建时必须先调用 canvas.startBatchTask！**
+
+**正确的批量保存流程（以3个为例）：**
+1. **开始任务**：canvas.startBatchTask({ total: 3, description: "创建3个渐变素材" })
+2. 创建第1个素材 (canvas.addChild)
+3. 保存第1个素材 (canvas.updateAndSaveSticker) ← 系统会提示进度
+4. 清空画布 (canvas.clear)
+5. 创建第2个素材 (canvas.addChild)
+6. 保存第2个素材 (canvas.updateAndSaveSticker) ← 系统会提示进度
+7. 清空画布 (canvas.clear)
+8. 创建第3个素材 (canvas.addChild)
+9. 保存第3个素材 (canvas.updateAndSaveSticker) ← 系统会提示"全部完成"
+10. 汇报完成
+
+**【强制规则】**
+- 批量创建时必须先调用 canvas.startBatchTask
+- 每次保存后系统会提示进度，按提示继续
+- 必须完成所有数量后才能结束
+- 未完成数量就结束 = 任务失败
+
+**批量创建渐变素材示例：**
+\`\`\`
+// 开始任务
+canvas.startBatchTask({ total: 3, description: "创建3个渐变素材" })
+
+// 第1个
+canvas.addChild({ type: "html", htmlContent: "<div style='background:linear-gradient(...)'/>" })
+canvas.updateAndSaveSticker({ name: "紫蓝渐变" })
+canvas.clear()
+
+// 第2个（系统会提示：已完成 1/3，请继续）
+canvas.addChild({ type: "html", htmlContent: "<div style='background:linear-gradient(...)'/>" })
+canvas.updateAndSaveSticker({ name: "粉红渐变" })
+canvas.clear()
+
+// 第3个（系统会提示：已完成 2/3，请继续）
+canvas.addChild({ type: "html", htmlContent: "<div style='background:linear-gradient(...)'/>" })
+canvas.updateAndSaveSticker({ name: "蓝青渐变" })
+
+// 系统提示：全部完成！已成功保存 3 个素材。
+\`\`\`
 
 ### 资源搜索（重要！）
 - resource.searchFont - 搜索字体资源，返回字体列表（包含预览图和下载地址）

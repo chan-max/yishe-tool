@@ -104,6 +104,12 @@ const agentState = reactive({
   pendingInteraction: null as AgentInteraction | null,
   error: null as string | null,
   searchHistory: [] as SearchRecord[],
+  // 任务追踪
+  batchTask: null as {
+    total: number;
+    completed: number;
+    description: string;
+  } | null,
 });
 
 let waitForUserInputPromise: { resolve: (value: string) => void } | null = null;
@@ -151,6 +157,49 @@ function recordSearch(toolName: string, args: Record<string, any>, resultCount: 
   });
 }
 
+// ============ 任务追踪 ============
+
+function startBatchTask(total: number, description: string) {
+  agentState.batchTask = {
+    total,
+    completed: 0,
+    description,
+  };
+  console.log(`[Agent] Batch task started: ${description} (${total} items)`);
+}
+
+function completeBatchItem(): { current: number; total: number; hint: string; isComplete: boolean } {
+  if (!agentState.batchTask) {
+    return { current: 0, total: 0, hint: "", isComplete: false };
+  }
+
+  agentState.batchTask.completed++;
+  const { completed, total } = agentState.batchTask;
+  const isComplete = completed >= total;
+
+  const hint = isComplete
+    ? `全部完成！已成功保存 ${total} 个素材。`
+    : `已完成 ${completed}/${total}，请继续创建下一个素材，完成后再次调用 canvas.updateAndSaveSticker 保存。`;
+
+  console.log(`[Agent] Batch progress: ${completed}/${total}`);
+
+  if (isComplete) {
+    agentState.batchTask = null;
+  }
+
+  return { current: completed, total, hint, isComplete };
+}
+
+function getBatchProgress(): string {
+  if (!agentState.batchTask) return "";
+  const { completed, total, description } = agentState.batchTask;
+  return `\n\n## 当前任务进度\n任务：${description}\n进度：${completed}/${total}\n请继续完成剩余 ${total - completed} 个素材。`;
+}
+
+function clearBatchTask() {
+  agentState.batchTask = null;
+}
+
 function buildSearchContext(): string {
   const cachedSummary = resourceService.getCachedResultsSummary();
   if (!cachedSummary) return "";
@@ -169,8 +218,8 @@ async function runAgentLoop(userMessage: string) {
   // 添加用户消息
   addMessage({ role: "user", content: userMessage });
 
-  // 构建消息列表（注入搜索上下文）
-  const systemPrompt = buildSystemPrompt() + buildSearchContext();
+  // 构建消息列表（注入搜索上下文和任务进度）
+  const systemPrompt = buildSystemPrompt() + buildSearchContext() + getBatchProgress();
   const messagesForLLM: any[] = [
     { role: "system", content: systemPrompt },
     ...agentState.messages.map((m) => ({
@@ -320,11 +369,20 @@ async function runAgentLoop(userMessage: string) {
         const toolDuration = Date.now() - toolStartTime;
         console.log("[Agent] Tool result:", result);
 
+        // 如果是保存操作，更新任务进度
+        let progressHint = "";
+        if (call.function.name === "canvas.updateAndSaveSticker" && result?.success) {
+          const progress = completeBatchItem();
+          if (progress.hint) {
+            progressHint = `\n\n[任务进度] ${progress.hint}`;
+          }
+        }
+
         addMessage({
           role: "tool",
           tool_call_id: call.id,
           tool_name: call.function.name,
-          content: JSON.stringify(result),
+          content: JSON.stringify(result) + progressHint,
           meta: {
             iteration,
             toolArgs: args,
@@ -335,7 +393,7 @@ async function runAgentLoop(userMessage: string) {
 
         messagesForLLM.push(
           { role: "assistant", content, tool_calls: toolCalls },
-          { role: "user", content: `[工具结果] ${call.function.name}: ${JSON.stringify(result)}` },
+          { role: "user", content: `[工具结果] ${call.function.name}: ${JSON.stringify(result)}${progressHint}` },
         );
       } catch (error: any) {
         console.error("[Agent] Tool error:", error);

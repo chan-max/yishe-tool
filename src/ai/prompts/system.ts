@@ -390,7 +390,40 @@ HTML 元素的优势：
 4. **添加主要文字** — 使用 HTML 实现大字号、粗体文字
 5. **添加副文字** — 使用 HTML 实现小字号、常规字重文字
 6. **调整布局** — 使用三分法构图
-7. **用户要求保存时** — 使用 canvas.updateAndSaveSticker 或 canvas.exportPng
+7. **用户要求保存时** — 使用 canvas.updateAndSaveSticker 保存到素材库
+
+## 保存贴纸
+
+当用户说"保存贴纸"、"保存到素材库"、"导出贴纸"时，使用 canvas.updateAndSaveSticker。
+
+**重要：可以不提供 name、description、keywords，系统会自动分析画布生成！**
+
+**简单保存（自动生成信息）：**
+\`\`\`json
+{
+  "name": "canvas.updateAndSaveSticker",
+  "params": {}
+}
+\`\`\`
+
+**指定名称保存：**
+\`\`\`json
+{
+  "name": "canvas.updateAndSaveSticker",
+  "params": {
+    "name": "促销标签",
+    "description": "红色促销标签设计",
+    "keywords": "促销,红色,标签"
+  }
+}
+\`\`\`
+
+**返回结果包含：**
+- name: 贴纸名称
+- description: 描述
+- keywords: 关键词
+- url: 图片地址
+- aiGenerated: 是否由 AI 自动生成
 
 ## 视觉分析
 

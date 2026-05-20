@@ -6,6 +6,7 @@ import {
 } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
 import { buildSystemPrompt, buildImageAnalysisPrompt } from "../prompts/system";
+import { buildKnowledgePrompt } from "../knowledge";
 import { resourceService } from "../services/resource";
 import { captureCanvasForAI, getCanvasStateSummary } from "../capture";
 import { buildAITools, INTERACTION_TOOL_NAMES } from "../shared/tools";
@@ -264,7 +265,7 @@ async function runAgentLoop(userMessage: string) {
   addMessage({ role: "user", content: userMessage });
 
   // 构建消息列表（注入搜索上下文和任务进度）
-  const systemPrompt = buildSystemPrompt() + buildSearchContext() + getBatchProgress();
+  const systemPrompt = buildSystemPrompt() + "\n" + buildKnowledgePrompt(userMessage) + buildSearchContext() + getBatchProgress();
   const messagesForLLM: any[] = [
     { role: "system", content: systemPrompt },
     ...agentState.messages.map((m) => ({

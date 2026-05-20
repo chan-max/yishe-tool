@@ -1,6 +1,7 @@
 import type { AgentState, EvaluateResult } from "../state";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
 import { directChat } from "../../direct-client";
+import { extractContent, extractJSON } from "../../shared/response-parser";
 
 // ============ 评估节点 ============
 
@@ -114,7 +115,6 @@ ${JSON.stringify(canvasState, null, 2)}
     };
   } catch (error: any) {
     console.error("[Agent] Evaluate error:", error);
-    // 评估失败不影响流程
     return {
       evaluateResult: {
         score: 5,
@@ -129,8 +129,6 @@ ${JSON.stringify(canvasState, null, 2)}
   }
 }
 
-// ============ 辅助函数 ============
-
 function getCanvasSummary() {
   const children = canvasStickerOptions.value.children;
   const mainCanvas = children[0];
@@ -144,33 +142,4 @@ function getCanvasSummary() {
       content: c.content || c.text || "",
     })),
   };
-}
-
-function extractContent(response: any): string {
-  const res = response as any;
-  if (res?.choices?.[0]?.message?.content) {
-    return res.choices[0].message.content;
-  }
-  if (res?.data?.choices?.[0]?.message?.content) {
-    return res.data.choices[0].message.content;
-  }
-  if (typeof res?.data === "string") {
-    return res.data;
-  }
-  if (res?.content) {
-    return res.content;
-  }
-  return "";
-}
-
-function extractJSON(text: string): any {
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    try {
-      return JSON.parse(jsonMatch[0]);
-    } catch {
-      return null;
-    }
-  }
-  return null;
 }

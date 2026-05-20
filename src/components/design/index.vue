@@ -17,6 +17,7 @@
 import mainView from "./layout/main.vue";
 import { isDarkMode, isEdit, currentEditingModelInfo } from "./store";
 import { usePreventScreenResize } from "./composition/preventScreenResize";
+import { useAudioWakeLock } from "./composition/useAudioWakeLock";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import {
   onBeforeMount,
@@ -34,6 +35,8 @@ import { initAIConfig } from "@/ai/direct-client";
 
 // 阻止缩放屏幕影响使用体验
 usePreventScreenResize();
+// 保持页面活跃，防止后台标签页被休眠
+useAudioWakeLock();
 
 onMounted(async () => {
   // 初始化 AI 配置

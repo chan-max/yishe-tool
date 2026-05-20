@@ -261,129 +261,16 @@ import {
 } from "@/components/design/layout/canvas/htmlTemplate/runtime.ts";
 import type { HtmlTemplateFieldDefinition } from "@/components/design/layout/canvas/htmlTemplate/types";
 
-declare global {
-  interface Window {
-    CodeMirror?: any;
-  }
-}
-
-// 使用 CDN 加载 CodeMirror，避免本地文件依赖
-const CODEMIRROR_CDN_BASE = "https://cdn.jsdelivr.net/npm/codemirror@5.65.16";
-const CODEMIRROR_STYLE_ASSETS = [`${CODEMIRROR_CDN_BASE}/lib/codemirror.min.css`];
-const CODEMIRROR_SCRIPT_ASSETS = [
-  `${CODEMIRROR_CDN_BASE}/lib/codemirror.min.js`,
-  `${CODEMIRROR_CDN_BASE}/mode/xml/xml.min.js`,
-  `${CODEMIRROR_CDN_BASE}/mode/javascript/javascript.min.js`,
-  `${CODEMIRROR_CDN_BASE}/mode/css/css.min.js`,
-  `${CODEMIRROR_CDN_BASE}/mode/htmlmixed/htmlmixed.min.js`,
-  `${CODEMIRROR_CDN_BASE}/addon/edit/closetag.min.js`,
-  `${CODEMIRROR_CDN_BASE}/addon/edit/closebrackets.min.js`,
-  `${CODEMIRROR_CDN_BASE}/addon/selection/active-line.min.js`,
-  `${CODEMIRROR_CDN_BASE}/addon/fold/foldcode.min.js`,
-  `${CODEMIRROR_CDN_BASE}/addon/fold/foldgutter.min.js`,
-  `${CODEMIRROR_CDN_BASE}/addon/fold/brace-fold.min.js`,
-  `${CODEMIRROR_CDN_BASE}/addon/fold/xml-fold.min.js`,
-  `${CODEMIRROR_CDN_BASE}/addon/fold/comment-fold.min.js`,
-  `${CODEMIRROR_CDN_BASE}/addon/hint/show-hint.min.js`,
-  `${CODEMIRROR_CDN_BASE}/addon/hint/html-hint.min.js`,
-];
-
-let codeMirrorAssetsPromise: Promise<void> | null = null;
-
-function loadStyleAsset(url: string) {
-  if (document.querySelector(`link[data-html-editor-asset="${url}"]`)) {
-    return Promise.resolve();
-  }
-
-  return new Promise<void>((resolve, reject) => {
-    const style = document.createElement("link");
-    style.rel = "stylesheet";
-    style.href = url;
-    style.dataset.htmlEditorAsset = url;
-    style.addEventListener("load", () => resolve(), { once: true });
-    style.addEventListener("error", () => reject(new Error(`Failed to load asset: ${url}`)), {
-      once: true,
-    });
-    document.head.appendChild(style);
-  });
-}
-
-function loadScriptAsset(url: string) {
-  const existingScript = document.querySelector(
-    `script[data-html-editor-asset="${url}"]`
-  ) as HTMLScriptElement | null;
-
-  if (existingScript?.dataset.loaded === "true") {
-    return Promise.resolve();
-  }
-
-  if (existingScript) {
-    return new Promise<void>((resolve, reject) => {
-      const handleLoad = () => {
-        cleanup();
-        resolve();
-      };
-      const handleError = () => {
-        cleanup();
-        reject(new Error(`Failed to load asset: ${url}`));
-      };
-      const cleanup = () => {
-        existingScript.removeEventListener("load", handleLoad);
-        existingScript.removeEventListener("error", handleError);
-      };
-
-      existingScript.addEventListener("load", handleLoad, { once: true });
-      existingScript.addEventListener("error", handleError, { once: true });
-    });
-  }
-
-  return new Promise<void>((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = url;
-    script.async = false;
-    script.dataset.htmlEditorAsset = url;
-    script.addEventListener(
-      "load",
-      () => {
-        script.dataset.loaded = "true";
-        resolve();
-      },
-      { once: true }
-    );
-    script.addEventListener("error", () => reject(new Error(`Failed to load asset: ${url}`)), {
-      once: true,
-    });
-    document.body.appendChild(script);
-  });
-}
-
-async function ensureCodeMirrorAssets() {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  if (window.CodeMirror) {
-    return;
-  }
-
-  if (!codeMirrorAssetsPromise) {
-    codeMirrorAssetsPromise = (async () => {
-      await Promise.all(CODEMIRROR_STYLE_ASSETS.map((asset) => loadStyleAsset(asset)));
-      for (const asset of CODEMIRROR_SCRIPT_ASSETS) {
-        await loadScriptAsset(asset);
-      }
-
-      if (!window.CodeMirror) {
-        throw new Error("CodeMirror is unavailable after loading local assets.");
-      }
-    })().catch((error) => {
-      codeMirrorAssetsPromise = null;
-      throw error;
-    });
-  }
-
-  return codeMirrorAssetsPromise;
-}
+import { EditorState, Extension } from "@codemirror/state";
+import { EditorView, keymap, ViewUpdate } from "@codemirror/view";
+import { html } from "@codemirror/lang-html";
+import { autocompletion, CompletionContext } from "@codemirror/autocomplete";
+import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
+import { indentOnInput, bracketMatching, foldGutter, foldKeymap } from "@codemirror/language";
+import { lineNumbers, highlightActiveLineGutter, highlightActiveLine } from "@codemirror/view";
+import { indentUnit } from "@codemirror/language";
+import { closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete";
+import { oneDark } from "@codemirror/theme-one-dark";
 
 const model = defineModel<string>({ default: "" });
 
@@ -405,7 +292,7 @@ const loadingEditor = ref(false);
 const editorError = ref("");
 const draftValue = ref("");
 const editorContainerRef = ref<HTMLElement | null>(null);
-const editorInstance = shallowRef<any>(null);
+const editorInstance = shallowRef<EditorView | null>(null);
 
 const draftSummary = computed(() => {
   const value = String(draftValue.value ?? "");
@@ -482,68 +369,101 @@ function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition) {
   }
 }
 
+/** Build autocomplete completions from magic variable lists */
+function buildCompletions(cx: CompletionContext) {
+  const allVariables = [
+    ...systemMagicVariableItems,
+    ...templateMagicVariableItems.value,
+  ];
+
+  const word = cx.matchBefore(/\{\{[\w.]*$/);
+  if (!word || word.from === word.to) return null;
+
+  return {
+    from: word.from,
+    options: allVariables.map((v) => ({
+      label: v.token,
+      type: "variable",
+      detail: v.description,
+    })),
+  };
+}
+
 function refreshEditor() {
   nextTick(() => {
-    if (!editorInstance.value) {
-      return;
-    }
-
-    editorInstance.value.setSize?.("100%", "100%");
-    editorInstance.value.refresh?.();
-    editorInstance.value.focus?.();
+    if (!editorInstance.value) return;
+    editorInstance.value.dispatch({ selection: editorInstance.value.state.selection });
+    editorInstance.value.focus();
   });
 }
 
 function syncEditorValue(value: string) {
-  if (!editorInstance.value) {
-    return;
-  }
-
-  if (editorInstance.value.getValue?.() === value) {
+  if (!editorInstance.value) return;
+  if (editorInstance.value.state.doc.toString() === value) {
     refreshEditor();
     return;
   }
-
-  editorInstance.value.setValue?.(value);
+  editorInstance.value.dispatch({
+    changes: {
+      from: 0,
+      to: editorInstance.value.state.doc.length,
+      insert: value,
+    },
+  });
   refreshEditor();
 }
 
 function mountEditor() {
-  if (!editorContainerRef.value || !window.CodeMirror) {
+  if (!editorContainerRef.value) return;
+
+  if (editorInstance.value) {
+    syncEditorValue(draftValue.value);
     return;
   }
 
-  if (!editorInstance.value) {
-    editorContainerRef.value.innerHTML = "";
-    editorInstance.value = window.CodeMirror(editorContainerRef.value, {
-      value: draftValue.value,
-      mode: "htmlmixed",
-      lineNumbers: true,
-      lineWrapping: true,
-      tabSize: 2,
-      indentUnit: 2,
-      autoCloseTags: true,
-      autoCloseBrackets: true,
-      styleActiveLine: true,
-      foldGutter: true,
-      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-      extraKeys: {
-        "Ctrl-Space": "autocomplete",
-        "Ctrl-/": "toggleComment",
-      },
-    });
-
-    editorInstance.value.on?.("change", (instance: any) => {
-      const nextValue = instance.getValue?.() ?? "";
-      if (nextValue !== draftValue.value) {
-        draftValue.value = nextValue;
+  const extensions: Extension[] = [
+    html({
+      selfClosingTags: true,
+      matchClosingTags: true,
+    }),
+    lineNumbers(),
+    highlightActiveLineGutter(),
+    highlightActiveLine(),
+    foldGutter(),
+    bracketMatching(),
+    closeBrackets(),
+    autocompletion({ override: [buildCompletions] }),
+    indentUnit.of("  "),
+    indentOnInput(),
+    history(),
+    keymap.of([
+      ...closeBracketsKeymap,
+      ...defaultKeymap,
+      ...historyKeymap,
+      ...foldKeymap,
+    ]),
+    oneDark,
+    EditorView.lineWrapping,
+    EditorView.updateListener.of((update: ViewUpdate) => {
+      if (update.docChanged) {
+        const nextValue = update.state.doc.toString();
+        if (nextValue !== draftValue.value) {
+          draftValue.value = nextValue;
+        }
       }
-    });
-  } else {
-    syncEditorValue(draftValue.value);
-  }
+    }),
+    EditorState.tabSize.of(2),
+  ];
 
-  refreshEditor();
+  const state = EditorState.create({
+    doc: draftValue.value,
+    extensions,
+  });
+
+  editorInstance.value = new EditorView({
+    state,
+    parent: editorContainerRef.value,
+  });
 }
 
 function openEditor() {
@@ -557,12 +477,19 @@ async function initializeEditor() {
   editorError.value = "";
 
   try {
-    await ensureCodeMirrorAssets();
+    // 确保 DOM 更新完成后再挂载编辑器
     await nextTick();
+    // 再等一帧确保 dialog 容器有实际尺寸
+    await new Promise((r) => requestAnimationFrame(r));
+
+    if (!editorContainerRef.value) {
+      throw new Error("Editor container not available");
+    }
+
     mountEditor();
   } catch (error) {
-    console.error("[htmlInput] failed to initialize CodeMirror", error);
-    editorError.value = "编辑器加载失败，请稍后重试。";
+    console.error("[htmlInput] failed to initialize CodeMirror 6", error);
+    editorError.value = `编辑器加载失败：${error instanceof Error ? error.message : "请稍后重试。"}`;
   } finally {
     loadingEditor.value = false;
   }
@@ -573,6 +500,11 @@ function handleDialogOpen() {
 }
 
 function retryLoadEditor() {
+  // Destroy existing instance and reinitialize
+  if (editorInstance.value) {
+    editorInstance.value.destroy();
+    editorInstance.value = null;
+  }
   initializeEditor();
 }
 
@@ -630,11 +562,13 @@ watch(
 );
 
 onBeforeUnmount(() => {
+  if (editorInstance.value) {
+    editorInstance.value.destroy();
+    editorInstance.value = null;
+  }
   if (editorContainerRef.value) {
     editorContainerRef.value.innerHTML = "";
   }
-
-  editorInstance.value = null;
 });
 </script>
 
@@ -1053,13 +987,11 @@ onBeforeUnmount(() => {
   padding: 8px 20px 12px;
 }
 
-:deep(.html-editor-dialog__editor .CodeMirror) {
+:deep(.html-editor-dialog__editor .cm-editor) {
   height: 100% !important;
   min-height: 400px;
   font-size: 14px;
   line-height: 1.6;
-  color: #0f172a;
-  background: #ffffff;
   font-family:
     "SFMono-Regular",
     "JetBrains Mono",
@@ -1070,24 +1002,24 @@ onBeforeUnmount(() => {
     monospace;
 }
 
-:deep(.html-editor-dialog__editor .CodeMirror-gutters) {
-  background: #f8fafc;
-  border-right: 1px solid #e2e8f0;
-}
-
-:deep(.html-editor-dialog__editor .CodeMirror-linenumber) {
-  color: #94a3b8;
-}
-
-:deep(.html-editor-dialog__editor .CodeMirror-scroll) {
+:deep(.html-editor-dialog__editor .cm-scroller) {
   height: 100% !important;
   min-height: 400px;
   overflow-y: auto !important;
-  background: #ffffff;
 }
 
-:deep(.html-editor-dialog__editor .CodeMirror-lines) {
+:deep(.html-editor-dialog__editor .cm-content) {
   padding: 10px 0;
+}
+
+:deep(.html-editor-dialog__editor .cm-tooltip-autocomplete) {
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+:deep(.html-editor-dialog__editor .cm-tooltip-autocomplete ul li) {
+  padding: 4px 8px;
+  font-size: 13px;
 }
 
 :deep(.html-editor-dialog__editor-shell .el-loading-mask) {

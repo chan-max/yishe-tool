@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Read(D:\\workspace\\yishe-admin\\src\\views\\material\\index/**)"
+      "Read(D:\\workspace\\yishe-admin\\src\\views\\material\\index/**)",
+      "Bash(npm run *)",
+      "Bash(findstr *)",
+      "Bash(npm install *)",
+      "Bash(npm ls *)"
     ]
   },
   "$version": 4

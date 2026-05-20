@@ -1,7 +1,6 @@
 import { reactive, computed } from "vue";
 import { directChat } from "../direct-client";
 import {
-  getOperationTools,
   executeOperation,
   createDesignOperationContext,
 } from "@/operations";
@@ -9,6 +8,10 @@ import { canvasStickerOptions } from "@/components/design/layout/canvas";
 import { buildSystemPrompt, buildImageAnalysisPrompt } from "../prompts/system";
 import { resourceService } from "../services/resource";
 import { captureCanvasForAI, getCanvasStateSummary } from "../capture";
+import { buildAITools, INTERACTION_TOOL_NAMES } from "../shared/tools";
+import { parseChatResponse, extractContent, extractJSON } from "../shared/response-parser";
+import { evaluateCanvasVisual } from "../visual-evaluate";
+import type { VisualEvaluation } from "../visual-evaluate";
 
 // ============ 类型定义 ============
 
@@ -45,56 +48,7 @@ interface SearchRecord {
 
 // ============ 工具定义 ============
 
-const interactionTools = ["ask_choice", "request_feedback"];
 const resourceToolNames = ["resource.searchFont", "resource.searchImage"];
-
-function getTools() {
-  const tools = getOperationTools();
-  return [
-    ...tools.map((t) => ({
-      type: "function" as const,
-      function: {
-        name: t.name,
-        description: t.description,
-        parameters: t.input_schema,
-      },
-    })),
-    ...resourceService.tools,
-    {
-      type: "function" as const,
-      function: {
-        name: "ask_choice",
-        description: "向用户提问，让用户做选择。当有多种设计方向、需要用户决策时使用。",
-        parameters: {
-          type: "object",
-          properties: {
-            question: { type: "string", description: "要问用户的问题" },
-            options: {
-              type: "array",
-              items: { type: "string" },
-              description: "选项列表（可选）",
-            },
-          },
-          required: ["question"],
-        },
-      },
-    },
-    {
-      type: "function" as const,
-      function: {
-        name: "request_feedback",
-        description: "展示当前效果，请求用户反馈。当完成一个步骤后，询问用户是否满意。",
-        parameters: {
-          type: "object",
-          properties: {
-            question: { type: "string", description: "想问用户什么" },
-          },
-          required: ["question"],
-        },
-      },
-    },
-  ];
-}
 
 // ============ Agent 状态 ============
 
@@ -207,12 +161,103 @@ function buildSearchContext(): string {
   return `\n\n## 搜索缓存\n${cachedSummary}\n请优先使用缓存结果，不要重复搜索相同关键词。如果需要不同关键词的资源才进行新搜索。`;
 }
 
+// ============ 工具参数安全解析 ============
+
+function safeParseToolArgs(raw: string): Record<string, any> {
+  // 尝试直接解析
+  try {
+    return JSON.parse(raw);
+  } catch {}
+
+  // 修复常见 JSON 格式问题
+  let fixed = raw;
+
+  // 1. 修复 htmlContent 中未转义的引号（最常见的问题）
+  // LLM 可能输出：{"htmlContent": "<div style="color:red">"}
+  // 需要修复为：{"htmlContent": "<div style=\"color:red\">"}
+  fixed = fixUnescapedQuotesInValue(fixed, "htmlContent");
+
+  // 2. 尾部缺少 }
+  if (fixed.trim().endsWith('"') && !fixed.trim().endsWith('}')) {
+    fixed = fixed.trimEnd() + "}";
+  }
+
+  try {
+    return JSON.parse(fixed);
+  } catch (e: any) {
+    console.warn("[Agent] Failed to recover JSON, returning empty args:", e.message);
+    return {};
+  }
+}
+
+function fixUnescapedQuotesInValue(json: string, key: string): string {
+  const pattern = new RegExp(`"${key}"\\s*:\\s*"`, "g");
+  let result = json;
+
+  let match = pattern.exec(result);
+  if (!match) return result;
+
+  // 找到值的起始位置和结束引号
+  const valueStart = match.index! + match[0].length;
+  let depth = 1;
+  let i = valueStart;
+  let inString = false;
+
+  for (; i < result.length; i++) {
+    const ch = result[i];
+    const prev = i > 0 ? result[i - 1] : "";
+
+    if (ch === '"' && prev !== "\\") {
+      if (!inString) {
+        inString = true;
+      } else {
+        depth--;
+        if (depth === 0) break;
+      }
+    }
+    // 实际上，我们需要跳过到下一个未转义的引号
+  }
+
+  // 简单方案：从 valueStart 到文件结束，找到最后一个 " 前有 } 的地方
+  // 更实用的方案：找到 "key": "... 末尾的引号
+  // 简化：只处理明显的未转义 HTML 引号问题
+
+  // 找到值的结束位置（下一个未转义的双引号后跟 , 或 }）
+  const valueEnd = findUnescapedQuote(result, valueStart);
+  if (valueEnd < 0) return result;
+
+  const rawValue = result.slice(valueStart, valueEnd);
+  // 对 HTML 内容中的双引号做转义（但要保留已转义的）
+  const escapedValue = rawValue
+    .replace(/\\"/g, "__ESCAPED_QUOTE__")
+    .replace(/"/g, '\\"')
+    .replace(/__ESCAPED_QUOTE__/g, '\\"');
+
+  return result.slice(0, valueStart) + escapedValue + result.slice(valueEnd);
+}
+
+function findUnescapedQuote(str: string, start: number): number {
+  for (let i = start; i < str.length; i++) {
+    if (str[i] === '"' && (i === 0 || str[i - 1] !== "\\")) {
+      // 检查前面是否有奇数个反斜杠
+      let bsCount = 0;
+      for (let j = i - 1; j >= 0 && str[j] === "\\"; j--) {
+        bsCount++;
+      }
+      if (bsCount % 2 === 0) {
+        return i;
+      }
+    }
+  }
+  return -1;
+}
+
 // ============ Agent 循环 ============
 
 async function runAgentLoop(userMessage: string) {
   const maxIterations = 10;
   const ctx = createDesignOperationContext();
-  const allTools = getTools();
+  const allTools = buildAITools({ includeResources: true, resourceTools: resourceService.tools });
   let iteration = 0;
 
   // 添加用户消息
@@ -255,20 +300,9 @@ async function runAgentLoop(userMessage: string) {
     const llmDuration = Date.now() - llmStartTime;
 
     // 解析响应
-    let message: any = null;
-    const res = response as any;
+    const parsed = parseChatResponse(response);
 
-    if (res?.choices?.[0]?.message) {
-      message = res.choices[0].message;
-    } else if (res?.data?.choices?.[0]?.message) {
-      message = res.data.choices[0].message;
-    } else if (typeof res?.data === "string") {
-      message = { content: res.data };
-    } else if (res?.content || res?.tool_calls) {
-      message = res;
-    }
-
-    if (!message) {
+    if (!parsed) {
       console.error("[Agent] No message in response:", response);
       addMessage({ 
         role: "assistant", 
@@ -278,8 +312,8 @@ async function runAgentLoop(userMessage: string) {
       return;
     }
 
-    const content = message.content || "";
-    const toolCalls = message.tool_calls || [];
+    const content = parsed.content;
+    const toolCalls = parsed.tool_calls || [];
 
     // 添加助手消息（包含调试信息）
     if (content || toolCalls.length > 0) {
@@ -305,14 +339,24 @@ async function runAgentLoop(userMessage: string) {
     agentState.status = "executing";
 
     for (const call of toolCalls) {
-      const args = typeof call.function.arguments === "string"
-        ? JSON.parse(call.function.arguments)
-        : call.function.arguments;
+      const rawArgs = call.function.arguments;
+      let args: any;
+
+      if (typeof rawArgs === "string") {
+        try {
+          args = JSON.parse(rawArgs);
+        } catch {
+          console.warn("[Agent] JSON parse failed, trying recovery:", String(rawArgs).slice(0, 200));
+          args = safeParseToolArgs(String(rawArgs));
+        }
+      } else {
+        args = rawArgs;
+      }
 
       console.log("[Agent] Executing tool:", call.function.name, args);
 
       // 检查是否是交互工具
-      if (interactionTools.includes(call.function.name)) {
+      if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
         agentState.status = "waiting_user";
         agentState.pendingInteraction = {
           type: call.function.name,
@@ -431,12 +475,38 @@ async function runAgentLoop(userMessage: string) {
   });
 }
 
+// ============ 视觉评估（手动触发，仅评估不修改） ============
+
+async function runVisualEvaluate(): Promise<VisualEvaluation | null> {
+  console.log("[Agent] 启动视觉评估...");
+
+  const evaluation = await evaluateCanvasVisual();
+  if (!evaluation) {
+    console.log("[Agent] 视觉评估失败或画布为空");
+    return null;
+  }
+
+  // 显示评估结果
+  addMessage({
+    role: "assistant",
+    content: [
+      `**视觉评估 - 评分: ${evaluation.score}/10**`,
+      evaluation.strengths.length > 0 ? `优点: ${evaluation.strengths.join("、")}` : "",
+      evaluation.weaknesses.length > 0 ? `不足: ${evaluation.weaknesses.join("、")}` : "",
+      evaluation.suggestions.length > 0 ? `建议: ${evaluation.suggestions.join("、")}` : "",
+    ].filter(Boolean).join("\n"),
+    meta: { iteration: 0 },
+  });
+
+  return evaluation;
+}
+
 // ============ 图片分析流程 ============
 
 async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
   const maxIterations = 10;
   const ctx = createDesignOperationContext();
-  const allTools = getTools();
+  const allTools = buildAITools({ includeResources: true, resourceTools: resourceService.tools });
   let iteration = 0;
 
   // 添加用户消息（带图片标记）
@@ -489,18 +559,9 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
   iteration = 1;
 
   // 解析分析响应
-  let analysisMessage: any = null;
-  const res = analysisResponse as any;
+  const parsed = parseChatResponse(analysisResponse);
 
-  if (res?.choices?.[0]?.message) {
-    analysisMessage = res.choices[0].message;
-  } else if (res?.data?.choices?.[0]?.message) {
-    analysisMessage = res.data.choices[0].message;
-  } else if (res?.content || res?.tool_calls) {
-    analysisMessage = res;
-  }
-
-  if (!analysisMessage) {
+  if (!parsed) {
     console.error("[Agent] 无法解析图片分析响应:", analysisResponse);
     addMessage({ 
       role: "assistant", 
@@ -510,8 +571,8 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
     return;
   }
 
-  const analysisContent = analysisMessage.content || "";
-  const toolCalls = analysisMessage.tool_calls || [];
+  const analysisContent = parsed.content;
+  const toolCalls = parsed.tool_calls || [];
 
   // 添加分析结果消息
   addMessage({
@@ -530,14 +591,19 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
     agentState.status = "executing";
 
     for (const call of toolCalls) {
-      const args = typeof call.function.arguments === "string"
-        ? JSON.parse(call.function.arguments)
-        : call.function.arguments;
+      const rawArgs = call.function.arguments;
+      let args: any;
+      if (typeof rawArgs === "string") {
+        try { args = JSON.parse(rawArgs); }
+        catch { args = safeParseToolArgs(String(rawArgs)); }
+      } else {
+        args = rawArgs;
+      }
 
       console.log("[Agent] 执行工具:", call.function.name, args);
 
       // 检查是否是交互工具
-      if (interactionTools.includes(call.function.name)) {
+      if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
         agentState.status = "waiting_user";
         agentState.pendingInteraction = {
           type: call.function.name,
@@ -664,25 +730,9 @@ ${stateSummary}
       temperature: 0.3,
     });
 
-    let resultText = "";
-    const res = response as any;
-    if (res?.choices?.[0]?.message?.content) {
-      resultText = res.choices[0].message.content;
-    } else if (typeof res?.data === "string") {
-      resultText = res.data;
-    } else if (typeof res?.content === "string") {
-      resultText = res.content;
-    }
+    let resultText = extractContent(response);
 
-    let evaluation: any;
-    try {
-      const jsonMatch = resultText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        evaluation = JSON.parse(jsonMatch[0]);
-      }
-    } catch {
-      evaluation = null;
-    }
+    let evaluation = extractJSON(resultText);
 
     if (!evaluation) {
       console.warn("[Agent] 无法解析评估结果");
@@ -804,27 +854,23 @@ ${evaluation.suggestions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
 请使用工具改进设计。只执行最关键的 1-2 个改进操作。`,
           },
         ],
-        tools: getTools(),
+        tools: buildAITools({ includeResources: true, resourceTools: resourceService.tools }),
       });
 
       // 解析并执行改进操作
-      const res = improveResponse as any;
-      let msg: any = null;
-      if (res?.choices?.[0]?.message) {
-        msg = res.choices[0].message;
-      } else if (res?.data?.choices?.[0]?.message) {
-        msg = res.data.choices[0].message;
-      } else if (res?.content || res?.tool_calls) {
-        msg = res;
-      }
+      const msg = parseChatResponse(improveResponse);
 
       if (msg?.tool_calls && msg.tool_calls.length > 0) {
         const ctx = createDesignOperationContext();
         for (const call of msg.tool_calls) {
-          const args =
-            typeof call.function.arguments === "string"
-              ? JSON.parse(call.function.arguments)
-              : call.function.arguments;
+          const rawArgs = call.function.arguments;
+          let args: any;
+          if (typeof rawArgs === "string") {
+            try { args = JSON.parse(rawArgs); }
+            catch { args = safeParseToolArgs(String(rawArgs)); }
+          } else {
+            args = rawArgs;
+          }
 
           try {
             if (resourceToolNames.includes(call.function.name)) {
@@ -926,6 +972,25 @@ export const designAgent = {
     if (waitForUserInputPromise) {
       waitForUserInputPromise.resolve(response);
       waitForUserInputPromise = null;
+    }
+  },
+
+  async evaluate(): Promise<VisualEvaluation | null> {
+    if (agentState.status !== "idle") {
+      console.warn("[Agent] Agent is busy, status:", agentState.status);
+      return null;
+    }
+
+    agentState.status = "thinking";
+
+    try {
+      return await runVisualEvaluate();
+    } catch (error: any) {
+      console.error("[Agent] Evaluate error:", error);
+      return null;
+    } finally {
+      agentState.status = "idle";
+      emit({ type: "done", data: null });
     }
   },
 

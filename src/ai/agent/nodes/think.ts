@@ -2,57 +2,15 @@ import { AIMessage } from "@langchain/core/messages";
 import type { AgentState } from "../state";
 import { buildSystemPrompt } from "../../prompts/system";
 import { directChat } from "../../direct-client";
-import { getOperationTools } from "@/operations";
+import { buildAITools } from "../../shared/tools";
+import { parseChatResponse } from "../../shared/response-parser";
 
 // ============ 思考节点 ============
 
 export async function thinkNode(state: AgentState): Promise<Partial<AgentState>> {
   console.log("[Agent] Think node", { iteration: state.iteration });
 
-  const tools = getOperationTools();
-  const allTools = [
-    ...tools.map((t) => ({
-      type: "function" as const,
-      function: {
-        name: t.name,
-        description: t.description,
-        parameters: t.input_schema,
-      },
-    })),
-    {
-      type: "function" as const,
-      function: {
-        name: "ask_choice",
-        description: "向用户提问，让用户做选择。当有多种设计方向、需要用户决策时使用。",
-        parameters: {
-          type: "object",
-          properties: {
-            question: { type: "string", description: "要问用户的问题" },
-            options: {
-              type: "array",
-              items: { type: "string" },
-              description: "选项列表（可选）",
-            },
-          },
-          required: ["question"],
-        },
-      },
-    },
-    {
-      type: "function" as const,
-      function: {
-        name: "request_feedback",
-        description: "展示当前效果，请求用户反馈。当完成一个步骤后，询问用户是否满意。",
-        parameters: {
-          type: "object",
-          properties: {
-            question: { type: "string", description: "想问用户什么" },
-          },
-          required: ["question"],
-        },
-      },
-    },
-  ];
+  const allTools = buildAITools();
 
   // 构建消息列表
   const messagesForLLM = [
@@ -87,7 +45,7 @@ export async function thinkNode(state: AgentState): Promise<Partial<AgentState>>
     });
 
     // 解析响应
-    const message = parseResponse(response);
+    const message = parseChatResponse(response);
 
     if (!message) {
       return {
@@ -116,24 +74,4 @@ export async function thinkNode(state: AgentState): Promise<Partial<AgentState>>
       currentNode: "error",
     };
   }
-}
-
-// ============ 辅助函数 ============
-
-function parseResponse(response: any): any {
-  const res = response as any;
-
-  if (res?.choices?.[0]?.message) {
-    return res.choices[0].message;
-  }
-  if (res?.data?.choices?.[0]?.message) {
-    return res.data.choices[0].message;
-  }
-  if (typeof res?.data === "string") {
-    return { content: res.data };
-  }
-  if (res?.content || res?.tool_calls) {
-    return res;
-  }
-  return null;
 }

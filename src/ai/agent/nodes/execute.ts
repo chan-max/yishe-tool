@@ -4,8 +4,7 @@ import {
   executeOperation,
   createDesignOperationContext,
 } from "@/operations";
-
-const interactionTools = ["ask_choice", "request_feedback"];
+import { INTERACTION_TOOL_NAMES } from "../../shared/tools";
 
 // ============ 执行节点 ============
 
@@ -22,7 +21,7 @@ export async function executeNode(state: AgentState): Promise<Partial<AgentState
       : call.function.arguments;
 
     // 检查是否是交互工具
-    if (interactionTools.includes(call.function.name)) {
+    if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
       return {
         pendingInteraction: {
           type: call.function.name,

@@ -3,11 +3,12 @@ import { BaseMessage, HumanMessage, AIMessage, ToolMessage } from "@langchain/co
 import { reactive, computed } from "vue";
 import { directChat } from "@/ai/direct-client";
 import {
-  getOperationTools,
   executeOperation,
   createDesignOperationContext,
 } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
+import { buildAITools, INTERACTION_TOOL_NAMES } from "@/ai/shared/tools";
+import { parseChatResponse } from "@/ai/shared/response-parser";
 
 // ============ 状态定义 ============
 
@@ -224,56 +225,11 @@ ${JSON.stringify(canvasState, null, 2)}
 
 // ============ 节点实现 ============
 
-const interactionTools = ["ask_choice", "request_feedback"];
-
 // 思考节点：调用 LLM 获取响应
 async function thinkNode(state: State): Promise<Partial<State>> {
   console.log("[LangGraph] Think node", { iteration: state.iteration });
 
-  const tools = getOperationTools();
-  const allTools = [
-    ...tools.map((t) => ({
-      type: "function" as const,
-      function: {
-        name: t.name,
-        description: t.description,
-        parameters: t.input_schema,
-      },
-    })),
-    {
-      type: "function" as const,
-      function: {
-        name: "ask_choice",
-        description: "向用户提问，让用户做选择。当有多种设计方向、需要用户决策时使用。",
-        parameters: {
-          type: "object",
-          properties: {
-            question: { type: "string", description: "要问用户的问题" },
-            options: {
-              type: "array",
-              items: { type: "string" },
-              description: "选项列表（可选）",
-            },
-          },
-          required: ["question"],
-        },
-      },
-    },
-    {
-      type: "function" as const,
-      function: {
-        name: "request_feedback",
-        description: "展示当前效果，请求用户反馈。当完成一个步骤后，询问用户是否满意。",
-        parameters: {
-          type: "object",
-          properties: {
-            question: { type: "string", description: "想问用户什么" },
-          },
-          required: ["question"],
-        },
-      },
-    },
-  ];
+  const allTools = buildAITools();
 
   const messagesForLLM = [
     { role: "system" as const, content: buildSystemPrompt() },
@@ -291,19 +247,7 @@ async function thinkNode(state: State): Promise<Partial<State>> {
       tools: allTools,
     });
 
-    // 解析响应
-    let message: any = null;
-    const res = response as any;
-
-    if (res?.choices?.[0]?.message) {
-      message = res.choices[0].message;
-    } else if (res?.data?.choices?.[0]?.message) {
-      message = res.data.choices[0].message;
-    } else if (typeof res?.data === "string") {
-      message = { content: res.data };
-    } else if (res?.content || res?.tool_calls) {
-      message = res;
-    }
+    const message = parseChatResponse(response);
 
     if (!message) {
       return {
@@ -343,7 +287,7 @@ async function executeToolsNode(state: State): Promise<Partial<State>> {
       : call.function.arguments;
 
     // 检查是否是交互工具
-    if (interactionTools.includes(call.function.name)) {
+    if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
       return {
         pendingInteraction: {
           type: call.function.name,

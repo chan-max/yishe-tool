@@ -2,6 +2,7 @@ import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import type { AgentState } from "../state";
 import { buildPlanPrompt } from "../../prompts/system";
 import { directChat } from "../../direct-client";
+import { extractContent, extractJSON } from "../../shared/response-parser";
 
 // ============ 规划节点 ============
 
@@ -73,36 +74,4 @@ export async function planNode(state: AgentState): Promise<Partial<AgentState>> 
       currentNode: "think",
     };
   }
-}
-
-// ============ 辅助函数 ============
-
-function extractContent(response: any): string {
-  const res = response as any;
-  if (res?.choices?.[0]?.message?.content) {
-    return res.choices[0].message.content;
-  }
-  if (res?.data?.choices?.[0]?.message?.content) {
-    return res.data.choices[0].message.content;
-  }
-  if (typeof res?.data === "string") {
-    return res.data;
-  }
-  if (res?.content) {
-    return res.content;
-  }
-  return "";
-}
-
-function extractJSON(text: string): any {
-  // 尝试提取 JSON
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    try {
-      return JSON.parse(jsonMatch[0]);
-    } catch {
-      return null;
-    }
-  }
-  return null;
 }

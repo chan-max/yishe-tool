@@ -2,6 +2,9 @@ import type { KnowledgeItem } from "./types";
 
 export const htmlElementsKnowledge: KnowledgeItem = {
   triggers: ["html", "添加", "创建", "设计", "元素", "背景", "标题", "卡片", "按钮", "矩形", "圆"],
+  priority: "core", // 核心知识，始终注入
+  category: "html-basics",
+  tokens: 300,
 
   content: `## HTML 写法速查
 

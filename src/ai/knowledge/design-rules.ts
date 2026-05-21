@@ -2,6 +2,9 @@ import type { KnowledgeItem } from "./types";
 
 export const designRulesKnowledge: KnowledgeItem = {
   triggers: ["设计", "配色", "颜色", "字号", "字体大小", "布局", "构图", "风格", "好看", "美化"],
+  priority: "core", // 核心规则，始终注入
+  category: "design-basics",
+  tokens: 200,
 
   content: `## 设计规则
 

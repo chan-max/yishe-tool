@@ -1,5 +1,6 @@
 import { apiInstance } from "@/api/apiInstance";
 import { Url } from "@/api/url";
+import { getAIConfig } from "./direct-client";
 import type {
   AiChatOptions,
   AiTextOptions,
@@ -13,96 +14,209 @@ function unwrapResponseData<T>(response: any): T {
   return (response?.data?.data ?? response?.data ?? response) as T;
 }
 
+/**
+ * 构建 OpenAI 风格的响应对象（从 fetch 响应解析）
+ */
+function buildChatResponse(data: any, model: string): AiChatResponse {
+  return {
+    id: data.id || `chatcmpl-${Date.now()}`,
+    object: data.object || "chat.completion",
+    created: data.created || Math.floor(Date.now() / 1000),
+    model: data.model || model,
+    choices: data.choices || [],
+    usage: data.usage,
+  };
+}
+
 export async function aiChat(options: AiChatOptions): Promise<AiChatResponse> {
   const {
-    featureCode,
     messages,
     model,
     keyId,
-    stream,
     temperature,
     maxTokens,
     ...rest
   } = options;
-  const payload: Record<string, any> = {
-    featureCode,
+
+  // 获取 AI 配置（前端直接调用）
+  const config = await getAIConfig(keyId);
+
+  // 构建请求体
+  const body: Record<string, any> = {
+    model: model || config.model,
     messages,
-    stream: stream ?? false,
+    temperature: temperature ?? 0.7,
     ...rest,
   };
-  if (model) payload.model = model;
-  if (keyId != null) payload.keyId = keyId;
-  if (temperature != null) payload.temperature = temperature;
-  if (maxTokens != null) payload.maxTokens = maxTokens;
 
-  const res = await apiInstance.post(Url.AI_CHAT, payload);
-  return res.data;
+  if (maxTokens) body.max_tokens = maxTokens;
+
+  // 直接调用 OpenAI API
+  const response = await fetch(`${config.baseURL}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${config.apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`AI 请求失败: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  return buildChatResponse(data, body.model);
 }
 
 export async function aiText(options: AiTextOptions): Promise<AiChatResponse> {
   const {
-    featureCode,
     prompt,
     systemPrompt,
     model,
     keyId,
-    stream,
     temperature,
     maxTokens,
     responseFormat,
   } = options;
-  const payload: Record<string, any> = {
-    featureCode,
-    prompt,
-    stream: stream ?? false,
-  };
-  if (systemPrompt) payload.systemPrompt = systemPrompt;
-  if (model) payload.model = model;
-  if (keyId != null) payload.keyId = keyId;
-  if (temperature != null) payload.temperature = temperature;
-  if (maxTokens != null) payload.maxTokens = maxTokens;
-  if (responseFormat) payload.responseFormat = responseFormat;
 
-  const res = await apiInstance.post(Url.AI_TEXT, payload);
-  return res.data;
+  // 获取 AI 配置（前端直接调用）
+  const config = await getAIConfig(keyId);
+
+  // 构建消息
+  const messages: Array<{ role: string; content: string }> = [];
+  if (systemPrompt) {
+    messages.push({ role: "system", content: systemPrompt });
+  }
+  messages.push({ role: "user", content: prompt });
+
+  // 构建请求体
+  const body: Record<string, any> = {
+    model: model || config.model,
+    messages,
+    temperature: temperature ?? 0.7,
+  };
+
+  if (maxTokens) body.max_tokens = maxTokens;
+  if (responseFormat) body.response_format = responseFormat;
+
+  // 直接调用 OpenAI API
+  const response = await fetch(`${config.baseURL}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${config.apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`AI 请求失败: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  return buildChatResponse(data, body.model);
 }
 
 export async function aiVision(
   options: AiVisionOptions,
 ): Promise<AiChatResponse> {
-  const { featureCode, prompt, imageUrls, systemPrompt, model, keyId } =
-    options;
-  const payload: Record<string, any> = {
-    featureCode,
-    prompt,
-    imageUrls,
-  };
-  if (systemPrompt) payload.systemPrompt = systemPrompt;
-  if (model) payload.model = model;
-  if (keyId != null) payload.keyId = keyId;
+  const { prompt, imageUrls, systemPrompt, model, keyId } = options;
 
-  const res = await apiInstance.post(Url.AI_VISION, payload);
-  return res.data;
+  // 获取 AI 配置（前端直接调用）
+  const config = await getAIConfig(keyId);
+
+  // 构建消息内容（支持图文）
+  const contentParts: Array<{ type: string; text?: string; image_url?: { url: string } }> = [];
+  
+  // 添加图片
+  for (const url of imageUrls) {
+    contentParts.push({ type: "image_url", image_url: { url } });
+  }
+  
+  // 添加文本
+  contentParts.push({ type: "text", text: prompt });
+
+  const messages: Array<{ role: string; content: any }> = [];
+  if (systemPrompt) {
+    messages.push({ role: "system", content: systemPrompt });
+  }
+  messages.push({ role: "user", content: contentParts });
+
+  // 构建请求体
+  const body: Record<string, any> = {
+    model: model || config.model,
+    messages,
+    temperature: 0.7,
+  };
+
+  // 直接调用 OpenAI API
+  const response = await fetch(`${config.baseURL}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${config.apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`AI 请求失败: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  return buildChatResponse(data, body.model);
 }
 
 export async function aiGenerateImage(
   options: AiTtiOptions,
 ): Promise<AiTtiResult> {
-  const { featureCode, prompt, negativePrompt, size, n, style, model, keyId } =
-    options;
-  const payload: Record<string, any> = {
-    featureCode,
-    prompt,
-  };
-  if (negativePrompt) payload.negativePrompt = negativePrompt;
-  if (size) payload.size = size;
-  if (n != null) payload.n = n;
-  if (style) payload.style = style;
-  if (model) payload.model = model;
-  if (keyId != null) payload.keyId = keyId;
+  const { prompt, negativePrompt, size, n, style, model, keyId } = options;
 
-  const res = await apiInstance.post(Url.AI_TTI, payload);
-  return res.data;
+  // 获取 AI 配置（前端直接调用）
+  const config = await getAIConfig(keyId);
+
+  // 构建请求体（OpenAI Images API）
+  const body: Record<string, any> = {
+    model: model || config.model,
+    prompt,
+    n: n || 1,
+  };
+
+  if (size) body.size = size;
+  if (style) body.style = style;
+
+  // 直接调用 OpenAI Images API
+  const response = await fetch(`${config.baseURL}/images/generations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${config.apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`AI 图片生成失败: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  
+  // 解析返回的图片
+  const images = (data.data || []).map((item: any) => ({
+    url: item.url || item.b64_json ? `data:image/png;base64,${item.b64_json}` : "",
+  })).filter((img: any) => img.url);
+
+  return {
+    images,
+    raw: data,
+    usedModel: body.model,
+    usedKeyId: keyId,
+  };
 }
 
 export async function aiGetTaskStatus(
@@ -110,12 +224,20 @@ export async function aiGetTaskStatus(
   featureCode?: string,
   keyId?: number | null,
 ): Promise<any> {
-  const payload: Record<string, any> = { taskId };
-  if (featureCode) payload.featureCode = featureCode;
-  if (keyId != null) payload.keyId = keyId;
+  // 获取 AI 配置（前端直接调用）
+  const config = await getAIConfig(keyId);
 
-  const res = await apiInstance.post(Url.AI_TTI_TASK_STATUS, payload);
-  return res.data;
+  // 注：OpenAI API 是同步的，这个函数主要用于兼容旧的异步任务系统
+  // 如果使用的是支持异步任务的提供商，需要自行实现状态查询
+  console.warn(
+    "[aiGetTaskStatus] OpenAI API 为同步调用，此函数仅返回兼容响应"
+  );
+
+  return {
+    taskId,
+    status: "completed",
+    result: null,
+  };
 }
 
 export async function aiGetUsageOptions(): Promise<any[]> {

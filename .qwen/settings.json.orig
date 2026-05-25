@@ -6,7 +6,12 @@
       "Bash(findstr *)",
       "Bash(npm install *)",
       "Bash(npm ls *)",
-      "Bash(netstat *)"
+      "Bash(netstat *)",
+      "Bash(taskkill *)",
+      "Read(d:\\workspace\\yishe-admin\\src\\views\\material\\index/**)",
+      "Read(d:\\workspace\\yishe-admin\\src\\views\\material\\index\\index.vue/**)",
+      "Read(D:\\work\\erp_web\\src\\views\\pick\\pushMessages/**)",
+      "Read(D:\\work\\erp_web\\src\\views\\pick\\selectProduct/**)"
     ]
   },
   "$version": 4

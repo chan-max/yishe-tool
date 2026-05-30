@@ -23,9 +23,11 @@ import {
 axios.defaults.timeout = 1000000; // 时间超时设置100s
 
 // 读取配置中的请求地址
-axios.defaults.baseURL = String(import.meta.env.VITE_API || "").trim() || "/api";
+const apiBaseURL = String(import.meta.env.VITE_API || "").trim() || "/api";
+axios.defaults.baseURL = apiBaseURL;
 
 export const apiInstance: any = axios.create({
+    baseURL: apiBaseURL,
     validateStatus: function (status) {
         return status >= 200 && status < 300 || status === 401; // 允许 401
     }
@@ -39,4 +41,3 @@ apiInstance.interceptors.request.use(formDataFormatRequestInterceptor)
 apiInstance.interceptors.response.use(tokenResponseInterceptor);
 apiInstance.interceptors.response.use(messageResponseInterceptor);
 apiInstance.interceptors.response.use(defaultResponseInterceptors);
-

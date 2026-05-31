@@ -5,6 +5,10 @@ on:
     branches: ["main"]
     paths:
       - "package.json"
+      - "package-lock.json"
+      - ".env.production"
+      - "vite.config.ts"
+      - "src/**"
   workflow_dispatch:
 
 jobs:
@@ -78,6 +82,7 @@ jobs:
         run: npm run build
         env:
           NODE_OPTIONS: "--max_old_space_size=1024000"
+          VITE_API: "https://1s.design:1520"
 
       - name: Deploy to Tencent Cloud
         uses: appleboy/scp-action@v0.1.7

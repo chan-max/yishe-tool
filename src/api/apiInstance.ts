@@ -23,11 +23,11 @@ import {
 axios.defaults.timeout = 1000000; // 时间超时设置100s
 
 // 读取配置中的请求地址
-const apiBaseURL = String(import.meta.env.VITE_API || "").trim() || "/api";
+const apiBaseURL = String(import.meta.env.VITE_API || (import.meta.env.DEV ? "/api" : "")).trim();
 axios.defaults.baseURL = apiBaseURL;
 
 export const apiInstance: any = axios.create({
-    baseURL: apiBaseURL,
+    baseURL: apiBaseURL || undefined,
     validateStatus: function (status) {
         return status >= 200 && status < 300 || status === 401; // 允许 401
     }

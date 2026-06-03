@@ -134,5 +134,5 @@
     "vite-svg-loader": "^5.1.1",
     "vue-tsc": "^3.2.6"
   },
-  "version": "0.0.3"
+  "version": "0.0.4"
 }

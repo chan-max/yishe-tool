@@ -8,6 +8,7 @@ on:
       - "package-lock.json"
       - ".env.production"
       - "vite.config.ts"
+      - ".github/workflows/deploy.yml"
       - "src/**"
   workflow_dispatch:
 

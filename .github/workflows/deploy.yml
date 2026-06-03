@@ -47,6 +47,16 @@ jobs:
             exit 0
           fi
 
+          CHANGED_FILES=$(git diff --name-only "$BEFORE_SHA" "${{ github.sha }}")
+          echo "$CHANGED_FILES"
+
+          if echo "$CHANGED_FILES" | grep -Ev '^package(-lock)?\.json$' | grep -q .; then
+            echo "previous_version=config-or-source-change" >> "$GITHUB_OUTPUT"
+            echo "version_changed=true" >> "$GITHUB_OUTPUT"
+            echo "Source/config changed, continue deploy without requiring a package.json version bump."
+            exit 0
+          fi
+
           PREVIOUS_VERSION=$(git show "${BEFORE_SHA}:package.json" | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).version")
           echo "previous_version=$PREVIOUS_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -69,7 +79,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Generate package-lock.json
@@ -82,7 +92,7 @@ jobs:
         run: npm run build
         env:
           NODE_OPTIONS: "--max_old_space_size=1024000"
-          VITE_API: "https://1s.design:1520"
+          VITE_API: "http://1s.design:1520"
 
       - name: Deploy to Tencent Cloud
         uses: appleboy/scp-action@v0.1.7

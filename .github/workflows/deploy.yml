@@ -107,53 +107,35 @@ jobs:
           NODE_OPTIONS: "--max_old_space_size=1024000"
           VITE_API: "https://1s.design:1520"
 
-      - name: Deploy to Tencent Cloud
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: 22
-          source: "www/**"
-          target: "/www/wwwroot/49.232.186.238_1522"
-          rm: false
-          strip_components: 1
-          overwrite: true
-          command_timeout: "10m"
-          timeout: "10m"
-          debug: true
+      - name: Install deploy tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rsync sshpass
 
-      - name: Deploy to 1s.design/tools
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: 22
-          source: "www/**"
-          target: "/www/wwwroot/1s.design/tools"
-          rm: false
-          strip_components: 1
-          overwrite: true
-          command_timeout: "10m"
-          timeout: "10m"
-          debug: true
+      - name: Check SSH connectivity
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        run: nc -vz -w 20 "$SERVER_HOST" 22
 
-      - name: Deploy to tool.1s.design
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: 22
-          source: "www/**"
-          target: "/www/wwwroot/tool.1s.design"
-          rm: false
-          strip_components: 1
-          overwrite: true
-          command_timeout: "10m"
-          timeout: "10m"
-          debug: true
+      - name: Deploy static files
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          deploy_to() {
+            local target="$1"
+            echo "Deploying www/ to ${target}"
+            sshpass -p "$SERVER_PASSWORD" rsync -az --delete --stats \
+              -e "ssh -p 22 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3" \
+              www/ "${SERVER_USERNAME}@${SERVER_HOST}:${target}/"
+          }
+
+          deploy_to "/www/wwwroot/49.232.186.238_1522"
+          deploy_to "/www/wwwroot/1s.design/tools"
+          deploy_to "/www/wwwroot/tool.1s.design"
 
       - name: Send Feishu Notification
         if: always()

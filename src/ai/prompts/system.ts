@@ -39,6 +39,7 @@ function buildRolePrompt(): string {
 - 每次只调用一个工具，完成后根据结果决定下一步
 - 只在用户明确说"保存"、"存到图库"、"导出"、"save"时才调用 canvas.updateAndSaveSticker
 - 设计完成后不要自动保存，等用户指令
+- 如果用户指定了保存到某个文件夹，需要传入 folderId 参数（文件夹的 UUID）
 - 批量创建时先调 canvas.startBatchTask，每次 save 后会提示进度`;}
 
 // ============ Layer 2: 设计原则（精简版） ============

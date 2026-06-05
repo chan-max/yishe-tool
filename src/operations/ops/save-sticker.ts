@@ -184,9 +184,16 @@ registerOperation({
       default: true,
       description: '自动去除白色/透明边框',
     },
+    {
+      name: 'folderId',
+      label: '文件夹ID',
+      type: 'string',
+      placeholder: '输入文件夹ID（留空则保存到根目录）',
+      description: '指定保存到哪个文件夹，留空则保存到根目录',
+    },
   ],
   async execute(params, ctx) {
-    let { name, description, keywords, autoTrim = true } = params
+    let { name, description, keywords, autoTrim = true, folderId } = params
 
     const controller = currentCanvasControllerInstance.value
     if (!controller) {
@@ -257,6 +264,7 @@ registerOperation({
         description: description || '',
         keywords: keywords || '',
         isCustom: true,
+        folderId: folderId || null,
         meta: {
           data: JSON.parse(JSON.stringify(canvasStickerOptions.value)),
         },

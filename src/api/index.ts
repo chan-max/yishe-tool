@@ -503,6 +503,18 @@ export const updateSticker = (data) => new Promise(async (resolve, reject) => {
   resolve(res.data.data)
 })
 
+/*
+ 获取贴纸文件夹树
+*/
+export const getStickerFolderTree = () => new Promise(async (resolve, reject) => {
+  try {
+    let res = await apiInstance.get('/api/sticker/sticker-folder/tree')
+    resolve(res.data.data)
+  } catch (e) {
+    reject(e)
+  }
+})
+
 
 
 /**
@@ -812,6 +824,8 @@ class Api {
   getCustomStickerList = getCustomStickerList
 
   updateSticker = updateSticker
+
+  getStickerFolderTree = getStickerFolderTree
 
   deleteSticker = deleteSticker
 

@@ -137,7 +137,7 @@ watch(show, async (val) => {
         panzoomInstance = panzoom(panzoomRef.value, {
             smoothScroll: true,
             maxZoom: 5,
-            minZoom: 0.1,
+            minZoom: 0.02,
             bounds: true,
             boundsPadding: 0.1,
             zoomSpeed: 0.065, // 调优后的缩放速度，更丝滑

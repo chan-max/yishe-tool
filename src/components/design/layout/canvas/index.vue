@@ -222,6 +222,37 @@
         ></tagsInput>
       </el-form-item>
 
+      <el-form-item label="保存到:">
+        <div class="folder-tree-wrapper">
+          <el-tree
+            :data="folderTree"
+            :props="{ label: 'name', children: 'children' }"
+            node-key="id"
+            :expand-on-click-node="false"
+            @node-click="handleFolderNodeClick"
+          >
+            <template #default="{ node, data }">
+              <span
+                class="folder-tree-item"
+                :class="{ 'is-selected': editForm.folderId === data.id }"
+                @click.stop="toggleFolderSelect(data.id)"
+              >
+                <span class="folder-tree-text">{{ node.label }}</span>
+                <el-icon v-if="editForm.folderId === data.id" class="folder-check-icon">
+                  <Check />
+                </el-icon>
+              </span>
+            </template>
+          </el-tree>
+          <div class="folder-tree-hint">
+            当前选择: {{ selectedFolderName || '根目录' }}
+            <el-button v-if="editForm.folderId" link type="primary" size="small" @click="clearFolderSelect">
+              取消选择
+            </el-button>
+          </div>
+        </div>
+      </el-form-item>
+
       <el-form-item label="自动去除白色边框:">
         <a-switch
           v-model:checked="editForm.autoTrim"
@@ -268,7 +299,7 @@ import {
   nextTick,
 } from "vue";
 
-import { CircleCloseFilled, FullScreen } from "@element-plus/icons-vue";
+import { CircleCloseFilled, FullScreen, Check } from "@element-plus/icons-vue";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import addPopover from "./addPopover.vue";
 import Api from "@/api";
@@ -359,13 +390,54 @@ const editForm = ref({
   description: "",
   keywords: [],
   autoTrim: true, // 默认开启自动去除白色边框
+  folderId: null as string | null, // 文件夹 ID
 });
+
+const folderTree = ref<any[]>([]);
+
+const selectedFolderName = computed(() => {
+  if (!editForm.value.folderId) return '';
+  function findName(nodes: any[]): string | null {
+    for (const n of nodes) {
+      if (n.id === editForm.value.folderId) return n.name;
+      const found = findName(n.children || []);
+      if (found) return found;
+    }
+    return null;
+  }
+  return findName(folderTree.value) || '';
+});
+
+function toggleFolderSelect(id: string) {
+  editForm.value.folderId = editForm.value.folderId === id ? null : id;
+}
+
+function handleFolderNodeClick(data: any) {
+  // el-tree 的 node-click 由展开/折叠箭头触发，不改变选中状态
+  // 选中状态由 toggleFolderSelect 控制
+}
+
+function clearFolderSelect() {
+  editForm.value.folderId = null;
+}
+
+async function loadFolderTree() {
+  if (folderTree.value.length > 0) return; // 已加载过则不重复加载
+  try {
+    const res = await Api.getStickerFolderTree();
+    folderTree.value = res || [];
+  } catch (e) {
+    console.error("获取文件夹树失败:", e);
+  }
+}
 
 function handleUploadClick() {
   if (shouldUpdateCanvasSticker.value) {
     message.warning("请先点击'更新贴纸'按钮更新画布内容");
     return;
   }
+  loadFolderTree();
+  editForm.value.folderId = null; // 每次打开时重置文件夹选择
   showUploadModal.value = true;
 }
 
@@ -430,6 +502,7 @@ async function doUpload() {
       ...editForm.value,
       keywords: editForm.value.keywords.join(","),
       isCustom: true, // 标识为自定义贴纸
+      folderId: editForm.value.folderId || null,
       meta: {
         data: canvasStickerOptions.value,
       },
@@ -478,6 +551,107 @@ function genSticker() {
 <style lang="less" scoped>
 :deep(.el-form-item) {
   margin-bottom: 8px;
+
+  .el-form-item__label {
+    line-height: 1;
+  }
+
+  .el-form-item__content {
+    line-height: 1;
+  }
+}
+
+.folder-tree-wrapper {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--1s-border-color, #e8e8e8);
+  border-radius: 6px;
+  padding: 4px 6px;
+  background: var(--1s-surface-background, #fafafa);
+
+  :deep(.el-tree) {
+    background: transparent;
+    font-size: 12px;
+  }
+
+  :deep(.el-tree-node__content) {
+    height: 26px;
+    border-radius: 3px;
+    padding: 0;
+  }
+
+  :deep(.el-tree-node__content:hover) {
+    background: transparent;
+  }
+
+  :deep(.el-tree-node.is-current > .el-tree-node__content) {
+    background: transparent !important;
+  }
+
+  :deep(.el-tree-node__expand-icon) {
+    font-size: 12px;
+    color: #999;
+  }
+
+  :deep(.el-tree-node__expand-icon.is-leaf) {
+    width: 12px;
+  }
+}
+
+.folder-tree-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 2px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  color: var(--1s-text-color, #333);
+  transition: all 0.15s;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  &.is-selected {
+    background-color: #1890ff;
+    color: #fff;
+
+    &:hover {
+      background-color: #096dd9;
+    }
+
+    .folder-check-icon {
+      color: #fff;
+    }
+  }
+}
+
+.folder-tree-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folder-check-icon {
+  font-size: 14px;
+  color: #1890ff;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.folder-tree-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--1s-border-color, #e8e8e8);
+  font-size: 12px;
+  color: var(--1s-text-color-secondary, #999);
 }
 
 .container {

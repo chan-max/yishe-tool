@@ -23,7 +23,11 @@
       "Read(d:\\work\\erp_web\\src\\common/**)",
       "Read(d:\\work\\erp_web\\src\\views\\pick\\pick/**)",
       "Read(d:\\work\\erp_web\\src\\views\\pick/**)",
-      "Read(d:\\work\\erp_web\\src\\views\\publish\\pictures/**)"
+      "Read(d:\\work\\erp_web\\src\\views\\publish\\pictures/**)",
+      "Read(d:\\work\\erp_web\\src\\composables/**)",
+      "Read(D:\\workspace\\yishe-server/**)",
+      "Read(D:\\workspace\\yishe-admin/**)",
+      "Read(d:\\workspace\\yishe-admin\\src\\views\\external\\toolkit\\temu/**)"
     ]
   },
   "$version": 4

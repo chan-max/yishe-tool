@@ -115,7 +115,7 @@ const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按
 - canvas.clear - 清空画布
 - canvas.exportPng - 导出 PNG
 - canvas.analyze - AI 视觉分析
-- canvas.updateAndSaveSticker - 保存到素材库
+- canvas.updateAndSaveSticker - 保存到素材库（支持 folderId 指定文件夹）
 
 ### 元素样式
 - element.setStyle - 设置位置、大小、旋转、透明度、层级
@@ -169,7 +169,7 @@ const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按
 6. **调整样式** — element.setBorder / element.setShadow / element.setBorderRadius 等美化
 7. **调整布局** — element.setStyle 调整位置、大小、层级（使用三分法构图）
 8. **自测试迭代** — 使用 canvas.createAndAnalyze 进行效果验证和优化
-9. **用户要求保存时** — 最后一步加 canvas.updateAndSaveSticker 或 canvas.exportPng
+9. **用户要求保存时** — 最后一步加 canvas.updateAndSaveSticker（可传 folderId 保存到指定文件夹）或 canvas.exportPng
 
 ## HTML 模板使用指南（重要！）
 
@@ -341,7 +341,7 @@ export function buildOperationsPrompt(): string {
   lines.push("- 颜色值使用 CSS 颜色格式，如 #ff0000, rgb(255,0,0)");
   lines.push("- 文字字号单位是 px，160 是正常大小，300+ 是标题大小");
   lines.push(
-    "- 当用户要求保存/导出/完成设计时，最后一步使用 canvas.updateAndSaveSticker 保存到素材库，或 canvas.exportPng 导出下载",
+    "- 当用户要求保存/导出/完成设计时，最后一步使用 canvas.updateAndSaveSticker 保存到素材库（可传 folderId 指定文件夹），或 canvas.exportPng 导出下载",
   );
   lines.push("- 设计完成后主动提示用户是否保存");
   lines.push("");

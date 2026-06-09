@@ -26,11 +26,24 @@ function getDefaultWsUrl() {
   const explicitUrl = import.meta.env.VITE_WS_URL as string | undefined;
   if (explicitUrl) return explicitUrl;
 
+  const apiBase = String(import.meta.env.VITE_API || "").trim();
+  if (apiBase) {
+    try {
+      if (/^https?:\/\//i.test(apiBase)) {
+        return new URL(apiBase).origin;
+      }
+
+      if (typeof window !== "undefined") {
+        return new URL(apiBase, window.location.origin).origin;
+      }
+    } catch {
+      // Fall through to the current page origin.
+    }
+  }
+
   if (typeof window === "undefined") return "";
 
-  const { protocol, host } = window.location;
-  const wsProtocol = protocol === "https:" ? "wss:" : "ws:";
-  return `${wsProtocol}//${host}/ws`;
+  return window.location.origin;
 }
 
 function parseBrowserInfo(ua: string) {

@@ -1,16 +1,18 @@
 import { reactive, computed } from "vue";
 import { directChat } from "../direct-client";
-import {
-  executeOperation,
-  createDesignOperationContext,
-} from "@/operations";
+import { executeOperation, createDesignOperationContext } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
 import { buildSystemPrompt, buildImageAnalysisPrompt } from "../prompts/system";
 import { buildKnowledgePrompt } from "../knowledge";
 import { resourceService } from "../services/resource";
 import { captureCanvasForAI, getCanvasStateSummary } from "../capture";
 import { buildAITools, INTERACTION_TOOL_NAMES } from "../shared/tools";
-import { parseChatResponse, extractContent, extractJSON } from "../shared/response-parser";
+import {
+  parseChatResponse,
+  extractContent,
+  extractJSON,
+} from "../shared/response-parser";
+import { translateToolResult } from "@/ai/agent/tool-translator";
 import { evaluateCanvasVisual } from "../visual-evaluate";
 import type { VisualEvaluation } from "../visual-evaluate";
 
@@ -25,12 +27,14 @@ interface AgentMessage {
   tool_call_id?: string;
   tool_name?: string;
   meta?: {
-    iteration?: number;        // 迭代轮次
-    toolArgs?: any;            // 工具调用参数
-    toolResult?: any;          // 工具执行结果（完整）
-    duration?: number;         // 执行耗时（ms）
-    llmResponse?: any;         // LLM 原始响应
-    hasImage?: boolean;        // 是否包含图片
+    iteration?: number; // 迭代轮次
+    toolArgs?: any; // 工具调用参数
+    toolResult?: any; // 工具执行结果（完整）
+    duration?: number; // 执行耗时（ms）
+    llmResponse?: any; // LLM 原始响应
+    hasImage?: boolean; // 是否包含图片
+    plan?: DesignPlan | null; // 执行计划
+    type?: string; // 消息类型标识
   };
 }
 
@@ -45,6 +49,18 @@ interface SearchRecord {
   query: string;
   resultCount: number;
   iteration: number;
+}
+
+// ============ 规划类型 ============
+
+interface DesignPlan {
+  goal: string;
+  steps: {
+    action: string;
+    description: string;
+    status: "pending" | "done" | "failed";
+  }[];
+  currentStep: number;
 }
 
 // ============ 工具定义 ============
@@ -65,6 +81,8 @@ const agentState = reactive({
     completed: number;
     description: string;
   } | null,
+  // 规划
+  plan: null as DesignPlan | null,
 });
 
 let waitForUserInputPromise: { resolve: (value: string) => void } | null = null;
@@ -91,19 +109,29 @@ function addMessage(msg: Partial<AgentMessage>): AgentMessage {
 
 // ============ 搜索去重 ============
 
-function isDuplicateSearch(toolName: string, args: Record<string, any>): SearchRecord | null {
+function isDuplicateSearch(
+  toolName: string,
+  args: Record<string, any>,
+): SearchRecord | null {
   const query = (args.query || "").toLowerCase().trim();
   if (!query) return null;
 
-  return agentState.searchHistory.find(
-    (r) =>
-      r.tool === toolName &&
-      r.query.toLowerCase().trim() === query &&
-      r.resultCount > 0
-  ) || null;
+  return (
+    agentState.searchHistory.find(
+      (r) =>
+        r.tool === toolName &&
+        r.query.toLowerCase().trim() === query &&
+        r.resultCount > 0,
+    ) || null
+  );
 }
 
-function recordSearch(toolName: string, args: Record<string, any>, resultCount: number, iteration: number) {
+function recordSearch(
+  toolName: string,
+  args: Record<string, any>,
+  resultCount: number,
+  iteration: number,
+) {
   agentState.searchHistory.push({
     tool: toolName,
     query: args.query || "",
@@ -123,7 +151,12 @@ function startBatchTask(total: number, description: string) {
   console.log(`[Agent] Batch task started: ${description} (${total} items)`);
 }
 
-function completeBatchItem(): { current: number; total: number; hint: string; isComplete: boolean } {
+function completeBatchItem(): {
+  current: number;
+  total: number;
+  hint: string;
+  isComplete: boolean;
+} {
   if (!agentState.batchTask) {
     return { current: 0, total: 0, hint: "", isComplete: false };
   }
@@ -179,14 +212,17 @@ function safeParseToolArgs(raw: string): Record<string, any> {
   fixed = fixUnescapedQuotesInValue(fixed, "htmlContent");
 
   // 2. 尾部缺少 }
-  if (fixed.trim().endsWith('"') && !fixed.trim().endsWith('}')) {
+  if (fixed.trim().endsWith('"') && !fixed.trim().endsWith("}")) {
     fixed = fixed.trimEnd() + "}";
   }
 
   try {
     return JSON.parse(fixed);
   } catch (e: any) {
-    console.warn("[Agent] Failed to recover JSON, returning empty args:", e.message);
+    console.warn(
+      "[Agent] Failed to recover JSON, returning empty args:",
+      e.message,
+    );
     return {};
   }
 }
@@ -258,28 +294,105 @@ function findUnescapedQuote(str: string, start: number): number {
 async function runAgentLoop(userMessage: string) {
   const maxIterations = 10;
   const ctx = createDesignOperationContext();
-  const allTools = buildAITools({ includeResources: true, resourceTools: resourceService.tools });
+  const allTools = buildAITools({
+    includeResources: true,
+    resourceTools: resourceService.tools,
+  });
   let iteration = 0;
 
   // 添加用户消息
   addMessage({ role: "user", content: userMessage });
 
   // 构建消息列表（注入搜索上下文和任务进度）
-  const systemPrompt = buildSystemPrompt() + "\n" + buildKnowledgePrompt(userMessage) + buildSearchContext() + getBatchProgress();
+  const systemPrompt =
+    buildSystemPrompt() +
+    "\n" +
+    buildKnowledgePrompt(userMessage) +
+    buildSearchContext() +
+    getBatchProgress();
   const messagesForLLM: any[] = [
     { role: "system", content: systemPrompt },
     ...agentState.messages.map((m) => ({
       role: m.role === "tool" ? "user" : m.role,
       content: m.content,
       ...(m.tool_calls ? { tool_calls: m.tool_calls } : {}),
-      ...(m.tool_call_id ? { tool_call_id: m.tool_call_id, name: m.tool_name } : {}),
+      ...(m.tool_call_id
+        ? { tool_call_id: m.tool_call_id, name: m.tool_name }
+        : {}),
     })),
   ];
+
+  // 规划阶段 —— 让 Agent 先想好再动手
+  let plan: DesignPlan | null = null;
+  try {
+    const planResponse = await directChat({
+      messages: [
+        {
+          role: "system",
+          content:
+            "你是设计规划专家。分析用户需求，输出简洁的 JSON 执行计划。只输出 JSON。",
+        },
+        {
+          role: "user",
+          content: `需求：${userMessage}\n当前画布元素数：${ctx.getCanvasChildren().length}\n\n输出：{"goal":"目标","steps":[{"action":"动作","description":"说明"}]}`,
+        },
+      ],
+      temperature: 0.2,
+    });
+    const planContent = parseChatResponse(planResponse);
+    if (planContent?.content) {
+      const planJson = extractJSON(planContent.content);
+      if (planJson?.steps?.length) {
+        plan = { ...planJson, currentStep: 0 };
+        agentState.plan = plan;
+        addMessage({
+          role: "assistant",
+          content: `📋 计划：${plan.goal}（${plan.steps.length} 步）`,
+          meta: { plan },
+        });
+      }
+    }
+  } catch (e) {
+    console.warn("[Agent] 规划阶段失败，继续直接执行:", e);
+  }
 
   for (let i = 0; i < maxIterations; i++) {
     iteration = i + 1;
     console.log(`[Agent] Iteration ${iteration}`);
     emit({ type: "iteration", data: { iteration, maxIterations } });
+
+    // 进度反思（每 3 轮）
+    if (plan && iteration > 1 && iteration % 3 === 0) {
+      const completedSteps = plan.steps.filter(
+        (s) => s.status === "done",
+      ).length;
+      messagesForLLM.push({
+        role: "system",
+        content: `[进度反思] 目标：${plan.goal}\n进度：${completedSteps}/${plan.steps.length}\n请评估进展，决定是继续执行、调整方向还是已完成。`,
+      });
+    }
+
+    // 上下文压缩（消息过多时）
+    if (messagesForLLM.length > 14) {
+      const systemMsgs = messagesForLLM.filter((m) => m.role === "system");
+      const recentMsgs = messagesForLLM.slice(-8);
+      const oldMsgs = messagesForLLM.slice(systemMsgs.length, -8);
+
+      const summary = oldMsgs
+        .filter((m) => m.role === "user" && m.content.startsWith("[工具结果]"))
+        .map((m) => m.content.replace("[工具结果] ", ""))
+        .join(" → ");
+
+      messagesForLLM.length = 0;
+      messagesForLLM.push(...systemMsgs);
+      if (summary) {
+        messagesForLLM.push({
+          role: "system",
+          content: `[历史摘要] 已完成: ${summary}`,
+        });
+      }
+      messagesForLLM.push(...recentMsgs);
+    }
 
     // 调用 LLM
     let response: any;
@@ -291,10 +404,10 @@ async function runAgentLoop(userMessage: string) {
       });
     } catch (error: any) {
       console.error("[Agent] LLM error:", error);
-      addMessage({ 
-        role: "assistant", 
+      addMessage({
+        role: "assistant",
         content: `抱歉，出现了错误：${error.message}`,
-        meta: { iteration, duration: Date.now() - llmStartTime }
+        meta: { iteration, duration: Date.now() - llmStartTime },
       });
       return;
     }
@@ -305,10 +418,10 @@ async function runAgentLoop(userMessage: string) {
 
     if (!parsed) {
       console.error("[Agent] No message in response:", response);
-      addMessage({ 
-        role: "assistant", 
+      addMessage({
+        role: "assistant",
         content: "抱歉，无法解析响应。",
-        meta: { iteration, llmResponse: response }
+        meta: { iteration, llmResponse: response },
       });
       return;
     }
@@ -347,7 +460,10 @@ async function runAgentLoop(userMessage: string) {
         try {
           args = JSON.parse(rawArgs);
         } catch {
-          console.warn("[Agent] JSON parse failed, trying recovery:", String(rawArgs).slice(0, 200));
+          console.warn(
+            "[Agent] JSON parse failed, trying recovery:",
+            String(rawArgs).slice(0, 200),
+          );
           args = safeParseToolArgs(String(rawArgs));
         }
       } else {
@@ -387,13 +503,15 @@ async function runAgentLoop(userMessage: string) {
       const toolStartTime = Date.now();
       try {
         let result;
-        
+
         // 检查是否是资源工具
         if (resourceToolNames.includes(call.function.name)) {
           // 检查是否是重复搜索
           const duplicate = isDuplicateSearch(call.function.name, args);
           if (duplicate) {
-            console.log(`[Agent] 跳过重复搜索: ${call.function.name}("${args.query}") (第${duplicate.iteration}轮已搜索)`);
+            console.log(
+              `[Agent] 跳过重复搜索: ${call.function.name}("${args.query}") (第${duplicate.iteration}轮已搜索)`,
+            );
             result = {
               success: true,
               data: [],
@@ -402,7 +520,10 @@ async function runAgentLoop(userMessage: string) {
               message: `此搜索在第${duplicate.iteration}轮已执行过，找到${duplicate.resultCount}个结果。请使用之前的结果，不要重复搜索。`,
             };
           } else {
-            result = await resourceService.executeTool(call.function.name, args);
+            result = await resourceService.executeTool(
+              call.function.name,
+              args,
+            );
             // 记录搜索结果
             const resultCount = result?.data?.length || 0;
             recordSearch(call.function.name, args, resultCount, iteration);
@@ -410,13 +531,16 @@ async function runAgentLoop(userMessage: string) {
         } else {
           result = await executeOperation(call.function.name, args, ctx);
         }
-        
+
         const toolDuration = Date.now() - toolStartTime;
         console.log("[Agent] Tool result:", result);
 
         // 如果是保存操作，更新任务进度
         let progressHint = "";
-        if (call.function.name === "canvas.updateAndSaveSticker" && result?.success) {
+        if (
+          call.function.name === "canvas.updateAndSaveSticker" &&
+          result?.success
+        ) {
           const progress = completeBatchItem();
           if (progress.hint) {
             progressHint = `\n\n[任务进度] ${progress.hint}`;
@@ -436,9 +560,17 @@ async function runAgentLoop(userMessage: string) {
           },
         });
 
+        const translatedResult = translateToolResult(
+          call.function.name,
+          args,
+          result,
+        );
         messagesForLLM.push(
           { role: "assistant", content, tool_calls: toolCalls },
-          { role: "user", content: `[工具结果] ${call.function.name}: ${JSON.stringify(result)}${progressHint}` },
+          {
+            role: "user",
+            content: `[工具结果] ${translatedResult}${progressHint}`,
+          },
         );
       } catch (error: any) {
         console.error("[Agent] Tool error:", error);
@@ -459,8 +591,47 @@ async function runAgentLoop(userMessage: string) {
 
         messagesForLLM.push(
           { role: "assistant", content, tool_calls: toolCalls },
-          { role: "user", content: `[工具结果] ${call.function.name}: ${JSON.stringify(errorResult)}` },
+          {
+            role: "user",
+            content: `[工具结果] ❌ ${call.function.name} 执行失败: ${error.message}`,
+          },
         );
+      }
+    }
+
+    // 视觉自检（每 4 轮）
+    if (iteration % 4 === 0 && iteration > 0) {
+      try {
+        const screenshot = await captureCanvasForAI();
+        const quickEval = await directChat({
+          messages: [
+            {
+              role: "system",
+              content:
+                "用一句话评价这个设计，格式：评分(X/10) + 主要问题或优点",
+            },
+            {
+              role: "user",
+              content: [{ type: "image_url", image_url: { url: screenshot } }],
+            },
+          ],
+          temperature: 0.3,
+          maxTokens: 100,
+        });
+        const evalContent = parseChatResponse(quickEval);
+        if (evalContent?.content) {
+          messagesForLLM.push({
+            role: "system",
+            content: `[视觉自检] ${evalContent.content}`,
+          });
+          addMessage({
+            role: "assistant",
+            content: `👁️ ${evalContent.content}`,
+            meta: { iteration, type: "visual-check" },
+          });
+        }
+      } catch (e) {
+        console.warn("[Agent] 视觉检查跳过:", e);
       }
     }
 
@@ -469,10 +640,10 @@ async function runAgentLoop(userMessage: string) {
 
   // 超过最大迭代次数
   console.warn("[Agent] Max iterations reached");
-  addMessage({ 
-    role: "assistant", 
+  addMessage({
+    role: "assistant",
     content: "已完成当前任务。如需继续，请告诉我。",
-    meta: { iteration }
+    meta: { iteration },
   });
 }
 
@@ -492,10 +663,18 @@ async function runVisualEvaluate(): Promise<VisualEvaluation | null> {
     role: "assistant",
     content: [
       `**视觉评估 - 评分: ${evaluation.score}/10**`,
-      evaluation.strengths.length > 0 ? `优点: ${evaluation.strengths.join("、")}` : "",
-      evaluation.weaknesses.length > 0 ? `不足: ${evaluation.weaknesses.join("、")}` : "",
-      evaluation.suggestions.length > 0 ? `建议: ${evaluation.suggestions.join("、")}` : "",
-    ].filter(Boolean).join("\n"),
+      evaluation.strengths.length > 0
+        ? `优点: ${evaluation.strengths.join("、")}`
+        : "",
+      evaluation.weaknesses.length > 0
+        ? `不足: ${evaluation.weaknesses.join("、")}`
+        : "",
+      evaluation.suggestions.length > 0
+        ? `建议: ${evaluation.suggestions.join("、")}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n"),
     meta: { iteration: 0 },
   });
 
@@ -507,14 +686,17 @@ async function runVisualEvaluate(): Promise<VisualEvaluation | null> {
 async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
   const maxIterations = 10;
   const ctx = createDesignOperationContext();
-  const allTools = buildAITools({ includeResources: true, resourceTools: resourceService.tools });
+  const allTools = buildAITools({
+    includeResources: true,
+    resourceTools: resourceService.tools,
+  });
   let iteration = 0;
 
   // 添加用户消息（带图片标记）
-  addMessage({ 
-    role: "user", 
+  addMessage({
+    role: "user",
     content: `${userMessage}\n[已上传参考图片]`,
-    meta: { hasImage: true }
+    meta: { hasImage: true },
   });
 
   // 构建包含图片的消息
@@ -524,22 +706,22 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
       role: "user",
       content: [
         { type: "text", text: userMessage },
-        { 
-          type: "image_url", 
-          image_url: { 
+        {
+          type: "image_url",
+          image_url: {
             url: imageBase64,
-            detail: "high"
-          } 
-        }
-      ]
-    }
+            detail: "high",
+          },
+        },
+      ],
+    },
   ];
 
   // 第一步：让 AI 分析图片
   console.log("[Agent] 开始图片分析...");
   let analysisResponse: any;
   const analysisStartTime = Date.now();
-  
+
   try {
     analysisResponse = await directChat({
       messages: messagesForLLM,
@@ -548,10 +730,10 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
     });
   } catch (error: any) {
     console.error("[Agent] 图片分析失败:", error);
-    addMessage({ 
-      role: "assistant", 
+    addMessage({
+      role: "assistant",
       content: `图片分析失败：${error.message}`,
-      meta: { iteration: 1, duration: Date.now() - analysisStartTime }
+      meta: { iteration: 1, duration: Date.now() - analysisStartTime },
     });
     return;
   }
@@ -564,10 +746,10 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
 
   if (!parsed) {
     console.error("[Agent] 无法解析图片分析响应:", analysisResponse);
-    addMessage({ 
-      role: "assistant", 
+    addMessage({
+      role: "assistant",
       content: "抱歉，无法解析图片分析结果。",
-      meta: { iteration, llmResponse: analysisResponse }
+      meta: { iteration, llmResponse: analysisResponse },
     });
     return;
   }
@@ -595,8 +777,11 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
       const rawArgs = call.function.arguments;
       let args: any;
       if (typeof rawArgs === "string") {
-        try { args = JSON.parse(rawArgs); }
-        catch { args = safeParseToolArgs(String(rawArgs)); }
+        try {
+          args = JSON.parse(rawArgs);
+        } catch {
+          args = safeParseToolArgs(String(rawArgs));
+        }
       } else {
         args = rawArgs;
       }
@@ -626,13 +811,13 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
       const toolStartTime = Date.now();
       try {
         let result;
-        
+
         if (resourceToolNames.includes(call.function.name)) {
           result = await resourceService.executeTool(call.function.name, args);
         } else {
           result = await executeOperation(call.function.name, args, ctx);
         }
-        
+
         const toolDuration = Date.now() - toolStartTime;
         console.log("[Agent] 工具结果:", result);
 
@@ -669,10 +854,10 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
   }
 
   // 添加完成消息
-  addMessage({ 
-    role: "assistant", 
+  addMessage({
+    role: "assistant",
     content: "已完成图片分析和设计创建。你可以继续调整或告诉我需要修改的地方。",
-    meta: { iteration: iteration + 1 }
+    meta: { iteration: iteration + 1 },
   });
 }
 
@@ -703,7 +888,8 @@ async function runAutoEvaluation(): Promise<EvaluationResult | null> {
       messages: [
         {
           role: "system",
-          content: "你是一个专业的设计评审专家。评估设计作品的质量，只输出 JSON。",
+          content:
+            "你是一个专业的设计评审专家。评估设计作品的质量，只输出 JSON。",
         },
         {
           role: "user",
@@ -724,7 +910,10 @@ ${stateSummary}
   "shouldIterate": true/false
 }`,
             },
-            { type: "image_url", image_url: { url: imageBase64, detail: "high" } },
+            {
+              type: "image_url",
+              image_url: { url: imageBase64, detail: "high" },
+            },
           ],
         },
       ],
@@ -745,7 +934,8 @@ ${stateSummary}
       strengths: evaluation.strengths || [],
       weaknesses: evaluation.weaknesses || [],
       suggestions: evaluation.suggestions || [],
-      shouldIterate: evaluation.shouldIterate !== false && (evaluation.score || 5) < 8,
+      shouldIterate:
+        evaluation.shouldIterate !== false && (evaluation.score || 5) < 8,
     };
 
     console.log("[Agent] 评估结果:", result);
@@ -764,7 +954,7 @@ async function runAutoImprove(suggestions: string[]): Promise<void> {
       const result = await executeOperation(
         "canvas.evaluateDesign",
         { criteria: suggestion },
-        ctx
+        ctx,
       );
       console.log("[Agent] 自动改进结果:", result);
     } catch (error: any) {
@@ -806,9 +996,15 @@ async function runSelfTest(): Promise<void> {
     const evalMsg = [
       `**第 ${round} 轮评估 - 评分: ${evaluation.score}/10**`,
       "",
-      evaluation.strengths.length > 0 ? `优点: ${evaluation.strengths.join("、")}` : "",
-      evaluation.weaknesses.length > 0 ? `不足: ${evaluation.weaknesses.join("、")}` : "",
-      evaluation.suggestions.length > 0 ? `建议: ${evaluation.suggestions.join("、")}` : "",
+      evaluation.strengths.length > 0
+        ? `优点: ${evaluation.strengths.join("、")}`
+        : "",
+      evaluation.weaknesses.length > 0
+        ? `不足: ${evaluation.weaknesses.join("、")}`
+        : "",
+      evaluation.suggestions.length > 0
+        ? `建议: ${evaluation.suggestions.join("、")}`
+        : "",
     ]
       .filter(Boolean)
       .join("\n");
@@ -855,7 +1051,10 @@ ${evaluation.suggestions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
 请使用工具改进设计。只执行最关键的 1-2 个改进操作。`,
           },
         ],
-        tools: buildAITools({ includeResources: true, resourceTools: resourceService.tools }),
+        tools: buildAITools({
+          includeResources: true,
+          resourceTools: resourceService.tools,
+        }),
       });
 
       // 解析并执行改进操作
@@ -867,8 +1066,11 @@ ${evaluation.suggestions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
           const rawArgs = call.function.arguments;
           let args: any;
           if (typeof rawArgs === "string") {
-            try { args = JSON.parse(rawArgs); }
-            catch { args = safeParseToolArgs(String(rawArgs)); }
+            try {
+              args = JSON.parse(rawArgs);
+            } catch {
+              args = safeParseToolArgs(String(rawArgs));
+            }
           } else {
             args = rawArgs;
           }
@@ -905,10 +1107,12 @@ export const designAgent = {
   state: agentState,
 
   isProcessing: computed(
-    () => agentState.status === "thinking" || agentState.status === "executing"
+    () => agentState.status === "thinking" || agentState.status === "executing",
   ),
 
   isWaitingForUser: computed(() => agentState.status === "waiting_user"),
+
+  currentPlan: computed(() => agentState.plan),
 
   onEvent(listener: (event: any) => void) {
     eventListeners.push(listener);
@@ -940,7 +1144,10 @@ export const designAgent = {
     } catch (error: any) {
       console.error("[Agent] Error:", error);
       agentState.error = error.message || "未知错误";
-      addMessage({ role: "assistant", content: `抱歉，出现了错误：${error.message}` });
+      addMessage({
+        role: "assistant",
+        content: `抱歉，出现了错误：${error.message}`,
+      });
     } finally {
       agentState.status = "idle";
       emit({ type: "done", data: null });
@@ -962,7 +1169,10 @@ export const designAgent = {
     } catch (error: any) {
       console.error("[Agent] Error:", error);
       agentState.error = error.message || "未知错误";
-      addMessage({ role: "assistant", content: `抱歉，出现了错误：${error.message}` });
+      addMessage({
+        role: "assistant",
+        content: `抱歉，出现了错误：${error.message}`,
+      });
     } finally {
       agentState.status = "idle";
       emit({ type: "done", data: null });

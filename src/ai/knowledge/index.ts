@@ -14,6 +14,12 @@ import { designRulesKnowledge } from "./design-rules";
 import { stickerSaveKnowledge } from "./sticker-save";
 import { remixKnowledge } from "./remix";
 import { customKnowledgeItems } from "./custom-specs";
+import {
+  styleTemplatesKnowledge,
+  layoutPatternsKnowledge,
+  commonMistakesKnowledge,
+  fontPairingKnowledge,
+} from "./style-templates";
 
 const allKnowledge: KnowledgeItem[] = [
   htmlElementsKnowledge,
@@ -24,6 +30,10 @@ const allKnowledge: KnowledgeItem[] = [
   designRulesKnowledge,
   stickerSaveKnowledge,
   remixKnowledge,
+  styleTemplatesKnowledge,
+  layoutPatternsKnowledge,
+  commonMistakesKnowledge,
+  fontPairingKnowledge,
   ...customKnowledgeItems,
 ];
 

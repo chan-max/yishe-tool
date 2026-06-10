@@ -1,7 +1,13 @@
 import { io, type Socket } from "socket.io-client";
 import { reactive } from "vue";
 
-type WsStatus = "idle" | "connecting" | "connected" | "reconnecting" | "disconnected" | "error";
+type WsStatus =
+  | "idle"
+  | "connecting"
+  | "connected"
+  | "reconnecting"
+  | "disconnected"
+  | "error";
 
 const CLIENT_SOURCE = "设计端";
 const HEARTBEAT_INTERVAL = 15_000;
@@ -15,7 +21,10 @@ function getAccessToken(): string | undefined {
   try {
     const raw = localStorage.getItem("token");
     if (!raw) return undefined;
-    const cleaned = raw.replace(/^"|"$/g, "").replace(/^Bearer\s+/i, "").trim();
+    const cleaned = raw
+      .replace(/^"|"$/g, "")
+      .replace(/^Bearer\s+/i, "")
+      .trim();
     return cleaned || undefined;
   } catch {
     return undefined;
@@ -27,37 +36,50 @@ function getDefaultWsUrl() {
   if (explicitUrl) return explicitUrl;
 
   const apiBase = String(import.meta.env.VITE_API || "").trim();
+  let origin = "";
   if (apiBase) {
     try {
       if (/^https?:\/\//i.test(apiBase)) {
-        return new URL(apiBase).origin;
-      }
-
-      if (typeof window !== "undefined") {
-        return new URL(apiBase, window.location.origin).origin;
+        origin = new URL(apiBase).origin;
+      } else if (typeof window !== "undefined") {
+        origin = new URL(apiBase, window.location.origin).origin;
       }
     } catch {
-      // Fall through to the current page origin.
+      // Fall through.
     }
   }
 
-  if (typeof window === "undefined") return "";
+  if (!origin) {
+    origin = typeof window === "undefined" ? "" : window.location.origin;
+  }
 
-  return window.location.origin;
+  if (!origin) return "";
+
+  // 服务端 WebSocketGateway 使用 namespace: "/ws"，
+  // socket.io-client 需要在 URL 中带上 namespace 路径才能正确连接。
+  return origin.replace(/\/+$/, "") + "/ws";
 }
 
 function parseBrowserInfo(ua: string) {
-  if (ua.includes("Edg/")) return { name: "Edge", version: ua.match(/Edg\/([\d.]+)/)?.[1] };
-  if (ua.includes("Chrome/")) return { name: "Chrome", version: ua.match(/Chrome\/([\d.]+)/)?.[1] };
-  if (ua.includes("Firefox/")) return { name: "Firefox", version: ua.match(/Firefox\/([\d.]+)/)?.[1] };
-  if (ua.includes("Safari/") && ua.includes("Version/")) return { name: "Safari", version: ua.match(/Version\/([\d.]+)/)?.[1] };
+  if (ua.includes("Edg/"))
+    return { name: "Edge", version: ua.match(/Edg\/([\d.]+)/)?.[1] };
+  if (ua.includes("Chrome/"))
+    return { name: "Chrome", version: ua.match(/Chrome\/([\d.]+)/)?.[1] };
+  if (ua.includes("Firefox/"))
+    return { name: "Firefox", version: ua.match(/Firefox\/([\d.]+)/)?.[1] };
+  if (ua.includes("Safari/") && ua.includes("Version/"))
+    return { name: "Safari", version: ua.match(/Version\/([\d.]+)/)?.[1] };
   return { name: "Unknown" };
 }
 
 function parseOsInfo(ua: string) {
   if (ua.includes("Windows NT 10")) return { name: "Windows", version: "10" };
   if (ua.includes("Windows NT 6.3")) return { name: "Windows", version: "8.1" };
-  if (ua.includes("Mac OS X")) return { name: "macOS", version: ua.match(/Mac OS X ([\d_]+)/)?.[1]?.replace(/_/g, ".") };
+  if (ua.includes("Mac OS X"))
+    return {
+      name: "macOS",
+      version: ua.match(/Mac OS X ([\d_]+)/)?.[1]?.replace(/_/g, "."),
+    };
   if (ua.includes("Linux")) return { name: "Linux" };
   return { name: "Unknown" };
 }
@@ -106,19 +128,33 @@ const clientInfo = reactive({
   app: {
     name: "yishe-tool",
     displayName: "设计端",
-    version: (import.meta.env.VITE_APP_VERSION as string | undefined) || undefined,
+    version:
+      (import.meta.env.VITE_APP_VERSION as string | undefined) || undefined,
     mode: import.meta.env.MODE,
   },
   language: typeof navigator !== "undefined" ? navigator.language : "unknown",
   uiLanguage: typeof navigator !== "undefined" ? navigator.language : "unknown",
   timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-  browser: typeof navigator !== "undefined" ? parseBrowserInfo(navigator.userAgent) : { name: "Unknown" },
-  os: typeof navigator !== "undefined" ? parseOsInfo(navigator.userAgent) : { name: "Unknown" },
+  browser:
+    typeof navigator !== "undefined"
+      ? parseBrowserInfo(navigator.userAgent)
+      : { name: "Unknown" },
+  os:
+    typeof navigator !== "undefined"
+      ? parseOsInfo(navigator.userAgent)
+      : { name: "Unknown" },
   device: {
-    memory: typeof navigator !== "undefined" ? (navigator as any).deviceMemory : undefined,
-    hardwareConcurrency: typeof navigator !== "undefined" ? navigator.hardwareConcurrency : undefined,
-    touchPoints: typeof navigator !== "undefined" ? navigator.maxTouchPoints : undefined,
+    memory:
+      typeof navigator !== "undefined"
+        ? (navigator as any).deviceMemory
+        : undefined,
+    hardwareConcurrency:
+      typeof navigator !== "undefined"
+        ? navigator.hardwareConcurrency
+        : undefined,
+    touchPoints:
+      typeof navigator !== "undefined" ? navigator.maxTouchPoints : undefined,
   },
   machine: {
     code: `DESIGN-TOOL-${clientId.slice(-12).toUpperCase()}`,
@@ -168,7 +204,10 @@ function startHeartbeatLoop() {
 
     heartbeatTimeoutTimer = setTimeout(() => {
       if (wsState.status === "connected") {
-        emitter.emit("log", { level: "warn", message: "[ws] heartbeat timeout, forcing reconnect" });
+        emitter.emit("log", {
+          level: "warn",
+          message: "[ws] heartbeat timeout, forcing reconnect",
+        });
         socket?.disconnect();
         socket?.connect();
       }
@@ -236,7 +275,10 @@ function bindSocketEvents(currentSocket: Socket) {
   });
 
   currentSocket.on("disconnect", (reason) => {
-    emitter.emit("log", { level: "warn", message: `[ws] disconnected: ${reason}` });
+    emitter.emit("log", {
+      level: "warn",
+      message: `[ws] disconnected: ${reason}`,
+    });
     stopHeartbeat();
     updateState({
       status: intentionalDisconnect ? "disconnected" : "error",

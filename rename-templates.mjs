@@ -1,0 +1,166 @@
+import { readFileSync, writeFileSync } from 'fs';
+
+const filePath = 'D:\\workspace\\yishe-client\\src\\main\\video-template\\templates\\registry.ts';
+
+const replacements = [
+  ["Luxe Jewelry Drop", "珠宝新品发布"],
+  ["Skin Serum Cinematic", "护肤精华大片"],
+  ["Flash Sale Fashion Rush", "服饰限时抢购"],
+  ["Gadget Midnight Drop", "数码午夜秒杀"],
+  ["Beauty Before / After", "美妆前后对比"],
+  ["Audio Battle Compare", "耳机竞品对决"],
+  ["Creator Growth Hook", "创作者增长钩子"],
+  ["Finance Hot-Take Reel", "财经热点锐评"],
+  ["Healing Night Letter", "治愈晚安信"],
+  ["Fireup Mission Reel", "热血冲刺宣言"],
+  ["Memory Film Letter", "回忆录胶片信"],
+  ["Craft Origin Documentary", "匠心起源纪录"],
+  ["Knowledge Learning Map", "知识学习地图"],
+  ["Myth Busting Carousel", "误区粉碎机"],
+  ["Quarterly Data Pulse", "季度数据脉搏"],
+  ["Store Growth Dashboard", "店铺增长看板"],
+  ["Brand Manifesto Aether", "品牌宣言大片"],
+  ["Brand Studio Values", "工作室品牌价值观"],
+  ["Prism Logo Reveal Lux", "高级Logo揭示"],
+  ["Keynote Launch Orbit X", "产品发布会"],
+  ["Fashion Editorial Lookbook", "时装穿搭图鉴"],
+  ["Home Living Showcase", "家居生活展示"],
+  ["UGC Review Stack", "用户口碑合集"],
+  ["Supplement Proof Wall", "保健品信任墙"],
+  ["News Beat Montage", "热点资讯蒙太奇"],
+  ["Creator Portfolio Montage", "创作者作品集"],
+  ["Founder Day One Journey", "创始人历程"],
+  ["Relationship Yearbook Timeline", "关系回忆录时间线"],
+  ["AI Workflow Roadmap", "AI工作流路线图"],
+  ["Course Roadmap Explainer", "课程路径地图"],
+  ["Heritage Milestone Journey", "品牌里程碑"],
+  ["Campaign Proof Wall", "营销战报墙"],
+  ["Street Interview Hook", "街访钩子"],
+  ["Mindset Reset Kinetic", "心态重启"],
+  ["City Memory Essay", "城市记忆散文"],
+  ["Wedding Vow Timeline", "婚礼誓言时间线"],
+  ["Ingredient Breakdown Lab", "成分实验室"],
+  ["Market Opportunity Radar", "市场机会雷达"],
+  ["Sustainability Brand Manifesto", "可持续品牌宣言"],
+  ["Mobility Future Keynote", "未来出行发布会"],
+  ["Restaurant Opening Rush", "餐饮开业快促"],
+  ["Pet Wellness Proof Wall", "宠物健康口碑墙"],
+  ["Podcast Cliffhanger Hook", "播客金句切条"],
+  ["Study Reset Kinetic", "学习重启"],
+  ["Graduation Memory Film", "毕业回忆电影"],
+  ["Family Archive Timeline", "家庭影像时间线"],
+  ["Parenting Myth Breakdown", "育儿误区拆解"],
+  ["Real Estate Investment Radar", "房产机会雷达"],
+  ["Employer Culture Manifesto", "雇主文化宣言"],
+  ["SaaS Release Keynote", "SaaS产品发布"],
+  ["Medspa Transformation Compare", "医美前后对比"],
+  ["Coastal Resort Suite Spotlight", "度假酒店套房"],
+  ["Gaming Rank-Up Hook", "游戏上分切条"],
+  ["Travel Vlog Editorial", "旅行Vlog蒙太奇"],
+  ["Solo Travel Essay", "独自旅行散文"],
+  ["Motherhood First-Year Timeline", "新手妈妈第一年"],
+  ["Personal Finance Habit Map", "个人财务习惯地图"],
+  ["Biomarker Health Dashboard", "健康指标看板"],
+  ["Wellness Retreat Manifesto", "疗愈度假宣言"],
+  ["Robotics Future Keynote", "机器人发布会"],
+  ["Salon Membership Flash", "美业会员快促"],
+  ["Restaurant Menu Editorial", "餐饮菜单蒙太奇"],
+  ["Home Renovation Compare", "家装改造对比"],
+  ["Wedding Venue Luxury Spotlight", "婚礼场地展示"],
+  ["Food Review Hook", "探店钩子"],
+  ["Career Advice Cliffhanger", "职场建议切条"],
+  ["Wedding Invitation Film", "婚礼邀请短片"],
+  ["Athlete Comeback Journey", "运动员回归历程"],
+  ["Study Abroad Roadmap", "留学路线图"],
+  ["Newborn Sleep Myth Breakdown", "新生儿睡眠误区"],
+  ["SaaS Customer Proof Wall", "SaaS客户案例墙"],
+  ["Property Penthouse Launch", "豪宅大平层发布"],
+  ["Eyewear Collection Editorial", "眼镜系列大片"],
+  ["Clear Aligner Smile Compare", "隐形矫正对比"],
+  ["Lawyer Consultation Hook", "律师咨询钩子"],
+  ["Proposal Weekend Journey", "求婚周末叙事"],
+  ["Wedding Planning Roadmap", "婚礼筹备路线图"],
+  ["Perimenopause Myth Breakdown", "围绝经期误区拆解"],
+  ["Boutique Hotel Guest Proof Wall", "精品酒店评价墙"],
+  ["EV Charging Network Launch", "充电网络发布"],
+  ["Bespoke Suit Signature Spotlight", "高定西装展示"],
+  ["Artisan Tea Gift Editorial", "高端茶礼大片"],
+  ["Tax Season Saver Hook", "财税建议钩子"],
+  ["Night Shift Burnout Kinetic", "夜班情绪表达"],
+  ["Father Daughter First Look Journey", "婚礼父女First Look"],
+  ["Moving City Goodbye Journey", "离城告别叙事"],
+  ["IVF Decision Roadmap", "IVF决策路线图"],
+  ["Small Business Tax Myth Breakdown", "小微企业财税误区"],
+  ["Architecture Studio Manifesto", "建筑工作室宣言"],
+  ["Private Membership Club Launch", "私享会员俱乐部发布"],
+  ["Bridal Jewelry Weekend Flash", "婚礼珠宝快促"],
+  ["Pilates Founders Pass Flash", "普拉提创始会员快促"],
+  ["Freelancer Boundary Kinetic", "自由职业边界感"],
+  ["After Layoff Reset Kinetic", "裁员后重启"],
+  ["Chef Service Cinematic Story", "主厨出餐叙事"],
+  ["Graduation Dorm Last Night Story", "毕业宿舍最后一夜"],
+  ["Creator Retention Dashboard", "内容留存看板"],
+  ["Clinic Consult Dashboard", "诊所咨询看板"],
+  ["Boutique Hotel Logo Reveal", "精品酒店Logo揭示"],
+  ["Climate Tech Logo Reveal", "气候科技Logo揭示"],
+  ["Luxury Watch Collector Spotlight", "高端腕表展示"],
+  ["Dental Implant Smile Compare", "种植牙对比"],
+  ["Immigration Consult Hook", "移民咨询钩子"],
+  ["Parenting Overload Kinetic", "育儿疲惫情绪"],
+  ["Marathon Finish Journey", "马拉松完赛历程"],
+  ["Sister Wedding Morning Story", "婚礼清晨姐妹视角"],
+  ["First Home Buying Roadmap", "首次购房路线图"],
+  ["Adult Acne Myth Breakdown", "成年痘误区拆解"],
+  ["Coworking Member Proof Wall", "共享办公证据墙"],
+  ["Satellite Network Launch", "卫星网络发布会"],
+  ["Fragrance Memory Editorial", "香水情绪大片"],
+  ["Smart Ring Recovery Launch", "智能戒指发布"],
+  ["Heritage Ceramic Vase Spotlight", "陶瓷艺术器物"],
+  ["Chef Knife Material Editorial", "主厨刀具大片"],
+  ["Museum Masterpiece Cinematic Story", "博物馆名作叙事"],
+  ["Bronze Mask History Breakdown", "青铜面具历史拆解"],
+  ["Comet Impact Science Breakdown", "彗星撞击科普"],
+  ["Sneaker Drop Midnight Editorial", "球鞋夜间发售"],
+  ["Carry-On Shell Tech Launch", "登机箱发布"],
+  ["Leather Weekender Atelier Spotlight", "皮革周末包展示"],
+  ["Silk Road Caravan Cinematic Story", "丝路商队叙事"],
+  ["Marble Sculpture Restoration Story", "大理石雕塑修复"],
+  ["Lost Library History Breakdown", "失落图书馆历史"],
+  ["Deep Sea Vent Science Breakdown", "深海热液科普"],
+  ["Projector Home Cinema Launch", "家用投影发布"],
+  ["Microcapsule Serum Clinical Launch", "微囊精华发布"],
+  ["Ceramic Cookware Flame Editorial", "陶瓷锅具大片"],
+  ["Espresso Grinder Brew Lab Editorial", "咖啡磨豆机大片"],
+  ["Ergonomic Chair Posture Engineering Launch", "人体工学椅发布"],
+  ["Portable Speaker Summer Spotlight", "便携音箱展示"],
+  ["Lip Oil Wear Shine Compare", "唇油试色对比"],
+  ["Stained Glass Cathedral Cinematic Story", "彩绘玻璃艺术叙事"],
+  ["Terracotta Warrior History Breakdown", "兵马俑历史拆解"],
+  ["Solar Eclipse Shadow Science Breakdown", "日食科学拆解"],
+];
+
+let content = readFileSync(filePath, 'utf-8');
+let successCount = 0;
+let failCount = 0;
+const failures = [];
+
+for (const [oldName, newName] of replacements) {
+  if (content.includes(oldName)) {
+    content = content.replace(oldName, newName);
+    successCount++;
+  } else {
+    failCount++;
+    failures.push(oldName);
+  }
+}
+
+writeFileSync(filePath, content, 'utf-8');
+
+console.log(`\n✅ Replacements complete!`);
+console.log(`   Successful: ${successCount}`);
+console.log(`   Failed (not found): ${failCount}`);
+if (failures.length > 0) {
+  console.log(`\n⚠️  The following names were NOT found in the file:`);
+  failures.forEach(name => console.log(`   - "${name}"`));
+}
+console.log(`\nTotal mappings: ${replacements.length}`);

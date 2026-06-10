@@ -36,16 +36,26 @@ export function translateToolResult(
     case "resource.searchImage": {
       const items = (result.data as any[]) || [];
       if (items.length === 0) return "⚠️ 未找到相关图片素材，建议换个关键词";
-      const names = items
-        .slice(0, 3)
-        .map((d: any) => d.name || d.label || "")
-        .filter(Boolean);
-      return `✅ 找到 ${items.length} 个图片素材${names.length ? "，前几个: " + names.join("、") : ""}`;
+      const list = items
+        .slice(0, 5)
+        .map(
+          (d: any, i: number) =>
+            `${i + 1}. ${d.name || "未命名"} | id:${d.id} | url:${d.url}`,
+        )
+        .join("\n");
+      return `✅ 找到 ${items.length} 个图片素材（用 url 配合 canvas.addImage 或 htmlBindings 使用）:\n${list}`;
     }
     case "resource.searchFont": {
       const items = (result.data as any[]) || [];
       if (items.length === 0) return "⚠️ 未找到相关字体，建议换个关键词";
-      return `✅ 找到 ${items.length} 个相关字体`;
+      const list = items
+        .slice(0, 5)
+        .map(
+          (d: any, i: number) =>
+            `${i + 1}. ${d.name || "未命名"} | id:${d.id} | url:${d.url}`,
+        )
+        .join("\n");
+      return `✅ 找到 ${items.length} 个相关字体（用 url 配合 htmlBindings 绑定字体）:\n${list}`;
     }
     case "canvas.remove":
       return "✅ 元素已删除";

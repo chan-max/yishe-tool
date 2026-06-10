@@ -20,6 +20,7 @@ import {
   commonMistakesKnowledge,
   fontPairingKnowledge,
 } from "./style-templates";
+import { designTipsKnowledge } from "./design-tips-loader";
 
 const allKnowledge: KnowledgeItem[] = [
   htmlElementsKnowledge,
@@ -34,6 +35,7 @@ const allKnowledge: KnowledgeItem[] = [
   layoutPatternsKnowledge,
   commonMistakesKnowledge,
   fontPairingKnowledge,
+  ...designTipsKnowledge, // ← 新增：自动加载的设计技巧
   ...customKnowledgeItems,
 ];
 

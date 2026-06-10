@@ -49,6 +49,7 @@ interface SearchRecord {
   query: string;
   resultCount: number;
   iteration: number;
+  cachedData?: any[];
 }
 
 // ============ 规划类型 ============
@@ -131,12 +132,14 @@ function recordSearch(
   args: Record<string, any>,
   resultCount: number,
   iteration: number,
+  data?: any[],
 ) {
   agentState.searchHistory.push({
     tool: toolName,
     query: args.query || "",
     resultCount,
     iteration,
+    cachedData: data,
   });
 }
 
@@ -357,6 +360,11 @@ async function runAgentLoop(userMessage: string) {
   }
 
   for (let i = 0; i < maxIterations; i++) {
+    // 检查是否被外部中断（如用户点击清空）
+    if (agentState.status === "idle") {
+      console.log("[Agent] 被中断，退出循环");
+      return;
+    }
     iteration = i + 1;
     console.log(`[Agent] Iteration ${iteration}`);
     emit({ type: "iteration", data: { iteration, maxIterations } });
@@ -514,19 +522,25 @@ async function runAgentLoop(userMessage: string) {
             );
             result = {
               success: true,
-              data: [],
+              data: duplicate.cachedData || [],
               total: duplicate.resultCount,
               query: args.query,
-              message: `此搜索在第${duplicate.iteration}轮已执行过，找到${duplicate.resultCount}个结果。请使用之前的结果，不要重复搜索。`,
+              message: `此搜索在第${duplicate.iteration}轮已执行过，找到${duplicate.resultCount}个结果。以下是缓存的结果：`,
             };
           } else {
             result = await resourceService.executeTool(
               call.function.name,
               args,
             );
-            // 记录搜索结果
+            // 记录搜索结果（含数据缓存）
             const resultCount = result?.data?.length || 0;
-            recordSearch(call.function.name, args, resultCount, iteration);
+            recordSearch(
+              call.function.name,
+              args,
+              resultCount,
+              iteration,
+              result?.data,
+            );
           }
         } else {
           result = await executeOperation(call.function.name, args, ctx);
@@ -1101,6 +1115,234 @@ ${evaluation.suggestions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
   }
 }
 
+// ============ 测试套件 ============
+
+interface SuiteTestCase {
+  category: string;
+  prompt: string;
+}
+
+const TEST_CASES: SuiteTestCase[] = [
+  {
+    category: "基础文字",
+    prompt: "先清空画布，然后添加一个写着 HELLO 的红色大字，居中显示",
+  },
+  {
+    category: "背景设置",
+    prompt: "先清空画布，然后把画布背景设为深蓝到紫色的渐变",
+  },
+  {
+    category: "形状添加",
+    prompt: "先清空画布，然后添加一个红色圆形和一个蓝色矩形",
+  },
+  {
+    category: "多元素组合",
+    prompt:
+      "先清空画布，然后创建一个简约名片：深色背景、白色标题、副标题、装饰线条",
+  },
+  {
+    category: "图片搜索添加",
+    prompt: "先清空画布，搜索猫咪图片，然后把搜到的一张图片添加到画布上",
+  },
+  {
+    category: "多图拼贴",
+    prompt: "先清空画布，搜索花朵和风景图片各3张，用 HTML Grid 做一个 2x2 拼图",
+  },
+  {
+    category: "渐变文字",
+    prompt: "先清空画布，添加一个大标题，文字用渐变填充效果",
+  },
+  {
+    category: "发光效果",
+    prompt: "先清空画布，深色背景，添加一个有霓虹发光效果的文字",
+  },
+];
+
+function runOneTest(
+  tc: SuiteTestCase,
+  idx: number,
+): Promise<{
+  pass: boolean;
+  elements: number;
+  score: number;
+  detail: string;
+}> {
+  return new Promise((resolve) => {
+    const t0 = Date.now();
+    const maxMs = 90_000;
+
+    // 清空状态
+    agentState.messages.length = 0;
+    agentState.searchHistory.length = 0;
+    agentState.plan = null;
+    agentState.pendingInteraction = null;
+    resourceService.clearSearchCache();
+
+    // 监控交互请求，自动回复
+    const interactionGuard = setInterval(() => {
+      if (agentState.status === "waiting_user" && waitForUserInputPromise) {
+        waitForUserInputPromise.resolve("直接执行，不要问我");
+        waitForUserInputPromise = null;
+      }
+    }, 500);
+
+    const timeout = setTimeout(() => {
+      clearInterval(interactionGuard);
+      resolve({
+        pass: false,
+        elements: 0,
+        score: 0,
+        detail: `超时（${maxMs / 1000}s）`,
+      });
+    }, maxMs);
+
+    runAgentLoop(tc.prompt)
+      .then(() => {
+        clearTimeout(timeout);
+        clearInterval(interactionGuard);
+
+        const ctx = createDesignOperationContext();
+        const allChildren = ctx.getCanvasChildren();
+        const elements = Math.max(0, allChildren.length - 1);
+
+        const toolMsgs = agentState.messages.filter((m) => m.role === "tool");
+        const toolCount = toolMsgs.length;
+        const errCount = toolMsgs.filter((m) => {
+          try {
+            return JSON.parse(m.content).success === false;
+          } catch {
+            return false;
+          }
+        }).length;
+
+        const pass = elements > 0 && errCount === 0;
+        const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+        const detail = `${elements} 元素, ${toolCount} 工具, ${errCount} 错误, ${elapsed}s`;
+
+        resolve({
+          pass,
+          elements,
+          score: pass ? 1 : 0,
+          detail,
+        });
+      })
+      .catch((e: any) => {
+        clearTimeout(timeout);
+        clearInterval(interactionGuard);
+        resolve({
+          pass: false,
+          elements: 0,
+          score: 0,
+          detail: `异常: ${e?.message || "未知错误"}`,
+        });
+      });
+  });
+}
+
+async function runTestSuite(): Promise<string> {
+  const total = TEST_CASES.length;
+  addMessage({
+    role: "assistant",
+    content: `🧪 测试套件启动：${total} 个用例\n\n${TEST_CASES.map((t, i) => `${i + 1}. [${t.category}] ${t.prompt}`).join("\n")}`,
+  });
+
+  const results: Array<{
+    category: string;
+    prompt: string;
+    pass: boolean;
+    elements: number;
+    score: number;
+    detail: string;
+  }> = [];
+
+  for (let i = 0; i < total; i++) {
+    const tc = TEST_CASES[i];
+    addMessage({
+      role: "assistant",
+      content: `⏳ [${i + 1}/${total}] ${tc.category}...`,
+    });
+
+    const r = await runOneTest(tc, i);
+
+    addMessage({
+      role: "assistant",
+      content: `${r.pass ? "✅" : "❌"} [${tc.category}] ${r.detail}`,
+    });
+
+    results.push({ ...tc, ...r });
+
+    // 测试间隔，等待渲染稳定
+    await new Promise((res) => setTimeout(res, 1500));
+  }
+
+  // 生成报告
+  const categories = [...new Set(results.map((r) => r.category))];
+  const catStats = categories.map((cat) => {
+    const rs = results.filter((r) => r.category === cat);
+    const passed = rs.filter((r) => r.pass).length;
+    return {
+      name: cat,
+      passed,
+      total: rs.length,
+      ok: passed === rs.length,
+    };
+  });
+
+  const passCount = results.filter((r) => r.pass).length;
+  const failItems = results
+    .filter((r) => !r.pass)
+    .map((r) => `- [${r.category}] ${r.prompt}\n  → ${r.detail}`);
+
+  const lines = [
+    `## 🧪 测试报告`,
+    ``,
+    `**通过率**: ${passCount}/${total} (${Math.round((passCount / total) * 100)}%)`,
+    ``,
+    `### 分类结果`,
+    ...catStats.map(
+      (c) => `${c.ok ? "✅" : "❌"} ${c.name}: ${c.passed}/${c.total}`,
+    ),
+    ``,
+  ];
+
+  if (failItems.length > 0) {
+    lines.push(`### 失败用例`, ...failItems, ``);
+  }
+
+  if (passCount < total) {
+    lines.push(`### 改进建议`);
+    const weakCats = catStats.filter((c) => !c.ok).map((c) => c.name);
+    if (weakCats.includes("图片搜索添加") || weakCats.includes("多图拼贴")) {
+      lines.push(
+        `- **图片/拼贴类**：检查 resource.searchImage 的 URL 是否正确传递给 canvas.addImage 或 htmlBindings`,
+      );
+    }
+    if (weakCats.includes("渐变文字") || weakCats.includes("发光效果")) {
+      lines.push(
+        `- **CSS 特效类**：检查 design-tips 知识库是否被正确注入，Agent 是否使用了正确的 CSS 语法`,
+      );
+    }
+    if (weakCats.includes("多元素组合")) {
+      lines.push(`- **组合类**：检查 Agent 的规划能力是否能正确分解多步任务`);
+    }
+    if (
+      weakCats.includes("基础文字") ||
+      weakCats.includes("背景设置") ||
+      weakCats.includes("形状添加")
+    ) {
+      lines.push(
+        `- **基础类**：检查 canvas.addChild / canvas.setBackgroundColor 等基本工具是否正常`,
+      );
+    }
+  }
+
+  lines.push(``, `*测试时间: ${new Date().toLocaleString()}*`);
+
+  const report = lines.join("\n");
+  addMessage({ role: "assistant", content: report });
+  return report;
+}
+
 // ============ 导出 ============
 
 export const designAgent = {
@@ -1244,12 +1486,46 @@ export const designAgent = {
     }
   },
 
+  async runTestSuite(): Promise<string> {
+    if (agentState.status !== "idle") {
+      console.warn("[Agent] Agent is busy, status:", agentState.status);
+      return "Agent 正忙";
+    }
+    agentState.status = "thinking";
+    agentState.error = null;
+    try {
+      return await runTestSuite();
+    } catch (error: any) {
+      console.error("[Agent] TestSuite error:", error);
+      agentState.error = error.message || "测试套件失败";
+      addMessage({
+        role: "assistant",
+        content: `测试套件失败：${error.message}`,
+      });
+      return `失败: ${error.message}`;
+    } finally {
+      agentState.status = "idle";
+      emit({ type: "done", data: null });
+    }
+  },
+
   clearMessages() {
-    agentState.messages.length = 0;
+    // 终止所有进行中的操作
+    agentState.status = "idle";
     agentState.error = null;
     agentState.pendingInteraction = null;
+    agentState.plan = null;
+    agentState.batchTask = null;
+
+    // 解除等待中的用户输入 Promise，防止循环卡住
+    if (waitForUserInputPromise) {
+      waitForUserInputPromise.resolve("[已中断]");
+      waitForUserInputPromise = null;
+    }
+
+    // 清空消息和缓存
+    agentState.messages.length = 0;
     agentState.searchHistory.length = 0;
-    agentState.status = "idle";
     resourceService.clearSearchCache();
   },
 };

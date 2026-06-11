@@ -37,6 +37,17 @@
         <span class="ws-status-label">{{ wsStatusLabel }}</span>
       </div>
     </el-tooltip>
+
+    <el-tooltip
+      :content="agentStatusTooltip"
+      placement="bottom"
+      :show-after="200"
+    >
+      <div class="agent-status-indicator" :class="`agent-status--${agentStatus}`">
+        <span class="agent-status-dot" />
+        <span class="agent-status-label">Agent {{ agentStatusLabel }}</span>
+      </div>
+    </el-tooltip>
     
     <div class="header-actions flex items-center gap-2 shrink-0">
       <!-- <el-button @click="showUpload = true" round text :icon="UploadFilled" class="action-btn">
@@ -103,6 +114,7 @@ import { openLoginDialog } from "@/modules/main/view/user/login/index.tsx";
 import Utils from "@/common/utils";
 import { localFileListResource } from "@/components/design/store";
 import { websocketClient } from "@/services/websocketClient";
+import { designAgent } from "@/ai/langgraph";
 
 const wsStatus = computed(() => websocketClient.state.status);
 const wsStatusLabel = computed(() => {
@@ -119,6 +131,22 @@ const wsStatusTooltip = computed(() => {
   const latency = websocketClient.state.lastLatencyMs;
   const latencyText = latency != null ? ` · 延迟 ${latency}ms` : "";
   return `服务连接: ${wsStatusLabel.value}${latencyText}`;
+});
+
+const agentStatus = computed(() => designAgent.state.status || "idle");
+const agentStatusLabel = computed(() => {
+  switch (agentStatus.value) {
+    case "thinking": return "思考中";
+    case "executing": return "执行中";
+    case "waiting_user": return "等待反馈";
+    case "error": return "异常";
+    default: return "空闲";
+  }
+});
+const agentStatusTooltip = computed(() => {
+  const error = designAgent.state.error ? ` · ${designAgent.state.error}` : "";
+  const count = designAgent.state.messages?.length ?? 0;
+  return `AI Agent: ${agentStatusLabel.value} · ${count} 条消息${error}`;
 });
 
 const router = useRouter();
@@ -271,6 +299,17 @@ function confirmExitEditMode() {
   flex-shrink: 0;
 }
 
+.agent-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  cursor: default;
+  user-select: none;
+  flex-shrink: 0;
+}
+
 .ws-status-dot {
   width: 7px;
   height: 7px;
@@ -279,6 +318,19 @@ function confirmExitEditMode() {
 }
 
 .ws-status-label {
+  font-size: 10px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.agent-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.agent-status-label {
   font-size: 10px;
   white-space: nowrap;
   line-height: 1;
@@ -322,6 +374,47 @@ function confirmExitEditMode() {
   }
   .ws-status-label {
     color: var(--1s-text-color-secondary, #999);
+  }
+}
+
+.agent-status--idle {
+  .agent-status-dot {
+    background: #52c41a;
+    box-shadow: 0 0 4px rgba(82, 196, 26, 0.4);
+  }
+  .agent-status-label {
+    color: #52c41a;
+  }
+}
+
+.agent-status--thinking,
+.agent-status--executing {
+  .agent-status-dot {
+    background: #faad14;
+    animation: ws-pulse 1.2s ease-in-out infinite;
+  }
+  .agent-status-label {
+    color: #faad14;
+  }
+}
+
+.agent-status--waiting_user {
+  .agent-status-dot {
+    background: #1677ff;
+    animation: ws-pulse 1.2s ease-in-out infinite;
+  }
+  .agent-status-label {
+    color: #1677ff;
+  }
+}
+
+.agent-status--error {
+  .agent-status-dot {
+    background: #ff4d4f;
+    animation: ws-pulse 1.2s ease-in-out infinite;
+  }
+  .agent-status-label {
+    color: #ff4d4f;
   }
 }
 

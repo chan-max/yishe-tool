@@ -1429,7 +1429,12 @@ export const designAgent = {
       });
     } finally {
       agentState.status = "idle";
-      syncAgentStatus({ step: "完成" });
+      syncAgentStatus({
+        step: "完成",
+        userInput: undefined,
+        lastToolCall: undefined,
+        lastError: undefined,
+      });
       emit({ type: "done", data: null });
     }
   },
@@ -1565,6 +1570,12 @@ export const designAgent = {
     agentState.messages.length = 0;
     agentState.searchHistory.length = 0;
     resourceService.clearSearchCache();
-    syncAgentStatus({ step: undefined, userInput: undefined, plan: undefined });
+    syncAgentStatus({
+      step: undefined,
+      userInput: undefined,
+      plan: undefined,
+      lastToolCall: undefined,
+      lastError: undefined,
+    });
   },
 };

@@ -317,6 +317,124 @@ function bindSocketEvents(currentSocket: Socket) {
       message: `[ws] admin-message: ${typeof data === "string" ? data : JSON.stringify(data)}`,
     });
   });
+
+  // 监听来自 admin 的远程命令
+  currentSocket.on("remote-command", (data: any) => {
+    emitter.emit("log", {
+      level: "info",
+      message: `[ws] remote-command: ${data?.type} ${data?.requestId || ""}`,
+    });
+    handleRemoteCommand(data);
+  });
+}
+
+async function handleRemoteCommand(data: any) {
+  const { type, payload, requestId } = data || {};
+  const result: Record<string, any> = { requestId, success: false };
+
+  try {
+    const { designAgent } = await import("@/ai/langgraph");
+
+    switch (type) {
+      case "chat": {
+        const message = payload?.message;
+        if (!message) throw new Error("缺少 message 参数");
+        await designAgent.chat(message);
+        result.success = true;
+        // 提取 Agent 最后的回复
+        const msgs = designAgent.state.messages;
+        const lastAssistant = [...msgs]
+          .reverse()
+          .find((m: any) => m.role === "assistant" && m.content);
+        result.agentResponse = lastAssistant?.content || "";
+        result.toolCallsCount = msgs.filter(
+          (m: any) => m.role === "tool",
+        ).length;
+        result.message = lastAssistant?.content
+          ? `Agent 已完成，共 ${result.toolCallsCount} 次工具调用`
+          : "Agent 对话已完成";
+        break;
+      }
+      case "clear": {
+        designAgent.clearMessages();
+        result.success = true;
+        result.message = "已清空";
+        break;
+      }
+      case "submitResponse": {
+        const response = payload?.response;
+        if (!response) throw new Error("缺少 response 参数");
+        designAgent.submitUserResponse(response);
+        result.success = true;
+        result.message = "已提交用户响应";
+        break;
+      }
+      case "getState": {
+        const { executeOperation } = await import("@/operations");
+        const { createDesignOperationContext } = await import("@/operations");
+        const ctx = createDesignOperationContext();
+        const stateResult = await executeOperation("canvas.getState", {}, ctx);
+        result.success = stateResult.success;
+        result.canvasState = stateResult.data;
+        result.message = stateResult.message;
+        break;
+      }
+      case "getConversation": {
+        const msgs = designAgent.state.messages;
+        result.success = true;
+        result.conversation = msgs.map((m: any) => ({
+          id: m.id,
+          role: m.role,
+          content:
+            typeof m.content === "string"
+              ? m.content
+              : JSON.stringify(m.content),
+          timestamp: m.timestamp,
+          tool_calls: m.tool_calls?.map((tc: any) => ({
+            id: tc.id,
+            name: tc.function?.name,
+            arguments:
+              typeof tc.function?.arguments === "string"
+                ? (() => {
+                    try {
+                      return JSON.parse(tc.function.arguments);
+                    } catch {
+                      return tc.function.arguments;
+                    }
+                  })()
+                : tc.function?.arguments,
+          })),
+          tool_call_id: m.tool_call_id,
+          tool_name: m.tool_name,
+          meta: m.meta
+            ? {
+                iteration: m.meta.iteration,
+                duration: m.meta.duration,
+                plan: m.meta.plan,
+                toolArgs: m.meta.toolArgs,
+                toolResult: m.meta.toolResult,
+                type: m.meta.type,
+              }
+            : undefined,
+        }));
+        result.agentStatus = {
+          status: designAgent.state.status,
+          plan: designAgent.state.plan,
+          error: designAgent.state.error,
+        };
+        result.message = `共 ${msgs.length} 条消息`;
+        break;
+      }
+      default:
+        throw new Error(`未知命令类型: ${type}`);
+    }
+  } catch (error: any) {
+    result.error = error?.message || "执行失败";
+  }
+
+  if (socket?.connected) {
+    socket.emit("remote-result", result);
+  }
 }
 
 function connect(endpoint?: string) {
@@ -388,4 +506,20 @@ export const websocketClient = {
   reconnect,
   sendMessage,
   events: emitter,
+
+  sendAgentStatus(status: {
+    available: boolean;
+    agentState: "idle" | "thinking" | "executing" | "waiting_user" | "error";
+    step?: string;
+    userInput?: string;
+    plan?: { goal: string; totalSteps: number; currentStep: number } | null;
+    iteration?: number;
+    lastToolCall?: string;
+    lastError?: string;
+    startedAt?: string;
+    updatedAt: string;
+  }) {
+    if (!socket?.connected) return;
+    socket.emit("agent-status", status);
+  },
 };

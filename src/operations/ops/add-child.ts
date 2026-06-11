@@ -56,7 +56,8 @@ registerOperation({
         { label: "矩形 (不推荐，用HTML)", value: "rect" },
         { label: "椭圆 (不推荐，用HTML)", value: "ellipse" },
       ],
-      description: "要添加的元素类型。对于文字、矩形、背景、图片等基础元素，优先使用 HTML 类型。",
+      description:
+        "要添加的元素类型。对于文字、矩形、背景、图片等基础元素，优先使用 HTML 类型。",
     },
     {
       name: "textContent",
@@ -558,14 +559,51 @@ registerOperation({
       name: "htmlContent",
       label: "HTML 代码",
       type: "string",
-      placeholder: '<div class="card">...</div>',
-      description: "仅 HTML 模板类型有效，完整的 HTML 代码（包含 <style> 标签）",
+      placeholder: '<div style="...">...</div>',
+      description: [
+        "仅 HTML 类型有效。用内联 style 写 HTML，元素默认填满画布（width:100%;height:100%）。",
+        "",
+        "【画布坐标系】",
+        "- 画布宽高等于 canvas.setSize 设置的值（如 1200x1200px）",
+        "- 字号用 px：标题 200-400px，副标题 120-200px，正文 80-140px",
+        "- 间距/圆角/边距也用 px：padding:40px; border-radius:20px",
+        "",
+        "【常用模式】",
+        "居中文字: <div style='display:flex;align-items:center;justify-content:center;width:100%;height:100%;'><div style='font-size:280px;font-weight:900;color:#fff;'>标题</div></div>",
+        "渐变背景: <div style='width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);'></div>",
+        "卡片: <div style='width:100%;height:100%;display:flex;align-items:center;justify-content:center;'><div style='background:#fff;border-radius:24px;padding:60px;box-shadow:0 8px 32px rgba(0,0,0,0.1);width:80%;height:70%;box-sizing:border-box;'><div style='font-size:200px;font-weight:700;color:#1a1a2e;'>标题</div></div></div>",
+        "",
+        "【CSS 技巧】",
+        "- 用 display:flex + align-items/justify-content 做对齐",
+        "- 用 linear-gradient() 做渐变背景",
+        "- 用 box-shadow 做阴影，text-shadow 做文字发光",
+        "- 用 border-radius:50% 做圆形，999px 做胶囊",
+        "- 用 object-fit:cover 让图片不变形填充",
+        "- 禁止用纯黑 #000000 和纯白 #ffffff",
+        "",
+        "【引用外部资源】",
+        "用 htmlBindings 传入图片/字体，HTML 中用 {{image.key.url}} 或 {{font.key.family}} 引用",
+      ].join("\n"),
     },
     {
       name: "htmlBindings",
       label: "模板绑定",
       type: "object",
-      description: "HTML 模板的变量绑定数据，如字体、图片等资源对象",
+      description: [
+        "仅 HTML 类型有效。绑定图片和字体资源，HTML 中用模板变量引用。",
+        "",
+        "【绑定图片】（配合 resource.searchImage 搜索结果使用）",
+        '{ "image": { "photo": { "id":"搜到的id", "url":"搜到的url", "name":"名称" } } }',
+        "HTML 引用: <img src='{{image.photo.url}}' style='width:100%;height:100%;object-fit:cover;'/>",
+        "多张图片: image 对象中加多个 key（img1, img2, img3...）",
+        "",
+        "【绑定字体】（配合 resource.searchFont 搜索结果使用）",
+        '{ "font": { "title": { "id":"搜到的id", "url":"搜到的url", "name":"名称" } } }',
+        "HTML 引用: <div style='font-family:{{font.title.family}};font-size:280px;'>文字</div>",
+        "",
+        "【完整示例】",
+        'htmlBindings: { image: { bg: { id:"123", url:"https://...", name:"背景图" } }, font: { main: { id:"456", url:"https://...", name:"字体名" } } }',
+      ].join("\n"),
     },
     {
       name: "htmlTemplateFields",
@@ -695,7 +733,8 @@ registerOperation({
         extraOptions.htmlTemplateFields = params.htmlTemplateFields;
       }
       if (params.htmlTemplateDefaultBindings !== undefined) {
-        extraOptions.htmlTemplateDefaultBindings = params.htmlTemplateDefaultBindings;
+        extraOptions.htmlTemplateDefaultBindings =
+          params.htmlTemplateDefaultBindings;
       }
       if (params.htmlTemplateMeta !== undefined) {
         extraOptions.htmlTemplateMeta = params.htmlTemplateMeta;
@@ -956,6 +995,13 @@ registerOperation({
     }
 
     const id = ctx.addCanvasChild(type, extraOptions);
-    return { success: true, message: `已添加${type}元素`, data: { id } };
+    const totalElements = ctx
+      .getCanvasChildren()
+      .filter((c: any) => c.type !== "canvas").length;
+    return {
+      success: true,
+      message: `已添加 ${type} 元素 (id: ${id})，当前画布共 ${totalElements} 个元素。用 element.setStyle 可通过 id 修改位置和大小。`,
+      data: { id, type, totalElements },
+    };
   },
 });

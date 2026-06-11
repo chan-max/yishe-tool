@@ -14,6 +14,7 @@ import {
 } from "../shared/response-parser";
 import { translateToolResult } from "@/ai/agent/tool-translator";
 import { evaluateCanvasVisual } from "../visual-evaluate";
+import { websocketClient } from "@/services/websocketClient";
 import type { VisualEvaluation } from "../visual-evaluate";
 
 // ============ 类型定义 ============
@@ -95,6 +96,30 @@ function generateId(): string {
 
 function emit(event: any) {
   eventListeners.forEach((listener) => listener(event));
+}
+
+// ============ Agent 状态同步 ============
+function syncAgentStatus(extra: Record<string, any> = {}) {
+  try {
+    websocketClient.sendAgentStatus({
+      available: agentState.status === "idle",
+      agentState: agentState.status as any,
+      plan: agentState.plan
+        ? {
+            goal: agentState.plan.goal,
+            totalSteps: agentState.plan.steps.length,
+            currentStep: agentState.plan.steps.filter(
+              (s) => s.status === "done",
+            ).length,
+          }
+        : null,
+      iteration: undefined,
+      updatedAt: new Date().toISOString(),
+      ...extra,
+    });
+  } catch {
+    // 静默失败，不影响 Agent 正常运行
+  }
 }
 
 function addMessage(msg: Partial<AgentMessage>): AgentMessage {
@@ -368,6 +393,10 @@ async function runAgentLoop(userMessage: string) {
     iteration = i + 1;
     console.log(`[Agent] Iteration ${iteration}`);
     emit({ type: "iteration", data: { iteration, maxIterations } });
+    syncAgentStatus({
+      step: `第 ${iteration}/${maxIterations} 轮推理`,
+      iteration,
+    });
 
     // 进度反思（每 3 轮）
     if (plan && iteration > 1 && iteration % 3 === 0) {
@@ -509,6 +538,10 @@ async function runAgentLoop(userMessage: string) {
 
       // 执行普通工具
       const toolStartTime = Date.now();
+      syncAgentStatus({
+        step: `执行工具: ${call.function.name}`,
+        lastToolCall: call.function.name,
+      });
       try {
         let result;
 
@@ -1380,6 +1413,10 @@ export const designAgent = {
 
     agentState.status = "thinking";
     agentState.error = null;
+    syncAgentStatus({
+      userInput: userMessage,
+      startedAt: new Date().toISOString(),
+    });
 
     try {
       await runAgentLoop(userMessage);
@@ -1392,6 +1429,7 @@ export const designAgent = {
       });
     } finally {
       agentState.status = "idle";
+      syncAgentStatus({ step: "完成" });
       emit({ type: "done", data: null });
     }
   },
@@ -1527,5 +1565,6 @@ export const designAgent = {
     agentState.messages.length = 0;
     agentState.searchHistory.length = 0;
     resourceService.clearSearchCache();
+    syncAgentStatus({ step: undefined, userInput: undefined, plan: undefined });
   },
 };

@@ -3,7 +3,8 @@ import { registerOperation } from "../../registry";
 registerOperation({
   id: "canvas.addBackground",
   name: "添加背景",
-  description: "向画布添加一个背景元素，可设置背景颜色",
+  description:
+    "添加背景元素。【推荐用 canvas.setBackgroundColor 或 canvas.addChild html 替代】这个工具只适合简单纯色/渐变背景。",
   group: "添加元素",
   params: [
     {
@@ -54,7 +55,7 @@ registerOperation({
     const id = ctx.addCanvasChild("background", extraOptions);
     return {
       success: true,
-      message: `已添加背景元素，颜色 ${backgroundColor || "#000"}`,
+      message: `已添加背景元素 (id: ${id})，颜色 ${backgroundColor || "transparent"}。`,
       data: { id, type: "background" },
     };
   },

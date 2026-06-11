@@ -3,7 +3,8 @@ import { registerOperation } from "../../registry";
 registerOperation({
   id: "canvas.addEllipse",
   name: "添加椭圆",
-  description: "向画布添加一个椭圆/圆形元素，支持背景色、边框",
+  description:
+    "添加椭圆/圆形元素（宽高相同即圆形）。【推荐用 canvas.addChild html + border-radius:50% 替代】更灵活。",
   group: "添加元素",
   params: [
     {
@@ -109,7 +110,7 @@ registerOperation({
     const id = ctx.addCanvasChild("ellipse", extraOptions);
     return {
       success: true,
-      message: `已添加椭圆元素 ${width}x${height}`,
+      message: `已添加${width === height ? "圆形" : "椭圆"}元素 (id: ${id}) ${width}x${height}px。用 element.setStyle 可通过 id 调整位置。`,
       data: { id, type: "ellipse" },
     };
   },

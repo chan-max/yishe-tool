@@ -3,7 +3,8 @@ import { registerOperation } from "../../registry";
 registerOperation({
   id: "canvas.addRect",
   name: "添加矩形",
-  description: "向画布添加一个矩形元素，支持背景色、边框、圆角",
+  description:
+    "添加矩形元素。【推荐用 canvas.addChild html 类型替代】适合纯色/渐变矩形，HTML 类型可实现更丰富的卡片、背景等效果。",
   group: "添加元素",
   params: [
     {
@@ -126,7 +127,7 @@ registerOperation({
     const id = ctx.addCanvasChild("rect", extraOptions);
     return {
       success: true,
-      message: `已添加矩形元素 ${width}x${height}`,
+      message: `已添加矩形元素 (id: ${id}) ${width}x${height}px。用 element.setStyle 可通过 id 调整位置和大小。`,
       data: { id, type: "rect" },
     };
   },

@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-06-11T05:42:15.684Z",
+  "server": "http://localhost:1520",
+  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "totalElapsedMs": 648
+  },
+  "results": [
+    {
+      "category": "最小链路",
+      "prompt": "请回复一句：设计工具 agent 自测成功。不要修改画布。",
+      "success": true,
+      "elapsedMs": 648,
+      "messageCount": 2,
+      "toolCallsUsed": [],
+      "issues": [],
+      "toolErrors": [],
+      "messageStats": {
+        "user": 1,
+        "assistant": 1,
+        "tool": 0
+      },
+      "totalDurationMs": 194,
+      "conversation": [
+        {
+          "id": "1781156535155-8n6q3w0",
+          "role": "user",
+          "content": "请回复一句：设计工具 agent 自测成功。不要修改画布。",
+          "timestamp": 1781156535155
+        },
+        {
+          "id": "1781156535581-fsi3i0u",
+          "role": "assistant",
+          "content": "抱歉，出现了错误：AI 请求失败: 400 - {\"error\":{\"message\":\"Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment\",\"type\":\"Arrearage\",\"param\":null,\"code\":\"Arrearage\"},\"id\":\"chatcmpl-43a5e61a-96c4-9463-bc5a-0559d13732e7\",\"request_id\":\"43a5e61a-96c4-9463-bc5a-0559d13732e7\"}",
+          "timestamp": 1781156535581,
+          "meta": {
+            "iteration": 1,
+            "duration": 194
+          }
+        }
+      ],
+      "agentStatus": {
+        "status": "idle",
+        "plan": null,
+        "error": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "timestamp": "2026-06-11T05:43:02.279Z",
+  "server": "http://localhost:1520",
+  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "summary": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "totalElapsedMs": 471
+  },
+  "results": [
+    {
+      "category": "最小链路",
+      "prompt": "请回复一句：设计工具 agent 自测成功。不要修改画布。",
+      "success": false,
+      "elapsedMs": 471,
+      "messageCount": 4,
+      "toolCallsUsed": [],
+      "issues": [
+        "Agent 回复错误: 抱歉，出现了错误：AI 请求失败: 400 - {\"error\":{\"message\":\"Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment\",\"type\":\"Arrearage\",\"param\":null,\"code\":\"Arr"
+      ],
+      "toolErrors": [],
+      "messageStats": {
+        "user": 2,
+        "assistant": 2,
+        "tool": 0
+      },
+      "totalDurationMs": 381,
+      "conversation": [
+        {
+          "id": "1781156535155-8n6q3w0",
+          "role": "user",
+          "content": "请回复一句：设计工具 agent 自测成功。不要修改画布。",
+          "timestamp": 1781156535155
+        },
+        {
+          "id": "1781156535581-fsi3i0u",
+          "role": "assistant",
+          "content": "抱歉，出现了错误：AI 请求失败: 400 - {\"error\":{\"message\":\"Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment\",\"type\":\"Arrearage\",\"param\":null,\"code\":\"Arrearage\"},\"id\":\"chatcmpl-43a5e61a-96c4-9463-bc5a-0559d13732e7\",\"request_id\":\"43a5e61a-96c4-9463-bc5a-0559d13732e7\"}",
+          "timestamp": 1781156535581,
+          "meta": {
+            "iteration": 1,
+            "duration": 194
+          }
+        },
+        {
+          "id": "1781156581901-959ewl4",
+          "role": "user",
+          "content": "请回复一句：设计工具 agent 自测成功。不要修改画布。",
+          "timestamp": 1781156581901
+        },
+        {
+          "id": "1781156582164-nw2xqjy",
+          "role": "assistant",
+          "content": "抱歉，出现了错误：AI 请求失败: 400 - {\"error\":{\"message\":\"Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment\",\"type\":\"Arrearage\",\"param\":null,\"code\":\"Arrearage\"},\"id\":\"chatcmpl-e2489cbd-dfa3-99f3-ab7d-1a54b6421dba\",\"request_id\":\"e2489cbd-dfa3-99f3-ab7d-1a54b6421dba\"}",
+          "timestamp": 1781156582164,
+          "meta": {
+            "iteration": 1,
+            "duration": 187
+          }
+        }
+      ],
+      "agentStatus": {
+        "status": "idle",
+        "plan": null,
+        "error": null
+      }
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "name": "yishe-tool",
   "private": true,
   "type": "module",
-    "version": "0.0.8",
+    "version": "0.0.10",
   "packageManager": "npm@10.9.2",
   "engines": {
     "node": ">=22.12.0"
@@ -13,7 +13,11 @@
     "build": "node --max_old_space_size=1024000 ./node_modules/vite/bin/vite.js build",
     "preview": "vite preview",
     "dev": "vite --host 0.0.0.0",
-    "typecheck": "vue-tsc --noEmit"
+    "typecheck": "vue-tsc --noEmit",
+    "agent:test": "node tools/run-test.mjs",
+    "agent:test:health": "node tools/run-test.mjs --health",
+    "agent:test:smoke": "node tools/run-test.mjs --suite smoke",
+    "agent:test:basic": "node tools/run-test.mjs --suite basic"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",

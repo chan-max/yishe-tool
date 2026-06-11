@@ -12,6 +12,7 @@ type WsStatus =
 const CLIENT_SOURCE = "设计端";
 const HEARTBEAT_INTERVAL = 15_000;
 const HEARTBEAT_TIMEOUT = 30_000;
+const REMOTE_COMMAND_TIMEOUT = 30_000;
 
 function generateClientId() {
   return `designtool-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -332,14 +333,39 @@ async function handleRemoteCommand(data: any) {
   const { type, payload, requestId } = data || {};
   const result: Record<string, any> = { requestId, success: false };
 
-  try {
-    const { designAgent } = await import("@/ai/langgraph");
+  const runWithTimeout = <T>(task: Promise<T>, timeoutMs = REMOTE_COMMAND_TIMEOUT) =>
+    Promise.race([
+      task,
+      new Promise<T>((_, reject) => {
+        window.setTimeout(() => {
+          reject(new Error(`远程命令执行超时 (${timeoutMs / 1000}s): ${type}`));
+        }, timeoutMs);
+      }),
+    ]);
 
+  try {
     switch (type) {
+      case "ping":
+      case "getAgentStatus": {
+        const { designAgent } = await import("@/ai/langgraph");
+        result.success = true;
+        result.clientId = clientId;
+        result.wsStatus = wsState.status;
+        result.connectedAt = wsState.connectedAt;
+        result.agentStatus = {
+          status: designAgent.state.status,
+          plan: designAgent.state.plan,
+          error: designAgent.state.error,
+          messageCount: designAgent.state.messages.length,
+        };
+        result.message = "设计工具在线";
+        break;
+      }
       case "chat": {
+        const { designAgent } = await import("@/ai/langgraph");
         const message = payload?.message;
         if (!message) throw new Error("缺少 message 参数");
-        await designAgent.chat(message);
+        await runWithTimeout(designAgent.chat(message), 120_000);
         result.success = true;
         // 提取 Agent 最后的回复
         const msgs = designAgent.state.messages;
@@ -356,12 +382,14 @@ async function handleRemoteCommand(data: any) {
         break;
       }
       case "clear": {
+        const { designAgent } = await import("@/ai/langgraph");
         designAgent.clearMessages();
         result.success = true;
         result.message = "已清空";
         break;
       }
       case "submitResponse": {
+        const { designAgent } = await import("@/ai/langgraph");
         const response = payload?.response;
         if (!response) throw new Error("缺少 response 参数");
         designAgent.submitUserResponse(response);
@@ -373,13 +401,16 @@ async function handleRemoteCommand(data: any) {
         const { executeOperation } = await import("@/operations");
         const { createDesignOperationContext } = await import("@/operations");
         const ctx = createDesignOperationContext();
-        const stateResult = await executeOperation("canvas.getState", {}, ctx);
+        const stateResult = await runWithTimeout(
+          executeOperation("canvas.getState", {}, ctx),
+        );
         result.success = stateResult.success;
         result.canvasState = stateResult.data;
         result.message = stateResult.message;
         break;
       }
       case "getConversation": {
+        const { designAgent } = await import("@/ai/langgraph");
         const msgs = designAgent.state.messages;
         result.success = true;
         result.conversation = msgs.map((m: any) => ({

@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-06-11T06:05:11.339Z",
+  "server": "http://localhost:1520",
+  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "summary": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "totalElapsedMs": 1066
+  },
+  "results": [
+    {
+      "category": "最小AI链路",
+      "prompt": "请回复一句：设计工具 agent 自测成功。不要修改画布。",
+      "success": false,
+      "elapsedMs": 1066,
+      "messageCount": 2,
+      "toolCallsUsed": [],
+      "issues": [
+        "Agent 回复错误: 抱歉，出现了错误：AI 请求失败: 400 - {\"error\":{\"message\":\"Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment\",\"type\":\"Arrearage\",\"param\":null,\"code\":\"Arr"
+      ],
+      "toolErrors": [],
+      "messageStats": {
+        "user": 1,
+        "assistant": 1,
+        "tool": 0
+      },
+      "totalDurationMs": 153,
+      "conversation": [
+        {
+          "id": "1781157910423-d4z19eo",
+          "role": "user",
+          "content": "请回复一句：设计工具 agent 自测成功。不要修改画布。",
+          "timestamp": 1781157910423
+        },
+        {
+          "id": "1781157911198-eesev15",
+          "role": "assistant",
+          "content": "抱歉，出现了错误：AI 请求失败: 400 - {\"error\":{\"message\":\"Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment\",\"type\":\"Arrearage\",\"param\":null,\"code\":\"Arrearage\"},\"id\":\"chatcmpl-b61715e7-3323-9d3a-92aa-192ccbb5b1b4\",\"request_id\":\"b61715e7-3323-9d3a-92aa-192ccbb5b1b4\"}",
+          "timestamp": 1781157911198,
+          "meta": {
+            "iteration": 1,
+            "duration": 153
+          }
+        }
+      ],
+      "agentStatus": {
+        "status": "idle",
+        "plan": null,
+        "error": null
+      }
+    }
+  ]
+}

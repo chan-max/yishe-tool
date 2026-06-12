@@ -46,6 +46,12 @@ import { startDesignToolWebSocket } from '@/services/connectionStatus';
 import { setupSingleTabManager } from '@/utils/singleTabManager'
 
 const EMBED_RUNTIME_KEY = 'yishe_tool_embed_runtime'
+const LAUNCH_RUNTIME_KEY = 'yishe_tool_launch_runtime'
+const LAUNCH_PROMPT_RUNTIME_KEY = 'yishe_tool_launch_prompt_runtime'
+
+function getRuntimeParam(searchParams: URLSearchParams, hashParams: URLSearchParams, key: string) {
+  return (searchParams.get(key) || hashParams.get(key) || '').trim()
+}
 
 function isEmbeddedRuntime() {
   return window.self !== window.top
@@ -56,14 +62,26 @@ function parseUrlRuntimeParams() {
   const hashQuery = window.location.hash.split('?')[1] || ''
   const hashParams = new URLSearchParams(hashQuery)
 
-  const embedSource = searchParams.get('embed') || hashParams.get('embed') || ''
-  const tenantId = searchParams.get('tenantId') || hashParams.get('tenantId') || ''
-  const tokenFromUrl = normalizeTokenValue(searchParams.get('token') || hashParams.get('token') || '')
+  const embedSource = getRuntimeParam(searchParams, hashParams, 'embed')
+  const tenantId = getRuntimeParam(searchParams, hashParams, 'tenantId')
+  const tokenFromUrl = normalizeTokenValue(getRuntimeParam(searchParams, hashParams, 'token'))
+  const launchSource = getRuntimeParam(searchParams, hashParams, 'launchSource')
+  const launchClientId = getRuntimeParam(searchParams, hashParams, 'launchClientId')
+  const launchProfileId = getRuntimeParam(searchParams, hashParams, 'launchProfileId')
+  const launchProfileName = getRuntimeParam(searchParams, hashParams, 'launchProfileName')
+  const launchMachineCode = getRuntimeParam(searchParams, hashParams, 'launchMachineCode')
+  const prompt = getRuntimeParam(searchParams, hashParams, 'prompt')
 
   return {
     embedSource,
     tenantId,
     tokenFromUrl,
+    launchSource,
+    launchClientId,
+    launchProfileId,
+    launchProfileName,
+    launchMachineCode,
+    prompt,
   }
 }
 
@@ -76,16 +94,81 @@ function syncEmbedRuntimeState(embedSource: string) {
   sessionStorage.removeItem(EMBED_RUNTIME_KEY)
 }
 
+function syncLaunchPromptState(prompt: string) {
+  if (prompt) {
+    sessionStorage.setItem(
+      LAUNCH_PROMPT_RUNTIME_KEY,
+      JSON.stringify({
+        prompt,
+        createdAt: new Date().toISOString(),
+        consumed: false,
+      }),
+    )
+  }
+}
+
+function syncLaunchRuntimeState(params: ReturnType<typeof parseUrlRuntimeParams>) {
+  if (
+    params.launchSource === 'admin-design-tool' &&
+    params.launchClientId &&
+    params.launchProfileId
+  ) {
+    sessionStorage.setItem(
+      LAUNCH_RUNTIME_KEY,
+      JSON.stringify({
+        source: params.launchSource,
+        clientId: params.launchClientId,
+        profileId: params.launchProfileId,
+        profileName: params.launchProfileName || undefined,
+        machineCode: params.launchMachineCode || undefined,
+        launchedAt: new Date().toISOString(),
+      }),
+    )
+    return
+  }
+
+  if (params.launchSource) {
+    sessionStorage.removeItem(LAUNCH_RUNTIME_KEY)
+  }
+}
+
+function readStoredLaunchRuntimeSource() {
+  try {
+    const raw = sessionStorage.getItem(LAUNCH_RUNTIME_KEY)
+    if (!raw) return ''
+    const parsed = JSON.parse(raw)
+    return String(parsed?.source || '').trim()
+  } catch {
+    return ''
+  }
+}
+
+function isAdminDesignToolLaunch(params: ReturnType<typeof parseUrlRuntimeParams>) {
+  return (
+    params.embedSource === 'admin-launch' ||
+    params.launchSource === 'admin-design-tool' ||
+    readStoredLaunchRuntimeSource() === 'admin-design-tool'
+  )
+}
+
 function cleanupAuthParamsFromUrl() {
+  const runtimeParamKeys = [
+    'token',
+    'tenantId',
+    'launchSource',
+    'launchClientId',
+    'launchProfileId',
+    'launchProfileName',
+    'launchMachineCode',
+    'prompt',
+  ]
   const currentUrl = new URL(window.location.href)
-  currentUrl.searchParams.delete('token')
-  currentUrl.searchParams.delete('tenantId')
+  runtimeParamKeys.forEach((key) => currentUrl.searchParams.delete(key))
 
   if (currentUrl.hash.includes('?')) {
     const [hashPath, hashQuery] = currentUrl.hash.slice(1).split('?')
     const nextHashParams = new URLSearchParams(hashQuery || '')
-    nextHashParams.delete('token')
-    nextHashParams.delete('tenantId')
+    runtimeParamKeys.forEach((key) => nextHashParams.delete(key))
     const nextHashQuery = nextHashParams.toString()
     currentUrl.hash = nextHashQuery ? `${hashPath}?${nextHashQuery}` : hashPath
   }
@@ -95,8 +178,11 @@ function cleanupAuthParamsFromUrl() {
 
 // 检查并处理 URL 参数中的 token
 async function handleUrlToken() {
-  const { embedSource, tokenFromUrl } = parseUrlRuntimeParams()
+  const runtimeParams = parseUrlRuntimeParams()
+  const { embedSource, tokenFromUrl, prompt } = runtimeParams
   syncEmbedRuntimeState(embedSource)
+  syncLaunchRuntimeState(runtimeParams)
+  syncLaunchPromptState(prompt)
 
   if (!tokenFromUrl) {
     return false
@@ -116,9 +202,14 @@ async function handleUrlToken() {
 }
 
 async function setup() {
+  const runtimeParams = parseUrlRuntimeParams()
+
   // 启动单标签页管理器
   if (!isEmbeddedRuntime()) {
-    const canContinue = setupSingleTabManager();
+    const canContinue = setupSingleTabManager({
+      disabled: isAdminDesignToolLaunch(runtimeParams),
+      reason: 'admin-design-tool launch supports multiple browser profiles',
+    });
     if (!canContinue) {
       return; // 如果检测到其他活跃标签页，直接返回
     }

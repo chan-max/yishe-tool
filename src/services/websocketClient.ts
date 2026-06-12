@@ -13,6 +13,8 @@ const CLIENT_SOURCE = "设计端";
 const HEARTBEAT_INTERVAL = 15_000;
 const HEARTBEAT_TIMEOUT = 30_000;
 const REMOTE_COMMAND_TIMEOUT = 30_000;
+const LAUNCH_RUNTIME_KEY = "yishe_tool_launch_runtime";
+const LAUNCH_PROMPT_RUNTIME_KEY = "yishe_tool_launch_prompt_runtime";
 
 function generateClientId() {
   return `designtool-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -97,6 +99,58 @@ function buildScreenInfo() {
   };
 }
 
+function readLaunchRuntimeInfo() {
+  if (typeof window === "undefined") return undefined;
+
+  try {
+    const raw = sessionStorage.getItem(LAUNCH_RUNTIME_KEY);
+    if (!raw) return undefined;
+    const parsed = JSON.parse(raw);
+    if (
+      parsed?.source !== "admin-design-tool" ||
+      !String(parsed?.clientId || "").trim() ||
+      !String(parsed?.profileId || "").trim()
+    ) {
+      return undefined;
+    }
+
+    return {
+      source: "admin-design-tool",
+      clientId: String(parsed.clientId).trim(),
+      profileId: String(parsed.profileId).trim(),
+      profileName: String(parsed.profileName || "").trim() || undefined,
+      machineCode: String(parsed.machineCode || "").trim() || undefined,
+      launchedAt: String(parsed.launchedAt || "").trim() || undefined,
+    };
+  } catch {
+    return undefined;
+  }
+}
+
+function consumeLaunchPrompt() {
+  if (typeof window === "undefined") return "";
+
+  try {
+    const raw = sessionStorage.getItem(LAUNCH_PROMPT_RUNTIME_KEY);
+    if (!raw) return "";
+    const parsed = JSON.parse(raw);
+    const prompt = String(parsed?.prompt || "").trim();
+    if (!prompt || parsed?.consumed === true) return "";
+    sessionStorage.setItem(
+      LAUNCH_PROMPT_RUNTIME_KEY,
+      JSON.stringify({
+        ...parsed,
+        consumed: true,
+        consumedAt: new Date().toISOString(),
+      }),
+    );
+    return prompt;
+  } catch {
+    sessionStorage.removeItem(LAUNCH_PROMPT_RUNTIME_KEY);
+    return "";
+  }
+}
+
 export type WebsocketEvents = {
   log: { level: "info" | "warn" | "error"; message: string };
   statusChanged: WsStatus;
@@ -167,6 +221,7 @@ const clientInfo = reactive({
     canvasEnabled: true,
     operationsVersion: "1.0",
   },
+  launch: readLaunchRuntimeInfo(),
 });
 
 const emitter = createEmitter<WebsocketEvents>();
@@ -177,6 +232,7 @@ let heartbeatTimeoutTimer: ReturnType<typeof setTimeout> | null = null;
 let lastPingTimestamp: number | null = null;
 let intentionalDisconnect = false;
 let lastAuthToken: string | undefined;
+let launchPromptDispatching = false;
 
 const wsState = reactive({
   endpoint: getDefaultWsUrl(),
@@ -245,6 +301,7 @@ function emitClientInfo() {
   if (!socket?.connected) return;
   clientInfo.timestamp = new Date().toISOString();
   clientInfo.screen = buildScreenInfo();
+  clientInfo.launch = readLaunchRuntimeInfo();
   socket.emit("client-info", clientInfo);
 }
 
@@ -273,6 +330,7 @@ function bindSocketEvents(currentSocket: Socket) {
     });
     emitClientInfo();
     startHeartbeatLoop();
+    void dispatchLaunchPromptIfNeeded();
   });
 
   currentSocket.on("disconnect", (reason) => {
@@ -327,6 +385,31 @@ function bindSocketEvents(currentSocket: Socket) {
     });
     handleRemoteCommand(data);
   });
+}
+
+async function dispatchLaunchPromptIfNeeded() {
+  if (launchPromptDispatching) return;
+
+  const prompt = consumeLaunchPrompt();
+  if (!prompt) return;
+
+  launchPromptDispatching = true;
+  try {
+    await new Promise((resolve) => window.setTimeout(resolve, 800));
+    const { designAgent } = await import("@/ai/langgraph");
+    await designAgent.chat(prompt);
+  } catch (error: any) {
+    if (socket?.connected) {
+      socket.emit("remote-result", {
+        requestId: `launch-prompt-${Date.now()}`,
+        success: false,
+        error: error?.message || "启动指令执行失败",
+        message: "启动指令执行失败",
+      });
+    }
+  } finally {
+    launchPromptDispatching = false;
+  }
 }
 
 async function handleRemoteCommand(data: any) {

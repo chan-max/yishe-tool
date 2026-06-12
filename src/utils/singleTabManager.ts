@@ -10,8 +10,18 @@
  * @Description: 单标签页管理器 - 确保同时只有一个浏览器标签页打开系统
  */
 
+interface SingleTabManagerOptions {
+  disabled?: boolean
+  reason?: string
+}
+
 // 单标签页管理功能
-export function setupSingleTabManager() {
+export function setupSingleTabManager(options: SingleTabManagerOptions = {}) {
+  if (options.disabled) {
+    console.log(`单标签页管理器已跳过${options.reason ? `：${options.reason}` : ''}`);
+    return true;
+  }
+
   const TAB_KEY = 'design_system_active_tab';
   const currentTabId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
   

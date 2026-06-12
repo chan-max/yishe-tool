@@ -41,8 +41,8 @@ const VISUAL_EVAL_SYSTEM_PROMPT = `你是一个专业的设计评审专家。你
 ## 评分标准
 
 - 8-10: 优秀，可直接使用
-- 6-7: 良好，有优化空间
-- 4-5: 一般，建议迭代
+- 6-7: 良好，可交付，给轻微建议但不要自动迭代
+- 4-5: 一般，建议用户确认后再迭代
 - 1-3: 较差，需要重新设计
 
 ## 建议要求
@@ -110,9 +110,7 @@ ${stateSummary}
       weaknesses: evaluation.weaknesses || [],
       suggestions: evaluation.suggestions || [],
       shouldIterate:
-        evaluation.shouldIterate !== undefined
-          ? evaluation.shouldIterate
-          : clampScore(evaluation.score) < 8,
+        Boolean(evaluation.shouldIterate) && clampScore(evaluation.score) < 6,
       iterationFocus: evaluation.iterationFocus,
     };
 

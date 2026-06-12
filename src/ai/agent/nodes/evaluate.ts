@@ -102,7 +102,8 @@ ${JSON.stringify(canvasState, null, 2)}
       strengths: evaluation.strengths || [],
       weaknesses: evaluation.weaknesses || [],
       suggestions: evaluation.suggestions || [],
-      shouldIterate: evaluation.shouldIterate || false,
+      shouldIterate:
+        Boolean(evaluation.shouldIterate) && Number(evaluation.score || 5) < 6,
       iterationFocus: evaluation.iterationFocus,
     };
 

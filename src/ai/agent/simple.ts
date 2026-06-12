@@ -69,6 +69,12 @@ interface DesignPlan {
 
 const resourceToolNames = ["resource.searchFont", "resource.searchImage"];
 
+function shouldContinueAfterArtwork(userMessage: string) {
+  return /继续|再改|优化|调整|迭代|自测|测试|看看效果|分析|保存|导出|save|export/i.test(
+    userMessage,
+  );
+}
+
 // ============ Agent 状态 ============
 
 const agentState = reactive({
@@ -327,6 +333,8 @@ async function runAgentLoop(userMessage: string) {
     resourceTools: resourceService.tools,
   });
   let iteration = 0;
+  const allowPostArtworkContinuation = shouldContinueAfterArtwork(userMessage);
+  let completedArtwork = false;
 
   // 添加用户消息
   addMessage({ role: "user", content: userMessage });
@@ -615,6 +623,15 @@ async function runAgentLoop(userMessage: string) {
             content: `[工具结果] ${translatedResult}${progressHint}`,
           },
         );
+
+        if (
+          result?.success &&
+          toolName === "canvas.addChild" &&
+          args?.type === "html" &&
+          !allowPostArtworkContinuation
+        ) {
+          completedArtwork = true;
+        }
       } catch (error: any) {
         console.error("[Agent] Tool error:", error);
         const errorResult = { success: false, error: error.message };
@@ -642,8 +659,18 @@ async function runAgentLoop(userMessage: string) {
       }
     }
 
+    if (completedArtwork) {
+      console.log("[Agent] HTML artwork completed, stopping to avoid over-iteration");
+      addMessage({
+        role: "assistant",
+        content: "已完成当前设计。如需继续优化、分析或保存，请告诉我。",
+        meta: { iteration, type: "artwork-complete" },
+      });
+      return;
+    }
+
     // 视觉自检（每 4 轮）
-    if (iteration % 4 === 0 && iteration > 0) {
+    if (allowPostArtworkContinuation && iteration % 4 === 0 && iteration > 0) {
       try {
         const screenshot = await captureCanvasForAI();
         const quickEval = await directChat({
@@ -979,7 +1006,7 @@ ${stateSummary}
       weaknesses: evaluation.weaknesses || [],
       suggestions: evaluation.suggestions || [],
       shouldIterate:
-        evaluation.shouldIterate !== false && (evaluation.score || 5) < 8,
+        evaluation.shouldIterate !== false && (evaluation.score || 5) < 6,
     };
 
     console.log("[Agent] 评估结果:", result);
@@ -1010,12 +1037,12 @@ async function runAutoImprove(suggestions: string[]): Promise<void> {
 // ============ 自测流程 ============
 
 async function runSelfTest(): Promise<void> {
-  const maxRounds = 3;
+  const maxRounds = 1;
   let round = 0;
 
   addMessage({
     role: "assistant",
-    content: "开始自测：截图 → 评估 → 迭代优化...",
+    content: "开始自测：截图 → 评估。默认不自动多轮改稿，避免过度设计。",
     meta: { iteration: 0 },
   });
 

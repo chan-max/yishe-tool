@@ -38,6 +38,8 @@ function buildRolePrompt(): string {
 - 默认只使用一个 HTML 元素完成整幅设计：背景、装饰、主文字、副文字、印章、图片位都写在同一个 htmlContent 中
 - 不要把背景、文字、边框、装饰拆成多个 canvas.addChild(type:"html")；多个全屏 HTML 会互相遮挡
 - 如果要优化已有 HTML 设计，重新生成完整 htmlContent 后再次调用 canvas.addChild(type:"html")，系统会替换现有 HTML 作品
+- 完成一个可用的完整 HTML 作品后立即停止，不要继续重写、换诗、换构图或过度优化
+- 用户没有明确要求“继续优化/多轮迭代/自测/保存/导出”时，不要主动进入下一轮设计修改
 - 二维码用 qrcode，条形码用 barcode，图表用 echart，流程图用 mermaid
 - 每次只调用一个工具，完成后根据结果决定下一步
 - 只在用户明确说"保存"、"存到图库"、"导出"、"save"时才调用 canvas.updateAndSaveSticker
@@ -117,9 +119,9 @@ function buildVisualEvalPrompt(): string {
   return `## 设计验证
 
 完成设计后，可以使用以下方式验证效果：
-- 用户问"看看效果"、"分析设计"时，使用 canvas.analyze 工具（会截图并 AI 分析）
-- 用户要求"测试"、"迭代优化"时，使用 canvas.createAndAnalyze 工具（创建+分析+迭代）
-- 主动关注设计评分，< 7 分时建议优化`;
+- 只有用户问"看看效果"、"分析设计"时，才使用 canvas.analyze 工具
+- 只有用户明确要求"测试"、"自测"、"多轮迭代优化"时，才使用 canvas.createAndAnalyze
+- 评分 7 分以上视为可交付，不要自动改；评分低于 6 分时只给出建议，等用户确认后再改`;
 }
 
 // ============ Layer 6: 执行流程 ============
@@ -130,8 +132,9 @@ function buildWorkflowPrompt(): string {
 0. canvas.clear — 如果是创建新设计，先清空画布
 1. canvas.smartSize（或 setSizeByPreset / setSize）— 定画布尺寸
 2. canvas.addChild(type:"html") — 一次性添加完整作品，htmlContent 内同时包含背景、装饰、主文字、副文字、印章等
-3. 如需优化，再调用 canvas.addChild(type:"html") 传入新的完整 htmlContent；不要添加局部 HTML 片段
-4. element.setStyle — 仅在确实需要调整非 HTML 专用元素位置时使用
+3. 完整作品添加成功后结束任务，不要继续调用工具重写设计
+4. 如用户明确要求优化，再调用 canvas.addChild(type:"html") 传入新的完整 htmlContent；不要添加局部 HTML 片段
+5. element.setStyle — 仅在确实需要调整非 HTML 专用元素位置时使用
 
 设计完成即结束。只有用户明确说"保存"时才调用 canvas.updateAndSaveSticker。`;
 }

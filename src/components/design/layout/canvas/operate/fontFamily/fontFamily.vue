@@ -16,11 +16,11 @@
         <el-tooltip v-if="model" content="查看字体详情" placement="top">
           <el-button
             size="small"
-            circle
-            class="font-detail-icon-button"
+            text
+            class="font-detail-text-button"
             @click="openFontDetail(model)"
           >
-            <el-icon><InfoFilled /></el-icon>
+            详情
           </el-button>
         </el-tooltip>
         <!-- <el-button size="small" @click="openFontModal"> 字体库 </el-button> -->
@@ -263,7 +263,7 @@ import desimage from "@/components/image.vue";
 import { fetchFontFaceWithMessage } from "./index.ts";
 import { showUpload, showFontModal, cacheFontFamily } from "@/components/design/store";
 import { useDebounceFn } from "@vueuse/core";
-import { Loading, Search, Check, DocumentCopy, Download, InfoFilled, View } from "@element-plus/icons-vue";
+import { Loading, Search, Check, DocumentCopy, Download, View } from "@element-plus/icons-vue";
 import { getFontList } from "@/api";
 import { message } from "ant-design-vue";
 
@@ -532,8 +532,21 @@ watch(
   flex-shrink: 0;
 }
 
-.font-detail-icon-button {
+.font-detail-text-button {
   flex: 0 0 auto;
+  min-width: auto;
+  height: 24px;
+  padding: 0 4px;
+  border: 0;
+  color: #606266;
+  font-size: 12px;
+  background: transparent;
+}
+
+.font-detail-text-button:hover,
+.font-detail-text-button:focus {
+  color: #409eff;
+  background: #ecf5ff;
 }
 
 .font-drawer-content {

@@ -7,7 +7,7 @@ import {
   createDesignOperationContext,
 } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
-import { buildAITools, INTERACTION_TOOL_NAMES } from "@/ai/shared/tools";
+import { buildAITools, INTERACTION_TOOL_NAMES, resolveAIToolName } from "@/ai/shared/tools";
 import { parseChatResponse } from "@/ai/shared/response-parser";
 
 // ============ 状态定义 ============
@@ -285,6 +285,7 @@ async function executeToolsNode(state: State): Promise<Partial<State>> {
     const args = typeof call.function.arguments === "string"
       ? JSON.parse(call.function.arguments)
       : call.function.arguments;
+    const toolName = resolveAIToolName(call.function.name);
 
     // 检查是否是交互工具
     if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
@@ -299,7 +300,7 @@ async function executeToolsNode(state: State): Promise<Partial<State>> {
     }
 
     // 执行工具
-    const result = await executeOperation(call.function.name, args, ctx);
+    const result = await executeOperation(toolName, args, ctx);
 
     const toolMessage = new ToolMessage({
       content: JSON.stringify(result),

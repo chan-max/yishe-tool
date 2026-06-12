@@ -2,10 +2,14 @@ import { reactive, ref, computed } from "vue";
 import { aiChat } from "@/ai/api";
 import { directChat } from "@/ai/direct-client";
 import {
-  getOperationTools,
   executeOperation,
   createDesignOperationContext,
 } from "@/operations";
+import {
+  buildAITools,
+  INTERACTION_TOOL_NAMES,
+  resolveAIToolName,
+} from "@/ai/shared/tools";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
 import type {
   AgentMessage,
@@ -194,7 +198,7 @@ ${JSON.stringify(canvasState, null, 2)}
 `;
 }
 
-const interactionTools = ["ask_choice", "request_feedback"];
+const interactionTools = [...INTERACTION_TOOL_NAMES];
 
 // 全局响应式状态
 const agentState = reactive<AgentState>({
@@ -227,52 +231,7 @@ async function runAgentLoop() {
   const maxIterations = 10;
   const ctx = createDesignOperationContext();
 
-  const tools = getOperationTools();
-  const allTools = [
-    ...tools.map((t) => ({
-      type: "function",
-      function: {
-        name: t.name,
-        description: t.description,
-        parameters: t.input_schema,
-      },
-    })),
-    {
-      type: "function",
-      function: {
-        name: "ask_choice",
-        description:
-          "向用户提问，让用户做选择。当有多种设计方向、需要用户决策时使用。",
-        parameters: {
-          type: "object",
-          properties: {
-            question: { type: "string", description: "要问用户的问题" },
-            options: {
-              type: "array",
-              items: { type: "string" },
-              description: "选项列表（可选）",
-            },
-          },
-          required: ["question"],
-        },
-      },
-    },
-    {
-      type: "function",
-      function: {
-        name: "request_feedback",
-        description:
-          "展示当前效果，请求用户反馈。当完成一个步骤后，询问用户是否满意。",
-        parameters: {
-          type: "object",
-          properties: {
-            question: { type: "string", description: "想问用户什么" },
-          },
-          required: ["question"],
-        },
-      },
-    },
-  ];
+  const allTools = buildAITools();
 
   const messagesForLLM: any[] = [
     { role: "system", content: buildSystemPrompt() },
@@ -361,7 +320,8 @@ async function runAgentLoop() {
           ? JSON.parse(call.function.arguments)
           : call.function.arguments;
 
-      console.log("[Agent] Executing tool:", call.function.name, args);
+      const toolName = resolveAIToolName(call.function.name);
+      console.log("[Agent] Executing tool:", toolName, args);
 
       if (interactionTools.includes(call.function.name)) {
         agentState.status = "waiting_user";
@@ -389,13 +349,13 @@ async function runAgentLoop() {
         continue;
       }
 
-      const result = await executeOperation(call.function.name, args, ctx);
+      const result = await executeOperation(toolName, args, ctx);
       console.log("[Agent] Tool result:", result);
 
       addMessage({
         role: "tool",
         tool_call_id: call.id,
-        tool_name: call.function.name,
+        tool_name: toolName,
         content: JSON.stringify(result),
       });
 
@@ -403,7 +363,7 @@ async function runAgentLoop() {
         { role: "assistant" as const, content, tool_calls: toolCalls },
         {
           role: "user" as const,
-          content: `[工具结果] ${call.function.name}: ${JSON.stringify(result)}`,
+          content: `[工具结果] ${toolName}: ${JSON.stringify(result)}`,
         },
       );
     }

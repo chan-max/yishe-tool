@@ -6,7 +6,7 @@ import { buildSystemPrompt, buildImageAnalysisPrompt } from "../prompts/system";
 import { buildKnowledgePrompt } from "../knowledge";
 import { resourceService } from "../services/resource";
 import { captureCanvasForAI, getCanvasStateSummary } from "../capture";
-import { buildAITools, INTERACTION_TOOL_NAMES } from "../shared/tools";
+import { buildAITools, INTERACTION_TOOL_NAMES, resolveAIToolName } from "../shared/tools";
 import {
   parseChatResponse,
   extractContent,
@@ -507,7 +507,8 @@ async function runAgentLoop(userMessage: string) {
         args = rawArgs;
       }
 
-      console.log("[Agent] Executing tool:", call.function.name, args);
+      const toolName = resolveAIToolName(call.function.name);
+      console.log("[Agent] Executing tool:", toolName, args);
 
       // 检查是否是交互工具
       if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
@@ -539,19 +540,19 @@ async function runAgentLoop(userMessage: string) {
       // 执行普通工具
       const toolStartTime = Date.now();
       syncAgentStatus({
-        step: `执行工具: ${call.function.name}`,
-        lastToolCall: call.function.name,
+        step: `执行工具: ${toolName}`,
+        lastToolCall: toolName,
       });
       try {
         let result;
 
         // 检查是否是资源工具
-        if (resourceToolNames.includes(call.function.name)) {
+        if (resourceToolNames.includes(toolName)) {
           // 检查是否是重复搜索
-          const duplicate = isDuplicateSearch(call.function.name, args);
+          const duplicate = isDuplicateSearch(toolName, args);
           if (duplicate) {
             console.log(
-              `[Agent] 跳过重复搜索: ${call.function.name}("${args.query}") (第${duplicate.iteration}轮已搜索)`,
+              `[Agent] 跳过重复搜索: ${toolName}("${args.query}") (第${duplicate.iteration}轮已搜索)`,
             );
             result = {
               success: true,
@@ -561,14 +562,10 @@ async function runAgentLoop(userMessage: string) {
               message: `此搜索在第${duplicate.iteration}轮已执行过，找到${duplicate.resultCount}个结果。以下是缓存的结果：`,
             };
           } else {
-            result = await resourceService.executeTool(
-              call.function.name,
-              args,
-            );
+            result = await resourceService.executeTool(toolName, args);
             // 记录搜索结果（含数据缓存）
             const resultCount = result?.data?.length || 0;
-            recordSearch(
-              call.function.name,
+            recordSearch(toolName,
               args,
               resultCount,
               iteration,
@@ -576,7 +573,7 @@ async function runAgentLoop(userMessage: string) {
             );
           }
         } else {
-          result = await executeOperation(call.function.name, args, ctx);
+          result = await executeOperation(toolName, args, ctx);
         }
 
         const toolDuration = Date.now() - toolStartTime;
@@ -585,7 +582,7 @@ async function runAgentLoop(userMessage: string) {
         // 如果是保存操作，更新任务进度
         let progressHint = "";
         if (
-          call.function.name === "canvas.updateAndSaveSticker" &&
+          toolName === "canvas.updateAndSaveSticker" &&
           result?.success
         ) {
           const progress = completeBatchItem();
@@ -597,7 +594,7 @@ async function runAgentLoop(userMessage: string) {
         addMessage({
           role: "tool",
           tool_call_id: call.id,
-          tool_name: call.function.name,
+          tool_name: toolName,
           content: JSON.stringify(result) + progressHint,
           meta: {
             iteration,
@@ -607,8 +604,7 @@ async function runAgentLoop(userMessage: string) {
           },
         });
 
-        const translatedResult = translateToolResult(
-          call.function.name,
+        const translatedResult = translateToolResult(toolName,
           args,
           result,
         );
@@ -626,7 +622,7 @@ async function runAgentLoop(userMessage: string) {
         addMessage({
           role: "tool",
           tool_call_id: call.id,
-          tool_name: call.function.name,
+          tool_name: toolName,
           content: JSON.stringify(errorResult),
           meta: {
             iteration,
@@ -640,7 +636,7 @@ async function runAgentLoop(userMessage: string) {
           { role: "assistant", content, tool_calls: toolCalls },
           {
             role: "user",
-            content: `[工具结果] ❌ ${call.function.name} 执行失败: ${error.message}`,
+            content: `[工具结果] ❌ ${toolName} 执行失败: ${error.message}`,
           },
         );
       }
@@ -833,7 +829,8 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
         args = rawArgs;
       }
 
-      console.log("[Agent] 执行工具:", call.function.name, args);
+      const toolName = resolveAIToolName(call.function.name);
+      console.log("[Agent] 执行工具:", toolName, args);
 
       // 检查是否是交互工具
       if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
@@ -859,10 +856,10 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
       try {
         let result;
 
-        if (resourceToolNames.includes(call.function.name)) {
-          result = await resourceService.executeTool(call.function.name, args);
+        if (resourceToolNames.includes(toolName)) {
+          result = await resourceService.executeTool(toolName, args);
         } else {
-          result = await executeOperation(call.function.name, args, ctx);
+          result = await executeOperation(toolName, args, ctx);
         }
 
         const toolDuration = Date.now() - toolStartTime;
@@ -871,7 +868,7 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
         addMessage({
           role: "tool",
           tool_call_id: call.id,
-          tool_name: call.function.name,
+          tool_name: toolName,
           content: JSON.stringify(result),
           meta: {
             iteration,
@@ -887,7 +884,7 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
         addMessage({
           role: "tool",
           tool_call_id: call.id,
-          tool_name: call.function.name,
+          tool_name: toolName,
           content: JSON.stringify(errorResult),
           meta: {
             iteration,
@@ -1122,11 +1119,13 @@ ${evaluation.suggestions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
             args = rawArgs;
           }
 
+          const toolName = resolveAIToolName(call.function.name);
+
           try {
-            if (resourceToolNames.includes(call.function.name)) {
-              await resourceService.executeTool(call.function.name, args);
+            if (resourceToolNames.includes(toolName)) {
+              await resourceService.executeTool(toolName, args);
             } else {
-              await executeOperation(call.function.name, args, ctx);
+              await executeOperation(toolName, args, ctx);
             }
           } catch (err) {
             console.error("[SelfTest] 改进操作失败:", err);

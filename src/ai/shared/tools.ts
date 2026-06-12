@@ -2,6 +2,44 @@ import { getOperationTools } from "@/operations";
 
 export const INTERACTION_TOOL_NAMES = ["ask_choice", "request_feedback"] as const;
 
+export const OPERATION_TOOL_PREFIX = "op__";
+const TOOL_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
+const toolNameMap = new Map<string, string>();
+
+function createSafeToolName(name: string, prefix: string): string {
+  const normalized = String(name || "").trim();
+  const readable = normalized.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 48);
+  let hash = 0;
+  for (let i = 0; i < normalized.length; i++) {
+    hash = (hash * 31 + normalized.charCodeAt(i)) >>> 0;
+  }
+  return `${prefix}${readable}_${hash.toString(36)}`;
+}
+
+export function normalizeOperationToolName(name: string): string {
+  const normalized = String(name || "").trim();
+  const safeName = createSafeToolName(normalized, OPERATION_TOOL_PREFIX);
+  toolNameMap.set(safeName, normalized);
+  return safeName;
+}
+
+function normalizeAnyToolName(name: string): string {
+  const normalized = String(name || "").trim();
+  if (TOOL_NAME_PATTERN.test(normalized)) {
+    toolNameMap.set(normalized, normalized);
+    return normalized;
+  }
+
+  const safeName = createSafeToolName(normalized, "tool__");
+  toolNameMap.set(safeName, normalized);
+  return safeName;
+}
+
+export function resolveAIToolName(name: string): string {
+  const normalized = String(name || "").trim();
+  return toolNameMap.get(normalized) || normalized;
+}
+
 const askChoiceDef = {
   type: "function" as const,
   function: {
@@ -43,10 +81,11 @@ export function buildAITools(options?: {
   includeResources?: boolean;
   resourceTools?: any[];
 }): any[] {
-  const opTools = getOperationTools().map((t) => ({
+  const operationTools = getOperationTools();
+  const opTools = operationTools.map((t) => ({
     type: "function" as const,
     function: {
-      name: t.name,
+      name: normalizeOperationToolName(t.name),
       description: t.description,
       parameters: t.input_schema,
     },
@@ -55,7 +94,15 @@ export function buildAITools(options?: {
   const tools = [...opTools];
 
   if (options?.includeResources && options?.resourceTools) {
-    tools.push(...options.resourceTools);
+    tools.push(
+      ...options.resourceTools.map((tool) => ({
+        ...tool,
+        function: {
+          ...tool.function,
+          name: normalizeAnyToolName(tool.function?.name),
+        },
+      })),
+    );
   }
 
   tools.push(...INTERACTION_TOOL_DEFS);

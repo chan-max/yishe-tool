@@ -4,7 +4,7 @@ import {
   executeOperation,
   createDesignOperationContext,
 } from "@/operations";
-import { INTERACTION_TOOL_NAMES } from "../../shared/tools";
+import { INTERACTION_TOOL_NAMES, resolveAIToolName } from "../../shared/tools";
 
 // ============ 执行节点 ============
 
@@ -19,6 +19,7 @@ export async function executeNode(state: AgentState): Promise<Partial<AgentState
     const args = typeof call.function.arguments === "string"
       ? JSON.parse(call.function.arguments)
       : call.function.arguments;
+    const toolName = resolveAIToolName(call.function.name);
 
     // 检查是否是交互工具
     if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
@@ -35,8 +36,8 @@ export async function executeNode(state: AgentState): Promise<Partial<AgentState
 
     try {
       // 执行工具
-      const result = await executeOperation(call.function.name, args, ctx);
-      toolResults[call.function.name] = result;
+      const result = await executeOperation(toolName, args, ctx);
+      toolResults[toolName] = result;
 
       const toolMessage = new ToolMessage({
         content: JSON.stringify(result),
@@ -78,7 +79,7 @@ export async function executeNode(state: AgentState): Promise<Partial<AgentState
       };
     } catch (error: any) {
       console.error("[Agent] Execute error:", error);
-      toolResults[call.function.name] = { success: false, error: error.message };
+      toolResults[toolName] = { success: false, error: error.message };
 
       const toolMessage = new ToolMessage({
         content: JSON.stringify({ success: false, error: error.message }),

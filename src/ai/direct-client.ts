@@ -1,8 +1,10 @@
 import CryptoJS from "crypto-js";
 import { getUserApiKey } from "./api";
 
-// 加密密钥（需要与服务端一致）
-const ENCRYPT_SECRET = "your-encrypt-secret-key-2024";
+// 加密密钥（需要与服务端 AI_API_KEY_RESPONSE_ENCRYPT_SECRET 一致）
+const ENCRYPT_SECRET =
+  String(import.meta.env.VITE_AI_API_KEY_RESPONSE_ENCRYPT_SECRET || "").trim() ||
+  "1s-design-encrypt-key";
 
 // 功能标识
 const FEATURE_AI_CHAT = "ai_chat";

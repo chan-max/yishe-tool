@@ -35,6 +35,9 @@ function buildRolePrompt(): string {
 - 用户要求修改/迭代现有设计时，不要清空画布，直接修改
 - 你是执行者，用户说做什么就调用工具执行，不要只给建议
 - 文字、矩形、背景、装饰：全部使用 HTML 类型，text/rect/ellipse 类型已废弃
+- 默认只使用一个 HTML 元素完成整幅设计：背景、装饰、主文字、副文字、印章、图片位都写在同一个 htmlContent 中
+- 不要把背景、文字、边框、装饰拆成多个 canvas.addChild(type:"html")；多个全屏 HTML 会互相遮挡
+- 如果要优化已有 HTML 设计，重新生成完整 htmlContent 后再次调用 canvas.addChild(type:"html")，系统会替换现有 HTML 作品
 - 二维码用 qrcode，条形码用 barcode，图表用 echart，流程图用 mermaid
 - 每次只调用一个工具，完成后根据结果决定下一步
 - 只在用户明确说"保存"、"存到图库"、"导出"、"save"时才调用 canvas.updateAndSaveSticker
@@ -86,6 +89,13 @@ function buildResourceGuidePrompt(): string {
 function buildHtmlQuickRefPrompt(): string {
   return `## HTML 写法速查
 
+### 单 HTML 作品规则（重要）
+- 一幅视觉作品默认只调用一次 canvas.addChild({type:"html"})。
+- 这一个 htmlContent 必须包含完整画面：背景、边框、装饰、标题、正文、署名、印章、图片等。
+- 不要先添加背景 HTML，再添加文字 HTML，再添加装饰 HTML。
+- 如果要迭代，输出一份新的完整 htmlContent 替换旧作品，不要只输出局部片段。
+- 根节点必须 width:100%; height:100%; position:relative; overflow:hidden; box-sizing:border-box。
+
 标题：<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#1a1a2e;"><div style="font-size:280px;font-weight:900;color:#fff;line-height:1;">标题</div></div>
 
 渐变背景：<div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px;"></div>
@@ -113,11 +123,9 @@ function buildWorkflowPrompt(): string {
 
 0. canvas.clear — 如果是创建新设计，先清空画布
 1. canvas.smartSize（或 setSizeByPreset / setSize）— 定画布尺寸
-2. canvas.addChild(type:"html") — 添加背景
-3. canvas.addChild(type:"html") — 添加装饰元素
-4. canvas.addChild(type:"html") — 添加主文字
-5. canvas.addChild(type:"html") — 添加副文字
-6. element.setStyle — 调整位置和层级
+2. canvas.addChild(type:"html") — 一次性添加完整作品，htmlContent 内同时包含背景、装饰、主文字、副文字、印章等
+3. 如需优化，再调用 canvas.addChild(type:"html") 传入新的完整 htmlContent；不要添加局部 HTML 片段
+4. element.setStyle — 仅在确实需要调整非 HTML 专用元素位置时使用
 
 设计完成即结束。只有用户明确说"保存"时才调用 canvas.updateAndSaveSticker。`;
 }

@@ -1,5 +1,46 @@
 import { registerOperation } from "../registry";
 
+function isHtmlArtworkType(type: string) {
+  return type === "html";
+}
+
+function getHtmlContentLength(child: any) {
+  return String(child?.htmlContent || "").trim().length;
+}
+
+function updateExistingHtmlArtwork(ctx: any, options: Record<string, any>) {
+  const htmlChildren = ctx
+    .getCanvasChildren()
+    .filter((child: any) => child.type === "html");
+
+  if (htmlChildren.length === 0) return null;
+
+  const target = htmlChildren[htmlChildren.length - 1];
+  const currentLength = getHtmlContentLength(target);
+  const nextLength = String(options.htmlContent || "").trim().length;
+  if (currentLength > 1200 && nextLength > 0 && nextLength < currentLength * 0.65) {
+    return {
+      id: target.id,
+      rejected: true,
+      message:
+        "检测到已有完整 HTML 作品，本次 htmlContent 明显更短，像是局部片段。请重新提交一份包含背景、装饰、文字、印章等全部内容的完整 htmlContent。",
+    };
+  }
+
+  for (const child of htmlChildren) {
+    if (child.id !== target.id) {
+      ctx.removeCanvasChild(child.id);
+    }
+  }
+
+  for (const [key, value] of Object.entries(options)) {
+    ctx.setChildProperty(target.id, key, value);
+  }
+  ctx.setChildProperty(target.id, "zIndex", 0);
+  ctx.selectChild(target.id);
+  return { id: target.id, rejected: false };
+}
+
 registerOperation({
   id: "canvas.addChild",
   name: "添加元素",
@@ -586,6 +627,14 @@ registerOperation({
       ].join("\n"),
     },
     {
+      name: "allowMultipleHtml",
+      label: "允许多个 HTML 元素",
+      type: "boolean",
+      default: false,
+      description:
+        "仅 HTML 类型有效。默认 false：再次添加 HTML 会替换已有 HTML 作品并清理旧 HTML 层，避免全屏片段互相遮挡。只有明确需要多个独立 HTML 层时才设为 true。",
+    },
+    {
       name: "htmlBindings",
       label: "模板绑定",
       type: "object",
@@ -707,6 +756,7 @@ registerOperation({
       htmlTemplateFields,
       htmlTemplateDefaultBindings,
       htmlTemplateMeta,
+      allowMultipleHtml,
       width,
       height,
     } = params;
@@ -994,14 +1044,35 @@ registerOperation({
       if (height !== undefined) extraOptions.height = height;
     }
 
-    const id = ctx.addCanvasChild(type, extraOptions);
+    const replaceResult =
+      isHtmlArtworkType(type) && !allowMultipleHtml
+        ? updateExistingHtmlArtwork(ctx, extraOptions)
+        : null;
+
+    if (replaceResult?.rejected) {
+      return {
+        success: false,
+        message:
+          replaceResult.message ||
+          "检测到局部 HTML 片段，请提交一份完整 htmlContent 替换现有 HTML 作品。",
+        data: {
+          id: replaceResult.id,
+          type,
+          rejected: true,
+          reason: "partial_html_fragment",
+        },
+      };
+    }
+
+    const id = replaceResult?.id || ctx.addCanvasChild(type, extraOptions);
     const totalElements = ctx
       .getCanvasChildren()
       .filter((c: any) => c.type !== "canvas").length;
+    const actionText = replaceResult ? "已更新现有" : "已添加";
     return {
       success: true,
-      message: `已添加 ${type} 元素 (id: ${id})，当前画布共 ${totalElements} 个元素。用 element.setStyle 可通过 id 修改位置和大小。`,
-      data: { id, type, totalElements },
+      message: `${actionText} ${type} 元素 (id: ${id})，当前画布共 ${totalElements} 个元素。HTML 作品默认保持单元素；如需优化，请传入完整 htmlContent 替换，不要追加局部 HTML 片段。`,
+      data: { id, type, totalElements, replaced: Boolean(replaceResult) },
     };
   },
 });

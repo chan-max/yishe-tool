@@ -72,10 +72,16 @@ function buildResourceGuidePrompt(): string {
 
 - resource.searchImage — 搜索你的素材库（图库/贴纸库），用关键词查找已有的素材
 - resource.searchFont — 搜索字体库
+- 用户提到艺术字、书法、古诗、挂画、字体风格、标题设计时，必须先调用 resource.searchFont 搜索合适字体
 - 搜索到素材后，通过 canvas.addImage({ imageUrl: 搜索结果中的url }) 放到画布上
 - 搜索到字体后，在 canvas.addChild 中通过 htmlBindings 绑定：
   { "htmlBindings": { "font": { "brand": { "id":"搜到的id", "url":"搜到的url", "name":"搜到的name" } } } }
 - HTML 中用 {{font.brand.family}} 引用字体，图片用 {{image.xxx.url}}
+- 字体绑定必须是对象，不要传 JSON 字符串；htmlContent 中必须实际写 font-family:{{font.xxx.family}}, serif
+- 外部图片、外部字体等资源严禁把 URL 直接写进 htmlContent；必须放进 htmlBindings，然后用 {{image.xxx.url}} / {{font.xxx.family}} 引用
+- 这样用户才能在 UI 里看到资源、替换资源、二次编辑；直接写 URL 会被工具拒绝
+- 如果使用多个字体，建议 title/body/accent 三个 key：{{font.title.family}}、{{font.body.family}}、{{font.accent.family}}
+- 迭代已有 HTML 作品时必须保留之前的 htmlBindings/font 绑定，不能把 htmlBindings 传空
 - 搜索关键词要简短精准（"艺术"、"可爱"、"简约"），不要长句
 - 不要重复搜索同一关键词，系统自动缓存
 

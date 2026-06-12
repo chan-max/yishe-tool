@@ -1,4 +1,8 @@
 import { registerOperation } from "../registry";
+import {
+  inferHtmlTemplateFieldsFromContent,
+  normalizeHtmlTemplateBindings,
+} from "@/components/design/layout/canvas/htmlTemplate/runtime";
 
 function isHtmlArtworkType(type: string) {
   return type === "html";
@@ -6,6 +10,185 @@ function isHtmlArtworkType(type: string) {
 
 function getHtmlContentLength(child: any) {
   return String(child?.htmlContent || "").trim().length;
+}
+
+function parseMaybeJsonObject(value: any) {
+  if (!value) return undefined;
+  if (typeof value === "object") return value;
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  try {
+    const parsed = JSON.parse(trimmed);
+    return parsed && typeof parsed === "object" ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function hasFontBindings(bindings: any) {
+  return hasResourceBindings(bindings, "font");
+}
+
+function hasResourceBindings(bindings: any, group: "font" | "image") {
+  return Boolean(
+    bindings &&
+      typeof bindings === "object" &&
+      bindings[group] &&
+      typeof bindings[group] === "object" &&
+      Object.keys(bindings[group]).length > 0,
+  );
+}
+
+function getFontBindingKeys(bindings: any) {
+  return getResourceBindingKeys(bindings, "font");
+}
+
+function getResourceBindingKeys(bindings: any, group: "font" | "image") {
+  if (!hasResourceBindings(bindings, group)) return [];
+  return Object.keys(bindings[group]).filter((key) => {
+    const value = bindings[group][key];
+    return value && typeof value === "object" && value.id && value.url;
+  });
+}
+
+function ensureHtmlReferencesBoundFonts(htmlContent: string, bindings: any) {
+  const html = String(htmlContent || "");
+  const fontKeys = getFontBindingKeys(bindings);
+  if (!html || fontKeys.length === 0 || html.includes("{{font.")) {
+    return html;
+  }
+
+  const fontStack = `${fontKeys
+    .map((key) => `{{font.${key}.family}}`)
+    .join(", ")}, serif`;
+  const fontFamilyDeclaration = `font-family:${fontStack}`;
+
+  if (/font-family\s*:/i.test(html)) {
+    return html.replace(/font-family\s*:[^;]+;?/i, `${fontFamilyDeclaration};`);
+  }
+
+  return html.replace(
+    /style=(["'])(.*?)\1/i,
+    (_match, quote, styleValue) =>
+      `style=${quote}${fontFamilyDeclaration};${styleValue}${quote}`,
+  );
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function replaceDirectImageUrlsWithBindings(htmlContent: string, bindings: any) {
+  let html = String(htmlContent || "");
+  const imageKeys = getResourceBindingKeys(bindings, "image");
+  for (const key of imageKeys) {
+    const url = bindings.image?.[key]?.url;
+    if (!url) continue;
+    html = html.replace(new RegExp(escapeRegExp(url), "g"), `{{image.${key}.url}}`);
+  }
+  return html;
+}
+
+function findDirectExternalResourceUrls(htmlContent: string) {
+  const html = String(htmlContent || "");
+  const urls = new Set<string>();
+  const patterns = [
+    /\b(?:src|href)\s*=\s*["'](https?:\/\/[^"']+)["']/gi,
+    /url\(\s*["']?(https?:\/\/[^)"']+)["']?\s*\)/gi,
+  ];
+
+  for (const pattern of patterns) {
+    for (const match of html.matchAll(pattern)) {
+      if (match[1]) urls.add(match[1]);
+    }
+  }
+
+  return Array.from(urls);
+}
+
+function getDirectExternalResourceError(options: Record<string, any>) {
+  const directUrls = findDirectExternalResourceUrls(options.htmlContent || "");
+  if (directUrls.length === 0) return "";
+  return [
+    "HTML 中检测到直接写入的外部资源 URL。图片、字体等外部资源必须通过 htmlBindings 绑定，不能直接写在 htmlContent 里。",
+    "请把图片改为 {{image.xxx.url}}，把字体改为 {{font.xxx.family}}，并在 htmlBindings 中提供对应的 id/url/name，方便用户在 UI 中查看和二次替换。",
+    `检测到的 URL: ${directUrls.slice(0, 3).join(", ")}`,
+  ].join("\n");
+}
+
+function prepareHtmlArtworkOptions(
+  options: Record<string, any>,
+  existingChild?: any,
+) {
+  const prepared = { ...options };
+  const parsedBindings = parseMaybeJsonObject(prepared.htmlBindings);
+  const parsedFields = parseMaybeJsonObject(prepared.htmlTemplateFields);
+  const parsedDefaultBindings = parseMaybeJsonObject(
+    prepared.htmlTemplateDefaultBindings,
+  );
+  const parsedMeta = parseMaybeJsonObject(prepared.htmlTemplateMeta);
+
+  if (parsedBindings !== undefined) prepared.htmlBindings = parsedBindings;
+  if (parsedFields !== undefined) prepared.htmlTemplateFields = parsedFields;
+  if (parsedDefaultBindings !== undefined) {
+    prepared.htmlTemplateDefaultBindings = parsedDefaultBindings;
+  }
+  if (parsedMeta !== undefined) prepared.htmlTemplateMeta = parsedMeta;
+
+  if (!hasFontBindings(prepared.htmlBindings) && hasFontBindings(existingChild?.htmlBindings)) {
+    prepared.htmlBindings = existingChild.htmlBindings;
+  }
+  if (
+    !hasResourceBindings(prepared.htmlBindings, "image") &&
+    hasResourceBindings(existingChild?.htmlBindings, "image")
+  ) {
+    prepared.htmlBindings = {
+      ...(existingChild.htmlBindings || {}),
+      ...(prepared.htmlBindings || {}),
+      image: existingChild.htmlBindings.image,
+    };
+  }
+
+  if (prepared.htmlContent && hasFontBindings(prepared.htmlBindings)) {
+    prepared.htmlContent = ensureHtmlReferencesBoundFonts(
+      prepared.htmlContent,
+      prepared.htmlBindings,
+    );
+  }
+  if (prepared.htmlContent && hasResourceBindings(prepared.htmlBindings, "image")) {
+    prepared.htmlContent = replaceDirectImageUrlsWithBindings(
+      prepared.htmlContent,
+      prepared.htmlBindings,
+    );
+  }
+
+  const existingFields = Array.isArray(prepared.htmlTemplateFields)
+    ? prepared.htmlTemplateFields
+    : Array.isArray(existingChild?.htmlTemplateFields)
+      ? existingChild.htmlTemplateFields
+      : [];
+  const inferredFields = inferHtmlTemplateFieldsFromContent(
+    prepared.htmlContent || existingChild?.htmlContent || "",
+    existingFields,
+  );
+
+  if (inferredFields.length > 0) {
+    prepared.htmlTemplateFields = inferredFields;
+    prepared.htmlBindings = normalizeHtmlTemplateBindings(
+      inferredFields,
+      prepared.htmlBindings || existingChild?.htmlBindings || {},
+    );
+    prepared.htmlTemplateDefaultBindings = normalizeHtmlTemplateBindings(
+      inferredFields,
+      prepared.htmlTemplateDefaultBindings ||
+        existingChild?.htmlTemplateDefaultBindings ||
+        prepared.htmlBindings ||
+        {},
+    );
+  }
+
+  return prepared;
 }
 
 function updateExistingHtmlArtwork(ctx: any, options: Record<string, any>) {
@@ -16,8 +199,17 @@ function updateExistingHtmlArtwork(ctx: any, options: Record<string, any>) {
   if (htmlChildren.length === 0) return null;
 
   const target = htmlChildren[htmlChildren.length - 1];
+  const preparedOptions = prepareHtmlArtworkOptions(options, target);
+  const directExternalResourceError = getDirectExternalResourceError(preparedOptions);
+  if (directExternalResourceError) {
+    return {
+      id: target.id,
+      rejected: true,
+      message: directExternalResourceError,
+    };
+  }
   const currentLength = getHtmlContentLength(target);
-  const nextLength = String(options.htmlContent || "").trim().length;
+  const nextLength = String(preparedOptions.htmlContent || "").trim().length;
   if (currentLength > 1200 && nextLength > 0 && nextLength < currentLength * 0.65) {
     return {
       id: target.id,
@@ -33,7 +225,7 @@ function updateExistingHtmlArtwork(ctx: any, options: Record<string, any>) {
     }
   }
 
-  for (const [key, value] of Object.entries(options)) {
+  for (const [key, value] of Object.entries(preparedOptions)) {
     ctx.setChildProperty(target.id, key, value);
   }
   ctx.setChildProperty(target.id, "zIndex", 0);
@@ -777,17 +969,22 @@ registerOperation({
       extraOptions.htmlContent = htmlContent;
       // 处理模板绑定
       if (params.htmlBindings !== undefined) {
-        extraOptions.htmlBindings = params.htmlBindings;
+        extraOptions.htmlBindings = parseMaybeJsonObject(params.htmlBindings) ?? params.htmlBindings;
       }
       if (params.htmlTemplateFields !== undefined) {
-        extraOptions.htmlTemplateFields = params.htmlTemplateFields;
+        extraOptions.htmlTemplateFields =
+          parseMaybeJsonObject(params.htmlTemplateFields) ??
+          params.htmlTemplateFields;
       }
       if (params.htmlTemplateDefaultBindings !== undefined) {
         extraOptions.htmlTemplateDefaultBindings =
+          parseMaybeJsonObject(params.htmlTemplateDefaultBindings) ??
           params.htmlTemplateDefaultBindings;
       }
       if (params.htmlTemplateMeta !== undefined) {
-        extraOptions.htmlTemplateMeta = params.htmlTemplateMeta;
+        extraOptions.htmlTemplateMeta =
+          parseMaybeJsonObject(params.htmlTemplateMeta) ??
+          params.htmlTemplateMeta;
       }
     }
 
@@ -1064,7 +1261,27 @@ registerOperation({
       };
     }
 
-    const id = replaceResult?.id || ctx.addCanvasChild(type, extraOptions);
+    const preparedExtraOptions = isHtmlArtworkType(type)
+      ? prepareHtmlArtworkOptions(extraOptions)
+      : extraOptions;
+    const directExternalResourceError = isHtmlArtworkType(type)
+      ? getDirectExternalResourceError(preparedExtraOptions)
+      : "";
+
+    if (directExternalResourceError) {
+      return {
+        success: false,
+        message: directExternalResourceError,
+        data: {
+          type,
+          rejected: true,
+          reason: "direct_external_resource_url",
+        },
+      };
+    }
+
+    const id =
+      replaceResult?.id || ctx.addCanvasChild(type, preparedExtraOptions);
     const totalElements = ctx
       .getCanvasChildren()
       .filter((c: any) => c.type !== "canvas").length;

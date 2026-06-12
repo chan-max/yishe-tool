@@ -11,8 +11,18 @@
           @click="openFontDialog"
           class="font-select-button"
         >
-          {{ model?.name || '请选择' }}
+          <span class="font-display-name">{{ model?.name || '请选择' }}</span>
         </el-button>
+        <el-tooltip v-if="model" content="查看字体详情" placement="top">
+          <el-button
+            size="small"
+            circle
+            class="font-detail-icon-button"
+            @click="openFontDetail(model)"
+          >
+            <el-icon><InfoFilled /></el-icon>
+          </el-button>
+        </el-tooltip>
         <!-- <el-button size="small" @click="openFontModal"> 字体库 </el-button> -->
         <el-button 
           v-if="model" 
@@ -93,11 +103,20 @@
                   <div class="font-item-desc" v-if="item.description">{{ item.description }}</div>
                   <div class="font-item-family" @click.stop="copyFontFamily(item.id)">
                     <span class="font-family-label">FontFamily:</span>
-                    <span class="font-family-value">{{ `font_${item.id}` }}</span>
+                    <span class="font-family-value">{{ getFontFamilyId(item.id) }}</span>
                     <el-icon class="font-family-copy-icon"><DocumentCopy /></el-icon>
                   </div>
                 </div>
                 <div class="font-item-actions" @click.stop>
+                  <el-button
+                    size="small"
+                    plain
+                    @click="openFontDetail(item)"
+                    class="font-detail-btn"
+                  >
+                    <el-icon><View /></el-icon>
+                    <span>详情</span>
+                  </el-button>
                   <el-button
                     v-if="!isFontLoaded(item.id)"
                     size="small"
@@ -145,6 +164,94 @@
           </div>
         </div>
       </el-drawer>
+
+      <el-dialog
+        v-model="detailVisible"
+        :title="detailFont?.name || '字体详情'"
+        width="560px"
+        class="font-detail-dialog"
+        :append-to-body="true"
+      >
+        <div v-if="detailFont" class="font-detail-content">
+          <div class="font-detail-preview">
+            <desimage
+              v-if="detailFont.thumbnail"
+              :src="detailFont.thumbnail"
+              class="font-detail-thumbnail"
+            ></desimage>
+            <div v-else class="font-detail-preview-empty">
+              暂无预览
+            </div>
+          </div>
+
+          <div class="font-detail-main">
+            <div class="font-detail-header">
+              <div class="font-detail-title">{{ detailFont.name }}</div>
+              <el-tag
+                size="small"
+                :type="isFontLoaded(detailFont.id) ? 'success' : 'info'"
+              >
+                {{ isFontLoaded(detailFont.id) ? '已加载' : '未加载' }}
+              </el-tag>
+            </div>
+
+            <div class="font-detail-desc">
+              {{ detailFont.description || '暂无描述' }}
+            </div>
+
+            <div class="font-detail-meta">
+              <div class="font-detail-row">
+                <span class="font-detail-label">FontFamily</span>
+                <button
+                  class="font-detail-value font-detail-copyable"
+                  type="button"
+                  @click="copyFontFamily(detailFont.id)"
+                >
+                  <span>{{ getFontFamilyId(detailFont.id) }}</span>
+                  <el-icon><DocumentCopy /></el-icon>
+                </button>
+              </div>
+              <div class="font-detail-row">
+                <span class="font-detail-label">字体 ID</span>
+                <span class="font-detail-value">{{ detailFont.id }}</span>
+              </div>
+              <div class="font-detail-row">
+                <span class="font-detail-label">资源地址</span>
+                <button
+                  v-if="detailFont.url"
+                  class="font-detail-value font-detail-copyable"
+                  type="button"
+                  @click="copyFontUrl(detailFont.url)"
+                >
+                  <span>{{ detailFont.url }}</span>
+                  <el-icon><DocumentCopy /></el-icon>
+                </button>
+                <span v-else class="font-detail-value font-detail-empty-value">暂无资源地址</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <template #footer>
+          <div class="font-detail-footer">
+            <el-button @click="detailVisible = false">关闭</el-button>
+            <el-button
+              v-if="detailFont"
+              :disabled="!detailFont.url || isFontLoaded(detailFont.id)"
+              @click="loadFontToCanvas(detailFont)"
+            >
+              {{ detailFont.url ? (isFontLoaded(detailFont.id) ? '已加载' : '加载到画布') : '无资源地址' }}
+            </el-button>
+            <el-button
+              v-if="detailFont"
+              type="primary"
+              @click="applyFontFromDetail"
+            >
+              应用字体
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
     </template>
   </operate-form-item>
 </template>
@@ -156,7 +263,7 @@ import desimage from "@/components/image.vue";
 import { fetchFontFaceWithMessage } from "./index.ts";
 import { showUpload, showFontModal, cacheFontFamily } from "@/components/design/store";
 import { useDebounceFn } from "@vueuse/core";
-import { Loading, Search, Check, DocumentCopy, Download } from "@element-plus/icons-vue";
+import { Loading, Search, Check, DocumentCopy, Download, InfoFilled, View } from "@element-plus/icons-vue";
 import { getFontList } from "@/api";
 import { message } from "ant-design-vue";
 
@@ -182,6 +289,8 @@ const currentPage = ref(1);
 const pageSize = ref(12);
 const total = ref(0);
 const searchKeyword = ref('');
+const detailVisible = ref(false);
+const detailFont = ref<FontItem | null>(null);
 
 // 计算显示的列表（当前页的数据）
 const displayList = computed(() => {
@@ -216,6 +325,26 @@ function selectFont(item: FontItem) {
   dialogVisible.value = false;
 }
 
+function openFontDetail(item?: FontItem | null) {
+  if (!item) {
+    return;
+  }
+  detailFont.value = item;
+  detailVisible.value = true;
+}
+
+function applyFontFromDetail() {
+  if (!detailFont.value) {
+    return;
+  }
+  selectFont(detailFont.value);
+  detailVisible.value = false;
+}
+
+function getFontFamilyId(fontId: string) {
+  return `font_${fontId}`;
+}
+
 // 检查字体是否已加载（响应式）
 function isFontLoaded(fontId: string): boolean {
   // 访问 cacheFontFamily.value 让 Vue 追踪依赖
@@ -236,7 +365,7 @@ async function loadFontToCanvas(item: FontItem) {
       id: item.id,
       name: item.name
     });
-    message.success(`字体 "${item.name}" 已加载到画布，可通过 FontFamily ID "${`font_${item.id}`}" 使用`);
+    message.success(`字体 "${item.name}" 已加载到画布，可通过 FontFamily ID "${getFontFamilyId(item.id)}" 使用`);
   } catch (error) {
     message.error(`字体 "${item.name}" 加载失败`);
   }
@@ -244,21 +373,29 @@ async function loadFontToCanvas(item: FontItem) {
 
 // 复制 FontFamily ID
 async function copyFontFamily(fontId: string) {
-  const fontFamilyId = `font_${fontId}`;
+  const fontFamilyId = getFontFamilyId(fontId);
+  await copyText(fontFamilyId, 'FontFamily ID 已复制到剪贴板');
+}
+
+async function copyFontUrl(url: string) {
+  await copyText(url, '字体资源地址已复制到剪贴板');
+}
+
+async function copyText(value: string, successText: string) {
   try {
-    await navigator.clipboard.writeText(fontFamilyId);
-    message.success('FontFamily ID 已复制到剪贴板');
+    await navigator.clipboard.writeText(value);
+    message.success(successText);
   } catch (error) {
     // 降级方案
     const textarea = document.createElement('textarea');
-    textarea.value = fontFamilyId;
+    textarea.value = value;
     textarea.style.position = 'fixed';
     textarea.style.opacity = '0';
     document.body.appendChild(textarea);
     textarea.select();
     try {
       document.execCommand('copy');
-      message.success('FontFamily ID 已复制到剪贴板');
+      message.success(successText);
     } catch (e) {
       message.error('复制失败，请手动复制');
     }
@@ -393,6 +530,10 @@ watch(
 
 .font-select-icon {
   flex-shrink: 0;
+}
+
+.font-detail-icon-button {
+  flex: 0 0 auto;
 }
 
 .font-drawer-content {
@@ -572,11 +713,23 @@ watch(
   margin-top: 8px;
   display: flex;
   gap: 4px;
+  align-items: center;
+}
+
+.font-item-actions :deep(.el-button + .el-button) {
+  margin-left: 0;
+}
+
+.font-detail-btn {
+  flex: 0 0 auto;
+  font-size: 12px;
+  padding: 6px 8px;
 }
 
 .font-load-btn,
 .font-loaded-btn {
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 12px;
   padding: 6px 8px;
 }
@@ -613,9 +766,156 @@ watch(
   background: #fff;
 }
 
+.font-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.font-detail-preview {
+  width: 100%;
+  height: 180px;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f7fa;
+}
+
+.font-detail-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.font-detail-preview-empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #909399;
+  font-size: 13px;
+}
+
+.font-detail-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.font-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.font-detail-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #303133;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.font-detail-desc {
+  color: #606266;
+  font-size: 13px;
+  line-height: 1.6;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.font-detail-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f7f8fa;
+}
+
+.font-detail-row {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.font-detail-label {
+  color: #909399;
+  font-size: 12px;
+}
+
+.font-detail-value {
+  min-width: 0;
+  color: #303133;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.font-detail-copyable {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #409eff;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+}
+
+.font-detail-copyable:hover {
+  background: #ecf5ff;
+}
+
+.font-detail-copyable span {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.font-detail-empty-value {
+  color: #c0c4cc;
+}
+
+.font-detail-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.font-detail-footer :deep(.el-button + .el-button) {
+  margin-left: 0;
+}
+
 @media (max-width: 1080px) {
   .font-search-wrapper .el-input {
     min-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .font-detail-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 }
 </style>

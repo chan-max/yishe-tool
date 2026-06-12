@@ -22,6 +22,11 @@ declare module '*.svg' {
     export default content;
 }
 
+declare module '*.svg?component' {
+    const component: any;
+    export default component;
+}
+
 declare module 'wordcloud' {
     const WordCloud: any;
     export default WordCloud;

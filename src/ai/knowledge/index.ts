@@ -4,42 +4,15 @@ import type { KnowledgeItem } from "./types";
 
 // ========== 组合器：根据用户输入选择相关知识层 ==========
 
-import { baseKnowledge } from "./base";
-import { htmlElementsKnowledge } from "./html-elements";
-import { fontBindingKnowledge } from "./font-binding";
-import { imageBindingKnowledge } from "./image-binding";
-import { batchWorkflowKnowledge } from "./batch-workflow";
-import { templateModeKnowledge } from "./template-mode";
-import { designRulesKnowledge } from "./design-rules";
-import { stickerSaveKnowledge } from "./sticker-save";
-import { remixKnowledge } from "./remix";
-import { customKnowledgeItems } from "./custom-specs";
 import {
-  styleTemplatesKnowledge,
-  layoutPatternsKnowledge,
-  commonMistakesKnowledge,
-  fontPairingKnowledge,
-} from "./style-templates";
-import { designTipsKnowledge } from "./design-tips-loader";
+  allKnowledgeItems,
+  baseAlwaysKnowledge,
+  builtInKnowledgeItems,
+  markdownSkillKnowledgeItems,
+} from "./registry";
 
-const allKnowledge: KnowledgeItem[] = [
-  htmlElementsKnowledge,
-  fontBindingKnowledge,
-  imageBindingKnowledge,
-  batchWorkflowKnowledge,
-  templateModeKnowledge,
-  designRulesKnowledge,
-  stickerSaveKnowledge,
-  remixKnowledge,
-  styleTemplatesKnowledge,
-  layoutPatternsKnowledge,
-  commonMistakesKnowledge,
-  fontPairingKnowledge,
-  ...designTipsKnowledge, // ← 新增：自动加载的设计技巧
-  ...customKnowledgeItems,
-];
-
-const baseAlways = baseKnowledge; // base 永远注入
+const allKnowledge: KnowledgeItem[] = allKnowledgeItems;
+const baseAlways = baseAlwaysKnowledge; // base 永远注入
 
 // ========== Token 预算配置 ==========
 const MAX_KNOWLEDGE_TOKENS = 2000; // 知识层最大 token 预算
@@ -124,4 +97,15 @@ export function getMatchedCategories(userInput: string): string[] {
     .filter((k) => k.triggers.some((t) => userInput.includes(t)))
     .map((k) => k.category || "未分类")
     .filter((v, i, a) => a.indexOf(v) === i); // 去重
+}
+
+export function getKnowledgeRegistryStats() {
+  return {
+    builtIn: builtInKnowledgeItems.length,
+    markdownSkills: markdownSkillKnowledgeItems.length,
+    total: allKnowledge.length,
+    categories: allKnowledge
+      .map((item) => item.category || "未分类")
+      .filter((v, i, a) => a.indexOf(v) === i),
+  };
 }

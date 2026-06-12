@@ -129,6 +129,8 @@ function groupTipsToKnowledgeItems(tips: LoadedTip[]): KnowledgeItem[] {
       effects: "## CSS 视觉效果速查",
       text: "## CSS 文字特效速查",
       patterns: "## CSS 图案纹理速查",
+      techniques: "## CSS 技巧速查",
+      shapes: "## CSS 形状技巧速查",
       cases: "## 设计案例参考",
       general: "## 设计技巧",
     };

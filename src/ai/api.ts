@@ -1,6 +1,7 @@
 import { apiInstance } from "@/api/apiInstance";
 import { Url } from "@/api/url";
 import { getAIConfig } from "./direct-client";
+import { DESIGN_TOOL_FEATURE_CODES } from "./feature-codes";
 import type {
   AiChatOptions,
   AiTextOptions,
@@ -33,13 +34,14 @@ export async function aiChat(options: AiChatOptions): Promise<AiChatResponse> {
     messages,
     model,
     keyId,
+    featureCode,
     temperature,
     maxTokens,
     ...rest
   } = options;
 
   // 获取 AI 配置（前端直接调用）
-  const config = await getAIConfig(keyId);
+  const config = await getAIConfig(keyId, featureCode || DESIGN_TOOL_FEATURE_CODES.chat);
 
   // 构建请求体
   const body: Record<string, any> = {
@@ -76,13 +78,14 @@ export async function aiText(options: AiTextOptions): Promise<AiChatResponse> {
     systemPrompt,
     model,
     keyId,
+    featureCode,
     temperature,
     maxTokens,
     responseFormat,
   } = options;
 
   // 获取 AI 配置（前端直接调用）
-  const config = await getAIConfig(keyId);
+  const config = await getAIConfig(keyId, featureCode || DESIGN_TOOL_FEATURE_CODES.chat);
 
   // 构建消息
   const messages: Array<{ role: string; content: string }> = [];
@@ -123,10 +126,10 @@ export async function aiText(options: AiTextOptions): Promise<AiChatResponse> {
 export async function aiVision(
   options: AiVisionOptions,
 ): Promise<AiChatResponse> {
-  const { prompt, imageUrls, systemPrompt, model, keyId } = options;
+  const { prompt, imageUrls, systemPrompt, model, keyId, featureCode } = options;
 
   // 获取 AI 配置（前端直接调用）
-  const config = await getAIConfig(keyId);
+  const config = await getAIConfig(keyId, featureCode || DESIGN_TOOL_FEATURE_CODES.chat);
 
   // 构建消息内容（支持图文）
   const contentParts: Array<{ type: string; text?: string; image_url?: { url: string } }> = [];
@@ -174,10 +177,10 @@ export async function aiVision(
 export async function aiGenerateImage(
   options: AiTtiOptions,
 ): Promise<AiTtiResult> {
-  const { prompt, negativePrompt, size, n, style, model, keyId } = options;
+  const { prompt, negativePrompt, size, n, style, model, keyId, featureCode } = options;
 
   // 获取 AI 配置（前端直接调用）
-  const config = await getAIConfig(keyId);
+  const config = await getAIConfig(keyId, featureCode || DESIGN_TOOL_FEATURE_CODES.image);
 
   // 构建请求体（OpenAI Images API）
   const body: Record<string, any> = {
@@ -225,7 +228,7 @@ export async function aiGetTaskStatus(
   keyId?: number | null,
 ): Promise<any> {
   // 获取 AI 配置（前端直接调用）
-  const config = await getAIConfig(keyId);
+  const config = await getAIConfig(keyId, featureCode || DESIGN_TOOL_FEATURE_CODES.image);
 
   // 注：OpenAI API 是同步的，这个函数主要用于兼容旧的异步任务系统
   // 如果使用的是支持异步任务的提供商，需要自行实现状态查询

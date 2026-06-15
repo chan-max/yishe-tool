@@ -5,6 +5,7 @@ export const INTERACTION_TOOL_NAMES = ["ask_choice", "request_feedback"] as cons
 export const OPERATION_TOOL_PREFIX = "op__";
 const TOOL_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 const toolNameMap = new Map<string, string>();
+const sanitizedToolNameMap = new Map<string, string>();
 
 function createSafeToolName(name: string, prefix: string): string {
   const normalized = String(name || "").trim();
@@ -16,10 +17,20 @@ function createSafeToolName(name: string, prefix: string): string {
   return `${prefix}${readable}_${hash.toString(36)}`;
 }
 
+function createReadableToolName(name: string, prefix: string): string {
+  return `${prefix}${String(name || "").trim().replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 48)}`;
+}
+
+function rememberToolName(safeName: string, originalName: string, prefix: string) {
+  const normalized = String(originalName || "").trim();
+  toolNameMap.set(safeName, normalized);
+  sanitizedToolNameMap.set(createReadableToolName(normalized, prefix), normalized);
+}
+
 export function normalizeOperationToolName(name: string): string {
   const normalized = String(name || "").trim();
   const safeName = createSafeToolName(normalized, OPERATION_TOOL_PREFIX);
-  toolNameMap.set(safeName, normalized);
+  rememberToolName(safeName, normalized, OPERATION_TOOL_PREFIX);
   return safeName;
 }
 
@@ -31,13 +42,13 @@ function normalizeAnyToolName(name: string): string {
   }
 
   const safeName = createSafeToolName(normalized, "tool__");
-  toolNameMap.set(safeName, normalized);
+  rememberToolName(safeName, normalized, "tool__");
   return safeName;
 }
 
 export function resolveAIToolName(name: string): string {
   const normalized = String(name || "").trim();
-  return toolNameMap.get(normalized) || normalized;
+  return toolNameMap.get(normalized) || sanitizedToolNameMap.get(normalized) || normalized;
 }
 
 const askChoiceDef = {

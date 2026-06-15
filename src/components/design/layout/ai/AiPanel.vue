@@ -128,6 +128,7 @@
 import { ref, computed, reactive, nextTick, watch, onMounted, onUnmounted } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { designAgent } from "@/ai/langgraph";
+import { resolveAIToolName } from "@/ai/shared/tools";
 import type { AgentInteraction } from "@/ai/langgraph";
 import { isDarkMode } from "@/components/design/store";
 
@@ -267,7 +268,7 @@ function copyConversationLog() {
 
     if (msg.tool_calls?.length) {
       for (const call of msg.tool_calls) {
-        lines.push(`\n工具调用: ${call.function.name}`);
+        lines.push(`\n工具调用: ${formatToolName(call.function.name)}`);
         try {
           const args = typeof call.function.arguments === 'string'
             ? JSON.parse(call.function.arguments)
@@ -343,6 +344,8 @@ function submitInteraction(answer: string) {
 }
 
 function formatToolName(name: string): string {
+  const resolvedName = resolveAIToolName(name);
+  const compactName = resolvedName.replace(/\./g, "_");
   const map: Record<string, string> = {
     canvas_clear: "清空画布",
     canvas_addChild: "添加元素",
@@ -361,7 +364,7 @@ function formatToolName(name: string): string {
     ask_choice: "询问",
     request_feedback: "反馈",
   };
-  return map[name] || name.split('.').pop() || name;
+  return map[compactName] || map[name] || resolvedName.split('.').pop() || resolvedName;
 }
 
 function parseResult(content: string) {

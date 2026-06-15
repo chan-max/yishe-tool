@@ -1,12 +1,13 @@
 import { reactive, computed } from "vue";
 import { directChat } from "../direct-client";
-import { executeOperation, createDesignOperationContext } from "@/operations";
+import { createDesignOperationContext } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
 import { buildSystemPrompt, buildImageAnalysisPrompt } from "../prompts/system";
 import { buildKnowledgePrompt } from "../knowledge";
 import { resourceService } from "../services/resource";
 import { captureCanvasForAI, getCanvasStateSummary } from "../capture";
 import { buildAITools, INTERACTION_TOOL_NAMES, resolveAIToolName } from "../shared/tools";
+import { executeAITool, isResourceToolName } from "../shared/execute-tool";
 import {
   parseChatResponse,
   extractContent,
@@ -39,6 +40,12 @@ interface AgentMessage {
   };
 }
 
+interface PersistedAgentState {
+  version: number;
+  savedAt: number;
+  messages: AgentMessage[];
+}
+
 interface AgentInteraction {
   type: string;
   question: string;
@@ -67,8 +74,6 @@ interface DesignPlan {
 
 // ============ 工具定义 ============
 
-const resourceToolNames = ["resource.searchFont", "resource.searchImage"];
-
 function shouldContinueAfterArtwork(userMessage: string) {
   return /继续|再改|优化|调整|迭代|自测|测试|看看效果|分析|保存|导出|save|export/i.test(
     userMessage,
@@ -95,6 +100,97 @@ const agentState = reactive({
 
 let waitForUserInputPromise: { resolve: (value: string) => void } | null = null;
 const eventListeners: ((event: any) => void)[] = [];
+
+const STORAGE_KEY = "yishe_tool_ai_agent_conversation_v1";
+const MAX_PERSISTED_MESSAGES = 80;
+const MAX_PERSISTED_CONTENT_LENGTH = 12000;
+
+function canUseLocalStorage(): boolean {
+  try {
+    return typeof window !== "undefined" && !!window.localStorage;
+  } catch {
+    return false;
+  }
+}
+
+function restorePlanFromMessages() {
+  const lastPlanMessage = [...agentState.messages]
+    .reverse()
+    .find((message) => message.meta?.plan);
+  agentState.plan = lastPlanMessage?.meta?.plan || null;
+}
+
+function sanitizeMessageForStorage(message: AgentMessage): AgentMessage {
+  const meta = message.meta
+    ? {
+        iteration: message.meta.iteration,
+        toolArgs: message.meta.toolArgs,
+        toolResult: message.meta.toolResult,
+        duration: message.meta.duration,
+        hasImage: message.meta.hasImage,
+        plan: message.meta.plan,
+        type: message.meta.type,
+      }
+    : undefined;
+
+  return {
+    id: message.id,
+    role: message.role,
+    content: String(message.content || "").slice(0, MAX_PERSISTED_CONTENT_LENGTH),
+    timestamp: Number(message.timestamp || Date.now()),
+    tool_calls: message.tool_calls,
+    tool_call_id: message.tool_call_id,
+    tool_name: message.tool_name,
+    ...(meta ? { meta } : {}),
+  };
+}
+
+function persistConversation() {
+  if (!canUseLocalStorage()) return;
+  try {
+    const payload: PersistedAgentState = {
+      version: 1,
+      savedAt: Date.now(),
+      messages: agentState.messages
+        .slice(-MAX_PERSISTED_MESSAGES)
+        .map(sanitizeMessageForStorage),
+    };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch (error) {
+    console.warn("[Agent] 持久化会话失败:", error);
+  }
+}
+
+function restoreConversation() {
+  if (!canUseLocalStorage()) return;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const payload = JSON.parse(raw) as Partial<PersistedAgentState>;
+    if (!Array.isArray(payload.messages)) return;
+
+    agentState.messages.splice(
+      0,
+      agentState.messages.length,
+      ...payload.messages
+        .filter((item) => item && typeof item.content === "string")
+        .slice(-MAX_PERSISTED_MESSAGES)
+        .map(sanitizeMessageForStorage),
+    );
+    restorePlanFromMessages();
+  } catch (error) {
+    console.warn("[Agent] 恢复会话失败:", error);
+  }
+}
+
+function clearPersistedConversation() {
+  if (!canUseLocalStorage()) return;
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch (error) {
+    console.warn("[Agent] 清理本地会话失败:", error);
+  }
+}
 
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -135,9 +231,12 @@ function addMessage(msg: Partial<AgentMessage>): AgentMessage {
     ...msg,
   } as AgentMessage;
   agentState.messages.push(message);
+  persistConversation();
   emit({ type: "message", data: message });
   return message;
 }
+
+restoreConversation();
 
 // ============ 搜索去重 ============
 
@@ -555,7 +654,7 @@ async function runAgentLoop(userMessage: string) {
         let result;
 
         // 检查是否是资源工具
-        if (resourceToolNames.includes(toolName)) {
+        if (isResourceToolName(toolName)) {
           // 检查是否是重复搜索
           const duplicate = isDuplicateSearch(toolName, args);
           if (duplicate) {
@@ -570,7 +669,7 @@ async function runAgentLoop(userMessage: string) {
               message: `此搜索在第${duplicate.iteration}轮已执行过，找到${duplicate.resultCount}个结果。以下是缓存的结果：`,
             };
           } else {
-            result = await resourceService.executeTool(toolName, args);
+            result = await executeAITool(toolName, args, ctx);
             // 记录搜索结果（含数据缓存）
             const resultCount = result?.data?.length || 0;
             recordSearch(toolName,
@@ -581,7 +680,7 @@ async function runAgentLoop(userMessage: string) {
             );
           }
         } else {
-          result = await executeOperation(toolName, args, ctx);
+          result = await executeAITool(toolName, args, ctx);
         }
 
         const toolDuration = Date.now() - toolStartTime;
@@ -883,11 +982,7 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
       try {
         let result;
 
-        if (resourceToolNames.includes(toolName)) {
-          result = await resourceService.executeTool(toolName, args);
-        } else {
-          result = await executeOperation(toolName, args, ctx);
-        }
+        result = await executeAITool(toolName, args, ctx);
 
         const toolDuration = Date.now() - toolStartTime;
         console.log("[Agent] 工具结果:", result);
@@ -1022,7 +1117,7 @@ async function runAutoImprove(suggestions: string[]): Promise<void> {
 
   for (const suggestion of suggestions.slice(0, 2)) {
     try {
-      const result = await executeOperation(
+      const result = await executeAITool(
         "canvas.evaluateDesign",
         { criteria: suggestion },
         ctx,
@@ -1149,11 +1244,7 @@ ${evaluation.suggestions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
           const toolName = resolveAIToolName(call.function.name);
 
           try {
-            if (resourceToolNames.includes(toolName)) {
-              await resourceService.executeTool(toolName, args);
-            } else {
-              await executeOperation(toolName, args, ctx);
-            }
+            await executeAITool(toolName, args, ctx);
           } catch (err) {
             console.error("[SelfTest] 改进操作失败:", err);
           }
@@ -1594,6 +1685,7 @@ export const designAgent = {
 
     // 清空消息和缓存
     agentState.messages.length = 0;
+    clearPersistedConversation();
     agentState.searchHistory.length = 0;
     resourceService.clearSearchCache();
     syncAgentStatus({

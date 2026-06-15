@@ -1,21 +1,25 @@
 import CryptoJS from "crypto-js";
 import { getUserApiKey } from "./api";
+import { DESIGN_TOOL_FEATURE_CODES } from "./feature-codes";
 
 // 加密密钥（需要与服务端 AI_API_KEY_RESPONSE_ENCRYPT_SECRET 一致）
 const ENCRYPT_SECRET =
   String(import.meta.env.VITE_AI_API_KEY_RESPONSE_ENCRYPT_SECRET || "").trim() ||
   "1s-design-encrypt-key";
 
-// 功能标识
-const FEATURE_AI_CHAT = "ai_chat";
-
 // 缓存解密后的配置
-let cachedConfig: {
+type CachedAiConfig = {
   apiKey: string;
   model: string;
   baseURL: string;
   name: string;
-} | null = null;
+};
+
+const cachedConfigMap = new Map<string, CachedAiConfig>();
+
+function getCacheKey(featureCode: string, keyId?: number | null): string {
+  return `${featureCode}:${keyId ?? "default"}`;
+}
 
 // 初始化状态
 let initialized = false;
@@ -77,26 +81,30 @@ export async function initAIConfig(): Promise<void> {
  * AI 是否已初始化
  */
 export function isAIInitialized(): boolean {
-  return initialized && cachedConfig !== null;
+  return initialized && cachedConfigMap.size > 0;
 }
 
 /**
  * 获取 AI 配置（带缓存）
  */
-export async function getAIConfig(keyId?: number | null): Promise<{
+export async function getAIConfig(
+  keyId?: number | null,
+  featureCode: string = DESIGN_TOOL_FEATURE_CODES.chat,
+): Promise<{
   apiKey: string;
   model: string;
   baseURL: string;
   name: string;
 }> {
-  // 如果有缓存且没有指定 keyId，直接返回
-  if (cachedConfig && keyId == null) {
+  const cacheKey = getCacheKey(featureCode, keyId);
+  const cachedConfig = cachedConfigMap.get(cacheKey);
+  if (cachedConfig) {
     return cachedConfig;
   }
 
   try {
     // 从服务端获取加密的 key
-    const result = await getUserApiKey(FEATURE_AI_CHAT, keyId);
+    const result = await getUserApiKey(featureCode, keyId);
     if (!result?.encryptedKey) {
       throw new Error("接口未返回可用的 API Key");
     }
@@ -105,14 +113,15 @@ export async function getAIConfig(keyId?: number | null): Promise<{
     const apiKey = decryptKey(result.encryptedKey);
 
     // 缓存配置
-    cachedConfig = {
+    const nextConfig = {
       apiKey,
       model: result.config?.model || "gpt-4o",
       baseURL: result.config?.baseURL || "https://api.openai.com/v1",
       name: result.name,
     };
 
-    return cachedConfig;
+    cachedConfigMap.set(cacheKey, nextConfig);
+    return nextConfig;
   } catch (error) {
     console.error("[AI Client] 获取配置失败:", error);
     throw error;
@@ -123,7 +132,7 @@ export async function getAIConfig(keyId?: number | null): Promise<{
  * 清除缓存（切换 key 时使用）
  */
 export function clearAIConfigCache(): void {
-  cachedConfig = null;
+  cachedConfigMap.clear();
 }
 
 /**
@@ -136,11 +145,12 @@ export async function directChat(options: {
   temperature?: number;
   maxTokens?: number;
   keyId?: number | null;
+  featureCode?: string;
 }): Promise<any> {
-  const { messages, tools, model, temperature, maxTokens, keyId } = options;
+  const { messages, tools, model, temperature, maxTokens, keyId, featureCode } = options;
 
   // 获取配置
-  const config = await getAIConfig(keyId);
+  const config = await getAIConfig(keyId, featureCode || DESIGN_TOOL_FEATURE_CODES.chat);
 
   // 构建请求体
   const body: any = {
@@ -180,11 +190,12 @@ export async function* directChatStream(options: {
   temperature?: number;
   maxTokens?: number;
   keyId?: number | null;
+  featureCode?: string;
 }): AsyncGenerator<any, void, unknown> {
-  const { messages, tools, model, temperature, maxTokens, keyId } = options;
+  const { messages, tools, model, temperature, maxTokens, keyId, featureCode } = options;
 
   // 获取配置
-  const config = await getAIConfig(keyId);
+  const config = await getAIConfig(keyId, featureCode || DESIGN_TOOL_FEATURE_CODES.chat);
 
   // 构建请求体
   const body: any = {

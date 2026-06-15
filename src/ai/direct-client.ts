@@ -1,6 +1,7 @@
 import CryptoJS from "crypto-js";
 import { getUserApiKey } from "./api";
 import { DESIGN_TOOL_FEATURE_CODES } from "./feature-codes";
+import { postAgentProxy } from "./proxy-client";
 
 // 加密密钥（需要与服务端 AI_API_KEY_RESPONSE_ENCRYPT_SECRET 一致）
 const ENCRYPT_SECRET =
@@ -149,12 +150,11 @@ export async function directChat(options: {
 }): Promise<any> {
   const { messages, tools, model, temperature, maxTokens, keyId, featureCode } = options;
 
-  // 获取配置
-  const config = await getAIConfig(keyId, featureCode || DESIGN_TOOL_FEATURE_CODES.chat);
-
   // 构建请求体
   const body: any = {
-    model: model || config.model,
+    featureCode: featureCode || DESIGN_TOOL_FEATURE_CODES.chat,
+    keyId,
+    model,
     messages,
     temperature: temperature ?? 0.7,
   };
@@ -162,22 +162,7 @@ export async function directChat(options: {
   if (maxTokens) body.max_tokens = maxTokens;
   if (tools && tools.length > 0) body.tools = tools;
 
-  // 直接调用 OpenAI API
-  const response = await fetch(`${config.baseURL}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${config.apiKey}`,
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`AI 请求失败: ${response.status} - ${error}`);
-  }
-
-  return response.json();
+  return postAgentProxy(body);
 }
 
 /**
@@ -194,59 +179,18 @@ export async function* directChatStream(options: {
 }): AsyncGenerator<any, void, unknown> {
   const { messages, tools, model, temperature, maxTokens, keyId, featureCode } = options;
 
-  // 获取配置
-  const config = await getAIConfig(keyId, featureCode || DESIGN_TOOL_FEATURE_CODES.chat);
-
   // 构建请求体
   const body: any = {
-    model: model || config.model,
+    featureCode: featureCode || DESIGN_TOOL_FEATURE_CODES.chat,
+    keyId,
+    model,
     messages,
     temperature: temperature ?? 0.7,
-    stream: true,
   };
 
   if (maxTokens) body.max_tokens = maxTokens;
   if (tools && tools.length > 0) body.tools = tools;
 
-  // 直接调用 OpenAI API
-  const response = await fetch(`${config.baseURL}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${config.apiKey}`,
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`AI 请求失败: ${response.status} - ${error}`);
-  }
-
-  const reader = response.body?.getReader();
-  if (!reader) throw new Error("无法读取响应流");
-
-  const decoder = new TextDecoder();
-  let buffer = "";
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() || "";
-
-    for (const line of lines) {
-      if (line.startsWith("data: ")) {
-        const data = line.slice(6).trim();
-        if (data === "[DONE]") return;
-        try {
-          yield JSON.parse(data);
-        } catch (e) {
-          // 忽略解析错误
-        }
-      }
-    }
-  }
+  const response = await postAgentProxy(body);
+  yield response;
 }

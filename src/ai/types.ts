@@ -43,25 +43,6 @@ export interface AiVisionOptions {
   [key: string]: any
 }
 
-export interface AiTtiOptions {
-  featureCode: string
-  prompt: string
-  negativePrompt?: string
-  size?: string
-  n?: number
-  style?: string
-  model?: string
-  keyId?: number | null
-}
-
-export interface AiTtiResult {
-  images: Array<{ url: string }>
-  raw: any
-  taskId?: string
-  usedModel?: string
-  usedKeyId?: number | null
-}
-
 export interface AiChatResponse {
   id: string
   object: string

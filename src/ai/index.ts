@@ -13,8 +13,6 @@ export type {
   AiChatOptions,
   AiTextOptions,
   AiVisionOptions,
-  AiTtiOptions,
-  AiTtiResult,
   AiChatResponse,
   AiChatChoice,
   AiStreamChunk,
@@ -28,8 +26,6 @@ export {
   aiChat,
   aiText,
   aiVision,
-  aiGenerateImage,
-  aiGetTaskStatus,
   aiGetUsageOptions,
   aiGetFeatureRegistry,
 } from "./api";

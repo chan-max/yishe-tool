@@ -15,13 +15,6 @@ export const AI_FEATURE_REGISTRY: AiFeatureItem[] = [
     description: '设计工具的 AI 对话专用 Key，覆盖设计助手对话、文本生成、图文理解等设计端 AI 能力',
   },
   {
-    code: 'design.tool.ai.image',
-    label: '设计工具 AI 文生图',
-    group: '设计端 / 设计工具',
-    scene: 'design',
-    description: '设计工具的 AI 文生图专用 Key，用于设计端文本生成图片能力',
-  },
-  {
     code: 'ai.chat.general',
     label: '外部通用对话',
     group: '开放能力 / 外部调用',
@@ -67,7 +60,6 @@ export const AI_FEATURE_REGISTRY: AiFeatureItem[] = [
 
 export const DESIGN_TOOL_FEATURE_CODES = {
   chat: 'design.tool.ai.chat',
-  image: 'design.tool.ai.image',
 } as const
 
 export type DesignToolFeatureCode = typeof DESIGN_TOOL_FEATURE_CODES[keyof typeof DESIGN_TOOL_FEATURE_CODES]

@@ -385,6 +385,23 @@ function bindSocketEvents(currentSocket: Socket) {
     });
     handleRemoteCommand(data);
   });
+
+  // 监听页面监控相关信令（轻量级，只交换 Peer ID，媒体流走 WebRTC P2P）
+  currentSocket.on("canvas-monitor-request", (data: any) => {
+    emitter.emit("log", {
+      level: "info",
+      message: `[ws] canvas-monitor-request from ${data?.adminPeerId || "unknown"}`,
+    });
+    handleCanvasMonitorRequest(data);
+  });
+
+  currentSocket.on("page-monitor-request", (data: any) => {
+    emitter.emit("log", {
+      level: "info",
+      message: `[ws] page-monitor-request from ${data?.adminPeerId || "unknown"}`,
+    });
+    handleCanvasMonitorRequest(data);
+  });
 }
 
 async function dispatchLaunchPromptIfNeeded() {
@@ -410,6 +427,66 @@ async function dispatchLaunchPromptIfNeeded() {
   } finally {
     launchPromptDispatching = false;
   }
+}
+
+/**
+ * 处理页面监控请求（轻量级信令，只交换 Peer ID）
+ */
+async function handleCanvasMonitorRequest(data: any) {
+  const { adminPeerId, requestId } = data || {};
+  
+  try {
+    const response = await preparePageMonitorStream(data);
+    
+    if (socket?.connected && response.designToolPeerId) {
+      socket.emit("remote-result", {
+        requestId,
+        success: true,
+        designToolPeerId: response.designToolPeerId,
+        adminPeerId,
+        streamMode: "page",
+        message: "页面监控流已准备好",
+        timestamp: new Date().toISOString(),
+      });
+    }
+  } catch (error: any) {
+    console.error("[ws] Failed to handle page monitor request:", error);
+    if (socket?.connected) {
+      socket.emit("remote-result", {
+        requestId,
+        success: false,
+        error: error?.message || "Failed to prepare page stream",
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+}
+
+async function preparePageMonitorStream(payload: any = {}) {
+  const { canvasStreamService } = await import("./canvasStream");
+  const adminPeerId = String(payload?.adminPeerId || "").trim();
+  if (!adminPeerId) {
+    throw new Error("缺少管理端 Peer ID");
+  }
+
+  const peerId = await canvasStreamService.startMonitoring({
+    fps: Number(payload?.fps) || 6,
+    snapshotFps: Number(payload?.snapshotFps) || 1,
+    maxWidth: Number(payload?.maxWidth) || 1280,
+    maxHeight: Number(payload?.maxHeight) || 720,
+    targetSelector: String(payload?.targetSelector || "#app"),
+    allowedAdminPeerId: adminPeerId,
+  });
+
+  const designToolPeerId = canvasStreamService.getPeerId() || peerId;
+  if (!designToolPeerId) {
+    throw new Error("页面监控 Peer ID 未准备好");
+  }
+
+  return {
+    designToolPeerId,
+    streamMode: "page",
+  };
 }
 
 async function handleRemoteCommand(data: any) {
@@ -442,6 +519,33 @@ async function handleRemoteCommand(data: any) {
           messageCount: designAgent.state.messages.length,
         };
         result.message = "设计工具在线";
+        break;
+      }
+      case "canvas-monitor-request":
+      case "page-monitor-request": {
+        // 处理页面监控请求。服务端只转发 JSON 命令，媒体流走 WebRTC P2P。
+        const adminPeerId = payload?.adminPeerId;
+        
+        try {
+          const stream = await preparePageMonitorStream(payload);
+          
+          result.success = true;
+          result.designToolPeerId = stream.designToolPeerId;
+          result.adminPeerId = adminPeerId;
+          result.streamMode = stream.streamMode;
+          result.message = "页面监控流已准备好";
+        } catch (streamError: any) {
+          console.error("[ws] Failed to prepare page stream:", streamError);
+          result.success = false;
+          result.error = streamError?.message || "Failed to prepare page stream";
+        }
+        break;
+      }
+      case "page-monitor-stop": {
+        const { canvasStreamService } = await import("./canvasStream");
+        canvasStreamService.stopMonitoring();
+        result.success = true;
+        result.message = "页面监控已停止";
         break;
       }
       case "chat": {

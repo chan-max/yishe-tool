@@ -4,7 +4,7 @@ import {
   normalizeHtmlTemplateBindings,
 } from "@/components/design/layout/canvas/htmlTemplate/runtime";
 
-function isHtmlArtworkType(type: string) {
+export function isHtmlArtworkType(type: string) {
   return type === "html";
 }
 
@@ -12,7 +12,7 @@ function getHtmlContentLength(child: any) {
   return String(child?.htmlContent || "").trim().length;
 }
 
-function parseMaybeJsonObject(value: any) {
+export function parseMaybeJsonObject(value: any) {
   if (!value) return undefined;
   if (typeof value === "object") return value;
   if (typeof value !== "string") return undefined;
@@ -107,7 +107,7 @@ function findDirectExternalResourceUrls(htmlContent: string) {
   return Array.from(urls);
 }
 
-function getDirectExternalResourceError(options: Record<string, any>) {
+export function getDirectExternalResourceError(options: Record<string, any>) {
   const directUrls = findDirectExternalResourceUrls(options.htmlContent || "");
   if (directUrls.length === 0) return "";
   return [
@@ -117,7 +117,7 @@ function getDirectExternalResourceError(options: Record<string, any>) {
   ].join("\n");
 }
 
-function prepareHtmlArtworkOptions(
+export function prepareHtmlArtworkOptions(
   options: Record<string, any>,
   existingChild?: any,
 ) {
@@ -191,7 +191,7 @@ function prepareHtmlArtworkOptions(
   return prepared;
 }
 
-function updateExistingHtmlArtwork(ctx: any, options: Record<string, any>) {
+export function updateExistingHtmlArtwork(ctx: any, options: Record<string, any>) {
   const htmlChildren = ctx
     .getCanvasChildren()
     .filter((child: any) => child.type === "html");

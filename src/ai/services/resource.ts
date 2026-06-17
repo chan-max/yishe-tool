@@ -42,6 +42,9 @@ export interface FontResource {
   description: string;
   url: string;
   thumbnail: string;
+  category: string;       // 字体分类，如 "标题字"、"正文字"、"手写体"
+  keywords: string;       // 搜索关键词
+  languages: string[];    // 支持的语言，如 ['zh-CN', 'en']
 }
 
 export interface ImageResource {
@@ -56,12 +59,14 @@ export interface ImageResource {
   height: number;
   isCustom: boolean;        // 是否为系统自定义（可二次开发）
   isCutout: boolean;        // 是否为抠图（无背景）
+  colorPalette: string;     // 主色调，逗号分隔的 hex，如 "#ff0000,#00ff00"
 }
 
 export interface FontSearchParams {
   query?: string;           // 搜索关键词
   limit?: number;           // 返回数量
   page?: number;            // 页码
+  category?: string;        // 字体分类过滤，如 "标题字"、"正文字"
 }
 
 export interface ImageSearchParams {
@@ -98,11 +103,14 @@ export async function searchFontResources(
   }
 
   try {
-    const result = await fetchApi("/api/font-template/page", {
+    const apiParams: Record<string, any> = {
       searchKeyword: params.query,
       currentPage: params.page || 1,
       pageSize: params.limit || 10,
-    });
+    };
+    if (params.category) apiParams.category = params.category;
+
+    const result = await fetchApi("/api/font-template/page", apiParams);
 
     const searchResult: ResourceSearchResult = {
       items: (result.list || []).map((item: any) => ({
@@ -111,6 +119,9 @@ export async function searchFontResources(
         description: item.description || "",
         url: item.url || "",
         thumbnail: item.thumbnail || "",
+        category: item.category || "",
+        keywords: item.keywords || "",
+        languages: item.languages || [],
       })),
       total: result.total || 0,
       query: params.query || "",
@@ -163,6 +174,7 @@ export async function searchImageResources(
         height: item.height || 0,
         isCustom: Boolean(item.isCustom),
         isCutout: Boolean(item.isCutout),
+        colorPalette: item.colorPalette || "",
       })),
       total: result.total || 0,
       query: params.query || "",
@@ -191,6 +203,9 @@ export async function getFontResource(id: string): Promise<FontResource | null> 
       description: result.description || "",
       url: result.url || "",
       thumbnail: result.thumbnail || "",
+      category: result.category || "",
+      keywords: result.keywords || "",
+      languages: result.languages || [],
     };
   } catch (error) {
     console.error("[ResourceService] 获取字体失败:", error);
@@ -214,6 +229,7 @@ export async function getImageResource(id: string): Promise<ImageResource | null
       height: result.height || 0,
       isCustom: Boolean(result.isCustom),
       isCutout: Boolean(result.isCutout),
+      colorPalette: result.colorPalette || "",
     };
   } catch (error) {
     console.error("[ResourceService] 获取图片失败:", error);
@@ -228,22 +244,27 @@ export const resourceTools = [
     type: "function" as const,
     function: {
       name: "resource.searchFont",
-      description: `搜索字体资源。当用户需要字体、字型、文字样式时使用。
+      description: `搜索字体库。返回字体列表，每项包含 id/name/url/category/keywords。
 
-返回字体列表，包含预览图、下载地址等完整信息。
-返回的 url 字段用于 @font-face 加载字体。
+**搜索到字体后，必须在 canvas.addHtml 的 htmlBindings 中绑定，HTML 中用 {{font.xxx.family}} 引用。**
 
-**重要：搜索到字体后，必须用 @font-face 加载才能在 font-family 中使用！**`,
+示例流程：
+1. resource.searchFont({ query: "艺术" })
+2. canvas.addHtml({ htmlContent: "<div style='font-family:{{font.brand.family}};...'>文字</div>", htmlBindings: { font: { brand: { id:"搜到的id", url:"搜到的url", name:"搜到的name" } } } })`,
       parameters: {
         type: "object",
         properties: {
           query: {
             type: "string",
-            description: "搜索关键词，如：简约、现代、复古、可爱、艺术、手写、科技",
+            description: "搜索关键词。推荐：标题字、手写体、艺术、简约、可爱、复古、科技、书法、衬线",
           },
           limit: {
             type: "number",
             description: "返回数量，默认 5，最大 20",
+          },
+          category: {
+            type: "string",
+            description: "字体分类过滤，如：标题字、正文字、手写体。不填则搜索全部分类。",
           },
         },
         required: ["query"],
@@ -254,10 +275,13 @@ export const resourceTools = [
     type: "function" as const,
     function: {
       name: "resource.searchImage",
-      description: `搜索图片资源。当用户需要图片、插图、图标、背景图时使用。
+      description: `搜索图库/贴纸库。返回图片列表，每项包含 id/name/url/keywords/colorPalette/width/height/isCutout。
 
-返回图片列表，包含预览图、URL 地址等完整信息。
-返回的 url 字段可直接用于 HTML 的 <img> 标签或 background-image。
+**搜索到图片后，在 canvas.addHtml 的 htmlBindings 中绑定，HTML 中用 {{image.xxx.url}} 引用。**
+
+示例流程：
+1. resource.searchImage({ query: "猫" })
+2. canvas.addHtml({ htmlContent: "<div style='background-image:url({{image.bg.url}});background-size:cover;...'></div>", htmlBindings: { image: { bg: { id:"搜到的id", url:"搜到的url", name:"搜到的name" } } } })
 
 筛选说明：
 - isCustom: true 仅返回系统自定义贴纸（可二次开发）
@@ -267,7 +291,7 @@ export const resourceTools = [
         properties: {
           query: {
             type: "string",
-            description: "搜索关键词，如：猫咪、风景、科技、纹理、渐变",
+            description: "搜索关键词，简短精准效果更好。如：猫咪、风景、科技、纹理、渐变、星空、花朵",
           },
           limit: {
             type: "number",
@@ -275,11 +299,11 @@ export const resourceTools = [
           },
           isCustom: {
             type: "boolean",
-            description: "是否仅返回系统自定义贴纸（可基于其二次开发）",
+            description: "仅返回系统自定义贴纸（可基于其二次开发）",
           },
           isCutout: {
             type: "boolean",
-            description: "是否仅返回抠图素材（无背景，适合叠加使用）",
+            description: "仅返回抠图素材（无背景，适合叠加使用）",
           },
         },
         required: ["query"],
@@ -299,6 +323,7 @@ export async function executeResourceTool(
       const result = await searchFontResources({
         query: args.query,
         limit: args.limit || 5,
+        category: args.category,
       });
       if (result.items.length === 0) {
         return {
@@ -317,6 +342,9 @@ export async function executeResourceTool(
           description: item.description,
           thumbnail: item.thumbnail,
           url: item.url,
+          category: item.category,
+          keywords: item.keywords,
+          languages: item.languages,
         })),
         total: result.total,
         query: result.query,
@@ -351,6 +379,9 @@ export async function executeResourceTool(
           category: item.category,
           isCustom: item.isCustom,
           isCutout: item.isCutout,
+          width: item.width,
+          height: item.height,
+          colorPalette: item.colorPalette,
         })),
         total: result.total,
         query: result.query,

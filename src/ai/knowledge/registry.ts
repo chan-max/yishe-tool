@@ -15,6 +15,17 @@ import {
   fontPairingKnowledge,
 } from "./style-templates";
 import { designTipsKnowledge } from "./design-tips-loader";
+import { compositionPatternsKnowledge } from "./composition-patterns";
+import { iterationTechniquesKnowledge } from "./iteration-techniques";
+import { glassEffectsKnowledge } from "./css-glass-effects";
+import { decorationsKnowledge } from "./css-decorations";
+import { buttonsKnowledge } from "./css-buttons";
+import { gridLayoutsKnowledge } from "./css-grid-layouts";
+import { textEffectsKnowledge } from "./css-text-effects";
+import { clippathShapesKnowledge } from "./css-clippath-shapes";
+import { pseudoElementsKnowledge } from "./css-pseudo-elements";
+import { advancedCompositionsKnowledge } from "./css-compositions-advanced";
+import { backgroundPatternsKnowledge } from "./css-background-patterns";
 import type { KnowledgeItem } from "./types";
 
 /**
@@ -30,6 +41,17 @@ export const baseAlwaysKnowledge = baseKnowledge;
 
 export const builtInKnowledgeItems: KnowledgeItem[] = [
   htmlElementsKnowledge,
+  compositionPatternsKnowledge,
+  iterationTechniquesKnowledge,
+  glassEffectsKnowledge,
+  decorationsKnowledge,
+  buttonsKnowledge,
+  gridLayoutsKnowledge,
+  textEffectsKnowledge,
+  clippathShapesKnowledge,
+  pseudoElementsKnowledge,
+  advancedCompositionsKnowledge,
+  backgroundPatternsKnowledge,
   fontBindingKnowledge,
   imageBindingKnowledge,
   batchWorkflowKnowledge,

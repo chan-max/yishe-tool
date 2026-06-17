@@ -179,6 +179,7 @@ const clientId = generateClientId();
 const clientInfo = reactive({
   clientId,
   source: CLIENT_SOURCE,
+  screenSharing: false,
   timestamp: new Date().toISOString(),
   app: {
     name: "yishe-tool",
@@ -470,11 +471,6 @@ async function preparePageMonitorStream(payload: any = {}) {
   }
 
   const peerId = await canvasStreamService.startMonitoring({
-    fps: Number(payload?.fps) || 6,
-    snapshotFps: Number(payload?.snapshotFps) || 1,
-    maxWidth: Number(payload?.maxWidth) || 1280,
-    maxHeight: Number(payload?.maxHeight) || 720,
-    targetSelector: String(payload?.targetSelector || "#app"),
     allowedAdminPeerId: adminPeerId,
   });
 
@@ -739,5 +735,10 @@ export const websocketClient = {
   }) {
     if (!socket?.connected) return;
     socket.emit("agent-status", status);
+  },
+
+  setScreenSharing(active: boolean) {
+    clientInfo.screenSharing = active;
+    emitClientInfo();
   },
 };

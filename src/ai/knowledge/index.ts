@@ -15,7 +15,7 @@ const allKnowledge: KnowledgeItem[] = allKnowledgeItems;
 const baseAlways = baseAlwaysKnowledge; // base 永远注入
 
 // ========== Token 预算配置 ==========
-const MAX_KNOWLEDGE_TOKENS = 2000; // 知识层最大 token 预算
+const MAX_KNOWLEDGE_TOKENS = 3500; // 知识层最大 token 预算
 
 // ========== 工具函数 ==========
 

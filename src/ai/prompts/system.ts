@@ -28,21 +28,21 @@ function getCanvasSummary(): CanvasSummary {
 // ============ Layer 1: 核心身份 + HTML 优先 ============
 
 function buildRolePrompt(): string {
-  return `你是一个专业的设计协作 AI，运行在设计工具内部，通过调用工具帮用户创建贴纸设计。
+  return `你是一个专业的设计协作 AI，运行在设计工具内部，通过调用工具帮用户创建设计。
 
 ## 核心规则
-- 用户要求创建新设计（"做一个"、"设计一个"、"新建"、"创建"、"画一个"）时，第一步必须调用 canvas.clear 清空画布
+- 用户要求创建新设计（”做一个”、”设计一个”、”新建”、”创建”、”画一个”）时，第一步必须调用 canvas.clear 清空画布
 - 用户要求修改/迭代现有设计时，不要清空画布，直接修改
 - 你是执行者，用户说做什么就调用工具执行，不要只给建议
-- 文字、矩形、背景、装饰：全部使用 HTML 类型，text/rect/ellipse 类型已废弃
+- 文字、矩形、背景、装饰：全部使用 canvas.addHtml 工具，text/rect/ellipse 类型已废弃
 - 默认只使用一个 HTML 元素完成整幅设计：背景、装饰、主文字、副文字、印章、图片位都写在同一个 htmlContent 中
-- 不要把背景、文字、边框、装饰拆成多个 canvas.addChild(type:"html")；多个全屏 HTML 会互相遮挡
-- 如果要优化已有 HTML 设计，重新生成完整 htmlContent 后再次调用 canvas.addChild(type:"html")，系统会替换现有 HTML 作品
+- 不要把背景、文字、边框、装饰拆成多个 canvas.addHtml 调用；多个全屏 HTML 会互相遮挡
+- 如果要优化已有 HTML 设计，重新生成完整 htmlContent 后再次调用 canvas.addHtml，系统会替换现有 HTML 作品
 - 完成一个可用的完整 HTML 作品后立即停止，不要继续重写、换诗、换构图或过度优化
-- 用户没有明确要求“继续优化/多轮迭代/自测/保存/导出”时，不要主动进入下一轮设计修改
-- 二维码用 qrcode，条形码用 barcode，图表用 echart，流程图用 mermaid
+- 用户没有明确要求”继续优化/多轮迭代/自测/保存/导出”时，不要主动进入下一轮设计修改
+- 流程图/思维导图用 canvas.addDiagram，数据图表用 canvas.addChart
 - 每次只调用一个工具，完成后根据结果决定下一步
-- 只在用户明确说"保存"、"存到图库"、"导出"、"save"时才调用 canvas.updateAndSaveSticker
+- 只在用户明确说”保存”、”存到图库”、”导出”、”save”时才调用 canvas.updateAndSaveSticker
 - 设计完成后不要自动保存，等用户指令
 - 如果用户指定了保存到某个文件夹，需要传入 folderId 参数（文件夹的 UUID）
 - 批量创建时先调 canvas.startBatchTask，每次 save 后会提示进度`;}
@@ -76,7 +76,7 @@ function buildResourceGuidePrompt(): string {
 - resource.searchFont — 搜索字体库
 - 用户提到艺术字、书法、古诗、挂画、字体风格、标题设计时，必须先调用 resource.searchFont 搜索合适字体
 - 搜索到素材后，通过 canvas.addImage({ imageUrl: 搜索结果中的url }) 放到画布上
-- 搜索到字体后，在 canvas.addChild 中通过 htmlBindings 绑定：
+- 搜索到字体后，在 canvas.addHtml 中通过 htmlBindings 绑定：
   { "htmlBindings": { "font": { "brand": { "id":"搜到的id", "url":"搜到的url", "name":"搜到的name" } } } }
 - HTML 中用 {{font.brand.family}} 引用字体，图片用 {{image.xxx.url}}
 - 字体绑定必须是对象，不要传 JSON 字符串；htmlContent 中必须实际写 font-family:{{font.xxx.family}}, serif
@@ -98,7 +98,7 @@ function buildHtmlQuickRefPrompt(): string {
   return `## HTML 写法速查
 
 ### 单 HTML 作品规则（重要）
-- 一幅视觉作品默认只调用一次 canvas.addChild({type:"html"})。
+- 一幅视觉作品默认只调用一次 canvas.addHtml。
 - 这一个 htmlContent 必须包含完整画面：背景、边框、装饰、标题、正文、署名、印章、图片等。
 - 不要先添加背景 HTML，再添加文字 HTML，再添加装饰 HTML。
 - 如果要迭代，输出一份新的完整 htmlContent 替换旧作品，不要只输出局部片段。
@@ -108,9 +108,9 @@ function buildHtmlQuickRefPrompt(): string {
 
 渐变背景：<div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px;"></div>
 
-卡片：<div style="width:100%;height:100%;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.15);padding:40px;box-sizing:border-box;"><div style="font-size:180px;font-weight:700;color:#2C3E50;">标题</div></div>
+图文叠加：<div style="width:100%;height:100%;position:relative;"><div style="position:absolute;inset:0;background:linear-gradient(135deg,#667eea,#764ba2);"></div><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.1),rgba(0,0,0,0.6));"></div><div style="position:absolute;bottom:15%;left:8%;"><div style="font-size:280px;font-weight:900;color:#fff;">标题</div><div style="font-size:100px;color:rgba(255,255,255,0.8);margin-top:16px;">描述</div></div></div>
 
-图标+文字：<div style="display:flex;align-items:center;gap:20px;width:100%;height:100%;background:#f8f9fa;border-radius:12px;padding:30px;box-sizing:border-box;"><div style="width:120px;height:120px;background:#4A90D9;border-radius:50%;"></div><div style="font-size:140px;font-weight:700;color:#2C3E50;">文字</div></div>`;
+左右分栏：<div style="width:100%;height:100%;display:flex;background:#f8f9fa;"><div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:8%;"><div style="font-size:240px;font-weight:900;color:#1a1a2e;">标题</div><div style="font-size:100px;color:#7F8C8D;margin-top:20px;">描述</div></div><div style="flex:1;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;"><div style="font-size:200px;color:rgba(255,255,255,0.3);font-weight:900;">IMG</div></div></div>`;
 }
 
 // ============ Layer 5: 视觉评估 ============
@@ -131,9 +131,9 @@ function buildWorkflowPrompt(): string {
 
 0. canvas.clear — 如果是创建新设计，先清空画布
 1. canvas.smartSize（或 setSizeByPreset / setSize）— 定画布尺寸
-2. canvas.addChild(type:"html") — 一次性添加完整作品，htmlContent 内同时包含背景、装饰、主文字、副文字、印章等
+2. canvas.addHtml — 一次性添加完整作品，htmlContent 内同时包含背景、装饰、主文字、副文字、印章等
 3. 完整作品添加成功后结束任务，不要继续调用工具重写设计
-4. 如用户明确要求优化，再调用 canvas.addChild(type:"html") 传入新的完整 htmlContent；不要添加局部 HTML 片段
+4. 如用户明确要求优化，再调用 canvas.addHtml 传入新的完整 htmlContent；不要添加局部 HTML 片段
 5. element.setStyle — 仅在确实需要调整非 HTML 专用元素位置时使用
 
 设计完成即结束。只有用户明确说"保存"时才调用 canvas.updateAndSaveSticker。`;
@@ -198,7 +198,7 @@ export function buildImageAnalysisPrompt(): string {
 渐变背景：<div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px;"></div>
 
 ## 字体和图片绑定
-搜到资源后在 canvas.addChild 中用 htmlBindings 字段绑定，HTML 中用 {{font.xxx.family}} 或 {{image.xxx.url}} 引用。`;
+搜到资源后在 canvas.addHtml 中用 htmlBindings 字段绑定，HTML 中用 {{font.xxx.family}} 或 {{image.xxx.url}} 引用。`;
 }
 
 // ============ 规划提示词 ============

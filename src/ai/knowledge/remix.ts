@@ -10,7 +10,7 @@ export const remixKnowledge: KnowledgeItem = {
 1. resource.searchImage({ query: "关键词", isCustom: true }) → 搜索可编辑的贴纸
 2. canvas.loadSticker({ stickerId: "贴纸ID" }) → 加载贴纸设计到画布
 3. canvas.getState → 查看元素结构（配色、布局、字体等）
-4. 参考元素后，用 element.setXxx 修改或 canvas.addChild 新增元素
+4. 参考元素后，用 element.setXxx 修改或 canvas.addHtml 新增元素
 
 ### 多贴纸混搭
 
@@ -21,7 +21,7 @@ export const remixKnowledge: KnowledgeItem = {
 5. canvas.getState → 记住另一个方案的字体/装饰 ✅
 6. canvas.clear()
 7. 综合两个贴纸的优点，创建新设计（从配色A + 布局B + 字体C）
-8. canvas.addChild(...)  创建合并后的新设计
+8. canvas.addHtml(...)  创建合并后的新设计
 
 ### 注意
 - resource.searchImage 返回的 isCustom=true 的贴纸才能加载元素树

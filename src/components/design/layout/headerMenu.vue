@@ -54,6 +54,13 @@
         素材上传
       </el-button> -->
 
+      <el-tooltip :content="screenShareActive ? '停止共享屏幕' : '共享屏幕给管理端'" placement="bottom" :show-after="200">
+        <div class="screen-share-btn" :class="{ 'screen-share-btn--active': screenShareActive }" @click="toggleScreenShare">
+          <span class="screen-share-dot" />
+          <span class="screen-share-label">{{ screenShareActive ? '共享中' : '共享屏幕' }}</span>
+        </div>
+      </el-tooltip>
+
       <el-switch
         v-model="isDarkMode"
         inline-prompt
@@ -115,6 +122,7 @@ import Utils from "@/common/utils";
 import { localFileListResource } from "@/components/design/store";
 import { websocketClient } from "@/services/websocketClient";
 import { designAgent } from "@/ai/langgraph";
+import { canvasStreamService } from "@/services/canvasStream";
 
 const wsStatus = computed(() => websocketClient.state.status);
 const wsStatusLabel = computed(() => {
@@ -148,6 +156,36 @@ const agentStatusTooltip = computed(() => {
   const count = designAgent.state.messages?.length ?? 0;
   return `AI Agent: ${agentStatusLabel.value} · ${count} 条消息${error}`;
 });
+
+// 屏幕共享
+const screenShareActive = ref(false);
+let screenShareCheckTimer = null;
+
+const toggleScreenShare = async () => {
+  if (screenShareActive.value) {
+    canvasStreamService.stopMonitoring();
+    screenShareActive.value = false;
+    websocketClient.setScreenSharing(false);
+    if (screenShareCheckTimer) { clearInterval(screenShareCheckTimer); screenShareCheckTimer = null; }
+  } else {
+    try {
+      await canvasStreamService.startMonitoring();
+      screenShareActive.value = true;
+      websocketClient.setScreenSharing(true);
+      screenShareCheckTimer = setInterval(() => {
+        if (!canvasStreamService.isActive()) {
+          screenShareActive.value = false;
+          websocketClient.setScreenSharing(false);
+          if (screenShareCheckTimer) { clearInterval(screenShareCheckTimer); screenShareCheckTimer = null; }
+        }
+      }, 2000);
+    } catch (e) {
+      console.warn("[ScreenShare] Failed:", e?.message);
+      screenShareActive.value = false;
+      websocketClient.setScreenSharing(false);
+    }
+  }
+};
 
 const router = useRouter();
 
@@ -415,6 +453,48 @@ function confirmExitEditMode() {
   }
   .agent-status-label {
     color: #ff4d4f;
+  }
+}
+
+.screen-share-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  transition: all 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .screen-share-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(128, 128, 128, 0.5);
+    flex-shrink: 0;
+  }
+
+  .screen-share-label {
+    font-size: 10px;
+    white-space: nowrap;
+    line-height: 1;
+    color: var(--1s-text-color-secondary, #999);
+  }
+}
+
+.screen-share-btn--active {
+  .screen-share-dot {
+    background: #52c41a;
+    box-shadow: 0 0 4px rgba(82, 196, 26, 0.5);
+    animation: ws-pulse 1.5s ease-in-out infinite;
+  }
+  .screen-share-label {
+    color: #52c41a;
   }
 }
 

@@ -725,8 +725,7 @@ async function runAgentLoop(userMessage: string) {
 
         if (
           result?.success &&
-          toolName === "canvas.addChild" &&
-          args?.type === "html" &&
+          (toolName === "canvas.addHtml" || (toolName === "canvas.addChild" && args?.type === "html")) &&
           !allowPostArtworkContinuation
         ) {
           completedArtwork = true;

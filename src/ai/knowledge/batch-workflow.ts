@@ -9,13 +9,13 @@ export const batchWorkflowKnowledge: KnowledgeItem = {
 
 以创建 3 个素材为例：
 1. canvas.startBatchTask({ total: 3, description: "创建3个素材" })
-2. canvas.addChild(...) — 创建设计
+2. canvas.addHtml({ htmlContent: "..." }) — 创建设计
 3. canvas.updateAndSaveSticker() — 系统提示 "已完成 1/3"
 4. canvas.clear()
-5. canvas.addChild(...) — 下一个设计
+5. canvas.addHtml({ htmlContent: "..." }) — 下一个设计
 6. canvas.updateAndSaveSticker() — 系统提示 "已完成 2/3"
 7. canvas.clear()
-8. canvas.addChild(...) — 最后一个设计
+8. canvas.addHtml({ htmlContent: "..." }) — 最后一个设计
 9. canvas.updateAndSaveSticker() — 系统提示 "全部完成！"
 
 规则：

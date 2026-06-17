@@ -22,8 +22,12 @@ export const designRulesKnowledge: KnowledgeItem = {
 ### 字号
 主标题 280-400 | 副标题 160-220 | 正文 100-140 | 注释 60-80
 
-### 构图
-- 三分法：主元素放在 33%/66% 位置，不要总是居中
-- 留白：元素间距 ≥20px，边距 ≥5%
-- 层级：背景 zIndex=0，装饰 1-5，文字 10-20`,
+### 构图 → CSS 实现
+- 居中构图：display:flex;align-items:center;justify-content:center;
+- 三分法：position:absolute;top:33%;left:33%; 或用 flex + padding 偏移
+- 留白：padding:5%;gap:20px;margin 也行
+- 层级：z-index 背景=0 装饰=1-5 文字=10-20（需 position:relative/absolute）
+- 左右分栏：display:flex; 左右各 flex:1;
+- 卡片网格：display:grid;grid-template-columns:1fr 1fr;gap:30px;`,
+
 };

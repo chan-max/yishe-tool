@@ -8,21 +8,21 @@ export const templateModeKnowledge: KnowledgeItem = {
 当用户要求做"模板"或"可更换"的设计时，使用 htmlTemplateFields：
 
 ### 可更换字体
-canvas.addChild({
-  htmlContent: "<div style='font-family:{{font.brand.family}};...'>", 
+canvas.addHtml({
+  htmlContent: "<div style='font-family:{{font.brand.family}};...'>",
   htmlBindings: { font: { brand: { id, url, name } } },
   htmlTemplateFields: [{ key: "font.brand", type: "font", label: "标题字体" }]
 })
 
 ### 可更换图片
-canvas.addChild({
+canvas.addHtml({
   htmlContent: "<img src='{{image.logo.url}}'/>",
   htmlBindings: { image: { logo: { id, url, name } } },
   htmlTemplateFields: [{ key: "image.logo", type: "image", label: "Logo" }]
 })
 
 ### 可编辑文字
-canvas.addChild({
+canvas.addHtml({
   htmlContent: "{{text.title}}",
   htmlTemplateFields: [{ key: "text.title", type: "text", label: "标题文字", defaultValue: "默认标题" }]
 })

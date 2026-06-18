@@ -236,46 +236,14 @@ class CanvasStreamService {
 }
 
 function resolvePeerjsConfig() {
-  const explicitHost = import.meta.env.VITE_PEERJS_HOST;
-  if (explicitHost) {
-    const explicitConfig = parsePeerjsUrl(explicitHost);
-    if (explicitConfig) return explicitConfig;
-  }
-
-  const candidates = [
-    import.meta.env.VITE_PROXY_TARGET,
-    import.meta.env.VITE_API,
-  ].filter(Boolean);
-
-  for (const candidate of candidates) {
-    const peerConfig = parsePeerjsUrl(candidate);
-    if (peerConfig) return peerConfig;
-  }
-
   const { protocol, hostname } = window.location;
+  const peerPort = Number(import.meta.env.VITE_PEERJS_PORT) || 15203;
   return {
     host: hostname,
-    port: protocol === "https:" ? 443 : 80,
+    port: peerPort,
     path: "/",
     secure: protocol === "https:",
   };
-}
-
-function parsePeerjsUrl(rawUrl: string) {
-  const value = String(rawUrl || "").trim();
-  if (!value || !/^https?:\/\//i.test(value)) return null;
-
-  try {
-    const url = new URL(value);
-    return {
-      host: url.hostname,
-      port: url.port ? Number(url.port) : url.protocol === "https:" ? 443 : 80,
-      path: "/",
-      secure: url.protocol === "https:",
-    };
-  } catch {
-    return null;
-  }
 }
 
 export const canvasStreamService = new CanvasStreamService();

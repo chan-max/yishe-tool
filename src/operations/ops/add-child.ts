@@ -588,6 +588,55 @@ registerOperation({
       description: "仅Chart.js图表类型有效",
     },
     {
+      name: "frappeChartType",
+      label: "Frappe图表类型",
+      type: "select",
+      default: "bar",
+      options: [
+        { label: "柱状图", value: "bar" },
+        { label: "折线图", value: "line" },
+        { label: "饼图", value: "pie" },
+        { label: "环形图", value: "donut" },
+        { label: "百分比柱状图", value: "percentage" },
+        { label: "热力图", value: "heatmap" },
+      ],
+      description: "仅Frappe Charts类型有效",
+    },
+    {
+      name: "frappeLabels",
+      label: "Frappe标签",
+      type: "string",
+      placeholder: '["Jan","Feb","Mar"]',
+      description: "仅Frappe Charts类型有效，JSON数组",
+    },
+    {
+      name: "frappeDatasets",
+      label: "Frappe数据",
+      type: "string",
+      placeholder: '[{"values":[30,50,20]}]',
+      description: "仅Frappe Charts类型有效，JSON数组",
+    },
+    {
+      name: "chartXkcdType",
+      label: "手绘图表类型",
+      type: "select",
+      default: "bar",
+      options: [
+        { label: "柱状图", value: "bar" },
+        { label: "折线图", value: "line" },
+        { label: "饼图", value: "pie" },
+        { label: "散点图", value: "scatter" },
+      ],
+      description: "仅chart.xkcd类型有效",
+    },
+    {
+      name: "chartXkcdData",
+      label: "手绘图表数据",
+      type: "string",
+      placeholder: '{"labels":["A","B"],"datasets":[{"label":"X","data":[10,20]}]}',
+      description: "仅chart.xkcd类型有效，JSON格式",
+    },
+    {
       name: "dagreNodes",
       label: "节点JSON",
       type: "string",
@@ -919,6 +968,11 @@ registerOperation({
       cytoscapeElements2,
       chartjsType,
       chartjsData,
+      frappeChartType,
+      frappeLabels,
+      frappeDatasets,
+      chartXkcdType,
+      chartXkcdData,
       dagreNodes,
       dagreEdges,
       starChartDate,
@@ -1095,6 +1149,21 @@ registerOperation({
         } catch {}
       }
     }
+    if (type === "frappeChart") {
+      if (frappeChartType !== undefined) extraOptions.chartType = frappeChartType;
+      if (frappeLabels !== undefined) {
+        try { extraOptions.labels = JSON.parse(frappeLabels); } catch {}
+      }
+      if (frappeDatasets !== undefined) {
+        try { extraOptions.datasets = JSON.parse(frappeDatasets); } catch {}
+      }
+    }
+    if (type === "chartXkcd") {
+      if (chartXkcdType !== undefined) extraOptions.chartType = chartXkcdType;
+      if (chartXkcdData !== undefined) {
+        try { extraOptions.data = JSON.parse(chartXkcdData); } catch {}
+      }
+    }
     if (type === "dagreGraph") {
       if (dagreNodes !== undefined) {
         try {
@@ -1216,7 +1285,7 @@ registerOperation({
     if (type === "d3Cloud") {
       if (d3CloudWords !== undefined) {
         try {
-          extraOptions.words = JSON.parse(d3CloudWords);
+          extraOptions.d3Cloud = { words: JSON.parse(d3CloudWords) };
         } catch {}
       }
     }

@@ -83,7 +83,7 @@
 
 <script setup>
 import { getBaseModel, getBaseSkybox } from "@/api/index.ts";
-import { ref, defineEmits, defineProps, computed, onMounted } from "vue";
+import { ref, defineEmits, defineProps, computed, onMounted, watch } from "vue";
 import { ElMessageBox } from "element-plus";
 import {
   canvasBgColor,
@@ -157,32 +157,24 @@ const agentStatusTooltip = computed(() => {
   return `AI Agent: ${agentStatusLabel.value} · ${count} 条消息${error}`;
 });
 
-// 屏幕共享
-const screenShareActive = ref(false);
-let screenShareCheckTimer = null;
+// 屏幕共享（监听 canvasStreamService 状态，无论谁触发都同步）
+const screenShareActive = ref(canvasStreamService.isActive());
+
+watch(() => canvasStreamService.status.isStreaming, (active) => {
+  screenShareActive.value = active;
+  websocketClient.setScreenSharing(active);
+});
 
 const toggleScreenShare = async () => {
   if (screenShareActive.value) {
     canvasStreamService.stopMonitoring();
-    screenShareActive.value = false;
-    websocketClient.setScreenSharing(false);
-    if (screenShareCheckTimer) { clearInterval(screenShareCheckTimer); screenShareCheckTimer = null; }
+    // watch 会自动更新 screenShareActive 和 setScreenSharing
   } else {
     try {
       await canvasStreamService.startMonitoring();
-      screenShareActive.value = true;
-      websocketClient.setScreenSharing(true);
-      screenShareCheckTimer = setInterval(() => {
-        if (!canvasStreamService.isActive()) {
-          screenShareActive.value = false;
-          websocketClient.setScreenSharing(false);
-          if (screenShareCheckTimer) { clearInterval(screenShareCheckTimer); screenShareCheckTimer = null; }
-        }
-      }, 2000);
+      // watch 会自动更新 screenShareActive 和 setScreenSharing
     } catch (e) {
       console.warn("[ScreenShare] Failed:", e?.message);
-      screenShareActive.value = false;
-      websocketClient.setScreenSharing(false);
     }
   }
 };

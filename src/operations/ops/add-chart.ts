@@ -25,7 +25,6 @@ registerOperation({
       name: "data",
       label: "数据 JSON",
       type: "string",
-      required: true,
       placeholder: '{"labels":["A","B"],"datasets":[{"values":[30,70]}]}',
       description: [
         "图表数据，JSON 格式：",
@@ -38,8 +37,12 @@ registerOperation({
       name: "config",
       label: "配置 JSON",
       type: "string",
-      placeholder: '{"title":{"text":"标题"}}',
-      description: "图表配置项（可选），如标题、颜色、图例等",
+      placeholder: '{"title":{"text":"图表标题"},"xAxis":{...},"series":[...]}',
+      description: [
+        "图表配置项，JSON 格式。",
+        "ECharts 推荐直接在 config 中传完整的 ECharts option（包含 title/xAxis/yAxis/series 等），data 会合并到 config 中。",
+        "示例：{\"title\":{\"text\":\"销量\"},\"xAxis\":{\"type\":\"category\",\"data\":[\"A\",\"B\"]},\"series\":[{\"type\":\"bar\",\"data\":[10,20]}]}",
+      ].join("\n"),
     },
     {
       name: "width",
@@ -62,28 +65,68 @@ registerOperation({
     const { chartType, data, config, width, height } = params;
     const options: Record<string, any> = {};
 
-    try {
-      options.data = JSON.parse(data);
-    } catch {
-      return { success: false, message: "数据 JSON 格式错误，请检查语法" };
-    }
+    // ECharts：需要把 option 写到 echart.engines.echarts.option
+    if (chartType === "echart") {
+      let echartOption: Record<string, any> = {};
 
-    if (config) {
-      try {
-        const parsedConfig = JSON.parse(config);
-        // ECharts 的配置和数据合并
-        if (chartType === "echart") {
-          Object.assign(options, parsedConfig);
-        } else {
-          options.config = parsedConfig;
+      // config 是完整的 ECharts option（优先）
+      if (config) {
+        try {
+          echartOption = JSON.parse(config);
+        } catch {
+          return { success: false, message: "配置 JSON 格式错误，请检查语法" };
         }
-      } catch {
-        return { success: false, message: "配置 JSON 格式错误，请检查语法" };
       }
-    }
 
-    if (chartType === "chartjs") {
-      options.chartType = "bar"; // 默认柱状图，可通过 config 覆盖
+      // data 是补充数据，合并到 option 里
+      if (data) {
+        try {
+          const parsedData = JSON.parse(data);
+          echartOption = { ...parsedData, ...echartOption };
+        } catch {
+          return { success: false, message: "数据 JSON 格式错误，请检查语法" };
+        }
+      }
+
+      // 写到正确路径
+      options.echart = {
+        version: 1,
+        engine: "echarts",
+        engines: {
+          echarts: {
+            renderer: "canvas",
+            theme: "",
+            option: echartOption,
+          },
+        },
+      };
+    } else {
+      // 非 ECharts 图表
+      if (data) {
+        try {
+          options.data = JSON.parse(data);
+        } catch {
+          return { success: false, message: "数据 JSON 格式错误，请检查语法" };
+        }
+      }
+      if (config) {
+        try {
+          const parsedConfig = JSON.parse(config);
+          // 每种图表组件读取配置的路径不同
+          if (chartType === "chartjs") {
+            options.options = parsedConfig;  // Chart.js 组件读 props.options.options
+          } else if (chartType === "plotlyChart") {
+            options.layout = parsedConfig;   // Plotly 组件读 props.options.layout
+          } else {
+            options.config = parsedConfig;
+          }
+        } catch {
+          return { success: false, message: "配置 JSON 格式错误，请检查语法" };
+        }
+      }
+      if (chartType === "chartjs") {
+        options.chartType = "bar";
+      }
     }
 
     if (width !== undefined) options.width = { value: width, unit: "px" };

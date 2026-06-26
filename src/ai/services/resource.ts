@@ -1,6 +1,35 @@
 import { directChat } from "@/ai/direct-client";
 import { apiInstance } from "@/api/apiInstance";
 
+// ============ 最近搜索结果 URL 记录（供 add-html 校验） ============
+
+const recentImageUrls = new Set<string>();
+const RECENT_URL_MAX_AGE = 10 * 60 * 1000; // 10 分钟
+const recentImageUrlsTimestamps = new Map<string, number>();
+
+export function addRecentImageUrls(urls: string[]): void {
+  const now = Date.now();
+  for (const url of urls) {
+    recentImageUrls.add(url);
+    recentImageUrlsTimestamps.set(url, now);
+  }
+  // 清理过期
+  for (const [url, ts] of recentImageUrlsTimestamps) {
+    if (now - ts > RECENT_URL_MAX_AGE) {
+      recentImageUrls.delete(url);
+      recentImageUrlsTimestamps.delete(url);
+    }
+  }
+}
+
+export function isRecentImageUrl(url: string): boolean {
+  return recentImageUrls.has(url);
+}
+
+export function getRecentImageUrls(): string[] {
+  return Array.from(recentImageUrls);
+}
+
 // ============ 搜索缓存 ============
 
 interface CacheEntry<T> {
@@ -152,7 +181,7 @@ export async function searchImageResources(
 
   try {
     const apiParams: Record<string, any> = {
-      search: params.query,
+      searchText: params.query || '',
       currentPage: params.page || 1,
       pageSize: params.limit || 10,
     };
@@ -182,6 +211,8 @@ export async function searchImageResources(
 
     if (searchResult.items.length > 0) {
       setCache(cacheKey, searchResult);
+      // 记录最近搜索到的图片 URL，供 add-html 校验
+      addRecentImageUrls(searchResult.items.map((item) => item.url).filter(Boolean));
     }
 
     return searchResult;
@@ -277,11 +308,36 @@ export const resourceTools = [
       name: "resource.searchImage",
       description: `搜索图库/贴纸库。返回图片列表，每项包含 id/name/url/keywords/colorPalette/width/height/isCutout。
 
-**搜索到图片后，在 canvas.addHtml 的 htmlBindings 中绑定，HTML 中用 {{image.xxx.url}} 引用。**
+**【必须遵守 - 违反视为失败】**
+1. 搜索到多张图片后，必须在 HTML 中使用**每张不同的图片**，每张图片绑定为独立的 key
+2. 禁止用同一张图片的 background-position 裁切来冒充多张不同图片！
+3. 禁止用纯色块/渐变代替图片！
+4. 如果需要 N 张图，就搜 N 张，绑定 N 个不同的 key，HTML 中引用 N 个不同的 URL
 
-示例流程：
-1. resource.searchImage({ query: "猫" })
-2. canvas.addHtml({ htmlContent: "<div style='background-image:url({{image.bg.url}});background-size:cover;...'></div>", htmlBindings: { image: { bg: { id:"搜到的id", url:"搜到的url", name:"搜到的name" } } } })
+**正确示例（照片墙 - 4张不同图片）：**
+1. resource.searchImage({ query: "风景", limit: 4 })
+   → 返回 img1(id:a, url:url_a), img2(id:b, url:url_b), img3(id:c, url:url_c), img4(id:d, url:url_d)
+2. canvas.addHtml({
+     htmlContent: "<div style='...'>
+       <div style='background-image:url({{image.img1.url}});...'></div>
+       <div style='background-image:url({{image.img2.url}});...'></div>
+       <div style='background-image:url({{image.img3.url}});...'></div>
+       <div style='background-image:url({{image.img4.url}});...'></div>
+     </div>",
+     htmlBindings: {
+       image: {
+         img1: { id: "a的id", url: "url_a", name: "a的name" },
+         img2: { id: "b的id", url: "url_b", name: "b的name" },
+         img3: { id: "c的id", url: "url_c", name: "c的name" },
+         img4: { id: "d的id", url: "url_d", name: "d的name" }
+       }
+     }
+   })
+
+**错误示例（同一张图裁切 - 禁止！）：**
+<div style='background-image:url({{image.bg.url}});background-position:center;'></div>
+<div style='background-image:url({{image.bg.url}});background-position:20% 30%;'></div>
+← 这是同一张图，不是多张图！
 
 筛选说明：
 - isCustom: true 仅返回系统自定义贴纸（可二次开发）

@@ -4,6 +4,7 @@ import {
   updateExistingHtmlArtwork,
   getDirectExternalResourceError,
 } from "./add-child";
+import { isRecentImageUrl, getRecentImageUrls } from "@/ai/services/resource";
 
 registerOperation({
   id: "canvas.addHtml",
@@ -80,6 +81,80 @@ registerOperation({
       htmlTemplateMeta,
       allowMultipleHtml,
     } = params;
+
+    // 校验：图片绑定中是否有重复 URL 或重复 ID
+    if (htmlBindings) {
+      let bindings: any = htmlBindings;
+      if (typeof bindings === 'string') {
+        try { bindings = JSON.parse(bindings); } catch {}
+      }
+      const imageBindings = bindings?.image;
+      if (imageBindings && typeof imageBindings === 'object') {
+        const entries = Object.entries(imageBindings);
+        if (entries.length > 1) {
+          const urlToKeys = new Map<string, string[]>();
+          const idToKeys = new Map<string, string[]>();
+          for (const [key, val] of entries) {
+            const v = val as any;
+            if (v?.url) {
+              if (!urlToKeys.has(v.url)) urlToKeys.set(v.url, []);
+              urlToKeys.get(v.url)!.push(key);
+            }
+            if (v?.id) {
+              if (!idToKeys.has(v.id)) idToKeys.set(v.id, []);
+              idToKeys.get(v.id)!.push(key);
+            }
+          }
+          const urlDups = Array.from(urlToKeys.entries()).filter(([, keys]) => keys.length > 1);
+          const idDups = Array.from(idToKeys.entries()).filter(([, keys]) => keys.length > 1);
+          if (urlDups.length > 0 || idDups.length > 0) {
+            const lines: string[] = [];
+            if (urlDups.length > 0) {
+              lines.push('以下绑定使用了相同的图片 URL：');
+              urlDups.forEach(([url, keys]) => lines.push(`  ${keys.join(', ')} → 同一张图`));
+            }
+            if (idDups.length > 0) {
+              lines.push('以下绑定使用了相同的图片 ID：');
+              idDups.forEach(([id, keys]) => lines.push(`  ${keys.join(', ')} → 同一张图 (id: ${id.slice(0, 8)}...)`));
+            }
+            return {
+              success: false,
+              message: `【图片重复】检测到多个绑定指向同一张图片！\n${lines.join('\n')}\n\n你需要：\n1. 搜索多张不同的图片（resource.searchImage，返回多条结果）\n2. 每张图片绑定为不同的 key\n3. 每个 key 必须使用不同的 id 和不同的 url\n\n禁止用同一张图片的 background-position 裁切冒充多张！`,
+              data: { rejected: true, reason: 'duplicate_image_bindings' },
+            };
+          }
+        }
+      }
+    }
+
+    // 校验：图片绑定中的 URL 是否来自真实搜索结果
+    if (htmlBindings) {
+      let bindings: any = htmlBindings;
+      if (typeof bindings === 'string') {
+        try { bindings = JSON.parse(bindings); } catch {}
+      }
+      const imageBindings = bindings?.image;
+      if (imageBindings && typeof imageBindings === 'object') {
+        const fakeUrls: string[] = [];
+        for (const [key, val] of Object.entries(imageBindings)) {
+          const url = (val as any)?.url;
+          if (url && !isRecentImageUrl(url)) {
+            fakeUrls.push(`  ${key} → ${url.slice(0, 60)}...`);
+          }
+        }
+        if (fakeUrls.length > 0) {
+          const recentUrls = getRecentImageUrls();
+          const hint = recentUrls.length > 0
+            ? `\n以下是最近搜索到的真实图片 URL（请直接使用）：\n${recentUrls.slice(0, 6).map((u, i) => `  ${i + 1}. ${u.slice(0, 80)}...`).join('\n')}`
+            : '\n请先用 resource.searchImage 搜索图片，然后使用返回的真实 url。';
+          return {
+            success: false,
+            message:`【虚假 URL】以下绑定的图片 URL 不在搜索结果中（AI 编造的）：\n${fakeUrls.join('\n')}${hint}\n\n你必须使用 resource.searchImage 返回的真实 url，禁止编造 URL！`,
+            data: { rejected: true, reason: 'fake_image_urls' },
+          };
+        }
+      }
+    }
 
     const options: Record<string, any> = { htmlContent };
     if (htmlBindings !== undefined) options.htmlBindings = htmlBindings;

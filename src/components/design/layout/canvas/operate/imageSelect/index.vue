@@ -234,9 +234,11 @@ function handleSearchClear() {
 .image-select-button {
   flex: 1 1 120px;
   min-width: 0;
-  max-width: 100%;
+  max-width: 240px;
   justify-content: flex-start;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .image-drawer-content {
@@ -335,6 +337,7 @@ function handleSearchClear() {
   white-space: nowrap;
   font-size: 14px;
   text-align: center;
+  max-width: 100%;
 }
 
 .image-item-check {

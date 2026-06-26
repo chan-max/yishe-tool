@@ -247,6 +247,10 @@ function useCurrentBackground(item) {
 
   .background-image-name {
     font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
   }
 }
 </style>

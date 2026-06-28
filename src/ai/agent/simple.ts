@@ -1668,6 +1668,32 @@ export const designAgent = {
     }
   },
 
+  /**
+   * 批量引擎专用：直接运行 agent 循环，由调用方管理生命周期
+   * - 每次调用会清空上一轮消息和搜索缓存
+   * - 调用方负责在调用前/后检查暂停/停止状态
+   */
+  async _runBatchItem(userMessage: string): Promise<void> {
+    agentState.status = "thinking";
+    agentState.error = null;
+    agentState.messages.length = 0;
+    agentState.searchHistory.length = 0;
+    agentState.plan = null;
+    agentState.pendingInteraction = null;
+    agentState.batchTask = null;
+    resourceService.clearSearchCache();
+
+    try {
+      await runAgentLoop(userMessage);
+    } catch (error: any) {
+      console.error("[BatchItem] Error:", error);
+      agentState.error = error.message || "未知错误";
+    } finally {
+      agentState.status = "idle";
+      emit({ type: "done", data: null });
+    }
+  },
+
   clearMessages() {
     // 终止所有进行中的操作
     agentState.status = "idle";

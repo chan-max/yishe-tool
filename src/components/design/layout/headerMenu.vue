@@ -50,9 +50,9 @@
     </el-tooltip>
     
     <div class="header-actions flex items-center gap-2 shrink-0">
-      <!-- <el-button @click="showUpload = true" round text :icon="UploadFilled" class="action-btn">
-        素材上传
-      </el-button> -->
+      <div class="auto-create-btn" @click="showAutocreateModal = true">
+        <span class="auto-create-label">自动制作</span>
+      </div>
 
       <el-tooltip :content="screenShareActive ? '停止共享屏幕' : '共享屏幕给管理端'" placement="bottom" :show-after="200">
         <div class="screen-share-btn" :class="{ 'screen-share-btn--active': screenShareActive }" @click="toggleScreenShare">
@@ -123,6 +123,7 @@ import { localFileListResource } from "@/components/design/store";
 import { websocketClient } from "@/services/websocketClient";
 import { designAgent } from "@/ai/langgraph";
 import { canvasStreamService } from "@/services/canvasStream";
+import { showAutocreateModal } from "./autocreate/index";
 
 const wsStatus = computed(() => websocketClient.state.status);
 const wsStatusLabel = computed(() => {
@@ -476,6 +477,31 @@ function confirmExitEditMode() {
     white-space: nowrap;
     line-height: 1;
     color: var(--1s-text-color-secondary, #999);
+  }
+}
+
+.auto-create-btn {
+  display: flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  transition: all 0.12s;
+  border: 1px solid var(--1s-border-color-strong, #d9d9d9);
+
+  &:hover {
+    border-color: #6c5ce7;
+    color: #6c5ce7;
+  }
+
+  .auto-create-label {
+    font-size: 10px;
+    white-space: nowrap;
+    line-height: 1.6;
+    color: var(--1s-text-color-secondary, #636e72);
+    font-weight: 500;
   }
 }
 

@@ -65,10 +65,10 @@
                     {{ item.width }} x {{ item.height }}
                   </div>
                   <div class="preset-ratio">
-                    比例 {{ formatDisplayRatio(item) }}
+                    {{ formatDisplayRatio(item) }}
                   </div>
-                  <div class="preset-desc" v-if="item.description">
-                    {{ item.description }}
+                  <div class="preset-tags" v-if="item.tags?.length">
+                    <span v-for="tag in item.tags.slice(0, 3)" :key="tag" class="tag">{{ tag }}</span>
                   </div>
                 </div>
               </div>
@@ -758,6 +758,7 @@ interface SizeOption {
   height: number;
   ratio?: number;
   description?: string;
+  tags?: string[];
 }
 
 interface SizeGroup {
@@ -1571,6 +1572,114 @@ const sizeGroups: SizeGroup[] = [
       },
     ],
   },
+  {
+    label: "地垫/地毯",
+    options: [
+      { label: "40x60", width: 5000, height: 7500, tags: ["地垫", "地毯", "进门垫", "玄关垫"] },
+      { label: "40x120", width: 5000, height: 15000, tags: ["地垫", "地毯", "走廊垫", "长条垫"] },
+      { label: "45x75", width: 5000, height: 8333, tags: ["地垫", "地毯"] },
+      { label: "45x120", width: 5000, height: 13333, tags: ["地垫", "地毯", "走廊垫"] },
+      { label: "45x150", width: 5000, height: 16667, tags: ["地垫", "地毯", "走廊垫"] },
+      { label: "50x80", width: 5000, height: 8000, tags: ["地垫", "地毯", "门口垫"] },
+      { label: "55x120", width: 5000, height: 10909, tags: ["地垫", "地毯", "走廊垫"] },
+      { label: "60x90", width: 5000, height: 7500, tags: ["地垫", "地毯", "门口垫", "入户垫"] },
+      { label: "60x120", width: 5000, height: 10000, tags: ["地垫", "地毯", "走廊垫"] },
+      { label: "60x160", width: 5000, height: 13333, tags: ["地垫", "地毯", "走廊垫", "长条垫"] },
+      { label: "80x120", width: 5000, height: 7500, tags: ["地垫", "地毯", "客厅垫"] },
+      { label: "100x100", width: 5000, height: 5000, tags: ["地垫", "地毯", "方形垫", "茶几垫"] },
+      { label: "100x150", width: 5000, height: 7500, tags: ["地垫", "地毯", "客厅垫"] },
+      { label: "100x160", width: 5000, height: 8000, tags: ["地垫", "地毯"] },
+      { label: "120x120", width: 5000, height: 5000, tags: ["地垫", "地毯", "方形垫", "茶几垫"] },
+      { label: "120x160", width: 5000, height: 6667, tags: ["地垫", "地毯", "客厅垫"] },
+      { label: "140x140", width: 5000, height: 5000, tags: ["地垫", "地毯", "方形垫"] },
+      { label: "150x200", width: 5000, height: 6667, tags: ["地垫", "地毯", "客厅垫", "沙发垫"] },
+      { label: "160x200", width: 5000, height: 6250, tags: ["地垫", "地毯", "客厅垫", "沙发垫"] },
+      { label: "160x230", width: 5000, height: 7188, tags: ["地垫", "地毯", "客厅垫", "大尺寸"] },
+    ],
+  },
+  {
+    label: "地垫/地毯 (圆形)",
+    options: [
+      { label: "直径60", width: 5000, height: 5000, tags: ["地垫", "地毯", "圆形垫", "圆垫"] },
+      { label: "直径80", width: 5000, height: 5000, tags: ["地垫", "地毯", "圆形垫", "圆垫"] },
+      { label: "直径100", width: 5000, height: 5000, tags: ["地垫", "地毯", "圆形垫", "圆垫"] },
+      { label: "直径120", width: 5000, height: 5000, tags: ["地垫", "地毯", "圆形垫", "圆垫"] },
+      { label: "直径140", width: 5000, height: 5000, tags: ["地垫", "地毯", "圆形垫", "圆垫"] },
+      { label: "直径150", width: 5000, height: 5000, tags: ["地垫", "地毯", "圆形垫", "圆垫", "大尺寸"] },
+    ],
+  },
+  {
+    label: "地垫/地毯 (半圆形)",
+    options: [
+      { label: "40x60 半圆", width: 5000, height: 7500, tags: ["地垫", "地毯", "半圆垫", "半圆形"] },
+      { label: "50x80 半圆", width: 5000, height: 8000, tags: ["地垫", "地毯", "半圆垫", "半圆形"] },
+      { label: "60x90 半圆", width: 5000, height: 7500, tags: ["地垫", "地毯", "半圆垫", "半圆形"] },
+    ],
+  },
+  {
+    label: "沥水垫/灶台垫",
+    options: [
+      { label: "20x30", width: 5000, height: 7500, tags: ["沥水垫", "灶台垫", "杯垫", "小垫"] },
+      { label: "30x40", width: 5000, height: 6667, tags: ["沥水垫", "灶台垫", "杯垫"] },
+      { label: "36x46", width: 5000, height: 6389, tags: ["沥水垫", "灶台垫"] },
+      { label: "38x38", width: 5000, height: 5000, tags: ["沥水垫", "灶台垫", "方形垫"] },
+      { label: "40x50", width: 5000, height: 6250, tags: ["沥水垫", "灶台垫"] },
+      { label: "40x60", width: 5000, height: 7500, tags: ["沥水垫", "灶台垫", "厨房垫"] },
+      { label: "40x70", width: 5000, height: 8750, tags: ["沥水垫", "灶台垫"] },
+      { label: "40x80", width: 5000, height: 10000, tags: ["沥水垫", "灶台垫", "厨房垫"] },
+      { label: "45x30", width: 7500, height: 5000, tags: ["沥水垫", "灶台垫", "杯垫"] },
+      { label: "48x71", width: 5000, height: 7396, tags: ["沥水垫", "灶台垫"] },
+      { label: "48x86", width: 5000, height: 8958, tags: ["沥水垫", "灶台垫"] },
+      { label: "50x50", width: 5000, height: 5000, tags: ["沥水垫", "灶台垫", "方形垫"] },
+      { label: "50x60", width: 5000, height: 6000, tags: ["沥水垫", "灶台垫"] },
+      { label: "50x80", width: 5000, height: 8000, tags: ["沥水垫", "灶台垫"] },
+      { label: "52x60", width: 5000, height: 5769, tags: ["沥水垫", "灶台垫"] },
+      { label: "52x72", width: 5000, height: 6923, tags: ["沥水垫", "灶台垫"] },
+      { label: "56x78", width: 5000, height: 6964, tags: ["沥水垫", "灶台垫"] },
+      { label: "56x86", width: 5000, height: 7679, tags: ["沥水垫", "灶台垫"] },
+      { label: "60x60", width: 5000, height: 5000, tags: ["沥水垫", "灶台垫", "方形垫"] },
+      { label: "60x90", width: 5000, height: 7500, tags: ["沥水垫", "灶台垫"] },
+      { label: "60x120", width: 5000, height: 10000, tags: ["沥水垫", "灶台垫", "大尺寸"] },
+      { label: "75x75", width: 5000, height: 5000, tags: ["沥水垫", "灶台垫", "方形垫"] },
+      { label: "80x80", width: 5000, height: 5000, tags: ["沥水垫", "灶台垫", "方形垫"] },
+      { label: "80x120", width: 5000, height: 7500, tags: ["沥水垫", "灶台垫", "大尺寸"] },
+    ],
+  },
+  {
+    label: "鼠标垫",
+    options: [
+      { label: "20x20", width: 5000, height: 5000, tags: ["鼠标垫", "小鼠标垫", "方形"] },
+      { label: "20x24", width: 5000, height: 6000, tags: ["鼠标垫", "小鼠标垫"] },
+      { label: "21x26", width: 5000, height: 6190, tags: ["鼠标垫"] },
+      { label: "22x18", width: 6111, height: 5000, tags: ["鼠标垫", "小鼠标垫"] },
+      { label: "25x25", width: 5000, height: 5000, tags: ["鼠标垫", "方形", "异形鼠标垫"] },
+      { label: "25x29", width: 5000, height: 5800, tags: ["鼠标垫"] },
+      { label: "30x30", width: 5000, height: 5000, tags: ["鼠标垫", "方形", "异形鼠标垫"] },
+      { label: "30x60", width: 5000, height: 10000, tags: ["鼠标垫", "中号鼠标垫"] },
+      { label: "30x70", width: 5000, height: 11667, tags: ["鼠标垫", "中号鼠标垫"] },
+      { label: "30x80", width: 5000, height: 13333, tags: ["鼠标垫", "大鼠标垫"] },
+      { label: "40x70", width: 5000, height: 8750, tags: ["鼠标垫", "大鼠标垫"] },
+      { label: "40x80", width: 5000, height: 10000, tags: ["鼠标垫", "大鼠标垫", "加长鼠标垫"] },
+      { label: "40x90", width: 5000, height: 11250, tags: ["鼠标垫", "大鼠标垫", "加长鼠标垫"] },
+      { label: "90x40", width: 11250, height: 5000, tags: ["鼠标垫", "大鼠标垫", "加长鼠标垫", "横版鼠标垫"] },
+      { label: "100x50", width: 10000, height: 5000, tags: ["鼠标垫", "超大鼠标垫", "桌垫", "电竞鼠标垫"] },
+    ],
+  },
+  {
+    label: "楼梯垫/汽车垫",
+    options: [
+      { label: "20x75", width: 5000, height: 18750, tags: ["楼梯垫", "楼梯", "台阶垫"] },
+      { label: "100x75", width: 5000, height: 3750, tags: ["汽车垫", "后备箱垫", "车垫"] },
+    ],
+  },
+  {
+    label: "浴室地垫",
+    options: [
+      { label: "40x60", width: 5000, height: 7500, tags: ["浴室垫", "浴室地垫", "卫生间垫"] },
+      { label: "40x120", width: 5000, height: 15000, tags: ["浴室垫", "浴室地垫", "卫生间垫", "长条垫"] },
+      { label: "50x80", width: 5000, height: 8000, tags: ["浴室垫", "浴室地垫", "卫生间垫"] },
+    ],
+  },
 ];
 
 const filteredSizeGroups = computed(() => {
@@ -1587,6 +1696,7 @@ const filteredSizeGroups = computed(() => {
         const searchableText = [
           item.label,
           item.description,
+          ...(item.tags || []),
           `${item.width}x${item.height}`,
           `${item.width} x ${item.height}`,
           `${item.width}/${item.height}`,
@@ -1614,19 +1724,29 @@ const matchedPresetCount = computed(() => {
   );
 });
 
+function gcd(a: number, b: number): number {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
 function formatDisplayRatio(item: SizeOption) {
   const width = Number(item.width || 0);
   const height = Number(item.height || 0);
 
   if (!width || !height) {
-    return "1.00 : 1.00";
+    return "1 : 1";
   }
 
-  if (width >= height) {
-    return `${(width / height).toFixed(2)} : 1.00`;
+  // 将比例转换为最简整数比
+  const divisor = gcd(Math.round(width), Math.round(height));
+  const w = Math.round(width / divisor);
+  const h = Math.round(height / divisor);
+
+  // 如果数字太大，保持原样
+  if (w > 100 || h > 100) {
+    return `${width} : ${height}`;
   }
 
-  return `1.00 : ${(height / width).toFixed(2)}`;
+  return `${w} : ${h}`;
 }
 
 function getRatioStyle(item: SizeOption) {
@@ -1776,15 +1896,35 @@ function handleSelect(item: SizeOption) {
 }
 
 .preset-ratio {
-  font-size: 11px;
-  color: #606266;
+  font-size: 12px;
+  font-weight: 600;
+  color: #409eff;
   margin-top: 2px;
+  letter-spacing: 0.5px;
 }
 
 .preset-desc {
   font-size: 11px;
   color: #c0c4cc;
   margin-top: 2px;
+}
+
+.preset-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+  justify-content: center;
+}
+
+.preset-tags .tag {
+  font-size: 10px;
+  padding: 1px 6px;
+  background-color: #f0f4ff;
+  color: #409eff;
+  border-radius: 3px;
+  border: 1px solid #d9ecff;
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {

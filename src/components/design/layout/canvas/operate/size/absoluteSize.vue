@@ -23,6 +23,14 @@
                         </el-icon>
                     </div>
                 </el-tooltip>
+
+                <el-tooltip content="翻转宽高" placement="top">
+                    <div class="flip-btn" @click="flipSize">
+                        <el-icon :size="14">
+                            <Sort />
+                        </el-icon>
+                    </div>
+                </el-tooltip>
                 
                 <div class="input-group input-group--secondary">
                     <span class="label-text">高</span>
@@ -40,7 +48,7 @@
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/size.svg?component";
 import { canvasStickerOptions } from '@/components/design/layout/canvas/index.tsx'
-import { Lock, Unlock } from "@element-plus/icons-vue";
+import { Lock, Unlock, Sort } from "@element-plus/icons-vue";
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -83,6 +91,17 @@ function onHeightChange() {
     const newW = Math.round(h * lockedRatio)
     width.value = { ...width.value, value: newW || 1 }
     updating = false
+}
+
+function flipSize() {
+    const w = Number(width.value?.value) || 0
+    const h = Number(height.value?.value) || 0
+    width.value = { ...width.value, value: h }
+    height.value = { ...height.value, value: w }
+    // 如果锁定了比例，更新锁定比例
+    if (locked.value) {
+        lockedRatio = h === 0 ? 1 : w / h
+    }
 }
 </script>
 
@@ -147,6 +166,25 @@ function onHeightChange() {
         &:hover {
             background: rgba(64, 158, 255, 0.15);
         }
+    }
+}
+
+.flip-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #bbb;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    transform: rotate(90deg);
+
+    &:hover {
+        color: #666;
+        background: #f0f0f0;
     }
 }
 

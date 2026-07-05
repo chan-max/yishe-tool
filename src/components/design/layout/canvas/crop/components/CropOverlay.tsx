@@ -18,15 +18,17 @@ import {
   highlightedPresetId,
 } from '../store'
 
-/** 根据画布尺寸自适应计算字体大小和间距 */
+/** 根据画布尺寸自适应计算字体、边框、间距（随画布增大） */
 function getAdaptiveStyle(canvasWidth: number, canvasHeight: number) {
   const minSide = Math.min(canvasWidth, canvasHeight)
-  // 基准：5000px 画布对应 14px 字体，按比例缩放
-  const baseFontSize = Math.max(10, Math.round(minSide / 5000 * 14))
-  const basePadding = Math.max(2, Math.round(minSide / 5000 * 4))
-  const baseRadius = Math.max(2, Math.round(minSide / 5000 * 4))
-  const baseLineHeight = Math.max(14, Math.round(baseFontSize * 1.4))
-  return { baseFontSize, basePadding, baseRadius, baseLineHeight }
+  // 字体：5000px → 28px，1000px → 16px，10000px+ → 48px，上限60
+  const baseFontSize = Math.max(16, Math.min(60, Math.round(16 + (minSide - 1000) / (10000 - 1000) * (48 - 16))))
+  const basePadding = Math.max(4, Math.round(baseFontSize * 0.35))
+  const baseRadius = Math.max(3, Math.round(baseFontSize * 0.3))
+  const baseLineHeight = Math.round(baseFontSize * 1.35)
+  // 边框：5000px → 4px，1000px → 2px，10000px+ → 6px，上限8
+  const baseBorderWidth = Math.max(2, Math.min(8, Math.round(2 + (minSide - 1000) / (10000 - 1000) * (6 - 2))))
+  return { baseFontSize, basePadding, baseRadius, baseLineHeight, baseBorderWidth }
 }
 
 /** 格式化像素尺寸 */
@@ -88,10 +90,10 @@ function renderCropGuideRegion(
 ) {
   const { guide, preset, region } = item
   const color = guide.color
-  const borderPx = isHighlighted ? 3 : 2
+  const { baseFontSize, basePadding, baseRadius, baseLineHeight, baseBorderWidth } = getAdaptiveStyle(props.canvasWidth, props.canvasHeight)
+  const borderPx = isHighlighted ? baseBorderWidth + 1 : baseBorderWidth
   const borderStyle = isHighlighted ? 'solid' : 'dashed'
-  const overlayOpacity = isHighlighted ? 0.15 : 0.08
-  const { baseFontSize, basePadding, baseRadius, baseLineHeight } = getAdaptiveStyle(props.canvasWidth, props.canvasHeight)
+  const overlayOpacity = isHighlighted ? 0.22 : 0.12
 
   const toPct = (v: number) => `${(v * 100).toFixed(4)}%`
 
@@ -226,7 +228,7 @@ function renderSafeZone(props: any) {
   if (!sz || !sz.valid) return null
 
   const toPct = (v: number) => `${(v * 100).toFixed(4)}%`
-  const { baseFontSize, basePadding, baseRadius, baseLineHeight } = getAdaptiveStyle(props.canvasWidth, props.canvasHeight)
+  const { baseFontSize, basePadding, baseRadius, baseLineHeight, baseBorderWidth } = getAdaptiveStyle(props.canvasWidth, props.canvasHeight)
 
   const leftPct = toPct(sz.left)
   const topPct = toPct(sz.top)
@@ -263,7 +265,7 @@ function renderSafeZone(props: any) {
           top: topPct,
           width: widthPct,
           height: heightPct,
-          border: `${Math.max(1, Math.round(props.canvasWidth / 5000 * 2))}px dashed #4CAF50`,
+          border: `${baseBorderWidth}px dashed #4CAF50`,
           boxSizing: 'border-box',
           pointerEvents: 'none',
         }}

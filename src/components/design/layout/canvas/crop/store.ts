@@ -1,41 +1,33 @@
 /**
- * Responsive Crop Guide System - State Management
- * 裁剪参考线系统 - 状态管理
+ * Crop Guide System - State Management
  *
- * Uses module-level ref() exports following the project convention.
- * Crop guides are editor-only visual aids - NOT persisted with canvas data.
+ * Uses useLocalStorage for persistence across page refreshes.
  */
 
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
 import type { CropPreset, CropGuide, CropRegion, SafeZone } from './types'
 import { calculateCropRegion, calculateSafeZone } from './engine'
 import { canvasStickerOptionsOnlyChild } from '../index'
 import { DEFAULT_CROP_PRESETS } from './presets'
 
-// -- Available presets catalog (for the "add" dropdown) --
+// -- Available presets catalog --
 export const availablePresets = ref<CropPreset[]>([...DEFAULT_CROP_PRESETS])
 
-// -- Active crop presets (those the user has added) --
-export const cropPresets = ref<CropPreset[]>([])
+// -- Persisted state via localStorage --
+export const cropPresets = useLocalStorage<CropPreset[]>('crop-guide-presets', [], { deep: true })
+export const cropGuides = useLocalStorage<CropGuide[]>('crop-guide-guides', [], { deep: true })
+export const showCropGuides = useLocalStorage<boolean>('crop-guide-show', false)
+export const showSafeZone = useLocalStorage<boolean>('crop-guide-safezone', true)
+export const showCropLabels = useLocalStorage<boolean>('crop-guide-labels', true)
 
-// -- Active crop guides (runtime state for each preset) --
-export const cropGuides = ref<CropGuide[]>([])
-
-// -- Global toggles --
-export const showCropGuides = ref(false)
-export const showSafeZone = ref(true)
-export const showCropLabels = ref(true)
-
-// -- Highlighted guide (clicked in the modal) --
+// -- Non-persisted UI state --
 export const highlightedPresetId = ref<string | null>(null)
-
-// -- Modal visibility --
 export const showCropGuideModal = ref(false)
 
 // -- Actions --
 
 export function addCropGuide(preset: CropPreset) {
-  // Avoid duplicates
   if (cropPresets.value.find(p => p.id === preset.id)) return
 
   cropPresets.value.push({ ...preset })
@@ -46,7 +38,6 @@ export function addCropGuide(preset: CropPreset) {
     locked: false,
     highlighted: false,
   })
-  // Auto-enable crop guides when first one is added
   if (!showCropGuides.value) {
     showCropGuides.value = true
   }

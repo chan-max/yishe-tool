@@ -3,7 +3,7 @@
     v-model:open="showCropGuideModal"
     title="裁剪参考线"
     :footer="null"
-    width="860px"
+    width="min(95vw, 1200px)"
     :destroyOnClose="false"
     centered
   >

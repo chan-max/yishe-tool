@@ -5,6 +5,7 @@ import { createFilterDefaultOptions } from './defaultOptions.tsx'
 import { SvgFilterComponent, SvgFilterStyleComponent } from './svgFilter/index.tsx'
 import { updateRenderingCanvas } from '../index.tsx'
 import { SvgClipPathComponent } from '@/components/design/layout/canvas/children/svg/clipPath/index.tsx'
+import { CropOverlay } from '@/components/design/layout/canvas/crop/components/CropOverlay'
 
 import { onBeforeReturnRender, onCanvasChildSetup } from './commonHooks.ts'
 
@@ -148,7 +149,7 @@ export const Canvas = defineComponent({
                             {ctx.slots.default()}
                         </foreignObject>
                     </svg> */}
-                    
+
                     <div
                         style={{
                             width: '100%',
@@ -163,6 +164,8 @@ export const Canvas = defineComponent({
                     </div>
 
                 </div>
+                {/* 裁剪参考线覆盖层 (仅编辑器可见, html-to-image 不捕获) */}
+                <CropOverlay canvasWidth={pxWidth} canvasHeight={pxHeight} />
                 {/* 真实的画布 */}
                 <canvas id={currentCanvasControllerInstance.value?.canvasId} style={canvasStyle} width={pxWidth} height={pxHeight}></canvas>
 

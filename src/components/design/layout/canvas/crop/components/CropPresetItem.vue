@@ -1,0 +1,120 @@
+<template>
+  <div
+    class="crop-preset-item"
+    :class="{
+      'crop-preset-item--highlighted': highlightedPresetId === guide.presetId,
+    }"
+    @click="$emit('toggle-highlight')"
+  >
+    <!-- Visibility checkbox -->
+    <el-checkbox
+      :model-value="guide.visible"
+      @change="$emit('toggle-visibility')"
+      @click.stop
+      size="small"
+    />
+
+    <!-- Color picker -->
+    <el-color-picker
+      :model-value="guide.color"
+      @change="(val: string) => $emit('color-change', val)"
+      @click.stop
+      size="small"
+      :predefine="predefineColors"
+      show-alpha
+    />
+
+    <!-- Preset info -->
+    <div class="crop-preset-item__info">
+      <div class="crop-preset-item__name">{{ preset.name }}</div>
+      <div class="crop-preset-item__size">
+        {{ preset.width }}×{{ preset.height }}
+        ({{ preset.ratio.toFixed(2) }})
+      </div>
+    </div>
+
+    <div style="flex: 1" />
+
+    <!-- Remove button -->
+    <el-button
+      link
+      type="danger"
+      size="small"
+      @click.stop="$emit('remove')"
+    >
+      <el-icon size="14">
+        <CircleCloseFilled />
+      </el-icon>
+    </el-button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { CircleCloseFilled } from '@element-plus/icons-vue'
+import { highlightedPresetId } from '../store'
+import type { CropGuide, CropPreset } from '../types'
+
+defineProps<{
+  guide: CropGuide
+  preset: CropPreset
+}>()
+
+defineEmits<{
+  'toggle-visibility': []
+  'toggle-highlight': []
+  remove: []
+  'color-change': [color: string]
+}>()
+
+const predefineColors = [
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+  '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+  '#FF4757', '#2ED573', '#1E90FF', '#FFA502', '#7B68EE',
+]
+</script>
+
+<style scoped>
+.crop-preset-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  border: 1px solid transparent;
+}
+
+.crop-preset-item:hover {
+  background-color: var(--1s-control-hover-background, rgba(0, 0, 0, 0.04));
+}
+
+.crop-preset-item--highlighted {
+  background-color: var(--1s-accent-color-faint, rgba(99, 102, 241, 0.08));
+  border-color: var(--1s-accent-color, #6366f1);
+}
+
+.crop-preset-item__info {
+  min-width: 0;
+}
+
+.crop-preset-item__name {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.crop-preset-item__size {
+  font-size: 11px;
+  color: var(--1s-text-color-secondary, #888);
+  line-height: 1.3;
+}
+
+.crop-preset-item :deep(.el-color-picker) {
+  --el-color-picker-width: 24px;
+  --el-color-picker-height: 24px;
+}
+</style>

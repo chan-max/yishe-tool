@@ -74,9 +74,18 @@
         </el-button>
       </div>
     </el-tooltip>
+
+    <el-tooltip :hide-after="0" content="裁剪参考线" placement="top">
+      <div>
+        <el-button link class="bottom-menu-icon-button" @click="showCropGuideModal = true">
+          <ScissorOutlined class="bottom-menu-icon" />
+        </el-button>
+      </div>
+    </el-tooltip>
   </div>
 
   <screenshotDrawer></screenshotDrawer>
+  <CropGuideModal />
 </template>
 <script setup>
 import {
@@ -108,6 +117,8 @@ import { notification } from "ant-design-vue";
 import screenshotDrawer from "@/components/design/components/screenshotDrawer.vue";
 import canvasMediaRecorder from "@/components/design/components/canvasMediaRecorder/index.vue";
 import { showAutocreateModal } from "@/components/design/layout/autocreate/index.ts";
+import CropGuideModal from "@/components/design/layout/canvas/crop/components/CropGuideModal.vue";
+import { showCropGuideModal } from "@/components/design/layout/canvas/crop/store";
 
 const { isSupported, open, sRGBHex } = useEyeDropper();
 
@@ -149,7 +160,7 @@ function doBuiltInAnimations() {}
 <style lang="less">
 .designiy-bottom-menu {
   height: 100%;
-  width: auto;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;

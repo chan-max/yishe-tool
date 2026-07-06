@@ -170,6 +170,8 @@
         placeholder="描述你想要的设计..."
         :disabled="isProcessing"
         @keydown.enter.exact.prevent="handleSend"
+        @compositionstart="isComposing = true"
+        @compositionend="isComposing = false"
         resize="none"
       />
       <div class="input-footer">
@@ -199,6 +201,7 @@ const agent = designAgent;
 // 状态
 const open = defineModel<boolean>("open", { default: false });
 const inputText = ref("");
+const isComposing = ref(false);
 const messagesRef = ref<HTMLElement>();
 const customAnswer = ref("");
 
@@ -247,6 +250,7 @@ onUnmounted(() => {
 
 // 发送消息
 function handleSend() {
+  if (isComposing.value) return;
   const text = inputText.value.trim();
   if (!text || isProcessing.value) return;
   agent.chat(text);

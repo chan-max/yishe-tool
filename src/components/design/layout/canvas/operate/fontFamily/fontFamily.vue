@@ -6,12 +6,16 @@
     <template #name> {{ label }} </template>
     <template #content>
       <div class="font-selector-wrapper">
-        <el-button 
-          size="small" 
+        <el-button
+          size="small"
           @click="openFontDialog"
           class="font-select-button"
         >
-          <span class="font-display-name">{{ model?.name || '请选择' }}</span>
+          <span class="font-display-name" v-if="model">
+            <span class="font-display-name__text">{{ model.name }}</span>
+            <span class="font-display-name__family">{{ getFontFamilyId(model.id) }}</span>
+          </span>
+          <span class="font-display-name font-display-name--placeholder" v-else>请选择字体</span>
         </el-button>
         <el-tooltip v-if="model" content="查看字体详情" placement="top">
           <el-button
@@ -24,10 +28,9 @@
           </el-button>
         </el-tooltip>
         <!-- <el-button size="small" @click="openFontModal"> 字体库 </el-button> -->
-        <el-button 
-          v-if="model" 
-          size="small" 
-           
+        <el-button
+          v-if="model"
+          size="small"
           type="danger"
           @click="clearFont"
         >
@@ -49,6 +52,21 @@
         @close="handleDialogClosed"
       >
         <div class="font-drawer-content">
+          <!-- 当前选中字体预览 -->
+          <div v-if="model" class="font-current-selected">
+            <div class="font-current-selected__label">当前选中</div>
+            <div class="font-current-selected__card">
+              <div class="font-current-selected__thumb" v-if="model.thumbnail">
+                <desimage :src="model.thumbnail" class="font-thumbnail-img"></desimage>
+              </div>
+              <div class="font-current-selected__info">
+                <div class="font-current-selected__name">{{ model.name }}</div>
+                <div class="font-current-selected__desc" v-if="model.description">{{ model.description }}</div>
+                <div class="font-current-selected__family">FontFamily: {{ getFontFamilyId(model.id) }}</div>
+              </div>
+            </div>
+          </div>
+
           <!-- 搜索框 -->
           <div class="font-search-wrapper">
             <el-input
@@ -62,11 +80,11 @@
                 <el-icon><Search /></el-icon>
               </template>
             </el-input>
-            <el-button 
-              type="primary" 
-              size="small" 
-              plain 
-              round 
+            <el-button
+              type="primary"
+              size="small"
+              plain
+              round
               @click="emitUpload"
               style="margin-left: 10px;"
             >
@@ -75,7 +93,7 @@
           </div>
 
           <!-- 字体列表 -->
-          <div class="font-list-wrapper" v-loading="loading">
+          <div ref="fontListWrapperRef" class="font-list-wrapper" v-loading="loading">
             <div v-if="!loading && displayList.length === 0" class="font-empty">
               <s1-empty>
                 <template #description>
@@ -88,6 +106,7 @@
               <div
                 v-for="item in displayList"
                 :key="item.id"
+                :id="'font-item-' + item.id"
                 class="font-item"
                 :class="{ 
                   'font-item-selected': model?.id === item.id,
@@ -258,7 +277,7 @@
 
 <script setup lang="ts">
 import icon from "@/components/design/assets/icon/font-family.svg?component";
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, nextTick } from "vue";
 import desimage from "@/components/image.vue";
 import { fetchFontFaceWithMessage } from "./index.ts";
 import { showUpload, showFontModal, cacheFontFamily } from "@/components/design/store";
@@ -291,6 +310,7 @@ const total = ref(0);
 const searchKeyword = ref('');
 const detailVisible = ref(false);
 const detailFont = ref<FontItem | null>(null);
+const fontListWrapperRef = ref<HTMLElement | null>(null);
 
 // 计算显示的列表（当前页的数据）
 const displayList = computed(() => {
@@ -403,9 +423,18 @@ async function copyText(value: string, successText: string) {
   }
 }
 
-function handleDialogOpened() {
+async function handleDialogOpened() {
   if (list.value.length === 0) {
-    fetchFontList();
+    await fetchFontList();
+  }
+  // 滚动到当前选中的字体
+  if (model.value) {
+    nextTick(() => {
+      const el = document.getElementById('font-item-' + model.value!.id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
   }
 }
 
@@ -506,17 +535,20 @@ watch(
   align-items: center;
   justify-content: flex-start;
   gap: 6px;
-  flex-wrap: wrap;
   width: 100%;
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .font-select-button {
-  flex: 1 1 120px;
+  flex: 1 1 0;
   min-width: 0;
   max-width: 100%;
   justify-content: flex-start;
   overflow: hidden;
+  padding: 0 8px;
+  width: 0;
 }
 
 .font-display-name {
@@ -555,6 +587,77 @@ watch(
   flex-direction: column;
   width: 100%;
   overflow: hidden;
+}
+
+.font-current-selected {
+  padding: 12px 16px;
+  background: #f0f9ff;
+  border-bottom: 1px solid #e4e7ed;
+  flex-shrink: 0;
+  max-height: 120px;
+  overflow: hidden;
+}
+
+.font-current-selected__label {
+  font-size: 12px;
+  color: #909399;
+  margin-bottom: 8px;
+}
+
+.font-current-selected__card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.font-current-selected__thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid #e4e7ed;
+}
+
+.font-current-selected__thumb .font-thumbnail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.font-current-selected__info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.font-current-selected__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.font-current-selected__desc {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.font-current-selected__family {
+  font-size: 11px;
+  color: #b0b4bc;
+  margin-top: 2px;
+  font-family: monospace;
 }
 
 .font-search-wrapper {
@@ -604,6 +707,7 @@ watch(
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  max-height: 260px;
 }
 
 .font-item:hover {
@@ -623,7 +727,7 @@ watch(
 
 .font-item-thumbnail {
   width: 100%;
-  height: 120px;
+  height: 80px;
   margin-bottom: 8px;
   border-radius: 4px;
   overflow: hidden;
@@ -639,6 +743,7 @@ watch(
 .font-item-info {
   flex: 1;
   min-height: 40px;
+  overflow: hidden;
 }
 
 .font-item-name {
@@ -648,7 +753,7 @@ watch(
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .font-item-desc {

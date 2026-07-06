@@ -166,6 +166,8 @@
             placeholder="描述你想要的设计..."
             :disabled="isProcessing"
             @keydown.enter.exact.prevent="handleSend"
+            @compositionstart="isComposing = true"
+            @compositionend="isComposing = false"
             clearable
           />
           <el-button
@@ -212,6 +214,7 @@ const agent = designAgent;
 // 状态
 const open = ref(false);
 const inputText = ref("");
+const isComposing = ref(false);
 const messagesRef = ref<HTMLElement>();
 const showInteraction = ref(false);
 const interactionData = ref<AgentInteraction | null>(null);
@@ -262,6 +265,7 @@ onUnmounted(() => {
 
 // 发送消息
 function handleSend() {
+  if (isComposing.value) return;
   const text = inputText.value.trim();
   if (!text || isProcessing.value) return;
   agent.chat(text);

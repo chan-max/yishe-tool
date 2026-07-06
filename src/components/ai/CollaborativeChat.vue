@@ -103,7 +103,9 @@
         v-model="inputText"
         placeholder="描述你想要的设计..."
         :disabled="agent.isProcessing.value"
-        @keydown.enter.exact="handleSend"
+        @keydown.enter.exact.prevent="handleSend"
+        @compositionstart="isComposing = true"
+        @compositionend="isComposing = false"
       >
         <template #append>
           <el-button :loading="agent.isProcessing.value" @click="handleSend">
@@ -124,6 +126,7 @@ const agent = designAgent;
 
 const messagesRef = ref<HTMLElement>();
 const inputText = ref("");
+const isComposing = ref(false);
 
 const showInteraction = ref(false);
 const interactionData = ref<AgentInteraction | null>(null);
@@ -158,6 +161,7 @@ onUnmounted(() => {
 });
 
 function handleSend() {
+  if (isComposing.value) return;
   const text = inputText.value.trim();
   if (!text || agent.isProcessing.value) return;
   agent.chat(text);

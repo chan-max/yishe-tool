@@ -1721,4 +1721,30 @@ export const designAgent = {
       lastError: undefined,
     });
   },
+
+  /**
+   * 停止当前处理，但保留对话消息（区别于 clearMessages）
+   */
+  stop() {
+    agentState.status = "idle";
+    agentState.error = null;
+    agentState.pendingInteraction = null;
+    agentState.plan = null;
+    agentState.batchTask = null;
+
+    // 解除等待中的用户输入 Promise，防止循环卡住
+    if (waitForUserInputPromise) {
+      waitForUserInputPromise.resolve("[已中断]");
+      waitForUserInputPromise = null;
+    }
+
+    persistConversation();
+    syncAgentStatus({
+      step: undefined,
+      userInput: undefined,
+      plan: undefined,
+      lastToolCall: undefined,
+      lastError: undefined,
+    });
+  },
 };

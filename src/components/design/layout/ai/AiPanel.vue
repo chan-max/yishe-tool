@@ -103,6 +103,8 @@
           :placeholder="isWaitingForUser ? '请输入选择...' : '描述你想要的设计...'"
           :disabled="isProcessing && !isWaitingForUser"
           @keydown.enter.exact.prevent="handleSend"
+          @compositionstart="isComposing = true"
+          @compositionend="isComposing = false"
         />
         <button
           v-if="isProcessing && !isWaitingForUser"
@@ -148,6 +150,7 @@ const agent = designAgent;
 
 // State
 const inputText = ref("");
+const isComposing = ref(false);
 const messagesRef = ref<HTMLElement>();
 const customAnswer = ref("");
 const imageInputRef = ref<HTMLInputElement>();
@@ -223,6 +226,7 @@ onUnmounted(() => {
 
 // Actions
 function handleSend() {
+  if (isComposing.value) return;
   if (selectedImage.value) {
     const text = inputText.value.trim() || "请分析这张图片的设计风格，然后创建一个类似的设计";
     agent.chatWithImage(text, selectedImage.value.preview);
@@ -245,7 +249,7 @@ function handleSend() {
   scrollToBottom();
 }
 
-function handleStop() { agent.clearMessages(); }
+function handleStop() { agent.stop(); }
 function copyConversationLog() {
   const msgs = messages.value;
   if (msgs.length === 0) return;

@@ -23,6 +23,7 @@ import "./add/add-qrcode";
 import "./add/add-barcode";
 import "./save-sticker";
 import "./load-sticker";
+import "./load-font";
 import "./search-sticker";
 import "./export-png";
 import "./analyze-canvas";

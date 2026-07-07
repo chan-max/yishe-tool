@@ -118,10 +118,12 @@ const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按
 - canvas.exportPng - 导出 PNG
 - canvas.analyze - AI 视觉分析
 - canvas.updateAndSaveSticker - 保存到素材库（支持 folderId 指定文件夹）
-- canvas.loadSticker - 加载贴纸到画布（isCustom=true 的可二次编辑）
+- canvas.loadSticker - 加载贴纸到画布（支持单个或批量，isCustom=true 的可二次编辑）
+- canvas.loadFont - 加载字体到画布（支持单个或批量，加载后可通过 font_xxx 使用）
 
 ### 资源搜索
 - resource.searchSticker - 搜索素材库贴纸（支持关键词、抠图、宽高比、尺寸范围等筛选）
+- resource.searchFont - 搜索字体库（支持关键词筛选）
 
 ### 元素样式
 - element.setStyle - 设置位置、大小、旋转、透明度、层级

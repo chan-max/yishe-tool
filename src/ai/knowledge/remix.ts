@@ -12,6 +12,12 @@ export const remixKnowledge: KnowledgeItem = {
 3. canvas.getState → 查看元素结构（配色、布局、字体等）
 4. 参考元素后，用 element.setXxx 修改或 canvas.addHtml 新增元素
 
+### 批量加载多个贴纸
+
+当用户指定多个贴纸 ID 时，可以一次加载：
+- canvas.loadSticker({ stickerId: ["id_a", "id_b"] }) → 一次加载多个贴纸到画布
+- 所有贴纸都会作为图片元素添加，可逐个调整位置和大小
+
 ### 多贴纸混搭
 
 1. resource.searchImage({ query: "关键词A" }) + canvas.loadSticker({ stickerId: "A的ID" })
@@ -26,5 +32,6 @@ export const remixKnowledge: KnowledgeItem = {
 ### 注意
 - resource.searchImage 返回的 isCustom=true 的贴纸才能加载元素树
 - canvas.getState 是"记忆"设计方案的唯一方式——加载后立即查看，记下关键参数
-- 创建新设计时先 canvas.clear 清空再开始`,
+- 创建新设计时先 canvas.clear 清空再开始
+- 批量加载时所有贴纸都作为图片元素，如需编辑某个贴纸的元素树，单独调用 canvas.loadSticker({ stickerId: "单个ID" })`,
 };

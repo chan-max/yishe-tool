@@ -10,6 +10,11 @@ resource.searchFont({ query: "艺术" })  → 返回 [{ id, name, url, category,
 - 支持 category 过滤：resource.searchFont({ query: "标题", category: "标题字" })
 - 返回结果中 category 字段显示字体分类（标题字/正文字/手写体等）
 
+### 加载字体到画布
+canvas.loadFont({ fontId: "字体ID" }) → 加载单个字体
+canvas.loadFont({ fontId: ["id_a", "id_b"] }) → 批量加载多个字体
+加载后字体可通过 font-family: font_xxx 在 CSS 中使用
+
 ### 绑定使用（搜索结果里直接有用法模板）
 搜索结果的 message 字段包含完整的 canvas.addHtml 调用示例，直接复制使用即可。
 

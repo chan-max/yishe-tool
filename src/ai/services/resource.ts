@@ -104,6 +104,7 @@ export interface ImageSearchParams {
   page?: number;            // 页码
   isCustom?: boolean;       // 是否为系统自定义（可二次开发）
   isCutout?: boolean;       // 是否为抠图（无背景）
+  searchMode?: "text" | "vector";  // 搜索模式：text=关键词搜索，vector=向量语义搜索
 }
 
 export interface ResourceSearchResult {
@@ -180,15 +181,40 @@ export async function searchImageResources(
   }
 
   try {
-    const apiParams: Record<string, any> = {
-      searchText: params.query || '',
-      currentPage: params.page || 1,
-      pageSize: params.limit || 10,
-    };
-    if (params.isCustom !== undefined) apiParams.isCustom = params.isCustom;
-    if (params.isCutout !== undefined) apiParams.isCutout = params.isCutout;
+    let result: any;
 
-    const result = await fetchApi("/api/sticker/page", apiParams);
+    // 向量语义搜索模式
+    if (params.searchMode === "vector") {
+      const response = await apiInstance.post("/api/vector-search/search", {
+        collection: "stickers",
+        query: params.query || "",
+        limit: params.limit || 10,
+      });
+      const data = response.data?.data || response.data;
+
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Vector search failed: ${response.statusText}`);
+      }
+
+      result = {
+        list: (data.items || []).map((item: any) => ({
+          id: item.sourceId,
+          ...item.payload,
+        })),
+        total: data.total || 0,
+      };
+    } else {
+      // 默认关键词搜索
+      const apiParams: Record<string, any> = {
+        searchText: params.query || '',
+        currentPage: params.page || 1,
+        pageSize: params.limit || 10,
+      };
+      if (params.isCustom !== undefined) apiParams.isCustom = params.isCustom;
+      if (params.isCutout !== undefined) apiParams.isCutout = params.isCutout;
+
+      result = await fetchApi("/api/sticker/page", apiParams);
+    }
 
     const searchResult: ResourceSearchResult = {
       items: (result.list || []).map((item: any) => ({

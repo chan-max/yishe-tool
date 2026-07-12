@@ -2,12 +2,13 @@ import { reactive, computed } from "vue";
 import { directChat } from "../direct-client";
 import { createDesignOperationContext } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
-import { buildSystemPrompt, buildImageAnalysisPrompt } from "../prompts/system";
+import { buildSystemPrompt, buildImageAnalysisPrompt, type DesignExperience } from "../prompts/system";
 import { buildKnowledgePrompt } from "../knowledge";
 import { resourceService } from "../services/resource";
 import { captureCanvasForAI, getCanvasStateSummary } from "../capture";
 import { buildAITools, INTERACTION_TOOL_NAMES, resolveAIToolName } from "../shared/tools";
 import { executeAITool, isResourceToolName } from "../shared/execute-tool";
+import { apiInstance } from "@/api/apiInstance";
 import {
   parseChatResponse,
   extractContent,
@@ -97,6 +98,63 @@ const agentState = reactive({
   // 规划
   plan: null as DesignPlan | null,
 });
+
+// ============ 设计经验检索 ============
+
+/**
+ * 从向量库检索相关设计经验
+ * 用于在 agent 设计时注入多源设计模式参考
+ */
+async function retrieveDesignExperiences(query: string): Promise<DesignExperience[]> {
+  try {
+    const response = await apiInstance.post("/api/vector-search/search", {
+      collection: "design-patterns",
+      query,
+      limit: 5,
+      scoreThreshold: 0.3,
+    });
+    const data = response.data?.data || response.data;
+
+    if (response.status < 200 || response.status >= 300) {
+      console.warn("[DesignExperience] Vector search failed:", response.statusText);
+      return [];
+    }
+
+    const items = data?.items || [];
+
+    // 去重：同一 compositionType 只保留最高 qualityScore
+    const deduped = new Map<string, any>();
+    for (const item of items) {
+      const type = item.payload?.compositionType;
+      if (!type) continue;
+      const existing = deduped.get(type);
+      if (!existing || (item.payload?.qualityScore || 0) > (existing.payload?.qualityScore || 0)) {
+        deduped.set(type, item);
+      }
+    }
+
+    // 多样性：确保至少 3 种不同构图类型
+    const results = Array.from(deduped.values())
+      .slice(0, 5)
+      .map((item) => ({
+        compositionType: item.payload?.compositionType || "未知",
+        colorStrategy: item.payload?.colorStrategy || "未知",
+        typographyStyle: item.payload?.typographyStyle || "未知",
+        decorationStyle: item.payload?.decorationStyle || "未知",
+        colorPalette: item.payload?.colorPalette || [],
+        htmlPattern: item.payload?.htmlPattern || "",
+        keyTechniques: item.payload?.keyTechniques || [],
+        qualityScore: item.payload?.qualityScore || 0,
+        keywords: item.payload?.keywords || [],
+      }));
+
+    console.log(`[DesignExperience] Retrieved ${results.length} patterns for: "${query}"`);
+    return results;
+  } catch (error) {
+    console.warn("[DesignExperience] Retrieval failed:", error);
+    return [];
+  }
+}
 
 let waitForUserInputPromise: { resolve: (value: string) => void } | null = null;
 const eventListeners: ((event: any) => void)[] = [];
@@ -438,9 +496,22 @@ async function runAgentLoop(userMessage: string) {
   // 添加用户消息
   addMessage({ role: "user", content: userMessage });
 
+  // 检索相关设计经验（异步，失败不影响主流程）
+  let designExperiences: DesignExperience[] = [];
+  try {
+    designExperiences = await retrieveDesignExperiences(userMessage);
+    if (designExperiences.length > 0) {
+      console.log(`[向量检索] 已检索到 ${designExperiences.length} 个设计经验，将注入 system prompt`);
+    } else {
+      console.log(`[向量检索] 未检索到相关设计经验（可能向量库为空或无匹配）`);
+    }
+  } catch (error) {
+    console.warn("[Agent] Design experience retrieval failed:", error);
+  }
+
   // 构建消息列表（注入搜索上下文和任务进度）
   const systemPrompt =
-    buildSystemPrompt() +
+    buildSystemPrompt({ designExperiences }) +
     "\n" +
     buildKnowledgePrompt(userMessage) +
     buildSearchContext() +

@@ -6,24 +6,18 @@
     <template #name> {{ label }} </template>
     <template #content>
       <div class="image-selector-wrapper">
-        <el-button 
-          size="small" 
+        <el-button
+          size="small"
           @click="openImageDialog"
           class="image-select-button"
         >
-          {{ model?.name || '请选择' }}
+          {{ model?.name || "请选择" }}
         </el-button>
-        <el-button 
-          v-if="model" 
-          size="small" 
-          link 
-          type="danger"
-          @click="remove"
-        >
+        <el-button v-if="model" size="small" link type="danger" @click="remove">
           清除
         </el-button>
       </div>
-      
+
       <!-- 图片选择抽屉 -->
       <el-drawer
         v-model="dialogVisible"
@@ -51,18 +45,35 @@
                 <el-icon><Search /></el-icon>
               </template>
             </el-input>
+            <el-button
+              class="image-search-by-image-button"
+              :loading="imageSearchLoading"
+              @click="triggerImageSearch"
+            >
+              <el-icon><Picture /></el-icon>
+            </el-button>
+            <input
+              ref="imageSearchInputRef"
+              type="file"
+              accept="image/*"
+              class="image-search-file-input"
+              @change="handleImageSearchFileChange"
+            />
           </div>
 
           <!-- 图片列表 -->
           <div class="image-list-wrapper" v-loading="loading">
-            <div v-if="!loading && displayList.length === 0" class="image-empty">
+            <div
+              v-if="!loading && displayList.length === 0"
+              class="image-empty"
+            >
               <s1-empty>
                 <template #description>
                   <p>无相关图片，尝试使用关键字搜索</p>
                 </template>
               </s1-empty>
             </div>
-            
+
             <div v-else class="image-list-grid">
               <div
                 v-for="item in displayList"
@@ -79,6 +90,11 @@
                 </div>
                 <div class="image-item-info">
                   <div class="image-item-name">{{ item.name || "未命名" }}</div>
+                  <div v-if="item._source" class="image-item-source">
+                    {{
+                      item._source === "image-vector" ? "视觉匹配" : "相似匹配"
+                    }}
+                  </div>
                 </div>
                 <div class="image-item-check" v-if="model?.id === item.id">
                   <el-icon><Check /></el-icon>
@@ -108,15 +124,18 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import icon from "@/components/design/assets/icon/background-image.svg?component";
-import { Search, Check } from "@element-plus/icons-vue";
+import { Search, Check, Picture } from "@element-plus/icons-vue";
 import { useDebounceFn } from "@vueuse/core";
-import { getStickerList } from "@/api";
+import { ElMessage } from "element-plus";
+import { getStickerList, searchStickerByImage } from "@/api";
 
 interface ImageItem {
   id: string;
   name?: string;
   url: string;
   type?: string;
+  _source?: string;
+  _score?: number;
 }
 
 const model = defineModel<ImageItem | null>({ default: null });
@@ -133,7 +152,9 @@ const loading = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(12);
 const total = ref(0);
-const searchKeyword = ref('');
+const searchKeyword = ref("");
+const imageSearchLoading = ref(false);
+const imageSearchInputRef = ref<HTMLInputElement | null>(null);
 
 // 计算显示的列表（当前页的数据）
 const displayList = computed(() => {
@@ -148,7 +169,7 @@ function remove() {
   model.value = null;
 }
 
-function selectImage(item: ImageItem) {  
+function selectImage(item: ImageItem) {
   model.value = item;
   dialogVisible.value = false;
 }
@@ -165,7 +186,7 @@ function handleDialogClosed() {
 
 async function fetchImageList(params = {}) {
   loading.value = true;
-  
+
   try {
     const res = await getStickerList({
       ...params,
@@ -173,15 +194,60 @@ async function fetchImageList(params = {}) {
       pageSize: pageSize.value,
       type: "image,texture",
     });
-    
+
     list.value = res.list || [];
     total.value = res.total || 0;
-    
   } catch (error) {
-    console.error('获取图片列表失败:', error);
+    console.error("获取图片列表失败:", error);
     list.value = [];
     total.value = 0;
   } finally {
+    loading.value = false;
+  }
+}
+
+function triggerImageSearch() {
+  imageSearchInputRef.value?.click();
+}
+
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(reader.error || new Error("读取图片失败"));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleImageSearchFileChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = "";
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    ElMessage.warning("请选择图片文件");
+    return;
+  }
+
+  imageSearchLoading.value = true;
+  loading.value = true;
+  try {
+    const imageUrl = await readFileAsDataUrl(file);
+    const result: any = await searchStickerByImage({
+      imageUrl,
+      mode: "hybrid",
+      limit: pageSize.value,
+    });
+    list.value = result.results || [];
+    total.value = result.total || list.value.length;
+    currentPage.value = 1;
+    searchKeyword.value = "";
+  } catch (error) {
+    console.error("以图搜图失败:", error);
+    ElMessage.error("以图搜图失败，请稍后重试");
+  } finally {
+    imageSearchLoading.value = false;
     loading.value = false;
   }
 }
@@ -214,7 +280,7 @@ const handleSearchInput = useDebounceFn(function (val: string) {
 
 // 清除搜索
 function handleSearchClear() {
-  searchKeyword.value = '';
+  searchKeyword.value = "";
   currentPage.value = 1;
   fetchImageList();
 }
@@ -259,6 +325,16 @@ function handleSearchClear() {
 
 .image-search-wrapper .el-input {
   flex: 1;
+}
+
+.image-search-by-image-button {
+  width: 32px;
+  padding: 0;
+  flex: 0 0 32px;
+}
+
+.image-search-file-input {
+  display: none;
 }
 
 .image-list-wrapper {
@@ -338,6 +414,14 @@ function handleSearchClear() {
   font-size: 14px;
   text-align: center;
   max-width: 100%;
+}
+
+.image-item-source {
+  margin-top: 4px;
+  color: #909399;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.2;
 }
 
 .image-item-check {

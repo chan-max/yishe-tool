@@ -139,12 +139,51 @@ function buildWorkflowPrompt(): string {
 设计完成即结束。只有用户明确说"保存"时才调用 canvas.updateAndSaveSticker。`;
 }
 
+// ============ Layer 7: 设计经验参考 ============
+
+export interface DesignExperience {
+  compositionType: string;
+  colorStrategy: string;
+  typographyStyle: string;
+  decorationStyle: string;
+  colorPalette: string[];
+  htmlPattern: string;
+  keyTechniques: string[];
+  qualityScore: number;
+  keywords: string[];
+}
+
+function buildDesignExperiencePrompt(patterns: DesignExperience[]): string {
+  if (!patterns.length) return '';
+
+  return `\n## 设计经验参考（来自图库中 ${patterns.length} 个相似设计的综合分析）
+
+这些是与当前需求最相似的 ${patterns.length} 个历史设计的设计模式总结，参考它们的配色、构图和技巧，融合多种经验创造新设计：
+
+${patterns.map((p, i) => `### 模式 ${i + 1}: ${p.compositionType} + ${p.colorStrategy}
+- 构图: ${p.compositionType}
+- 配色策略: ${p.colorStrategy} (${p.colorPalette.join(', ')})
+- 排版: ${p.typographyStyle}
+- 装饰: ${p.decorationStyle}
+- 关键技术: ${p.keyTechniques.join(', ')}
+- 参考骨架:
+\`\`\`html
+${p.htmlPattern}
+\`\`\``).join('\n\n')}
+
+**重要**：设计完成后，你必须在回复开头用一句话说明使用了设计经验参考，例如：
+- "参考了 ${patterns.length} 个相似设计的经验：采用了${patterns[0]?.compositionType || '类似'}构图和${patterns[0]?.colorStrategy || '类似'}配色策略"
+- "综合了图库中 ${patterns.length} 个历史设计的模式，融合了多种配色和构图技巧"
+不要超过一句话，简短提及即可。`;
+}
+
 // ============ 组合器 ============
 
 export interface PromptOptions {
   includeResourceGuide?: boolean;
   includeHtmlQuickRef?: boolean;
   canvasState?: boolean;
+  designExperiences?: DesignExperience[];
 }
 
 export function buildSystemPrompt(options: PromptOptions = {}): string {
@@ -152,6 +191,7 @@ export function buildSystemPrompt(options: PromptOptions = {}): string {
     includeResourceGuide = true,
     includeHtmlQuickRef = true,
     canvasState = true,
+    designExperiences = [],
   } = options;
 
   const layers: string[] = [];
@@ -165,6 +205,12 @@ export function buildSystemPrompt(options: PromptOptions = {}): string {
   }
 
   layers.push(buildDesignRulesPrompt());
+
+  // Layer 7: 设计经验参考（从向量库检索）
+  const experiencePrompt = buildDesignExperiencePrompt(designExperiences);
+  if (experiencePrompt) {
+    layers.push(experiencePrompt);
+  }
 
   if (includeResourceGuide) {
     layers.push(buildResourceGuidePrompt());

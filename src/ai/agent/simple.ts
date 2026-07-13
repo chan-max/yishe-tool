@@ -510,10 +510,11 @@ async function runAgentLoop(userMessage: string) {
   }
 
   // 构建消息列表（注入搜索上下文和任务进度）
+  const knowledgePrompt = await buildKnowledgePrompt(userMessage);
   const systemPrompt =
     buildSystemPrompt({ designExperiences }) +
     "\n" +
-    buildKnowledgePrompt(userMessage) +
+    knowledgePrompt +
     buildSearchContext() +
     getBatchProgress();
   const messagesForLLM: any[] = [

@@ -112,6 +112,7 @@ export const currentOperatingBaseModelInfo = ref({} as any)
 // 是否展示场景控制弹窗
 export const showSceneControl = ref(false)
 export const showImageEditorModal = ref(false) // 图片编辑弹窗
+export const showKnowledgeDialog = ref(false) // 设计知识库弹窗
 
 // 是否展示图片贴图的弹窗
 export const showImageSticker = ref(false)
@@ -404,7 +405,7 @@ export const showCanvasStructure = ref(false)
 
 export const menuItems = {
     workspace: 'workspace',
-    sticker: 'sticker', 
+    sticker: 'sticker',
     material: 'material',
     videoClip: 'videoClip',
     canvas: 'canvas',
@@ -412,6 +413,7 @@ export const menuItems = {
     font: 'font',
     scene: 'scene',
     imageEditor: 'imageEditor', // 图片编辑
+    knowledge: 'knowledge', // 知识库
 } as const
 
 // 切换菜单状态

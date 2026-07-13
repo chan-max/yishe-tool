@@ -153,4 +153,12 @@ export enum Url {
 
   // 获取用户的 API Key（通用，支持多种功能）
   USER_GET_API_KEY = "/api/user/get-api-key",
+
+  // 设计知识库
+  DESIGN_KNOWLEDGE_CREATE = "/api/design-knowledge/create",
+  DESIGN_KNOWLEDGE_UPDATE = "/api/design-knowledge/update",
+  DESIGN_KNOWLEDGE_DELETE = "/api/design-knowledge/delete",
+  DESIGN_KNOWLEDGE_PAGE = "/api/design-knowledge/page",
+  DESIGN_KNOWLEDGE_SEARCH = "/api/design-knowledge/search",
+  DESIGN_KNOWLEDGE_REINDEX = "/api/design-knowledge/reindex",
 }

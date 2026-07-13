@@ -770,6 +770,57 @@ export const getCrawlerMaterialById = (id) =>
     }
   });
 
+// 设计知识库 API
+export const createDesignKnowledge = (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const res = await apiInstance.post(Url.DESIGN_KNOWLEDGE_CREATE, data);
+      resolve(res.data.data || res.data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const updateDesignKnowledge = (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const res = await apiInstance.post(Url.DESIGN_KNOWLEDGE_UPDATE, data);
+      resolve(res.data.data || res.data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const deleteDesignKnowledge = (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const res = await apiInstance.post(Url.DESIGN_KNOWLEDGE_DELETE, data);
+      resolve(res.data.data || res.data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const getDesignKnowledgePage = (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const res = await apiInstance.post(Url.DESIGN_KNOWLEDGE_PAGE, data);
+      resolve(res.data.data || res.data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const searchDesignKnowledge = (data) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const res = await apiInstance.post(Url.DESIGN_KNOWLEDGE_SEARCH, data);
+      resolve(res.data.data || res.data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
 class Api {
   // 测试服务是否联通
   hello = hello;
@@ -885,6 +936,13 @@ class Api {
   updateCrawlerMaterial = updateCrawlerMaterial;
   deleteCrawlerMaterial = deleteCrawlerMaterial;
   getCrawlerMaterialById = getCrawlerMaterialById;
+
+  // 设计知识库
+  createDesignKnowledge = createDesignKnowledge;
+  updateDesignKnowledge = updateDesignKnowledge;
+  deleteDesignKnowledge = deleteDesignKnowledge;
+  getDesignKnowledgePage = getDesignKnowledgePage;
+  searchDesignKnowledge = searchDesignKnowledge;
 }
 
 export default new Api();

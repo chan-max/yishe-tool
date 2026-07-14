@@ -32,6 +32,20 @@
         @close="handleDialogClosed"
       >
         <div class="image-drawer-content">
+          <!-- 当前选中图片预览 -->
+          <div v-if="model" class="image-current-selected">
+            <div class="image-current-selected__label">当前选中</div>
+            <div class="image-current-selected__card">
+              <div class="image-current-selected__thumb">
+                <s1-image :src="model.url" class="image-thumbnail-img"></s1-image>
+              </div>
+              <div class="image-current-selected__info">
+                <div class="image-current-selected__name">{{ model.name || "未命名" }}</div>
+                <div class="image-current-selected__id">图片ID: {{ model.id }}</div>
+              </div>
+            </div>
+          </div>
+
           <!-- 搜索框 -->
           <div class="image-search-wrapper">
             <el-input
@@ -447,5 +461,66 @@ function handleSearchClear() {
   flex-shrink: 0;
   width: 100%;
   background: #fff;
+}
+
+.image-current-selected {
+  padding: 12px 16px;
+  background: #f0f9ff;
+  border-bottom: 1px solid #e4e7ed;
+  flex-shrink: 0;
+  max-height: 120px;
+  overflow: hidden;
+}
+
+.image-current-selected__label {
+  font-size: 12px;
+  color: #909399;
+  margin-bottom: 8px;
+}
+
+.image-current-selected__card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.image-current-selected__thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid #e4e7ed;
+}
+
+.image-current-selected__thumb .image-thumbnail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-current-selected__info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.image-current-selected__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-current-selected__id {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

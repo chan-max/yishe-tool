@@ -105,6 +105,12 @@ export interface ImageSearchParams {
   isCustom?: boolean;       // 是否为系统自定义（可二次开发）
   isCutout?: boolean;       // 是否为抠图（无背景）
   searchMode?: "text" | "vector";  // 搜索模式：text=关键词搜索，vector=向量语义搜索
+  aspectRatio?: string;     // 宽高比，如 "1:1", "16:9"
+  aspectRatioTolerance?: number; // 宽高比容差
+  minWidth?: number;        // 最小宽度
+  maxWidth?: number;        // 最大宽度
+  minHeight?: number;       // 最小高度
+  maxHeight?: number;       // 最大高度
 }
 
 export interface ResourceSearchResult {
@@ -181,43 +187,61 @@ export async function searchImageResources(
   }
 
   try {
-    let result: any;
+    const limit = params.limit || 10;
+    // 向量或复杂查询时多查一些，方便在前端做宽高、宽高比过滤
+    const needsFiltering = Boolean(
+      params.aspectRatio ||
+      params.minWidth !== undefined ||
+      params.maxWidth !== undefined ||
+      params.minHeight !== undefined ||
+      params.maxHeight !== undefined
+    );
+    const pageSize = needsFiltering ? Math.max(limit * 3, 50) : limit;
 
-    // 向量语义搜索模式
-    if (params.searchMode === "vector") {
-      const response = await apiInstance.post("/api/vector-search/search", {
-        collection: "stickers",
-        query: params.query || "",
-        limit: params.limit || 10,
-      });
-      const data = response.data?.data || response.data;
+    const apiParams: Record<string, any> = {
+      searchText: params.query || '',
+      currentPage: params.page || 1,
+      pageSize: pageSize,
+      searchMode: params.searchMode || "vector", // 默认启用混合向量检索
+    };
 
-      if (response.status < 200 || response.status >= 300) {
-        throw new Error(`Vector search failed: ${response.statusText}`);
-      }
+    if (params.isCustom !== undefined) apiParams.isCustom = params.isCustom;
+    if (params.isCutout !== undefined) apiParams.isCutout = params.isCutout;
 
-      result = {
-        list: (data.items || []).map((item: any) => ({
-          id: item.sourceId,
-          ...item.payload,
-        })),
-        total: data.total || 0,
-      };
-    } else {
-      // 默认关键词搜索
-      const apiParams: Record<string, any> = {
-        searchText: params.query || '',
-        currentPage: params.page || 1,
-        pageSize: params.limit || 10,
-      };
-      if (params.isCustom !== undefined) apiParams.isCustom = params.isCustom;
-      if (params.isCutout !== undefined) apiParams.isCutout = params.isCutout;
+    const result = await fetchApi("/api/sticker/page", apiParams);
+    let list = result.list || [];
 
-      result = await fetchApi("/api/sticker/page", apiParams);
+    // 本地过滤：宽高范围
+    if (params.minWidth !== undefined) {
+      list = list.filter((item: any) => (item.width || 0) >= params.minWidth!);
+    }
+    if (params.maxWidth !== undefined) {
+      list = list.filter((item: any) => (item.width || 0) <= params.maxWidth!);
+    }
+    if (params.minHeight !== undefined) {
+      list = list.filter((item: any) => (item.height || 0) >= params.minHeight!);
+    }
+    if (params.maxHeight !== undefined) {
+      list = list.filter((item: any) => (item.height || 0) <= params.maxHeight!);
     }
 
+    // 本地过滤：宽高比
+    if (params.aspectRatio && params.aspectRatio !== 'any') {
+      const [rw, rh] = params.aspectRatio.split(':').map(Number);
+      const targetRatio = rw / rh;
+      const tolerance = params.aspectRatioTolerance !== undefined ? params.aspectRatioTolerance : 0.15;
+      list = list.filter((item: any) => {
+        if (!item.width || !item.height) return false;
+        const itemRatio = item.width / item.height;
+        return Math.abs(itemRatio - targetRatio) / targetRatio <= tolerance;
+      });
+    }
+
+    // 截取到 limit
+    list = list.slice(0, limit);
+
     const searchResult: ResourceSearchResult = {
-      items: (result.list || []).map((item: any) => ({
+      items: list.map((item: any) => ({
         id: item.id,
         name: item.name || "未命名图片",
         description: item.description || "",
@@ -231,7 +255,7 @@ export async function searchImageResources(
         isCutout: Boolean(item.isCutout),
         colorPalette: item.colorPalette || "",
       })),
-      total: result.total || 0,
+      total: result.total || list.length,
       query: params.query || "",
     };
 
@@ -331,8 +355,9 @@ export const resourceTools = [
   {
     type: "function" as const,
     function: {
-      name: "resource.searchImage",
-      description: `搜索图库/贴纸库。返回图片列表，每项包含 id/name/url/keywords/colorPalette/width/height/isCutout。
+      name: "resource.searchSticker",
+      description: `从素材库/贴纸库搜索贴纸和插画素材。支持后端向量混合语义搜索，并能进行比例、尺寸过滤。
+返回图片列表，每项包含 id/name/url/keywords/colorPalette/width/height/isCutout。
 
 **【必须遵守 - 违反视为失败】**
 1. 搜索到多张图片后，必须在 HTML 中使用**每张不同的图片**，每张图片绑定为独立的 key
@@ -341,7 +366,7 @@ export const resourceTools = [
 4. 如果需要 N 张图，就搜 N 张，绑定 N 个不同的 key，HTML 中引用 N 个不同的 URL
 
 **正确示例（照片墙 - 4张不同图片）：**
-1. resource.searchImage({ query: "风景", limit: 4 })
+1. resource.searchSticker({ query: "风景", limit: 4 })
    → 返回 img1(id:a, url:url_a), img2(id:b, url:url_b), img3(id:c, url:url_c), img4(id:d, url:url_d)
 2. canvas.addHtml({
      htmlContent: "<div style='...'>
@@ -358,34 +383,54 @@ export const resourceTools = [
          img4: { id: "d的id", url: "url_d", name: "d的name" }
        }
      }
-   })
-
-**错误示例（同一张图裁切 - 禁止！）：**
-<div style='background-image:url({{image.bg.url}});background-position:center;'></div>
-<div style='background-image:url({{image.bg.url}});background-position:20% 30%;'></div>
-← 这是同一张图，不是多张图！
-
-筛选说明：
-- isCustom: true 仅返回系统自定义贴纸（可二次开发）
-- isCutout: true 仅返回抠图素材（无背景，适合叠加使用）`,
+   })`,
       parameters: {
         type: "object",
         properties: {
           query: {
             type: "string",
-            description: "搜索关键词，简短精准效果更好。如：猫咪、风景、科技、纹理、渐变、星空、花朵",
+            description: "搜索描述语或关键词，语义匹配效果极好。如：猫咪、极简风纹理、中国风底纹",
           },
           limit: {
             type: "number",
             description: "返回数量，默认 5，最大 20",
           },
+          searchMode: {
+            type: "string",
+            enum: ["vector", "text"],
+            description: "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
+          },
           isCustom: {
             type: "boolean",
-            description: "仅返回系统自定义贴纸（可基于其二次开发）",
+            description: "仅返回自定义模版贴纸（可基于其二次修改）",
           },
           isCutout: {
             type: "boolean",
-            description: "仅返回抠图素材（无背景，适合叠加使用）",
+            description: "仅返回已抠图素材（透明背景，适合图层重叠叠加）",
+          },
+          aspectRatio: {
+            type: "string",
+            description: "按宽高比筛选，格式如 '1:1', '16:9', '9:16', '3:4' 等，不传代表不限。可根据当前目标画布形状进行选择",
+          },
+          aspectRatioTolerance: {
+            type: "number",
+            description: "宽高比允许的偏差值，默认 0.15 表示允许偏差 ±15%",
+          },
+          minWidth: {
+            type: "number",
+            description: "筛选像素宽度 >= 这里的数值，避免素材过小模糊",
+          },
+          maxWidth: {
+            type: "number",
+            description: "筛选像素宽度 <= 这里的数值",
+          },
+          minHeight: {
+            type: "number",
+            description: "筛选像素高度 >= 这里的数值",
+          },
+          maxHeight: {
+            type: "number",
+            description: "筛选像素高度 <= 这里的数值",
           },
         },
         required: ["query"],
@@ -433,12 +478,19 @@ export async function executeResourceTool(
       };
     }
 
-    case "resource.searchImage": {
+    case "resource.searchSticker": {
       const result = await searchImageResources({
         query: args.query,
         limit: args.limit || 5,
+        searchMode: args.searchMode,
         isCustom: args.isCustom,
         isCutout: args.isCutout,
+        aspectRatio: args.aspectRatio,
+        aspectRatioTolerance: args.aspectRatioTolerance,
+        minWidth: args.minWidth,
+        maxWidth: args.maxWidth,
+        minHeight: args.minHeight,
+        maxHeight: args.maxHeight,
       });
       if (result.items.length === 0) {
         return {
@@ -446,7 +498,7 @@ export async function executeResourceTool(
           data: [],
           total: 0,
           query: result.query,
-          message: `未找到与"${result.query}"相关的图片，建议：\n1. 尝试更简洁的关键词\n2. 移除筛选条件（isCustom/isCutout）重新搜索\n3. 使用其他素材方式（如添加形状、文字）`,
+          message: `未找到与"${result.query}"相关的贴纸，建议：\n1. 尝试更简洁的关键词\n2. 移除或放宽筛选条件（isCustom/isCutout/宽高比等）重新搜索\n3. 使用其他素材方式（如添加形状、文字）`,
         };
       }
       return {
@@ -488,7 +540,7 @@ export function getSearchHistory(): SearchHistoryEntry[] {
   const history: SearchHistoryEntry[] = [];
   for (const [key, entry] of searchCache.entries()) {
     const data = entry.data as ResourceSearchResult;
-    const tool = key.startsWith("font:") ? "resource.searchFont" : "resource.searchImage";
+    const tool = key.startsWith("font:") ? "resource.searchFont" : "resource.searchSticker";
     history.push({
       tool,
       query: data.query,

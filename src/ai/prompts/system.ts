@@ -72,10 +72,10 @@ function buildDesignRulesPrompt(): string {
 function buildResourceGuidePrompt(): string {
   return `## 素材库 / 字体
 
-- resource.searchImage — 搜索你的素材库（图库/贴纸库），用关键词查找已有的素材
+- resource.searchSticker — 搜索贴纸和素材库（支持语义检索、长宽比和尺寸过滤，返回含有 id、url、width、height、isCustom、isCutout 等信息的贴纸列表）
 - resource.searchFont — 搜索字体库
 - 用户提到艺术字、书法、古诗、挂画、字体风格、标题设计时，必须先调用 resource.searchFont 搜索合适字体
-- 搜索到素材后，通过 canvas.addImage({ imageUrl: 搜索结果中的url }) 放到画布上
+- 搜索到素材后，通常通过 canvas.loadSticker({ stickerId: "搜到的id" }) 载入画布上。对于可编辑贴纸（isCustom=true），它会加载完整元素树，支持后续修改文字、样式等
 - 搜索到字体后，在 canvas.addHtml 中通过 htmlBindings 绑定：
   { "htmlBindings": { "font": { "brand": { "id":"搜到的id", "url":"搜到的url", "name":"搜到的name" } } } }
 - HTML 中用 {{font.brand.family}} 引用字体，图片用 {{image.xxx.url}}
@@ -88,8 +88,8 @@ function buildResourceGuidePrompt(): string {
 - 不要重复搜索同一关键词，系统自动缓存
 
 示例流程：
-1. resource.searchImage({ query: "猫" }) → 返回素材列表
-2. canvas.addImage({ imageUrl: "https://素材地址" }) → 放到画布上`;
+1. resource.searchSticker({ query: "猫", limit: 3, isCutout: true }) → 返回贴纸列表及 id
+2. canvas.loadSticker({ stickerId: "搜到的贴纸id" }) → 载入到画布上`;
 }
 
 // ============ Layer 4: HTML 速查 ============

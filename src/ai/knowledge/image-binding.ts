@@ -1,12 +1,12 @@
 import type { KnowledgeItem } from "./types";
 
 export const imageBindingKnowledge: KnowledgeItem = {
-  triggers: ["图片", "image", "贴图", "素材", "图库", "resource.searchImage", "addImage", "背景图"],
+  triggers: ["图片", "image", "贴图", "素材", "图库", "resource.searchSticker", "addImage", "背景图"],
 
   content: `## 图片搜索与绑定
 
 ### 搜索
-resource.searchImage({ query: "猫" })
+resource.searchSticker({ query: "猫" })
 返回 [{ id, name, url, keywords, colorPalette, width, height, isCutout }]
 - colorPalette 字段可帮助匹配设计配色
 - isCutout:true 的素材无背景，适合叠加

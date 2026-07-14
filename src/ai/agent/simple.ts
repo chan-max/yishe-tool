@@ -496,10 +496,57 @@ async function runAgentLoop(userMessage: string) {
   // 添加用户消息
   addMessage({ role: "user", content: userMessage });
 
-  // 检索相关设计经验（异步，失败不影响主流程）
+  // 1. 规划阶段 —— 让 Planner 进行意图分流与 Query 重写，以防原始输入语意模糊
+  let plan: DesignPlan | null = null;
+  let searchQueries = {
+    assets: userMessage,
+    styles: userMessage,
+    layouts: userMessage,
+  };
+
+  try {
+    const planResponse = await directChat({
+      messages: [
+        {
+          role: "system",
+          content: "你是设计规划专家。分析用户需求，输出包含执行步骤和向量知识库分类检索词的 JSON 执行计划。只输出 JSON，严禁带任何 Markdown 包裹标记。",
+        },
+        {
+          role: "user",
+          content: `需求：${userMessage}\n当前画布元素数：${ctx.getCanvasChildren().length}\n\n输出格式示例：\n{\n  "goal": "目标描述",\n  "searchQueries": {\n    "assets": "素材及字体检索词，如：可爱猫咪 艺术字",\n    "styles": "设计特效及CSS技巧检索词，如：毛玻璃 霓虹发光",\n    "layouts": "构图与版式检索词，如：三分法 左右分栏"\n  },\n  "steps": [\n    { "action": "canvas.clear", "description": "清空画布重新设计" },\n    { "action": "canvas.addHtml", "description": "添加完整设计作品" }\n  ]\n}`,
+        },
+      ],
+      temperature: 0.2,
+    });
+    const planContent = parseChatResponse(planResponse);
+    if (planContent?.content) {
+      const planJson = extractJSON(planContent.content);
+      if (planJson?.steps?.length) {
+        plan = { ...planJson, currentStep: 0 };
+        agentState.plan = plan;
+        if (planJson.searchQueries) {
+          searchQueries = {
+            assets: planJson.searchQueries.assets || userMessage,
+            styles: planJson.searchQueries.styles || userMessage,
+            layouts: planJson.searchQueries.layouts || userMessage,
+          };
+          console.log("[Query 重写] 规划提取检索词：", searchQueries);
+        }
+        addMessage({
+          role: "assistant",
+          content: `📋 计划：${plan.goal}（${plan.steps.length} 步）`,
+          meta: { plan },
+        });
+      }
+    }
+  } catch (e) {
+    console.warn("[Agent] 规划与检索词提取失败，使用原始输入:", e);
+  }
+
+  // 2. 高精度向量检索 —— 利用重写后的子句进行垂类检索，提升精准度并极大节约 Token
   let designExperiences: DesignExperience[] = [];
   try {
-    designExperiences = await retrieveDesignExperiences(userMessage);
+    designExperiences = await retrieveDesignExperiences(searchQueries.layouts);
     if (designExperiences.length > 0) {
       console.log(`[向量检索] 已检索到 ${designExperiences.length} 个设计经验，将注入 system prompt`);
     } else {
@@ -509,14 +556,15 @@ async function runAgentLoop(userMessage: string) {
     console.warn("[Agent] Design experience retrieval failed:", error);
   }
 
-  // 构建消息列表（注入搜索上下文和任务进度）
-  const knowledgePrompt = await buildKnowledgePrompt(userMessage);
+  // 3. 构建高信号的消息列表（注入高精准度语义知识、搜索上下文和任务进度）
+  const knowledgePrompt = await buildKnowledgePrompt(searchQueries.styles);
   const systemPrompt =
     buildSystemPrompt({ designExperiences }) +
     "\n" +
     knowledgePrompt +
     buildSearchContext() +
     getBatchProgress();
+
   const messagesForLLM: any[] = [
     { role: "system", content: systemPrompt },
     ...agentState.messages.map((m) => ({
@@ -528,40 +576,6 @@ async function runAgentLoop(userMessage: string) {
         : {}),
     })),
   ];
-
-  // 规划阶段 —— 让 Agent 先想好再动手
-  let plan: DesignPlan | null = null;
-  try {
-    const planResponse = await directChat({
-      messages: [
-        {
-          role: "system",
-          content:
-            "你是设计规划专家。分析用户需求，输出简洁的 JSON 执行计划。只输出 JSON。",
-        },
-        {
-          role: "user",
-          content: `需求：${userMessage}\n当前画布元素数：${ctx.getCanvasChildren().length}\n\n输出：{"goal":"目标","steps":[{"action":"动作","description":"说明"}]}`,
-        },
-      ],
-      temperature: 0.2,
-    });
-    const planContent = parseChatResponse(planResponse);
-    if (planContent?.content) {
-      const planJson = extractJSON(planContent.content);
-      if (planJson?.steps?.length) {
-        plan = { ...planJson, currentStep: 0 };
-        agentState.plan = plan;
-        addMessage({
-          role: "assistant",
-          content: `📋 计划：${plan.goal}（${plan.steps.length} 步）`,
-          meta: { plan },
-        });
-      }
-    }
-  } catch (e) {
-    console.warn("[Agent] 规划阶段失败，继续直接执行:", e);
-  }
 
   for (let i = 0; i < maxIterations; i++) {
     // 检查是否被外部中断（如用户点击清空）
@@ -1535,7 +1549,7 @@ async function runTestSuite(): Promise<string> {
     const weakCats = catStats.filter((c) => !c.ok).map((c) => c.name);
     if (weakCats.includes("图片搜索添加") || weakCats.includes("多图拼贴")) {
       lines.push(
-        `- **图片/拼贴类**：检查 resource.searchImage 的 URL 是否正确传递给 canvas.addImage 或 htmlBindings`,
+        `- **图片/拼贴类**：检查 resource.searchSticker 的 URL 是否正确传递给 canvas.addImage 或 htmlBindings`,
       );
     }
     if (weakCats.includes("渐变文字") || weakCats.includes("发光效果")) {

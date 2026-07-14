@@ -11,6 +11,7 @@ import {
   markdownSkillKnowledgeItems,
 } from "./registry";
 import { searchDesignKnowledge } from "@/api";
+import { syncLocalTipsToBackend } from "./design-tips-loader";
 
 const allKnowledge: KnowledgeItem[] = allKnowledgeItems;
 const baseAlways = baseAlwaysKnowledge; // base 永远注入
@@ -128,6 +129,9 @@ async function fetchVectorKnowledge(query: string): Promise<KnowledgeItem[]> {
 // ========== 渐进式知识注入 ==========
 
 export async function buildKnowledgePrompt(userInput: string): Promise<string> {
+  // 静默触发本地技巧同步（如增删改 Markdown），确保 Qdrant 数据库数据闭环
+  void syncLocalTipsToBackend();
+
   const vectorItems = await fetchVectorKnowledge(userInput);
 
   let totalTokens = estimateTokens(baseAlways.content);

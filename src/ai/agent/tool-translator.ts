@@ -46,9 +46,9 @@ export function translateToolResult(
     }
     case "element.setTextContent":
       return `✅ 文字已更新: "${(args?.textContent || "").slice(0, 20)}"`;
-    case "resource.searchImage": {
+    case "resource.searchSticker": {
       const items = (result.data as any[]) || [];
-      if (items.length === 0) return "⚠️ 未找到相关图片素材，建议换个关键词";
+      if (items.length === 0) return "⚠️ 未找到相关贴纸素材，建议换个关键词";
       const first = items[0];
       const list = items
         .slice(0, 5)
@@ -58,7 +58,7 @@ export function translateToolResult(
         )
         .join("\n");
       const bindingsExample = `canvas.addHtml({ htmlContent: "<div style='background-image:url({{image.bg.url}});background-size:cover;width:100%;height:100%;'></div>", htmlBindings: { image: { bg: { id:"${first.id}", url:"${first.url}", name:"${first.name}" } } } })`;
-      return `✅ 找到 ${items.length} 个图片素材:\n${list}\n\n用法（复制后替换 key 名 "bg" 即可）:\n${bindingsExample}`;
+      return `✅ 找到 ${items.length} 个贴纸素材:\n${list}\n\n用法（复制后替换 key 名 "bg" 即可）:\n${bindingsExample}`;
     }
     case "resource.searchFont": {
       const items = (result.data as any[]) || [];

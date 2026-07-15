@@ -187,6 +187,11 @@ import { currentModelController } from "@/components/design/store";
 
 import { imageDataToFile, canvasToFile } from "@/common/transform";
 import { defineCanvasChild } from "./children/define.tsx";
+import {
+  syncHtmlTemplateFieldsFromContent,
+  getValueByPath,
+  setValueByPath,
+} from "./htmlTemplate/runtime.ts";
 
 import {
   currentFocusingStickerId,
@@ -1271,3 +1276,218 @@ export class CanvasController {
     return render.bind(this);
   }
 }
+
+export function inferComponentTypeFromKey(key: string): string {
+  let inferredType = "echart"; // default ECharts
+  
+  if (key.startsWith("threejs.") || key.startsWith("threeScene.")) {
+    inferredType = "threeScene";
+  } else if (key.startsWith("echart.")) {
+    inferredType = "echart";
+  } else if (key.startsWith("wordCloud.")) {
+    inferredType = "wordCloud";
+  } else if (key.startsWith("barcode.")) {
+    inferredType = "barcode";
+  } else if (key.startsWith("qrcode.")) {
+    inferredType = "qrcode";
+  } else if (key.startsWith("figlet.")) {
+    inferredType = "figlet";
+  } else if (key.startsWith("math.")) {
+    inferredType = "math";
+  } else if (key.startsWith("mermaid.")) {
+    inferredType = "mermaid";
+  } else if (key.startsWith("graphviz.")) {
+    inferredType = "graphviz";
+  } else if (key.startsWith("dagreGraph.")) {
+    inferredType = "dagreGraph";
+  } else if (key.startsWith("roughShape.")) {
+    inferredType = "roughShape";
+  } else if (key.startsWith("chartjs.")) {
+    inferredType = "chartjs";
+  } else if (key.startsWith("frappeChart.")) {
+    inferredType = "frappeChart";
+  } else if (key.startsWith("chartXkcd.")) {
+    inferredType = "chartXkcd";
+  } else if (key.startsWith("plotlyChart.")) {
+    inferredType = "plotlyChart";
+  } else if (key.startsWith("vegaLite.")) {
+    inferredType = "vegaLite";
+  } else if (key.startsWith("waveform.")) {
+    inferredType = "waveform";
+  } else if (key.startsWith("markmapChart.")) {
+    inferredType = "markmapChart";
+  } else if (key.startsWith("particlesEffect.")) {
+    inferredType = "particlesEffect";
+  } else if (key.startsWith("confetti.")) {
+    inferredType = "confetti";
+  } else if (key.startsWith("trianglify.")) {
+    inferredType = "trianglify";
+  } else if (key.startsWith("starChart.")) {
+    inferredType = "starChart";
+  } else if (key.startsWith("vexFlow.")) {
+    inferredType = "vexFlow";
+  } else if (key.startsWith("cytoscape.")) {
+    inferredType = "cytoscape";
+  } else if (key.startsWith("cytoscapeGraph.")) {
+    inferredType = "cytoscapeGraph";
+  } else if (key.startsWith("vueDataUi.")) {
+    inferredType = "vueDataUi";
+  } else if (key.startsWith("d3.")) {
+    inferredType = "d3";
+  } else if (key.startsWith("d3Cloud.")) {
+    inferredType = "d3Cloud";
+  } else if (key.startsWith("opentypeText.")) {
+    inferredType = "opentypeText";
+  } else if (key.startsWith("simplexNoise.")) {
+    inferredType = "simplexNoise";
+  } else if (key.startsWith("molecule.")) {
+    inferredType = "molecule";
+  } else if (key.startsWith("threeMol.")) {
+    inferredType = "threeMol";
+  } else if (key.startsWith("abcNotation.")) {
+    inferredType = "abcNotation";
+  } else if (key.startsWith("rawCanvas.")) {
+    inferredType = "rawCanvas";
+  }
+  
+  return inferredType;
+}
+
+export function autoCreateAndBindNewFields(fields: any[], target: any) {
+  if (!target) return;
+  if (!target.htmlBindings) {
+    target.htmlBindings = {};
+  }
+  const bindings = target.htmlBindings;
+  
+  fields.forEach((field) => {
+    if (field.type === "child") {
+      const existingBinding = getValueByPath(bindings, field.key);
+      if (!existingBinding || !existingBinding.id) {
+        const inferredType = inferComponentTypeFromKey(field.key);
+        const newId = "_" + String(new Date().getTime()) + Math.random().toString(36).substring(2, 6);
+        const defaultOptionsCreator = canvasChildDefaultOptionsMap[inferredType];
+        const newOptions = {
+          ...(defaultOptionsCreator ? defaultOptionsCreator.call(null) : {}),
+          id: newId,
+          type: inferredType,
+          undeletable: true,
+        };
+        
+        if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
+          canvasStickerOptions.value.children.push(newOptions);
+        }
+        setValueByPath(bindings, field.key, { id: newId });
+      }
+    } else if (field.type === "html") {
+      const existingBinding = getValueByPath(bindings, field.key);
+      if (!existingBinding || !existingBinding.id) {
+        const newId = "_" + String(new Date().getTime()) + Math.random().toString(36).substring(2, 6);
+        const defaultOptionsCreator = canvasChildDefaultOptionsMap["html"];
+        const newOptions = {
+          ...(defaultOptionsCreator ? defaultOptionsCreator.call(null) : {}),
+          id: newId,
+          type: "html",
+          undeletable: true,
+        };
+        
+        if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
+          canvasStickerOptions.value.children.push(newOptions);
+        }
+        setValueByPath(bindings, field.key, { id: newId });
+      }
+    }
+  });
+  
+  target.htmlBindings = { ...bindings };
+}
+
+export function deleteValueByPath(target: any, path: string) {
+  const segments = path.split(".").filter(Boolean);
+  if (!segments.length) return;
+  
+  let cursor = target;
+  for (let i = 0; i < segments.length - 1; i++) {
+    const segment = segments[i];
+    if (!cursor[segment] || typeof cursor[segment] !== "object") {
+      return;
+    }
+    cursor = cursor[segment];
+  }
+  
+  const lastSegment = segments[segments.length - 1];
+  if (cursor && typeof cursor === "object") {
+    delete cursor[lastSegment];
+  }
+}
+
+export function cleanUpUnusedBindings(fields: any[], target: any) {
+  if (!target) return;
+  const bindings = target.htmlBindings || {};
+  
+  const activeKeys = new Set(fields.map(f => f.key));
+  const activeBoundIds = new Set<string>();
+  
+  fields.forEach(field => {
+    const bound = getValueByPath(bindings, field.key);
+    if (bound && bound.id) {
+      activeBoundIds.add(bound.id);
+    }
+  });
+  
+  const allPaths: string[] = [];
+  function collectPaths(obj: any, currentPath = "") {
+    if (!obj || typeof obj !== "object") return;
+    if (obj.id && typeof obj.id === "string") {
+      allPaths.push(currentPath);
+      return;
+    }
+    Object.keys(obj).forEach(key => {
+      const nextPath = currentPath ? `${currentPath}.${key}` : key;
+      collectPaths(obj[key], nextPath);
+    });
+  }
+  collectPaths(bindings);
+  
+  allPaths.forEach(path => {
+    if (!activeKeys.has(path)) {
+      deleteValueByPath(bindings, path);
+    }
+  });
+  
+  if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
+    canvasStickerOptions.value.children = canvasStickerOptions.value.children.filter((c: any) => {
+      if (c.undeletable && !activeBoundIds.has(c.id) && c.id !== target.id) {
+        return false;
+      }
+      return true;
+    });
+  }
+}
+
+watch(
+  () => {
+    if (!canvasStickerOptions.value || !Array.isArray(canvasStickerOptions.value.children)) {
+      return [];
+    }
+    return canvasStickerOptions.value.children
+      .filter((c: any) => c && c.type === "html")
+      .map((c: any) => ({
+        id: c.id,
+        htmlContent: c.htmlContent,
+      }));
+  },
+  (htmlChildren) => {
+    if (!htmlChildren) return;
+    htmlChildren.forEach((hc) => {
+      const child = canvasStickerOptions.value.children.find((c: any) => c.id === hc.id);
+      if (!child) return;
+      
+      const nextHtmlContent = String(child.htmlContent ?? "");
+      const inferredFields = syncHtmlTemplateFieldsFromContent(child, nextHtmlContent);
+      autoCreateAndBindNewFields(inferredFields, child);
+      cleanUpUnusedBindings(inferredFields, child);
+    });
+  },
+  { deep: true, immediate: true }
+);

@@ -227,7 +227,50 @@ function humanizeHtmlTemplateFieldKey(key = "") {
     .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
+function getComponentFriendlyName(key: string): string {
+  if (key.startsWith("threejs.") || key.startsWith("threeScene.")) return "3D模型 (Three.js)";
+  if (key.startsWith("echart.")) return "图表 (ECharts)";
+  if (key.startsWith("wordCloud.")) return "词云";
+  if (key.startsWith("barcode.")) return "条形码";
+  if (key.startsWith("qrcode.")) return "二维码";
+  if (key.startsWith("figlet.")) return "艺术字 (Figlet)";
+  if (key.startsWith("math.")) return "数学公式 (KaTeX)";
+  if (key.startsWith("mermaid.")) return "流程图 (Mermaid)";
+  if (key.startsWith("graphviz.")) return "Graphviz绘图";
+  if (key.startsWith("dagreGraph.")) return "拓扑图 (Dagre)";
+  if (key.startsWith("roughShape.")) return "手绘图形 (Rough)";
+  if (key.startsWith("chartjs.")) return "图表 (Chart.js)";
+  if (key.startsWith("frappeChart.")) return "图表 (Frappe)";
+  if (key.startsWith("chartXkcd.")) return "手绘图表 (xkcd)";
+  if (key.startsWith("plotlyChart.")) return "高级图表 (Plotly)";
+  if (key.startsWith("vegaLite.")) return "声明式图表 (Vega)";
+  if (key.startsWith("waveform.")) return "音频波形";
+  if (key.startsWith("markmapChart.")) return "思维导图 (Markmap)";
+  if (key.startsWith("particlesEffect.")) return "粒子特效";
+  if (key.startsWith("confetti.")) return "纸屑特效";
+  if (key.startsWith("trianglify.")) return "三角背景";
+  if (key.startsWith("starChart.")) return "星空星图";
+  if (key.startsWith("vexFlow.")) return "五线谱 (VexFlow)";
+  if (key.startsWith("cytoscape.")) return "关系图 (Cytoscape)";
+  if (key.startsWith("cytoscapeGraph.")) return "网络图 (Cytoscape)";
+  if (key.startsWith("vueDataUi.")) return "数据报表 (VueDataUI)";
+  if (key.startsWith("d3.")) return "D3可视化";
+  if (key.startsWith("d3Cloud.")) return "D3词云";
+  if (key.startsWith("opentypeText.")) return "艺术字体 (Opentype)";
+  if (key.startsWith("simplexNoise.")) return "噪声图";
+  if (key.startsWith("molecule.")) return "分子结构";
+  if (key.startsWith("threeMol.")) return "生物分子 (3D)";
+  if (key.startsWith("abcNotation.")) return "简谱 (ABC)";
+  if (key.startsWith("rawCanvas.")) return "原生画布";
+  return "组件";
+}
+
 function createInferredHtmlTemplateFieldLabel(key: string, type: HtmlTemplateFieldType) {
+  if (type === "child") {
+    const componentName = getComponentFriendlyName(key);
+    return `${componentName} ${humanizeHtmlTemplateFieldKey(key)}`;
+  }
+
   const typeLabelMap: Record<HtmlTemplateFieldType, string> = {
     text: "文本",
     textarea: "多行文本",

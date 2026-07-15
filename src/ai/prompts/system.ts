@@ -109,6 +109,23 @@ function buildHtmlQuickRefPrompt(): string {
 - 如果要迭代，输出一份新的完整 htmlContent 替换旧作品，不要只输出局部片段。
 - 根节点必须 width:100%; height:100%; position:relative; overflow:hidden; box-sizing:border-box。
 
+### 魔术变量与内置嵌入组件 (ECharts, Three.js, qrcode, barcode 等)
+- 当你想在一个 HTML 布局中混排/放置各种丰富组件（如折线图、3D模型、二维码、拓扑图、公式等）时，直接在 HTML 源码中写入带有特定前缀的插槽魔术变量（例如 {{echart.myChart}}、{{threejs.myModel}}、{{qrcode.myCode}}）。
+- 格式为 {{组件类型.任意变量名}}。系统会全自动实例化该类型的组件并嵌入在该 HTML 容器对应的位置。
+- 支持的前缀和对应类型：
+  * echart (ECharts 图表，如折线/柱状/饼图/地图) -> 例: <div style="flex:1;">{{echart.mainChart}}</div>
+  * threejs 或 threeScene (Three.js 3D模型场景) -> 例: <div style="width:300px;height:300px;">{{threejs.myModel}}</div>
+  * qrcode (二维码) -> 例: <div style="width:100px;height:100px;">{{qrcode.scanMe}}</div>
+  * barcode (条形码) -> 例: <div style="width:200px;height:60px;">{{barcode.goodsBar}}</div>
+  * wordCloud (词云图) -> 例: <div style="width:400px;height:400px;">{{wordCloud.tags}}</div>
+  * math (数学公式 KaTeX) -> 例: <div>{{math.formula1}}</div>
+  * mermaid (流程图/时序图/甘特图) -> 例: <div style="width:500px;height:400px;">{{mermaid.flow1}}</div>
+  * chartjs (Chart.js 图表) -> 例: <div style="width:300px;height:300px;">{{chartjs.myChart}}</div>
+  * particlesEffect (粒子特效) -> 例: <div style="position:absolute;inset:0;">{{particlesEffect.bg}}</div>
+  * opentypeText (艺术字体渲染) -> 例: <div>{{opentypeText.brandTitle}}</div>
+- 提示词举例：“左侧图片右侧 echart”：
+  你应当调用一次 canvas.addHtml，其 htmlContent 包含左右分栏布局。左侧是一个 <img> 或带 {{image.xxx.url}} 的容器，右侧是 {{echart.myChart}}。这样系统会自动创建好对应的图表，用户直接在界面右侧就可以可视化配置它！
+
 标题：<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#1a1a2e;"><div style="font-size:280px;font-weight:900;color:#fff;line-height:1;">标题</div></div>
 
 渐变背景：<div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px;"></div>

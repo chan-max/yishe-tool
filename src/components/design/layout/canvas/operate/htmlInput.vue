@@ -45,128 +45,76 @@
       </div>
 
       <div class="html-editor-dialog__sidebar">
-        <el-tabs v-model="activeTabName" class="html-editor-dialog__tabs" stretch>
-          <!-- Tab 1: 模板变量 -->
-          <el-tab-pane label="模板变量" name="variables">
-            <div class="html-editor-dialog__sidebar-content">
-              <div class="html-editor-dialog__section-header">
-                <span>提示：点击变量可以直接插入到编辑器光标处</span>
-              </div>
+        <div class="html-editor-dialog__sidebar-header">
+          <h3>模板变量速查</h3>
+        </div>
+        <div class="html-editor-dialog__sidebar-content scrollable-panel">
+          <div class="html-editor-dialog__section-header">
+            <span>提示：点击左侧可以插入变量，点击右侧“配置”可跳转编辑组件参数</span>
+          </div>
 
-              <!-- 模板/魔术变量 -->
-              <div class="html-editor-dialog__variable-section">
-                <div class="html-editor-dialog__variable-section-name">
-                  当前模板变量
-                  <span class="badge" v-if="templateMagicVariableItems.length">
-                    {{ templateMagicVariableItems.length }}
-                  </span>
+          <!-- 当前模板已识别变量 -->
+          <div class="html-editor-dialog__variable-section">
+            <div class="html-editor-dialog__variable-section-name">
+              当前模板变量
+              <span class="badge" v-if="templateMagicVariableItems.length">
+                {{ templateMagicVariableItems.length }}
+              </span>
+            </div>
+            <div v-if="templateMagicVariableItems.length" class="html-editor-dialog__variable-list compact-list">
+              <div
+                v-for="item in templateMagicVariableItems"
+                :key="item.token"
+                class="html-editor-dialog__variable-row"
+              >
+                <div class="variable-row-left" @click="insertVariable(item.token)">
+                  <div class="variable-token-container">
+                    <el-tag size="small" :type="getBadgeType(item.type)" class="type-tag">{{ item.type.toUpperCase() }}</el-tag>
+                    <code class="clickable-code">{{ item.token }}</code>
+                  </div>
+                  <span class="variable-desc">{{ item.description }}</span>
                 </div>
-                <div v-if="templateMagicVariableItems.length" class="html-editor-dialog__variable-list compact-list">
-                  <div
-                    v-for="item in templateMagicVariableItems"
-                    :key="item.token"
-                    class="html-editor-dialog__variable-row"
-                    @click="insertVariable(item.token)"
+                <div class="variable-row-right" v-if="getBoundChildId(item)">
+                  <el-button
+                    size="small"
+                    type="primary"
+                    plain
+                    class="configure-btn"
+                    @click.stop="configureComponent(getBoundChildId(item))"
                   >
-                    <div class="variable-token-container">
-                      <el-tag size="small" :type="getBadgeType(item.type)" class="type-tag">{{ item.type.toUpperCase() }}</el-tag>
-                      <code class="clickable-code">{{ item.token }}</code>
-                    </div>
-                    <span class="variable-desc">{{ item.description }}</span>
-                  </div>
-                </div>
-                <div v-else class="html-editor-dialog__variable-empty">
-                  当前暂无已识别的模板变量。
-                </div>
-              </div>
-
-              <!-- 系统变量 -->
-              <div class="html-editor-dialog__variable-section" style="margin-top: 16px;">
-                <div class="html-editor-dialog__variable-section-name">
-                  内置系统变量
-                  <span class="badge">{{ systemMagicVariableItems.length }}</span>
-                </div>
-                <div class="html-editor-dialog__variable-list compact-list">
-                  <div
-                    v-for="item in systemMagicVariableItems"
-                    :key="item.token"
-                    class="html-editor-dialog__variable-row"
-                    @click="insertVariable(item.token)"
-                  >
-                    <div class="variable-token-container">
-                      <el-tag size="small" type="info" class="type-tag">SYS</el-tag>
-                      <code class="clickable-code">{{ item.token }}</code>
-                    </div>
-                    <span class="variable-desc">{{ item.description }}</span>
-                  </div>
+                    配置
+                  </el-button>
                 </div>
               </div>
             </div>
-          </el-tab-pane>
+            <div v-else class="html-editor-dialog__variable-empty">
+              当前暂无已识别的模板变量。
+            </div>
+          </div>
 
-          <!-- Tab 2: 组件配置 -->
-          <el-tab-pane label="组件配置" name="widget">
-            <div class="html-editor-dialog__sidebar-content scrollable-panel">
-              <div v-if="boundChildren.length === 0" class="widget-empty">
-                <el-empty description="当前模板没有挂载子组件" :image-size="60">
-                  <template #extra>
-                    <div style="font-size: 11px; color: #8a8f98; line-height: 1.6; text-align: left; padding: 0 10px;">
-                      您可以在 HTML 代码中添加形如 <code v-pre>{{child.chart}}</code> 的变量，然后在页面右侧面板将其绑定为特定组件（如 ECharts 图表、二维码等）。
-                    </div>
-                  </template>
-                </el-empty>
-              </div>
-              <div v-else class="widget-config-panel">
-                <div class="widget-select-row">
-                  <div class="widget-label">选择要配置的组件：</div>
-                  <el-select v-model="selectedChildId" placeholder="选择组件进行配置" style="width: 100%">
-                    <el-option
-                      v-for="child in boundChildren"
-                      :key="child.id"
-                      :value="child.id"
-                      :label="`${canvasChildLabelMap[child.type]} (${child.id.slice(-4)})`"
-                    />
-                  </el-select>
-                </div>
-
-                <div v-if="selectedChild" class="widget-form-container">
-                  <div class="widget-form-header">
-                    <span class="widget-type-badge">{{ selectedChild.type.toUpperCase() }}</span>
-                    <span class="widget-id-text">ID: {{ selectedChild.id.slice(-6) }}</span>
+          <!-- 内置系统变量 -->
+          <div class="html-editor-dialog__variable-section" style="margin-top: 20px;">
+            <div class="html-editor-dialog__variable-section-name">
+              内置系统变量
+              <span class="badge">{{ systemMagicVariableItems.length }}</span>
+            </div>
+            <div class="html-editor-dialog__variable-list compact-list">
+              <div
+                v-for="item in systemMagicVariableItems"
+                :key="item.token"
+                class="html-editor-dialog__variable-row"
+              >
+                <div class="variable-row-left" @click="insertVariable(item.token)">
+                  <div class="variable-token-container">
+                    <el-tag size="small" type="info" class="type-tag">SYS</el-tag>
+                    <code class="clickable-code">{{ item.token }}</code>
                   </div>
-                  <div class="widget-form-content">
-                    <component :is="CanvasChildOperationComponentMap[selectedChild.type]" />
-                  </div>
+                  <span class="variable-desc">{{ item.description }}</span>
                 </div>
               </div>
             </div>
-          </el-tab-pane>
-
-          <!-- Tab 3: 语法速查 -->
-          <el-tab-pane label="语法速查" name="docs">
-            <div class="html-editor-dialog__sidebar-content scrollable-panel font-size-11">
-              <div class="doc-section">
-                <div class="doc-title">变量语法规范</div>
-                <div class="doc-content">
-                  <div class="doc-bullet"><strong>文字</strong>: <code v-pre>{{text.title}}</code></div>
-                  <div class="doc-bullet"><strong>颜色</strong>: <code v-pre>{{color.primary}}</code> 或 <code v-pre>{{color.primary.css}}</code></div>
-                  <div class="doc-bullet"><strong>图片</strong>: <code v-pre>{{image.logo.url}}</code></div>
-                  <div class="doc-bullet"><strong>组件</strong>: <code v-pre>{{child.salesChart}}</code></div>
-                  <div class="doc-bullet"><strong>HTML子模板</strong>: <code v-pre>{{html.subBlock}}</code></div>
-                </div>
-              </div>
-              
-              <div class="doc-section" style="margin-top: 12px;">
-                <div class="doc-title">CSS 限定范围保护</div>
-                <div class="doc-content">
-                  <div class="doc-paragraph">
-                    编辑器支持手写 <code>&lt;style&gt;</code>。保存后，所有 CSS 选择器都会自动被增加属性限制，使其只作用在当前贴纸内，避免样式冲突。
-                  </div>
-                </div>
-              </div>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -234,20 +182,7 @@ const draftValue = ref("");
 const editorContainerRef = ref<HTMLElement | null>(null);
 const editorInstance = shallowRef<EditorView | null>(null);
 
-const activeTabName = ref("variables");
-const selectedChildId = ref("");
-let originalActiveChildId = "this_is_html_id";
-
-const boundChildren = computed(() => {
-  if (!canvasStickerOptions.value?.children) return [];
-  return canvasStickerOptions.value.children.filter(
-    (c: any) => c.type !== "canvas" && c.type !== "html"
-  );
-});
-
-const selectedChild = computed(() => {
-  return canvasStickerOptions.value.children.find((c: any) => c.id === selectedChildId.value);
-});
+// Removed tab-related state and computed properties since we use a simplified sidebar now
 
 function getBadgeType(type: string) {
   switch (type) {
@@ -286,23 +221,32 @@ function insertVariable(token: string) {
   view.focus();
 }
 
-function restoreActiveElement() {
-  currentOperatingCanvasChildId.value = originalActiveChildId;
+function getBoundChildId(item: any) {
+  if (item.type !== "child" && item.type !== "html") return null;
+  const tokenKey = item.token.replace(/^\{\{/, "").replace(/\}\}$/, "");
+  const bindings = props.templateTarget?.htmlBindings || {};
+  
+  let boundValue = bindings[tokenKey];
+  if (!boundValue && tokenKey.startsWith("child.")) {
+    boundValue = bindings[tokenKey.substring(6)];
+  } else if (!boundValue && tokenKey.startsWith("html.")) {
+    boundValue = bindings[tokenKey.substring(5)];
+  }
+  
+  if (boundValue && typeof boundValue === "object" && boundValue.id) {
+    return boundValue.id;
+  }
+  return null;
 }
 
-watch(activeTabName, (tab) => {
-  if (tab === "variables") {
-    currentOperatingCanvasChildId.value = "this_is_html_id";
-  } else if (tab === "widget" && selectedChildId.value) {
-    currentOperatingCanvasChildId.value = selectedChildId.value;
-  }
-});
-
-watch(selectedChildId, (newId) => {
-  if (activeTabName.value === "widget" && newId) {
-    currentOperatingCanvasChildId.value = newId;
-  }
-});
+function configureComponent(id: string) {
+  // 保存 HTML 内容并关闭弹窗
+  handleSave();
+  // 切换活动聚焦元素，主画布侧边栏将自动渲染该组件的配置菜单
+  nextTick(() => {
+    currentOperatingCanvasChildId.value = id;
+  });
+}
 
 const draftSummary = computed(() => {
   const value = String(draftValue.value ?? "");

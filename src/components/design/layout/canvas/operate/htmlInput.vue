@@ -122,37 +122,95 @@
             </div>
             
             <div class="doc-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+              <!-- 1. 基础变量 -->
               <div class="doc-section">
-                <div class="doc-title">基础变量语法</div>
+                <div class="doc-title">1. 基础画布变量</div>
                 <div class="doc-content">
-                  <div class="doc-bullet"><strong>文字</strong>: <code v-pre>{{text.fieldName}}</code></div>
+                  <div class="doc-bullet"><strong>文字排版</strong>: <code v-pre>{{text.fieldName}}</code></div>
                   <div class="doc-bullet">
-                    <strong>颜色</strong>: <code v-pre>{{color.fieldName}}</code> 
-                    <span style="color: #64748b; font-size: 10px;">(或 <code v-pre>{{color.fieldName.css}}</code>)</span>
+                    <strong>颜色方案</strong>: <code v-pre>{{color.fieldName}}</code> 
+                    <span style="color: #64748b; font-size: 10px;">(CSS别名: <code v-pre>{{color.fieldName.css}}</code>)</span>
                   </div>
-                  <div class="doc-bullet"><strong>图片</strong>: <code v-pre>{{image.fieldName.url}}</code></div>
+                  <div class="doc-bullet"><strong>图片素材</strong>: <code v-pre>{{image.fieldName.url}}</code></div>
+                  <div class="doc-bullet"><strong>字体族名</strong>: <code v-pre>{{font.fieldName.family}}</code></div>
                 </div>
               </div>
 
+              <!-- 2. 数据与可视化图表 -->
               <div class="doc-section">
-                <div class="doc-title">高级组件变量语法</div>
+                <div class="doc-title">2. 数据与可视化图表</div>
                 <div class="doc-content">
                   <div class="doc-bullet"><strong>ECharts 图表</strong>: <code v-pre>{{echart.chartName}}</code></div>
-                  <div class="doc-bullet"><strong>Three.js 三维</strong>: <code v-pre>{{threejs.modelName}}</code></div>
-                  <div class="doc-bullet"><strong>词云图</strong>: <code v-pre>{{wordCloud.cloudName}}</code></div>
-                  <div class="doc-bullet"><strong>二维码 / 条形码</strong>: <code v-pre>{{qrcode.qrName}}</code> / <code v-pre>{{barcode.barName}}</code></div>
-                  <div class="doc-bullet"><strong>ASCII 艺术字</strong>: <code v-pre>{{figlet.fontName}}</code></div>
-                  <div class="doc-bullet"><strong>数学公式</strong>: <code v-pre>{{math.formulaName}}</code></div>
-                  <div class="doc-bullet"><strong>Mermaid 流程图</strong>: <code v-pre>{{mermaid.graphName}}</code></div>
-                  <div class="doc-bullet"><strong>嵌套 HTML 片段</strong>: <code v-pre>{{html.blockName}}</code></div>
-                  <div class="doc-bullet"><strong>通用组件插槽</strong>: <code v-pre>{{child.slotName}}</code></div>
+                  <div class="doc-bullet"><strong>Data UI 图表</strong>: <code v-pre>{{vueDataUi.chartName}}</code></div>
+                  <div class="doc-bullet"><strong>Chart.js 图表</strong>: <code v-pre>{{chartjs.chartName}}</code></div>
+                  <div class="doc-bullet"><strong>Frappe 极简图表</strong>: <code v-pre>{{frappeChart.chartName}}</code></div>
+                  <div class="doc-bullet"><strong>Plotly 科学图表</strong>: <code v-pre>{{plotlyChart.chartName}}</code></div>
+                  <div class="doc-bullet"><strong>Vega-Lite 规范</strong>: <code v-pre>{{vegaLite.chartName}}</code></div>
+                  <div class="doc-bullet"><strong>xkcd 手绘图表</strong>: <code v-pre>{{chartXkcd.chartName}}</code></div>
                 </div>
               </div>
 
+              <!-- 3. 三维、图形与网络拓扑 -->
               <div class="doc-section">
-                <div class="doc-title">CSS 沙箱机制</div>
-                <div class="doc-content" style="font-size: 11px; color: #64748b; line-height: 1.5;">
-                  手写的 <code>&lt;style&gt;</code> 样式会自动局限于当前贴纸内，避免全局冲突。
+                <div class="doc-title">3. 三维、几何与拓扑网络</div>
+                <div class="doc-content">
+                  <div class="doc-bullet"><strong>Three.js 3D场景</strong>: <code v-pre>{{threejs.sceneName}}</code></div>
+                  <div class="doc-bullet"><strong>D3 词云图</strong>: <code v-pre>{{wordCloud.cloudName}}</code> <span style="color:#94a3b8;font-size:10px;">(或d3Cloud)</span></div>
+                  <div class="doc-bullet"><strong>Cytoscape 关系图</strong>: <code v-pre>{{cytoscape.graphName}}</code> <span style="color:#94a3b8;font-size:10px;">(或cytoscapeGraph)</span></div>
+                  <div class="doc-bullet"><strong>Dagre 拓扑图</strong>: <code v-pre>{{dagreGraph.graphName}}</code></div>
+                  <div class="doc-bullet"><strong>Rough 手绘图形</strong>: <code v-pre>{{roughShape.shapeName}}</code></div>
+                  <div class="doc-bullet"><strong>D3 自定义绘图</strong>: <code v-pre>{{d3.chartName}}</code></div>
+                  <div class="doc-bullet"><strong>程序画布 Canvas</strong>: <code v-pre>{{rawCanvas.canvasName}}</code></div>
+                  <div class="doc-bullet"><strong>圆形 / 矩形</strong>: <code v-pre>{{child.shapeName}}</code> <span style="color:#94a3b8;font-size:10px;">(ellipse / rect)</span></div>
+                </div>
+              </div>
+
+              <!-- 4. 排版、艺术字与编码 -->
+              <div class="doc-section">
+                <div class="doc-title">4. 排版、艺术字与编码</div>
+                <div class="doc-content">
+                  <div class="doc-bullet"><strong>二维码 / 条形码</strong>: <code v-pre>{{qrcode.qrName}}</code> / <code v-pre>{{barcode.barName}}</code></div>
+                  <div class="doc-bullet"><strong>Figlet 艺术字</strong>: <code v-pre>{{figlet.textName}}</code></div>
+                  <div class="doc-bullet"><strong>OpenType 路径字</strong>: <code v-pre>{{child.fontPath}}</code> <span style="color:#94a3b8;font-size:10px;">(opentypeText)</span></div>
+                  <div class="doc-bullet"><strong>Shiki 代码高亮</strong>: <code v-pre>{{child.codeName}}</code> <span style="color:#94a3b8;font-size:10px;">(codeBlock)</span></div>
+                </div>
+              </div>
+
+              <!-- 5. 科学计算、公式与谱图 -->
+              <div class="doc-section">
+                <div class="doc-title">5. 科学、乐谱与文档结构</div>
+                <div class="doc-content">
+                  <div class="doc-bullet"><strong>KaTeX 数学公式</strong>: <code v-pre>{{math.formulaName}}</code></div>
+                  <div class="doc-bullet"><strong>Mermaid 流程图</strong>: <code v-pre>{{mermaid.graphName}}</code></div>
+                  <div class="doc-bullet"><strong>Graphviz DOT网络</strong>: <code v-pre>{{graphviz.dotName}}</code></div>
+                  <div class="doc-bullet"><strong>RDKit 2D分子式</strong>: <code v-pre>{{molecule.molName}}</code></div>
+                  <div class="doc-bullet"><strong>3Dmol 3D分子结构</strong>: <code v-pre>{{threeMol.molName}}</code></div>
+                  <div class="doc-bullet"><strong>ABC 简易乐谱</strong>: <code v-pre>{{abcNotation.scoreName}}</code></div>
+                  <div class="doc-bullet"><strong>VexFlow 五线谱</strong>: <code v-pre>{{vexFlow.scoreName}}</code></div>
+                  <div class="doc-bullet"><strong>Markmap 思维导图</strong>: <code v-pre>{{markmapChart.mapName}}</code></div>
+                </div>
+              </div>
+
+              <!-- 6. 音效、特效与背景纹理 -->
+              <div class="doc-section">
+                <div class="doc-title">6. 音频、特效与背景纹理</div>
+                <div class="doc-content">
+                  <div class="doc-bullet"><strong>Waveform 音频波形</strong>: <code v-pre>{{waveform.waveName}}</code></div>
+                  <div class="doc-bullet"><strong>Simplex 噪声纹理</strong>: <code v-pre>{{simplexNoise.noiseName}}</code></div>
+                  <div class="doc-bullet"><strong>Particles 粒子特效</strong>: <code v-pre>{{particlesEffect.partName}}</code></div>
+                  <div class="doc-bullet"><strong>Confetti 撒花效果</strong>: <code v-pre>{{confetti.effectName}}</code></div>
+                  <div class="doc-bullet"><strong>Trianglify 三角背景</strong>: <code v-pre>{{trianglify.patternName}}</code></div>
+                  <div class="doc-bullet"><strong>Astronomy 星座图</strong>: <code v-pre>{{starChart.skyName}}</code></div>
+                </div>
+              </div>
+
+              <!-- 7. 系统与结构 -->
+              <div class="doc-section">
+                <div class="doc-title">7. 系统控制与结构</div>
+                <div class="doc-content">
+                  <div class="doc-bullet"><strong>嵌套子 HTML 片段</strong>: <code v-pre>{{html.blockName}}</code></div>
+                  <div class="doc-bullet"><strong>通用组件插槽</strong>: <code v-pre>{{child.slotName}}</code></div>
+                  <div class="doc-bullet"><strong>CSS 作用域隔离</strong>: 手写 <code>&lt;style&gt;</code> 自动进行沙箱封装，只在当前贴纸内生效。</div>
                 </div>
               </div>
             </div>

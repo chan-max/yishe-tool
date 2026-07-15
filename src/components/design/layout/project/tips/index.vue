@@ -94,7 +94,7 @@
       </div>
 
       <!-- 空状态 -->
-      <s1-empty v-slot v-if="isEmpty">
+      <s1-empty v-if="isEmpty">
         <template #description>暂无设计技巧</template>
       </s1-empty>
     </div>

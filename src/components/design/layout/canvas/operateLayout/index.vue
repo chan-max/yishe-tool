@@ -2,53 +2,51 @@
   <el-scrollbar>
     <div class="canvas-operate-form" style="margin: 1rem">
       <!-- 如果当前是 HTML 模板或者画布设置，显示顶部的二选一 Tab -->
-      <div v-if="currentOperatingCanvasChild.type === 'html' || currentOperatingCanvasChild.type === 'canvas'" class="custom-segmented-control">
+      <div v-if="activeChild && (activeChild.type === 'html' || activeChild.type === 'canvas')" class="custom-segmented-control">
         <div 
           class="segmented-item" 
-          :class="{ active: currentOperatingCanvasChild.type !== 'canvas' }"
-          @click="setTab('html')"
+          :class="{ active: activeChildId === 'this_is_html_id' }"
+          @click="activeChildId = 'this_is_html_id'"
         >
           主 HTML 模板
         </div>
         <div 
           class="segmented-item" 
-          :class="{ active: currentOperatingCanvasChild.type === 'canvas' }"
-          @click="setTab('canvas')"
+          :class="{ active: activeChildId === 'this_is_canvas_id' }"
+          @click="activeChildId = 'this_is_canvas_id'"
         >
           画布设置
         </div>
       </div>
 
       <!-- 如果当前选中的是子组件，显示快捷返回按钮 -->
-      <div v-if="currentOperatingCanvasChild.type !== 'html' && currentOperatingCanvasChild.type !== 'canvas'" class="sidebar-back-header">
-        <el-button size="small" type="info" plain style="width: 100%;" @click="selectMasterHtml">
+      <div v-if="activeChild && activeChild.type !== 'html' && activeChild.type !== 'canvas'" class="sidebar-back-header">
+        <el-button size="small" type="info" plain style="width: 100%;" @click="activeChildId = 'this_is_html_id'">
           ← 返回编辑主 HTML 模板
         </el-button>
         <div style="font-size: 11px; color: #8a8f98; margin-top: 6px; text-align: center;">
-          当前正在编辑：{{ currentOperatingCanvasChild.type.toUpperCase() }} ({{ currentOperatingCanvasChild.id.slice(-4) }})
+          当前正在编辑：{{ activeChild.type.toUpperCase() }} ({{ activeChild.id.slice(-4) }})
         </div>
       </div>
 
-      <component :is="CanvasChildOperationComponentMap[currentOperatingCanvasChild.type]"></component>
+      <component v-if="activeChild" :is="CanvasChildOperationComponentMap[activeChild.type]"></component>
     </div>
   </el-scrollbar>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
-import { currentOperatingCanvasChildId } from "../index.tsx";
+import { currentOperatingCanvasChildId, currentOperatingCanvasChild } from "../index.tsx";
 
-function setTab(tab: 'html' | 'canvas') {
-  if (tab === 'canvas') {
-    currentOperatingCanvasChildId.value = "this_is_canvas_id";
-  } else {
-    currentOperatingCanvasChildId.value = "this_is_html_id";
+const activeChild = computed(() => currentOperatingCanvasChild.value);
+const activeChildId = computed({
+  get() {
+    return currentOperatingCanvasChildId.value;
+  },
+  set(val) {
+    currentOperatingCanvasChildId.value = val;
   }
-}
-
-function selectMasterHtml() {
-  currentOperatingCanvasChildId.value = "this_is_html_id";
-}
+});
 
 import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
 import operateItemTextContent from "@/components/design/layout/canvas/operate/textContent.vue";
@@ -93,7 +91,6 @@ import {
   removeCavnasChild,
   currentCanvasControllerInstance,
   showMainCanvas,
-  currentOperatingCanvasChild,
   CanvasChildType,
   updateRenderingCanvas,
   CanvasChildOperationComponentMap

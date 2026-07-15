@@ -106,7 +106,15 @@ export function normalizeHtmlTemplateBindings(
         break;
       case "font":
       case "image":
+      case "child":
         setValueByPath(normalized, field.key, null);
+        break;
+      case "html":
+        setValueByPath(normalized, field.key, {
+          htmlContent: "",
+          cssContent: "",
+          htmlBindings: {},
+        });
         break;
       case "textarea":
       case "text":
@@ -175,6 +183,14 @@ function inferHtmlTemplateFieldType(path = ""): HtmlTemplateFieldType | null {
 
   if (path.startsWith("font.")) {
     return "font";
+  }
+
+  if (path.startsWith("child.")) {
+    return "child";
+  }
+
+  if (path.startsWith("html.")) {
+    return "html";
   }
 
   return null;

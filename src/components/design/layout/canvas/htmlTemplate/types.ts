@@ -3,7 +3,9 @@ export type HtmlTemplateFieldType =
   | "textarea"
   | "color"
   | "image"
-  | "font";
+  | "font"
+  | "child"
+  | "html";
 
 export type HtmlTemplateSource = "builtin" | "local" | "remote";
 

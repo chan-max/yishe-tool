@@ -216,11 +216,39 @@ export var canvasStickerOptions = ref({
   children: [
     // 默认会存在一个画布元素
     createDefaultCanvasChildcanvasStickerOptions(),
+    // 默认固定的 HTML 代码主元素
+    {
+      id: "this_is_html_id",
+      type: "html",
+      htmlContent: `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #fafafa; color: #666; font-family: sans-serif; font-size: 24px;">\n  主 HTML 模板\n</div>`,
+      htmlBindings: {},
+      htmlTemplateFields: [],
+      htmlTemplateDefaultBindings: {},
+      htmlTemplateMeta: null,
+      transform: {
+        rotate: 0,
+        scaleX: 1,
+        scaleY: 1,
+      },
+      filter: {
+        blur: { value: 0, unit: "px" },
+        brightness: { value: 100, unit: "%" },
+        contrast: { value: 100, unit: "%" },
+        grayscale: { value: 0, unit: "%" },
+        hueRotate: { value: 0, unit: "deg" },
+        invert: { value: 0, unit: "%" },
+        opacity: { value: 100, unit: "%" },
+        saturate: { value: 100, unit: "%" },
+        sepia: { value: 0, unit: "%" },
+      },
+      zIndex: 0,
+      undeletable: true,
+    }
   ],
 });
 
 export const canvasStickerOptionsOnlyChild = computed(() => {
-  return canvasStickerOptions.value.children.find((c) => c.type == "canvas");
+  return canvasStickerOptions.value.children.find((c) => c.type == "canvas") as any;
 });
 
 // 获取子元素最高层级的元素，而不是获取该层级 ， 有多个返回第一个

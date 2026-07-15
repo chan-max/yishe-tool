@@ -138,8 +138,8 @@ function aspectRatioChange(asepctRatio) {
    * 分为基于宽度或高度
    */
   let canvasChild = canvasStickerOptions.value.children.find(
-    (item) => item.type == "canvas",
-  );
+    (item: any) => item.type == "canvas",
+  ) as any;
 
   canvasChild.height.value = Number(
     (canvasChild.width.value / asepctRatio).toFixed(2),
@@ -149,7 +149,7 @@ function aspectRatioChange(asepctRatio) {
 function handlePresetSelect(preset: { width: number; height: number }) {
   let canvasChild = canvasStickerOptions.value.children.find(
     (item: any) => item.type == "canvas",
-  );
+  ) as any;
   if (canvasChild) {
     canvasChild.width.value = preset.width;
     canvasChild.height.value = preset.height;

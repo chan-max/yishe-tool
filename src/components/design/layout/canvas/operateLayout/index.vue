@@ -1,6 +1,16 @@
 <template>
   <el-scrollbar>
     <div class="canvas-operate-form" style="margin: 1rem">
+      <!-- 如果当前选中的不是 HTML 模板，显示快捷返回按钮 -->
+      <div v-if="currentOperatingCanvasChild.type !== 'html' && currentOperatingCanvasChild.type !== 'canvas'" class="sidebar-back-header">
+        <el-button size="small" type="info" plain style="width: 100%;" @click="selectMasterHtml">
+          ← 返回编辑主 HTML 模板
+        </el-button>
+        <div style="font-size: 11px; color: #8a8f98; margin-top: 6px; text-align: center;">
+          当前正在编辑：{{ currentOperatingCanvasChild.type.toUpperCase() }} ({{ currentOperatingCanvasChild.id.slice(-4) }})
+        </div>
+      </div>
+
       <component :is="CanvasChildOperationComponentMap[currentOperatingCanvasChild.type]"></component>
     </div>
   </el-scrollbar>
@@ -8,6 +18,11 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
+import { currentOperatingCanvasChildId } from "../index.tsx";
+
+function selectMasterHtml() {
+  currentOperatingCanvasChildId.value = "this_is_html_id";
+}
 
 import operateItemColor from "@/components/design/layout/canvas/operate/color/index.vue";
 import operateItemTextContent from "@/components/design/layout/canvas/operate/textContent.vue";
@@ -72,7 +87,12 @@ function remove(index) {
 
 
 </script>
-<style lang="less">
+.sidebar-back-header {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
 .el-input--small {
   input::-webkit-textfield-decoration-container {
     height: 16px;

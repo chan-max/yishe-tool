@@ -33,7 +33,7 @@ function setNestedValue(obj: any, path: string, value: any): void {
 export function createDesignOperationContext(): OperationContext {
   return {
     getCanvasSize() {
-      const child = getCanvasChild();
+      const child = getCanvasChild() as any;
       if (!child) return { width: 2000, height: 2000, unit: "px" };
       return {
         width: child.width.value,
@@ -43,7 +43,7 @@ export function createDesignOperationContext(): OperationContext {
     },
 
     setCanvasSize(width, height, unit) {
-      const child = getCanvasChild();
+      const child = getCanvasChild() as any;
       if (!child) return;
       const finalUnit = unit || child.width.unit;
       child.width = { value: width, unit: finalUnit };
@@ -51,12 +51,12 @@ export function createDesignOperationContext(): OperationContext {
     },
 
     getCanvasBackgroundColor() {
-      const child = getCanvasChild();
+      const child = getCanvasChild() as any;
       return child?.backgroundColor?.color || "rgba(0,0,0,0)";
     },
 
     setCanvasBackgroundColor(color) {
-      const child = getCanvasChild();
+      const child = getCanvasChild() as any;
       if (!child) return;
       child.backgroundColor = { color };
     },

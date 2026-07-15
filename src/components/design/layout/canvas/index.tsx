@@ -247,6 +247,90 @@ export var canvasStickerOptions = ref({
   ],
 });
 
+watch(
+  canvasStickerOptions,
+  (newVal) => {
+    if (!newVal.children) {
+      newVal.children = [];
+    }
+    const children = newVal.children;
+
+    // 1. 确保始终存在 canvas 元素
+    let hasCanvas = children.some((c) => c.type === "canvas");
+    if (!hasCanvas) {
+      children.unshift(createDefaultCanvasChildcanvasStickerOptions());
+    }
+
+    // 2. 确保始终存在 id 为 "this_is_html_id" 的 html 元素
+    let hasHtml = children.some((c) => c.id === "this_is_html_id");
+    if (!hasHtml) {
+      const defaultHtml = {
+        id: "this_is_html_id",
+        type: "html",
+        htmlContent: `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #fafafa; color: #666; font-family: sans-serif; font-size: 24px;">\n  主 HTML 模板\n</div>`,
+        htmlBindings: {},
+        htmlTemplateFields: [],
+        htmlTemplateDefaultBindings: {},
+        htmlTemplateMeta: null,
+        transform: {
+          rotate: 0,
+          scaleX: 1,
+          scaleY: 1,
+        },
+        filter: {
+          blur: { value: 0, unit: "px" },
+          brightness: { value: 100, unit: "%" },
+          contrast: { value: 100, unit: "%" },
+          grayscale: { value: 0, unit: "%" },
+          hueRotate: { value: 0, unit: "deg" },
+          invert: { value: 0, unit: "%" },
+          opacity: { value: 100, unit: "%" },
+          saturate: { value: 100, unit: "%" },
+          sepia: { value: 0, unit: "%" },
+          filterUrl: {
+            isCompositeFilter: false,
+            filterChildren: [],
+          }
+        },
+        zIndex: 0,
+        undeletable: true,
+      };
+
+      const canvasIndex = children.findIndex((c) => c.type === "canvas");
+      if (canvasIndex !== -1) {
+        children.splice(canvasIndex + 1, 0, defaultHtml);
+      } else {
+        children.push(defaultHtml);
+      }
+    } else {
+      const htmlChild = children.find((c) => c.id === "this_is_html_id");
+      if (htmlChild) {
+        if (!htmlChild.filter) {
+          htmlChild.filter = {
+            blur: { value: 0, unit: "px" },
+            brightness: { value: 100, unit: "%" },
+            contrast: { value: 100, unit: "%" },
+            grayscale: { value: 0, unit: "%" },
+            hueRotate: { value: 0, unit: "deg" },
+            invert: { value: 0, unit: "%" },
+            opacity: { value: 100, unit: "%" },
+            saturate: { value: 100, unit: "%" },
+            sepia: { value: 0, unit: "%" },
+          } as any;
+        }
+        if (!htmlChild.filter.filterUrl) {
+          htmlChild.filter.filterUrl = {
+            isCompositeFilter: false,
+            filterChildren: [],
+          };
+        }
+        htmlChild.undeletable = true;
+      }
+    }
+  },
+  { immediate: true, deep: true }
+);
+
 export const canvasStickerOptionsOnlyChild = computed(() => {
   return canvasStickerOptions.value.children.find((c) => c.type == "canvas") as any;
 });

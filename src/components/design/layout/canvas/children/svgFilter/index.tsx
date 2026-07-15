@@ -243,13 +243,15 @@ function SvgChildCompositeFilterComponent() {
         }
 
         let url = child.filter.filterUrl
-        return url.isCompositeFilter && url.filterChildren.length
+        return url && url.isCompositeFilter && url.filterChildren && url.filterChildren.length
     })
 
 
 
     const filters = compositeChildren.map((child) => {
-        let filterIds = child.filter.filterUrl.filterChildren.map((item) => item.filterId)
+        let filterUrl = child.filter?.filterUrl
+        if (!filterUrl || !filterUrl.filterChildren) return null
+        let filterIds = filterUrl.filterChildren.map((item) => item.filterId)
         let filterIdStr = filterIds.join('-')
 
         let mergeNodes = filterIds.map((name) => {
@@ -263,7 +265,7 @@ function SvgChildCompositeFilterComponent() {
                 }
             </feMerge>
         </filter>
-    })
+    }).filter(Boolean)
 
 
     return <>

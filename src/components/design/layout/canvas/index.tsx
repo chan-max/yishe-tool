@@ -750,6 +750,83 @@ function createCanvasChild(options) {
 
 export const renderingLoading = ref(false);
 
+// ============ DOM 重挂载与插槽机制 ============
+
+let activeResizeObserver: ResizeObserver | null = null;
+
+function reparentCanvasChildren() {
+  const children = canvasStickerOptions.value.children;
+
+  if (!activeResizeObserver) {
+    activeResizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const placeholder = entry.target as HTMLElement;
+        const childId = placeholder.getAttribute("data-s1-child-id");
+        if (!childId) continue;
+
+        const child = canvasStickerOptions.value.children.find((c) => c.id === childId);
+        if (!child) continue;
+
+        const width = placeholder.clientWidth;
+        const height = placeholder.clientHeight;
+
+        // 动态同步宽高尺寸，触发子组件响应式重绘（如 ECharts resize）
+        if (child.width && (child.width.value !== width || child.width.unit !== "px")) {
+          child.width.value = width;
+          child.width.unit = "px";
+        }
+        if (child.height && (child.height.value !== height || child.height.unit !== "px")) {
+          child.height.value = height;
+          child.height.unit = "px";
+        }
+      }
+    });
+  }
+
+  // 先清空历史观察
+  activeResizeObserver.disconnect();
+
+  children.forEach((child) => {
+    if (child.type === "canvas" || child.type === "html") return;
+
+    // 支持 data-s1-child-id 或 class="s1-child"
+    const placeholder = document.querySelector(`[data-s1-child-id="${child.id}"]`);
+    const renderNode = document.getElementById(`s1-child-render-${child.id}`);
+
+    if (placeholder && renderNode) {
+      if (renderNode.parentNode !== placeholder) {
+        placeholder.appendChild(renderNode);
+      }
+
+      // 重写子组件的绝对定位与大小，使其填满插槽
+      renderNode.style.width = "100%";
+      renderNode.style.height = "100%";
+      renderNode.style.position = "relative";
+      renderNode.style.top = "0";
+      renderNode.style.left = "0";
+
+      const childEl = renderNode.firstElementChild as HTMLElement;
+      if (childEl) {
+        childEl.style.width = "100%";
+        childEl.style.height = "100%";
+        childEl.style.position = "relative";
+        childEl.style.top = "0";
+        childEl.style.left = "0";
+        childEl.style.transform = "none";
+      }
+
+      // 监听插槽尺寸变化
+      activeResizeObserver.observe(placeholder);
+    } else if (renderNode) {
+      // 找不到插槽时退回到离屏池中，防止被销毁
+      const pool = document.getElementById("s1-offscreen-pool");
+      if (pool && renderNode.parentNode !== pool) {
+        pool.appendChild(renderNode);
+      }
+    }
+  });
+}
+
 // 二维的画布控制器
 
 export class CanvasController {
@@ -1020,22 +1097,81 @@ export class CanvasController {
   getRender() {
     // 改为异步组件
     function render() {
-      const children = canvasStickerOptions.value.children.map(
-        (childOptions) => {
+      const childrenOptions = canvasStickerOptions.value.children;
+      const hasHtmlElement = childrenOptions.some((c) => c.type === "html");
+
+      if (!hasHtmlElement) {
+        // 兼容旧模式：当画布上没有 HTML 模板时，所有子元素平级平铺渲染
+        const children = childrenOptions.map((childOptions) => {
           return createCanvasChild(childOptions);
-        },
+        });
+
+        this.updateRenderingCanvas();
+
+        return (
+          <Canvas
+            options={childrenOptions.find(
+              (item) => item.type == "canvas",
+            )}
+          >
+            {children}
+          </Canvas>
+        );
+      }
+
+      // 新嵌入模式：只渲染 Master HTML 在画布顶层，其他元素渲染在离屏池中，并通过 DOM 重挂载挂载到 HTML 中
+      const htmlChild = childrenOptions.find((c) => c.type === "html");
+      const htmlRenderNode = htmlChild ? createCanvasChild(htmlChild) : null;
+
+      const nonHtmlChildren = childrenOptions.filter(
+        (c) => c.type !== "canvas" && c.type !== "html"
       );
+      
+      const offscreenRenderNodes = nonHtmlChildren.map((c) => {
+        return (
+          <div
+            id={`s1-child-render-${c.id}`}
+            key={c.id}
+            style={{ width: "100%", height: "100%", position: "relative" }}
+          >
+            {createCanvasChild(c)}
+          </div>
+        );
+      });
 
       this.updateRenderingCanvas();
 
+      nextTick(() => {
+        reparentCanvasChildren();
+      });
+
       return (
-        <Canvas
-          options={canvasStickerOptions.value.children.find(
-            (item) => item.type == "canvas",
-          )}
-        >
-          {children}
-        </Canvas>
+        <div style={{ width: "100%", height: "100%", position: "relative" }}>
+          {/* 主画布：仅挂载 Master HTML */}
+          <Canvas
+            options={childrenOptions.find(
+              (item) => item.type == "canvas",
+            )}
+          >
+            {htmlRenderNode}
+          </Canvas>
+
+          {/* 离屏渲染池：挂载所有图表、词云等其他子元素 */}
+          <div
+            id="s1-offscreen-pool"
+            style={{
+              position: "absolute",
+              top: "-9999px",
+              left: "-9999px",
+              width: "1000px",
+              height: "1000px",
+              overflow: "hidden",
+              pointerEvents: "none",
+            }}
+          >
+            {offscreenRenderNodes}
+          </div>
+        </div>
       );
     }
 

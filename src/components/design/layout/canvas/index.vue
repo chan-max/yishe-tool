@@ -348,17 +348,53 @@ function remove(id) {
 }
 
 function clearCanvasChildren() {
-  // 除了画布，其他全移除
+  // 除了画布和 Master HTML 元素，其他全移除；并将 HTML 元素重置为初始状态
   const canvasChild =
     canvasStickerOptions.value.children.find(
       (child) => child.type === "canvas",
     ) || canvasStickerOptions.value.children[0];
+
+  const htmlChild =
+    canvasStickerOptions.value.children.find(
+      (child) => child.id === "this_is_html_id",
+    ) || {
+      id: "this_is_html_id",
+      type: "html",
+      htmlContent: `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #fafafa; color: #666; font-family: sans-serif; font-size: 24px;">\n  主 HTML 模板\n</div>`,
+      htmlBindings: {},
+      htmlTemplateFields: [],
+      htmlTemplateDefaultBindings: {},
+      htmlTemplateMeta: null,
+      transform: { rotate: 0, scaleX: 1, scaleY: 1 },
+      filter: {
+        blur: { value: 0, unit: "px" },
+        brightness: { value: 100, unit: "%" },
+        contrast: { value: 100, unit: "%" },
+        grayscale: { value: 0, unit: "%" },
+        hueRotate: { value: 0, unit: "deg" },
+        invert: { value: 0, unit: "%" },
+        opacity: { value: 100, unit: "%" },
+        saturate: { value: 100, unit: "%" },
+        sepia: { value: 0, unit: "%" },
+      },
+      zIndex: 0,
+      undeletable: true,
+    };
+
+  // 重置 HTML 内容与绑定关系
+  htmlChild.htmlContent = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #fafafa; color: #666; font-family: sans-serif; font-size: 24px;">\n  主 HTML 模板\n</div>`;
+  htmlChild.htmlBindings = {};
+  htmlChild.htmlTemplateFields = [];
+  htmlChild.htmlTemplateDefaultBindings = {};
+  htmlChild.htmlTemplateMeta = null;
+
   const count = canvasStickerOptions.value.children.filter(
-    (child) => child.type !== "canvas",
+    (child) => child.type !== "canvas" && child.id !== "this_is_html_id",
   ).length;
-  canvasStickerOptions.value.children = [canvasChild];
-  currentOperatingCanvasChildId.value = canvasChild.id;
-  message.success(`已清空画布，共删除 ${count} 个元素`);
+
+  canvasStickerOptions.value.children = [canvasChild, htmlChild];
+  currentOperatingCanvasChildId.value = "this_is_html_id";
+  message.success(`已清空画布，共删除 ${count} 个关联组件`);
 }
 
 /**

@@ -756,8 +756,9 @@ export const currentOperatingCanvasChild: any = computed(() => {
  */
 export function removeCavnasChild(id) {
   let child = canvasStickerOptions.value.children.find(
-    (child) => child.id == id,
-  );
+    (child: any) => child.id == id,
+  ) as any;
+  if (!child || child.undeletable) return;
   let index = canvasStickerOptions.value.children.indexOf(child);
   canvasStickerOptions.value.children.splice(index, 1);
   currentFocusingStickerId.value = null;

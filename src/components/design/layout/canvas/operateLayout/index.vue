@@ -1,11 +1,22 @@
 <template>
   <el-scrollbar>
     <div class="canvas-operate-form" style="margin: 1rem">
-      <div v-if="currentOperatingCanvasChild.type === 'html' || currentOperatingCanvasChild.type === 'canvas'" class="sidebar-main-tabs">
-        <el-radio-group v-model="activeMainTab" size="small" style="width: 100%; display: flex; justify-content: center;">
-          <el-radio-button value="html">主 HTML 模板</el-radio-button>
-          <el-radio-button value="canvas">画布设置</el-radio-button>
-        </el-radio-group>
+      <!-- 如果当前是 HTML 模板或者画布设置，显示顶部的二选一 Tab -->
+      <div v-if="currentOperatingCanvasChild.type === 'html' || currentOperatingCanvasChild.type === 'canvas'" class="custom-segmented-control">
+        <div 
+          class="segmented-item" 
+          :class="{ active: activeMainTab === 'html' }"
+          @click="activeMainTab = 'html'"
+        >
+          主 HTML 模板
+        </div>
+        <div 
+          class="segmented-item" 
+          :class="{ active: activeMainTab === 'canvas' }"
+          @click="activeMainTab = 'canvas'"
+        >
+          画布设置
+        </div>
       </div>
 
       <!-- 如果当前选中的是子组件，显示快捷返回按钮 -->
@@ -108,19 +119,34 @@ function remove(index) {
 
 </script>
 <style lang="less">
-.sidebar-main-tabs {
-  margin-bottom: 14px;
-  
-  .el-radio-group {
-    display: flex;
-    width: 100%;
-    
-    .el-radio-button {
-      flex: 1;
-      
-      .el-radio-button__inner {
-        width: 100%;
-      }
+.custom-segmented-control {
+  display: flex;
+  background-color: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  user-select: none;
+  cursor: pointer;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+
+  .segmented-item {
+    flex: 1;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    border-radius: 6px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      color: #0f172a;
+    }
+
+    &.active {
+      background-color: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
     }
   }
 }

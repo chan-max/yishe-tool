@@ -1,7 +1,14 @@
 <template>
   <el-scrollbar>
     <div class="canvas-operate-form" style="margin: 1rem">
-      <!-- 如果当前选中的不是 HTML 模板，显示快捷返回按钮 -->
+      <div v-if="currentOperatingCanvasChild.type === 'html' || currentOperatingCanvasChild.type === 'canvas'" class="sidebar-main-tabs">
+        <el-radio-group v-model="activeMainTab" size="small" style="width: 100%; display: flex; justify-content: center;">
+          <el-radio-button value="html">主 HTML 模板</el-radio-button>
+          <el-radio-button value="canvas">画布设置</el-radio-button>
+        </el-radio-group>
+      </div>
+
+      <!-- 如果当前选中的是子组件，显示快捷返回按钮 -->
       <div v-if="currentOperatingCanvasChild.type !== 'html' && currentOperatingCanvasChild.type !== 'canvas'" class="sidebar-back-header">
         <el-button size="small" type="info" plain style="width: 100%;" @click="selectMasterHtml">
           ← 返回编辑主 HTML 模板
@@ -19,6 +26,19 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import { currentOperatingCanvasChildId } from "../index.tsx";
+
+const activeMainTab = computed({
+  get() {
+    return currentOperatingCanvasChild.value.type === 'canvas' ? 'canvas' : 'html';
+  },
+  set(val) {
+    if (val === 'canvas') {
+      currentOperatingCanvasChildId.value = "this_is_canvas_id";
+    } else {
+      currentOperatingCanvasChildId.value = "this_is_html_id";
+    }
+  }
+});
 
 function selectMasterHtml() {
   currentOperatingCanvasChildId.value = "this_is_html_id";
@@ -88,6 +108,23 @@ function remove(index) {
 
 </script>
 <style lang="less">
+.sidebar-main-tabs {
+  margin-bottom: 14px;
+  
+  .el-radio-group {
+    display: flex;
+    width: 100%;
+    
+    .el-radio-button {
+      flex: 1;
+      
+      .el-radio-button__inner {
+        width: 100%;
+      }
+    }
+  }
+}
+
 .sidebar-back-header {
   margin-bottom: 14px;
   padding-bottom: 12px;

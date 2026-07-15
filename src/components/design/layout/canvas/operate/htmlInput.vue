@@ -40,7 +40,11 @@
         </div>
 
         <div v-loading="loadingEditor" class="html-editor-dialog__editor-shell">
-          <div v-show="!editorError" ref="editorContainerRef" class="      <div class="html-editor-dialog__sidebar">
+          <div v-show="!editorError" ref="editorContainerRef" class="html-editor-dialog__editor"></div>
+        </div>
+      </div>
+
+      <div class="html-editor-dialog__sidebar">
         <el-tabs v-model="activeTabName" class="html-editor-dialog__tabs" stretch>
           <!-- Tab 1: 模板变量 -->
           <el-tab-pane label="模板变量" name="variables">

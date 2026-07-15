@@ -268,6 +268,7 @@ import {
   currentOperatingCanvasChildId,
   CanvasChildOperationComponentMap,
   canvasChildLabelMap,
+  canvasChildDefaultOptionsMap,
 } from "../index.tsx";
 
 import { EditorState, Extension } from "@codemirror/state";
@@ -637,6 +638,158 @@ function handleCancel() {
   dialogVisible.value = false;
 }
 
+function inferComponentTypeFromKey(key: string): string {
+  let inferredType = "echart"; // default ECharts
+  
+  if (key.startsWith("threejs.") || key.startsWith("threeScene.")) {
+    inferredType = "threeScene";
+  } else if (key.startsWith("echart.")) {
+    inferredType = "echart";
+  } else if (key.startsWith("wordCloud.")) {
+    inferredType = "wordCloud";
+  } else if (key.startsWith("barcode.")) {
+    inferredType = "barcode";
+  } else if (key.startsWith("qrcode.")) {
+    inferredType = "qrcode";
+  } else if (key.startsWith("figlet.")) {
+    inferredType = "figlet";
+  } else if (key.startsWith("math.")) {
+    inferredType = "math";
+  } else if (key.startsWith("mermaid.")) {
+    inferredType = "mermaid";
+  } else if (key.startsWith("graphviz.")) {
+    inferredType = "graphviz";
+  } else if (key.startsWith("dagreGraph.")) {
+    inferredType = "dagreGraph";
+  } else if (key.startsWith("roughShape.")) {
+    inferredType = "roughShape";
+  } else if (key.startsWith("chartjs.")) {
+    inferredType = "chartjs";
+  } else if (key.startsWith("frappeChart.")) {
+    inferredType = "frappeChart";
+  } else if (key.startsWith("chartXkcd.")) {
+    inferredType = "chartXkcd";
+  } else if (key.startsWith("plotlyChart.")) {
+    inferredType = "plotlyChart";
+  } else if (key.startsWith("vegaLite.")) {
+    inferredType = "vegaLite";
+  } else if (key.startsWith("waveform.")) {
+    inferredType = "waveform";
+  } else if (key.startsWith("markmapChart.")) {
+    inferredType = "markmapChart";
+  } else if (key.startsWith("particlesEffect.")) {
+    inferredType = "particlesEffect";
+  } else if (key.startsWith("confetti.")) {
+    inferredType = "confetti";
+  } else if (key.startsWith("trianglify.")) {
+    inferredType = "trianglify";
+  } else if (key.startsWith("starChart.")) {
+    inferredType = "starChart";
+  } else if (key.startsWith("vexFlow.")) {
+    inferredType = "vexFlow";
+  } else if (key.startsWith("cytoscape.")) {
+    inferredType = "cytoscape";
+  } else if (key.startsWith("cytoscapeGraph.")) {
+    inferredType = "cytoscapeGraph";
+  } else if (key.startsWith("vueDataUi.")) {
+    inferredType = "vueDataUi";
+  } else if (key.startsWith("d3.")) {
+    inferredType = "d3";
+  } else if (key.startsWith("d3Cloud.")) {
+    inferredType = "d3Cloud";
+  } else if (key.startsWith("opentypeText.")) {
+    inferredType = "opentypeText";
+  } else if (key.startsWith("simplexNoise.")) {
+    inferredType = "simplexNoise";
+  } else if (key.startsWith("molecule.")) {
+    inferredType = "molecule";
+  } else if (key.startsWith("threeMol.")) {
+    inferredType = "threeMol";
+  } else if (key.startsWith("abcNotation.")) {
+    inferredType = "abcNotation";
+  } else if (key.startsWith("rawCanvas.")) {
+    inferredType = "rawCanvas";
+  }
+  
+  return inferredType;
+}
+
+function autoCreateAndBindNewFields(fields: HtmlTemplateFieldDefinition[]) {
+  if (!props.templateTarget) return;
+  if (!props.templateTarget.htmlBindings) {
+    props.templateTarget.htmlBindings = {};
+  }
+  const bindings = props.templateTarget.htmlBindings;
+  
+  fields.forEach((field) => {
+    if (field.type === "child") {
+      const existingBinding = bindings[field.key];
+      if (!existingBinding || !existingBinding.id) {
+        const inferredType = inferComponentTypeFromKey(field.key);
+        const newId = "_" + String(new Date().getTime()) + Math.random().toString(36).substring(2, 6);
+        const defaultOptionsCreator = canvasChildDefaultOptionsMap[inferredType];
+        const newOptions = {
+          ...(defaultOptionsCreator ? defaultOptionsCreator.call(null) : {}),
+          id: newId,
+          type: inferredType,
+          undeletable: true,
+        };
+        
+        if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
+          canvasStickerOptions.value.children.push(newOptions);
+        }
+        bindings[field.key] = { id: newId };
+      }
+    } else if (field.type === "html") {
+      const existingBinding = bindings[field.key];
+      if (!existingBinding || !existingBinding.id) {
+        const newId = "_" + String(new Date().getTime()) + Math.random().toString(36).substring(2, 6);
+        const defaultOptionsCreator = canvasChildDefaultOptionsMap["html"];
+        const newOptions = {
+          ...(defaultOptionsCreator ? defaultOptionsCreator.call(null) : {}),
+          id: newId,
+          type: "html",
+          undeletable: true,
+        };
+        
+        if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
+          canvasStickerOptions.value.children.push(newOptions);
+        }
+        bindings[field.key] = { id: newId };
+      }
+    }
+  });
+  
+  props.templateTarget.htmlBindings = { ...bindings };
+}
+
+function cleanUpUnusedBindings(fields: HtmlTemplateFieldDefinition[]) {
+  if (!props.templateTarget) return;
+  const bindings = props.templateTarget.htmlBindings || {};
+  
+  const activeKeys = new Set(fields.map(f => f.key));
+  const activeBoundIds = new Set<string>();
+  
+  Object.keys(bindings).forEach(key => {
+    if (activeKeys.has(key)) {
+      if (bindings[key] && bindings[key].id) {
+        activeBoundIds.add(bindings[key].id);
+      }
+    } else {
+      delete bindings[key];
+    }
+  });
+  
+  if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
+    canvasStickerOptions.value.children = canvasStickerOptions.value.children.filter((c: any) => {
+      if (c.undeletable && !activeBoundIds.has(c.id) && c.id !== props.templateTarget.id) {
+        return false;
+      }
+      return true;
+    });
+  }
+}
+
 function handleSave() {
   const nextValue = String(draftValue.value ?? "");
   const previousValue = String(model.value ?? "");
@@ -648,6 +801,12 @@ function handleSave() {
     const preserveBindings = hasHtmlMagicVariables(nextValue);
     if (preserveBindings) {
       const inferredFields = syncHtmlTemplateFieldsFromContent(props.templateTarget, nextValue);
+      
+      // Auto create and bind components for new child variables
+      autoCreateAndBindNewFields(inferredFields);
+      // Clean up unused/removed child components
+      cleanUpUnusedBindings(inferredFields);
+      
       detachHtmlTemplateFromTarget(props.templateTarget, {
         preserveBindings: inferredFields.length > 0,
       });

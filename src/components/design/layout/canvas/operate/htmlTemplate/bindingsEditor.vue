@@ -77,53 +77,16 @@
         <template #name> {{ field.label }} </template>
         <template #content>
           <div class="html-template-bindings__child-controls">
-            <el-select
-              size="small"
-              :model-value="getFieldValue(field)?.id || ''"
-              placeholder="绑定组件"
-              clearable
-              style="width: 120px; margin-right: 6px;"
-              @update:model-value="bindChildElement(field, $event)"
-            >
-              <el-option
-                v-for="c in bindableCanvasChildren"
-                :key="c.id"
-                :label="c.name"
-                :value="c.id"
-              />
-            </el-select>
-
-            <el-dropdown
-              size="small"
-              split-button
-              type="primary"
-              style="margin-right: 6px;"
-              @click="autoCreateAndBindChildElement(field)"
-              @command="createAndBindChildElement(field, $event)"
-            >
-              创建组件
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item command="echart">ECharts 图表</el-dropdown-item>
-                  <el-dropdown-item command="wordCloud">词云图</el-dropdown-item>
-                  <el-dropdown-item command="figlet">ASCII 艺术字</el-dropdown-item>
-                  <el-dropdown-item command="qrcode">二维码</el-dropdown-item>
-                  <el-dropdown-item command="barcode">条形码</el-dropdown-item>
-                  <el-dropdown-item command="text">文字贴纸</el-dropdown-item>
-                  <el-dropdown-item command="image">图片贴纸</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-
             <el-button
               v-if="getFieldValue(field)?.id"
               size="small"
-              type="success"
+              type="primary"
               plain
               @click="selectBoundElement(getFieldValue(field).id)"
             >
-              编辑
+              配置此组件
             </el-button>
+            <span v-else style="font-size: 11px; color: #94a3b8;">未绑定组件</span>
           </div>
         </template>
       </operate-form-item>
@@ -206,106 +169,6 @@ const bindableCanvasChildren = computed(() => {
       name: `${c.type.toUpperCase()} (${c.id.slice(-4)})`,
     }));
 });
-
-function bindChildElement(field: any, childId: any) {
-  if (!childId) {
-    updateFieldValue(field, null);
-    return;
-  }
-  updateFieldValue(field, { id: childId });
-}
-
-function autoCreateAndBindChildElement(field: any) {
-  const key = field.key || "";
-  let inferredType = "echart"; // default ECharts
-  
-  if (key.startsWith("threejs.") || key.startsWith("threeScene.")) {
-    inferredType = "threeScene";
-  } else if (key.startsWith("echart.")) {
-    inferredType = "echart";
-  } else if (key.startsWith("wordCloud.")) {
-    inferredType = "wordCloud";
-  } else if (key.startsWith("barcode.")) {
-    inferredType = "barcode";
-  } else if (key.startsWith("qrcode.")) {
-    inferredType = "qrcode";
-  } else if (key.startsWith("figlet.")) {
-    inferredType = "figlet";
-  } else if (key.startsWith("math.")) {
-    inferredType = "math";
-  } else if (key.startsWith("mermaid.")) {
-    inferredType = "mermaid";
-  } else if (key.startsWith("graphviz.")) {
-    inferredType = "graphviz";
-  } else if (key.startsWith("dagreGraph.")) {
-    inferredType = "dagreGraph";
-  } else if (key.startsWith("roughShape.")) {
-    inferredType = "roughShape";
-  } else if (key.startsWith("chartjs.")) {
-    inferredType = "chartjs";
-  } else if (key.startsWith("frappeChart.")) {
-    inferredType = "frappeChart";
-  } else if (key.startsWith("chartXkcd.")) {
-    inferredType = "chartXkcd";
-  } else if (key.startsWith("plotlyChart.")) {
-    inferredType = "plotlyChart";
-  } else if (key.startsWith("vegaLite.")) {
-    inferredType = "vegaLite";
-  } else if (key.startsWith("waveform.")) {
-    inferredType = "waveform";
-  } else if (key.startsWith("markmapChart.")) {
-    inferredType = "markmapChart";
-  } else if (key.startsWith("particlesEffect.")) {
-    inferredType = "particlesEffect";
-  } else if (key.startsWith("confetti.")) {
-    inferredType = "confetti";
-  } else if (key.startsWith("trianglify.")) {
-    inferredType = "trianglify";
-  } else if (key.startsWith("starChart.")) {
-    inferredType = "starChart";
-  } else if (key.startsWith("vexFlow.")) {
-    inferredType = "vexFlow";
-  } else if (key.startsWith("cytoscape.")) {
-    inferredType = "cytoscape";
-  } else if (key.startsWith("cytoscapeGraph.")) {
-    inferredType = "cytoscapeGraph";
-  } else if (key.startsWith("vueDataUi.")) {
-    inferredType = "vueDataUi";
-  } else if (key.startsWith("d3.")) {
-    inferredType = "d3";
-  } else if (key.startsWith("d3Cloud.")) {
-    inferredType = "d3Cloud";
-  } else if (key.startsWith("opentypeText.")) {
-    inferredType = "opentypeText";
-  } else if (key.startsWith("simplexNoise.")) {
-    inferredType = "simplexNoise";
-  } else if (key.startsWith("molecule.")) {
-    inferredType = "molecule";
-  } else if (key.startsWith("threeMol.")) {
-    inferredType = "threeMol";
-  } else if (key.startsWith("abcNotation.")) {
-    inferredType = "abcNotation";
-  } else if (key.startsWith("rawCanvas.")) {
-    inferredType = "rawCanvas";
-  }
-  
-  createAndBindChildElement(field, inferredType);
-}
-
-function createAndBindChildElement(field: any, type: string) {
-  const newId = "_" + String(new Date().getTime());
-  const defaultOptionsCreator = canvasChildDefaultOptionsMap[type];
-  const newOptions = {
-    ...(defaultOptionsCreator ? defaultOptionsCreator.call(null) : {}),
-    id: newId,
-    type,
-    // Add undeletable so it is persistent and controlled by HTML binding
-    undeletable: true,
-  };
-  canvasStickerOptions.value.children.push(newOptions);
-  updateFieldValue(field, { id: newId });
-  currentOperatingCanvasChildId.value = newId;
-}
 
 function selectBoundElement(id: string) {
   currentOperatingCanvasChildId.value = id;

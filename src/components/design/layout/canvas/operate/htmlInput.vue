@@ -139,6 +139,7 @@ import {
   detachHtmlTemplateFromTarget,
   hasHtmlMagicVariables,
   syncHtmlTemplateFieldsFromContent,
+  inferHtmlTemplateFieldsFromContent,
 } from "@/components/design/layout/canvas/htmlTemplate/runtime.ts";
 import type { HtmlTemplateFieldDefinition } from "@/components/design/layout/canvas/htmlTemplate/types";
 
@@ -265,9 +266,10 @@ const systemMagicVariableItems = [
 ];
 
 const templateMagicVariableItems = computed(() => {
-  const fields = Array.isArray(props.templateTarget?.htmlTemplateFields)
-    ? (props.templateTarget?.htmlTemplateFields as HtmlTemplateFieldDefinition[])
-    : [];
+  const fields = inferHtmlTemplateFieldsFromContent(
+    draftValue.value,
+    props.templateTarget?.htmlTemplateFields || []
+  );
 
   return fields.flatMap((field) => createMagicVariableItemsForField(field));
 });
@@ -318,22 +320,26 @@ function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition): a
           type: field.type,
         },
       ];
-    case "child":
+    case "child": {
+      const hasPrefix = field.key.includes(".");
       return [
         {
-          token: field.key.startsWith("child.") ? `{{${field.key}}}` : `{{child.${field.key}}}`,
+          token: hasPrefix ? `{{${field.key}}}` : `{{child.${field.key}}}`,
           description: `${field.label}，嵌入组件插槽（如 ECharts、Sticker 等）`,
           type: field.type,
         },
       ];
-    case "html":
+    }
+    case "html": {
+      const hasPrefix = field.key.includes(".");
       return [
         {
-          token: field.key.startsWith("html.") ? `{{${field.key}}}` : `{{html.${field.key}}}`,
+          token: hasPrefix ? `{{${field.key}}}` : `{{html.${field.key}}}`,
           description: `${field.label}，递归嵌套的 HTML 代码片段`,
           type: field.type,
         },
       ];
+    }
     case "textarea":
     case "text":
     default:

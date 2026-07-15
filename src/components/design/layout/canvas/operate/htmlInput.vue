@@ -50,7 +50,7 @@
         </div>
         <div class="html-editor-dialog__sidebar-content scrollable-panel">
           <div class="html-editor-dialog__section-header">
-            <span>提示：点击左侧可以插入变量，点击右侧“配置”可跳转编辑组件参数</span>
+            <span>提示：点击变量名可快速插入到编辑器光标处</span>
           </div>
 
           <!-- 当前模板已识别变量 -->
@@ -63,24 +63,34 @@
             </div>
             <div v-if="templateMagicVariableItems.length" class="html-editor-dialog__variable-list compact-list">
               <div
-                v-for="item in templateMagicVariableItems"
-                :key="item.token"
+                v-for="field in templateMagicVariableItems"
+                :key="field.key"
                 class="html-editor-dialog__variable-row"
               >
-                <div class="variable-row-left" @click="insertVariable(item.token)">
-                  <div class="variable-token-container">
-                    <el-tag size="small" :type="getBadgeType(item.type)" class="type-tag">{{ item.type.toUpperCase() }}</el-tag>
-                    <code class="clickable-code">{{ item.token }}</code>
+                <div class="variable-row-left">
+                  <div class="variable-header">
+                    <el-tag size="small" :type="getBadgeType(field.type)" class="type-tag">{{ field.type.toUpperCase() }}</el-tag>
+                    <span class="field-label">{{ field.label }}</span>
                   </div>
-                  <span class="variable-desc">{{ item.description }}</span>
+                  <div class="tokens-container">
+                    <span
+                      v-for="tokenItem in field.tokens"
+                      :key="tokenItem.token"
+                      class="clickable-token-tag"
+                      @click="insertVariable(tokenItem.token)"
+                      :title="tokenItem.description"
+                    >
+                      {{ tokenItem.token.replace(/^\{\{/, '').replace(/\}\}$/, '') }}
+                    </span>
+                  </div>
                 </div>
-                <div class="variable-row-right" v-if="getBoundChildId(item)">
+                <div class="variable-row-right" v-if="getFieldBoundId(field)">
                   <el-button
                     size="small"
                     type="primary"
                     plain
                     class="configure-btn"
-                    @click.stop="configureComponent(getBoundChildId(item))"
+                    @click.stop="configureComponent(getFieldBoundId(field))"
                   >
                     配置
                   </el-button>
@@ -96,20 +106,29 @@
           <div class="html-editor-dialog__variable-section" style="margin-top: 20px;">
             <div class="html-editor-dialog__variable-section-name">
               内置系统变量
-              <span class="badge">{{ systemMagicVariableItems.length }}</span>
             </div>
             <div class="html-editor-dialog__variable-list compact-list">
               <div
-                v-for="item in systemMagicVariableItems"
-                :key="item.token"
+                v-for="group in systemGroupedVariables"
+                :key="group.label"
                 class="html-editor-dialog__variable-row"
               >
-                <div class="variable-row-left" @click="insertVariable(item.token)">
-                  <div class="variable-token-container">
-                    <el-tag size="small" type="info" class="type-tag">SYS</el-tag>
-                    <code class="clickable-code">{{ item.token }}</code>
+                <div class="variable-row-left">
+                  <div class="variable-header">
+                    <el-tag size="small" type="info" class="type-tag">{{ group.type.toUpperCase() }}</el-tag>
+                    <span class="field-label">{{ group.label }}</span>
                   </div>
-                  <span class="variable-desc">{{ item.description }}</span>
+                  <div class="tokens-container">
+                    <span
+                      v-for="tokenItem in group.tokens"
+                      :key="tokenItem.token"
+                      class="clickable-token-tag"
+                      @click="insertVariable(tokenItem.token)"
+                      :title="tokenItem.description"
+                    >
+                      {{ tokenItem.token.replace(/^\{\{/, '').replace(/\}\}$/, '') }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -323,16 +342,16 @@ function insertVariable(token: string) {
   view.focus();
 }
 
-function getBoundChildId(item: any) {
-  if (item.type !== "child" && item.type !== "html") return null;
-  const tokenKey = item.token.replace(/^\{\{/, "").replace(/\}\}$/, "");
+function getFieldBoundId(field: any) {
+  if (field.type !== "child" && field.type !== "html") return null;
+  const key = field.key;
   const bindings = props.templateTarget?.htmlBindings || {};
   
-  let boundValue = bindings[tokenKey];
-  if (!boundValue && tokenKey.startsWith("child.")) {
-    boundValue = bindings[tokenKey.substring(6)];
-  } else if (!boundValue && tokenKey.startsWith("html.")) {
-    boundValue = bindings[tokenKey.substring(5)];
+  let boundValue = bindings[key];
+  if (!boundValue && key.startsWith("child.")) {
+    boundValue = bindings[key.substring(6)];
+  } else if (!boundValue && key.startsWith("html.")) {
+    boundValue = bindings[key.substring(5)];
   }
   
   if (boundValue && typeof boundValue === "object" && boundValue.id) {
@@ -355,15 +374,27 @@ const draftSummary = computed(() => {
   return `${value.split(/\r?\n/).length} 行 · ${value.length} 字符`;
 });
 
-const systemMagicVariableItems = [
-  { token: "{{canvas.width}}", description: "画布宽度数值", type: "canvas" },
-  { token: "{{canvas.height}}", description: "画布高度数值", type: "canvas" },
-  { token: "{{canvas.widthUnit}}", description: "画布宽度单位", type: "canvas" },
-  { token: "{{canvas.heightUnit}}", description: "画布高度单位", type: "canvas" },
-  { token: "{{canvas.widthCss}}", description: "画布宽度 CSS 值", type: "canvas" },
-  { token: "{{canvas.heightCss}}", description: "画布高度 CSS 值", type: "canvas" },
-  { token: "{{element.id}}", description: "当前元素 id", type: "element" },
-  { token: "{{element.zIndex}}", description: "当前元素层级", type: "element" },
+const systemGroupedVariables = [
+  {
+    label: "画布尺寸",
+    type: "canvas",
+    tokens: [
+      { token: "{{canvas.width}}", description: "画布宽度数值" },
+      { token: "{{canvas.height}}", description: "画布高度数值" },
+      { token: "{{canvas.widthUnit}}", description: "画布宽度单位" },
+      { token: "{{canvas.heightUnit}}", description: "画布高度单位" },
+      { token: "{{canvas.widthCss}}", description: "画布宽度 CSS 值" },
+      { token: "{{canvas.heightCss}}", description: "画布高度 CSS 值" },
+    ]
+  },
+  {
+    label: "当前元素",
+    type: "element",
+    tokens: [
+      { token: "{{element.id}}", description: "当前元素 id" },
+      { token: "{{element.zIndex}}", description: "当前元素层级" },
+    ]
+  }
 ];
 
 const templateMagicVariableItems = computed(() => {
@@ -372,7 +403,14 @@ const templateMagicVariableItems = computed(() => {
     props.templateTarget?.htmlTemplateFields || []
   );
 
-  return fields.flatMap((field) => createMagicVariableItemsForField(field));
+  return fields.map((field) => {
+    return {
+      key: field.key,
+      label: field.label || field.key,
+      type: field.type,
+      tokens: createMagicVariableItemsForField(field),
+    };
+  });
 });
 
 function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition): any[] {
@@ -456,10 +494,10 @@ function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition): a
 
 /** Build autocomplete completions from magic variable lists */
 function buildCompletions(cx: CompletionContext) {
-  const allVariables: any[] = [
-    ...systemMagicVariableItems,
-    ...templateMagicVariableItems.value,
-  ];
+  const flatSystem = systemGroupedVariables.flatMap((g) => g.tokens);
+  const flatTemplate = templateMagicVariableItems.value.flatMap((field) => field.tokens);
+  
+  const allVariables = [...flatSystem, ...flatTemplate];
 
   const word = cx.matchBefore(/\{\{[\w.]*$/);
   if (!word || word.from === word.to) return null;
@@ -1227,30 +1265,46 @@ onBeforeUnmount(() => {
 
 .html-editor-dialog__variable-row {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  cursor: pointer;
+  gap: 12px;
   transition: all 0.2s ease;
   
   &:hover {
     border-color: #3b82f6;
-    background: #f0f7ff;
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.05);
-    
-    .clickable-code {
-      color: #2563eb;
-    }
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.05);
+  }
+  
+  .variable-row-left {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .variable-row-right {
+    flex-shrink: 0;
   }
 }
 
-.variable-token-container {
+.variable-header {
   display: flex;
   align-items: center;
   gap: 8px;
+  
+  .field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .type-tag {
@@ -1261,19 +1315,32 @@ onBeforeUnmount(() => {
   line-height: 15px;
 }
 
-.clickable-code {
-  font-size: 11px;
-  font-weight: 600;
-  color: #0f172a;
-  background: transparent;
-  padding: 0;
-  border: none;
+.tokens-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
-.variable-desc {
+.clickable-token-tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: monospace;
   font-size: 11px;
-  color: #64748b;
-  line-height: 1.4;
+  font-weight: 500;
+  color: #0f172a;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  word-break: break-all;
+  
+  &:hover {
+    color: #2563eb;
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
 }
 
 /* Widgets Config UI */

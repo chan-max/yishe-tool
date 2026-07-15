@@ -310,9 +310,4 @@ function getFieldIcon(type: string) {
   border-left: 2px solid #e5e7eb;
   margin: 6px 0 12px 12px;
 }
-</style>size: 11px;
-  line-height: 1.5;
-  color: #8a8f98;
-  text-align: left;
-}
 </style>

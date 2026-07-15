@@ -46,6 +46,12 @@ import {
   createDefaultCanvasChildImageOptions,
 } from "./children/image.tsx";
 import { formatSizeOptionToPixelValue } from "./helper.tsx";
+import { 
+  remapBindingBySchema, 
+  getComponentDefaultConfig,
+  COMPONENT_CONFIGS
+} from "./componentConfigSchema";
+
 
 import {
   createCanvasChildRawCanvas,
@@ -577,7 +583,7 @@ defineCanvasChild({
 defineCanvasChild({
   typeName: "html",
   typeKey: "html",
-  label: "HTML代码 (HTML)",
+  label: "代码画布",
   defaultOptionsCreator: createDefaultCanvasChildHtmlOptions,
   renderer: createCanvasChildHtml,
   operationLayout: htmlLayout,
@@ -827,17 +833,27 @@ export function addCanvasChild(options) {
 // 当前正在操作的元素id
 export var currentOperatingCanvasChildId = ref("this_is_canvas_id");
 
-export const currentOperatingCanvasChild: any = computed(() => {
-  let child = canvasStickerOptions.value.children.find(
-    (c) => c.id == currentOperatingCanvasChildId.value,
-  );
+export const currentOperatingCanvasChild: any = computed({
+  get() {
+    let child = canvasStickerOptions.value.children.find(
+      (c) => c.id == currentOperatingCanvasChildId.value,
+    );
 
-  if (!child) {
-    currentOperatingCanvasChildId.value =
-      canvasStickerOptions.value.children[0].id;
-    return canvasStickerOptions.value.children[0];
-  }
-  return child;
+    if (!child) {
+      currentOperatingCanvasChildId.value =
+        canvasStickerOptions.value.children[0].id;
+      return canvasStickerOptions.value.children[0];
+    }
+    return child;
+  },
+  set(val) {
+    const index = canvasStickerOptions.value.children.findIndex(
+      (c) => c.id == currentOperatingCanvasChildId.value,
+    );
+    if (index !== -1) {
+      canvasStickerOptions.value.children[index] = val;
+    }
+  },
 });
 
 /**
@@ -1288,6 +1304,8 @@ export function inferComponentTypeFromKey(key: string): string {
     inferredType = "wordCloud";
   } else if (key.startsWith("barcode.")) {
     inferredType = "barcode";
+  } else if (key.startsWith("codeBlock.")) {
+    inferredType = "codeBlock";
   } else if (key.startsWith("qrcode.")) {
     inferredType = "qrcode";
   } else if (key.startsWith("figlet.")) {
@@ -1353,13 +1371,30 @@ export function inferComponentTypeFromKey(key: string): string {
   return inferredType;
 }
 
+function safeClone<T>(value: T): T {
+  if (typeof structuredClone === "function") {
+    try {
+      return structuredClone(value);
+    } catch {
+      // Fall through
+    }
+  }
+  return JSON.parse(JSON.stringify(value));
+}
+
+/** Map simple AI binding properties to the actual nested paths components expect */
+function remapBindingForComponentType(componentType: string, binding: Record<string, any>): Record<string, any> {
+  // 使用统一的配置架构进行重映射
+  return remapBindingBySchema(componentType, binding);
+}
+
 export function autoCreateAndBindNewFields(fields: any[], target: any) {
   if (!target) return;
   if (!target.htmlBindings) {
     target.htmlBindings = {};
   }
   const bindings = target.htmlBindings;
-  
+
   fields.forEach((field) => {
     if (field.type === "child") {
       const existingBinding = getValueByPath(bindings, field.key);
@@ -1367,39 +1402,94 @@ export function autoCreateAndBindNewFields(fields: any[], target: any) {
         const inferredType = inferComponentTypeFromKey(field.key);
         const newId = "_" + String(new Date().getTime()) + Math.random().toString(36).substring(2, 6);
         const defaultOptionsCreator = canvasChildDefaultOptionsMap[inferredType];
-        const newOptions = {
-          ...(defaultOptionsCreator ? defaultOptionsCreator.call(null) : {}),
-          id: newId,
-          type: inferredType,
-          undeletable: true,
-        };
-        
+        // 1. 先创建默认嵌套结构
+        const defaultOpts = defaultOptionsCreator ? defaultOptionsCreator.call(null) : {};
+        const newOptions = { ...defaultOpts, id: newId, type: inferredType, undeletable: true };
+        // 2. 将 binding 重映射到嵌套路径后写入
+        if (existingBinding && typeof existingBinding === "object") {
+          const remapped = remapBindingForComponentType(inferredType, existingBinding);
+          Object.keys(remapped).forEach((key) => {
+            if (key !== "id" && key !== "type" && key !== "undeletable") {
+              setValueByPath(newOptions, key, remapped[key]);
+            }
+          });
+        }
         if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
           canvasStickerOptions.value.children.push(newOptions);
         }
-        setValueByPath(bindings, field.key, { id: newId });
+        setValueByPath(bindings, field.key, {
+          ...(existingBinding && typeof existingBinding === "object" ? existingBinding : {}),
+          id: newId,
+        });
+      } else {
+        // Synchronize updated properties from binding to existing canvas child
+        const childComponent = canvasStickerOptions.value.children.find((c: any) => c.id === existingBinding.id);
+        if (childComponent) {
+          const componentType = childComponent.type || inferComponentTypeFromKey(field.key);
+          const remappedBinding = remapBindingForComponentType(componentType, existingBinding);
+          Object.keys(remappedBinding).forEach((propKey) => {
+            if (propKey !== "id" && propKey !== "type" && propKey !== "undeletable") {
+              const currentVal = getValueByPath(childComponent, propKey);
+              const newVal = remappedBinding[propKey];
+              if (JSON.stringify(currentVal) !== JSON.stringify(newVal)) {
+                setValueByPath(childComponent, propKey, safeClone(newVal));
+              }
+            }
+          });
+        }
       }
     } else if (field.type === "html") {
       const existingBinding = getValueByPath(bindings, field.key);
       if (!existingBinding || !existingBinding.id) {
         const newId = "_" + String(new Date().getTime()) + Math.random().toString(36).substring(2, 6);
         const defaultOptionsCreator = canvasChildDefaultOptionsMap["html"];
-        const newOptions = {
-          ...(defaultOptionsCreator ? defaultOptionsCreator.call(null) : {}),
-          id: newId,
-          type: "html",
-          undeletable: true,
-        };
+        const defaultOpts = defaultOptionsCreator ? defaultOptionsCreator.call(null) : {};
+        const newOptions = { ...defaultOpts, id: newId, type: "html", undeletable: true };
+        if (existingBinding && typeof existingBinding === "object") {
+          Object.keys(existingBinding).forEach((key) => {
+            if (key !== "id" && key !== "type" && key !== "undeletable") {
+              setValueByPath(newOptions, key, existingBinding[key]);
+            }
+          });
+        }
         
         if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
           canvasStickerOptions.value.children.push(newOptions);
         }
-        setValueByPath(bindings, field.key, { id: newId });
+        setValueByPath(bindings, field.key, {
+          ...(existingBinding && typeof existingBinding === "object" ? existingBinding : {}),
+          id: newId,
+        });
+      } else {
+        // Synchronize updated properties from binding to existing HTML canvas child
+        const childComponent = canvasStickerOptions.value.children.find((c: any) => c.id === existingBinding.id);
+        if (childComponent) {
+          Object.keys(existingBinding).forEach((propKey) => {
+            if (propKey !== "id" && propKey !== "type" && propKey !== "undeletable") {
+              const currentVal = getValueByPath(childComponent, propKey);
+              const newVal = existingBinding[propKey];
+              if (JSON.stringify(currentVal) !== JSON.stringify(newVal)) {
+                setValueByPath(childComponent, propKey, safeClone(newVal));
+              }
+            }
+          });
+        }
       }
     }
   });
   
+  // 确保 Vue 响应式更新
   target.htmlBindings = { ...bindings };
+  // 强制更新 canvasStickerOptions 的引用，确保深层变化被 Vue 检测到
+  if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
+    canvasStickerOptions.value.children = [...canvasStickerOptions.value.children];
+  }
+  
+  // 等待下一个 tick 后重新挂载和渲染，确保新组件正确显示
+  nextTick(() => {
+    reparentCanvasChildren();
+    updateRenderingCanvas();
+  });
 }
 
 export function deleteValueByPath(target: any, path: string) {
@@ -1456,38 +1546,85 @@ export function cleanUpUnusedBindings(fields: any[], target: any) {
   });
   
   if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
-    canvasStickerOptions.value.children = canvasStickerOptions.value.children.filter((c: any) => {
+    const nextChildren = canvasStickerOptions.value.children.filter((c: any) => {
       if (c.undeletable && !activeBoundIds.has(c.id) && c.id !== target.id) {
         return false;
       }
       return true;
     });
+    if (nextChildren.length !== canvasStickerOptions.value.children.length) {
+      canvasStickerOptions.value.children = nextChildren;
+    }
   }
 }
+
+// ─── Magic variable auto-bind watcher ───────────────────────────────────────
+// Watches HTML children for {{xxx.yyy}} magic variables and auto-creates/binds
+// corresponding canvas child components. Guarded against re-entrant triggers
+// caused by useLocalStorage ↔ canvasStickerOptions reactive cycle.
+
+const prevHtmlContentMap = new Map<string, string>();
+let htmlBindingsGuard = false;
+let htmlBindingsTimer: ReturnType<typeof setTimeout> | null = null;
 
 watch(
   () => {
     if (!canvasStickerOptions.value || !Array.isArray(canvasStickerOptions.value.children)) {
-      return [];
+      return "";
     }
     return canvasStickerOptions.value.children
       .filter((c: any) => c && c.type === "html")
-      .map((c: any) => ({
-        id: c.id,
-        htmlContent: c.htmlContent,
-      }));
+      .map((c: any) => `${c.id}::${String(c.htmlContent ?? "")}`)
+      .join("||");
   },
-  (htmlChildren) => {
-    if (!htmlChildren) return;
-    htmlChildren.forEach((hc) => {
-      const child = canvasStickerOptions.value.children.find((c: any) => c.id === hc.id);
-      if (!child) return;
-      
-      const nextHtmlContent = String(child.htmlContent ?? "");
-      const inferredFields = syncHtmlTemplateFieldsFromContent(child, nextHtmlContent);
-      autoCreateAndBindNewFields(inferredFields, child);
-      cleanUpUnusedBindings(inferredFields, child);
-    });
+  () => {
+    // Guard: skip if we're already syncing or within the cooldown window
+    if (htmlBindingsGuard) return;
+
+    // Debounce: cancel any pending sync and schedule a new one
+    // This breaks the reactive chain with useLocalStorage
+    if (htmlBindingsTimer) {
+      clearTimeout(htmlBindingsTimer);
+    }
+
+    htmlBindingsTimer = setTimeout(() => {
+      htmlBindingsTimer = null;
+      if (!canvasStickerOptions.value || !Array.isArray(canvasStickerOptions.value.children)) return;
+
+      const htmlChildren = canvasStickerOptions.value.children.filter(
+        (c: any) => c && c.type === "html"
+      );
+
+      // Only process children whose htmlContent actually changed
+      const changedChildren = htmlChildren.filter((child: any) => {
+        const current = String(child.htmlContent ?? "");
+        const prev = prevHtmlContentMap.get(child.id);
+        return prev !== current;
+      });
+
+      // Update the map for next comparison
+      htmlChildren.forEach((child: any) => {
+        prevHtmlContentMap.set(child.id, String(child.htmlContent ?? ""));
+      });
+
+      if (!changedChildren.length) return;
+
+      htmlBindingsGuard = true;
+      try {
+        changedChildren.forEach((child: any) => {
+          const nextHtmlContent = String(child.htmlContent ?? "");
+          const inferredFields = syncHtmlTemplateFieldsFromContent(child, nextHtmlContent);
+          autoCreateAndBindNewFields(inferredFields, child);
+          cleanUpUnusedBindings(inferredFields, child);
+        });
+      } finally {
+        // Keep guard active through the next tick so useLocalStorage effects
+        // that fire after our callback don't re-trigger the watch
+        nextTick(() => {
+          htmlBindingsGuard = false;
+        });
+      }
+    }, 0);
   },
-  { deep: true, immediate: true }
+  { immediate: true }
 );

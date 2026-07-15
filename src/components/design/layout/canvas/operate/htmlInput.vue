@@ -16,7 +16,7 @@
 
   <el-dialog
     v-model="dialogVisible"
-    title="编辑 HTML 代码"
+    title="编辑代码画布"
     fullscreen
     append-to-body
     class="html-editor-dialog"
@@ -27,9 +27,6 @@
       <div class="html-editor-dialog__main">
         <div class="html-editor-dialog__toolbar">
           <div class="html-editor-dialog__hint">
-            支持 HTML + 内联 <code>&lt;style&gt;</code>，推荐使用
-            <code v-pre>{{text.title}}</code>、<code v-pre>{{color.primary}}</code>、
-            <code v-pre>{{image.logo.url}}</code> 这类变量写法。
             <span class="html-editor-dialog__meta">{{ draftSummary }}</span>
           </div>
         </div>
@@ -103,7 +100,7 @@
           </div>
 
           <!-- 内置系统变量 -->
-          <div class="html-editor-dialog__variable-section" style="margin-top: 20px;">
+          <div class="html-editor-dialog__variable-section" style="margin-top: 12px;">
             <div class="html-editor-dialog__variable-section-name">
               内置系统变量
             </div>
@@ -135,101 +132,24 @@
           </div>
 
           <!-- 语法与组件参考文档 -->
-          <div class="html-editor-dialog__variable-section" style="margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+          <div class="html-editor-dialog__variable-section" style="margin-top: 14px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
             <div class="html-editor-dialog__variable-section-name" style="color: #1e293b; font-weight: 700;">
-              语法与组件参考文档
+              可插入组件
             </div>
-            
-            <div class="doc-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
-              <!-- 1. 基础变量 -->
-              <div class="doc-section">
-                <div class="doc-title">1. 基础画布变量</div>
+
+            <div class="component-reference-list">
+              <div v-for="group in componentReferenceItems" :key="group.category" class="doc-section">
+                <div class="doc-title">{{ group.category }}</div>
                 <div class="doc-content">
-                  <div class="doc-bullet"><strong>文字排版</strong>: <code v-pre>{{text.fieldName}}</code></div>
-                  <div class="doc-bullet">
-                    <strong>颜色方案</strong>: <code v-pre>{{color.fieldName}}</code> 
-                    <span style="color: #64748b; font-size: 10px;">(CSS别名: <code v-pre>{{color.fieldName.css}}</code>)</span>
+                  <div
+                    v-for="item in group.items"
+                    :key="item.token"
+                    class="component-reference-item"
+                    @click="insertVariable(item.token)"
+                  >
+                    <span class="component-ref-name">{{ item.name }}</span>
+                    <span class="component-ref-token">{{ item.token.replace(/^\{\{/, '').replace(/\}\}$/, '') }}</span>
                   </div>
-                  <div class="doc-bullet"><strong>图片素材</strong>: <code v-pre>{{image.fieldName.url}}</code></div>
-                  <div class="doc-bullet"><strong>字体族名</strong>: <code v-pre>{{font.fieldName.family}}</code></div>
-                </div>
-              </div>
-
-              <!-- 2. 数据与可视化图表 -->
-              <div class="doc-section">
-                <div class="doc-title">2. 数据与可视化图表</div>
-                <div class="doc-content">
-                  <div class="doc-bullet"><strong>ECharts 图表</strong>: <code v-pre>{{echart.chartName}}</code></div>
-                  <div class="doc-bullet"><strong>Data UI 图表</strong>: <code v-pre>{{vueDataUi.chartName}}</code></div>
-                  <div class="doc-bullet"><strong>Chart.js 图表</strong>: <code v-pre>{{chartjs.chartName}}</code></div>
-                  <div class="doc-bullet"><strong>Frappe 极简图表</strong>: <code v-pre>{{frappeChart.chartName}}</code></div>
-                  <div class="doc-bullet"><strong>Plotly 科学图表</strong>: <code v-pre>{{plotlyChart.chartName}}</code></div>
-                  <div class="doc-bullet"><strong>Vega-Lite 规范</strong>: <code v-pre>{{vegaLite.chartName}}</code></div>
-                  <div class="doc-bullet"><strong>xkcd 手绘图表</strong>: <code v-pre>{{chartXkcd.chartName}}</code></div>
-                </div>
-              </div>
-
-              <!-- 3. 三维、图形与网络拓扑 -->
-              <div class="doc-section">
-                <div class="doc-title">3. 三维、几何与拓扑网络</div>
-                <div class="doc-content">
-                  <div class="doc-bullet"><strong>Three.js 3D场景</strong>: <code v-pre>{{threejs.sceneName}}</code></div>
-                  <div class="doc-bullet"><strong>D3 词云图</strong>: <code v-pre>{{wordCloud.cloudName}}</code> <span style="color:#94a3b8;font-size:10px;">(或d3Cloud)</span></div>
-                  <div class="doc-bullet"><strong>Cytoscape 关系图</strong>: <code v-pre>{{cytoscape.graphName}}</code> <span style="color:#94a3b8;font-size:10px;">(或cytoscapeGraph)</span></div>
-                  <div class="doc-bullet"><strong>Dagre 拓扑图</strong>: <code v-pre>{{dagreGraph.graphName}}</code></div>
-                  <div class="doc-bullet"><strong>Rough 手绘图形</strong>: <code v-pre>{{roughShape.shapeName}}</code></div>
-                  <div class="doc-bullet"><strong>D3 自定义绘图</strong>: <code v-pre>{{d3.chartName}}</code></div>
-                  <div class="doc-bullet"><strong>程序画布 Canvas</strong>: <code v-pre>{{rawCanvas.canvasName}}</code></div>
-                  <div class="doc-bullet"><strong>圆形 / 矩形</strong>: <code v-pre>{{child.shapeName}}</code> <span style="color:#94a3b8;font-size:10px;">(ellipse / rect)</span></div>
-                </div>
-              </div>
-
-              <!-- 4. 排版、艺术字与编码 -->
-              <div class="doc-section">
-                <div class="doc-title">4. 排版、艺术字与编码</div>
-                <div class="doc-content">
-                  <div class="doc-bullet"><strong>二维码 / 条形码</strong>: <code v-pre>{{qrcode.qrName}}</code> / <code v-pre>{{barcode.barName}}</code></div>
-                  <div class="doc-bullet"><strong>Figlet 艺术字</strong>: <code v-pre>{{figlet.textName}}</code></div>
-                  <div class="doc-bullet"><strong>OpenType 路径字</strong>: <code v-pre>{{child.fontPath}}</code> <span style="color:#94a3b8;font-size:10px;">(opentypeText)</span></div>
-                  <div class="doc-bullet"><strong>Shiki 代码高亮</strong>: <code v-pre>{{child.codeName}}</code> <span style="color:#94a3b8;font-size:10px;">(codeBlock)</span></div>
-                </div>
-              </div>
-
-              <!-- 5. 科学计算、公式与谱图 -->
-              <div class="doc-section">
-                <div class="doc-title">5. 科学、乐谱与文档结构</div>
-                <div class="doc-content">
-                  <div class="doc-bullet"><strong>KaTeX 数学公式</strong>: <code v-pre>{{math.formulaName}}</code></div>
-                  <div class="doc-bullet"><strong>Mermaid 流程图</strong>: <code v-pre>{{mermaid.graphName}}</code></div>
-                  <div class="doc-bullet"><strong>Graphviz DOT网络</strong>: <code v-pre>{{graphviz.dotName}}</code></div>
-                  <div class="doc-bullet"><strong>RDKit 2D分子式</strong>: <code v-pre>{{molecule.molName}}</code></div>
-                  <div class="doc-bullet"><strong>3Dmol 3D分子结构</strong>: <code v-pre>{{threeMol.molName}}</code></div>
-                  <div class="doc-bullet"><strong>ABC 简易乐谱</strong>: <code v-pre>{{abcNotation.scoreName}}</code></div>
-                  <div class="doc-bullet"><strong>VexFlow 五线谱</strong>: <code v-pre>{{vexFlow.scoreName}}</code></div>
-                  <div class="doc-bullet"><strong>Markmap 思维导图</strong>: <code v-pre>{{markmapChart.mapName}}</code></div>
-                </div>
-              </div>
-
-              <!-- 6. 音效、特效与背景纹理 -->
-              <div class="doc-section">
-                <div class="doc-title">6. 音频、特效与背景纹理</div>
-                <div class="doc-content">
-                  <div class="doc-bullet"><strong>Waveform 音频波形</strong>: <code v-pre>{{waveform.waveName}}</code></div>
-                  <div class="doc-bullet"><strong>Simplex 噪声纹理</strong>: <code v-pre>{{simplexNoise.noiseName}}</code></div>
-                  <div class="doc-bullet"><strong>Particles 粒子特效</strong>: <code v-pre>{{particlesEffect.partName}}</code></div>
-                  <div class="doc-bullet"><strong>Confetti 撒花效果</strong>: <code v-pre>{{confetti.effectName}}</code></div>
-                  <div class="doc-bullet"><strong>Trianglify 三角背景</strong>: <code v-pre>{{trianglify.patternName}}</code></div>
-                  <div class="doc-bullet"><strong>Astronomy 星座图</strong>: <code v-pre>{{starChart.skyName}}</code></div>
-                </div>
-              </div>
-
-              <!-- 7. 系统与结构 -->
-              <div class="doc-section">
-                <div class="doc-title">7. 系统控制与结构</div>
-                <div class="doc-content">
-                  <div class="doc-bullet"><strong>嵌套子 HTML 片段</strong>: <code v-pre>{{html.blockName}}</code></div>
-                  <div class="doc-bullet"><strong>通用组件插槽</strong>: <code v-pre>{{child.slotName}}</code></div>
-                  <div class="doc-bullet"><strong>CSS 作用域隔离</strong>: 手写 <code>&lt;style&gt;</code> 自动进行沙箱封装，只在当前贴纸内生效。</div>
                 </div>
               </div>
             </div>
@@ -291,7 +211,7 @@ const model = defineModel<string>({ default: "" });
 
 const props = defineProps({
   label: {
-    default: "html代码",
+    default: "代码画布",
   },
   placeholder: {
     default: "请输入",
@@ -395,6 +315,72 @@ const systemGroupedVariables = [
       { token: "{{element.zIndex}}", description: "当前元素层级" },
     ]
   }
+];
+
+const componentReferenceItems = [
+  {
+    category: "数据图表",
+    items: [
+      { name: "ECharts 图表", token: "{{echart.myChart}}" },
+      { name: "Chart.js 图表", token: "{{chartjs.myChart}}" },
+      { name: "Plotly 科学图表", token: "{{plotlyChart.myChart}}" },
+      { name: "Frappe 极简图表", token: "{{frappeChart.myChart}}" },
+      { name: "xkcd 手绘图表", token: "{{chartXkcd.myChart}}" },
+      { name: "Data UI 图表", token: "{{vueDataUi.myReport}}" },
+      { name: "Vega-Lite 规范", token: "{{vegaLite.myChart}}" },
+    ]
+  },
+  {
+    category: "3D与图形",
+    items: [
+      { name: "Three.js 3D场景", token: "{{threejs.myScene}}" },
+      { name: "Cytoscape 关系图", token: "{{cytoscape.myGraph}}" },
+      { name: "Dagre 拓扑图", token: "{{dagreGraph.myGraph}}" },
+      { name: "D3 自定义绘图", token: "{{d3.myChart}}" },
+      { name: "Rough 手绘图形", token: "{{roughShape.myShape}}" },
+      { name: "程序画布 Canvas", token: "{{rawCanvas.myCanvas}}" },
+    ]
+  },
+  {
+    category: "文字与编码",
+    items: [
+      { name: "二维码", token: "{{qrcode.myCode}}" },
+      { name: "条形码", token: "{{barcode.myCode}}" },
+      { name: "Figlet 艺术字", token: "{{figlet.artText}}" },
+      { name: "OpenType 路径字", token: "{{opentypeText.brandTitle}}" },
+      { name: "Shiki 代码高亮", token: "{{codeBlock.myCode}}" },
+      { name: "D3 词云图", token: "{{wordCloud.myCloud}}" },
+    ]
+  },
+  {
+    category: "科学与文档",
+    items: [
+      { name: "KaTeX 数学公式", token: "{{math.formula}}" },
+      { name: "Mermaid 流程图", token: "{{mermaid.flowchart}}" },
+      { name: "Graphviz DOT网络", token: "{{graphviz.dotGraph}}" },
+      { name: "RDKit 2D分子式", token: "{{molecule.mol2d}}" },
+      { name: "3Dmol 3D分子结构", token: "{{threeMol.mol3d}}" },
+      { name: "Markmap 思维导图", token: "{{markmapChart.mindmap}}" },
+    ]
+  },
+  {
+    category: "乐谱",
+    items: [
+      { name: "ABC 简易乐谱", token: "{{abcNotation.score}}" },
+      { name: "VexFlow 五线谱", token: "{{vexFlow.musicSheet}}" },
+    ]
+  },
+  {
+    category: "特效与背景",
+    items: [
+      { name: "Particles 粒子特效", token: "{{particlesEffect.particles}}" },
+      { name: "Confetti 撒花效果", token: "{{confetti.effect}}" },
+      { name: "Trianglify 三角背景", token: "{{trianglify.pattern}}" },
+      { name: "Astronomy 星座图", token: "{{starChart.starMap}}" },
+      { name: "Waveform 音频波形", token: "{{waveform.audioWave}}" },
+      { name: "Simplex 噪声纹理", token: "{{simplexNoise.noiseBg}}" },
+    ]
+  },
 ];
 
 const templateMagicVariableItems = computed(() => {
@@ -748,7 +734,7 @@ onBeforeUnmount(() => {
 }
 
 .html-editor-dialog__sidebar {
-  width: 420px;
+  width: 340px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -756,20 +742,20 @@ onBeforeUnmount(() => {
   max-height: calc(100vh - 180px);
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .html-editor-dialog__sidebar-header {
   flex-shrink: 0;
-  padding: 16px 20px;
+  padding: 10px 14px;
   background: rgba(248, 250, 252, 0.9);
   border-bottom: 1px solid rgba(226, 232, 240, 0.9);
 }
 
 .html-editor-dialog__sidebar-header h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #334155;
 }
@@ -778,7 +764,7 @@ onBeforeUnmount(() => {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 16px 20px;
+  padding: 10px 14px;
   max-height: calc(100vh - 240px);
 }
 
@@ -949,17 +935,18 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 12px;
+  padding: 4px 10px;
   border: 1px solid var(--el-border-color-lighter);
-  border-radius: 8px;
+  border-radius: 6px;
   background: rgba(255, 255, 255, 0.88);
 }
 
 .html-editor-dialog__hint {
   flex: 1;
+  display: flex;
+  justify-content: flex-end;
   font-size: 12px;
-  color: var(--el-text-color-regular);
-  line-height: 1.5;
+  color: var(--el-text-color-secondary);
 }
 
 .html-editor-dialog__hint code {
@@ -973,7 +960,6 @@ onBeforeUnmount(() => {
 .html-editor-dialog__meta {
   font-size: 11px;
   color: var(--el-text-color-secondary);
-  margin-left: 4px;
 }
 
 
@@ -1046,7 +1032,7 @@ onBeforeUnmount(() => {
 
 .html-editor-dialog__editor-shell {
   flex: 1 1 auto;
-  min-height: 400px;
+  min-height: 0;
   max-height: calc(100vh - 180px);
   height: 100%;
   padding: 4px;
@@ -1059,7 +1045,7 @@ onBeforeUnmount(() => {
 .html-editor-dialog__editor {
   width: 100%;
   height: 100%;
-  min-height: 400px;
+  min-height: 0;
   border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 8px;
   overflow: hidden;
@@ -1131,7 +1117,7 @@ onBeforeUnmount(() => {
 
 :deep(.html-editor-dialog__editor .cm-editor) {
   height: 100% !important;
-  min-height: 400px;
+  min-height: 0;
   font-size: 14px;
   line-height: 1.6;
   font-family:
@@ -1146,7 +1132,7 @@ onBeforeUnmount(() => {
 
 :deep(.html-editor-dialog__editor .cm-scroller) {
   height: 100% !important;
-  min-height: 400px;
+  min-height: 0;
   overflow-y: auto !important;
 }
 
@@ -1239,11 +1225,11 @@ onBeforeUnmount(() => {
 
 /* Magic Variables UI */
 .html-editor-dialog__section-header {
-  padding: 8px 10px;
+  padding: 6px 8px;
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  border-radius: 4px;
+  margin-bottom: 8px;
   
   span {
     color: #166534;
@@ -1257,10 +1243,10 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: #475569;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     
     .badge {
       display: inline-flex;
@@ -1270,7 +1256,7 @@ onBeforeUnmount(() => {
       color: #475569;
       font-size: 10px;
       font-weight: 700;
-      padding: 2px 6px;
+      padding: 1px 5px;
       border-radius: 9999px;
     }
   }
@@ -1279,18 +1265,18 @@ onBeforeUnmount(() => {
 .compact-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .html-editor-dialog__variable-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  gap: 12px;
+  border-radius: 6px;
+  gap: 8px;
   transition: all 0.2s ease;
   
   &:hover {
@@ -1303,7 +1289,7 @@ onBeforeUnmount(() => {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
   
   .variable-row-right {
@@ -1314,10 +1300,10 @@ onBeforeUnmount(() => {
 .variable-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   
   .field-label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: #475569;
     overflow: hidden;
@@ -1329,28 +1315,28 @@ onBeforeUnmount(() => {
 .type-tag {
   font-size: 8px;
   font-weight: 700;
-  padding: 0 4px;
-  height: 15px;
-  line-height: 15px;
+  padding: 0 3px;
+  height: 14px;
+  line-height: 14px;
 }
 
 .tokens-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .clickable-token-tag {
   display: inline-flex;
   align-items: center;
   font-family: monospace;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   color: #0f172a;
   background: #f1f5f9;
   border: 1px solid #e2e8f0;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 1px 5px;
+  border-radius: 3px;
   cursor: pointer;
   transition: all 0.15s ease;
   word-break: break-all;
@@ -1437,48 +1423,89 @@ onBeforeUnmount(() => {
   font-size: 11px;
 }
 
+.component-reference-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
 .doc-section {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px;
-  
+  border-radius: 6px;
+  padding: 8px;
+
   .doc-title {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: #334155;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
-  
+
   .doc-content {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    
+    gap: 3px;
+
     .doc-bullet {
       color: #475569;
-      
+
       code {
         background: #e2e8f0;
         color: #0f172a;
-        padding: 2px 4px;
-        border-radius: 4px;
+        padding: 1px 3px;
+        border-radius: 3px;
         font-size: 10px;
       }
     }
-    
+
     .doc-paragraph {
       color: #64748b;
       line-height: 1.6;
-      
+
       code {
         background: #e2e8f0;
         color: #0f172a;
-        padding: 1px 4px;
-        border-radius: 4px;
+        padding: 1px 3px;
+        border-radius: 3px;
         font-size: 10px;
       }
     }
+  }
+}
+
+.component-reference-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+
+  .component-ref-name {
+    font-size: 11px;
+    color: #334155;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .component-ref-token {
+    font-family: monospace;
+    font-size: 10px;
+    color: #2563eb;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 1px 4px;
+    border-radius: 3px;
+    flex-shrink: 0;
   }
 }
 </style>

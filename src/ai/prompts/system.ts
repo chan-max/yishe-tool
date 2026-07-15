@@ -123,8 +123,35 @@ function buildHtmlQuickRefPrompt(): string {
   * chartjs (Chart.js 图表) -> 例: <div style="width:300px;height:300px;">{{chartjs.myChart}}</div>
   * particlesEffect (粒子特效) -> 例: <div style="position:absolute;inset:0;">{{particlesEffect.bg}}</div>
   * opentypeText (艺术字体渲染) -> 例: <div>{{opentypeText.brandTitle}}</div>
+- 配置魔术变量对应的内置组件：
+  如果魔术变量（例如 {{echart.mainChart}}）被加入到 HTML 代码中，系统会自动在画布上创建对应的组件。你可以在 canvas.addHtml 的 htmlBindings 中以与魔术变量名对应的嵌套结构传入该组件的初始化或更新配置，系统会自动将配置合并/同步到画布上！
+  各组件常见可配置属性如下：
+  * echart: 传入 option 对象作为 ECharts option（例如 { "option": { "title": { "text": "标题" }, "series": [...] } }）
+  * threejs / threeScene: 传入 3D 属性（如 modelUrl, autoRotate）
+  * qrcode / barcode: 传入文本内容（如 { "textContent": "扫描内容/条码内容" }）
+  * math: 传入 LaTeX 公式字符串（如 { "formula": "\\frac{a}{b}=c" }）
+  * mermaid: 传入 Mermaid DSL 源码（如 { "mermaidSource": "graph TD\n  A-->B" }）
+  * particlesEffect: 传入粒子效果配置
+  * wordCloud: 传入词云数据
+- 示例：添加并配置一个带有 ECharts 柱状图的 HTML 分栏：
+  canvas.addHtml({
+    htmlContent: \`<div style="display:flex;width:100%;height:100%;"><div style="flex:1;">右侧是图表</div><div style="flex:1;">{{echart.myChart}}</div></div>\`,
+    htmlBindings: {
+      echart: {
+        myChart: {
+          option: {
+            title: { text: "销量数据" },
+            xAxis: { data: ["衬衫", "羊毛衫", "雪纺衫"] },
+            yAxis: {},
+            series: [{ type: "bar", data: [5, 20, 36] }]
+          }
+        }
+      }
+    }
+  })
+- 再次调用 canvas.addHtml 进行更新/迭代优化时，如果保留之前的 htmlBindings/id，可以直接修改其下的 option/textContent/mermaidSource 等，系统会自动同步更新已有组件，不会重复创建或丢失数据。
 - 提示词举例：“左侧图片右侧 echart”：
-  你应当调用一次 canvas.addHtml，其 htmlContent 包含左右分栏布局。左侧是一个 <img> 或带 {{image.xxx.url}} 的容器，右侧是 {{echart.myChart}}。这样系统会自动创建好对应的图表，用户直接在界面右侧就可以可视化配置它！
+  你应当调用一次 canvas.addHtml，其 htmlContent 包含左右分栏布局。左侧是一个 <img> 或带 {{image.xxx.url}} 的容器，右侧是 {{echart.myChart}}。这样系统会自动创建并根据 htmlBindings 中的配置初始化图表！
 
 标题：<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#1a1a2e;"><div style="font-size:280px;font-weight:900;color:#fff;line-height:1;">标题</div></div>
 

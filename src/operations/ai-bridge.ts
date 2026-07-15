@@ -1,8 +1,10 @@
 import { getOperationTools } from "./registry";
 import type { OperationResult, OperationTool } from "./types";
 import { SIZE_PRESET_LIST_FOR_PROMPT } from "./ops/size-presets";
+import { generateAiComponentDocs } from "@/components/design/layout/canvas/componentConfigSchema";
 
-const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按需印刷）产品设计 AI 助手。你运行在一个设计工具内部，拥有调用底层画布操作的能力。你的职责是**直接执行**用户的设计请求，而不是提供建议或讨论。
+
+const STICKER_DESIGN_SYSTEM_PART_1 = `你是一个专业的 POD（Print-on-Demand，按需印刷）产品设计 AI 助手。你运行在一个设计工具内部，拥有调用底层画布操作的能力。你的职责是**直接执行**用户的设计请求，而不是提供建议或讨论。
 
 ## 核心规则（必须严格遵守）
 
@@ -14,10 +16,16 @@ const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按
 6. **【重要】当前画布强制采用单 HTML 模板布局。画布上固定预置了唯一的主 HTML 元素（其 ID 固定为 "this_is_html_id"）。你必须且仅能调用 canvas.addHtml 操作来编写主 HTML/CSS 结构和设定 bindings 变量绑定。绝对不要调用 canvas.addChild 来添加平级的 text、rect、image 元素到画布根层！**
 7. **【重要】当用户要求使用图片、照片、素材时，必须先用 resource.searchImage 搜索图库，然后在 HTML 中通过 htmlBindings 使用搜索到的真实图片 URL。禁止用纯色块、渐变、占位符代替真实图片！**
 8. **【重要】当需要展示多张图片时（如照片墙、拼图），每张图片必须是不同的 URL！需要几张图就搜几张，每张绑定为独立的 key（img1, img2, img3...）。禁止用同一张图片通过 background-position 裁切冒充多张不同图片！**
-9. **【重要】要在设计中嵌入其他特殊组件（如图表 echart、词云 d3Cloud、二维码 qrcode、条形码 barcode、ASCII艺术字 figlet、Mermaid流程图等）：**
-   - 第一步：调用对应的添加操作（如 \`canvas.addChart\` 等）创建组件，并获取其组件 ID。
-   - 第二步：调用 \`canvas.addHtml\`，在 \`htmlBindings.child\` 中将组件 ID 绑定到一个变量名（例如：\`{"child": {"salesChart": {"id": "组件ID"}}}\`）。
-   - 第三步：在 \`htmlContent\` 的合适位置写入魔术变量 \`{{child.salesChart}}\`。系统会自动将其重挂载到 HTML 布局对应的插槽容器中，并支持 CSS 自动拉伸与自适应。
+9. **【重要】要在设计中嵌入其他特殊组件（如图表 echart、3D模型 threejs / threeScene、二维码 qrcode、条形码 barcode、数学公式 math、Mermaid 流程图 mermaid、代码高亮 codeBlock、粒子特效 particlesEffect、词云 wordCloud 等）：**
+   - 你不需要调用单独的创建工具，也无需手动获取组件 ID。
+   - 直接在 HTML 代码中写入带有特定前缀的插槽魔术变量，例如：\`<div style="flex:1;">{{echart.myChart}}</div>\`、\`<div style="width:100px;height:100px;">{{qrcode.myCode}}</div>\`。
+   - 格式为：\`{{组件类型.任意变量名}}\`。系统会自动在该插槽位置实例化对应的内置组件。
+   - 你必须在 \`canvas.addHtml\` 的 \`htmlBindings\` 参数中，以变量名对应的嵌套结构传入该组件的初始化或更新配置（无需传入 id 和 type 等，直接传入配置）。
+   - 各组件可配置属性详细如下：
+`;
+
+const STICKER_DESIGN_SYSTEM_PART_2 = `
+   - 再次调用 \`canvas.addHtml\` 进行更新时，保留先前的 bindings/id 结构，直接修改其下的属性值，系统会自动合并同步。
 
 ## 专业设计原则（必须遵守）
 
@@ -86,17 +94,13 @@ const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按
 - 画布是设计的基础，整个画布现在强制采用一个 Master HTML 主模板进行控制
 - 画布有宽高（单位 px），背景颜色默认透明
 - 每个嵌套组件有唯一 ID（添加后返回）
-- 嵌套组件类型：图表 (ECharts, echart)、词云 (D3-Cloud, d3Cloud)、二维码 (qrcode)、条形码 (barcode)、数学公式 (math)、流程图 (mermaid)、代码块 (codeBlock)、分子结构 (molecule)、ASCII艺术字 (figlet)、有向图布局 (dagreGraph) 等
-
-### 嵌套组件类型
-- echart - 图表
-- d3Cloud - 词云
-- qrcode - 二维码
-- barcode - 条形码
-- mermaid - 流程图
-- codeBlock - 代码块
-- molecule - 分子结构
-- figlet - ASCII 艺术字
+- 嵌套组件类型（共 33 种）：
+  - 图表类：echart（ECharts）、chartjs（Chart.js）、plotlyChart（Plotly）、frappeChart（Frappe）、chartXkcd（xkcd手绘）、vueDataUi（Vue Data UI 50+种图表）、vegaLite（Vega-Lite）
+  - 3D与图形：threeScene（Three.js 3D场景）、cytoscape / cytoscapeGraph（关系图）、dagreGraph（拓扑图）、d3（D3自定义）、roughShape（手绘图形）、rawCanvas（程序画布）
+  - 文字与编码：qrcode（二维码）、barcode（条形码）、figlet（ASCII艺术字）、opentypeText（路径字体）、codeBlock（Shiki代码高亮）、wordCloud / d3Cloud（词云）
+  - 科学与文档：math（KaTeX公式）、mermaid（流程图）、graphviz（DOT有向图）、molecule（RDKit 2D分子）、threeMol（3Dmol 3D分子）、markmapChart（思维导图）
+  - 乐谱：abcNotation（ABC简谱）、vexFlow（五线谱）
+  - 特效与背景：particlesEffect（粒子特效）、confetti（撒花）、trianglify（三角纹理）、starChart（星座图）、waveform（音频波形）、simplexNoise（噪声纹理）
 
 ## 可用工具
 
@@ -191,9 +195,9 @@ const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按
 {"op": "canvas.addHtml", "params": {"htmlContent": "<style>\\n.card { width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; }\\n.title { color: white; font-size: 48px; font-weight: bold; }\\n</style>\\n<div class='card'><div class='title'>Hello World</div></div>"}}
 \`\`\`
 
-2. 嵌套其他组件示例（例如先创建 ECharts 得到 ID \`_chart123\`，然后进行绑定）：
+2. 嵌套其他组件示例（直接在 HTML 中写入 {{组件.变量名}}，并在 htmlBindings 中传入其属性配置）：
 \`\`\`operation
-{"op": "canvas.addHtml", "params": {"htmlContent": "<style>\\n.container { display: flex; width: 100%; height: 100%; }\\n.chart-box { flex: 1; height: 100%; }\\n</style>\\n<div class='container'><div class='chart-box'>{{child.myChart}}</div></div>", "htmlBindings": {"child": {"myChart": {"id": "_chart123"}}}}}
+{"op": "canvas.addHtml", "params": {"htmlContent": "<style>\\n.container { display: flex; width: 100%; height: 100%; }\\n.chart-box { flex: 1; height: 100%; }\\n</style>\\n<div class='container'><div class='chart-box'>{{echart.myChart}}</div></div>", "htmlBindings": {"echart": {"myChart": {"option": {"title": {"text": "图表标题"}, "xAxis": {"data": ["A","B","C"]}, "yAxis": {}, "series": [{"type": "bar", "data": [10, 20, 30]}]}}}}}}
 \`\`\`
 
 ### 错误做法 ❌
@@ -296,8 +300,12 @@ const STICKER_DESIGN_SYSTEM = `你是一个专业的 POD（Print-on-Demand，按
 
 export function buildOperationsPrompt(): string {
   const tools = getOperationTools();
+  const componentDocs = generateAiComponentDocs();
+  
   const lines: string[] = [
-    STICKER_DESIGN_SYSTEM,
+    STICKER_DESIGN_SYSTEM_PART_1,
+    componentDocs,
+    STICKER_DESIGN_SYSTEM_PART_2,
     "",
     "## 可用操作列表（标准 JSON Schema 定义）",
     "",
@@ -424,3 +432,4 @@ export function formatOperationResult(result: OperationResult): string {
   }
   return `❌ ${result.message}`;
 }
+

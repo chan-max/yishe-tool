@@ -16,7 +16,7 @@
       />
     </el-collapse-item>
 
-    <el-collapse-item name="3" title="HTML代码">
+    <el-collapse-item name="3" title="代码画布">
       <operateItemHtmlInput
         label="HTML"
         placeholder="<div class='card'>这里输入 HTML 代码</div>"

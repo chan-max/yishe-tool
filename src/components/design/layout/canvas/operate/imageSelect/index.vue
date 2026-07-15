@@ -41,7 +41,7 @@
               </div>
               <div class="image-current-selected__info">
                 <div class="image-current-selected__name">{{ model.name || "未命名" }}</div>
-                <div class="image-current-selected__id">图片ID: {{ model.id }}</div>
+                <div class="image-current-selected__id">ID: {{ model.id }}</div>
               </div>
             </div>
           </div>
@@ -316,6 +316,14 @@ function handleSearchClear() {
   min-width: 0;
   max-width: 240px;
   justify-content: flex-start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+
+.image-select-button :deep(.el-button__text),
+.image-select-button :deep(span) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

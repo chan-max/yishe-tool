@@ -247,8 +247,6 @@ export function getPositionInfoFromOptions(position) {
     let rightValue = position.right?.value
     let rightUnit = position.right?.unit
 
-    console.log('getPosition')
-
     if (position.center) {
         containerStyle.display = 'flex'
         containerStyle.alignItems = 'center'

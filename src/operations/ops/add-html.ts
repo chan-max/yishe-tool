@@ -37,13 +37,14 @@ registerOperation({
     },
     {
       name: "htmlBindings",
-      label: "资源绑定",
+      label: "资源绑定与配置",
       type: "object",
       description: [
-        "绑定图片和字体资源。格式：",
-        '{ "image": { "photo": { "id":"xxx", "url":"https://...", "name":"名称" } } }',
-        '{ "font": { "title": { "id":"xxx", "url":"https://...", "name":"字体名" } } }',
-        "HTML 中用 {{image.photo.url}} 和 {{font.title.family}} 引用。",
+        "绑定图片、字体资源及内置嵌入组件的初始化配置。格式：",
+        '图片：{ "image": { "photo": { "id":"xxx", "url":"https://...", "name":"名称" } } }',
+        '字体：{ "font": { "title": { "id":"xxx", "url":"https://...", "name":"字体名" } } }',
+        '组件：{ "echart": { "myChart": { "option": { "title": { "text": "销量" }, ... } } } }',
+        "HTML 中用 {{image.photo.url}}、{{font.title.family}} 和 {{echart.myChart}} 引用。",
       ].join("\n"),
     },
     {

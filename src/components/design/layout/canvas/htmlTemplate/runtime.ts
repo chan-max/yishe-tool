@@ -192,7 +192,7 @@ function inferHtmlTemplateFieldType(path = ""): HtmlTemplateFieldType | null {
     "frappeChart", "chartXkcd", "plotlyChart", "vegaLite", "waveform", "markmapChart", 
     "particlesEffect", "confetti", "trianglify", "starChart", "vexFlow", "cytoscape", 
     "cytoscapeGraph", "vueDataUi", "d3", "d3Cloud", "opentypeText", "simplexNoise", 
-    "molecule", "threeMol", "abcNotation", "rawCanvas"
+    "molecule", "threeMol", "abcNotation", "rawCanvas", "codeBlock"
   ];
   for (const prefix of childPrefixes) {
     if (path.startsWith(prefix + ".")) {

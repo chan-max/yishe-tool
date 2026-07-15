@@ -17,20 +17,11 @@
           </span>
           <span class="font-display-name font-display-name--placeholder" v-else>请选择字体</span>
         </el-button>
-        <el-tooltip v-if="model" content="查看字体详情" placement="top">
-          <el-button
-            size="small"
-            text
-            class="font-detail-text-button"
-            @click="openFontDetail(model)"
-          >
-            详情
-          </el-button>
-        </el-tooltip>
         <!-- <el-button size="small" @click="openFontModal"> 字体库 </el-button> -->
         <el-button
           v-if="model"
           size="small"
+          link
           type="danger"
           @click="clearFont"
         >
@@ -62,7 +53,7 @@
               <div class="font-current-selected__info">
                 <div class="font-current-selected__name">{{ model.name }}</div>
                 <div class="font-current-selected__desc" v-if="model.description">{{ model.description }}</div>
-                <div class="font-current-selected__family">FontFamily: {{ getFontFamilyId(model.id) }}</div>
+                <div class="font-current-selected__family">ID: {{ model.id }}</div>
               </div>
             </div>
           </div>
@@ -547,8 +538,15 @@ watch(
   max-width: 100%;
   justify-content: flex-start;
   overflow: hidden;
-  padding: 0 8px;
   width: 0;
+  margin-right: 4px;
+}
+
+.font-select-button :deep(.el-button__text),
+.font-select-button :deep(span) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .font-display-name {

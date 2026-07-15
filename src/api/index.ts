@@ -719,6 +719,58 @@ export const getSentenceById = (id) =>
     }
   });
 
+// 文档相关API
+export const getTextDocumentList = (data?: any) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const res = await apiInstance.post("/api/text-document/page", data);
+      resolve(res.data.data || res.data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const getTextDocumentById = (id: string) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const res = await apiInstance.get(`/api/text-document/${id}`);
+      resolve(res.data.data || res.data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const createTextDocument = (data: any) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const res = await apiInstance.post("/api/text-document", data);
+      resolve(res.data.data || res.data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const updateTextDocument = (id: string, data: any) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const res = await apiInstance.patch(`/api/text-document/${id}`, data);
+      resolve(res.data.data || res.data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+export const deleteTextDocument = (id: string) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const res = await apiInstance.delete(`/api/text-document/${id}`);
+      resolve(res.data.data || res.data);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+
 // 爬虫素材相关API
 export const createCrawlerMaterial = (data) =>
   new Promise(async (resolve, reject) => {
@@ -929,6 +981,13 @@ class Api {
   updateSentence = updateSentence;
   deleteSentence = deleteSentence;
   getSentenceById = getSentenceById;
+
+  // 文档相关方法
+  getTextDocumentList = getTextDocumentList;
+  getTextDocumentById = getTextDocumentById;
+  createTextDocument = createTextDocument;
+  updateTextDocument = updateTextDocument;
+  deleteTextDocument = deleteTextDocument;
 
   // 爬虫素材相关方法
   createCrawlerMaterial = createCrawlerMaterial;

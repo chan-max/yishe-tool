@@ -33,7 +33,9 @@ import { ref, computed, markRaw } from "vue";
 
 import tabSticker from "./sticker/index.vue";
 import tabFont from "./font/index.vue";
-import tabSentence from './sentence/index.vue'
+import tabSentence from './sentence/index.vue';
+import tabDocument from './document/index.vue';
+import tabTips from './tips/index.vue';
 import { useLocalStorage } from "@vueuse/core";
 
 enum UserOwnSourceType {
@@ -42,7 +44,9 @@ enum UserOwnSourceType {
   FONT = "font",
   COLLECT = "collect",
   LIKED = "liked",
-  DRAFT = "draft"
+  DRAFT = "draft",
+  DOCUMENT = "document",
+  TIPS = "tips"
 }
 
 const activeKey = useLocalStorage('_1s_projectActiveTab', UserOwnSourceType.STICKER);
@@ -62,6 +66,16 @@ const tabs = ref([
     label: "句子",
     key: "sentence",
     component: markRaw(tabSentence),
+  },
+  {
+    label: "文档",
+    key: UserOwnSourceType.DOCUMENT,
+    component: markRaw(tabDocument),
+  },
+  {
+    label: "技巧",
+    key: UserOwnSourceType.TIPS,
+    component: markRaw(tabTips),
   },
 ]);
 

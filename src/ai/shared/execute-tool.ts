@@ -2,7 +2,12 @@ import { createDesignOperationContext, executeOperation } from "@/operations";
 import { resourceService } from "@/ai/services/resource";
 import { resolveAIToolName } from "./tools";
 
-const RESOURCE_TOOL_NAMES = new Set(["resource.searchFont", "resource.searchSticker"]);
+const RESOURCE_TOOL_NAMES = new Set([
+  "resource.searchFont",
+  "resource.searchSticker",
+  "resource.searchSentence",
+  "resource.searchTextDocument",
+]);
 
 export function isResourceToolName(toolName: string): boolean {
   return RESOURCE_TOOL_NAMES.has(resolveAIToolName(toolName));

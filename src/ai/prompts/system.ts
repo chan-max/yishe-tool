@@ -70,11 +70,16 @@ function buildDesignRulesPrompt(): string {
 // ============ Layer 3: 资源使用 ============
 
 function buildResourceGuidePrompt(): string {
-  return `## 素材库 / 字体
+  return `## 素材库 / 字体 / 文案 / 文档
 
 - resource.searchSticker — 搜索贴纸和素材库（支持语义检索、长宽比和尺寸过滤，返回含有 id、url、width、height、isCustom、isCutout 等信息的贴纸列表）
 - resource.searchFont — 搜索字体库
+- resource.searchSentence — 搜索系统文案库，获取精美短句、品牌文案、心情语录、广告语等
+- resource.searchTextDocument — 搜索文本文档库，获取详细长文本、文章、产品背景介绍等数据源
 - 用户提到艺术字、书法、古诗、挂画、字体风格、标题设计时，必须先调用 resource.searchFont 搜索合适字体
+- 如果用户需求包含特定文案主题（如“治愈文案”、“七夕促销语”、“励志句子”），必须先调用 resource.searchSentence 获取真实文案，切勿瞎编
+- 如果需要背景故事、长篇说明、或者包含深度信息的说明文字，优先调用 resource.searchTextDocument 提取真实的文档数据
+- 搜索到文案或文档内容后，直接应用到 HTML 节点（如 canvas.addHtml 的 htmlContent）或相关元素中
 - 搜索到素材后，通常通过 canvas.loadSticker({ stickerId: "搜到的id" }) 载入画布上。对于可编辑贴纸（isCustom=true），它会加载完整元素树，支持后续修改文字、样式等
 - 搜索到字体后，在 canvas.addHtml 中通过 htmlBindings 绑定：
   { "htmlBindings": { "font": { "brand": { "id":"搜到的id", "url":"搜到的url", "name":"搜到的name" } } } }

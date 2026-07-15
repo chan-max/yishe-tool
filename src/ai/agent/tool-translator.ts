@@ -74,6 +74,30 @@ export function translateToolResult(
       const bindingsExample = `canvas.addHtml({ htmlContent: "<div style='font-family:{{font.brand.family}};...'>文字</div>", htmlBindings: { font: { brand: { id:"${first.id}", url:"${first.url}", name:"${first.name}" } } } })`;
       return `✅ 找到 ${items.length} 个字体:\n${list}\n\n用法（复制后替换 key 名 "brand" 即可）:\n${bindingsExample}`;
     }
+    case "resource.searchSentence": {
+      const items = (result.data as any[]) || [];
+      if (items.length === 0) return "⚠️ 未找到相关文案，建议换个关键词";
+      const list = items
+        .slice(0, 5)
+        .map(
+          (d: any, i: number) =>
+            `${i + 1}. "${d.content}"${d.description ? " | 说明: " + d.description : ""}`,
+        )
+        .join("\n");
+      return `✅ 找到 ${items.length} 条文案，你可以将以下合适文案直接用到设计的文字元素中:\n${list}`;
+    }
+    case "resource.searchTextDocument": {
+      const items = (result.data as any[]) || [];
+      if (items.length === 0) return "⚠️ 未找到相关文档，建议换个关键词";
+      const list = items
+        .slice(0, 5)
+        .map(
+          (d: any, i: number) =>
+            `${i + 1}. 【${d.title}】 (分类: ${d.category || "无"})\n摘要: ${d.summary || "无"}\n内容: ${d.content.slice(0, 100)}...`,
+        )
+        .join("\n\n");
+      return `✅ 找到 ${items.length} 篇文档，可作为设计的文案与背景参考数据源:\n${list}`;
+    }
     case "canvas.remove":
       return "✅ 元素已删除";
     case "canvas.updateAndSaveSticker":

@@ -91,6 +91,22 @@ export interface ImageResource {
   colorPalette: string;     // 主色调，逗号分隔的 hex，如 "#ff0000,#00ff00"
 }
 
+export interface SentenceResource {
+  id: number;
+  content: string;
+  description: string;
+  keywords?: string;
+}
+
+export interface TextDocumentResource {
+  id: string;
+  title: string;
+  content: string;
+  summary: string | null;
+  category: string | null;
+  tags: string | null;
+}
+
 export interface FontSearchParams {
   query?: string;           // 搜索关键词
   limit?: number;           // 返回数量
@@ -113,8 +129,21 @@ export interface ImageSearchParams {
   maxHeight?: number;       // 最大高度
 }
 
+export interface SentenceSearchParams {
+  query?: string;
+  limit?: number;
+  page?: number;
+}
+
+export interface TextDocumentSearchParams {
+  query?: string;
+  limit?: number;
+  page?: number;
+  category?: string;
+}
+
 export interface ResourceSearchResult {
-  items: FontResource[] | ImageResource[];
+  items: FontResource[] | ImageResource[] | SentenceResource[] | TextDocumentResource[];
   total: number;
   query: string;
 }
@@ -268,6 +297,95 @@ export async function searchImageResources(
     return searchResult;
   } catch (error) {
     console.error("[ResourceService] 搜索图片失败:", error);
+    return { items: [], total: 0, query: params.query || "" };
+  }
+}
+
+// ============ 句子/文案资源服务 ============
+
+export async function searchSentenceResources(
+  params: SentenceSearchParams
+): Promise<ResourceSearchResult> {
+  const cacheKey = getCacheKey("sentence", params);
+  const cached = getFromCache<ResourceSearchResult>(cacheKey);
+  if (cached) {
+    console.log("[ResourceService] 句子缓存命中:", params.query);
+    return cached;
+  }
+
+  try {
+    const apiParams: Record<string, any> = {
+      search: params.query,
+      currentPage: params.page || 1,
+      pageSize: params.limit || 10,
+    };
+
+    const result = await fetchApi("/api/sentences/page", apiParams);
+
+    const searchResult: ResourceSearchResult = {
+      items: (result.list || []).map((item: any) => ({
+        id: item.id,
+        content: item.content || "",
+        description: item.description || "",
+        keywords: item.keywords || "",
+      })),
+      total: result.total || 0,
+      query: params.query || "",
+    };
+
+    if (searchResult.items.length > 0) {
+      setCache(cacheKey, searchResult);
+    }
+
+    return searchResult;
+  } catch (error) {
+    console.error("[ResourceService] 搜索句子失败:", error);
+    return { items: [], total: 0, query: params.query || "" };
+  }
+}
+
+// ============ 文档资源服务 ============
+
+export async function searchTextDocumentResources(
+  params: TextDocumentSearchParams
+): Promise<ResourceSearchResult> {
+  const cacheKey = getCacheKey("textDocument", params);
+  const cached = getFromCache<ResourceSearchResult>(cacheKey);
+  if (cached) {
+    console.log("[ResourceService] 文档缓存命中:", params.query);
+    return cached;
+  }
+
+  try {
+    const apiParams: Record<string, any> = {
+      keyword: params.query,
+      page: params.page || 1,
+      pageSize: params.limit || 10,
+    };
+    if (params.category) apiParams.category = params.category;
+
+    const result = await fetchApi("/api/text-document/page", apiParams);
+
+    const searchResult: ResourceSearchResult = {
+      items: (result.list || []).map((item: any) => ({
+        id: item.id,
+        title: item.title || "",
+        content: item.content || "",
+        summary: item.summary || "",
+        category: item.category || "",
+        tags: item.tags || "",
+      })),
+      total: result.total || 0,
+      query: params.query || "",
+    };
+
+    if (searchResult.items.length > 0) {
+      setCache(cacheKey, searchResult);
+    }
+
+    return searchResult;
+  } catch (error) {
+    console.error("[ResourceService] 搜索文档失败:", error);
     return { items: [], total: 0, query: params.query || "" };
   }
 }
@@ -437,6 +555,54 @@ export const resourceTools = [
       },
     },
   },
+  {
+    type: "function" as const,
+    function: {
+      name: "resource.searchSentence",
+      description: `从文案库中搜索优美的句子、广告词、心情语录等文案素材。
+返回文案列表，每项包含 id/content/description/keywords。你必须将搜到的句子直接用到设计文本元素中。`,
+      parameters: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description: "文案搜索关键词，如：治愈、猫咪、七夕、中秋、促销、正能量",
+          },
+          limit: {
+            type: "number",
+            description: "返回数量，默认 5，最大 20",
+          },
+        },
+        required: ["query"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "resource.searchTextDocument",
+      description: `从文档库中搜索文本文档（如详细描述、背景文章、设计规范等）。
+返回文档列表，每项包含 id/title/content/summary/category/tags。`,
+      parameters: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description: "文档搜索关键词",
+          },
+          limit: {
+            type: "number",
+            description: "返回数量，默认 5，最大 20",
+          },
+          category: {
+            type: "string",
+            description: "分类过滤",
+          },
+        },
+        required: ["query"],
+      },
+    },
+  },
 ];
 
 // ============ AI 工具执行 ============
@@ -522,6 +688,63 @@ export async function executeResourceTool(
       };
     }
 
+    case "resource.searchSentence": {
+      const result = await searchSentenceResources({
+        query: args.query,
+        limit: args.limit || 5,
+      });
+      if (result.items.length === 0) {
+        return {
+          success: true,
+          data: [],
+          total: 0,
+          query: result.query,
+          message: `未找到与"${result.query}"相关的文案，建议：\n1. 尝试更通用的词语\n2. 直接使用默认文案`,
+        };
+      }
+      return {
+        success: true,
+        data: result.items.map((item: any) => ({
+          id: item.id,
+          content: item.content,
+          description: item.description,
+          keywords: item.keywords,
+        })),
+        total: result.total,
+        query: result.query,
+      };
+    }
+
+    case "resource.searchTextDocument": {
+      const result = await searchTextDocumentResources({
+        query: args.query,
+        limit: args.limit || 5,
+        category: args.category,
+      });
+      if (result.items.length === 0) {
+        return {
+          success: true,
+          data: [],
+          total: 0,
+          query: result.query,
+          message: `未找到与"${result.query}"相关的文档，建议：\n1. 放宽或更换搜索词\n2. 检查分类参数`,
+        };
+      }
+      return {
+        success: true,
+        data: result.items.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          content: item.content,
+          summary: item.summary,
+          category: item.category,
+          tags: item.tags,
+        })),
+        total: result.total,
+        query: result.query,
+      };
+    }
+
     default:
       return { success: false, error: `未知工具: ${toolName}` };
   }
@@ -540,7 +763,10 @@ export function getSearchHistory(): SearchHistoryEntry[] {
   const history: SearchHistoryEntry[] = [];
   for (const [key, entry] of searchCache.entries()) {
     const data = entry.data as ResourceSearchResult;
-    const tool = key.startsWith("font:") ? "resource.searchFont" : "resource.searchSticker";
+    let tool = "resource.searchSticker";
+    if (key.startsWith("font:")) tool = "resource.searchFont";
+    else if (key.startsWith("sentence:")) tool = "resource.searchSentence";
+    else if (key.startsWith("textDocument:")) tool = "resource.searchTextDocument";
     history.push({
       tool,
       query: data.query,
@@ -570,6 +796,8 @@ export function clearSearchCache(): void {
 export const resourceService = {
   searchFont: searchFontResources,
   searchImage: searchImageResources,
+  searchSentence: searchSentenceResources,
+  searchTextDocument: searchTextDocumentResources,
   getFont: getFontResource,
   getImage: getImageResource,
   executeTool: executeResourceTool,

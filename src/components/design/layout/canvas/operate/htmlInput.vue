@@ -40,200 +40,129 @@
         </div>
 
         <div v-loading="loadingEditor" class="html-editor-dialog__editor-shell">
-          <div v-show="!editorError" ref="editorContainerRef" class="html-editor-dialog__editor"></div>
-        </div>
-      </div>
+          <div v-show="!editorError" ref="editorContainerRef" class="      <div class="html-editor-dialog__sidebar">
+        <el-tabs v-model="activeTabName" class="html-editor-dialog__tabs" stretch>
+          <!-- Tab 1: 模板变量 -->
+          <el-tab-pane label="模板变量" name="variables">
+            <div class="html-editor-dialog__sidebar-content">
+              <div class="html-editor-dialog__section-header">
+                <span>提示：点击变量可以直接插入到编辑器光标处</span>
+              </div>
 
-      <div class="html-editor-dialog__sidebar">
-        <div class="html-editor-dialog__sidebar-header">
-          <h3>魔术变量</h3>
-        </div>
-        <div class="html-editor-dialog__sidebar-content">
-          <div class="html-editor-dialog__doc-section">
-            <div class="html-editor-dialog__doc-title">支持范围</div>
-            <div class="html-editor-dialog__doc-content">
-              <div class="html-editor-dialog__doc-item">
-                <strong>可写内容：</strong>普通 HTML 标签 + 内联 <code>&lt;style&gt;</code>。
-              </div>
-              <div class="html-editor-dialog__doc-item">
-                <strong>样式处理：</strong><code>&lt;style&gt;</code> 里的选择器会自动限定到当前贴纸元素，不会直接污染整个画布。
-              </div>
-              <div class="html-editor-dialog__doc-item">
-                <strong>安全过滤：</strong><code>&lt;script&gt;</code>、<code>iframe</code>、事件属性（如 <code>onclick</code>）以及危险链接会被清理。
-              </div>
-              <div class="html-editor-dialog__doc-item">
-                <strong>布局限制：</strong><code>position: fixed</code> 会被改写为 <code>position: absolute</code>。
-              </div>
-              <div class="html-editor-dialog__doc-note">
-                右侧下方“当前模板变量”列表，才是这一个元素当前真正可用的变量全集。
-              </div>
-            </div>
-          </div>
-
-          <div class="html-editor-dialog__doc-section">
-            <div class="html-editor-dialog__doc-title">变量从哪里来</div>
-            <div class="html-editor-dialog__doc-content">
-              <div class="html-editor-dialog__doc-type">
-                <div class="html-editor-dialog__doc-type-name">系统变量</div>
-                <div class="html-editor-dialog__doc-type-desc">
-                  固定支持 <code v-pre>{{canvas.width}}</code>、<code v-pre>{{canvas.heightCss}}</code>、
-                  <code v-pre>{{element.id}}</code>、<code v-pre>{{element.zIndex}}</code>。
+              <!-- 模板/魔术变量 -->
+              <div class="html-editor-dialog__variable-section">
+                <div class="html-editor-dialog__variable-section-name">
+                  当前模板变量
+                  <span class="badge" v-if="templateMagicVariableItems.length">
+                    {{ templateMagicVariableItems.length }}
+                  </span>
+                </div>
+                <div v-if="templateMagicVariableItems.length" class="html-editor-dialog__variable-list compact-list">
+                  <div
+                    v-for="item in templateMagicVariableItems"
+                    :key="item.token"
+                    class="html-editor-dialog__variable-row"
+                    @click="insertVariable(item.token)"
+                  >
+                    <div class="variable-token-container">
+                      <el-tag size="small" :type="getBadgeType(item.type)" class="type-tag">{{ item.type.toUpperCase() }}</el-tag>
+                      <code class="clickable-code">{{ item.token }}</code>
+                    </div>
+                    <span class="variable-desc">{{ item.description }}</span>
+                  </div>
+                </div>
+                <div v-else class="html-editor-dialog__variable-empty">
+                  当前暂无已识别的模板变量。
                 </div>
               </div>
 
-              <div class="html-editor-dialog__doc-type">
-                <div class="html-editor-dialog__doc-type-name">模板库变量</div>
-                <div class="html-editor-dialog__doc-type-desc">
-                  从“模板库”选中的模板自带字段而来，保存后可在“模板绑定”里改内容、颜色、图片、字体等。
+              <!-- 系统变量 -->
+              <div class="html-editor-dialog__variable-section" style="margin-top: 16px;">
+                <div class="html-editor-dialog__variable-section-name">
+                  内置系统变量
+                  <span class="badge">{{ systemMagicVariableItems.length }}</span>
                 </div>
-              </div>
-
-              <div class="html-editor-dialog__doc-type">
-                <div class="html-editor-dialog__doc-type-name">手写 HTML 自动识别变量</div>
-                <div class="html-editor-dialog__doc-type-desc">
-                  直接在 HTML 中写变量并保存后，会自动识别一部分变量并生成“模板绑定”面板。
-                </div>
-              </div>
-
-              <div class="html-editor-dialog__doc-type">
-                <div class="html-editor-dialog__doc-type-name">旧写法提醒</div>
-                <div class="html-editor-dialog__doc-type-syntax">
-                  <code v-pre>{{title}}</code>
-                </div>
-                <div class="html-editor-dialog__doc-type-desc">
-                  这类没有类型前缀的写法，不适合作为手写 HTML 的通用定义方式；请改成
-                  <code v-pre>{{text.title}}</code> 这类带前缀写法。
+                <div class="html-editor-dialog__variable-list compact-list">
+                  <div
+                    v-for="item in systemMagicVariableItems"
+                    :key="item.token"
+                    class="html-editor-dialog__variable-row"
+                    @click="insertVariable(item.token)"
+                  >
+                    <div class="variable-token-container">
+                      <el-tag size="small" type="info" class="type-tag">SYS</el-tag>
+                      <code class="clickable-code">{{ item.token }}</code>
+                    </div>
+                    <span class="variable-desc">{{ item.description }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </el-tab-pane>
 
-          <div class="html-editor-dialog__doc-section">
-            <div class="html-editor-dialog__doc-title">手写 HTML 时推荐写法</div>
-            <div class="html-editor-dialog__doc-content">
-              <div class="html-editor-dialog__doc-type">
-                <div class="html-editor-dialog__doc-type-name">文本 / 多行文本</div>
-                <div class="html-editor-dialog__doc-type-syntax">
-                  <code v-pre>{{text.title}}</code>、<code v-pre>{{text.desc}}</code>
+          <!-- Tab 2: 组件配置 -->
+          <el-tab-pane label="组件配置" name="widget">
+            <div class="html-editor-dialog__sidebar-content scrollable-panel">
+              <div v-if="boundChildren.length === 0" class="widget-empty">
+                <el-empty description="当前模板没有挂载子组件" :image-size="60">
+                  <template #extra>
+                    <div style="font-size: 11px; color: #8a8f98; line-height: 1.6; text-align: left; padding: 0 10px;">
+                      您可以在 HTML 代码中添加形如 <code>{{ '{{' }}child.chart{{ '}}' }}</code> 的变量，然后在页面右侧面板将其绑定为特定组件（如 ECharts 图表、二维码等）。
+                    </div>
+                  </template>
+                </el-empty>
+              </div>
+              <div v-else class="widget-config-panel">
+                <div class="widget-select-row">
+                  <div class="widget-label">选择要配置的组件：</div>
+                  <el-select v-model="selectedChildId" placeholder="选择组件进行配置" style="width: 100%">
+                    <el-option
+                      v-for="child in boundChildren"
+                      :key="child.id"
+                      :value="child.id"
+                      :label="`${canvasChildLabelMap[child.type]} (${child.id.slice(-4)})`"
+                    />
+                  </el-select>
                 </div>
-                <div class="html-editor-dialog__doc-type-desc">用于标题、正文、说明文案；多行文本同样写成 <code v-pre>{{text.xxx}}</code>。</div>
-              </div>
 
-              <div class="html-editor-dialog__doc-type">
-                <div class="html-editor-dialog__doc-type-name">颜色</div>
-                <div class="html-editor-dialog__doc-type-syntax">
-                  <code v-pre>{{color.primary}}</code>、<code v-pre>{{color.primary.css}}</code>
-                </div>
-                <div class="html-editor-dialog__doc-type-desc">可直接用于文字色、背景色、边框色；<code>.css</code> 也会输出颜色值。</div>
-              </div>
-
-              <div class="html-editor-dialog__doc-type">
-                <div class="html-editor-dialog__doc-type-name">图片</div>
-                <div class="html-editor-dialog__doc-type-syntax">
-                  <code v-pre>{{image.logo.url}}</code>、<code v-pre>{{image.logo.src}}</code>、<code v-pre>{{image.logo.name}}</code>
-                </div>
-                <div class="html-editor-dialog__doc-type-desc">通常把 <code>.url</code> / <code>.src</code> 放到 <code>img src</code>，把 <code>.name</code> 放到 <code>alt</code>。</div>
-              </div>
-
-              <div class="html-editor-dialog__doc-type">
-                <div class="html-editor-dialog__doc-type-name">字体</div>
-                <div class="html-editor-dialog__doc-type-syntax">
-                  <code v-pre>{{font.brand.family}}</code>、<code v-pre>{{font.brand.name}}</code>
-                </div>
-                <div class="html-editor-dialog__doc-type-desc">推荐在 CSS 的 <code>font-family</code> 中使用 <code>.family</code>。</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="html-editor-dialog__doc-section">
-            <div class="html-editor-dialog__doc-title">模板库变量如何继续使用</div>
-            <div class="html-editor-dialog__doc-content">
-              <div class="html-editor-dialog__doc-item">
-                <strong>沿用现有 key：</strong>如果模板库里原本就是 <code v-pre>{{style.size}}</code>、
-                <code v-pre>{{text.title}}</code> 这类 key，编辑 HTML 时继续原样使用即可。
-              </div>
-              <div class="html-editor-dialog__doc-item">
-                <strong>修改入口：</strong>模板自带字段请到“模板绑定”里改值，不需要在 HTML 里重新定义字段结构。
-              </div>
-              <div class="html-editor-dialog__doc-item">
-                <strong>新增变量建议：</strong>如果是手写 HTML 新增变量，优先使用
-                <code>text</code>、<code>color</code>、<code>image</code>、<code>font</code>
-                这几类前缀，保存后更容易自动生成绑定项。
-              </div>
-              <div class="html-editor-dialog__doc-note">
-                像 <code v-pre>{{style.xxx}}</code> 这种模板自带变量可以正常渲染，但更适合由模板库预先定义，而不是作为手写 HTML 的通用新增写法。
-              </div>
-            </div>
-          </div>
-
-          <div class="html-editor-dialog__doc-section">
-            <div class="html-editor-dialog__doc-title">常见示例</div>
-            <div class="html-editor-dialog__doc-content">
-              <div class="html-editor-dialog__doc-example">
-                <div class="html-editor-dialog__doc-example-title">标题文字</div>
-                <div class="html-editor-dialog__doc-example-code">
-                  <code v-pre>&lt;h1&gt;{{text.title}}&lt;/h1&gt;</code>
-                </div>
-              </div>
-
-              <div class="html-editor-dialog__doc-example">
-                <div class="html-editor-dialog__doc-example-title">图片</div>
-                <div class="html-editor-dialog__doc-example-code">
-                  <code v-pre>&lt;img src="{{image.logo.url}}" alt="{{image.logo.name}}"&gt;</code>
-                </div>
-              </div>
-
-              <div class="html-editor-dialog__doc-example">
-                <div class="html-editor-dialog__doc-example-title">字体 + 样式块</div>
-                <div class="html-editor-dialog__doc-example-code">
-                  <code v-pre>&lt;style&gt;.title { font-family: {{font.brand.family}}, sans-serif; color: {{color.primary}}; }&lt;/style&gt;</code>
+                <div v-if="selectedChild" class="widget-form-container">
+                  <div class="widget-form-header">
+                    <span class="widget-type-badge">{{ selectedChild.type.toUpperCase() }}</span>
+                    <span class="widget-id-text">ID: {{ selectedChild.id.slice(-6) }}</span>
+                  </div>
+                  <div class="widget-form-content">
+                    <component :is="CanvasChildOperationComponentMap[selectedChild.type]" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </el-tab-pane>
 
-          <div class="html-editor-dialog__doc-section">
-            <div class="html-editor-dialog__doc-title">当前模板变量</div>
-            <div class="html-editor-dialog__variable-section">
-              <div class="html-editor-dialog__variable-section-name">
-                系统变量
-                <span>· {{ systemMagicVariableItems.length }} 项</span>
+          <!-- Tab 3: 语法速查 -->
+          <el-tab-pane label="语法速查" name="docs">
+            <div class="html-editor-dialog__sidebar-content scrollable-panel font-size-11">
+              <div class="doc-section">
+                <div class="doc-title">变量语法规范</div>
+                <div class="doc-content">
+                  <div class="doc-bullet"><strong>文字</strong>: <code>{{ '{{' }}text.title{{ '}}' }}</code></div>
+                  <div class="doc-bullet"><strong>颜色</strong>: <code>{{ '{{' }}color.primary{{ '}}' }}</code> 或 <code>{{ '{{' }}color.primary.css{{ '}}' }}</code></div>
+                  <div class="doc-bullet"><strong>图片</strong>: <code>{{ '{{' }}image.logo.url{{ '}}' }}</code></div>
+                  <div class="doc-bullet"><strong>组件</strong>: <code>{{ '{{' }}child.salesChart{{ '}}' }}</code></div>
+                  <div class="doc-bullet"><strong>HTML子模板</strong>: <code>{{ '{{' }}html.subBlock{{ '}}' }}</code></div>
+                </div>
               </div>
-              <div class="html-editor-dialog__variable-list">
-                <div
-                  v-for="item in systemMagicVariableItems"
-                  :key="item.token"
-                  class="html-editor-dialog__variable-item"
-                >
-                  <code>{{ item.token }}</code>
-                  <span>{{ item.description }}</span>
+              
+              <div class="doc-section" style="margin-top: 12px;">
+                <div class="doc-title">CSS 限定范围保护</div>
+                <div class="doc-content">
+                  <div class="doc-paragraph">
+                    编辑器支持手写 <code>&lt;style&gt;</code>。保存后，所有 CSS 选择器都会自动被增加属性限制，使其只作用在当前贴纸内，避免样式冲突。
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div class="html-editor-dialog__variable-section">
-              <div class="html-editor-dialog__variable-section-name">
-                模板变量
-                <span v-if="templateMagicVariableItems.length">
-                  · {{ templateMagicVariableItems.length }} 项
-                </span>
-              </div>
-              <div v-if="templateMagicVariableItems.length" class="html-editor-dialog__variable-list">
-                <div
-                  v-for="item in templateMagicVariableItems"
-                  :key="item.token"
-                  class="html-editor-dialog__variable-item"
-                >
-                  <code>{{ item.token }}</code>
-                  <span>{{ item.description }}</span>
-                </div>
-              </div>
-              <div v-else class="html-editor-dialog__variable-empty">
-                当前没有模板变量。你可以直接写纯 HTML / CSS，或先从模板库选择带变量的模板。
-              </div>
-            </div>
-          </div>
-        </div>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </div>
 
@@ -260,6 +189,13 @@ import {
   syncHtmlTemplateFieldsFromContent,
 } from "@/components/design/layout/canvas/htmlTemplate/runtime.ts";
 import type { HtmlTemplateFieldDefinition } from "@/components/design/layout/canvas/htmlTemplate/types";
+
+import {
+  canvasStickerOptions,
+  currentOperatingCanvasChildId,
+  CanvasChildOperationComponentMap,
+  canvasChildLabelMap,
+} from "../index.tsx";
 
 import { EditorState, Extension } from "@codemirror/state";
 import { EditorView, keymap, ViewUpdate } from "@codemirror/view";
@@ -294,20 +230,90 @@ const draftValue = ref("");
 const editorContainerRef = ref<HTMLElement | null>(null);
 const editorInstance = shallowRef<EditorView | null>(null);
 
+const activeTabName = ref("variables");
+const selectedChildId = ref("");
+let originalActiveChildId = "this_is_html_id";
+
+const boundChildren = computed(() => {
+  if (!canvasStickerOptions.value?.children) return [];
+  return canvasStickerOptions.value.children.filter(
+    (c: any) => c.type !== "canvas" && c.type !== "html"
+  );
+});
+
+const selectedChild = computed(() => {
+  return canvasStickerOptions.value.children.find((c: any) => c.id === selectedChildId.value);
+});
+
+function getBadgeType(type: string) {
+  switch (type) {
+    case "text":
+    case "textarea":
+      return "info";
+    case "color":
+      return "success";
+    case "image":
+      return "warning";
+    case "font":
+      return "primary";
+    case "child":
+      return "danger";
+    case "html":
+      return "warning";
+    default:
+      return "info";
+  }
+}
+
+function insertVariable(token: string) {
+  if (!editorInstance.value) return;
+  const view = editorInstance.value;
+  const state = view.state;
+  const mainSelection = state.selection.main;
+  
+  view.dispatch({
+    changes: {
+      from: mainSelection.from,
+      to: mainSelection.to,
+      insert: token
+    },
+    selection: { anchor: mainSelection.from + token.length }
+  });
+  view.focus();
+}
+
+function restoreActiveElement() {
+  currentOperatingCanvasChildId.value = originalActiveChildId;
+}
+
+watch(activeTabName, (tab) => {
+  if (tab === "variables") {
+    currentOperatingCanvasChildId.value = "this_is_html_id";
+  } else if (tab === "widget" && selectedChildId.value) {
+    currentOperatingCanvasChildId.value = selectedChildId.value;
+  }
+});
+
+watch(selectedChildId, (newId) => {
+  if (activeTabName.value === "widget" && newId) {
+    currentOperatingCanvasChildId.value = newId;
+  }
+});
+
 const draftSummary = computed(() => {
   const value = String(draftValue.value ?? "");
   return `${value.split(/\r?\n/).length} 行 · ${value.length} 字符`;
 });
 
 const systemMagicVariableItems = [
-  { token: "{{canvas.width}}", description: "画布宽度数值" },
-  { token: "{{canvas.height}}", description: "画布高度数值" },
-  { token: "{{canvas.widthUnit}}", description: "画布宽度单位" },
-  { token: "{{canvas.heightUnit}}", description: "画布高度单位" },
-  { token: "{{canvas.widthCss}}", description: "画布宽度 CSS 值" },
-  { token: "{{canvas.heightCss}}", description: "画布高度 CSS 值" },
-  { token: "{{element.id}}", description: "当前元素 id" },
-  { token: "{{element.zIndex}}", description: "当前元素层级" },
+  { token: "{{canvas.width}}", description: "画布宽度数值", type: "canvas" },
+  { token: "{{canvas.height}}", description: "画布高度数值", type: "canvas" },
+  { token: "{{canvas.widthUnit}}", description: "画布宽度单位", type: "canvas" },
+  { token: "{{canvas.heightUnit}}", description: "画布高度单位", type: "canvas" },
+  { token: "{{canvas.widthCss}}", description: "画布宽度 CSS 值", type: "canvas" },
+  { token: "{{canvas.heightCss}}", description: "画布高度 CSS 值", type: "canvas" },
+  { token: "{{element.id}}", description: "当前元素 id", type: "element" },
+  { token: "{{element.zIndex}}", description: "当前元素层级", type: "element" },
 ];
 
 const templateMagicVariableItems = computed(() => {
@@ -318,17 +324,19 @@ const templateMagicVariableItems = computed(() => {
   return fields.flatMap((field) => createMagicVariableItemsForField(field));
 });
 
-function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition) {
+function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition): any[] {
   switch (field.type) {
     case "color":
       return [
         {
           token: `{{${field.key}}}`,
           description: `${field.label}，直接输出颜色值`,
+          type: field.type,
         },
         {
           token: `{{${field.key}.css}}`,
           description: `${field.label}，颜色 CSS 别名`,
+          type: field.type,
         },
       ];
     case "image":
@@ -336,14 +344,17 @@ function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition) {
         {
           token: `{{${field.key}.url}}`,
           description: `${field.label}，图片地址`,
+          type: field.type,
         },
         {
           token: `{{${field.key}.src}}`,
           description: `${field.label}，图片地址别名`,
+          type: field.type,
         },
         {
           token: `{{${field.key}.name}}`,
           description: `${field.label}，图片名称`,
+          type: field.type,
         },
       ];
     case "font":
@@ -351,10 +362,28 @@ function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition) {
         {
           token: `{{${field.key}.family}}`,
           description: `${field.label}，渲染后的字体 family`,
+          type: field.type,
         },
         {
           token: `{{${field.key}.name}}`,
           description: `${field.label}，字体名称`,
+          type: field.type,
+        },
+      ];
+    case "child":
+      return [
+        {
+          token: field.key.startsWith("child.") ? `{{${field.key}}}` : `{{child.${field.key}}}`,
+          description: `${field.label}，嵌入组件插槽（如 ECharts、Sticker 等）`,
+          type: field.type,
+        },
+      ];
+    case "html":
+      return [
+        {
+          token: field.key.startsWith("html.") ? `{{${field.key}}}` : `{{html.${field.key}}}`,
+          description: `${field.label}，递归嵌套的 HTML 代码片段`,
+          type: field.type,
         },
       ];
     case "textarea":
@@ -364,6 +393,7 @@ function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition) {
         {
           token: `{{${field.key}}}`,
           description: `${field.label}，文本变量`,
+          type: field.type,
         },
       ];
   }
@@ -371,7 +401,7 @@ function createMagicVariableItemsForField(field: HtmlTemplateFieldDefinition) {
 
 /** Build autocomplete completions from magic variable lists */
 function buildCompletions(cx: CompletionContext) {
-  const allVariables = [
+  const allVariables: any[] = [
     ...systemMagicVariableItems,
     ...templateMagicVariableItems.value,
   ];
@@ -606,7 +636,7 @@ onBeforeUnmount(() => {
 }
 
 .html-editor-dialog__sidebar {
-  width: 320px;
+  width: 420px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -1052,6 +1082,262 @@ onBeforeUnmount(() => {
   .html-editor-dialog__footer-actions {
     width: 100%;
     justify-content: flex-end;
+  }
+}
+
+/* Custom Tabs for the Sidebar */
+:deep(.html-editor-dialog__tabs) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  .el-tabs__header {
+    margin: 0;
+    background: rgba(248, 250, 252, 0.9);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+  }
+  
+  .el-tabs__item {
+    font-size: 12px;
+    font-weight: 500;
+    height: 38px;
+    line-height: 38px;
+  }
+  
+  .el-tabs__content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .el-tab-pane {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Scrollable Panel inside Tabs */
+.scrollable-panel {
+  flex: 1;
+  overflow-y: auto !important;
+  max-height: calc(100vh - 220px) !important;
+}
+
+/* Magic Variables UI */
+.html-editor-dialog__section-header {
+  padding: 8px 10px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  
+  span {
+    color: #166534;
+    font-size: 10px;
+    font-weight: 500;
+  }
+}
+
+.html-editor-dialog__variable-section {
+  .html-editor-dialog__variable-section-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 8px;
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 9999px;
+    }
+  }
+}
+
+.compact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.html-editor-dialog__variable-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: #3b82f6;
+    background: #f0f7ff;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.05);
+    
+    .clickable-code {
+      color: #2563eb;
+    }
+  }
+}
+
+.variable-token-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.type-tag {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 0 4px;
+  height: 15px;
+  line-height: 15px;
+}
+
+.clickable-code {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0f172a;
+  background: transparent;
+  padding: 0;
+  border: none;
+}
+
+.variable-desc {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Widgets Config UI */
+.widget-empty {
+  padding: 30px 10px;
+}
+
+.widget-config-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.widget-select-row {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 12px;
+  border-radius: 8px;
+  
+  .widget-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 6px;
+  }
+}
+
+.widget-form-container {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  
+  .widget-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f1f5f9;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    
+    .widget-type-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: #3b82f6;
+      background: #eff6ff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #bfdbfe;
+    }
+    
+    .widget-id-text {
+      font-size: 10px;
+      color: #64748b;
+      font-family: monospace;
+    }
+  }
+  
+  .widget-form-content {
+    padding: 12px;
+    background: #ffffff;
+    
+    :deep(.operate-form-item) {
+      margin-bottom: 12px;
+      
+      .operate-form-item-title {
+        font-size: 11px;
+        color: #475569;
+      }
+    }
+  }
+}
+
+/* Compact Docs UI */
+.font-size-11 {
+  font-size: 11px;
+}
+
+.doc-section {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  
+  .doc-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+  }
+  
+  .doc-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    
+    .doc-bullet {
+      color: #475569;
+      
+      code {
+        background: #e2e8f0;
+        color: #0f172a;
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-size: 10px;
+      }
+    }
+    
+    .doc-paragraph {
+      color: #64748b;
+      line-height: 1.6;
+      
+      code {
+        background: #e2e8f0;
+        color: #0f172a;
+        padding: 1px 4px;
+        border-radius: 4px;
+        font-size: 10px;
+      }
+    }
   }
 }
 </style>

@@ -5,15 +5,15 @@
       <div v-if="currentOperatingCanvasChild.type === 'html' || currentOperatingCanvasChild.type === 'canvas'" class="custom-segmented-control">
         <div 
           class="segmented-item" 
-          :class="{ active: activeMainTab === 'html' }"
-          @click="activeMainTab = 'html'"
+          :class="{ active: currentOperatingCanvasChild.type !== 'canvas' }"
+          @click="setTab('html')"
         >
           主 HTML 模板
         </div>
         <div 
           class="segmented-item" 
-          :class="{ active: activeMainTab === 'canvas' }"
-          @click="activeMainTab = 'canvas'"
+          :class="{ active: currentOperatingCanvasChild.type === 'canvas' }"
+          @click="setTab('canvas')"
         >
           画布设置
         </div>
@@ -38,18 +38,13 @@
 import { onMounted, ref, computed, watch, reactive, watchEffect, nextTick } from "vue";
 import { currentOperatingCanvasChildId } from "../index.tsx";
 
-const activeMainTab = computed({
-  get() {
-    return currentOperatingCanvasChild.value.type === 'canvas' ? 'canvas' : 'html';
-  },
-  set(val) {
-    if (val === 'canvas') {
-      currentOperatingCanvasChildId.value = "this_is_canvas_id";
-    } else {
-      currentOperatingCanvasChildId.value = "this_is_html_id";
-    }
+function setTab(tab: 'html' | 'canvas') {
+  if (tab === 'canvas') {
+    currentOperatingCanvasChildId.value = "this_is_canvas_id";
+  } else {
+    currentOperatingCanvasChildId.value = "this_is_html_id";
   }
-});
+}
 
 function selectMasterHtml() {
   currentOperatingCanvasChildId.value = "this_is_html_id";
@@ -122,9 +117,9 @@ function remove(index) {
 .custom-segmented-control {
   display: flex;
   background-color: #f1f5f9;
-  padding: 4px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: 3px;
+  border-radius: 6px;
+  margin-bottom: 12px;
   user-select: none;
   cursor: pointer;
   border: 1px solid rgba(226, 232, 240, 0.8);
@@ -132,11 +127,11 @@ function remove(index) {
   .segmented-item {
     flex: 1;
     text-align: center;
-    padding: 8px 12px;
-    font-size: 13px;
+    padding: 5px 8px;
+    font-size: 11px;
     font-weight: 600;
     color: #64748b;
-    border-radius: 6px;
+    border-radius: 4px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
@@ -146,7 +141,7 @@ function remove(index) {
     &.active {
       background-color: #ffffff;
       color: #0f172a;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
   }
 }

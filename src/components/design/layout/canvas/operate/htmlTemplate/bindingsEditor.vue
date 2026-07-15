@@ -93,11 +93,15 @@
               />
             </el-select>
 
-            <el-dropdown size="small" style="margin-right: 6px;" @command="createAndBindChildElement(field, $event)">
-              <el-button size="small" type="primary" plain>
-                创建组件
-                <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-              </el-button>
+            <el-dropdown
+              size="small"
+              split-button
+              type="primary"
+              style="margin-right: 6px;"
+              @click="autoCreateAndBindChildElement(field)"
+              @command="createAndBindChildElement(field, $event)"
+            >
+              创建组件
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item command="echart">ECharts 图表</el-dropdown-item>
@@ -209,6 +213,83 @@ function bindChildElement(field: any, childId: any) {
     return;
   }
   updateFieldValue(field, { id: childId });
+}
+
+function autoCreateAndBindChildElement(field: any) {
+  const key = field.key || "";
+  let inferredType = "echart"; // default ECharts
+  
+  if (key.startsWith("threejs.") || key.startsWith("threeScene.")) {
+    inferredType = "threeScene";
+  } else if (key.startsWith("echart.")) {
+    inferredType = "echart";
+  } else if (key.startsWith("wordCloud.")) {
+    inferredType = "wordCloud";
+  } else if (key.startsWith("barcode.")) {
+    inferredType = "barcode";
+  } else if (key.startsWith("qrcode.")) {
+    inferredType = "qrcode";
+  } else if (key.startsWith("figlet.")) {
+    inferredType = "figlet";
+  } else if (key.startsWith("math.")) {
+    inferredType = "math";
+  } else if (key.startsWith("mermaid.")) {
+    inferredType = "mermaid";
+  } else if (key.startsWith("graphviz.")) {
+    inferredType = "graphviz";
+  } else if (key.startsWith("dagreGraph.")) {
+    inferredType = "dagreGraph";
+  } else if (key.startsWith("roughShape.")) {
+    inferredType = "roughShape";
+  } else if (key.startsWith("chartjs.")) {
+    inferredType = "chartjs";
+  } else if (key.startsWith("frappeChart.")) {
+    inferredType = "frappeChart";
+  } else if (key.startsWith("chartXkcd.")) {
+    inferredType = "chartXkcd";
+  } else if (key.startsWith("plotlyChart.")) {
+    inferredType = "plotlyChart";
+  } else if (key.startsWith("vegaLite.")) {
+    inferredType = "vegaLite";
+  } else if (key.startsWith("waveform.")) {
+    inferredType = "waveform";
+  } else if (key.startsWith("markmapChart.")) {
+    inferredType = "markmapChart";
+  } else if (key.startsWith("particlesEffect.")) {
+    inferredType = "particlesEffect";
+  } else if (key.startsWith("confetti.")) {
+    inferredType = "confetti";
+  } else if (key.startsWith("trianglify.")) {
+    inferredType = "trianglify";
+  } else if (key.startsWith("starChart.")) {
+    inferredType = "starChart";
+  } else if (key.startsWith("vexFlow.")) {
+    inferredType = "vexFlow";
+  } else if (key.startsWith("cytoscape.")) {
+    inferredType = "cytoscape";
+  } else if (key.startsWith("cytoscapeGraph.")) {
+    inferredType = "cytoscapeGraph";
+  } else if (key.startsWith("vueDataUi.")) {
+    inferredType = "vueDataUi";
+  } else if (key.startsWith("d3.")) {
+    inferredType = "d3";
+  } else if (key.startsWith("d3Cloud.")) {
+    inferredType = "d3Cloud";
+  } else if (key.startsWith("opentypeText.")) {
+    inferredType = "opentypeText";
+  } else if (key.startsWith("simplexNoise.")) {
+    inferredType = "simplexNoise";
+  } else if (key.startsWith("molecule.")) {
+    inferredType = "molecule";
+  } else if (key.startsWith("threeMol.")) {
+    inferredType = "threeMol";
+  } else if (key.startsWith("abcNotation.")) {
+    inferredType = "abcNotation";
+  } else if (key.startsWith("rawCanvas.")) {
+    inferredType = "rawCanvas";
+  }
+  
+  createAndBindChildElement(field, inferredType);
 }
 
 function createAndBindChildElement(field: any, type: string) {

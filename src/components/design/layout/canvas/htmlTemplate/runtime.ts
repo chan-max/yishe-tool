@@ -185,8 +185,19 @@ function inferHtmlTemplateFieldType(path = ""): HtmlTemplateFieldType | null {
     return "font";
   }
 
-  if (path.startsWith("child.")) {
-    return "child";
+  // Check child type prefixes
+  const childPrefixes = [
+    "child", "threejs", "threeScene", "echart", "wordCloud", "barcode", "qrcode", 
+    "figlet", "math", "mermaid", "graphviz", "dagreGraph", "roughShape", "chartjs", 
+    "frappeChart", "chartXkcd", "plotlyChart", "vegaLite", "waveform", "markmapChart", 
+    "particlesEffect", "confetti", "trianglify", "starChart", "vexFlow", "cytoscape", 
+    "cytoscapeGraph", "vueDataUi", "d3", "d3Cloud", "opentypeText", "simplexNoise", 
+    "molecule", "threeMol", "abcNotation", "rawCanvas"
+  ];
+  for (const prefix of childPrefixes) {
+    if (path.startsWith(prefix + ".")) {
+      return "child";
+    }
   }
 
   if (path.startsWith("html.")) {
@@ -437,8 +448,20 @@ export function resolveHtmlMagicVariables(templateText = "", context: Record<str
     const trimmedPath = String(path).trim();
     const value = getValueByPath(context, trimmedPath);
 
-    // Support child magic variables shorthand (e.g. {{child.sales}} -> placeholder div)
-    if (trimmedPath.startsWith("child.") && value && typeof value === "object" && value.id) {
+    // Support child magic variables shorthand (e.g. {{child.sales}} or {{echart.sales}} -> placeholder div)
+    const isChildVar = (() => {
+      const childPrefixes = [
+        "child", "threejs", "threeScene", "echart", "wordCloud", "barcode", "qrcode", 
+        "figlet", "math", "mermaid", "graphviz", "dagreGraph", "roughShape", "chartjs", 
+        "frappeChart", "chartXkcd", "plotlyChart", "vegaLite", "waveform", "markmapChart", 
+        "particlesEffect", "confetti", "trianglify", "starChart", "vexFlow", "cytoscape", 
+        "cytoscapeGraph", "vueDataUi", "d3", "d3Cloud", "opentypeText", "simplexNoise", 
+        "molecule", "threeMol", "abcNotation", "rawCanvas"
+      ];
+      return childPrefixes.some((prefix) => trimmedPath.startsWith(prefix + "."));
+    })();
+
+    if (isChildVar && value && typeof value === "object" && value.id) {
       return `<div data-s1-child-id="${value.id}" class="s1-child-placeholder" style="width:100%;height:100%;display:block;position:relative;"></div>`;
     }
 

@@ -87,6 +87,7 @@ function remove(index) {
 
 
 </script>
+<style lang="less">
 .sidebar-back-header {
   margin-bottom: 14px;
   padding-bottom: 12px;

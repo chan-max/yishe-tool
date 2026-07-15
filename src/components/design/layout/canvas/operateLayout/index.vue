@@ -1,34 +1,6 @@
 <template>
   <el-scrollbar>
     <div class="canvas-operate-form" style="margin: 1rem">
-      <!-- 如果当前是 HTML 模板或者画布设置，显示顶部的二选一 Tab -->
-      <div v-if="activeChild && (activeChild.type === 'html' || activeChild.type === 'canvas')" class="custom-segmented-control">
-        <div 
-          class="segmented-item" 
-          :class="{ active: activeChildId === 'this_is_html_id' }"
-          @click="activeChildId = 'this_is_html_id'"
-        >
-          主 HTML 模板
-        </div>
-        <div 
-          class="segmented-item" 
-          :class="{ active: activeChildId === 'this_is_canvas_id' }"
-          @click="activeChildId = 'this_is_canvas_id'"
-        >
-          画布设置
-        </div>
-      </div>
-
-      <!-- 如果当前选中的是子组件，显示快捷返回按钮 -->
-      <div v-if="activeChild && activeChild.type !== 'html' && activeChild.type !== 'canvas'" class="sidebar-back-header">
-        <el-button size="small" type="info" plain style="width: 100%;" @click="activeChildId = 'this_is_html_id'">
-          ← 返回编辑主 HTML 模板
-        </el-button>
-        <div style="font-size: 11px; color: #8a8f98; margin-top: 6px; text-align: center;">
-          当前正在编辑：{{ activeChild.type.toUpperCase() }} ({{ activeChild.id.slice(-4) }})
-        </div>
-      </div>
-
       <component v-if="activeChild" :is="CanvasChildOperationComponentMap[activeChild.type]"></component>
     </div>
   </el-scrollbar>

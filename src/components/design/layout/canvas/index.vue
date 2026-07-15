@@ -128,6 +128,48 @@
       </div>
     </div>
 
+    <div style="width: 100%; padding: 1rem 1rem 0">
+      <el-select v-model="currentOperatingCanvasChildId">
+        <template #label="{ label }">
+          <div style="font-size: 1rem">
+            {{ canvasChildLabelMap[currentOperatingCanvasChild.type] }}
+          </div>
+        </template>
+
+        <template v-for="(item, index) in canvasStickerOptions.children">
+          <el-option
+            class="canvas-child-select-option"
+            :value="item.id"
+            :label="canvasChildLabelMap[item.type]"
+          >
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                font-size: 1rem;
+                height: 100%;
+              "
+              @mouseenter="optionMouseenter(item)"
+              @mouseleave="optionMouseleave(item)"
+            >
+              {{ canvasChildLabelMap[item.type] }}
+              <div style="flex: 1"></div>
+              <el-button
+                v-if="!item.undeletable"
+                link
+                type="danger"
+                @click="remove(item.id)"
+              >
+                <el-icon size="14">
+                  <CircleCloseFilled></CircleCloseFilled>
+                </el-icon>
+              </el-button>
+            </div>
+          </el-option>
+        </template>
+      </el-select>
+    </div>
+
     <div class="operate">
       <operateLayout></operateLayout>
     </div>

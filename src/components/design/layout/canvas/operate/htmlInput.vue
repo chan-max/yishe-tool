@@ -260,6 +260,8 @@ import {
   hasHtmlMagicVariables,
   syncHtmlTemplateFieldsFromContent,
   inferHtmlTemplateFieldsFromContent,
+  getValueByPath,
+  setValueByPath,
 } from "@/components/design/layout/canvas/htmlTemplate/runtime.ts";
 import type { HtmlTemplateFieldDefinition } from "@/components/design/layout/canvas/htmlTemplate/types";
 
@@ -348,13 +350,7 @@ function getFieldBoundId(field: any) {
   const key = field.key;
   const bindings = props.templateTarget?.htmlBindings || {};
   
-  let boundValue = bindings[key];
-  if (!boundValue && key.startsWith("child.")) {
-    boundValue = bindings[key.substring(6)];
-  } else if (!boundValue && key.startsWith("html.")) {
-    boundValue = bindings[key.substring(5)];
-  }
-  
+  const boundValue = getValueByPath(bindings, key);
   if (boundValue && typeof boundValue === "object" && boundValue.id) {
     return boundValue.id;
   }
@@ -714,6 +710,25 @@ function inferComponentTypeFromKey(key: string): string {
   return inferredType;
 }
 
+function deleteValueByPath(target: any, path: string) {
+  const segments = path.split(".").filter(Boolean);
+  if (!segments.length) return;
+  
+  let cursor = target;
+  for (let i = 0; i < segments.length - 1; i++) {
+    const segment = segments[i];
+    if (!cursor[segment] || typeof cursor[segment] !== "object") {
+      return;
+    }
+    cursor = cursor[segment];
+  }
+  
+  const lastSegment = segments[segments.length - 1];
+  if (cursor && typeof cursor === "object") {
+    delete cursor[lastSegment];
+  }
+}
+
 function autoCreateAndBindNewFields(fields: HtmlTemplateFieldDefinition[]) {
   if (!props.templateTarget) return;
   if (!props.templateTarget.htmlBindings) {
@@ -723,7 +738,7 @@ function autoCreateAndBindNewFields(fields: HtmlTemplateFieldDefinition[]) {
   
   fields.forEach((field) => {
     if (field.type === "child") {
-      const existingBinding = bindings[field.key];
+      const existingBinding = getValueByPath(bindings, field.key);
       if (!existingBinding || !existingBinding.id) {
         const inferredType = inferComponentTypeFromKey(field.key);
         const newId = "_" + String(new Date().getTime()) + Math.random().toString(36).substring(2, 6);
@@ -738,10 +753,10 @@ function autoCreateAndBindNewFields(fields: HtmlTemplateFieldDefinition[]) {
         if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
           canvasStickerOptions.value.children.push(newOptions);
         }
-        bindings[field.key] = { id: newId };
+        setValueByPath(bindings, field.key, { id: newId });
       }
     } else if (field.type === "html") {
-      const existingBinding = bindings[field.key];
+      const existingBinding = getValueByPath(bindings, field.key);
       if (!existingBinding || !existingBinding.id) {
         const newId = "_" + String(new Date().getTime()) + Math.random().toString(36).substring(2, 6);
         const defaultOptionsCreator = canvasChildDefaultOptionsMap["html"];
@@ -755,7 +770,7 @@ function autoCreateAndBindNewFields(fields: HtmlTemplateFieldDefinition[]) {
         if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
           canvasStickerOptions.value.children.push(newOptions);
         }
-        bindings[field.key] = { id: newId };
+        setValueByPath(bindings, field.key, { id: newId });
       }
     }
   });
@@ -770,13 +785,30 @@ function cleanUpUnusedBindings(fields: HtmlTemplateFieldDefinition[]) {
   const activeKeys = new Set(fields.map(f => f.key));
   const activeBoundIds = new Set<string>();
   
-  Object.keys(bindings).forEach(key => {
-    if (activeKeys.has(key)) {
-      if (bindings[key] && bindings[key].id) {
-        activeBoundIds.add(bindings[key].id);
-      }
-    } else {
-      delete bindings[key];
+  fields.forEach(field => {
+    const bound = getValueByPath(bindings, field.key);
+    if (bound && bound.id) {
+      activeBoundIds.add(bound.id);
+    }
+  });
+  
+  const allPaths: string[] = [];
+  function collectPaths(obj: any, currentPath = "") {
+    if (!obj || typeof obj !== "object") return;
+    if (obj.id && typeof obj.id === "string") {
+      allPaths.push(currentPath);
+      return;
+    }
+    Object.keys(obj).forEach(key => {
+      const nextPath = currentPath ? `${currentPath}.${key}` : key;
+      collectPaths(obj[key], nextPath);
+    });
+  }
+  collectPaths(bindings);
+  
+  allPaths.forEach(path => {
+    if (!activeKeys.has(path)) {
+      deleteValueByPath(bindings, path);
     }
   });
   

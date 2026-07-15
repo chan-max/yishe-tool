@@ -418,7 +418,14 @@ export function resolveHtmlMagicVariables(templateText = "", context: Record<str
   }
 
   return templateText.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (_, path) => {
-    const value = getValueByPath(context, String(path).trim());
+    const trimmedPath = String(path).trim();
+    const value = getValueByPath(context, trimmedPath);
+
+    // Support child magic variables shorthand (e.g. {{child.sales}} -> placeholder div)
+    if (trimmedPath.startsWith("child.") && value && typeof value === "object" && value.id) {
+      return `<div data-s1-child-id="${value.id}" class="s1-child-placeholder" style="width:100%;height:100%;display:block;position:relative;"></div>`;
+    }
+
     return stringifyTemplateValue(value);
   });
 }

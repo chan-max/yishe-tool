@@ -234,9 +234,11 @@ function createInferredHtmlTemplateFieldLabel(key: string, type: HtmlTemplateFie
     color: "颜色",
     image: "图片",
     font: "字体",
+    child: "嵌入组件",
+    html: "子模板",
   };
 
-  return `${typeLabelMap[type]} ${humanizeHtmlTemplateFieldKey(key)}`;
+  return `${typeLabelMap[type] || "组件"} ${humanizeHtmlTemplateFieldKey(key)}`;
 }
 
 function createInferredHtmlTemplateFieldDescription(key: string, type: HtmlTemplateFieldType) {
@@ -246,9 +248,11 @@ function createInferredHtmlTemplateFieldDescription(key: string, type: HtmlTempl
     color: `{{${key}}}`,
     image: `{{${key}.url}}`,
     font: `{{${key}.family}}`,
+    child: `{{${key}}}`,
+    html: `{{${key}}}`,
   };
 
-  return `从 HTML 中自动识别，变量名 ${variableTokenMap[type]}`;
+  return `从 HTML 中自动识别，变量名 ${variableTokenMap[type] || `{{${key}}}`}`;
 }
 
 export function inferHtmlTemplateFieldsFromContent(

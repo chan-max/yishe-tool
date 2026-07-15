@@ -114,6 +114,49 @@
               </div>
             </div>
           </div>
+
+          <!-- 语法与组件参考文档 -->
+          <div class="html-editor-dialog__variable-section" style="margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+            <div class="html-editor-dialog__variable-section-name" style="color: #1e293b; font-weight: 700;">
+              语法与组件参考文档
+            </div>
+            
+            <div class="doc-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+              <div class="doc-section">
+                <div class="doc-title">基础变量语法</div>
+                <div class="doc-content">
+                  <div class="doc-bullet"><strong>文字</strong>: <code v-pre>{{text.fieldName}}</code></div>
+                  <div class="doc-bullet">
+                    <strong>颜色</strong>: <code v-pre>{{color.fieldName}}</code> 
+                    <span style="color: #64748b; font-size: 10px;">(或 <code v-pre>{{color.fieldName.css}}</code>)</span>
+                  </div>
+                  <div class="doc-bullet"><strong>图片</strong>: <code v-pre>{{image.fieldName.url}}</code></div>
+                </div>
+              </div>
+
+              <div class="doc-section">
+                <div class="doc-title">高级组件变量语法</div>
+                <div class="doc-content">
+                  <div class="doc-bullet"><strong>ECharts 图表</strong>: <code v-pre>{{echart.chartName}}</code></div>
+                  <div class="doc-bullet"><strong>Three.js 三维</strong>: <code v-pre>{{threejs.modelName}}</code></div>
+                  <div class="doc-bullet"><strong>词云图</strong>: <code v-pre>{{wordCloud.cloudName}}</code></div>
+                  <div class="doc-bullet"><strong>二维码 / 条形码</strong>: <code v-pre>{{qrcode.qrName}}</code> / <code v-pre>{{barcode.barName}}</code></div>
+                  <div class="doc-bullet"><strong>ASCII 艺术字</strong>: <code v-pre>{{figlet.fontName}}</code></div>
+                  <div class="doc-bullet"><strong>数学公式</strong>: <code v-pre>{{math.formulaName}}</code></div>
+                  <div class="doc-bullet"><strong>Mermaid 流程图</strong>: <code v-pre>{{mermaid.graphName}}</code></div>
+                  <div class="doc-bullet"><strong>嵌套 HTML 片段</strong>: <code v-pre>{{html.blockName}}</code></div>
+                  <div class="doc-bullet"><strong>通用组件插槽</strong>: <code v-pre>{{child.slotName}}</code></div>
+                </div>
+              </div>
+
+              <div class="doc-section">
+                <div class="doc-title">CSS 沙箱机制</div>
+                <div class="doc-content" style="font-size: 11px; color: #64748b; line-height: 1.5;">
+                  手写的 <code>&lt;style&gt;</code> 样式会自动局限于当前贴纸内，避免全局冲突。
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

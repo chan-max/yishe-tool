@@ -426,6 +426,25 @@ export function resolveHtmlMagicVariables(templateText = "", context: Record<str
       return `<div data-s1-child-id="${value.id}" class="s1-child-placeholder" style="width:100%;height:100%;display:block;position:relative;"></div>`;
     }
 
+    // Support nested HTML snippet magic variables (e.g. {{html.card}} -> recursive compile)
+    if (
+      trimmedPath.startsWith("html.") &&
+      value &&
+      typeof value === "object" &&
+      typeof value.htmlContent === "string"
+    ) {
+      const subBindings = normalizeTemplateContextValue(value.htmlBindings || {});
+      const subContext = {
+        ...context,
+        ...subBindings,
+      };
+      const compiledSubHtml = resolveHtmlMagicVariables(
+        value.htmlContent,
+        subContext
+      );
+      return `<div class="s1-html-fragment" data-s1-fragment-key="${trimmedPath}" style="display:contents;">${compiledSubHtml}</div>`;
+    }
+
     return stringifyTemplateValue(value);
   });
 }

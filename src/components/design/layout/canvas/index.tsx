@@ -1098,28 +1098,8 @@ export class CanvasController {
     // 改为异步组件
     function render() {
       const childrenOptions = canvasStickerOptions.value.children;
-      const hasHtmlElement = childrenOptions.some((c) => c.type === "html");
 
-      if (!hasHtmlElement) {
-        // 兼容旧模式：当画布上没有 HTML 模板时，所有子元素平级平铺渲染
-        const children = childrenOptions.map((childOptions) => {
-          return createCanvasChild(childOptions);
-        });
-
-        this.updateRenderingCanvas();
-
-        return (
-          <Canvas
-            options={childrenOptions.find(
-              (item) => item.type == "canvas",
-            )}
-          >
-            {children}
-          </Canvas>
-        );
-      }
-
-      // 新嵌入模式：只渲染 Master HTML 在画布顶层，其他元素渲染在离屏池中，并通过 DOM 重挂载挂载到 HTML 中
+      // 嵌入模式：只渲染 Master HTML 在画布顶层，其他元素渲染在离屏池中，并通过 DOM 重挂载挂载到 HTML 中
       const htmlChild = childrenOptions.find((c) => c.type === "html");
       const htmlRenderNode = htmlChild ? createCanvasChild(htmlChild) : null;
 

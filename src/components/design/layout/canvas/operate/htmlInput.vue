@@ -111,7 +111,7 @@
                 <el-empty description="当前模板没有挂载子组件" :image-size="60">
                   <template #extra>
                     <div style="font-size: 11px; color: #8a8f98; line-height: 1.6; text-align: left; padding: 0 10px;">
-                      您可以在 HTML 代码中添加形如 <code>{{ '{{' }}child.chart{{ '}}' }}</code> 的变量，然后在页面右侧面板将其绑定为特定组件（如 ECharts 图表、二维码等）。
+                      您可以在 HTML 代码中添加形如 <code v-pre>{{child.chart}}</code> 的变量，然后在页面右侧面板将其绑定为特定组件（如 ECharts 图表、二维码等）。
                     </div>
                   </template>
                 </el-empty>
@@ -148,11 +148,11 @@
               <div class="doc-section">
                 <div class="doc-title">变量语法规范</div>
                 <div class="doc-content">
-                  <div class="doc-bullet"><strong>文字</strong>: <code>{{ '{{' }}text.title{{ '}}' }}</code></div>
-                  <div class="doc-bullet"><strong>颜色</strong>: <code>{{ '{{' }}color.primary{{ '}}' }}</code> 或 <code>{{ '{{' }}color.primary.css{{ '}}' }}</code></div>
-                  <div class="doc-bullet"><strong>图片</strong>: <code>{{ '{{' }}image.logo.url{{ '}}' }}</code></div>
-                  <div class="doc-bullet"><strong>组件</strong>: <code>{{ '{{' }}child.salesChart{{ '}}' }}</code></div>
-                  <div class="doc-bullet"><strong>HTML子模板</strong>: <code>{{ '{{' }}html.subBlock{{ '}}' }}</code></div>
+                  <div class="doc-bullet"><strong>文字</strong>: <code v-pre>{{text.title}}</code></div>
+                  <div class="doc-bullet"><strong>颜色</strong>: <code v-pre>{{color.primary}}</code> 或 <code v-pre>{{color.primary.css}}</code></div>
+                  <div class="doc-bullet"><strong>图片</strong>: <code v-pre>{{image.logo.url}}</code></div>
+                  <div class="doc-bullet"><strong>组件</strong>: <code v-pre>{{child.salesChart}}</code></div>
+                  <div class="doc-bullet"><strong>HTML子模板</strong>: <code v-pre>{{html.subBlock}}</code></div>
                 </div>
               </div>
               

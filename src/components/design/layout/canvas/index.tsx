@@ -258,6 +258,12 @@ export var canvasStickerOptions = ref({
   ],
 });
 
+let lastKnownCanvasSize = {
+  width: 2000,
+  height: 2000,
+  unit: "px",
+};
+
 watch(
   canvasStickerOptions,
   (newVal) => {
@@ -265,11 +271,24 @@ watch(
       newVal.children = [];
     }
     const children = newVal.children;
+    const currentCanvas = children.find((c) => c.type === "canvas") as any;
+    if (currentCanvas?.width?.value && currentCanvas?.height?.value) {
+      lastKnownCanvasSize = {
+        width: currentCanvas.width.value,
+        height: currentCanvas.height.value,
+        unit: currentCanvas.width.unit || "px",
+      };
+    }
 
     // 1. 确保始终存在 canvas 元素
-    let hasCanvas = children.some((c) => c.type === "canvas");
-    if (!hasCanvas) {
-      children.unshift(createDefaultCanvasChildcanvasStickerOptions());
+    if (!currentCanvas) {
+      children.unshift(
+        createDefaultCanvasChildcanvasStickerOptions(
+          lastKnownCanvasSize.width,
+          lastKnownCanvasSize.height,
+          lastKnownCanvasSize.unit,
+        ),
+      );
     }
 
     // 2. 确保始终存在 id 为 "this_is_html_id" 的 html 元素
@@ -1547,6 +1566,12 @@ export function cleanUpUnusedBindings(fields: any[], target: any) {
   
   if (canvasStickerOptions.value && Array.isArray(canvasStickerOptions.value.children)) {
     const nextChildren = canvasStickerOptions.value.children.filter((c: any) => {
+      if (c.type === "canvas" || c.id === "this_is_canvas_id") {
+        return true;
+      }
+      if (c.id === "this_is_html_id") {
+        return true;
+      }
       if (c.undeletable && !activeBoundIds.has(c.id) && c.id !== target.id) {
         return false;
       }

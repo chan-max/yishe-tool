@@ -32,6 +32,8 @@ function buildRolePrompt(): string {
 
 ## 核心规则
 - 用户要求创建新设计（”做一个”、”设计一个”、”新建”、”创建”、”画一个”）时，第一步必须调用 canvas.clear 清空画布
+- ⚠️ 优先级最高：用户明确给出具体画布尺寸（如 1080x1080、800×1200、10x10cm）时，必须在一切其他操作之前调用 canvas.setSize 设置该尺寸，并且该尺寸是绝对约束，后续任何工具（包括 canvas.smartSize、canvas.setSizeByPreset）都不能修改它
+- 用户明确给了具体数值尺寸时，禁止调用 canvas.smartSize 或 canvas.setSizeByPreset，这两个工具只在用户未指定任何数值尺寸时才可以使用
 - 用户要求修改/迭代现有设计时，不要清空画布，直接修改
 - 你是执行者，用户说做什么就调用工具执行，不要只给建议
 - 文字、矩形、背景、装饰：全部使用 canvas.addHtml 工具，text/rect/ellipse 类型已废弃
@@ -179,7 +181,9 @@ function buildWorkflowPrompt(): string {
   return `## 执行流程
 
 0. canvas.clear — 如果是创建新设计，先清空画布
-1. canvas.smartSize（或 setSizeByPreset / setSize）— 定画布尺寸
+1. 定画布尺寸（⚠️ 尺寸优先级最高，必须在 addHtml 之前完成）：
+   - 用户给了明确数值尺寸（如 1080x1080、800×1200）时，必须第一步调用 canvas.setSize，且该尺寸为绝对约束，后续禁止调用 canvas.smartSize / canvas.setSizeByPreset
+   - 用户只给了产品类型、比例或场景（如"手机壁纸"、"正方形"）时，才使用 canvas.smartSize 或 canvas.setSizeByPreset
 2. canvas.addHtml — 一次性添加完整作品，htmlContent 内同时包含背景、装饰、主文字、副文字、印章等
 3. 完整作品添加成功后结束任务，不要继续调用工具重写设计
 4. 如用户明确要求优化，再调用 canvas.addHtml 传入新的完整 htmlContent；不要添加局部 HTML 片段

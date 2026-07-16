@@ -2554,6 +2554,13 @@ function normalizeChildOptions(child: any, defaults?: any): any {
   return child;
 }
 
+function cloneSizeValue(size: any, fallbackValue = 2000, fallbackUnit = "px") {
+  return {
+    value: Number(size?.value ?? fallbackValue),
+    unit: String(size?.unit || fallbackUnit),
+  };
+}
+
 export function applyDesignToCanvas(data: any): void {
   const canvas = canvasStickerOptions.value;
 
@@ -2562,11 +2569,41 @@ export function applyDesignToCanvas(data: any): void {
     canvas.supportBackgroundColor = data.supportBackgroundColor;
 
   const newChildren: any[] = [];
+  const existingCanvasChild = canvas.children.find((c: any) => c.type === "canvas");
+  const existingCanvasWidth = cloneSizeValue(existingCanvasChild?.width);
+  const existingCanvasHeight = cloneSizeValue(existingCanvasChild?.height);
+
   for (const child of data.children) {
-    const factory = CHILD_DEFAULT_FACTORIES[child.type];
+    let factory;
+    if (child.type === "canvas" && existingCanvasChild) {
+      factory = () =>
+        createDefaultCanvasChildcanvasStickerOptions(
+          existingCanvasWidth.value,
+          existingCanvasHeight.value,
+          existingCanvasWidth.unit,
+        );
+    } else {
+      factory = CHILD_DEFAULT_FACTORIES[child.type];
+    }
+
     if (!factory) continue;
 
     const defaults = factory();
+    if (child.type === "canvas" && existingCanvasChild) {
+      const normalized = normalizeDefaultsMismatch(existingCanvasChild, child);
+      delete normalized.id;
+      delete normalized.width;
+      delete normalized.height;
+
+      const merged = deepMergeDefaults(existingCanvasChild, normalized);
+      merged.id = existingCanvasChild.id || "this_is_canvas_id";
+      merged.type = "canvas";
+      merged.width = { ...existingCanvasWidth };
+      merged.height = { ...existingCanvasHeight };
+      newChildren.push(merged);
+      continue;
+    }
+
     const normalized = normalizeDefaultsMismatch(defaults, child);
     if (normalized.type === "text" && normalized.fontWeight) {
       normalized.fontWeight = normalizeFontWeight(normalized.fontWeight);
@@ -2582,6 +2619,13 @@ export function applyDesignToCanvas(data: any): void {
   }
 
   if (newChildren.length === 0) return;
+  if (existingCanvasChild && !newChildren.some((c) => c.type === "canvas")) {
+    newChildren.unshift({
+      ...existingCanvasChild,
+      width: { ...existingCanvasWidth },
+      height: { ...existingCanvasHeight },
+    });
+  }
 
   canvas.children = newChildren;
   const base = newChildren.find((c) => c.type === "canvas");

@@ -25,17 +25,21 @@ export function createPngBackgroundStyle(scale = 1, cellWidth = 10) {
 }
 
 // 这是默认始终存在的画布元素 ，有且只有一个，他会与所有其他子元素同级显示，但实际上它是包含所有子元素的
-export function createDefaultCanvasChildcanvasStickerOptions() {
+export function createDefaultCanvasChildcanvasStickerOptions(
+    currentWidth?: number,
+    currentHeight?: number,
+    currentUnit = 'px',
+): any {
     return {
         id: 'this_is_canvas_id',
         type: 'canvas',
         width:{
-            unit:'px',
-            value:2000
+            unit: currentUnit,
+            value: currentWidth || 2000
         },
         height:{
-            unit:'px',
-            value:2000
+            unit: currentUnit,
+            value: currentHeight || 2000
         },
         fontSize: {
             unit: 'px',

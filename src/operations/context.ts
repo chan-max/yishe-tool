@@ -46,8 +46,17 @@ export function createDesignOperationContext(): OperationContext {
       const child = getCanvasChild() as any;
       if (!child) return;
       const finalUnit = unit || child.width.unit;
-      child.width = { value: width, unit: finalUnit };
-      child.height = { value: height, unit: finalUnit };
+      // 修改属性值
+      child.width.value = width;
+      child.width.unit = finalUnit;
+      child.height.value = height;
+      child.height.unit = finalUnit;
+      // 强制触发 UI 面板更新：通过替换数组元素触发 currentOperatingCanvasChild 重新计算
+      const children = canvasStickerOptions.value.children;
+      const index = children.indexOf(child);
+      if (index !== -1) {
+        canvasStickerOptions.value.children.splice(index, 1, child);
+      }
     },
 
     getCanvasBackgroundColor() {

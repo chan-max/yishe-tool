@@ -51,7 +51,7 @@ function calcRelevance(item: KnowledgeItem, userInput: string): number {
   return score;
 }
 
-// ========== 向量知识库搜索 ==========
+// ========== 向量库搜索 ==========
 
 interface VectorSearchResult {
   id: string;
@@ -96,7 +96,7 @@ function normalizeVectorSearchResult(raw: any): VectorSearchResult | null {
 }
 
 /**
- * 从向量知识库搜索相关知识
+ * 从向量库搜索相关知识
  * 失败时返回空数组，不影响主流程
  */
 async function fetchVectorKnowledge(query: string): Promise<KnowledgeItem[]> {

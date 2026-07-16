@@ -81,6 +81,42 @@ function shouldContinueAfterArtwork(userMessage: string) {
   );
 }
 
+interface ExplicitCanvasSize {
+  width: number;
+  height: number;
+  unit: "px" | "mm" | "cm" | "in";
+}
+
+function extractExplicitCanvasSize(userMessage: string): ExplicitCanvasSize | null {
+  const text = String(userMessage || "");
+  const patterns = [
+    /(\d+(?:\.\d+)?)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\s*(px|mm|cm|in)\b/i,
+    /(\d+(?:\.\d+)?)\s*(px|mm|cm|in)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\b/i,
+    /(\d+(?:\.\d+)?)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)(?=\D|$)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (!match) continue;
+
+    if (pattern === patterns[1]) {
+      return {
+        width: Number(match[1]),
+        height: Number(match[3]),
+        unit: (match[2].toLowerCase() as ExplicitCanvasSize["unit"]) || "px",
+      };
+    }
+
+    return {
+      width: Number(match[1]),
+      height: Number(match[2]),
+      unit: ((match[3] || "px").toLowerCase() as ExplicitCanvasSize["unit"]),
+    };
+  }
+
+  return null;
+}
+
 // ============ Agent 状态 ============
 
 const agentState = reactive({
@@ -491,7 +527,16 @@ async function runAgentLoop(userMessage: string) {
   });
   let iteration = 0;
   const allowPostArtworkContinuation = shouldContinueAfterArtwork(userMessage);
+  let explicitCanvasSize = extractExplicitCanvasSize(userMessage);
   let completedArtwork = false;
+
+  if (explicitCanvasSize) {
+    ctx.setCanvasSize(
+      explicitCanvasSize.width,
+      explicitCanvasSize.height,
+      explicitCanvasSize.unit,
+    );
+  }
 
   // 添加用户消息
   addMessage({ role: "user", content: userMessage });
@@ -509,11 +554,11 @@ async function runAgentLoop(userMessage: string) {
       messages: [
         {
           role: "system",
-          content: "你是设计规划专家。分析用户需求，输出包含执行步骤和向量知识库分类检索词的 JSON 执行计划。只输出 JSON，严禁带任何 Markdown 包裹标记。",
+          content: "你是设计规划专家。分析用户需求，输出包含执行步骤和向量库分类检索词的 JSON 执行计划。只输出 JSON，严禁带任何 Markdown 包裹标记。",
         },
         {
           role: "user",
-          content: `需求：${userMessage}\n当前画布元素数：${ctx.getCanvasChildren().length}\n\n输出格式示例：\n{\n  "goal": "目标描述",\n  "searchQueries": {\n    "assets": "素材及字体检索词，如：可爱猫咪 艺术字",\n    "styles": "设计特效及CSS技巧检索词，如：毛玻璃 霓虹发光",\n    "layouts": "构图与版式检索词，如：三分法 左右分栏"\n  },\n  "steps": [\n    { "action": "canvas.clear", "description": "清空画布重新设计" },\n    { "action": "canvas.addHtml", "description": "添加完整设计作品" }\n  ]\n}`,
+          content: `需求：${userMessage}\n当前画布元素数：${ctx.getCanvasChildren().length}\n\n输出格式示例：\n{\n  "goal": "目标描述",\n  "searchQueries": {\n    "assets": "素材及字体检索词，如：可爱猫咪 艺术字",\n    "styles": "设计特效及CSS技巧检索词，如：毛玻璃 霓虹发光",\n    "layouts": "构图与版式检索词，如：三分法 左右分栏"\n  },\n  "steps": [\n    { "action": "canvas.clear", "description": "清空画布重新设计" },\n    { "action": "canvas.setSize", "description": "如果用户明确给了数值尺寸，先设置准确画布尺寸" },\n    { "action": "canvas.addHtml", "description": "添加完整设计作品" }\n  ]\n}`,
         },
       ],
       temperature: 0.2,
@@ -766,11 +811,85 @@ async function runAgentLoop(userMessage: string) {
             );
           }
         } else {
-          result = await executeAITool(toolName, args, ctx);
+          if (explicitCanvasSize) {
+            if (toolName === "canvas.smartSize" || toolName === "canvas.setSizeByPreset") {
+              // 拦截：用户已明确指定尺寸时，smartSize/setSizeByPreset 绝对禁止
+              result = {
+                success: false,
+                message:
+                  `⛔ 用户已明确指定画布尺寸 ${explicitCanvasSize.width}×${explicitCanvasSize.height} ${explicitCanvasSize.unit}，` +
+                  `${toolName} 已被禁止。该尺寸是绝对约束，不可覆盖。请直接进行下一步操作。`,
+                data: {
+                  width: explicitCanvasSize.width,
+                  height: explicitCanvasSize.height,
+                  unit: explicitCanvasSize.unit,
+                  blockedByExplicitSize: true,
+                },
+              };
+            } else {
+              // canvas.setSize 强制使用用户指定的尺寸
+              if (toolName === "canvas.setSize") {
+                args = {
+                  ...args,
+                  width: explicitCanvasSize.width,
+                  height: explicitCanvasSize.height,
+                  unit: explicitCanvasSize.unit,
+                };
+              }
+              // 在执行工具前，先直接设置画布尺寸（绕过操作系统的可能问题）
+              if (
+                toolName === "canvas.setSize" ||
+                toolName === "canvas.addHtml" ||
+                toolName === "canvas.addChild"
+              ) {
+                ctx.setCanvasSize(
+                  explicitCanvasSize.width,
+                  explicitCanvasSize.height,
+                  explicitCanvasSize.unit,
+                );
+              }
+              result = await executeAITool(toolName, args, ctx);
+              // 如果是画布尺寸设置工具，且用户明确指定了尺寸，则更新 explicitCanvasSize
+              if (
+                result?.success &&
+                (toolName === "canvas.setSize" ||
+                  toolName === "canvas.smartSize" ||
+                  toolName === "canvas.setSizeByPreset")
+              ) {
+                explicitCanvasSize = {
+                  width: args.width,
+                  height: args.height,
+                  unit: args.unit || "px",
+                };
+              }
+            }
+          } else {
+            result = await executeAITool(toolName, args, ctx);
+          }
         }
 
         const toolDuration = Date.now() - toolStartTime;
         console.log("[Agent] Tool result:", result);
+
+        // 尺寸强制矫正：用户指定明确尺寸时，每次工具执行后都强制确保画布尺寸正确
+        // 不管工具是否修改了尺寸，都重新设置一次（防止任何路径的尺寸篡改）
+        if (explicitCanvasSize) {
+          const current = ctx.getCanvasSize();
+          if (
+            current.width !== explicitCanvasSize.width ||
+            current.height !== explicitCanvasSize.height
+          ) {
+            console.warn(
+              `[Agent] 画布尺寸被篡改 ${current.width}×${current.height} → 矫正为 ${explicitCanvasSize.width}×${explicitCanvasSize.height}`,
+            );
+          }
+          // 每次都强制设置，不管当前尺寸是否正确
+          ctx.setCanvasSize(
+            explicitCanvasSize.width,
+            explicitCanvasSize.height,
+            explicitCanvasSize.unit,
+          );
+        }
 
         // 如果是保存操作，更新任务进度
         let progressHint = "";

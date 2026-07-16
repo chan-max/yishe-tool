@@ -112,6 +112,7 @@ export interface FontSearchParams {
   limit?: number;           // 返回数量
   page?: number;            // 页码
   category?: string;        // 字体分类过滤，如 "标题字"、"正文字"
+  searchMode?: "text" | "vector";  // 搜索模式：text=关键词搜索，vector=向量语义搜索
 }
 
 export interface ImageSearchParams {
@@ -133,6 +134,7 @@ export interface SentenceSearchParams {
   query?: string;
   limit?: number;
   page?: number;
+  searchMode?: "text" | "vector";  // 搜索模式：text=关键词搜索，vector=向量语义搜索
 }
 
 export interface TextDocumentSearchParams {
@@ -140,6 +142,7 @@ export interface TextDocumentSearchParams {
   limit?: number;
   page?: number;
   category?: string;
+  searchMode?: "text" | "vector";  // 搜索模式：text=关键词搜索，vector=向量语义搜索
 }
 
 export interface ResourceSearchResult {
@@ -172,6 +175,7 @@ export async function searchFontResources(
       searchKeyword: params.query,
       currentPage: params.page || 1,
       pageSize: params.limit || 10,
+      searchMode: params.searchMode || "vector", // 默认启用混合向量检索
     };
     if (params.category) apiParams.category = params.category;
 
@@ -318,6 +322,7 @@ export async function searchSentenceResources(
       search: params.query,
       currentPage: params.page || 1,
       pageSize: params.limit || 10,
+      searchMode: params.searchMode || "vector", // 默认启用混合向量检索
     };
 
     const result = await fetchApi("/api/sentences/page", apiParams);
@@ -361,6 +366,7 @@ export async function searchTextDocumentResources(
       keyword: params.query,
       page: params.page || 1,
       pageSize: params.limit || 10,
+      searchMode: params.searchMode || "vector", // 默认启用混合向量检索
     };
     if (params.category) apiParams.category = params.category;
 
@@ -443,7 +449,7 @@ export const resourceTools = [
     type: "function" as const,
     function: {
       name: "resource.searchFont",
-      description: `搜索字体库。返回字体列表，每项包含 id/name/url/category/keywords。
+      description: `搜索字体库。支持后端向量混合语义搜索。返回字体列表，每项包含 id/name/url/category/keywords。
 
 **搜索到字体后，必须在 canvas.addHtml 的 htmlBindings 中绑定，HTML 中用 {{font.xxx.family}} 引用。**
 
@@ -455,7 +461,7 @@ export const resourceTools = [
         properties: {
           query: {
             type: "string",
-            description: "搜索关键词。推荐：标题字、手写体、艺术、简约、可爱、复古、科技、书法、衬线",
+            description: "搜索关键词或自然语言描述，语义匹配效果极好。推荐：标题字、手写体、艺术、简约、可爱、复古、科技、书法、衬线",
           },
           limit: {
             type: "number",
@@ -464,6 +470,11 @@ export const resourceTools = [
           category: {
             type: "string",
             description: "字体分类过滤，如：标题字、正文字、手写体。不填则搜索全部分类。",
+          },
+          searchMode: {
+            type: "string",
+            enum: ["vector", "text"],
+            description: "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
           },
         },
         required: ["query"],
@@ -559,18 +570,23 @@ export const resourceTools = [
     type: "function" as const,
     function: {
       name: "resource.searchSentence",
-      description: `从文案库中搜索优美的句子、广告词、心情语录等文案素材。
+      description: `从文案库中搜索优美的句子、广告词、心情语录等文案素材。支持后端向量混合语义搜索。
 返回文案列表，每项包含 id/content/description/keywords。你必须将搜到的句子直接用到设计文本元素中。`,
       parameters: {
         type: "object",
         properties: {
           query: {
             type: "string",
-            description: "文案搜索关键词，如：治愈、猫咪、七夕、中秋、促销、正能量",
+            description: "文案搜索关键词或自然语言描述，语义匹配效果极好，如：治愈、猫咪、七夕、中秋、促销、正能量",
           },
           limit: {
             type: "number",
             description: "返回数量，默认 5，最大 20",
+          },
+          searchMode: {
+            type: "string",
+            enum: ["vector", "text"],
+            description: "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
           },
         },
         required: ["query"],
@@ -581,14 +597,14 @@ export const resourceTools = [
     type: "function" as const,
     function: {
       name: "resource.searchTextDocument",
-      description: `从文档库中搜索文本文档（如详细描述、背景文章、设计规范等）。
+      description: `从文档库中搜索文本文档（如详细描述、背景文章、设计规范等）。支持后端向量混合语义搜索。
 返回文档列表，每项包含 id/title/content/summary/category/tags。`,
       parameters: {
         type: "object",
         properties: {
           query: {
             type: "string",
-            description: "文档搜索关键词",
+            description: "文档搜索关键词或自然语言描述，语义匹配效果极好",
           },
           limit: {
             type: "number",
@@ -597,6 +613,11 @@ export const resourceTools = [
           category: {
             type: "string",
             description: "分类过滤",
+          },
+          searchMode: {
+            type: "string",
+            enum: ["vector", "text"],
+            description: "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
           },
         },
         required: ["query"],
@@ -617,6 +638,7 @@ export async function executeResourceTool(
         query: args.query,
         limit: args.limit || 5,
         category: args.category,
+        searchMode: args.searchMode,
       });
       if (result.items.length === 0) {
         return {
@@ -692,6 +714,7 @@ export async function executeResourceTool(
       const result = await searchSentenceResources({
         query: args.query,
         limit: args.limit || 5,
+        searchMode: args.searchMode,
       });
       if (result.items.length === 0) {
         return {
@@ -720,6 +743,7 @@ export async function executeResourceTool(
         query: args.query,
         limit: args.limit || 5,
         category: args.category,
+        searchMode: args.searchMode,
       });
       if (result.items.length === 0) {
         return {

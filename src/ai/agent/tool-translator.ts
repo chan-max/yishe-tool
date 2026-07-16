@@ -49,30 +49,26 @@ export function translateToolResult(
     case "resource.searchSticker": {
       const items = (result.data as any[]) || [];
       if (items.length === 0) return "⚠️ 未找到相关贴纸素材，建议换个关键词";
-      const first = items[0];
       const list = items
         .slice(0, 5)
         .map(
           (d: any, i: number) =>
-            `${i + 1}. ${d.name || "未命名"} | ${d.width}x${d.height}${d.isCutout ? " | 抠图" : ""}${d.colorPalette ? " | 色:" + d.colorPalette.split(",").slice(0, 3).join(" ") : ""}`,
+            `${i + 1}. ${d.name || "未命名"} | id:${d.id} | url:${d.url} | ${d.width}x${d.height}${d.isCutout ? " | 抠图" : ""}${d.colorPalette ? " | 色:" + d.colorPalette.split(",").slice(0, 3).join(" ") : ""}`,
         )
         .join("\n");
-      const bindingsExample = `canvas.addHtml({ htmlContent: "<div style='background-image:url({{image.bg.url}});background-size:cover;width:100%;height:100%;'></div>", htmlBindings: { image: { bg: { id:"${first.id}", url:"${first.url}", name:"${first.name}" } } } })`;
-      return `✅ 找到 ${items.length} 个贴纸素材:\n${list}\n\n用法（复制后替换 key 名 "bg" 即可）:\n${bindingsExample}`;
+      return `✅ 找到 ${items.length} 个图片/贴纸候选。请选择与设计目标匹配的资源；不合适可以忽略或换关键词继续搜索。\n${list}\n\n如使用某项，请放入 canvas.addHtml 的 htmlBindings.image，并用 {{image.xxx.url}} 引用。`;
     }
     case "resource.searchFont": {
       const items = (result.data as any[]) || [];
       if (items.length === 0) return "⚠️ 未找到相关字体，建议换个关键词";
-      const first = items[0];
       const list = items
         .slice(0, 5)
         .map(
           (d: any, i: number) =>
-            `${i + 1}. ${d.name || "未命名"}${d.category ? " [" + d.category + "]" : ""}${d.keywords ? " " + d.keywords : ""}`,
+            `${i + 1}. ${d.name || "未命名"}${d.category ? " [" + d.category + "]" : ""} | id:${d.id} | url:${d.url}${d.keywords ? " | " + d.keywords : ""}`,
         )
         .join("\n");
-      const bindingsExample = `canvas.addHtml({ htmlContent: "<div style='font-family:{{font.brand.family}};...'>文字</div>", htmlBindings: { font: { brand: { id:"${first.id}", url:"${first.url}", name:"${first.name}" } } } })`;
-      return `✅ 找到 ${items.length} 个字体:\n${list}\n\n用法（复制后替换 key 名 "brand" 即可）:\n${bindingsExample}`;
+      return `✅ 找到 ${items.length} 个字体候选。请选择合适字体；不合适可以换关键词继续搜索。\n${list}\n\n如使用某项，请放入 canvas.addHtml 的 htmlBindings.font，并用 {{font.xxx.family}} 引用。`;
     }
     case "resource.searchSentence": {
       const items = (result.data as any[]) || [];
@@ -84,7 +80,7 @@ export function translateToolResult(
             `${i + 1}. "${d.content}"${d.description ? " | 说明: " + d.description : ""}`,
         )
         .join("\n");
-      return `✅ 找到 ${items.length} 条文案，你可以将以下合适文案直接用到设计的文字元素中:\n${list}`;
+      return `✅ 找到 ${items.length} 条文案候选，可选择合适内容使用，也可只作为风格参考:\n${list}`;
     }
     case "resource.searchTextDocument": {
       const items = (result.data as any[]) || [];

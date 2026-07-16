@@ -151,6 +151,73 @@ export interface ResourceSearchResult {
   query: string;
 }
 
+const KNOWN_DESIGN_TERMS = [
+  "中秋", "月饼", "礼盒", "圆月", "祥云", "桂花", "国潮", "中国风", "新中式",
+  "春节", "新年", "咖啡", "奶茶", "茶饮", "饮品", "热饮", "乌龙", "拿铁", "茶叶",
+  "香氛", "香水", "香水瓶", "雪松", "白茶", "茶花", "枝叶", "自然", "纸张", "纹理",
+  "光影", "窗格", "东方窗格", "美食", "水果", "花卉", "玫瑰", "猫咪", "宠物",
+  "圣诞", "情人节", "七夕", "母亲节", "教师节", "开学", "促销", "新品", "高端",
+  "高级", "安静", "温柔", "复古", "科技", "赛博", "极简", "可爱", "治愈", "手写",
+  "书法", "插画", "海报", "封面", "包装", "名片", "贴纸", "头像", "壁纸", "banner",
+];
+
+const NOISY_QUERY_TERMS = [
+  "帮我", "做一张", "设计", "尺寸", "主标题", "副标题", "标题写", "文案", "画面",
+  "希望", "整体", "适合", "可以", "不要", "需要", "作为", "使用", "发布", "首图",
+  "朋友圈", "小红书", "电商", "详情页", "门店", "电子屏",
+];
+
+function compactText(value: string, maxLength = 80): string {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .replace(/[，。！？、；：,.!?;:()（）【】[\]{}<>《》"']/g, " ")
+    .trim()
+    .slice(0, maxLength);
+}
+
+function uniqueStrings(values: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const value of values) {
+    const normalized = compactText(value, 120);
+    if (!normalized || seen.has(normalized)) continue;
+    seen.add(normalized);
+    result.push(normalized);
+  }
+  return result;
+}
+
+function extractDesignTerms(request: string): string[] {
+  const terms: string[] = [];
+  const lower = request.toLowerCase();
+
+  for (const term of KNOWN_DESIGN_TERMS) {
+    if (lower.includes(term.toLowerCase())) {
+      terms.push(term);
+    }
+  }
+
+  const quotedTerms = Array.from(request.matchAll(/[“"「『《](.*?)[”"」』》]/g))
+    .map((match) => match[1])
+    .flatMap((value) => value.split(/[与和&+＋/、，,\s]+/))
+    .map((item) => item.trim())
+    .filter((item) => item.length >= 2 && item.length <= 12);
+
+  const chunks = request
+    .split(/[\s,，。！？、；：:;.!?]+/)
+    .map((item) =>
+      item
+        .replace(/^(主题是|主题|主标题写|副标题写|标题写|写)/, "")
+        .replace(/[“”"「」『』《》]/g, "")
+        .trim(),
+    )
+    .filter((item) => item.length >= 2 && item.length <= 12)
+    .filter((item) => !/^\d+\s*[x×*]\s*\d+$/i.test(item))
+    .filter((item) => !NOISY_QUERY_TERMS.some((term) => item.includes(term)));
+
+  return uniqueStrings([...terms, ...quotedTerms, ...chunks]).slice(0, 12);
+}
+
 // ============ API 调用 ============
 
 async function fetchApi(endpoint: string, params: Record<string, any> = {}) {
@@ -171,30 +238,74 @@ export async function searchFontResources(
   }
 
   try {
-    const apiParams: Record<string, any> = {
-      searchKeyword: params.query,
-      currentPage: params.page || 1,
-      pageSize: params.limit || 10,
-      searchMode: params.searchMode || "vector", // 默认启用混合向量检索
-    };
-    if (params.category) apiParams.category = params.category;
+    const limit = params.limit || 10;
+    const primaryQuery = compactText(params.query || "", 60);
+    const genericFallbacks = [
+      "标题字",
+      "艺术",
+      "简约",
+      "手写",
+      "衬线",
+      "等线体",
+      "高端",
+      "复古",
+    ];
+    const queryCandidates = uniqueStrings([
+      primaryQuery,
+      ...extractDesignTerms(primaryQuery).filter((term) => term.length <= 8),
+      ...genericFallbacks,
+    ]);
+    const modeCandidates = uniqueStrings([
+      params.searchMode || "vector",
+      "text",
+      "vector",
+    ]) as Array<"text" | "vector">;
+    const categoryCandidates = params.category
+      ? [params.category, undefined]
+      : [undefined];
 
-    const result = await fetchApi("/api/font-template/page", apiParams);
-
-    const searchResult: ResourceSearchResult = {
-      items: (result.list || []).map((item: any) => ({
-        id: item.id,
-        name: item.name || "未命名字体",
-        description: item.description || "",
-        url: item.url || "",
-        thumbnail: item.thumbnail || "",
-        category: item.category || "",
-        keywords: item.keywords || "",
-        languages: item.languages || [],
-      })),
-      total: result.total || 0,
-      query: params.query || "",
+    let searchResult: ResourceSearchResult = {
+      items: [],
+      total: 0,
+      query: primaryQuery,
     };
+
+    for (const category of categoryCandidates) {
+      for (const query of queryCandidates) {
+        for (const searchMode of modeCandidates) {
+          const apiParams: Record<string, any> = {
+            searchKeyword: query,
+            currentPage: params.page || 1,
+            pageSize: limit,
+            searchMode,
+          };
+          if (category) apiParams.category = category;
+
+          const result = await fetchApi("/api/font-template/page", apiParams);
+          const items = (result.list || []).map((item: any) => ({
+            id: item.id,
+            name: item.name || "未命名字体",
+            description: item.description || "",
+            url: item.url || "",
+            thumbnail: item.thumbnail || "",
+            category: item.category || "",
+            keywords: item.keywords || "",
+            languages: item.languages || [],
+          }));
+
+          if (items.length > 0) {
+            searchResult = {
+              items,
+              total: result.total || items.length,
+              query,
+            };
+            break;
+          }
+        }
+        if (searchResult.items.length > 0) break;
+      }
+      if (searchResult.items.length > 0) break;
+    }
 
     if (searchResult.items.length > 0) {
       setCache(cacheKey, searchResult);
@@ -451,11 +562,7 @@ export const resourceTools = [
       name: "resource.searchFont",
       description: `搜索字体库。支持后端向量混合语义搜索。返回字体列表，每项包含 id/name/url/category/keywords。
 
-**搜索到字体后，必须在 canvas.addHtml 的 htmlBindings 中绑定，HTML 中用 {{font.xxx.family}} 引用。**
-
-示例流程：
-1. resource.searchFont({ query: "艺术" })
-2. canvas.addHtml({ htmlContent: "<div style='font-family:{{font.brand.family}};...'>文字</div>", htmlBindings: { font: { brand: { id:"搜到的id", url:"搜到的url", name:"搜到的name" } } } })`,
+如果在 HTML 中使用字体资源，将字体放入 canvas.addHtml 的 htmlBindings.font，并用 {{font.xxx.family}} 引用。`,
       parameters: {
         type: "object",
         properties: {
@@ -486,33 +593,9 @@ export const resourceTools = [
     function: {
       name: "resource.searchSticker",
       description: `从素材库/贴纸库搜索贴纸和插画素材。支持后端向量混合语义搜索，并能进行比例、尺寸过滤。
-返回图片列表，每项包含 id/name/url/keywords/colorPalette/width/height/isCutout。
+返回图片候选列表，每项包含 id/name/url/keywords/colorPalette/width/height/isCutout。你可以根据设计目标选择合适项，也可以忽略不相关结果、换关键词继续搜索，或改用 HTML/CSS 绘制。
 
-**【必须遵守 - 违反视为失败】**
-1. 搜索到多张图片后，必须在 HTML 中使用**每张不同的图片**，每张图片绑定为独立的 key
-2. 禁止用同一张图片的 background-position 裁切来冒充多张不同图片！
-3. 禁止用纯色块/渐变代替图片！
-4. 如果需要 N 张图，就搜 N 张，绑定 N 个不同的 key，HTML 中引用 N 个不同的 URL
-
-**正确示例（照片墙 - 4张不同图片）：**
-1. resource.searchSticker({ query: "风景", limit: 4 })
-   → 返回 img1(id:a, url:url_a), img2(id:b, url:url_b), img3(id:c, url:url_c), img4(id:d, url:url_d)
-2. canvas.addHtml({
-     htmlContent: "<div style='...'>
-       <div style='background-image:url({{image.img1.url}});...'></div>
-       <div style='background-image:url({{image.img2.url}});...'></div>
-       <div style='background-image:url({{image.img3.url}});...'></div>
-       <div style='background-image:url({{image.img4.url}});...'></div>
-     </div>",
-     htmlBindings: {
-       image: {
-         img1: { id: "a的id", url: "url_a", name: "a的name" },
-         img2: { id: "b的id", url: "url_b", name: "b的name" },
-         img3: { id: "c的id", url: "url_c", name: "c的name" },
-         img4: { id: "d的id", url: "url_d", name: "d的name" }
-       }
-     }
-   })`,
+如果决定在 HTML 中使用某张外部图片，需要把它放入 canvas.addHtml 的 htmlBindings.image，并在 htmlContent 中用 {{image.xxx.url}} 引用。`,
       parameters: {
         type: "object",
         properties: {
@@ -571,7 +654,7 @@ export const resourceTools = [
     function: {
       name: "resource.searchSentence",
       description: `从文案库中搜索优美的句子、广告词、心情语录等文案素材。支持后端向量混合语义搜索。
-返回文案列表，每项包含 id/content/description/keywords。你必须将搜到的句子直接用到设计文本元素中。`,
+返回文案候选列表，每项包含 id/content/description/keywords。你可以选择合适文案使用，也可以只作为风格参考。`,
       parameters: {
         type: "object",
         properties: {
@@ -786,6 +869,7 @@ export interface SearchHistoryEntry {
 export function getSearchHistory(): SearchHistoryEntry[] {
   const history: SearchHistoryEntry[] = [];
   for (const [key, entry] of searchCache.entries()) {
+    if (key.startsWith("bundle:")) continue;
     const data = entry.data as ResourceSearchResult;
     let tool = "resource.searchSticker";
     if (key.startsWith("font:")) tool = "resource.searchFont";

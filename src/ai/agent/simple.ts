@@ -58,7 +58,7 @@ interface SearchRecord {
   query: string;
   resultCount: number;
   iteration: number;
-  cachedData?: any[];
+  cachedData?: any;
 }
 
 // ============ 规划类型 ============
@@ -338,7 +338,7 @@ function isDuplicateSearch(
   toolName: string,
   args: Record<string, any>,
 ): SearchRecord | null {
-  const query = (args.query || "").toLowerCase().trim();
+  const query = (args.query || args.request || "").toLowerCase().trim();
   if (!query) return null;
 
   return (
@@ -356,15 +356,19 @@ function recordSearch(
   args: Record<string, any>,
   resultCount: number,
   iteration: number,
-  data?: any[],
+  data?: any,
 ) {
   agentState.searchHistory.push({
     tool: toolName,
-    query: args.query || "",
+    query: args.query || args.request || "",
     resultCount,
     iteration,
     cachedData: data,
   });
+}
+
+function getResourceResultCount(result: any): number {
+  return Array.isArray(result?.data) ? result.data.length : 0;
 }
 
 // ============ 任务追踪 ============
@@ -554,11 +558,11 @@ async function runAgentLoop(userMessage: string) {
       messages: [
         {
           role: "system",
-          content: "你是设计规划专家。分析用户需求，输出包含执行步骤和向量库分类检索词的 JSON 执行计划。只输出 JSON，严禁带任何 Markdown 包裹标记。",
+          content: "你是设计规划专家。分析用户需求，输出包含执行步骤和向量库分类检索词的 JSON 执行计划。只输出 JSON，不要带 Markdown 包裹标记。",
         },
         {
           role: "user",
-          content: `需求：${userMessage}\n当前画布元素数：${ctx.getCanvasChildren().length}\n\n输出格式示例：\n{\n  "goal": "目标描述",\n  "searchQueries": {\n    "assets": "素材及字体检索词，如：可爱猫咪 艺术字",\n    "styles": "设计特效及CSS技巧检索词，如：毛玻璃 霓虹发光",\n    "layouts": "构图与版式检索词，如：三分法 左右分栏"\n  },\n  "steps": [\n    { "action": "canvas.clear", "description": "清空画布重新设计" },\n    { "action": "canvas.setSize", "description": "如果用户明确给了数值尺寸，先设置准确画布尺寸" },\n    { "action": "canvas.addHtml", "description": "添加完整设计作品" }\n  ]\n}`,
+          content: `需求：${userMessage}\n当前画布元素数：${ctx.getCanvasChildren().length}\n\n输出格式示例：\n{\n  "goal": "目标描述",\n  "searchQueries": {\n    "assets": "素材检索词",\n    "styles": "字体或风格检索词",\n    "layouts": "构图或版式检索词"\n  },\n  "steps": [\n    { "action": "canvas.clear", "description": "创建新设计时清空画布" },\n    { "action": "canvas.setSize", "description": "用户明确给了数值尺寸时设置画布尺寸" },\n    { "action": "resource.searchSticker/resource.searchFont/resource.searchSentence/resource.searchTextDocument", "description": "按需要搜索候选资源" },\n    { "action": "canvas.addHtml", "description": "添加完整设计作品" }\n  ]\n}`,
         },
       ],
       temperature: 0.2,
@@ -789,21 +793,23 @@ async function runAgentLoop(userMessage: string) {
           // 检查是否是重复搜索
           const duplicate = isDuplicateSearch(toolName, args);
           if (duplicate) {
+            const searchLabel = args.query || args.request || "";
             console.log(
-              `[Agent] 跳过重复搜索: ${toolName}("${args.query}") (第${duplicate.iteration}轮已搜索)`,
+              `[Agent] 跳过重复搜索: ${toolName}("${searchLabel}") (第${duplicate.iteration}轮已搜索)`,
             );
             result = {
               success: true,
               data: duplicate.cachedData || [],
               total: duplicate.resultCount,
-              query: args.query,
+              query: searchLabel,
               message: `此搜索在第${duplicate.iteration}轮已执行过，找到${duplicate.resultCount}个结果。以下是缓存的结果：`,
             };
           } else {
             result = await executeAITool(toolName, args, ctx);
             // 记录搜索结果（含数据缓存）
-            const resultCount = result?.data?.length || 0;
-            recordSearch(toolName,
+            const resultCount = getResourceResultCount(result);
+            recordSearch(
+              toolName,
               args,
               resultCount,
               iteration,

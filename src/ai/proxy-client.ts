@@ -1,12 +1,13 @@
 import axios, { AxiosHeaders } from "axios";
 import { normalizeTokenValue, useLoginStatusStore } from "@/store/stores/login";
 import { DESIGN_TOOL_FEATURE_CODES } from "./feature-codes";
+import { AI_TIMEOUTS } from "./shared/timeout";
 
 const baseURL = String(import.meta.env.VITE_API || "").trim() || "";
 
 const aiProxyInstance = axios.create({
   baseURL,
-  timeout: 1_000_000,
+  timeout: AI_TIMEOUTS.chat,
   validateStatus(status) {
     return status >= 200 && status < 300;
   },
@@ -27,10 +28,19 @@ export function unwrapAiProxyResponse<T = any>(response: any): T {
   return (response?.data?.data ?? response?.data ?? response) as T;
 }
 
-export async function postAgentProxy(body: Record<string, any>) {
-  const response = await aiProxyInstance.post("/api/ai/agent-proxy", {
-    featureCode: DESIGN_TOOL_FEATURE_CODES.chat,
-    ...body,
-  });
+export async function postAgentProxy(
+  body: Record<string, any>,
+  options?: { timeoutMs?: number },
+) {
+  const response = await aiProxyInstance.post(
+    "/api/ai/agent-proxy",
+    {
+      featureCode: DESIGN_TOOL_FEATURE_CODES.chat,
+      ...body,
+    },
+    {
+      timeout: options?.timeoutMs ?? AI_TIMEOUTS.chat,
+    },
+  );
   return unwrapAiProxyResponse(response);
 }

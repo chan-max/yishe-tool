@@ -1,6 +1,9 @@
 import { getOperationTools } from "@/operations";
 
-export const INTERACTION_TOOL_NAMES = ["ask_choice", "request_feedback"] as const;
+export const INTERACTION_TOOL_NAMES = [
+  "ask_choice",
+  "request_feedback",
+] as const;
 
 export const OPERATION_TOOL_PREFIX = "op__";
 const TOOL_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
@@ -18,13 +21,23 @@ function createSafeToolName(name: string, prefix: string): string {
 }
 
 function createReadableToolName(name: string, prefix: string): string {
-  return `${prefix}${String(name || "").trim().replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 48)}`;
+  return `${prefix}${String(name || "")
+    .trim()
+    .replace(/[^a-zA-Z0-9_-]/g, "_")
+    .slice(0, 48)}`;
 }
 
-function rememberToolName(safeName: string, originalName: string, prefix: string) {
+function rememberToolName(
+  safeName: string,
+  originalName: string,
+  prefix: string,
+) {
   const normalized = String(originalName || "").trim();
   toolNameMap.set(safeName, normalized);
-  sanitizedToolNameMap.set(createReadableToolName(normalized, prefix), normalized);
+  sanitizedToolNameMap.set(
+    createReadableToolName(normalized, prefix),
+    normalized,
+  );
 }
 
 export function normalizeOperationToolName(name: string): string {
@@ -48,14 +61,19 @@ function normalizeAnyToolName(name: string): string {
 
 export function resolveAIToolName(name: string): string {
   const normalized = String(name || "").trim();
-  return toolNameMap.get(normalized) || sanitizedToolNameMap.get(normalized) || normalized;
+  return (
+    toolNameMap.get(normalized) ||
+    sanitizedToolNameMap.get(normalized) ||
+    normalized
+  );
 }
 
 const askChoiceDef = {
   type: "function" as const,
   function: {
     name: "ask_choice",
-    description: "向用户提问，让用户做选择。当有多种设计方向、需要用户决策时使用。",
+    description:
+      "向用户提问，让用户做选择。当有多种设计方向、需要用户决策时使用。",
     parameters: {
       type: "object" as const,
       properties: {
@@ -75,7 +93,8 @@ const requestFeedbackDef = {
   type: "function" as const,
   function: {
     name: "request_feedback",
-    description: "展示当前效果，请求用户反馈。当完成一个步骤后，询问用户是否满意。",
+    description:
+      "展示当前效果，请求用户反馈。当完成一个步骤后，询问用户是否满意。",
     parameters: {
       type: "object" as const,
       properties: {
@@ -91,8 +110,13 @@ export const INTERACTION_TOOL_DEFS = [askChoiceDef, requestFeedbackDef];
 export function buildAITools(options?: {
   includeResources?: boolean;
   resourceTools?: any[];
+  includeInteractions?: boolean;
+  excludeOperations?: string[];
 }): any[] {
-  const operationTools = getOperationTools();
+  const excluded = new Set(options?.excludeOperations || []);
+  const operationTools = getOperationTools().filter(
+    (t) => !excluded.has(t.name),
+  );
   const opTools = operationTools.map((t) => ({
     type: "function" as const,
     function: {
@@ -116,7 +140,9 @@ export function buildAITools(options?: {
     );
   }
 
-  tools.push(...INTERACTION_TOOL_DEFS);
+  if (options?.includeInteractions !== false) {
+    tools.push(...INTERACTION_TOOL_DEFS);
+  }
 
   return tools;
 }

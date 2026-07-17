@@ -2,39 +2,19 @@
   <a-modal
     v-model:open="showAutocreateModal"
     title="自动制作"
-    width="480px"
+    width="560px"
     :footer="null"
     :destroy-on-close="false"
     centered
     :mask-closable="batchProgress.status === 'idle'"
   >
-    <!-- 配置阶段 -->
     <div v-if="batchProgress.status === 'idle'" class="auto-config">
       <div class="auto-config__field">
-        <label>风格</label>
-        <div class="auto-config__tags">
-          <span
-            v-for="s in presetStyles"
-            :key="s"
-            class="auto-tag"
-            :class="{ active: config.style === s }"
-            @click="config.style = s"
-          >{{ s }}</span>
-        </div>
-        <a-input
-          v-model:value="config.style"
-          placeholder="输入自定义风格"
-          size="small"
-          allow-clear
-        />
-      </div>
-
-      <div class="auto-config__field">
-        <label>主题描述</label>
+        <label>需求提示词</label>
         <a-textarea
           v-model:value="config.description"
-          placeholder="如：咖啡店菜单、花卉海报、科技感名片..."
-          :rows="2"
+          placeholder="例如：做一组 1024x1024 的咖啡猫咪贴纸，日系手账风，透明背景带白边，每张有不同姿态和一句短文案，合格后自动保存到素材库"
+          :rows="6"
           size="small"
         />
       </div>
@@ -44,26 +24,32 @@
         <a-input-number
           v-model:value="config.count"
           :min="1"
-          :max="20"
+          :max="100"
           size="small"
         />
       </div>
 
+      <a-checkbox v-model:checked="config.enableAnalysisOptimization">
+        分析优化
+      </a-checkbox>
+
       <button
         class="auto-btn auto-btn--primary"
-        :disabled="!config.style"
+        :disabled="!canStart"
         @click="handleStart"
       >
         开始制作
       </button>
     </div>
 
-    <!-- 运行阶段 -->
     <div
-      v-else-if="batchProgress.status === 'running' || batchProgress.status === 'paused' || batchProgress.status === 'preparing'"
+      v-else-if="
+        batchProgress.status === 'running' ||
+        batchProgress.status === 'paused' ||
+        batchProgress.status === 'preparing'
+      "
       class="auto-running"
     >
-      <!-- 进度 -->
       <div class="auto-running__header">
         <div class="auto-running__bar">
           <div
@@ -76,22 +62,22 @@
         </span>
       </div>
 
-      <!-- 当前状态 -->
       <div class="auto-running__status">
         <template v-if="batchProgress.status === 'preparing'">
           <span class="dot dot--active" />
-          <span>正在生成提示词</span>
+          <span>正在拆解生产 brief</span>
         </template>
         <template v-else-if="currentItem">
           <span class="dot dot--active" />
-          <span>{{ statusText(currentItem) }}</span>
+          <span
+            >{{ currentItem.brief.title }} · {{ statusText(currentItem) }}</span
+          >
           <span v-if="currentItem.score !== null" class="auto-running__score">
             {{ currentItem.score }}/10
           </span>
         </template>
       </div>
 
-      <!-- 列表 -->
       <div class="auto-list">
         <div
           v-for="item in batchProgress.items"
@@ -102,38 +88,54 @@
           <span class="auto-list__dot">
             <span v-if="item.status === 'done'" class="dot dot--done" />
             <span v-else-if="item.status === 'failed'" class="dot dot--fail" />
-            <span v-else-if="item.status === 'pending'" class="dot dot--pending" />
+            <span v-else-if="item.status === 'skipped'" class="dot dot--skip" />
+            <span
+              v-else-if="item.status === 'pending'"
+              class="dot dot--pending"
+            />
             <span v-else class="dot dot--active" />
           </span>
-          <span class="auto-list__text">{{ item.prompt }}</span>
+          <span
+            class="auto-list__text"
+            :title="item.error || item.brief.prompt"
+          >
+            {{ item.brief.title }}
+            <em v-if="item.revisionCount > 0">修订 {{ item.revisionCount }}</em>
+          </span>
           <span v-if="item.score !== null" class="auto-list__score">
             {{ item.score }}
           </span>
         </div>
       </div>
 
-      <!-- 控制 -->
       <div class="auto-controls">
         <template v-if="batchProgress.status === 'paused'">
-          <button class="auto-btn auto-btn--primary" @click="handleResume">继续</button>
+          <button class="auto-btn auto-btn--primary" @click="handleResume">
+            继续
+          </button>
         </template>
         <template v-else-if="batchProgress.status === 'running'">
           <button class="auto-btn" @click="handlePause">暂停</button>
         </template>
-        <button class="auto-btn auto-btn--danger" @click="handleStop">停止</button>
+        <button class="auto-btn auto-btn--danger" @click="handleStop">
+          停止
+        </button>
       </div>
     </div>
 
-    <!-- 完成/停止阶段 -->
     <div v-else class="auto-done">
       <div class="auto-done__summary">
         <div class="auto-done__title">
-          {{ batchProgress.status === 'done' ? '全部完成' : '已停止' }}
+          {{ batchProgress.status === "done" ? "全部完成" : "已停止" }}
         </div>
         <div class="auto-done__stats">
           <span class="auto-done__stat">
             <span class="dot dot--done" />
             成功 {{ successCount }}
+          </span>
+          <span v-if="skipCount > 0" class="auto-done__stat">
+            <span class="dot dot--skip" />
+            跳过 {{ skipCount }}
           </span>
           <span v-if="failCount > 0" class="auto-done__stat">
             <span class="dot dot--fail" />
@@ -143,9 +145,11 @@
             均分 {{ avgScore }}
           </span>
         </div>
+        <div v-if="batchProgress.error" class="auto-done__error">
+          {{ batchProgress.error }}
+        </div>
       </div>
 
-      <!-- 结果列表 -->
       <div class="auto-list">
         <div
           v-for="item in batchProgress.items"
@@ -155,16 +159,31 @@
         >
           <span class="auto-list__dot">
             <span v-if="item.status === 'done'" class="dot dot--done" />
+            <span v-else-if="item.status === 'skipped'" class="dot dot--skip" />
             <span v-else class="dot dot--fail" />
           </span>
-          <span class="auto-list__text">{{ item.prompt }}</span>
+          <span
+            class="auto-list__text"
+            :title="item.error || item.savedUrl || item.brief.prompt"
+          >
+            {{ item.brief.title }}
+          </span>
+          <a
+            v-if="item.savedUrl"
+            class="auto-list__link"
+            :href="item.savedUrl"
+            target="_blank"
+            >查看</a
+          >
           <span v-if="item.score !== null" class="auto-list__score">
             {{ item.score }}
           </span>
         </div>
       </div>
 
-      <button class="auto-btn auto-btn--primary" @click="handleReset">再来一批</button>
+      <button class="auto-btn auto-btn--primary" @click="handleReset">
+        再来一批
+      </button>
     </div>
   </a-modal>
 </template>
@@ -182,44 +201,41 @@ import {
 } from "@/ai/agent/batch";
 import type { AutoBatchConfig, BatchItem } from "@/ai/agent/batch";
 
-// ============ 配置 ============
-
-const presetStyles = [
-  "极简主义",
-  "日系小清新",
-  "复古怀旧",
-  "科技未来",
-  "中国风",
-  "欧美海报",
-  "可爱卡通",
-  "奢华质感",
-];
-
 const config = reactive<AutoBatchConfig>({
-  style: "",
   description: "",
   count: 5,
+  enableAnalysisOptimization: false,
 });
 
-// ============ 计算属性 ============
-
 const currentItem = computed<BatchItem | null>(() => {
-  if (batchProgress.current >= 0 && batchProgress.current < batchProgress.items.length) {
+  if (
+    batchProgress.current >= 0 &&
+    batchProgress.current < batchProgress.items.length
+  ) {
     return batchProgress.items[batchProgress.current];
   }
   return null;
 });
 
-const doneCount = computed(() =>
-  batchProgress.items.filter((i) => i.status === "done" || i.status === "failed").length,
+const canStart = computed(() => Boolean((config.description || "").trim()));
+
+const doneCount = computed(
+  () =>
+    batchProgress.items.filter((i) =>
+      ["done", "failed", "skipped"].includes(i.status),
+    ).length,
 );
 
-const successCount = computed(() =>
-  batchProgress.items.filter((i) => i.status === "done").length,
+const successCount = computed(
+  () => batchProgress.items.filter((i) => i.status === "done").length,
 );
 
-const failCount = computed(() =>
-  batchProgress.items.filter((i) => i.status === "failed").length,
+const failCount = computed(
+  () => batchProgress.items.filter((i) => i.status === "failed").length,
+);
+
+const skipCount = computed(
+  () => batchProgress.items.filter((i) => i.status === "skipped").length,
 );
 
 const progressPercent = computed(() => {
@@ -234,47 +250,59 @@ const avgScore = computed(() => {
   return (sum / scored.length).toFixed(1);
 });
 
-// ============ 方法 ============
-
 function statusText(item: BatchItem): string {
   switch (item.status) {
-    case "generating":
-      return "生成中";
+    case "pending":
+      return "等待中";
+    case "designing":
+      return "设计中";
     case "evaluating":
       return "评估中";
-    case "improving":
-      return "优化中";
+    case "revising":
+      return "修订中";
     case "saving":
       return "保存中";
+    case "done":
+      return "已完成";
+    case "skipped":
+      return "已跳过";
+    case "failed":
+      return item.error || "失败";
     default:
       return "";
   }
 }
 
 async function handleStart() {
-  if (!config.style) return;
+  if (!canStart.value) return;
   await startBatch({ ...config });
 }
 
-function handlePause() { pauseBatch(); }
-function handleResume() { resumeBatch(); }
-function handleStop() { stopBatch(); }
-function handleReset() { resetBatch(); }
+function handlePause() {
+  pauseBatch();
+}
+function handleResume() {
+  resumeBatch();
+}
+function handleStop() {
+  stopBatch();
+}
+function handleReset() {
+  resetBatch();
+}
 </script>
 
 <style lang="less" scoped>
-// ============ 配色变量 ============
 @accent: #6c5ce7;
 @accent-light: #a29bfe;
 @text: #2d3436;
 @text-secondary: #636e72;
 @text-muted: #b2bec3;
 @border: #dfe6e9;
-@bg-subtle: #f8f9fa;
 @done: #00b894;
 @fail: #d63031;
+@skip: #b7791f;
 
-// ============ 通用组件 ============
 .dot {
   display: inline-block;
   width: 6px;
@@ -287,14 +315,28 @@ function handleReset() { resetBatch(); }
     background: @accent;
     animation: dot-pulse 1.2s ease-in-out infinite;
   }
-  &--done { background: @done; }
-  &--fail { background: @fail; }
-  &--pending { background: @border; }
+  &--done {
+    background: @done;
+  }
+  &--fail {
+    background: @fail;
+  }
+  &--skip {
+    background: @skip;
+  }
+  &--pending {
+    background: @border;
+  }
 }
 
 @keyframes dot-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 .auto-btn {
@@ -312,24 +354,36 @@ function handleReset() { resetBatch(); }
   transition: all 0.12s;
   user-select: none;
 
-  &:hover { border-color: @accent-light; color: @accent; }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:hover {
+    border-color: @accent-light;
+    color: @accent;
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 
   &--primary {
     background: @accent;
     border-color: @accent;
     color: #fff;
-    &:hover { background: #5b4cdb; border-color: #5b4cdb; color: #fff; }
+    &:hover {
+      background: #5b4cdb;
+      border-color: #5b4cdb;
+      color: #fff;
+    }
   }
 
   &--danger {
     border-color: @fail;
     color: @fail;
-    &:hover { background: @fail; color: #fff; }
+    &:hover {
+      background: @fail;
+      color: #fff;
+    }
   }
 }
 
-// ============ 配置阶段 ============
 .auto-config {
   display: flex;
   flex-direction: column;
@@ -348,16 +402,10 @@ function handleReset() { resetBatch(); }
     }
   }
 
-  &__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
   &__row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 
     label {
       font-size: 12px;
@@ -368,29 +416,6 @@ function handleReset() { resetBatch(); }
   }
 }
 
-.auto-tag {
-  display: inline-block;
-  padding: 3px 10px;
-  font-size: 12px;
-  border-radius: 3px;
-  border: 1px solid @border;
-  background: #fff;
-  color: @text-secondary;
-  cursor: pointer;
-  transition: all 0.12s;
-  user-select: none;
-  line-height: 1.5;
-
-  &:hover { border-color: @accent-light; color: @accent; }
-
-  &.active {
-    background: @accent;
-    border-color: @accent;
-    color: #fff;
-  }
-}
-
-// ============ 运行阶段 ============
 .auto-running {
   display: flex;
   flex-direction: column;
@@ -441,9 +466,8 @@ function handleReset() { resetBatch(); }
   }
 }
 
-// ============ 列表 ============
 .auto-list {
-  max-height: 280px;
+  max-height: 320px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -460,12 +484,21 @@ function handleReset() { resetBatch(); }
     font-size: 12px;
     background: #fff;
 
-    &--done { background: fade(@done, 5%); }
-    &--failed { background: fade(@fail, 5%); }
-    &--generating,
+    &--done {
+      background: fade(@done, 5%);
+    }
+    &--failed {
+      background: fade(@fail, 5%);
+    }
+    &--skipped {
+      background: fade(@skip, 7%);
+    }
+    &--designing,
     &--evaluating,
-    &--improving,
-    &--saving { background: fade(@accent, 4%); }
+    &--revising,
+    &--saving {
+      background: fade(@accent, 4%);
+    }
   }
 
   &__dot {
@@ -483,6 +516,12 @@ function handleReset() { resetBatch(); }
     white-space: nowrap;
     color: @text;
     line-height: 1.4;
+
+    em {
+      margin-left: 6px;
+      color: @text-muted;
+      font-style: normal;
+    }
   }
 
   &__score {
@@ -494,9 +533,14 @@ function handleReset() { resetBatch(); }
     min-width: 18px;
     text-align: right;
   }
+
+  &__link {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: @accent;
+  }
 }
 
-// ============ 控制按钮 ============
 .auto-controls {
   display: flex;
   gap: 8px;
@@ -504,7 +548,6 @@ function handleReset() { resetBatch(); }
   padding-top: 4px;
 }
 
-// ============ 完成阶段 ============
 .auto-done {
   display: flex;
   flex-direction: column;
@@ -535,6 +578,12 @@ function handleReset() { resetBatch(); }
     display: inline-flex;
     align-items: center;
     gap: 5px;
+  }
+
+  &__error {
+    margin-top: 8px;
+    font-size: 12px;
+    color: @fail;
   }
 }
 </style>

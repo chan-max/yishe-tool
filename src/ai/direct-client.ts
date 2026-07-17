@@ -2,11 +2,13 @@ import CryptoJS from "crypto-js";
 import { getUserApiKey } from "./api";
 import { DESIGN_TOOL_FEATURE_CODES } from "./feature-codes";
 import { postAgentProxy } from "./proxy-client";
+import { AI_TIMEOUTS } from "./shared/timeout";
 
 // 加密密钥（需要与服务端 AI_API_KEY_RESPONSE_ENCRYPT_SECRET 一致）
 const ENCRYPT_SECRET =
-  String(import.meta.env.VITE_AI_API_KEY_RESPONSE_ENCRYPT_SECRET || "").trim() ||
-  "1s-design-encrypt-key";
+  String(
+    import.meta.env.VITE_AI_API_KEY_RESPONSE_ENCRYPT_SECRET || "",
+  ).trim() || "1s-design-encrypt-key";
 
 // 缓存解密后的配置
 type CachedAiConfig = {
@@ -147,8 +149,18 @@ export async function directChat(options: {
   maxTokens?: number;
   keyId?: number | null;
   featureCode?: string;
+  timeoutMs?: number;
 }): Promise<any> {
-  const { messages, tools, model, temperature, maxTokens, keyId, featureCode } = options;
+  const {
+    messages,
+    tools,
+    model,
+    temperature,
+    maxTokens,
+    keyId,
+    featureCode,
+    timeoutMs,
+  } = options;
 
   // 构建请求体
   const body: any = {
@@ -162,7 +174,7 @@ export async function directChat(options: {
   if (maxTokens) body.max_tokens = maxTokens;
   if (tools && tools.length > 0) body.tools = tools;
 
-  return postAgentProxy(body);
+  return postAgentProxy(body, { timeoutMs: timeoutMs ?? AI_TIMEOUTS.chat });
 }
 
 /**
@@ -176,8 +188,18 @@ export async function* directChatStream(options: {
   maxTokens?: number;
   keyId?: number | null;
   featureCode?: string;
+  timeoutMs?: number;
 }): AsyncGenerator<any, void, unknown> {
-  const { messages, tools, model, temperature, maxTokens, keyId, featureCode } = options;
+  const {
+    messages,
+    tools,
+    model,
+    temperature,
+    maxTokens,
+    keyId,
+    featureCode,
+    timeoutMs,
+  } = options;
 
   // 构建请求体
   const body: any = {
@@ -191,6 +213,8 @@ export async function* directChatStream(options: {
   if (maxTokens) body.max_tokens = maxTokens;
   if (tools && tools.length > 0) body.tools = tools;
 
-  const response = await postAgentProxy(body);
+  const response = await postAgentProxy(body, {
+    timeoutMs: timeoutMs ?? AI_TIMEOUTS.chat,
+  });
   yield response;
 }

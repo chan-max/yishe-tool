@@ -1,6 +1,7 @@
 import { directChat } from "./direct-client";
 import { captureCanvasForAI, getCanvasStateSummary } from "./capture";
 import { parseChatResponse, extractJSON } from "./shared/response-parser";
+import { AI_TIMEOUTS } from "./shared/timeout";
 
 // ============ 类型定义 ============
 
@@ -90,6 +91,7 @@ ${stateSummary}
         },
       ],
       temperature: 0.3,
+      timeoutMs: AI_TIMEOUTS.batchEvaluate,
     });
 
     const parsed = parseChatResponse(response);
@@ -100,7 +102,9 @@ ${stateSummary}
 
     const evaluation = extractJSON(parsed.content);
     if (!evaluation) {
-      console.warn("[VisualEval] 无法解析评估 JSON", { content: parsed.content.slice(0, 200) });
+      console.warn("[VisualEval] 无法解析评估 JSON", {
+        content: parsed.content.slice(0, 200),
+      });
       return null;
     }
 

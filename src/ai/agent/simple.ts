@@ -2,12 +2,21 @@ import { reactive, computed } from "vue";
 import { directChat } from "../direct-client";
 import { createDesignOperationContext } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
-import { buildSystemPrompt, buildImageAnalysisPrompt, type DesignExperience } from "../prompts/system";
+import {
+  buildSystemPrompt,
+  buildImageAnalysisPrompt,
+  type DesignExperience,
+} from "../prompts/system";
 import { buildKnowledgePrompt } from "../knowledge";
 import { resourceService } from "../services/resource";
 import { captureCanvasForAI, getCanvasStateSummary } from "../capture";
-import { buildAITools, INTERACTION_TOOL_NAMES, resolveAIToolName } from "../shared/tools";
+import {
+  buildAITools,
+  INTERACTION_TOOL_NAMES,
+  resolveAIToolName,
+} from "../shared/tools";
 import { executeAITool, isResourceToolName } from "../shared/execute-tool";
+import { AI_TIMEOUTS, withTimeout } from "../shared/timeout";
 import { apiInstance } from "@/api/apiInstance";
 import {
   parseChatResponse,
@@ -75,9 +84,20 @@ interface DesignPlan {
 
 // ============ 工具定义 ============
 
+function shouldAllowCanvasAnalysis(userMessage: string) {
+  const text = String(userMessage || "");
+  const analysisIntent =
+    /分析|评价|评估|打分|看看效果|看一下效果|检查效果|自测|测试|review|analy[sz]e|evaluate|score/i;
+  const deniedAnalysisIntent =
+    /(不要|不用|无需|别|禁止|不需要).{0,12}(分析|评价|评估|打分|自测|测试|review|analy[sz]e|evaluate|score)/i;
+
+  return analysisIntent.test(text) && !deniedAnalysisIntent.test(text);
+}
+
 function shouldContinueAfterArtwork(userMessage: string) {
-  return /继续|再改|优化|调整|迭代|自测|测试|看看效果|分析|保存|导出|save|export/i.test(
-    userMessage,
+  return (
+    /继续|再改|优化|调整|迭代|保存|导出|save|export/i.test(userMessage) ||
+    shouldAllowCanvasAnalysis(userMessage)
   );
 }
 
@@ -87,7 +107,9 @@ interface ExplicitCanvasSize {
   unit: "px" | "mm" | "cm" | "in";
 }
 
-function extractExplicitCanvasSize(userMessage: string): ExplicitCanvasSize | null {
+function extractExplicitCanvasSize(
+  userMessage: string,
+): ExplicitCanvasSize | null {
   const text = String(userMessage || "");
   const patterns = [
     /(\d+(?:\.\d+)?)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\s*(px|mm|cm|in)\b/i,
@@ -110,7 +132,7 @@ function extractExplicitCanvasSize(userMessage: string): ExplicitCanvasSize | nu
     return {
       width: Number(match[1]),
       height: Number(match[2]),
-      unit: ((match[3] || "px").toLowerCase() as ExplicitCanvasSize["unit"]),
+      unit: (match[3] || "px").toLowerCase() as ExplicitCanvasSize["unit"],
     };
   }
 
@@ -141,7 +163,9 @@ const agentState = reactive({
  * 从向量库检索相关设计经验
  * 用于在 agent 设计时注入多源设计模式参考
  */
-async function retrieveDesignExperiences(query: string): Promise<DesignExperience[]> {
+async function retrieveDesignExperiences(
+  query: string,
+): Promise<DesignExperience[]> {
   try {
     const response = await apiInstance.post("/api/vector-search/search", {
       collection: "design-patterns",
@@ -152,7 +176,10 @@ async function retrieveDesignExperiences(query: string): Promise<DesignExperienc
     const data = response.data?.data || response.data;
 
     if (response.status < 200 || response.status >= 300) {
-      console.warn("[DesignExperience] Vector search failed:", response.statusText);
+      console.warn(
+        "[DesignExperience] Vector search failed:",
+        response.statusText,
+      );
       return [];
     }
 
@@ -164,7 +191,11 @@ async function retrieveDesignExperiences(query: string): Promise<DesignExperienc
       const type = item.payload?.compositionType;
       if (!type) continue;
       const existing = deduped.get(type);
-      if (!existing || (item.payload?.qualityScore || 0) > (existing.payload?.qualityScore || 0)) {
+      if (
+        !existing ||
+        (item.payload?.qualityScore || 0) >
+          (existing.payload?.qualityScore || 0)
+      ) {
         deduped.set(type, item);
       }
     }
@@ -184,7 +215,9 @@ async function retrieveDesignExperiences(query: string): Promise<DesignExperienc
         keywords: item.payload?.keywords || [],
       }));
 
-    console.log(`[DesignExperience] Retrieved ${results.length} patterns for: "${query}"`);
+    console.log(
+      `[DesignExperience] Retrieved ${results.length} patterns for: "${query}"`,
+    );
     return results;
   } catch (error) {
     console.warn("[DesignExperience] Retrieval failed:", error);
@@ -230,7 +263,10 @@ function sanitizeMessageForStorage(message: AgentMessage): AgentMessage {
   return {
     id: message.id,
     role: message.role,
-    content: String(message.content || "").slice(0, MAX_PERSISTED_CONTENT_LENGTH),
+    content: String(message.content || "").slice(
+      0,
+      MAX_PERSISTED_CONTENT_LENGTH,
+    ),
     timestamp: Number(message.timestamp || Date.now()),
     tool_calls: message.tool_calls,
     tool_call_id: message.tool_call_id,
@@ -369,6 +405,87 @@ function recordSearch(
 
 function getResourceResultCount(result: any): number {
   return Array.isArray(result?.data) ? result.data.length : 0;
+}
+
+function toLLMMessage(message: AgentMessage) {
+  if (message.role === "tool") {
+    if (!message.tool_call_id) {
+      return {
+        role: "user",
+        content: `[工具结果] ${message.content || ""}`,
+      };
+    }
+    return {
+      role: "tool",
+      tool_call_id: message.tool_call_id,
+      content: message.content || "",
+    };
+  }
+
+  return {
+    role: message.role,
+    content: message.content || "",
+    ...(message.tool_calls?.length ? { tool_calls: message.tool_calls } : {}),
+  };
+}
+
+function stripToolCalls(message: any) {
+  const { tool_calls: _toolCalls, ...rest } = message;
+  return rest;
+}
+
+function sanitizeToolProtocolMessages(messages: any[]) {
+  const result: any[] = [];
+
+  for (let i = 0; i < messages.length; i++) {
+    const message = messages[i];
+    const toolCalls = Array.isArray(message?.tool_calls)
+      ? message.tool_calls
+      : [];
+
+    if (message?.role === "assistant" && toolCalls.length > 0) {
+      const requiredIds = toolCalls
+        .map((call: any) => call?.id)
+        .filter(Boolean);
+      const toolMessages: any[] = [];
+      let j = i + 1;
+
+      while (messages[j]?.role === "tool") {
+        toolMessages.push(messages[j]);
+        j++;
+      }
+
+      const outputIds = new Set(
+        toolMessages
+          .map((toolMessage) => toolMessage?.tool_call_id)
+          .filter(Boolean),
+      );
+      const isComplete =
+        requiredIds.length > 0 &&
+        requiredIds.every((id: string) => outputIds.has(id));
+
+      if (isComplete) {
+        result.push(message, ...toolMessages);
+      } else if (message.content) {
+        result.push(stripToolCalls(message));
+      }
+
+      i = j - 1;
+      continue;
+    }
+
+    if (message?.role === "tool") {
+      result.push({
+        role: "user",
+        content: `[工具结果] ${message.content || ""}`,
+      });
+      continue;
+    }
+
+    result.push(message);
+  }
+
+  return result;
 }
 
 // ============ 任务追踪 ============
@@ -522,12 +639,62 @@ function findUnescapedQuote(str: string, start: number): number {
 
 // ============ Agent 循环 ============
 
-async function runAgentLoop(userMessage: string) {
+interface RunAgentLoopOptions {
+  allowInteraction?: boolean;
+  allowCanvasAnalysis?: boolean;
+  excludeOperations?: string[];
+}
+
+const AUTO_BATCH_BLOCKED_OPERATIONS = [
+  "canvas.startBatchTask",
+  "canvas.getBatchProgress",
+  "canvas.updateAndSaveSticker",
+  "canvas.exportPng",
+];
+
+const CANVAS_ANALYSIS_OPERATIONS = [
+  "canvas.analyze",
+  "canvas.evaluateDesign",
+  "canvas.createAndAnalyze",
+  "canvas.quickTest",
+];
+
+function getToolTimeoutMs(toolName: string): number {
+  return isResourceToolName(toolName)
+    ? AI_TIMEOUTS.resourceTool
+    : AI_TIMEOUTS.tool;
+}
+
+function executeToolWithTimeout(
+  toolName: string,
+  args: Record<string, any>,
+  ctx: ReturnType<typeof createDesignOperationContext>,
+) {
+  return withTimeout(
+    executeAITool(toolName, args, ctx),
+    getToolTimeoutMs(toolName),
+    `工具 ${toolName}`,
+  );
+}
+
+async function runAgentLoop(
+  userMessage: string,
+  options: RunAgentLoopOptions = {},
+) {
   const maxIterations = 10;
   const ctx = createDesignOperationContext();
+  const allowInteraction = options.allowInteraction !== false;
+  const allowCanvasAnalysis =
+    options.allowCanvasAnalysis ?? shouldAllowCanvasAnalysis(userMessage);
+  const excludeOperations = [
+    ...(options.excludeOperations || []),
+    ...(!allowCanvasAnalysis ? CANVAS_ANALYSIS_OPERATIONS : []),
+  ];
   const allTools = buildAITools({
     includeResources: true,
     resourceTools: resourceService.tools,
+    includeInteractions: allowInteraction,
+    excludeOperations,
   });
   let iteration = 0;
   const allowPostArtworkContinuation = shouldContinueAfterArtwork(userMessage);
@@ -558,7 +725,8 @@ async function runAgentLoop(userMessage: string) {
       messages: [
         {
           role: "system",
-          content: "你是设计规划专家。分析用户需求，输出包含执行步骤和向量库分类检索词的 JSON 执行计划。只输出 JSON，不要带 Markdown 包裹标记。",
+          content:
+            "你是设计规划专家。分析用户需求，输出包含执行步骤和向量库分类检索词的 JSON 执行计划。只输出 JSON，不要带 Markdown 包裹标记。",
         },
         {
           role: "user",
@@ -566,6 +734,7 @@ async function runAgentLoop(userMessage: string) {
         },
       ],
       temperature: 0.2,
+      timeoutMs: AI_TIMEOUTS.planning,
     });
     const planContent = parseChatResponse(planResponse);
     if (planContent?.content) {
@@ -595,9 +764,15 @@ async function runAgentLoop(userMessage: string) {
   // 2. 高精度向量检索 —— 利用重写后的子句进行垂类检索，提升精准度并极大节约 Token
   let designExperiences: DesignExperience[] = [];
   try {
-    designExperiences = await retrieveDesignExperiences(searchQueries.layouts);
+    designExperiences = await withTimeout(
+      retrieveDesignExperiences(searchQueries.layouts),
+      AI_TIMEOUTS.knowledge,
+      "设计经验检索",
+    );
     if (designExperiences.length > 0) {
-      console.log(`[向量检索] 已检索到 ${designExperiences.length} 个设计经验，将注入 system prompt`);
+      console.log(
+        `[向量检索] 已检索到 ${designExperiences.length} 个设计经验，将注入 system prompt`,
+      );
     } else {
       console.log(`[向量检索] 未检索到相关设计经验（可能向量库为空或无匹配）`);
     }
@@ -606,24 +781,27 @@ async function runAgentLoop(userMessage: string) {
   }
 
   // 3. 构建高信号的消息列表（注入高精准度语义知识、搜索上下文和任务进度）
-  const knowledgePrompt = await buildKnowledgePrompt(searchQueries.styles);
+  const knowledgePrompt = await withTimeout(
+    buildKnowledgePrompt(searchQueries.styles),
+    AI_TIMEOUTS.knowledge,
+    "知识检索",
+  ).catch((error) => {
+    console.warn("[Agent] Knowledge prompt timeout/failure, skipped:", error);
+    return "";
+  });
   const systemPrompt =
     buildSystemPrompt({ designExperiences }) +
     "\n" +
     knowledgePrompt +
     buildSearchContext() +
-    getBatchProgress();
+    getBatchProgress() +
+    (allowInteraction
+      ? ""
+      : "\n\n## 自动制作模式\n- 当前任务不能等待用户反馈，也不要调用 ask_choice 或 request_feedback\n- 如果信息不足，请基于当前提示词和可用资源自行判断\n- 完成当前设计后直接结束，由外层流水线负责评估和保存");
 
   const messagesForLLM: any[] = [
     { role: "system", content: systemPrompt },
-    ...agentState.messages.map((m) => ({
-      role: m.role === "tool" ? "user" : m.role,
-      content: m.content,
-      ...(m.tool_calls ? { tool_calls: m.tool_calls } : {}),
-      ...(m.tool_call_id
-        ? { tool_call_id: m.tool_call_id, name: m.tool_name }
-        : {}),
-    })),
+    ...agentState.messages.map(toLLMMessage),
   ];
 
   for (let i = 0; i < maxIterations; i++) {
@@ -658,8 +836,19 @@ async function runAgentLoop(userMessage: string) {
       const oldMsgs = messagesForLLM.slice(systemMsgs.length, -8);
 
       const summary = oldMsgs
-        .filter((m) => m.role === "user" && m.content.startsWith("[工具结果]"))
-        .map((m) => m.content.replace("[工具结果] ", ""))
+        .map((m) => {
+          if (
+            m.role === "user" &&
+            String(m.content || "").startsWith("[工具结果]")
+          ) {
+            return String(m.content || "").replace("[工具结果] ", "");
+          }
+          if (m.role === "tool") {
+            return String(m.content || "").slice(0, 500);
+          }
+          return "";
+        })
+        .filter(Boolean)
         .join(" → ");
 
       messagesForLLM.length = 0;
@@ -678,8 +867,9 @@ async function runAgentLoop(userMessage: string) {
     const llmStartTime = Date.now();
     try {
       response = await directChat({
-        messages: messagesForLLM,
+        messages: sanitizeToolProtocolMessages(messagesForLLM),
         tools: allTools,
+        timeoutMs: AI_TIMEOUTS.chat,
       });
     } catch (error: any) {
       console.error("[Agent] LLM error:", error);
@@ -707,6 +897,16 @@ async function runAgentLoop(userMessage: string) {
 
     const content = parsed.content;
     const toolCalls = parsed.tool_calls || [];
+    let assistantToolCallsAppended = false;
+    const appendAssistantToolCalls = () => {
+      if (assistantToolCallsAppended) return;
+      messagesForLLM.push({
+        role: "assistant",
+        content: content || "",
+        tool_calls: toolCalls,
+      });
+      assistantToolCallsAppended = true;
+    };
 
     // 添加助手消息（包含调试信息）
     if (content || toolCalls.length > 0) {
@@ -754,6 +954,27 @@ async function runAgentLoop(userMessage: string) {
 
       // 检查是否是交互工具
       if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
+        if (!allowInteraction) {
+          const autoResponse =
+            "自动制作模式不等待用户反馈。请直接基于当前需求完成设计；如果画面已经完成，请结束本轮。";
+          appendAssistantToolCalls();
+          messagesForLLM.push({
+            role: "tool",
+            tool_call_id: call.id,
+            content: autoResponse,
+          });
+          addMessage({
+            role: "tool",
+            tool_call_id: call.id,
+            tool_name: call.function.name,
+            content: autoResponse,
+            meta: { iteration, toolArgs: args },
+          });
+          agentState.status = "thinking";
+          agentState.pendingInteraction = null;
+          continue;
+        }
+
         agentState.status = "waiting_user";
         agentState.pendingInteraction = {
           type: call.function.name,
@@ -766,11 +987,19 @@ async function runAgentLoop(userMessage: string) {
         const userResponse = await waitForUserInput();
         console.log("[Agent] User response:", userResponse);
 
-        // 添加用户响应到消息列表
-        messagesForLLM.push(
-          { role: "assistant", content, tool_calls: toolCalls },
-          { role: "user", content: userResponse },
-        );
+        appendAssistantToolCalls();
+        messagesForLLM.push({
+          role: "tool",
+          tool_call_id: call.id,
+          content: `用户反馈：${userResponse}`,
+        });
+        addMessage({
+          role: "tool",
+          tool_call_id: call.id,
+          tool_name: call.function.name,
+          content: `用户反馈：${userResponse}`,
+          meta: { iteration, toolArgs: args },
+        });
 
         agentState.status = "thinking";
         agentState.pendingInteraction = null;
@@ -805,20 +1034,26 @@ async function runAgentLoop(userMessage: string) {
               message: `此搜索在第${duplicate.iteration}轮已执行过，找到${duplicate.resultCount}个结果。以下是缓存的结果：`,
             };
           } else {
-            result = await executeAITool(toolName, args, ctx);
+            result = await executeToolWithTimeout(toolName, args, ctx);
             // 记录搜索结果（含数据缓存）
             const resultCount = getResourceResultCount(result);
-            recordSearch(
-              toolName,
-              args,
-              resultCount,
-              iteration,
-              result?.data,
-            );
+            recordSearch(toolName, args, resultCount, iteration, result?.data);
           }
+        } else if (
+          !allowInteraction &&
+          AUTO_BATCH_BLOCKED_OPERATIONS.includes(toolName)
+        ) {
+          result = {
+            success: false,
+            message:
+              "自动制作单张设计阶段不能调用批量、保存或导出工具。请只完成当前画布设计，保存由外层流水线处理。",
+          };
         } else {
           if (explicitCanvasSize) {
-            if (toolName === "canvas.smartSize" || toolName === "canvas.setSizeByPreset") {
+            if (
+              toolName === "canvas.smartSize" ||
+              toolName === "canvas.setSizeByPreset"
+            ) {
               // 拦截：用户已明确指定尺寸时，smartSize/setSizeByPreset 绝对禁止
               result = {
                 success: false,
@@ -854,7 +1089,7 @@ async function runAgentLoop(userMessage: string) {
                   explicitCanvasSize.unit,
                 );
               }
-              result = await executeAITool(toolName, args, ctx);
+              result = await executeToolWithTimeout(toolName, args, ctx);
               // 如果是画布尺寸设置工具，且用户明确指定了尺寸，则更新 explicitCanvasSize
               if (
                 result?.success &&
@@ -870,7 +1105,7 @@ async function runAgentLoop(userMessage: string) {
               }
             }
           } else {
-            result = await executeAITool(toolName, args, ctx);
+            result = await executeToolWithTimeout(toolName, args, ctx);
           }
         }
 
@@ -899,10 +1134,7 @@ async function runAgentLoop(userMessage: string) {
 
         // 如果是保存操作，更新任务进度
         let progressHint = "";
-        if (
-          toolName === "canvas.updateAndSaveSticker" &&
-          result?.success
-        ) {
+        if (toolName === "canvas.updateAndSaveSticker" && result?.success) {
           const progress = completeBatchItem();
           if (progress.hint) {
             progressHint = `\n\n[任务进度] ${progress.hint}`;
@@ -922,21 +1154,18 @@ async function runAgentLoop(userMessage: string) {
           },
         });
 
-        const translatedResult = translateToolResult(toolName,
-          args,
-          result,
-        );
-        messagesForLLM.push(
-          { role: "assistant", content, tool_calls: toolCalls },
-          {
-            role: "user",
-            content: `[工具结果] ${translatedResult}${progressHint}`,
-          },
-        );
+        const translatedResult = translateToolResult(toolName, args, result);
+        appendAssistantToolCalls();
+        messagesForLLM.push({
+          role: "tool",
+          tool_call_id: call.id,
+          content: `${translatedResult}${progressHint}`,
+        });
 
         if (
           result?.success &&
-          (toolName === "canvas.addHtml" || (toolName === "canvas.addChild" && args?.type === "html")) &&
+          (toolName === "canvas.addHtml" ||
+            (toolName === "canvas.addChild" && args?.type === "html")) &&
           !allowPostArtworkContinuation
         ) {
           completedArtwork = true;
@@ -958,28 +1187,36 @@ async function runAgentLoop(userMessage: string) {
           },
         });
 
-        messagesForLLM.push(
-          { role: "assistant", content, tool_calls: toolCalls },
-          {
-            role: "user",
-            content: `[工具结果] ❌ ${toolName} 执行失败: ${error.message}`,
-          },
-        );
+        appendAssistantToolCalls();
+        messagesForLLM.push({
+          role: "tool",
+          tool_call_id: call.id,
+          content: `❌ ${toolName} 执行失败: ${error.message}`,
+        });
       }
     }
 
     if (completedArtwork) {
-      console.log("[Agent] HTML artwork completed, stopping to avoid over-iteration");
+      console.log(
+        "[Agent] HTML artwork completed, stopping to avoid over-iteration",
+      );
       addMessage({
         role: "assistant",
-        content: "已完成当前设计。如需继续优化、分析或保存，请告诉我。",
+        content: allowInteraction
+          ? "已完成当前设计。如需继续优化、分析或保存，请告诉我。"
+          : "已完成当前设计。",
         meta: { iteration, type: "artwork-complete" },
       });
       return;
     }
 
     // 视觉自检（每 4 轮）
-    if (allowPostArtworkContinuation && iteration % 4 === 0 && iteration > 0) {
+    if (
+      allowCanvasAnalysis &&
+      allowPostArtworkContinuation &&
+      iteration % 4 === 0 &&
+      iteration > 0
+    ) {
       try {
         const screenshot = await captureCanvasForAI();
         const quickEval = await directChat({
@@ -996,6 +1233,7 @@ async function runAgentLoop(userMessage: string) {
           ],
           temperature: 0.3,
           maxTokens: 100,
+          timeoutMs: AI_TIMEOUTS.quickEvaluate,
         });
         const evalContent = parseChatResponse(quickEval);
         if (evalContent?.content) {
@@ -1106,6 +1344,7 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
       messages: messagesForLLM,
       tools: allTools,
       maxTokens: 4096,
+      timeoutMs: AI_TIMEOUTS.chat,
     });
   } catch (error: any) {
     console.error("[Agent] 图片分析失败:", error);
@@ -1192,7 +1431,7 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
       try {
         let result;
 
-        result = await executeAITool(toolName, args, ctx);
+        result = await executeToolWithTimeout(toolName, args, ctx);
 
         const toolDuration = Date.now() - toolStartTime;
         console.log("[Agent] 工具结果:", result);
@@ -1294,6 +1533,7 @@ ${stateSummary}
         },
       ],
       temperature: 0.3,
+      timeoutMs: AI_TIMEOUTS.quickEvaluate,
     });
 
     let resultText = extractContent(response);
@@ -1327,7 +1567,7 @@ async function runAutoImprove(suggestions: string[]): Promise<void> {
 
   for (const suggestion of suggestions.slice(0, 2)) {
     try {
-      const result = await executeAITool(
+      const result = await executeToolWithTimeout(
         "canvas.evaluateDesign",
         { criteria: suggestion },
         ctx,
@@ -1431,6 +1671,7 @@ ${evaluation.suggestions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
           includeResources: true,
           resourceTools: resourceService.tools,
         }),
+        timeoutMs: AI_TIMEOUTS.chat,
       });
 
       // 解析并执行改进操作
@@ -1454,7 +1695,7 @@ ${evaluation.suggestions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
           const toolName = resolveAIToolName(call.function.name);
 
           try {
-            await executeAITool(toolName, args, ctx);
+            await executeToolWithTimeout(toolName, args, ctx);
           } catch (err) {
             console.error("[SelfTest] 改进操作失败:", err);
           }
@@ -1895,7 +2136,11 @@ export const designAgent = {
     resourceService.clearSearchCache();
 
     try {
-      await runAgentLoop(userMessage);
+      await runAgentLoop(userMessage, {
+        allowInteraction: false,
+        allowCanvasAnalysis: false,
+        excludeOperations: AUTO_BATCH_BLOCKED_OPERATIONS,
+      });
     } catch (error: any) {
       console.error("[BatchItem] Error:", error);
       agentState.error = error.message || "未知错误";

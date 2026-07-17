@@ -2,11 +2,26 @@ import {
   currentCanvasControllerInstance,
   renderingLoading,
 } from "@/components/design/layout/canvas";
+import { nextTick } from "vue";
+
+function waitForAnimationFrame(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(() => resolve());
+      return;
+    }
+    setTimeout(resolve, 16);
+  });
+}
 
 /**
  * 等待画布渲染完成
  */
-async function waitForRender(controller: any, timeout = 5000): Promise<void> {
+async function waitForRender(
+  controller: any,
+  timeout = 15_000,
+  rejectOnTimeout = false,
+): Promise<void> {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     const check = () => {
@@ -15,8 +30,12 @@ async function waitForRender(controller: any, timeout = 5000): Promise<void> {
         return;
       }
       if (Date.now() - startTime > timeout) {
-        // 超时后也继续，避免卡住
-        console.warn("[AI Capture] 等待渲染超时，继续截图");
+        const message = `[AI Capture] 等待渲染超时 (${timeout}ms)`;
+        console.warn(message);
+        if (rejectOnTimeout) {
+          reject(new Error(message));
+          return;
+        }
         resolve();
         return;
       }
@@ -26,24 +45,53 @@ async function waitForRender(controller: any, timeout = 5000): Promise<void> {
   });
 }
 
-/**
- * 截取当前画布为 base64 图片
- * 会先强制更新贴纸渲染，确保截图是最新的
- */
-export async function captureCanvasForAI(): Promise<string> {
+export async function renderCurrentCanvasNow(
+  options: { timeoutMs?: number } = {},
+) {
   const controller = currentCanvasControllerInstance.value;
   if (!controller) {
     throw new Error("画布控制器未初始化");
   }
 
-  // 强制更新贴纸渲染
-  await controller.activeUpdateRenderingCanvas();
+  const timeoutMs = options.timeoutMs ?? 15_000;
 
-  // 等待渲染完成
-  await waitForRender(controller);
+  await nextTick();
+  await waitForAnimationFrame();
+  await waitForAnimationFrame();
 
-  // 额外等待一帧确保 DOM 更新
-  await new Promise((resolve) => requestAnimationFrame(resolve));
+  if (typeof controller.updateRenderingCanvasJob === "function") {
+    controller.loading.value = true;
+    renderingLoading.value = true;
+    await Promise.race([
+      Promise.resolve(controller.updateRenderingCanvasJob()),
+      new Promise<never>((_, reject) => {
+        setTimeout(
+          () => reject(new Error(`画布渲染超时 (${timeoutMs}ms)`)),
+          timeoutMs,
+        );
+      }),
+    ]);
+  } else {
+    await controller.activeUpdateRenderingCanvas();
+    await waitForRender(controller, timeoutMs, true);
+  }
+
+  await waitForRender(controller, timeoutMs, true);
+  if (controller.shouldUpdateCanvasSticker?.value) {
+    throw new Error("画布渲染未完成或渲染失败，已阻止使用旧画面");
+  }
+  await nextTick();
+  await waitForAnimationFrame();
+
+  return controller;
+}
+
+/**
+ * 截取当前画布为 base64 图片
+ * 会先强制更新贴纸渲染，确保截图是最新的
+ */
+export async function captureCanvasForAI(): Promise<string> {
+  const controller = await renderCurrentCanvasNow();
 
   const canvasEl = controller.canvasEl;
   if (!canvasEl) {
@@ -62,7 +110,11 @@ export async function captureCanvasForAI(): Promise<string> {
       throw new Error("画布截图数据为空");
     }
 
-    console.log("[AI Capture] 截图成功，大小:", Math.round(base64.length / 1024), "KB");
+    console.log(
+      "[AI Capture] 截图成功，大小:",
+      Math.round(base64.length / 1024),
+      "KB",
+    );
     return base64;
   } catch (err: any) {
     // 如果 toDataURL 失败，可能是 canvas 被污染

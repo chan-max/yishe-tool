@@ -31,8 +31,10 @@ export const designRulesKnowledge: KnowledgeItem = {
 深色背景配浅色字，浅色背景配深色字
 
 ### 字号
-- HTML 继承画布基础字号，优先用 em 建立层级：展示标题 8-14em | 标题 5-8em | 副标题 2.5-4em | 正文 1.5-2.5em | 注释 0.8-1.2em
-- 兰亭序、碑帖、长文使用 dense 基础字号；书法正文作为视觉主体时用 2.5-4.5em，行高 1.6-2.2
+- 使用尺寸工具返回的 typeScale，不要自己写一组固定字号：hero=唯一主视觉，title=主标题，primaryText=核心长文/书法主体，subtitle=副标题，body=正文，caption=说明
+- dense 用于兰亭序、碑帖、包装标签、参数列表和长文；balanced 用于常规海报；display 用于单字、短标语和艺术字
+- 根节点定义 --type-hero/title/primary/subtitle/body/caption，文字通过 var(--type-xxx) 使用；font-size 禁止 px、pt、rem、vw、vh
+- 主视觉只允许一个，主标题最多两个；普通正文不得与标题尺寸接近，核心长文不得缩成 caption
 - 中间布局容器不要设置 font-size，避免嵌套 em 重复放大
 
 ### 构图 → CSS 实现

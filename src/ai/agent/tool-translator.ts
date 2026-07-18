@@ -39,8 +39,16 @@ export function translateToolResult(
       return "✅ 画布已清空，可以开始新设计";
     case "canvas.smartSize":
     case "canvas.setSize":
-    case "canvas.setSizeByPreset":
-      return `✅ 画布尺寸已设置: ${args?.width || "?"}x${args?.height || "?"}`;
+    case "canvas.setSizeByPreset": {
+      const data = (result.data || {}) as any;
+      const scale = data.typeScale || {};
+      return `✅ 画布尺寸已设置: ${data.width || args?.width || "?"}x${data.height || args?.height || "?"}，基础字号 ${data.baseFontSize || "?"}px（${data.typographyDensityLabel || "标准排版"}）。本次 HTML 使用精确相对字号：主视觉 ${scale.hero || "9em"}、主标题 ${scale.title || "5.5em"}、核心文字 ${scale.primaryText || "3em"}、副标题 ${scale.subtitle || "2.4em"}、正文 ${scale.body || "1.5em"}、说明 ${scale.caption || "0.9em"}。禁止改回 px/rem/vw 字号。`;
+    }
+    case "canvas.setBaseFontSize": {
+      const data = (result.data || {}) as any;
+      const scale = data.typeScale || {};
+      return `✅ 画布基础字号已设置为 ${data.baseFontSize || "?"}px。相对字号表：主视觉 ${scale.hero || "9em"}、主标题 ${scale.title || "5.5em"}、核心文字 ${scale.primaryText || "3em"}、正文 ${scale.body || "1.5em"}、说明 ${scale.caption || "0.9em"}。`;
+    }
     case "canvas.setBackgroundColor":
       return `✅ 背景色已设置: ${args?.color || "未知"}`;
     case "element.setStyle": {

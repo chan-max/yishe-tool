@@ -1,5 +1,6 @@
 import { io, type Socket } from "socket.io-client";
 import { reactive } from "vue";
+import { getDesignRuntimeSnapshot } from "./designRuntime";
 
 type WsStatus =
   | "idle"
@@ -13,8 +14,11 @@ const CLIENT_SOURCE = "设计端";
 const HEARTBEAT_INTERVAL = 15_000;
 const HEARTBEAT_TIMEOUT = 30_000;
 const REMOTE_COMMAND_TIMEOUT = 30_000;
+const AGENT_STATUS_COALESCE_MS = 300;
+const AGENT_STATUS_REFRESH_MS = 30_000;
 const LAUNCH_RUNTIME_KEY = "yishe_tool_launch_runtime";
 const LAUNCH_PROMPT_RUNTIME_KEY = "yishe_tool_launch_prompt_runtime";
+const designRuntime = getDesignRuntimeSnapshot();
 
 function generateClientId() {
   return `designtool-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -120,6 +124,9 @@ function readLaunchRuntimeInfo() {
       profileId: String(parsed.profileId).trim(),
       profileName: String(parsed.profileName || "").trim() || undefined,
       machineCode: String(parsed.machineCode || "").trim() || undefined,
+      workspaceId:
+        String(parsed.workspaceId || designRuntime.workspaceId).trim() ||
+        designRuntime.workspaceId,
       launchedAt: String(parsed.launchedAt || "").trim() || undefined,
     };
   } catch {
@@ -222,6 +229,14 @@ const clientInfo = reactive({
     canvasEnabled: true,
     operationsVersion: "1.0",
   },
+  designWorker: {
+    workerId: designRuntime.workerId,
+    workspaceId: designRuntime.workspaceId,
+    capacity: 1,
+    activeRequestId: null as string | null,
+    state: "idle",
+    updatedAt: new Date().toISOString(),
+  },
   launch: readLaunchRuntimeInfo(),
 });
 
@@ -234,6 +249,12 @@ let lastPingTimestamp: number | null = null;
 let intentionalDisconnect = false;
 let lastAuthToken: string | undefined;
 let launchPromptDispatching = false;
+let activeRemoteRequestId: string | null = null;
+const cancelledRemoteRequestIds = new Set<string>();
+let pendingAgentStatus: Record<string, any> | null = null;
+let agentStatusTimer: ReturnType<typeof setTimeout> | null = null;
+let lastAgentStatusFingerprint = "";
+let lastAgentStatusSentAt = 0;
 
 const wsState = reactive({
   endpoint: getDefaultWsUrl(),
@@ -306,6 +327,95 @@ function emitClientInfo() {
   socket.emit("client-info", clientInfo);
 }
 
+function setRemoteWorkerState(
+  state: "idle" | "busy" | "cancelling",
+  requestId: string | null,
+) {
+  Object.assign(clientInfo.designWorker, {
+    state,
+    activeRequestId: requestId,
+    updatedAt: new Date().toISOString(),
+  });
+  emitClientInfo();
+}
+
+function getAgentStatusFingerprint(status: Record<string, any>) {
+  const { updatedAt: _updatedAt, ...stableStatus } = status;
+  return JSON.stringify(stableStatus);
+}
+
+function flushAgentStatus(force = false) {
+  if (agentStatusTimer) {
+    clearTimeout(agentStatusTimer);
+    agentStatusTimer = null;
+  }
+  if (!pendingAgentStatus || !socket?.connected) return;
+
+  const status = {
+    ...pendingAgentStatus,
+    workerId: designRuntime.workerId,
+    workspaceId: designRuntime.workspaceId,
+    requestId: activeRemoteRequestId,
+  };
+  const fingerprint = getAgentStatusFingerprint(status);
+  const now = Date.now();
+  if (
+    !force &&
+    fingerprint === lastAgentStatusFingerprint &&
+    now - lastAgentStatusSentAt < AGENT_STATUS_REFRESH_MS
+  ) {
+    pendingAgentStatus = null;
+    return;
+  }
+
+  socket.emit("agent-status", status);
+  pendingAgentStatus = null;
+  lastAgentStatusFingerprint = fingerprint;
+  lastAgentStatusSentAt = now;
+}
+
+function queueAgentStatus(status: Record<string, any>) {
+  pendingAgentStatus = status;
+  const terminal = status.agentState === "idle" || status.agentState === "error";
+  if (terminal) {
+    flushAgentStatus(true);
+    return;
+  }
+  if (!agentStatusTimer) {
+    agentStatusTimer = setTimeout(
+      () => flushAgentStatus(),
+      AGENT_STATUS_COALESCE_MS,
+    );
+  }
+}
+
+async function syncCurrentAgentStatus() {
+  try {
+    const { designAgent } = await import("@/ai/langgraph");
+    const state = designAgent.state;
+    const plan = state.plan;
+    const completedSteps = Array.isArray(plan?.steps)
+      ? plan.steps.filter((step: any) =>
+          ["done", "failed", "skipped"].includes(step?.status),
+        ).length
+      : 0;
+    queueAgentStatus({
+      available: state.status === "idle",
+      agentState: state.status === "done" ? "idle" : state.status,
+      plan: plan
+        ? {
+            goal: plan.goal,
+            totalSteps: plan.steps.length,
+            currentStep: completedSteps,
+          }
+        : null,
+      updatedAt: new Date().toISOString(),
+    });
+  } catch {
+    // Agent UI can still be loading during the first socket connection.
+  }
+}
+
 function buildQuery() {
   return {
     clientSource: CLIENT_SOURCE,
@@ -331,6 +441,8 @@ function bindSocketEvents(currentSocket: Socket) {
     });
     emitClientInfo();
     startHeartbeatLoop();
+    flushAgentStatus(true);
+    void syncCurrentAgentStatus();
     void dispatchLaunchPromptIfNeeded();
   });
 
@@ -412,6 +524,8 @@ async function dispatchLaunchPromptIfNeeded() {
   if (!prompt) return;
 
   launchPromptDispatching = true;
+  activeRemoteRequestId = "launch-prompt";
+  setRemoteWorkerState("busy", "launch-prompt");
   try {
     await new Promise((resolve) => window.setTimeout(resolve, 800));
     const { designAgent } = await import("@/ai/langgraph");
@@ -427,6 +541,10 @@ async function dispatchLaunchPromptIfNeeded() {
     }
   } finally {
     launchPromptDispatching = false;
+    if (activeRemoteRequestId === "launch-prompt") {
+      activeRemoteRequestId = null;
+      setRemoteWorkerState("idle", null);
+    }
   }
 }
 
@@ -487,7 +605,13 @@ async function preparePageMonitorStream(payload: any = {}) {
 
 async function handleRemoteCommand(data: any) {
   const { type, payload, requestId } = data || {};
-  const result: Record<string, any> = { requestId, success: false };
+  const result: Record<string, any> = {
+    requestId,
+    success: false,
+    phase: "completed",
+  };
+  let ownsRemoteWorker = false;
+  let ownedRemoteRequestId: string | null = null;
 
   const runWithTimeout = <T>(task: Promise<T>, timeoutMs = REMOTE_COMMAND_TIMEOUT) =>
     Promise.race([
@@ -548,8 +672,44 @@ async function handleRemoteCommand(data: any) {
         const { designAgent } = await import("@/ai/langgraph");
         const message = payload?.message;
         if (!message) throw new Error("缺少 message 参数");
-        await runWithTimeout(designAgent.chat(message), 120_000);
+        if (activeRemoteRequestId || designAgent.state.status !== "idle") {
+          result.phase = "rejected";
+          result.error = "当前设计实例正在执行其他指令";
+          result.message = result.error;
+          break;
+        }
+
+        activeRemoteRequestId = String(requestId || `remote-${Date.now()}`);
+        ownedRemoteRequestId = activeRemoteRequestId;
+        ownsRemoteWorker = true;
+        setRemoteWorkerState("busy", activeRemoteRequestId);
+        if (socket?.connected) {
+          socket.emit("remote-result", {
+            requestId,
+            success: true,
+            phase: "accepted",
+            message: "指令已接收，Agent 开始处理",
+            workerId: designRuntime.workerId,
+            workspaceId: designRuntime.workspaceId,
+            reportedAt: new Date().toISOString(),
+          });
+        }
+
+        await designAgent.chat(message);
+        if (designAgent.state.error) {
+          throw new Error(designAgent.state.error);
+        }
+        if (
+          ownedRemoteRequestId &&
+          cancelledRemoteRequestIds.delete(ownedRemoteRequestId)
+        ) {
+          result.success = false;
+          result.phase = "cancelled";
+          result.message = "Agent 制作已停止";
+          break;
+        }
         result.success = true;
+        result.phase = "completed";
         // 提取 Agent 最后的回复
         const msgs = designAgent.state.messages;
         const lastAssistant = [...msgs]
@@ -564,8 +724,29 @@ async function handleRemoteCommand(data: any) {
           : "Agent 对话已完成";
         break;
       }
+      case "stop": {
+        const { designAgent } = await import("@/ai/langgraph");
+        const targetRequestId = String(
+          payload?.requestId || activeRemoteRequestId || "",
+        ).trim();
+        if (!targetRequestId || targetRequestId !== activeRemoteRequestId) {
+          result.phase = "rejected";
+          result.message = "当前没有匹配的执行中指令";
+          break;
+        }
+        cancelledRemoteRequestIds.add(targetRequestId);
+        setRemoteWorkerState("cancelling", targetRequestId);
+        designAgent.stop();
+        result.success = true;
+        result.message = "已发送停止指令";
+        break;
+      }
       case "clear": {
         const { designAgent } = await import("@/ai/langgraph");
+        if (activeRemoteRequestId) {
+          cancelledRemoteRequestIds.add(activeRemoteRequestId);
+          setRemoteWorkerState("cancelling", activeRemoteRequestId);
+        }
         designAgent.clearMessages();
         result.success = true;
         result.message = "已清空";
@@ -644,6 +825,12 @@ async function handleRemoteCommand(data: any) {
     }
   } catch (error: any) {
     result.error = error?.message || "执行失败";
+    result.phase = "failed";
+  } finally {
+    if (ownsRemoteWorker) {
+      activeRemoteRequestId = null;
+      setRemoteWorkerState("idle", null);
+    }
   }
 
   if (socket?.connected) {
@@ -733,8 +920,7 @@ export const websocketClient = {
     startedAt?: string;
     updatedAt: string;
   }) {
-    if (!socket?.connected) return;
-    socket.emit("agent-status", status);
+    queueAgentStatus(status);
   },
 
   setScreenSharing(active: boolean) {

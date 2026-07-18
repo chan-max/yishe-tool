@@ -44,6 +44,7 @@ import { normalizeTokenValue, useLoginStatusStore, initLoginStoreUserInfo } from
 import { initConfigStoreBasicConfig } from '@/store/stores/config.ts';
 import { startDesignToolWebSocket } from '@/services/connectionStatus';
 import { setupSingleTabManager } from '@/utils/singleTabManager'
+import { getDesignRuntimeSnapshot } from '@/services/designRuntime'
 
 const EMBED_RUNTIME_KEY = 'yishe_tool_embed_runtime'
 const LAUNCH_RUNTIME_KEY = 'yishe_tool_launch_runtime'
@@ -121,6 +122,7 @@ function syncLaunchRuntimeState(params: ReturnType<typeof parseUrlRuntimeParams>
         profileId: params.launchProfileId,
         profileName: params.launchProfileName || undefined,
         machineCode: params.launchMachineCode || undefined,
+        workspaceId: getDesignRuntimeSnapshot().workspaceId,
         launchedAt: new Date().toISOString(),
       }),
     )
@@ -130,25 +132,6 @@ function syncLaunchRuntimeState(params: ReturnType<typeof parseUrlRuntimeParams>
   if (params.launchSource) {
     sessionStorage.removeItem(LAUNCH_RUNTIME_KEY)
   }
-}
-
-function readStoredLaunchRuntimeSource() {
-  try {
-    const raw = sessionStorage.getItem(LAUNCH_RUNTIME_KEY)
-    if (!raw) return ''
-    const parsed = JSON.parse(raw)
-    return String(parsed?.source || '').trim()
-  } catch {
-    return ''
-  }
-}
-
-function isAdminDesignToolLaunch(params: ReturnType<typeof parseUrlRuntimeParams>) {
-  return (
-    params.embedSource === 'admin-launch' ||
-    params.launchSource === 'admin-design-tool' ||
-    readStoredLaunchRuntimeSource() === 'admin-design-tool'
-  )
 }
 
 function cleanupAuthParamsFromUrl() {
@@ -202,13 +185,12 @@ async function handleUrlToken() {
 }
 
 async function setup() {
-  const runtimeParams = parseUrlRuntimeParams()
+  const designRuntime = getDesignRuntimeSnapshot()
 
   // 启动单标签页管理器
   if (!isEmbeddedRuntime()) {
     const canContinue = setupSingleTabManager({
-      disabled: isAdminDesignToolLaunch(runtimeParams),
-      reason: 'admin-design-tool launch supports multiple browser profiles',
+      scopeId: designRuntime.workspaceId,
     });
     if (!canContinue) {
       return; // 如果检测到其他活跃标签页，直接返回
@@ -265,9 +247,6 @@ async function setup() {
   app.mount('#app')
 }
 setup()
-
-
-
 
 
 

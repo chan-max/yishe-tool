@@ -3,6 +3,7 @@ import {
   prepareHtmlArtworkOptions,
   updateExistingHtmlArtwork,
   getDirectExternalResourceError,
+  getCanvasTypographyContext,
 } from "./add-child";
 import { isRecentImageUrl, getRecentImageUrls } from "@/ai/services/resource";
 
@@ -22,8 +23,9 @@ registerOperation({
       description: [
         "完整的 HTML/CSS 代码，元素默认填满画布（width:100%;height:100%）。",
         "",
-        "【响应式字号】HTML 会继承画布基础字号。文字默认用 em：展示标题 8-14em、标题 5-8em、副标题 2.5-4em、正文 1.5-2.5em、注释 0.8-1.2em。",
-        "中间布局容器不要设置 font-size，避免嵌套 em 重复放大；极细描边等固定细节才使用 px。",
+        "【响应式字号】HTML 会继承画布基础字号。必须使用尺寸工具返回的 typeScale，将文字分为 hero/title/primaryText/subtitle/body/caption，不要凭感觉分配。",
+        "推荐在根节点定义 --type-hero/title/primary/subtitle/body/caption，文字使用 font-size:var(--type-xxx)。font-size 禁止 px、pt、rem、vw、vh；写入时残留绝对字号会自动转为相对值。",
+        "主视觉只用于一个最重要的信息，主标题最多两个；长文或书法主体使用 primaryText，普通说明才使用 body/caption。中间布局容器不要设置 font-size，避免嵌套 em 重复放大。",
         "",
         "【常用模式】",
         "居中文字: display:flex;align-items:center;justify-content:center;",
@@ -188,7 +190,11 @@ registerOperation({
     }
 
     // 新增 HTML 元素
-    const prepared = prepareHtmlArtworkOptions(options);
+    const prepared = prepareHtmlArtworkOptions(
+      options,
+      undefined,
+      getCanvasTypographyContext(ctx),
+    );
     const directError = getDirectExternalResourceError(prepared);
     if (directError) {
       return { success: false, message: directError, data: { rejected: true, reason: "direct_external_resource_url" } };

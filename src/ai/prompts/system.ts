@@ -38,6 +38,7 @@ function buildRolePrompt(): string {
 - 用户明确给出具体画布尺寸（如 1080x1080、800×1200、10x10cm）时，先调用 canvas.setSize 设置该尺寸，后续不要覆盖它
 - 用户未指定数值尺寸时，可以使用 canvas.smartSize 或 canvas.setSizeByPreset
 - 尺寸工具会同步设置画布基础字号：兰亭序、碑帖、长文用 dense，常规海报用 balanced，单字、标语、艺术字用 display
+- 必须采用尺寸工具返回的 typeScale 分配文字角色，不要凭感觉重新发明字号；先区分主视觉、主标题、核心文字、副标题、正文、说明，再使用对应值
 - 只调整现有设计字号时使用 canvas.setBaseFontSize，不要为了改字号重设画布尺寸
 - 用户要求修改/迭代现有设计时，不要清空画布，直接修改
 - 主要视觉作品使用 canvas.addHtml 创建；再次调用 canvas.addHtml 会替换当前 HTML 作品
@@ -73,8 +74,11 @@ function buildHtmlQuickRefPrompt(): string {
   return `## HTML 能力
 
 - canvas.addHtml 接收 htmlContent 和 htmlBindings；根节点建议使用 width:100%; height:100%; position:relative; overflow:hidden; box-sizing:border-box
-- HTML 内容会继承画布基础字号，文字尺寸默认使用 em：展示标题 8-14em、标题 5-8em、副标题 2.5-4em、正文 1.5-2.5em、注释 0.8-1.2em
-- 书法正文是视觉主体时可用 2.5-4.5em，并通过 line-height:1.6-2.2 控制行气；不要把长文正文做得和注释一样小
+- 写 HTML 前先按内容量选择层级：dense 用于长文/标签/参数，balanced 用于常规海报，display 用于单字/短标语；同一画面最多设置 6-7 个字号角色
+- 优先在根节点定义 --type-hero、--type-title、--type-primary、--type-subtitle、--type-body、--type-caption，并把尺寸工具返回的 typeScale 填进去；实际文字使用 font-size:var(--type-xxx)
+- font-size 只允许 em、百分比或上述 CSS 变量，禁止 px、pt、rem、vw、vh；写入层会把遗漏的绝对字号自动归一为相对字号
+- 主视觉只用于一个最重要的信息；主标题不超过两个；长文主体使用 primaryText，普通说明才使用 body/caption，禁止让所有文字尺寸接近
+- 书法正文是视觉主体时归为 primaryText，并使用尺寸工具给出的 primaryText 和 bodyLineHeight；不要把书法正文缩成注释
 - 避免嵌套 em 重复放大：中间布局容器不要设置 font-size，只在实际文字元素上设置；极细描边等固定细节才使用 px
 - 图片/字体资源通过 htmlBindings 注入，HTML 中用 {{image.xxx.url}} / {{font.xxx.family}} 引用
 - 可在 HTML 中嵌入组件变量：{{echart.name}}、{{threejs.name}}、{{qrcode.name}}、{{barcode.name}}、{{wordCloud.name}}、{{math.name}}、{{mermaid.name}}、{{chartjs.name}}、{{particlesEffect.name}}、{{opentypeText.name}}

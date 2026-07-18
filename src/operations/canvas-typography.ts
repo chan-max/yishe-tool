@@ -2,6 +2,18 @@ import type { OperationContext } from "./types";
 
 export type CanvasTypographyDensity = "dense" | "balanced" | "display";
 
+export interface CanvasTypographyScale {
+  hero: string;
+  title: string;
+  primaryText: string;
+  subtitle: string;
+  body: string;
+  caption: string;
+  micro: string;
+  heroLineHeight: number;
+  bodyLineHeight: number;
+}
+
 const DENSITY_RATIOS: Record<CanvasTypographyDensity, number> = {
   dense: 0.012,
   balanced: 0.016,
@@ -26,9 +38,13 @@ export function inferCanvasTypographyDensity(
   description: string,
 ): CanvasTypographyDensity {
   const text = String(description || "");
+  const quotedContentLength = Array.from(
+    text.matchAll(/[“\"']([^”\"']+)[”\"']/g),
+  ).reduce((total, match) => total + String(match[1] || "").length, 0);
 
   if (
-    /兰亭序|全文|长文|正文|篇章|段落|多行|密集|排满|手卷|碑帖|经文|目录|信息图|书法作品模拟/i.test(
+    quotedContentLength >= 100 ||
+    /兰亭序|全文|长文|正文|篇章|段落|多行|密集|排满|手卷|碑帖|经文|目录|信息图|书法作品模拟|包装标签|产品参数|规格信息|成分表|菜单|价目表|日程|数据看板|二维码|条形码/i.test(
       text,
     )
   ) {
@@ -44,6 +60,72 @@ export function inferCanvasTypographyDensity(
   }
 
   return "balanced";
+}
+
+function formatEm(value: number): string {
+  return `${Number(value.toFixed(2))}em`;
+}
+
+export function buildCanvasTypographyScale(
+  width: number,
+  height: number,
+  density: CanvasTypographyDensity,
+): CanvasTypographyScale {
+  const aspectRatio = width > 0 && height > 0 ? width / height : 1;
+  const heroAspectMultiplier =
+    aspectRatio >= 2 ? 1.08 : aspectRatio <= 0.7 ? 0.9 : 1;
+
+  const profiles: Record<
+    CanvasTypographyDensity,
+    Omit<CanvasTypographyScale, "hero"> & { heroBase: number }
+  > = {
+    dense: {
+      heroBase: 5.5,
+      title: "3.8em",
+      primaryText: "2.6em",
+      subtitle: "1.8em",
+      body: "1.25em",
+      caption: "0.85em",
+      micro: "0.7em",
+      heroLineHeight: 0.95,
+      bodyLineHeight: 1.75,
+    },
+    balanced: {
+      heroBase: 9,
+      title: "5.5em",
+      primaryText: "3em",
+      subtitle: "2.4em",
+      body: "1.5em",
+      caption: "0.9em",
+      micro: "0.72em",
+      heroLineHeight: 0.95,
+      bodyLineHeight: 1.55,
+    },
+    display: {
+      heroBase: 13,
+      title: "7.5em",
+      primaryText: "4em",
+      subtitle: "2.8em",
+      body: "1.4em",
+      caption: "0.9em",
+      micro: "0.72em",
+      heroLineHeight: 0.88,
+      bodyLineHeight: 1.45,
+    },
+  };
+
+  const profile = profiles[density];
+  return {
+    hero: formatEm(profile.heroBase * heroAspectMultiplier),
+    title: profile.title,
+    primaryText: profile.primaryText,
+    subtitle: profile.subtitle,
+    body: profile.body,
+    caption: profile.caption,
+    micro: profile.micro,
+    heroLineHeight: profile.heroLineHeight,
+    bodyLineHeight: profile.bodyLineHeight,
+  };
 }
 
 export function recommendCanvasBaseFontSize(
@@ -100,17 +182,24 @@ export function applyCanvasBaseFontSize(
     });
   }
 
+  const typeScale = buildCanvasTypographyScale(
+    options.width,
+    options.height,
+    density,
+  );
+
   return {
     baseFontSize: fontSize,
     baseFontUnit: "px",
     typographyDensity: density,
     typographyDensityLabel: CANVAS_TYPOGRAPHY_LABELS[density],
+    typeScale,
     emScale: {
-      displayTitle: "8-14em",
-      title: "5-8em",
-      subtitle: "2.5-4em",
-      body: "1.5-2.5em",
-      caption: "0.8-1.2em",
+      displayTitle: typeScale.hero,
+      title: typeScale.title,
+      subtitle: typeScale.subtitle,
+      body: typeScale.body,
+      caption: typeScale.caption,
     },
   };
 }

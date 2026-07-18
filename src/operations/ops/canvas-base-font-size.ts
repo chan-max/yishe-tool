@@ -44,7 +44,7 @@ registerOperation({
 
     return {
       success: true,
-      message: `画布基础字号已设置为 ${typography.baseFontSize}px（${typography.typographyDensityLabel}）。HTML 文字请使用 em：展示标题 ${typography.emScale.displayTitle}，正文 ${typography.emScale.body}。`,
+      message: `画布基础字号已设置为 ${typography.baseFontSize}px（${typography.typographyDensityLabel}）。HTML 相对字号：主视觉 ${typography.typeScale.hero}、主标题 ${typography.typeScale.title}、核心文字 ${typography.typeScale.primaryText}、副标题 ${typography.typeScale.subtitle}、正文 ${typography.typeScale.body}、说明 ${typography.typeScale.caption}。`,
       data: typography,
     };
   },

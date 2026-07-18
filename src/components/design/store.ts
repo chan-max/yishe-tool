@@ -8,6 +8,7 @@ import Api from '@/api'
 import { message } from 'ant-design-vue'
 import { uploadToCOS, createDraft } from '@/api'
 import { saveAs } from 'file-saver';
+import { migrateLegacyWorkspaceStorage } from '@/services/designRuntime'
 
 // 当前实例
 export const currentModelController:Ref<ModelController> = shallowRef(null);
@@ -189,7 +190,7 @@ export const builtInCanvasBackgrounds = ref([
 ])
 
 
-export const currentCanvasBackground = useLocalStorage('_1s_canvasBackground', builtInCanvasBackgrounds.value[0])
+export const currentCanvasBackground = useLocalStorage(migrateLegacyWorkspaceStorage('_1s_canvasBackground'), builtInCanvasBackgrounds.value[0])
 
 /**
  * 画布背景图设置
@@ -239,7 +240,7 @@ export const builtInCanvasBackgroundImages = ref([
     },
 ])
 
-export const currentCanvasBackgroundImageId = useLocalStorage('_1s_canvasBackgroundImageId', builtInCanvasBackgroundImages.value[0].id)
+export const currentCanvasBackgroundImageId = useLocalStorage(migrateLegacyWorkspaceStorage('_1s_canvasBackgroundImageId'), builtInCanvasBackgroundImages.value[0].id)
 
 // 是否展示字体列表
 export const showFontModal = ref(false)
@@ -507,18 +508,18 @@ export const localFileListResource = ref([])
 export const useDesignStore = defineStore('_1s_design', () => {
     return {
         version: null,
-        storageName: useLocalStorage('_1s_storageName', storageName),
+        storageName: useLocalStorage(migrateLegacyWorkspaceStorage('_1s_storageName'), storageName),
         showWorkspace: useLocalStorage('_1s_showWorkspace', showWorkspace),
         // lastModifiedTime: useLocalStorage('_1s_lastModifiedTime', lastModifiedTime),
         showBaseModelSelect: useLocalStorage('_1s_showBaseModelSelect', showBaseModelSelect),
         showBasicCanvas: useLocalStorage('_1s_showBasicCanvas', showBasicCanvas),
         showThreeCanvas: useLocalStorage('_1s_showThreeCanvas', showThreeCanvas),
         showSticker: useLocalStorage('_1s_showSticker', showSticker),
-        currentOperatingBaseModelInfo: useLocalStorage('_1s_currentOperatingBaseModelInfo', currentOperatingBaseModelInfo),
+        currentOperatingBaseModelInfo: useLocalStorage(migrateLegacyWorkspaceStorage('_1s_currentOperatingBaseModelInfo'), currentOperatingBaseModelInfo),
         // showCanvasLayout: useLocalStorage('_1s_showCanvasLayout', showCanvasLayout), // 开启时可能有问题
-        canvasStickerOptions: useLocalStorage('_1s_canvasStickerOptions', canvasStickerOptions),
+        canvasStickerOptions: useLocalStorage(migrateLegacyWorkspaceStorage('_1s_canvasStickerOptions'), canvasStickerOptions),
         stickerQueryTags: useLocalStorage('_1s_stickerQueryTags', stickerQueryTags),
-        currentOperatingCanvasChildId: useLocalStorage('currentOperatingCanvasChildId', currentOperatingCanvasChildId),
+        currentOperatingCanvasChildId: useLocalStorage(migrateLegacyWorkspaceStorage('currentOperatingCanvasChildId'), currentOperatingCanvasChildId),
         showMainCanvas: useLocalStorage('_1s_showMainCanvas', showMainCanvas),
         viewDisplayController: useLocalStorage('_1s_viewDisplayController', viewDisplayController)
     }

@@ -8,6 +8,86 @@ export function isHtmlArtworkType(type: string) {
   return type === "html";
 }
 
+export interface HtmlTypographyContext {
+  baseFontSize: number;
+}
+
+export function getCanvasTypographyContext(ctx: any): HtmlTypographyContext {
+  const canvas = ctx
+    .getCanvasChildren()
+    .find((child: any) => child.type === "canvas");
+  const rawFontSize = canvas?.fontSize;
+  const baseFontSize =
+    typeof rawFontSize === "object"
+      ? Number(rawFontSize.value)
+      : Number(rawFontSize);
+  return {
+    baseFontSize:
+      Number.isFinite(baseFontSize) && baseFontSize > 0 ? baseFontSize : 32,
+  };
+}
+
+function formatRelativeEm(value: number): string {
+  return `${Number(value.toFixed(3))}em`;
+}
+
+function normalizeFontSizeValue(value: string, baseFontSize: number) {
+  let normalized = value;
+  normalized = normalized.replace(
+    /(-?\d*\.?\d+)px\b/gi,
+    (_match, size) => formatRelativeEm(Number(size) / baseFontSize),
+  );
+  normalized = normalized.replace(
+    /(-?\d*\.?\d+)pt\b/gi,
+    (_match, size) =>
+      formatRelativeEm((Number(size) * (96 / 72)) / baseFontSize),
+  );
+  normalized = normalized.replace(/(-?\d*\.?\d+)rem\b/gi, "$1em");
+  normalized = normalized.replace(
+    /(-?\d*\.?\d+)vw\b/gi,
+    (_match, size) => `calc(var(--canvas-html-vw) * ${Number(size)})`,
+  );
+  normalized = normalized.replace(
+    /(-?\d*\.?\d+)vh\b/gi,
+    (_match, size) => `calc(var(--canvas-html-vh) * ${Number(size)})`,
+  );
+  return normalized;
+}
+
+export function normalizeHtmlTypography(
+  htmlContent: string,
+  typography: HtmlTypographyContext,
+) {
+  let convertedDeclarations = 0;
+  const normalizeDeclaration = (
+    _match: string,
+    prefix: string,
+    value: string,
+  ) => {
+    const normalizedValue = normalizeFontSizeValue(
+      value,
+      typography.baseFontSize,
+    );
+    if (normalizedValue !== value) convertedDeclarations += 1;
+    return `${prefix}${normalizedValue}`;
+  };
+
+  let normalizedHtml = String(htmlContent || "").replace(
+    /(font-size\s*:\s*)([^;}"']+)/gi,
+    normalizeDeclaration,
+  );
+  normalizedHtml = normalizedHtml.replace(
+    /(--(?:type|font-size|fs)-[\w-]+\s*:\s*)([^;}"']+)/gi,
+    normalizeDeclaration,
+  );
+  normalizedHtml = normalizedHtml.replace(
+    /(\bfont\s*:\s*)([^;}"']+)/gi,
+    normalizeDeclaration,
+  );
+
+  return { htmlContent: normalizedHtml, convertedDeclarations };
+}
+
 function getHtmlContentLength(child: any) {
   return String(child?.htmlContent || "").trim().length;
 }
@@ -120,6 +200,7 @@ export function getDirectExternalResourceError(options: Record<string, any>) {
 export function prepareHtmlArtworkOptions(
   options: Record<string, any>,
   existingChild?: any,
+  typography?: HtmlTypographyContext,
 ) {
   const prepared = { ...options };
   const parsedBindings = parseMaybeJsonObject(prepared.htmlBindings);
@@ -135,6 +216,13 @@ export function prepareHtmlArtworkOptions(
     prepared.htmlTemplateDefaultBindings = parsedDefaultBindings;
   }
   if (parsedMeta !== undefined) prepared.htmlTemplateMeta = parsedMeta;
+
+  if (prepared.htmlContent && typography) {
+    prepared.htmlContent = normalizeHtmlTypography(
+      prepared.htmlContent,
+      typography,
+    ).htmlContent;
+  }
 
   if (!hasFontBindings(prepared.htmlBindings) && hasFontBindings(existingChild?.htmlBindings)) {
     prepared.htmlBindings = existingChild.htmlBindings;
@@ -199,7 +287,11 @@ export function updateExistingHtmlArtwork(ctx: any, options: Record<string, any>
   if (htmlChildren.length === 0) return null;
 
   const target = htmlChildren[htmlChildren.length - 1];
-  const preparedOptions = prepareHtmlArtworkOptions(options, target);
+  const preparedOptions = prepareHtmlArtworkOptions(
+    options,
+    target,
+    getCanvasTypographyContext(ctx),
+  );
   const directExternalResourceError = getDirectExternalResourceError(preparedOptions);
   if (directExternalResourceError) {
     return {
@@ -847,8 +939,9 @@ registerOperation({
         "",
         "【画布坐标系】",
         "- 画布宽高等于 canvas.setSize 设置的值（如 1200x1200px）",
-        "- HTML 会继承画布基础字号；文字用 em：展示标题 8-14em、标题 5-8em、副标题 2.5-4em、正文 1.5-2.5em、注释 0.8-1.2em",
-        "- 中间布局容器不要设置 font-size，避免嵌套 em 重复放大；边距可用百分比或 em，细描边可保留 px",
+        "- HTML 会继承画布基础字号；必须使用尺寸工具返回的 typeScale，把文字分为 hero/title/primaryText/subtitle/body/caption",
+        "- 根节点定义对应 CSS 变量，实际文字使用 var(--type-xxx)；font-size 禁止 px、pt、rem、vw、vh，残留绝对字号会自动归一为相对值",
+        "- 主视觉只用于一个最重要的信息，长文/书法主体使用 primaryText，普通说明才使用 body/caption；中间容器不要设置 font-size",
         "",
         "【常用模式】",
         "居中文字: <div style='display:flex;align-items:center;justify-content:center;width:100%;height:100%;'><div style='font-size:10em;font-weight:900;color:#fff;'>标题</div></div>",
@@ -1331,7 +1424,11 @@ registerOperation({
     }
 
     const preparedExtraOptions = isHtmlArtworkType(type)
-      ? prepareHtmlArtworkOptions(extraOptions)
+      ? prepareHtmlArtworkOptions(
+          extraOptions,
+          undefined,
+          getCanvasTypographyContext(ctx),
+        )
       : extraOptions;
     const directExternalResourceError = isHtmlArtworkType(type)
       ? getDirectExternalResourceError(preparedExtraOptions)

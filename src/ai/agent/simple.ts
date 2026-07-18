@@ -22,6 +22,7 @@ import {
 import { translateToolResult } from "@/ai/agent/tool-translator";
 import { evaluateCanvasVisual } from "../visual-evaluate";
 import { websocketClient } from "@/services/websocketClient";
+import { migrateLegacyWorkspaceStorage } from "@/services/designRuntime";
 import type { VisualEvaluation } from "../visual-evaluate";
 import {
   clearAgentDesignProvenance,
@@ -104,7 +105,9 @@ const agentState = reactive({
 let waitForUserInputPromise: { resolve: (value: string) => void } | null = null;
 const eventListeners: ((event: any) => void)[] = [];
 
-const STORAGE_KEY = "yishe_tool_ai_agent_conversation_v1";
+const STORAGE_KEY = migrateLegacyWorkspaceStorage(
+  "yishe_tool_ai_agent_conversation_v1",
+);
 const MAX_PERSISTED_MESSAGES = 80;
 const MAX_PERSISTED_CONTENT_LENGTH = 12000;
 
@@ -952,6 +955,11 @@ async function runAgentLoop(
     }
     const llmDuration = Date.now() - llmStartTime;
 
+    if (agentState.status === "idle") {
+      failRemainingPlan(plan, "任务已被用户中断");
+      return;
+    }
+
     // 解析响应
     const parsed = parseChatResponse(response);
 
@@ -1004,6 +1012,10 @@ async function runAgentLoop(
     agentState.status = "executing";
 
     for (const call of toolCalls) {
+      if (agentState.status === "idle") {
+        failRemainingPlan(plan, "任务已被用户中断");
+        return;
+      }
       const rawArgs = call.function.arguments;
       let args: any;
 
@@ -1315,6 +1327,11 @@ async function runAgentLoop(
           content: `❌ ${toolName} 执行失败: ${error.message}`,
         });
       }
+    }
+
+    if (agentState.status === "idle") {
+      failRemainingPlan(plan, "任务已被用户中断");
+      return;
     }
 
     if (completedArtwork) {

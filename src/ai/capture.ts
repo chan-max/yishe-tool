@@ -4,6 +4,18 @@ import {
 } from "@/components/design/layout/canvas";
 import { nextTick } from "vue";
 
+export const DEFAULT_AI_CAPTURE_MAX_DIMENSION = 1000;
+
+export interface CanvasCaptureForAIOptions {
+  /** AI 预览图最长边；传 0 可关闭缩放并保留原始尺寸。 */
+  maxDimension?: number;
+  /** 默认继续使用 PNG，保持透明背景和现有模型兼容性。 */
+  mimeType?: "image/png" | "image/jpeg" | "image/webp";
+  /** 仅 JPEG/WebP 生效。 */
+  quality?: number;
+  timeoutMs?: number;
+}
+
 function waitForAnimationFrame(): Promise<void> {
   return new Promise((resolve) => {
     if (typeof requestAnimationFrame === "function") {
@@ -90,8 +102,12 @@ export async function renderCurrentCanvasNow(
  * 截取当前画布为 base64 图片
  * 会先强制更新贴纸渲染，确保截图是最新的
  */
-export async function captureCanvasForAI(): Promise<string> {
-  const controller = await renderCurrentCanvasNow();
+export async function captureCanvasForAI(
+  options: CanvasCaptureForAIOptions = {},
+): Promise<string> {
+  const controller = await renderCurrentCanvasNow({
+    timeoutMs: options.timeoutMs,
+  });
 
   const canvasEl = controller.canvasEl;
   if (!canvasEl) {
@@ -104,14 +120,51 @@ export async function captureCanvasForAI(): Promise<string> {
   }
 
   try {
-    // 截图为 base64
-    const base64 = canvasEl.toDataURL("image/png");
+    const maxDimension =
+      options.maxDimension === undefined
+        ? DEFAULT_AI_CAPTURE_MAX_DIMENSION
+        : Math.max(0, Number(options.maxDimension) || 0);
+    const longestSide = Math.max(canvasEl.width, canvasEl.height);
+    const scale =
+      maxDimension > 0 && longestSide > maxDimension
+        ? maxDimension / longestSide
+        : 1;
+    const outputWidth = Math.max(1, Math.round(canvasEl.width * scale));
+    const outputHeight = Math.max(1, Math.round(canvasEl.height * scale));
+
+    let outputCanvas: HTMLCanvasElement = canvasEl;
+    if (scale < 1) {
+      outputCanvas = document.createElement("canvas");
+      outputCanvas.width = outputWidth;
+      outputCanvas.height = outputHeight;
+      const outputContext = outputCanvas.getContext("2d", { alpha: true });
+      if (!outputContext) {
+        throw new Error("无法创建 AI 预览图画布");
+      }
+      outputContext.imageSmoothingEnabled = true;
+      outputContext.imageSmoothingQuality = "high";
+      outputContext.drawImage(
+        canvasEl,
+        0,
+        0,
+        canvasEl.width,
+        canvasEl.height,
+        0,
+        0,
+        outputWidth,
+        outputHeight,
+      );
+    }
+
+    const mimeType = options.mimeType || "image/png";
+    const quality = Math.max(0.1, Math.min(1, options.quality ?? 0.86));
+    const base64 = outputCanvas.toDataURL(mimeType, quality);
     if (!base64 || base64 === "data:," || base64.length < 100) {
       throw new Error("画布截图数据为空");
     }
 
     console.log(
-      "[AI Capture] 截图成功，大小:",
+      `[AI Capture] 截图成功 ${canvasEl.width}x${canvasEl.height} -> ${outputWidth}x${outputHeight}，大小:`,
       Math.round(base64.length / 1024),
       "KB",
     );
@@ -140,9 +193,15 @@ export function getCanvasStateSummary(): string {
   const children = options.children || [];
   const mainCanvas = children[0];
   const elements = children.slice(1);
+  const formatSize = (size: any) => {
+    if (size && typeof size === "object") {
+      return `${size.value ?? "?"}${size.unit || "px"}`;
+    }
+    return String(size ?? "?");
+  };
 
   const lines = [
-    `画布尺寸: ${mainCanvas?.width || "?"} x ${mainCanvas?.height || "?"}`,
+    `画布尺寸: ${formatSize(mainCanvas?.width)} x ${formatSize(mainCanvas?.height)}`,
     `元素数量: ${elements.length}`,
     "",
   ];

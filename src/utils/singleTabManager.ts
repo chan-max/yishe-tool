@@ -13,6 +13,7 @@
 interface SingleTabManagerOptions {
   disabled?: boolean
   reason?: string
+  scopeId?: string
 }
 
 // 单标签页管理功能
@@ -22,7 +23,8 @@ export function setupSingleTabManager(options: SingleTabManagerOptions = {}) {
     return true;
   }
 
-  const TAB_KEY = 'design_system_active_tab';
+  const scopeId = String(options.scopeId || 'default').replace(/[^a-zA-Z0-9:_-]/g, '')
+  const TAB_KEY = `design_system_active_tab:${scopeId}`;
   const currentTabId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
   
   // 检查是否已有其他标签页打开

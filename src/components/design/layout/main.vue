@@ -216,6 +216,7 @@
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
 import { useElementSize, useLocalStorage } from "@vueuse/core";
+import { migrateLegacyWorkspaceStorage } from "@/services/designRuntime";
 import { ModelController } from "../core/controller";
 import headerMenu from "./headerMenu.vue";
 import loading from "./loading.vue";
@@ -379,7 +380,10 @@ const aspectRatioOptions = [
 ];
 
 // 使用本地存储保存选择的比例
-const selectedAspectRatio = useLocalStorage("canvas-aspect-ratio", 1);
+const selectedAspectRatio = useLocalStorage(
+  migrateLegacyWorkspaceStorage("canvas-aspect-ratio"),
+  1,
+);
 
 // 更新比例的函数
 const updateAspectRatio = () => {

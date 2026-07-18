@@ -10,6 +10,11 @@ registerOperation({
     const size = ctx.getCanvasSize();
     const bgColor = ctx.getCanvasBackgroundColor();
     const children = ctx.getCanvasChildren();
+    const canvas = children.find((c: any) => c.type === "canvas");
+    const baseFontSize =
+      typeof canvas?.fontSize === "object"
+        ? canvas.fontSize.value
+        : canvas?.fontSize || 32;
 
     const elements = children
       .filter((c: any) => c.type !== "canvas")
@@ -40,9 +45,10 @@ registerOperation({
         : "无";
     return {
       success: true,
-      message: `画布 ${size.width}x${size.height}${size.unit}，背景 ${bgColor}，${elements.length} 个元素: ${elementSummary}。用 element.setStyle(id, ...) 修改单个元素，用 canvas.addChild 添加新元素。`,
+      message: `画布 ${size.width}x${size.height}${size.unit}，基础字号 ${baseFontSize}px，背景 ${bgColor}，${elements.length} 个元素: ${elementSummary}。用 element.setStyle(id, ...) 修改单个元素，用 canvas.addChild 添加新元素。`,
       data: {
         canvasSize: size,
+        baseFontSize,
         backgroundColor: bgColor,
         totalChildren: children.length,
         elements,

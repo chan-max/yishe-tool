@@ -1,5 +1,5 @@
-import { directChat } from "@/ai/direct-client";
 import { apiInstance } from "@/api/apiInstance";
+import { buildImageSearchAttempts } from "./resource-search-strategy";
 
 // ============ 最近搜索结果 URL 记录（供 add-html 校验） ============
 
@@ -71,9 +71,9 @@ export interface FontResource {
   description: string;
   url: string;
   thumbnail: string;
-  category: string;       // 字体分类，如 "标题字"、"正文字"、"手写体"
-  keywords: string;       // 搜索关键词
-  languages: string[];    // 支持的语言，如 ['zh-CN', 'en']
+  category: string; // 字体分类，如 "标题字"、"正文字"、"手写体"
+  keywords: string; // 搜索关键词
+  languages: string[]; // 支持的语言，如 ['zh-CN', 'en']
 }
 
 export interface ImageResource {
@@ -86,9 +86,9 @@ export interface ImageResource {
   keywords: string;
   width: number;
   height: number;
-  isCustom: boolean;        // 是否为系统自定义（可二次开发）
-  isCutout: boolean;        // 是否为抠图（无背景）
-  colorPalette: string;     // 主色调，逗号分隔的 hex，如 "#ff0000,#00ff00"
+  isCustom: boolean; // 是否为系统自定义（可二次开发）
+  isCutout: boolean; // 是否为抠图（无背景）
+  colorPalette: string; // 主色调，逗号分隔的 hex，如 "#ff0000,#00ff00"
 }
 
 export interface SentenceResource {
@@ -108,33 +108,33 @@ export interface TextDocumentResource {
 }
 
 export interface FontSearchParams {
-  query?: string;           // 搜索关键词
-  limit?: number;           // 返回数量
-  page?: number;            // 页码
-  category?: string;        // 字体分类过滤，如 "标题字"、"正文字"
-  searchMode?: "text" | "vector";  // 搜索模式：text=关键词搜索，vector=向量语义搜索
+  query?: string; // 搜索关键词
+  limit?: number; // 返回数量
+  page?: number; // 页码
+  category?: string; // 字体分类过滤，如 "标题字"、"正文字"
+  searchMode?: "text" | "vector"; // 搜索模式：text=关键词搜索，vector=向量语义搜索
 }
 
 export interface ImageSearchParams {
-  query?: string;           // 搜索关键词
-  limit?: number;           // 返回数量
-  page?: number;            // 页码
-  isCustom?: boolean;       // 是否为系统自定义（可二次开发）
-  isCutout?: boolean;       // 是否为抠图（无背景）
-  searchMode?: "text" | "vector";  // 搜索模式：text=关键词搜索，vector=向量语义搜索
-  aspectRatio?: string;     // 宽高比，如 "1:1", "16:9"
+  query?: string; // 搜索关键词
+  limit?: number; // 返回数量
+  page?: number; // 页码
+  isCustom?: boolean; // 是否为系统自定义（可二次开发）
+  isCutout?: boolean; // 是否为抠图（无背景）
+  searchMode?: "text" | "vector"; // 搜索模式：text=关键词搜索，vector=向量语义搜索
+  aspectRatio?: string; // 宽高比，如 "1:1", "16:9"
   aspectRatioTolerance?: number; // 宽高比容差
-  minWidth?: number;        // 最小宽度
-  maxWidth?: number;        // 最大宽度
-  minHeight?: number;       // 最小高度
-  maxHeight?: number;       // 最大高度
+  minWidth?: number; // 最小宽度
+  maxWidth?: number; // 最大宽度
+  minHeight?: number; // 最小高度
+  maxHeight?: number; // 最大高度
 }
 
 export interface SentenceSearchParams {
   query?: string;
   limit?: number;
   page?: number;
-  searchMode?: "text" | "vector";  // 搜索模式：text=关键词搜索，vector=向量语义搜索
+  searchMode?: "text" | "vector"; // 搜索模式：text=关键词搜索，vector=向量语义搜索
 }
 
 export interface TextDocumentSearchParams {
@@ -142,29 +142,115 @@ export interface TextDocumentSearchParams {
   limit?: number;
   page?: number;
   category?: string;
-  searchMode?: "text" | "vector";  // 搜索模式：text=关键词搜索，vector=向量语义搜索
+  searchMode?: "text" | "vector"; // 搜索模式：text=关键词搜索，vector=向量语义搜索
 }
 
 export interface ResourceSearchResult {
-  items: FontResource[] | ImageResource[] | SentenceResource[] | TextDocumentResource[];
+  items:
+    | FontResource[]
+    | ImageResource[]
+    | SentenceResource[]
+    | TextDocumentResource[];
   total: number;
   query: string;
 }
 
 const KNOWN_DESIGN_TERMS = [
-  "中秋", "月饼", "礼盒", "圆月", "祥云", "桂花", "国潮", "中国风", "新中式",
-  "春节", "新年", "咖啡", "奶茶", "茶饮", "饮品", "热饮", "乌龙", "拿铁", "茶叶",
-  "香氛", "香水", "香水瓶", "雪松", "白茶", "茶花", "枝叶", "自然", "纸张", "纹理",
-  "光影", "窗格", "东方窗格", "美食", "水果", "花卉", "玫瑰", "猫咪", "宠物",
-  "圣诞", "情人节", "七夕", "母亲节", "教师节", "开学", "促销", "新品", "高端",
-  "高级", "安静", "温柔", "复古", "科技", "赛博", "极简", "可爱", "治愈", "手写",
-  "书法", "插画", "海报", "封面", "包装", "名片", "贴纸", "头像", "壁纸", "banner",
+  "中秋",
+  "月饼",
+  "礼盒",
+  "圆月",
+  "祥云",
+  "桂花",
+  "国潮",
+  "中国风",
+  "新中式",
+  "春节",
+  "新年",
+  "咖啡",
+  "奶茶",
+  "茶饮",
+  "饮品",
+  "热饮",
+  "乌龙",
+  "拿铁",
+  "茶叶",
+  "香氛",
+  "香水",
+  "香水瓶",
+  "雪松",
+  "白茶",
+  "茶花",
+  "枝叶",
+  "自然",
+  "纸张",
+  "纹理",
+  "光影",
+  "窗格",
+  "东方窗格",
+  "美食",
+  "水果",
+  "花卉",
+  "玫瑰",
+  "猫咪",
+  "宠物",
+  "圣诞",
+  "情人节",
+  "七夕",
+  "母亲节",
+  "教师节",
+  "开学",
+  "促销",
+  "新品",
+  "高端",
+  "高级",
+  "安静",
+  "温柔",
+  "复古",
+  "科技",
+  "赛博",
+  "极简",
+  "可爱",
+  "治愈",
+  "手写",
+  "书法",
+  "插画",
+  "海报",
+  "封面",
+  "包装",
+  "名片",
+  "贴纸",
+  "头像",
+  "壁纸",
+  "banner",
 ];
 
 const NOISY_QUERY_TERMS = [
-  "帮我", "做一张", "设计", "尺寸", "主标题", "副标题", "标题写", "文案", "画面",
-  "希望", "整体", "适合", "可以", "不要", "需要", "作为", "使用", "发布", "首图",
-  "朋友圈", "小红书", "电商", "详情页", "门店", "电子屏",
+  "帮我",
+  "做一张",
+  "设计",
+  "尺寸",
+  "主标题",
+  "副标题",
+  "标题写",
+  "文案",
+  "画面",
+  "希望",
+  "整体",
+  "适合",
+  "可以",
+  "不要",
+  "需要",
+  "作为",
+  "使用",
+  "发布",
+  "首图",
+  "朋友圈",
+  "小红书",
+  "电商",
+  "详情页",
+  "门店",
+  "电子屏",
 ];
 
 function compactText(value: string, maxLength = 80): string {
@@ -228,7 +314,7 @@ async function fetchApi(endpoint: string, params: Record<string, any> = {}) {
 // ============ 字体资源服务 ============
 
 export async function searchFontResources(
-  params: FontSearchParams
+  params: FontSearchParams,
 ): Promise<ResourceSearchResult> {
   const cacheKey = getCacheKey("font", params);
   const cached = getFromCache<ResourceSearchResult>(cacheKey);
@@ -321,7 +407,7 @@ export async function searchFontResources(
 // ============ 图片资源服务 ============
 
 export async function searchImageResources(
-  params: ImageSearchParams
+  params: ImageSearchParams,
 ): Promise<ResourceSearchResult> {
   const cacheKey = getCacheKey("image", params);
   const cached = getFromCache<ResourceSearchResult>(cacheKey);
@@ -338,12 +424,12 @@ export async function searchImageResources(
       params.minWidth !== undefined ||
       params.maxWidth !== undefined ||
       params.minHeight !== undefined ||
-      params.maxHeight !== undefined
+      params.maxHeight !== undefined,
     );
     const pageSize = needsFiltering ? Math.max(limit * 3, 50) : limit;
 
     const apiParams: Record<string, any> = {
-      searchText: params.query || '',
+      searchText: params.query || "",
       currentPage: params.page || 1,
       pageSize: pageSize,
       searchMode: params.searchMode || "vector", // 默认启用混合向量检索
@@ -363,17 +449,24 @@ export async function searchImageResources(
       list = list.filter((item: any) => (item.width || 0) <= params.maxWidth!);
     }
     if (params.minHeight !== undefined) {
-      list = list.filter((item: any) => (item.height || 0) >= params.minHeight!);
+      list = list.filter(
+        (item: any) => (item.height || 0) >= params.minHeight!,
+      );
     }
     if (params.maxHeight !== undefined) {
-      list = list.filter((item: any) => (item.height || 0) <= params.maxHeight!);
+      list = list.filter(
+        (item: any) => (item.height || 0) <= params.maxHeight!,
+      );
     }
 
     // 本地过滤：宽高比
-    if (params.aspectRatio && params.aspectRatio !== 'any') {
-      const [rw, rh] = params.aspectRatio.split(':').map(Number);
+    if (params.aspectRatio && params.aspectRatio !== "any") {
+      const [rw, rh] = params.aspectRatio.split(":").map(Number);
       const targetRatio = rw / rh;
-      const tolerance = params.aspectRatioTolerance !== undefined ? params.aspectRatioTolerance : 0.15;
+      const tolerance =
+        params.aspectRatioTolerance !== undefined
+          ? params.aspectRatioTolerance
+          : 0.15;
       list = list.filter((item: any) => {
         if (!item.width || !item.height) return false;
         const itemRatio = item.width / item.height;
@@ -406,7 +499,9 @@ export async function searchImageResources(
     if (searchResult.items.length > 0) {
       setCache(cacheKey, searchResult);
       // 记录最近搜索到的图片 URL，供 add-html 校验
-      addRecentImageUrls(searchResult.items.map((item) => item.url).filter(Boolean));
+      addRecentImageUrls(
+        searchResult.items.map((item) => item.url).filter(Boolean),
+      );
     }
 
     return searchResult;
@@ -419,7 +514,7 @@ export async function searchImageResources(
 // ============ 句子/文案资源服务 ============
 
 export async function searchSentenceResources(
-  params: SentenceSearchParams
+  params: SentenceSearchParams,
 ): Promise<ResourceSearchResult> {
   const cacheKey = getCacheKey("sentence", params);
   const cached = getFromCache<ResourceSearchResult>(cacheKey);
@@ -463,7 +558,7 @@ export async function searchSentenceResources(
 // ============ 文档资源服务 ============
 
 export async function searchTextDocumentResources(
-  params: TextDocumentSearchParams
+  params: TextDocumentSearchParams,
 ): Promise<ResourceSearchResult> {
   const cacheKey = getCacheKey("textDocument", params);
   const cached = getFromCache<ResourceSearchResult>(cacheKey);
@@ -509,9 +604,14 @@ export async function searchTextDocumentResources(
 
 // ============ 单个资源获取 ============
 
-export async function getFontResource(id: string): Promise<FontResource | null> {
+export async function getFontResource(
+  id: string,
+): Promise<FontResource | null> {
   try {
-    const result = await fetchApi(`/api/font-template/${id}`);
+    const response = await apiInstance.get(
+      `/api/font-template/${encodeURIComponent(id)}`,
+    );
+    const result = response.data?.data || response.data;
     if (!result) return null;
     return {
       id: result.id,
@@ -529,7 +629,9 @@ export async function getFontResource(id: string): Promise<FontResource | null> 
   }
 }
 
-export async function getImageResource(id: string): Promise<ImageResource | null> {
+export async function getImageResource(
+  id: string,
+): Promise<ImageResource | null> {
   try {
     const result = await fetchApi(`/api/sticker/${id}`);
     if (!result) return null;
@@ -568,7 +670,8 @@ export const resourceTools = [
         properties: {
           query: {
             type: "string",
-            description: "搜索关键词或自然语言描述，语义匹配效果极好。推荐：标题字、手写体、艺术、简约、可爱、复古、科技、书法、衬线",
+            description:
+              "搜索关键词或自然语言描述，语义匹配效果极好。推荐：标题字、手写体、艺术、简约、可爱、复古、科技、书法、衬线",
           },
           limit: {
             type: "number",
@@ -576,12 +679,14 @@ export const resourceTools = [
           },
           category: {
             type: "string",
-            description: "字体分类过滤，如：标题字、正文字、手写体。不填则搜索全部分类。",
+            description:
+              "字体分类过滤，如：标题字、正文字、手写体。不填则搜索全部分类。",
           },
           searchMode: {
             type: "string",
             enum: ["vector", "text"],
-            description: "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
+            description:
+              "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
           },
         },
         required: ["query"],
@@ -595,13 +700,16 @@ export const resourceTools = [
       description: `从素材库/贴纸库搜索贴纸和插画素材。支持后端向量混合语义搜索，并能进行比例、尺寸过滤。
 返回图片候选列表，每项包含 id/name/url/keywords/colorPalette/width/height/isCutout。你可以根据设计目标选择合适项，也可以忽略不相关结果、换关键词继续搜索，或改用 HTML/CSS 绘制。
 
+搜索会在一次调用内自动放宽尺寸/比例过滤并简化关键词。query 使用 2-4 个核心名词即可，不要堆叠中英文同义词；一次调用没有结果时不要立刻连续重试。
+
 如果决定在 HTML 中使用某张外部图片，需要把它放入 canvas.addHtml 的 htmlBindings.image，并在 htmlContent 中用 {{image.xxx.url}} 引用。`,
       parameters: {
         type: "object",
         properties: {
           query: {
             type: "string",
-            description: "搜索描述语或关键词，语义匹配效果极好。如：猫咪、极简风纹理、中国风底纹",
+            description:
+              "搜索描述语或关键词，语义匹配效果极好。如：猫咪、极简风纹理、中国风底纹",
           },
           limit: {
             type: "number",
@@ -610,7 +718,8 @@ export const resourceTools = [
           searchMode: {
             type: "string",
             enum: ["vector", "text"],
-            description: "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
+            description:
+              "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
           },
           isCustom: {
             type: "boolean",
@@ -622,7 +731,8 @@ export const resourceTools = [
           },
           aspectRatio: {
             type: "string",
-            description: "按宽高比筛选，格式如 '1:1', '16:9', '9:16', '3:4' 等，不传代表不限。可根据当前目标画布形状进行选择",
+            description:
+              "按宽高比筛选，格式如 '1:1', '16:9', '9:16', '3:4' 等，不传代表不限。可根据当前目标画布形状进行选择",
           },
           aspectRatioTolerance: {
             type: "number",
@@ -660,7 +770,8 @@ export const resourceTools = [
         properties: {
           query: {
             type: "string",
-            description: "文案搜索关键词或自然语言描述，语义匹配效果极好，如：治愈、猫咪、七夕、中秋、促销、正能量",
+            description:
+              "文案搜索关键词或自然语言描述，语义匹配效果极好，如：治愈、猫咪、七夕、中秋、促销、正能量",
           },
           limit: {
             type: "number",
@@ -669,7 +780,8 @@ export const resourceTools = [
           searchMode: {
             type: "string",
             enum: ["vector", "text"],
-            description: "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
+            description:
+              "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
           },
         },
         required: ["query"],
@@ -700,7 +812,8 @@ export const resourceTools = [
           searchMode: {
             type: "string",
             enum: ["vector", "text"],
-            description: "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
+            description:
+              "检索模式，vector=向量语义搜索（推荐，用于模糊匹配与自然语言意图），text=关键词精准文本搜索",
           },
         },
         required: ["query"],
@@ -713,7 +826,7 @@ export const resourceTools = [
 
 export async function executeResourceTool(
   toolName: string,
-  args: Record<string, any>
+  args: Record<string, any>,
 ): Promise<any> {
   switch (toolName) {
     case "resource.searchFont": {
@@ -750,7 +863,7 @@ export async function executeResourceTool(
     }
 
     case "resource.searchSticker": {
-      const result = await searchImageResources({
+      const searchParams = {
         query: args.query,
         limit: args.limit || 5,
         searchMode: args.searchMode,
@@ -762,14 +875,32 @@ export async function executeResourceTool(
         maxWidth: args.maxWidth,
         minHeight: args.minHeight,
         maxHeight: args.maxHeight,
-      });
+      };
+      const attempts = buildImageSearchAttempts(searchParams);
+      let result: ResourceSearchResult = {
+        items: [],
+        total: 0,
+        query: args.query || "",
+      };
+      let usedStrategy = attempts[0]?.strategy || "exact";
+      let attemptCount = 0;
+
+      for (const attempt of attempts) {
+        attemptCount += 1;
+        usedStrategy = attempt.strategy;
+        result = await searchImageResources(attempt.params);
+        if (result.items.length > 0) break;
+      }
+
       if (result.items.length === 0) {
         return {
           success: true,
           data: [],
           total: 0,
           query: result.query,
-          message: `未找到与"${result.query}"相关的贴纸，建议：\n1. 尝试更简洁的关键词\n2. 移除或放宽筛选条件（isCustom/isCutout/宽高比等）重新搜索\n3. 使用其他素材方式（如添加形状、文字）`,
+          searchStrategy: usedStrategy,
+          searchAttempts: attemptCount,
+          message: `系统已自动尝试原始条件、放宽过滤和简化关键词，仍未找到与"${args.query}"相关的贴纸。不要继续重复搜索，请改用兼容的 SVG/CSS 图形或明确说明素材库没有合适资源。`,
         };
       }
       return {
@@ -790,6 +921,8 @@ export async function executeResourceTool(
         })),
         total: result.total,
         query: result.query,
+        searchStrategy: usedStrategy,
+        searchAttempts: attemptCount,
       };
     }
 
@@ -874,7 +1007,8 @@ export function getSearchHistory(): SearchHistoryEntry[] {
     let tool = "resource.searchSticker";
     if (key.startsWith("font:")) tool = "resource.searchFont";
     else if (key.startsWith("sentence:")) tool = "resource.searchSentence";
-    else if (key.startsWith("textDocument:")) tool = "resource.searchTextDocument";
+    else if (key.startsWith("textDocument:"))
+      tool = "resource.searchTextDocument";
     history.push({
       tool,
       query: data.query,
@@ -890,7 +1024,7 @@ export function getCachedResultsSummary(): string {
   if (history.length === 0) return "";
 
   const lines = history.map(
-    (h) => `- ${h.tool}("${h.query}") → ${h.resultCount} 个结果`
+    (h) => `- ${h.tool}("${h.query}") → ${h.resultCount} 个结果`,
   );
   return `已缓存的搜索结果（无需重复搜索）:\n${lines.join("\n")}`;
 }

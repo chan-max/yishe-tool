@@ -5,6 +5,10 @@ import {
   SIZE_PRESET_CATEGORIES,
   sizePresets,
 } from "./size-presets";
+import {
+  applyCanvasBaseFontSize,
+  type CanvasTypographyDensity,
+} from "../canvas-typography";
 
 registerOperation({
   id: "canvas.setSizeByPreset",
@@ -26,9 +30,35 @@ registerOperation({
       description: '按名称模糊匹配预设，如 "T恤" "马克杯" "海报"',
       placeholder: "输入产品名称，如 T恤、马克杯、手机壳",
     },
+    {
+      name: "typographyDensity",
+      label: "排版密度",
+      type: "select",
+      default: "balanced",
+      options: [
+        { label: "密集长文", value: "dense" },
+        { label: "标准排版", value: "balanced" },
+        { label: "标题展示", value: "display" },
+      ],
+      description:
+        "兰亭序、碑帖、长文选 dense；常规设计选 balanced；单字、标语、艺术字选 display。",
+    },
+    {
+      name: "baseFontSize",
+      label: "画布基础字号",
+      type: "number",
+      min: 4,
+      max: 500,
+      description: "可选的明确基础字号（px）；不传则根据预设尺寸自动计算。",
+    },
   ],
   execute(params, ctx) {
-    const { presetId, presetName } = params;
+    const {
+      presetId,
+      presetName,
+      typographyDensity = "balanced",
+      baseFontSize,
+    } = params;
 
     if (!presetId && !presetName) {
       const categories = SIZE_PRESET_CATEGORIES.join("、");
@@ -62,6 +92,13 @@ registerOperation({
     }
 
     ctx.setCanvasSize(preset.width, preset.height, preset.unit);
+    const typography = applyCanvasBaseFontSize(ctx, {
+      width: preset.width,
+      height: preset.height,
+      unit: preset.unit,
+      density: typographyDensity as CanvasTypographyDensity,
+      fontSize: baseFontSize,
+    });
 
     return {
       success: true,
@@ -69,7 +106,8 @@ registerOperation({
         `已将画布设置为「${preset.name}」尺寸：${preset.width}×${preset.height} ${preset.unit}` +
         (preset.printArea
           ? `（印刷区 ${preset.printArea.width}×${preset.printArea.height} ${preset.printArea.unit}）`
-          : ""),
+          : "") +
+        `；基础字号 ${typography.baseFontSize}px（${typography.typographyDensityLabel}）`,
       data: {
         presetId: preset.id,
         presetName: preset.name,
@@ -78,6 +116,7 @@ registerOperation({
         unit: preset.unit,
         printArea: preset.printArea,
         dpi: preset.dpi,
+        ...typography,
       },
     };
   },

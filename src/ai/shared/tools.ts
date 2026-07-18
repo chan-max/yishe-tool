@@ -94,7 +94,7 @@ const requestFeedbackDef = {
   function: {
     name: "request_feedback",
     description:
-      "展示当前效果，请求用户反馈。当完成一个步骤后，询问用户是否满意。",
+      "展示当前效果并请求用户反馈。仅在用户要求的设计、检查、保存或导出步骤都已完成后使用，不能代替尚未执行的交付步骤。",
     parameters: {
       type: "object" as const,
       properties: {

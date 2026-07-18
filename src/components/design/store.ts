@@ -112,7 +112,6 @@ export const currentOperatingBaseModelInfo = ref({} as any)
 // 是否展示场景控制弹窗
 export const showSceneControl = ref(false)
 export const showImageEditorModal = ref(false) // 图片编辑弹窗
-export const showKnowledgeDialog = ref(false) // 设计知识库弹窗
 
 // 是否展示图片贴图的弹窗
 export const showImageSticker = ref(false)
@@ -413,7 +412,6 @@ export const menuItems = {
     font: 'font',
     scene: 'scene',
     imageEditor: 'imageEditor', // 图片编辑
-    knowledge: 'knowledge', // 知识库
 } as const
 
 // 切换菜单状态
@@ -551,4 +549,3 @@ export function exitEditMode() {
 
 // 角度选择全局状态
 export const selectedAngles = ref<string[]>([]);
-

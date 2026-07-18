@@ -1,4 +1,5 @@
 import "./canvas-size";
+import "./canvas-base-font-size";
 import "./canvas-set-size-by-preset";
 import "./canvas-smart-size";
 import "./background-color";

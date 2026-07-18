@@ -5,6 +5,7 @@ import { canvasStickerOptions } from "@/components/design/layout/canvas";
 interface CanvasSummary {
   width: number;
   height: number;
+  baseFontSize: number;
   elementCount: number;
   elements: { id: any; type: any; content: string }[];
 }
@@ -12,10 +13,12 @@ interface CanvasSummary {
 function getCanvasSummary(): CanvasSummary {
   const children = canvasStickerOptions.value.children;
   const mainCanvas = children[0];
-  const extractNum = (v: any) => typeof v === "number" ? v : (v?.value ?? 500);
+  const extractNum = (v: any) =>
+    typeof v === "number" ? v : (v?.value ?? 500);
   return {
     width: extractNum(mainCanvas?.width) || 500,
     height: extractNum(mainCanvas?.height) || 500,
+    baseFontSize: extractNum(mainCanvas?.fontSize) || 32,
     elementCount: children.length - 1,
     elements: children.slice(1).map((c: any) => ({
       id: c.id,
@@ -34,11 +37,16 @@ function buildRolePrompt(): string {
 - 用户要求创建新设计时，先调用 canvas.clear 清空画布
 - 用户明确给出具体画布尺寸（如 1080x1080、800×1200、10x10cm）时，先调用 canvas.setSize 设置该尺寸，后续不要覆盖它
 - 用户未指定数值尺寸时，可以使用 canvas.smartSize 或 canvas.setSizeByPreset
+- 尺寸工具会同步设置画布基础字号：兰亭序、碑帖、长文用 dense，常规海报用 balanced，单字、标语、艺术字用 display
+- 只调整现有设计字号时使用 canvas.setBaseFontSize，不要为了改字号重设画布尺寸
 - 用户要求修改/迭代现有设计时，不要清空画布，直接修改
 - 主要视觉作品使用 canvas.addHtml 创建；再次调用 canvas.addHtml 会替换当前 HTML 作品
 - 流程图/思维导图可用 canvas.addDiagram，数据图表可用 canvas.addChart
 - 每次只调用一个工具，完成后根据结果决定下一步
-- 只在用户明确要求保存时调用 canvas.updateAndSaveSticker`;}
+- 只在用户明确要求保存时调用 canvas.updateAndSaveSticker
+- 用户明确要求检查时，完成设计后调用 canvas.analyze；分析发现问题时先修改，再继续后续步骤
+- 用户明确要求保存或导出时，必须先完成保存/导出才能 request_feedback，不能用询问满意度替代交付`;
+}
 
 // ============ Layer 3: 资源使用 ============
 
@@ -50,6 +58,11 @@ function buildResourceGuidePrompt(): string {
 - resource.searchSentence：搜索短文案候选
 - resource.searchTextDocument：搜索长文本/知识文档候选
 - 搜索结果只是候选，可选择、忽略或继续搜索
+- 图片搜索 query 使用 2-4 个核心名词，不要堆叠中英文同义词；系统会在一次调用内自动放宽过滤并简化关键词
+- 搜索为空时不要连续重复调用；改用 SVG/CSS，或从已返回候选中选择真正兼容的资源
+- 资源只有在最终画面中清晰可见并承担实际视觉作用时才算“使用”，禁止以极低透明度、极小尺寸或隐藏图层形式凑数
+- 不兼容当前配色、背景和印刷方式的素材应放弃，不要为了满足“使用素材”而破坏设计
+- resource.searchFont 返回 id/url/name 后，HTML 设计直接通过 htmlBindings.font 使用，不要再调用 canvas.loadFont 请求字体详情
 - 外部图片和字体用于 HTML 时，需要放进 canvas.addHtml 的 htmlBindings，不要直接把 URL 写进 htmlContent
 - 图片引用：{{image.xxx.url}}；字体引用：{{font.xxx.family}}`;
 }
@@ -60,6 +73,9 @@ function buildHtmlQuickRefPrompt(): string {
   return `## HTML 能力
 
 - canvas.addHtml 接收 htmlContent 和 htmlBindings；根节点建议使用 width:100%; height:100%; position:relative; overflow:hidden; box-sizing:border-box
+- HTML 内容会继承画布基础字号，文字尺寸默认使用 em：展示标题 8-14em、标题 5-8em、副标题 2.5-4em、正文 1.5-2.5em、注释 0.8-1.2em
+- 书法正文是视觉主体时可用 2.5-4.5em，并通过 line-height:1.6-2.2 控制行气；不要把长文正文做得和注释一样小
+- 避免嵌套 em 重复放大：中间布局容器不要设置 font-size，只在实际文字元素上设置；极细描边等固定细节才使用 px
 - 图片/字体资源通过 htmlBindings 注入，HTML 中用 {{image.xxx.url}} / {{font.xxx.family}} 引用
 - 可在 HTML 中嵌入组件变量：{{echart.name}}、{{threejs.name}}、{{qrcode.name}}、{{barcode.name}}、{{wordCloud.name}}、{{math.name}}、{{mermaid.name}}、{{chartjs.name}}、{{particlesEffect.name}}、{{opentypeText.name}}
 - 组件配置放在 htmlBindings 对应 key 下，例如 echart.name.option、qrcode.name.textContent、mermaid.name.mermaidSource`;
@@ -80,22 +96,26 @@ export interface DesignExperience {
 }
 
 function buildDesignExperiencePrompt(patterns: DesignExperience[]): string {
-  if (!patterns.length) return '';
+  if (!patterns.length) return "";
 
   return `\n## 设计经验参考（来自图库中 ${patterns.length} 个相似设计的综合分析）
 
 这些是与当前需求最相似的 ${patterns.length} 个历史设计的设计模式总结，参考它们的配色、构图和技巧，融合多种经验创造新设计：
 
-${patterns.map((p, i) => `### 模式 ${i + 1}: ${p.compositionType} + ${p.colorStrategy}
+${patterns
+  .map(
+    (p, i) => `### 模式 ${i + 1}: ${p.compositionType} + ${p.colorStrategy}
 - 构图: ${p.compositionType}
-- 配色策略: ${p.colorStrategy} (${p.colorPalette.join(', ')})
+- 配色策略: ${p.colorStrategy} (${p.colorPalette.join(", ")})
 - 排版: ${p.typographyStyle}
 - 装饰: ${p.decorationStyle}
-- 关键技术: ${p.keyTechniques.join(', ')}
+- 关键技术: ${p.keyTechniques.join(", ")}
 - 参考骨架:
 \`\`\`html
 ${p.htmlPattern}
-\`\`\``).join('\n\n')}
+\`\`\``,
+  )
+  .join("\n\n")}
 
 这些经验只作为参考，不要求在最终回复中说明，也不要机械复刻参考骨架。`;
 }
@@ -122,7 +142,8 @@ export function buildSystemPrompt(options: PromptOptions = {}): string {
 
   if (canvasState) {
     const state = getCanvasSummary();
-    const hint = state.elementCount > 0 ? "（如果要创建新设计，记得先 canvas.clear）" : "";
+    const hint =
+      state.elementCount > 0 ? "（如果要创建新设计，记得先 canvas.clear）" : "";
     layers.push(`\n## 当前画布\n${JSON.stringify(state)}\n${hint}`);
   }
 
@@ -151,7 +172,7 @@ export function buildImageAnalysisPrompt(): string {
 3. 先分析再执行
 
 ## HTML 写法
-标题：<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#1a1a2e;"><div style="font-size:280px;font-weight:900;color:#fff;">标题</div></div>
+标题：<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#1a1a2e;"><div style="font-size:10em;font-weight:900;color:#fff;">标题</div></div>
 渐变背景：<div style="width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px;"></div>
 
 ## 字体和图片绑定

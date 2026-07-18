@@ -1,6 +1,11 @@
 import { registerOperation } from '../registry'
 import { sizePresets, searchPresets, SIZE_PRESET_CATEGORIES } from './size-presets'
 import { ratioCategories } from '../../components/design/layout/canvas/crop/ratioData'
+import {
+  applyCanvasBaseFontSize,
+  inferCanvasTypographyDensity,
+  type CanvasTypographyDensity,
+} from '../canvas-typography'
 
 const UNIT_CONVERSION: Record<string, number> = {
   px: 1,
@@ -255,9 +260,28 @@ registerOperation({
       placeholder: '如：16:9、竖屏、T恤前胸、A3海报、4000x5000px、马克杯、Instagram 方形图',
       description: '用自然语言描述你想要的画布尺寸，可以是比例（16:9）、方向（竖屏/横版/方形）、产品名称、具体尺寸、或分类',
     },
+    {
+      name: 'typographyDensity',
+      label: '排版密度',
+      type: 'select',
+      options: [
+        { label: '密集长文', value: 'dense' },
+        { label: '标准排版', value: 'balanced' },
+        { label: '标题展示', value: 'display' },
+      ],
+      description: '可选。不传时根据 description 自动判断；兰亭序/长文用 dense，常规设计用 balanced，单字/标语/艺术字用 display。',
+    },
+    {
+      name: 'baseFontSize',
+      label: '画布基础字号',
+      type: 'number',
+      min: 4,
+      max: 500,
+      description: '可选的明确基础字号（px）；通常不传，由画布尺寸和排版密度自动计算。',
+    },
   ],
   execute(params, ctx) {
-    const { description } = params
+    const { description, baseFontSize } = params
 
     if (!description || !description.trim()) {
       return {
@@ -272,6 +296,17 @@ registerOperation({
     }
 
     const trimmed = description.trim()
+    const typographyDensity = (
+      params.typographyDensity || inferCanvasTypographyDensity(trimmed)
+    ) as CanvasTypographyDensity
+    const applyTypography = (width: number, height: number, unit: string) =>
+      applyCanvasBaseFontSize(ctx, {
+        width,
+        height,
+        unit,
+        density: typographyDensity,
+        fontSize: baseFontSize,
+      })
 
     // 1. 先尝试解析具体尺寸
     const parsed = parseSizeString(trimmed)
@@ -282,17 +317,20 @@ registerOperation({
       const finalH = Math.max(10, Math.min(20000, pxH))
 
       ctx.setCanvasSize(finalW, finalH, 'px')
+      const typography = applyTypography(finalW, finalH, 'px')
 
       return {
         success: true,
         message: `已按您指定的尺寸设置画布：${finalW}×${finalH} px` +
-          (parsed.unit !== 'px' ? `（从 ${parsed.width}×${parsed.height} ${parsed.unit} 转换）` : ''),
+          (parsed.unit !== 'px' ? `（从 ${parsed.width}×${parsed.height} ${parsed.unit} 转换）` : '') +
+          `；基础字号 ${typography.baseFontSize}px（${typography.typographyDensityLabel}）`,
         data: {
           width: finalW,
           height: finalH,
           unit: 'px',
           source: 'parsed',
           originalValue: `${parsed.width}x${parsed.height}${parsed.unit}`,
+          ...typography,
         },
       }
     }
@@ -301,10 +339,11 @@ registerOperation({
     const ratioResult = matchRatioRequest(trimmed)
     if (ratioResult) {
       ctx.setCanvasSize(ratioResult.width, ratioResult.height, ratioResult.unit)
+      const typography = applyTypography(ratioResult.width, ratioResult.height, ratioResult.unit)
       return {
         success: true,
-        message: `已将画布设置为 ${ratioResult.width}×${ratioResult.height} ${ratioResult.unit}（${ratioResult.reason}）`,
-        data: ratioResult,
+        message: `已将画布设置为 ${ratioResult.width}×${ratioResult.height} ${ratioResult.unit}（${ratioResult.reason}）；基础字号 ${typography.baseFontSize}px（${typography.typographyDensityLabel}）`,
+        data: { ...ratioResult, ...typography },
       }
     }
 
@@ -313,10 +352,12 @@ registerOperation({
     if (presetResults.length === 1) {
       const preset = presetResults[0]
       ctx.setCanvasSize(preset.width, preset.height, preset.unit)
+      const typography = applyTypography(preset.width, preset.height, preset.unit)
       return {
         success: true,
         message: `已将画布设置为「${preset.name}」尺寸：${preset.width}×${preset.height} ${preset.unit}` +
-          (preset.printArea ? `（印刷区 ${preset.printArea.width}×${preset.printArea.height} ${preset.printArea.unit}）` : ''),
+          (preset.printArea ? `（印刷区 ${preset.printArea.width}×${preset.printArea.height} ${preset.printArea.unit}）` : '') +
+          `；基础字号 ${typography.baseFontSize}px（${typography.typographyDensityLabel}）`,
         data: {
           presetId: preset.id,
           presetName: preset.name,
@@ -327,6 +368,7 @@ registerOperation({
           dpi: preset.dpi,
           source: 'preset',
           reason: `关键词匹配到 ${preset.name}`,
+          ...typography,
         },
       }
     }
@@ -335,10 +377,11 @@ registerOperation({
     const ruleMatch = matchProductRule(trimmed)
     if (ruleMatch) {
       ctx.setCanvasSize(ruleMatch.width, ruleMatch.height, ruleMatch.unit)
+      const typography = applyTypography(ruleMatch.width, ruleMatch.height, ruleMatch.unit)
       return {
         success: true,
-        message: `已将画布设置为「${ruleMatch.presetName}」尺寸：${ruleMatch.width}×${ruleMatch.height} ${ruleMatch.unit}（${ruleMatch.reason}）`,
-        data: ruleMatch,
+        message: `已将画布设置为「${ruleMatch.presetName}」尺寸：${ruleMatch.width}×${ruleMatch.height} ${ruleMatch.unit}（${ruleMatch.reason}）；基础字号 ${typography.baseFontSize}px（${typography.typographyDensityLabel}）`,
+        data: { ...ruleMatch, ...typography },
       }
     }
 
@@ -346,9 +389,10 @@ registerOperation({
     if (presetResults.length > 1) {
       const top = presetResults[0]
       ctx.setCanvasSize(top.width, top.height, top.unit)
+      const typography = applyTypography(top.width, top.height, top.unit)
       return {
         success: true,
-        message: `已将画布设置为「${top.name}」尺寸：${top.width}×${top.height} ${top.unit}。其他匹配：${presetResults.slice(1, 4).map((p) => p.name).join('、')}`,
+        message: `已将画布设置为「${top.name}」尺寸：${top.width}×${top.height} ${top.unit}；基础字号 ${typography.baseFontSize}px（${typography.typographyDensityLabel}）。其他匹配：${presetResults.slice(1, 4).map((p) => p.name).join('、')}`,
         data: {
           presetId: top.id,
           presetName: top.name,
@@ -360,6 +404,7 @@ registerOperation({
           source: 'preset',
           reason: `模糊匹配，共 ${presetResults.length} 个候选`,
           alternatives: presetResults.slice(1, 4).map((p) => ({ id: p.id, name: p.name })),
+          ...typography,
         },
       }
     }

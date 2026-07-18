@@ -9,6 +9,9 @@ export function translateToolResult(
   result: OperationResult,
 ): string {
   if (!result.success) {
+    if (toolName === "canvas.loadFont") {
+      return `❌ 字体预加载失败: ${result.message}。如果 resource.searchFont 已返回 id/url/name，不要重复调用 canvas.loadFont；直接通过 canvas.addHtml 的 htmlBindings.font 绑定该搜索结果。`;
+    }
     return `❌ ${toolName} 失败: ${result.message}。请检查参数或尝试其他方案。`;
   }
 
@@ -48,7 +51,9 @@ export function translateToolResult(
       return `✅ 文字已更新: "${(args?.textContent || "").slice(0, 20)}"`;
     case "resource.searchSticker": {
       const items = (result.data as any[]) || [];
-      if (items.length === 0) return "⚠️ 未找到相关贴纸素材，建议换个关键词";
+      if (items.length === 0) {
+        return `⚠️ 素材库没有找到可用结果。系统已经自动完成放宽过滤和简化关键词，不要连续重复搜索；请改用 SVG/CSS 绘制，或如实说明没有采用外部素材。${result.message ? `\n${result.message}` : ""}`;
+      }
       const list = items
         .slice(0, 5)
         .map(
@@ -56,7 +61,7 @@ export function translateToolResult(
             `${i + 1}. ${d.name || "未命名"} | id:${d.id} | url:${d.url} | ${d.width}x${d.height}${d.isCutout ? " | 抠图" : ""}${d.colorPalette ? " | 色:" + d.colorPalette.split(",").slice(0, 3).join(" ") : ""}`,
         )
         .join("\n");
-      return `✅ 找到 ${items.length} 个图片/贴纸候选。请选择与设计目标匹配的资源；不合适可以忽略或换关键词继续搜索。\n${list}\n\n如使用某项，请放入 canvas.addHtml 的 htmlBindings.image，并用 {{image.xxx.url}} 引用。`;
+      return `✅ 找到 ${items.length} 个图片/贴纸候选。先检查主题、配色、背景类型和清晰度；只有兼容当前设计时才使用，禁止通过低透明度或隐藏来凑数。\n${list}\n\n如使用某项，请放入 canvas.addHtml 的 htmlBindings.image，并用 {{image.xxx.url}} 引用。`;
     }
     case "resource.searchFont": {
       const items = (result.data as any[]) || [];

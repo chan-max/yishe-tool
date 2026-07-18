@@ -294,17 +294,14 @@ import { useLoadingOptions } from "@/components/loading/index.tsx";
 import addPopover from "./addPopover.vue";
 import Api from "@/api";
 import { message } from "ant-design-vue";
-import { useLoginStatusStore } from "@/store/stores/login";
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { stickerAutoplacementTags } from "@/components/design/components/tagsInput/index.ts";
-import Utils from "@/common/utils";
-import { imageDataToFile, canvasToFile } from "@/common/transform";
+import { executeAITool } from "@/ai/shared/execute-tool";
+import { clearAgentDesignProvenance } from "@/ai/design-provenance";
 import {
   currentFocusingStickerId,
   ChildViewHelperComponent,
 } from "@/components/design/layout/canvas/components/childViewHelper/index";
-
-const loginStore = useLoginStatusStore();
 
 const canvasContainerRef = ref();
 
@@ -393,6 +390,7 @@ function clearCanvasChildren() {
   ).length;
 
   canvasStickerOptions.value.children = [canvasChild, htmlChild];
+  clearAgentDesignProvenance(canvasStickerOptions.value);
   currentOperatingCanvasChildId.value = "this_is_html_id";
   message.success(`已清空画布，共删除 ${count} 个关联组件`);
 }
@@ -496,45 +494,19 @@ async function doUpload() {
       console.warn("当前画布尺寸极大，可能会导致处理时间过长或内存不足。");
     }
 
-    // 根据是否去除白色边框来决定使用哪个方法获取文件
-    let file;
-    if (editForm.value.autoTrim) {
-      // 使用更加内存友好的裁切方式，避免大量的 ImageData 内存申请和遍历
-      const trimmedCanvas = Utils.trimCanvas(canvasController.canvasEl);
-      file = await canvasToFile(trimmedCanvas);
-    } else {
-      // 直接将原始画布转为文件
-      file = await canvasToFile(canvasController.canvasEl);
+    const result = await executeAITool("canvas.updateAndSaveSticker", {
+      name: editForm.value.name,
+      description: editForm.value.description,
+      keywords: editForm.value.keywords.join(","),
+      autoTrim: editForm.value.autoTrim,
+      folderId: editForm.value.folderId || null,
+    });
+
+    if (!result?.success) {
+      throw new Error(result?.message || "保存失败");
     }
 
-    // 获取文件后缀
-    const suffix = file.name.split(".").pop() || "png";
-
-    // 上传文件到COS，路径包含当前用户账号
-    const cos = await Api.uploadToCOS({
-      file: file,
-      category: "sticker",
-      account:
-        loginStore?.userInfo?.account ||
-        loginStore?.userInfo?.name ||
-        undefined,
-      userId: loginStore?.userInfo?.id,
-    });
-
-    // 直接保存到素材
-    await Api.createSticker({
-      url: cos.url,
-      suffix: suffix,
-      ...editForm.value,
-      keywords: editForm.value.keywords.join(","),
-      isCustom: true, // 标识为自定义贴纸
-      folderId: editForm.value.folderId || null,
-      meta: {
-        data: canvasStickerOptions.value,
-      },
-      userId: loginStore.isLogin ? loginStore.userInfo.id : null,
-    });
-    message.success("保存成功");
+    message.success(result.message || "保存成功");
 
     submitLoading.value = false;
     showUploadModal.value = false;

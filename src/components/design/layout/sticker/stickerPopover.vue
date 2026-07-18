@@ -58,6 +58,7 @@
 import { getStickerTypeLabel } from "./index";
 import { canvasStickerOptions } from "../canvas";
 import { message } from "ant-design-vue";
+import { restoreAgentDesignProvenance } from "@/ai/design-provenance";
 
 const props = defineProps({
   stickerInfo: {
@@ -73,6 +74,10 @@ const props = defineProps({
 
 function useInCanvasSticker() {
   canvasStickerOptions.value = props.stickerInfo.meta.data;
+  restoreAgentDesignProvenance(
+    canvasStickerOptions.value,
+    props.stickerInfo.meta,
+  );
   message.success("引用成功");
 }
 </script>

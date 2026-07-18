@@ -2,22 +2,18 @@ import { reactive, computed } from "vue";
 import { directChat } from "../direct-client";
 import { createDesignOperationContext } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
-import {
-  buildSystemPrompt,
-  buildImageAnalysisPrompt,
-  type DesignExperience,
-} from "../prompts/system";
+import { buildSystemPrompt, buildImageAnalysisPrompt } from "../prompts/system";
 import { buildKnowledgePrompt } from "../knowledge";
 import { resourceService } from "../services/resource";
 import { captureCanvasForAI, getCanvasStateSummary } from "../capture";
 import {
   buildAITools,
   INTERACTION_TOOL_NAMES,
+  normalizeOperationToolName,
   resolveAIToolName,
 } from "../shared/tools";
 import { executeAITool, isResourceToolName } from "../shared/execute-tool";
 import { AI_TIMEOUTS, withTimeout } from "../shared/timeout";
-import { apiInstance } from "@/api/apiInstance";
 import {
   parseChatResponse,
   extractContent,
@@ -27,6 +23,21 @@ import { translateToolResult } from "@/ai/agent/tool-translator";
 import { evaluateCanvasVisual } from "../visual-evaluate";
 import { websocketClient } from "@/services/websocketClient";
 import type { VisualEvaluation } from "../visual-evaluate";
+import {
+  clearAgentDesignProvenance,
+  recordAgentDesignPrompt,
+} from "../design-provenance";
+import {
+  buildExecutionPlan,
+  ensurePlanStep,
+  failPendingPlanSteps,
+  getIncompleteDeliveryActions,
+  getPlanProgress,
+  settlePlanStep,
+  shouldAllowCanvasAnalysis,
+  shouldContinueAfterArtwork,
+  type DesignPlan,
+} from "./planning";
 
 // ============ 类型定义 ============
 
@@ -70,74 +81,7 @@ interface SearchRecord {
   cachedData?: any;
 }
 
-// ============ 规划类型 ============
-
-interface DesignPlan {
-  goal: string;
-  steps: {
-    action: string;
-    description: string;
-    status: "pending" | "done" | "failed";
-  }[];
-  currentStep: number;
-}
-
 // ============ 工具定义 ============
-
-function shouldAllowCanvasAnalysis(userMessage: string) {
-  const text = String(userMessage || "");
-  const analysisIntent =
-    /分析|评价|评估|打分|看看效果|看一下效果|检查效果|自测|测试|review|analy[sz]e|evaluate|score/i;
-  const deniedAnalysisIntent =
-    /(不要|不用|无需|别|禁止|不需要).{0,12}(分析|评价|评估|打分|自测|测试|review|analy[sz]e|evaluate|score)/i;
-
-  return analysisIntent.test(text) && !deniedAnalysisIntent.test(text);
-}
-
-function shouldContinueAfterArtwork(userMessage: string) {
-  return (
-    /继续|再改|优化|调整|迭代|保存|导出|save|export/i.test(userMessage) ||
-    shouldAllowCanvasAnalysis(userMessage)
-  );
-}
-
-interface ExplicitCanvasSize {
-  width: number;
-  height: number;
-  unit: "px" | "mm" | "cm" | "in";
-}
-
-function extractExplicitCanvasSize(
-  userMessage: string,
-): ExplicitCanvasSize | null {
-  const text = String(userMessage || "");
-  const patterns = [
-    /(\d+(?:\.\d+)?)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\s*(px|mm|cm|in)\b/i,
-    /(\d+(?:\.\d+)?)\s*(px|mm|cm|in)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\b/i,
-    /(\d+(?:\.\d+)?)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)(?=\D|$)/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (!match) continue;
-
-    if (pattern === patterns[1]) {
-      return {
-        width: Number(match[1]),
-        height: Number(match[3]),
-        unit: (match[2].toLowerCase() as ExplicitCanvasSize["unit"]) || "px",
-      };
-    }
-
-    return {
-      width: Number(match[1]),
-      height: Number(match[2]),
-      unit: (match[3] || "px").toLowerCase() as ExplicitCanvasSize["unit"],
-    };
-  }
-
-  return null;
-}
 
 // ============ Agent 状态 ============
 
@@ -156,74 +100,6 @@ const agentState = reactive({
   // 规划
   plan: null as DesignPlan | null,
 });
-
-// ============ 设计经验检索 ============
-
-/**
- * 从向量库检索相关设计经验
- * 用于在 agent 设计时注入多源设计模式参考
- */
-async function retrieveDesignExperiences(
-  query: string,
-): Promise<DesignExperience[]> {
-  try {
-    const response = await apiInstance.post("/api/vector-search/search", {
-      collection: "design-patterns",
-      query,
-      limit: 5,
-      scoreThreshold: 0.3,
-    });
-    const data = response.data?.data || response.data;
-
-    if (response.status < 200 || response.status >= 300) {
-      console.warn(
-        "[DesignExperience] Vector search failed:",
-        response.statusText,
-      );
-      return [];
-    }
-
-    const items = data?.items || [];
-
-    // 去重：同一 compositionType 只保留最高 qualityScore
-    const deduped = new Map<string, any>();
-    for (const item of items) {
-      const type = item.payload?.compositionType;
-      if (!type) continue;
-      const existing = deduped.get(type);
-      if (
-        !existing ||
-        (item.payload?.qualityScore || 0) >
-          (existing.payload?.qualityScore || 0)
-      ) {
-        deduped.set(type, item);
-      }
-    }
-
-    // 多样性：确保至少 3 种不同构图类型
-    const results = Array.from(deduped.values())
-      .slice(0, 5)
-      .map((item) => ({
-        compositionType: item.payload?.compositionType || "未知",
-        colorStrategy: item.payload?.colorStrategy || "未知",
-        typographyStyle: item.payload?.typographyStyle || "未知",
-        decorationStyle: item.payload?.decorationStyle || "未知",
-        colorPalette: item.payload?.colorPalette || [],
-        htmlPattern: item.payload?.htmlPattern || "",
-        keyTechniques: item.payload?.keyTechniques || [],
-        qualityScore: item.payload?.qualityScore || 0,
-        keywords: item.payload?.keywords || [],
-      }));
-
-    console.log(
-      `[DesignExperience] Retrieved ${results.length} patterns for: "${query}"`,
-    );
-    return results;
-  } catch (error) {
-    console.warn("[DesignExperience] Retrieval failed:", error);
-    return [];
-  }
-}
 
 let waitForUserInputPromise: { resolve: (value: string) => void } | null = null;
 const eventListeners: ((event: any) => void)[] = [];
@@ -333,6 +209,7 @@ function emit(event: any) {
 // ============ Agent 状态同步 ============
 function syncAgentStatus(extra: Record<string, any> = {}) {
   try {
+    const planProgress = getPlanProgress(agentState.plan);
     websocketClient.sendAgentStatus({
       available: agentState.status === "idle",
       agentState: agentState.status as any,
@@ -340,9 +217,7 @@ function syncAgentStatus(extra: Record<string, any> = {}) {
         ? {
             goal: agentState.plan.goal,
             totalSteps: agentState.plan.steps.length,
-            currentStep: agentState.plan.steps.filter(
-              (s) => s.status === "done",
-            ).length,
+            currentStep: planProgress.settled,
           }
         : null,
       iteration: undefined,
@@ -677,6 +552,194 @@ function executeToolWithTimeout(
   );
 }
 
+function notifyPlanUpdated(step?: string) {
+  persistConversation();
+  emit({ type: "plan", data: agentState.plan });
+  syncAgentStatus(step ? { step } : {});
+}
+
+function getPlanActionForTool(toolName: string, args: Record<string, any>) {
+  if (toolName === "canvas.addChild" && args?.type === "html") {
+    return "canvas.addChild:html";
+  }
+  return toolName;
+}
+
+function describePlanAction(toolName: string): string {
+  const descriptions: Record<string, string> = {
+    "canvas.clear": "清空画布",
+    "canvas.setSize": "设置画布尺寸",
+    "canvas.setBaseFontSize": "设置画布基础字号",
+    "canvas.smartSize": "智能设置画布尺寸",
+    "canvas.setSizeByPreset": "按预设设置画布尺寸",
+    "canvas.addHtml": "生成完整 HTML/CSS 作品",
+    "canvas.addChild:html": "生成完整 HTML/CSS 作品",
+    "resource.searchFont": "搜索字体资源",
+    "resource.searchSticker": "搜索图片或贴纸素材",
+    "resource.searchSentence": "搜索短文案",
+    "resource.searchTextDocument": "搜索文档资料",
+    ask_choice: "等待用户选择",
+    request_feedback: "等待用户反馈",
+  };
+  return descriptions[toolName] || `执行 ${toolName}`;
+}
+
+function isAgentDesignMutationTool(
+  toolName: string,
+  args: Record<string, any>,
+): boolean {
+  if (toolName.startsWith("element.")) return true;
+  if (toolName === "canvas.addChild") return args?.type !== "canvas";
+  return (
+    toolName.startsWith("canvas.add") ||
+    toolName.startsWith("canvas.create") ||
+    toolName === "canvas.removeChild" ||
+    toolName === "canvas.setBaseFontSize" ||
+    toolName === "canvas.setBackgroundColor" ||
+    toolName === "canvas.quickTest"
+  );
+}
+
+function syncAgentDesignProvenanceAfterTool(
+  toolName: string,
+  args: Record<string, any>,
+  prompt: string,
+) {
+  if (toolName === "canvas.clear") {
+    clearAgentDesignProvenance(canvasStickerOptions.value);
+    return;
+  }
+  if (isAgentDesignMutationTool(toolName, args)) {
+    recordAgentDesignPrompt(canvasStickerOptions.value, prompt, toolName);
+  }
+}
+
+function didToolCompletePlanStep(toolName: string, result: any): boolean {
+  if (!result?.success) return false;
+  if (isResourceToolName(toolName) && Array.isArray(result?.data)) {
+    return result.data.length > 0;
+  }
+  return true;
+}
+
+function getToolPlanResult(toolName: string, result: any): string | undefined {
+  if (isResourceToolName(toolName) && Array.isArray(result?.data)) {
+    if (result.data.length === 0) return result?.message;
+    const strategy = result?.searchStrategy
+      ? `，策略 ${result.searchStrategy}`
+      : "";
+    const attempts = result?.searchAttempts
+      ? `，内部尝试 ${result.searchAttempts} 次`
+      : "";
+    return `找到 ${result.data.length} 个候选${strategy}${attempts}`;
+  }
+  return result?.message;
+}
+
+function ensureRuntimePlanStep(
+  plan: DesignPlan | null,
+  action: string,
+  description = describePlanAction(action),
+) {
+  if (!plan) return;
+  const previousLength = plan.steps.length;
+  ensurePlanStep(plan, action, description);
+  if (plan.steps.length !== previousLength) {
+    notifyPlanUpdated(`新增计划步骤: ${description}`);
+  }
+}
+
+function settleRuntimePlanStep(
+  plan: DesignPlan | null,
+  action: string,
+  success: boolean,
+  result?: string,
+) {
+  if (!plan) return;
+  settlePlanStep(
+    plan,
+    action,
+    success ? "done" : "failed",
+    result,
+    describePlanAction(action),
+  );
+  notifyPlanUpdated(result);
+}
+
+function failRemainingPlan(plan: DesignPlan | null, reason: string) {
+  if (!plan || !plan.steps.some((step) => step.status === "pending")) return;
+  failPendingPlanSteps(plan, reason);
+  notifyPlanUpdated(reason);
+}
+
+async function executePreflightOperation(
+  toolName: "canvas.clear" | "canvas.setSize",
+  args: Record<string, any>,
+  ctx: ReturnType<typeof createDesignOperationContext>,
+  plan: DesignPlan | null,
+) {
+  const callId = `preflight-${generateId()}`;
+  const safeToolName = normalizeOperationToolName(toolName);
+  const toolCall = {
+    id: callId,
+    type: "function",
+    function: {
+      name: safeToolName,
+      arguments: JSON.stringify(args),
+    },
+  };
+
+  ensureRuntimePlanStep(plan, toolName);
+  addMessage({
+    role: "assistant",
+    content: "",
+    tool_calls: [toolCall],
+    meta: { iteration: 0, type: "preflight" },
+  });
+
+  const startedAt = Date.now();
+  agentState.status = "executing";
+  syncAgentStatus({ step: `前置执行: ${toolName}`, lastToolCall: toolName });
+
+  try {
+    const result = await executeToolWithTimeout(toolName, args, ctx);
+    settleRuntimePlanStep(plan, toolName, !!result?.success, result?.message);
+    addMessage({
+      role: "tool",
+      tool_call_id: callId,
+      tool_name: toolName,
+      content: JSON.stringify(result),
+      meta: {
+        iteration: 0,
+        type: "preflight",
+        toolArgs: args,
+        toolResult: result,
+        duration: Date.now() - startedAt,
+      },
+    });
+    return result;
+  } catch (error: any) {
+    const errorResult = { success: false, message: error.message };
+    settleRuntimePlanStep(plan, toolName, false, error.message);
+    addMessage({
+      role: "tool",
+      tool_call_id: callId,
+      tool_name: toolName,
+      content: JSON.stringify(errorResult),
+      meta: {
+        iteration: 0,
+        type: "preflight",
+        toolArgs: args,
+        toolResult: errorResult,
+        duration: Date.now() - startedAt,
+      },
+    });
+    return errorResult;
+  } finally {
+    agentState.status = "thinking";
+  }
+}
+
 async function runAgentLoop(
   userMessage: string,
   options: RunAgentLoopOptions = {},
@@ -686,8 +749,68 @@ async function runAgentLoop(
   const allowInteraction = options.allowInteraction !== false;
   const allowCanvasAnalysis =
     options.allowCanvasAnalysis ?? shouldAllowCanvasAnalysis(userMessage);
+  let iteration = 0;
+  const allowPostArtworkContinuation = shouldContinueAfterArtwork(userMessage);
+  let completedArtwork = false;
+
+  // 添加用户消息
+  addMessage({ role: "user", content: userMessage });
+
+  // 1. 本地生成可执行计划，避免额外的 Planner 模型请求。
+  const executionPlan = buildExecutionPlan(userMessage);
+  const searchQueries = executionPlan.searchQueries;
+  let explicitCanvasSize = executionPlan.shouldPreflightSize
+    ? executionPlan.explicitCanvasSize
+    : null;
+  const completedPreflightOperations = new Set<string>();
+  const excludedPreflightOperations = new Set<string>();
+
+  agentState.plan = executionPlan.plan;
+  const plan = agentState.plan;
+  if (plan) {
+    addMessage({
+      role: "assistant",
+      content: `📋 计划：${plan.goal}（${plan.steps.length} 步）`,
+      meta: { plan, type: "plan" },
+    });
+  }
+
+  // 2. 确定性前置操作直接执行，不再各消耗一轮模型调用。
+  if (executionPlan.isNewDesign) {
+    clearAgentDesignProvenance(canvasStickerOptions.value);
+    const result = await executePreflightOperation(
+      "canvas.clear",
+      {},
+      ctx,
+      plan,
+    );
+    if (result.success) {
+      completedPreflightOperations.add("canvas.clear");
+      excludedPreflightOperations.add("canvas.clear");
+    }
+  }
+
+  if (explicitCanvasSize) {
+    const result = await executePreflightOperation(
+      "canvas.setSize",
+      {
+        ...explicitCanvasSize,
+        typographyDensity: executionPlan.typographyDensity,
+      },
+      ctx,
+      plan,
+    );
+    if (result.success) {
+      completedPreflightOperations.add("canvas.setSize");
+      excludedPreflightOperations.add("canvas.setSize");
+      excludedPreflightOperations.add("canvas.smartSize");
+      excludedPreflightOperations.add("canvas.setSizeByPreset");
+    }
+  }
+
   const excludeOperations = [
     ...(options.excludeOperations || []),
+    ...excludedPreflightOperations,
     ...(!allowCanvasAnalysis ? CANVAS_ANALYSIS_OPERATIONS : []),
   ];
   const allTools = buildAITools({
@@ -696,103 +819,50 @@ async function runAgentLoop(
     includeInteractions: allowInteraction,
     excludeOperations,
   });
-  let iteration = 0;
-  const allowPostArtworkContinuation = shouldContinueAfterArtwork(userMessage);
-  let explicitCanvasSize = extractExplicitCanvasSize(userMessage);
-  let completedArtwork = false;
 
-  if (explicitCanvasSize) {
-    ctx.setCanvasSize(
-      explicitCanvasSize.width,
-      explicitCanvasSize.height,
-      explicitCanvasSize.unit,
-    );
-  }
+  const needsDesignKnowledge = !!plan?.steps.some((step) =>
+    ["canvas.addHtml", "canvas.addDiagram", "canvas.addChart"].includes(
+      step.action,
+    ),
+  );
 
-  // 添加用户消息
-  addMessage({ role: "user", content: userMessage });
+  // 3. 只加载真正会注入提示词的设计知识。
+  const knowledgePrompt = needsDesignKnowledge
+    ? await withTimeout(
+        buildKnowledgePrompt(searchQueries.styles),
+        AI_TIMEOUTS.knowledge,
+        "知识检索",
+      ).catch((error) => {
+        console.warn(
+          "[Agent] Knowledge prompt timeout/failure, skipped:",
+          error,
+        );
+        return "";
+      })
+    : "";
 
-  // 1. 规划阶段 —— 让 Planner 进行意图分流与 Query 重写，以防原始输入语意模糊
-  let plan: DesignPlan | null = null;
-  let searchQueries = {
-    assets: userMessage,
-    styles: userMessage,
-    layouts: userMessage,
-  };
+  const preflightSummary = completedPreflightOperations.size
+    ? `\n\n## 运行时已完成的前置操作\n${Array.from(completedPreflightOperations)
+        .map((action) => `- ${action}`)
+        .join("\n")}\n这些操作已经成功完成，不要重复调用，直接继续剩余计划。`
+    : "";
 
-  try {
-    const planResponse = await directChat({
-      messages: [
-        {
-          role: "system",
-          content:
-            "你是设计规划专家。分析用户需求，输出包含执行步骤和向量库分类检索词的 JSON 执行计划。只输出 JSON，不要带 Markdown 包裹标记。",
-        },
-        {
-          role: "user",
-          content: `需求：${userMessage}\n当前画布元素数：${ctx.getCanvasChildren().length}\n\n输出格式示例：\n{\n  "goal": "目标描述",\n  "searchQueries": {\n    "assets": "素材检索词",\n    "styles": "字体或风格检索词",\n    "layouts": "构图或版式检索词"\n  },\n  "steps": [\n    { "action": "canvas.clear", "description": "创建新设计时清空画布" },\n    { "action": "canvas.setSize", "description": "用户明确给了数值尺寸时设置画布尺寸" },\n    { "action": "resource.searchSticker/resource.searchFont/resource.searchSentence/resource.searchTextDocument", "description": "按需要搜索候选资源" },\n    { "action": "canvas.addHtml", "description": "添加完整设计作品" }\n  ]\n}`,
-        },
-      ],
-      temperature: 0.2,
-      timeoutMs: AI_TIMEOUTS.planning,
-    });
-    const planContent = parseChatResponse(planResponse);
-    if (planContent?.content) {
-      const planJson = extractJSON(planContent.content);
-      if (planJson?.steps?.length) {
-        plan = { ...planJson, currentStep: 0 };
-        agentState.plan = plan;
-        if (planJson.searchQueries) {
-          searchQueries = {
-            assets: planJson.searchQueries.assets || userMessage,
-            styles: planJson.searchQueries.styles || userMessage,
-            layouts: planJson.searchQueries.layouts || userMessage,
-          };
-          console.log("[Query 重写] 规划提取检索词：", searchQueries);
-        }
-        addMessage({
-          role: "assistant",
-          content: `📋 计划：${plan.goal}（${plan.steps.length} 步）`,
-          meta: { plan },
-        });
-      }
-    }
-  } catch (e) {
-    console.warn("[Agent] 规划与检索词提取失败，使用原始输入:", e);
-  }
+  const requiredDeliveryActions = getIncompleteDeliveryActions(plan);
+  const deliverySummary = requiredDeliveryActions.length
+    ? `\n\n## 必须完成的交付步骤\n${requiredDeliveryActions
+        .map((action) => `- ${action}`)
+        .join(
+          "\n",
+        )}\n用户已明确要求这些步骤。完成设计和必要检查后必须执行，执行成功前禁止调用 ask_choice 或 request_feedback。`
+    : "";
 
-  // 2. 高精度向量检索 —— 利用重写后的子句进行垂类检索，提升精准度并极大节约 Token
-  let designExperiences: DesignExperience[] = [];
-  try {
-    designExperiences = await withTimeout(
-      retrieveDesignExperiences(searchQueries.layouts),
-      AI_TIMEOUTS.knowledge,
-      "设计经验检索",
-    );
-    if (designExperiences.length > 0) {
-      console.log(
-        `[向量检索] 已检索到 ${designExperiences.length} 个设计经验，将注入 system prompt`,
-      );
-    } else {
-      console.log(`[向量检索] 未检索到相关设计经验（可能向量库为空或无匹配）`);
-    }
-  } catch (error) {
-    console.warn("[Agent] Design experience retrieval failed:", error);
-  }
-
-  // 3. 构建高信号的消息列表（注入高精准度语义知识、搜索上下文和任务进度）
-  const knowledgePrompt = await withTimeout(
-    buildKnowledgePrompt(searchQueries.styles),
-    AI_TIMEOUTS.knowledge,
-    "知识检索",
-  ).catch((error) => {
-    console.warn("[Agent] Knowledge prompt timeout/failure, skipped:", error);
-    return "";
-  });
+  // 4. 构建高信号消息列表。
   const systemPrompt =
-    buildSystemPrompt({ designExperiences }) +
+    buildSystemPrompt() +
     "\n" +
     knowledgePrompt +
+    preflightSummary +
+    deliverySummary +
     buildSearchContext() +
     getBatchProgress() +
     (allowInteraction
@@ -808,6 +878,7 @@ async function runAgentLoop(
     // 检查是否被外部中断（如用户点击清空）
     if (agentState.status === "idle") {
       console.log("[Agent] 被中断，退出循环");
+      failRemainingPlan(plan, "任务已被用户中断");
       return;
     }
     iteration = i + 1;
@@ -820,12 +891,10 @@ async function runAgentLoop(
 
     // 进度反思（每 3 轮）
     if (plan && iteration > 1 && iteration % 3 === 0) {
-      const completedSteps = plan.steps.filter(
-        (s) => s.status === "done",
-      ).length;
+      const progress = getPlanProgress(plan);
       messagesForLLM.push({
         role: "system",
-        content: `[进度反思] 目标：${plan.goal}\n进度：${completedSteps}/${plan.steps.length}\n请评估进展，决定是继续执行、调整方向还是已完成。`,
+        content: `[进度反思] 目标：${plan.goal}\n进度：${progress.settled}/${progress.total}，失败 ${progress.failed}\n请评估进展，决定是继续执行、调整方向还是已完成。`,
       });
     }
 
@@ -873,6 +942,7 @@ async function runAgentLoop(
       });
     } catch (error: any) {
       console.error("[Agent] LLM error:", error);
+      failRemainingPlan(plan, `模型调用失败: ${error.message}`);
       addMessage({
         role: "assistant",
         content: `抱歉，出现了错误：${error.message}`,
@@ -887,6 +957,7 @@ async function runAgentLoop(
 
     if (!parsed) {
       console.error("[Agent] No message in response:", response);
+      failRemainingPlan(plan, "无法解析模型响应");
       addMessage({
         role: "assistant",
         content: "抱歉，无法解析响应。",
@@ -925,6 +996,7 @@ async function runAgentLoop(
     // 如果没有工具调用，结束
     if (toolCalls.length === 0) {
       console.log("[Agent] No tool calls, ending loop");
+      failRemainingPlan(plan, "模型未继续执行剩余步骤");
       return;
     }
 
@@ -950,10 +1022,38 @@ async function runAgentLoop(
       }
 
       const toolName = resolveAIToolName(call.function.name);
+      const planAction = getPlanActionForTool(toolName, args);
+      const isInteractionTool = INTERACTION_TOOL_NAMES.includes(
+        call.function.name,
+      );
+      const pendingDeliveryActions = getIncompleteDeliveryActions(plan);
+      if (!isInteractionTool || pendingDeliveryActions.length === 0) {
+        ensureRuntimePlanStep(plan, planAction);
+      }
       console.log("[Agent] Executing tool:", toolName, args);
 
       // 检查是否是交互工具
-      if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
+      if (isInteractionTool) {
+        if (pendingDeliveryActions.length > 0) {
+          const blockedResponse = `用户已明确要求完成 ${pendingDeliveryActions.join(", ")}。请先执行这些交付步骤，成功后再请求反馈。`;
+          appendAssistantToolCalls();
+          messagesForLLM.push({
+            role: "tool",
+            tool_call_id: call.id,
+            content: blockedResponse,
+          });
+          addMessage({
+            role: "tool",
+            tool_call_id: call.id,
+            tool_name: call.function.name,
+            content: blockedResponse,
+            meta: { iteration, toolArgs: args, type: "delivery-blocked" },
+          });
+          agentState.status = "thinking";
+          agentState.pendingInteraction = null;
+          continue;
+        }
+
         if (!allowInteraction) {
           const autoResponse =
             "自动制作模式不等待用户反馈。请直接基于当前需求完成设计；如果画面已经完成，请结束本轮。";
@@ -970,6 +1070,12 @@ async function runAgentLoop(
             content: autoResponse,
             meta: { iteration, toolArgs: args },
           });
+          settleRuntimePlanStep(
+            plan,
+            planAction,
+            true,
+            "自动制作模式已跳过等待用户反馈",
+          );
           agentState.status = "thinking";
           agentState.pendingInteraction = null;
           continue;
@@ -1000,6 +1106,7 @@ async function runAgentLoop(
           content: `用户反馈：${userResponse}`,
           meta: { iteration, toolArgs: args },
         });
+        settleRuntimePlanStep(plan, planAction, true, "用户已提交反馈");
 
         agentState.status = "thinking";
         agentState.pendingInteraction = null;
@@ -1075,6 +1182,7 @@ async function runAgentLoop(
                   width: explicitCanvasSize.width,
                   height: explicitCanvasSize.height,
                   unit: explicitCanvasSize.unit,
+                  typographyDensity: executionPlan.typographyDensity,
                 };
               }
               // 在执行工具前，先直接设置画布尺寸（绕过操作系统的可能问题）
@@ -1112,6 +1220,10 @@ async function runAgentLoop(
         const toolDuration = Date.now() - toolStartTime;
         console.log("[Agent] Tool result:", result);
 
+        if (result?.success) {
+          syncAgentDesignProvenanceAfterTool(toolName, args, userMessage);
+        }
+
         // 尺寸强制矫正：用户指定明确尺寸时，每次工具执行后都强制确保画布尺寸正确
         // 不管工具是否修改了尺寸，都重新设置一次（防止任何路径的尺寸篡改）
         if (explicitCanvasSize) {
@@ -1140,6 +1252,14 @@ async function runAgentLoop(
             progressHint = `\n\n[任务进度] ${progress.hint}`;
           }
         }
+
+        const planStepSucceeded = didToolCompletePlanStep(toolName, result);
+        settleRuntimePlanStep(
+          plan,
+          planAction,
+          planStepSucceeded,
+          getToolPlanResult(toolName, result),
+        );
 
         addMessage({
           role: "tool",
@@ -1173,6 +1293,7 @@ async function runAgentLoop(
       } catch (error: any) {
         console.error("[Agent] Tool error:", error);
         const errorResult = { success: false, error: error.message };
+        settleRuntimePlanStep(plan, planAction, false, error.message);
 
         addMessage({
           role: "tool",
@@ -1200,6 +1321,7 @@ async function runAgentLoop(
       console.log(
         "[Agent] HTML artwork completed, stopping to avoid over-iteration",
       );
+      failRemainingPlan(plan, "作品已完成，未执行的计划步骤已跳过");
       addMessage({
         role: "assistant",
         content: allowInteraction
@@ -1257,6 +1379,7 @@ async function runAgentLoop(
 
   // 超过最大迭代次数
   console.warn("[Agent] Max iterations reached");
+  failRemainingPlan(plan, "达到最大推理轮次");
   addMessage({
     role: "assistant",
     content: "已完成当前任务。如需继续，请告诉我。",
@@ -1435,6 +1558,10 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
 
         const toolDuration = Date.now() - toolStartTime;
         console.log("[Agent] 工具结果:", result);
+
+        if (result?.success) {
+          syncAgentDesignProvenanceAfterTool(toolName, args, userMessage);
+        }
 
         addMessage({
           role: "tool",

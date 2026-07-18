@@ -2,7 +2,7 @@
   "name": "yishe-tool",
   "private": true,
   "type": "module",
-  "version": "0.0.47",
+  "version": "0.0.48",
   "packageManager": "npm@10.9.2",
   "engines": {
     "node": ">=22.12.0"
@@ -17,7 +17,11 @@
     "agent:test": "node tools/run-test.mjs",
     "agent:test:health": "node tools/run-test.mjs --health",
     "agent:test:smoke": "node tools/run-test.mjs --suite smoke",
-    "agent:test:basic": "node tools/run-test.mjs --suite basic"
+    "agent:test:basic": "node tools/run-test.mjs --suite basic",
+    "agent:test:planning": "node --experimental-strip-types tools/agent-planning.test.mjs",
+    "agent:test:provenance": "node --experimental-strip-types tools/agent-provenance.test.mjs",
+    "agent:test:resources": "node --experimental-strip-types tools/resource-search-strategy.test.mjs",
+    "agent:test:typography": "node --experimental-strip-types tools/canvas-typography.test.mjs"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",

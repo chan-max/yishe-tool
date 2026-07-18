@@ -76,7 +76,6 @@ export enum Url {
 
   GET_TEXT_STICKER_BY_ID = "/getTextStickerById",
 
-  GET_FONT_BY_ID = "/getFontById",
 
   GET_MODEL_BY_ID = "/getModelById",
 

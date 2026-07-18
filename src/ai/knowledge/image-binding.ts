@@ -1,7 +1,16 @@
 import type { KnowledgeItem } from "./types";
 
 export const imageBindingKnowledge: KnowledgeItem = {
-  triggers: ["图片", "image", "贴图", "素材", "图库", "resource.searchSticker", "addImage", "背景图"],
+  triggers: [
+    "图片",
+    "image",
+    "贴图",
+    "素材",
+    "图库",
+    "resource.searchSticker",
+    "addImage",
+    "背景图",
+  ],
 
   content: `## 图片搜索与绑定
 
@@ -36,7 +45,10 @@ htmlTemplateFields: [{ key: "image.bg", type: "image", label: "背景图" }]
 
 ### 规则
 - htmlBindings 必须绑定搜到的图片对象（含 id/url/name），禁止绑 null
-- 搜索关键词简短精准（"猫咪"、"风景"、"科技"），不要长句
-- 不要重复搜索同一关键词，系统自动缓存 5 分钟
+- 搜索关键词使用 2-4 个核心名词（"飞蛾 线稿"、"海岸 灯塔"），不要堆叠中英文同义词和大量过滤条件
+- 单次搜索会自动放宽尺寸、比例并简化关键词；空结果后不要连续重复搜索
+- 先判断候选的主题、构图、配色、清晰度和背景类型是否适合当前设计，不合适就不要强行使用
+- 使用外部素材时必须让它在成品中清晰可见并承担实际视觉作用，禁止只绑定后隐藏、缩小或设置极低透明度
+- 非抠图 JPG 不可作为透明 mask；需要单色化时优先选择真正透明的 PNG/WebP/SVG 抠图素材
 - 优先用 background-image 方式，比 addImage 更灵活`,
 };

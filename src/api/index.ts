@@ -195,7 +195,9 @@ export const getImageById = (id: string) =>
 
 export const getFontById = (id: string) =>
   new Promise(async (resolve, reject) => {
-    const data = await apiInstance.post(Url.GET_FONT_BY_ID, { id });
+    const data = await apiInstance.get(
+      `/api/font-template/${encodeURIComponent(id)}`,
+    );
     resolve(data.data.data);
   });
 

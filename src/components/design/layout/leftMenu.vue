@@ -184,19 +184,6 @@
       </div>
     </el-tooltip>
 
-    <el-tooltip :hide-after="0" content="设计知识库" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{
-          'menu-bar-item-focus': menuState.activeMenu === menuItems.knowledge,
-        }"
-        @click="setActiveMenu(menuItems.knowledge)"
-      >
-        <div class="menu-bar-item-icon"><BookOutlined /></div>
-        <span>知识库</span>
-      </div>
-    </el-tooltip>
-
     <el-tooltip :hide-after="0" content="查看数据结构" placement="right">
       <div
         class="menu-bar-item"
@@ -265,7 +252,6 @@ import {
   VideoCameraOutlined,
   ThunderboltOutlined,
   CodeOutlined,
-  BookOutlined,
 } from "@ant-design/icons-vue";
 import desimage from "@/components/image.vue";
 import { DESIGN_3D_ENABLED } from "../featureFlags";

@@ -1,6 +1,7 @@
 import { registerOperation } from "../registry";
 import { getStickerById } from "@/api";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
+import { restoreAgentDesignProvenance } from "@/ai/design-provenance";
 
 registerOperation({
   id: "canvas.loadSticker",
@@ -102,6 +103,7 @@ async function loadSingleSticker(stickerId: string, ctx: any) {
   if (metaData) {
     const deepCopy = JSON.parse(JSON.stringify(metaData));
     canvasStickerOptions.value = deepCopy;
+    restoreAgentDesignProvenance(canvasStickerOptions.value, sticker.meta);
 
     const children = deepCopy?.children || [];
     const elementCount = Math.max(0, children.length - 1);

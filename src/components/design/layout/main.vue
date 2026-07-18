@@ -254,7 +254,6 @@ import {
   showCanvasStructure,
   menuState,
   menuItems,
-  showKnowledgeDialog,
 } from "../store";
 import leftMenu from "./leftMenu.vue";
 import diydialog from "../components/dialog.vue";
@@ -306,7 +305,6 @@ import videoClip from "./videoClip/index.vue";
 import operationsPanel from "./operations/index.vue";
 import canvasStructure from "./canvasStructure/index.vue";
 import AiPanel from "./ai/AiPanel.vue";
-import knowledge from "./knowledge/index.vue";
 import { isAiPanelOpen } from "@/ai/store";
 import { useEventBus } from "@vueuse/core";
 import { DESIGN_3D_ENABLED } from "../featureFlags";
@@ -345,8 +343,6 @@ const leftComponent = computed(() => {
       return canvasLayout;
     case menuItems.decoration:
       return decoration;
-    case menuItems.knowledge:
-      return null; // 知识库使用全屏弹窗，不作为侧边栏
     default:
       return null;
   }

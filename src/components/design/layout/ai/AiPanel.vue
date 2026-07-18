@@ -10,7 +10,10 @@
     <div class="ai-panel__header" @mousedown="onDragStart">
       <span class="ai-panel__title">AI 设计</span>
       <span v-if="isProcessing" class="ai-panel__status">思考中</span>
-      <span v-if="planProgress" class="ai-panel__plan">{{ planProgress.done }}/{{ planProgress.total }}</span>
+      <span v-if="planProgress" class="ai-panel__plan">
+        {{ planProgress.settled }}/{{ planProgress.total }}
+        <template v-if="planProgress.failed"> · {{ planProgress.failed }} 失败</template>
+      </span>
       <div class="ai-panel__header-actions">
         <button class="ai-panel__icon-btn" @click="copyConversationLog" title="复制对话日志">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
@@ -26,7 +29,7 @@
 
     <!-- Progress -->
     <div v-if="planProgress" class="ai-panel__progress">
-      <div class="ai-panel__progress-bar" :style="{ width: (planProgress.done / planProgress.total * 100) + '%' }"></div>
+      <div class="ai-panel__progress-bar" :style="{ width: (planProgress.settled / planProgress.total * 100) + '%' }"></div>
     </div>
 
     <!-- Messages -->
@@ -192,15 +195,19 @@ const isProcessing = computed(() => agent.isProcessing.value);
 const isWaitingForUser = computed(() => agent.isWaitingForUser.value);
 const interactionData = computed(() => agent.state.pendingInteraction);
 
-const currentPlan = computed(() => {
-  const lastPlanMsg = messages.value.findLast?.((m: any) => (m.meta as any)?.plan);
-  return (lastPlanMsg?.meta as any)?.plan || null;
-});
+const currentPlan = computed(() => agent.currentPlan.value);
 
 const planProgress = computed(() => {
   if (!currentPlan.value?.steps) return null;
   const done = currentPlan.value.steps.filter((s: any) => s.status === 'done').length;
-  return { done, total: currentPlan.value.steps.length, goal: currentPlan.value.goal };
+  const failed = currentPlan.value.steps.filter((s: any) => s.status === 'failed').length;
+  return {
+    settled: done + failed,
+    done,
+    failed,
+    total: currentPlan.value.steps.length,
+    goal: currentPlan.value.goal,
+  };
 });
 
 // Quick prompts — plain text, no emoji

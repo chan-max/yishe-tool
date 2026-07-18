@@ -239,6 +239,10 @@ import Api from "@/api";
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { useStickerDetailModal } from "./stickerModal.ts";
 import { useLoginStatusStore } from "@/store/stores/login";
+import {
+  clearAgentDesignProvenance,
+  restoreAgentDesignProvenance,
+} from "@/ai/design-provenance";
 
 const loginStore = useLoginStatusStore();
 
@@ -313,6 +317,7 @@ onBeforeMount(() => {
 function useInCanvasSticker(item) {
   if (item.meta?.data) {
     canvasStickerOptions.value = item.meta.data;
+    restoreAgentDesignProvenance(canvasStickerOptions.value, item.meta);
   } else {
     canvasStickerOptions.value = {
       unit: "px",
@@ -330,6 +335,7 @@ function useInCanvasSticker(item) {
       type: "image",
       imageInfo: item,
     });
+    clearAgentDesignProvenance(canvasStickerOptions.value);
   }
   menuState.value.showProject = false;
   setActiveMenu(menuItems.canvas);

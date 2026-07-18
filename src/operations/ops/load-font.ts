@@ -13,7 +13,9 @@ registerOperation({
 
 加载后，字体可通过 font-family: font_xxx 在 CSS 中使用。
 
-配合 resource.searchFont 使用：先搜索字体库找到字体，获取 id，再用此工具加载。`,
+HTML 设计通常不需要调用此工具：直接把 resource.searchFont 返回的 id/url/name 放入 canvas.addHtml 的 htmlBindings.font，渲染器会自动加载字体。
+
+仅在独立文字元素等非 HTML 场景需要预加载字体时调用。已有搜索结果时同时传入 fontUrl/fontName，可避免再次请求字体详情。`,
   group: "字体",
   params: [
     {
@@ -21,15 +23,29 @@ registerOperation({
       label: "字体ID",
       type: "string",
       required: true,
-      description: "字体ID，支持单个字符串或字符串数组。单个: \"xxx\"，多个: [\"id_a\", \"id_b\"]",
+      description:
+        '字体ID，支持单个字符串或字符串数组。单个: "xxx"，多个: ["id_a", "id_b"]',
+    },
+    {
+      name: "fontUrl",
+      label: "字体地址",
+      type: "string",
+      description:
+        "resource.searchFont 返回的字体 URL；单个加载时建议传入，避免再次请求详情接口",
+    },
+    {
+      name: "fontName",
+      label: "字体名称",
+      type: "string",
+      description: "resource.searchFont 返回的字体名称",
     },
   ],
   async execute(params, ctx) {
-    const { fontId } = params;
+    const { fontId, fontUrl, fontName } = params;
 
     // 单个加载
     if (typeof fontId === "string") {
-      return await loadSingleFont(fontId);
+      return await loadSingleFont(fontId, { url: fontUrl, name: fontName });
     }
 
     // 批量加载
@@ -53,7 +69,9 @@ registerOperation({
         };
       }
 
-      const names = results.map((r: any) => `「${r.name || "未命名"}」`).join("、");
+      const names = results
+        .map((r: any) => `「${r.name || "未命名"}」`)
+        .join("、");
 
       return {
         success: true,
@@ -74,9 +92,19 @@ registerOperation({
   },
 });
 
-async function loadSingleFont(fontId: string) {
+async function loadSingleFont(
+  fontId: string,
+  suppliedFont?: { url?: string; name?: string },
+) {
   try {
-    const font = await getFontById(fontId) as any;
+    const font = suppliedFont?.url
+      ? {
+          id: fontId,
+          url: suppliedFont.url,
+          name: suppliedFont.name || "未命名字体",
+          description: "",
+        }
+      : ((await getFontById(fontId)) as any);
 
     if (!font) {
       return {

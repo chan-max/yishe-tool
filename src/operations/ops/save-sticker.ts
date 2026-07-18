@@ -11,6 +11,11 @@ import Utils from "@/common/utils";
 import { captureCanvasForAI, renderCurrentCanvasNow } from "@/ai/capture";
 import { directChat } from "@/ai/direct-client";
 import { AI_TIMEOUTS } from "@/ai/shared/timeout";
+import { extractContent, extractJSON } from "@/ai/shared/response-parser";
+import {
+  buildStickerRecordMeta,
+  getAgentDesignProvenance,
+} from "@/ai/design-provenance";
 
 // 批量任务状态
 let batchTaskState: {
@@ -73,6 +78,75 @@ function inferStickerMetaFromCanvas() {
     description,
     keywords: ["贴纸", "AI生成", title].filter(Boolean).join(","),
   };
+}
+
+function normalizeKeywords(value: unknown): string {
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => String(item).trim())
+      .filter(Boolean)
+      .join(",");
+  }
+  return String(value || "")
+    .split(/[,，、\n]/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .join(",");
+}
+
+function normalizeGeneratedMeta(value: any) {
+  return {
+    name: String(value?.name || "").trim(),
+    description: String(value?.description || "").trim(),
+    keywords: normalizeKeywords(value?.keywords),
+  };
+}
+
+async function generateStickerMetaFromPrompt(
+  prompt: string,
+  promptHistory: Array<{ prompt: string }>,
+): Promise<{
+  name: string;
+  description: string;
+  keywords: string;
+} | null> {
+  try {
+    const canvasMeta = inferStickerMetaFromCanvas();
+    const revisions = promptHistory
+      .slice(1)
+      .map((entry, index) => `${index + 1}. ${entry.prompt}`)
+      .join("\n");
+    const response = await directChat({
+      messages: [
+        {
+          role: "system",
+          content: `你是贴纸素材信息编辑。根据设计提示词生成可用于素材库检索和展示的信息。
+
+只输出 JSON：
+{
+  "name": "5-15字的明确名称",
+  "description": "20-60字，说明主题、画面和风格",
+  "keywords": "4-8个逗号分隔关键词"
+}
+
+不要使用“AI生成贴纸”这类空泛名称，不要输出 Markdown。`,
+        },
+        {
+          role: "user",
+          content: `原始设计提示词：\n${prompt.slice(0, 3000)}\n\n${revisions ? `后续修改提示词：\n${revisions.slice(0, 2000)}\n\n` : ""}画布文字摘要：\n${canvasMeta.description}`,
+        },
+      ],
+      temperature: 0.2,
+      maxTokens: 240,
+      timeoutMs: AI_TIMEOUTS.quickEvaluate,
+    });
+    const parsed = extractJSON(extractContent(response));
+    if (!parsed) return null;
+    return normalizeGeneratedMeta(parsed);
+  } catch (error) {
+    console.error("[SaveSticker] 根据提示词生成元数据失败:", error);
+    return null;
+  }
 }
 
 // 批量任务工具
@@ -148,7 +222,7 @@ registerOperation({
 });
 
 // AI 分析画布生成贴纸信息
-async function generateStickerMeta(): Promise<{
+async function generateStickerMetaFromCanvas(): Promise<{
   name: string;
   description: string;
   keywords: string;
@@ -204,11 +278,7 @@ async function generateStickerMeta(): Promise<{
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
-      return {
-        name: parsed.name || "AI生成贴纸",
-        description: parsed.description || "",
-        keywords: parsed.keywords || "",
-      };
+      return normalizeGeneratedMeta(parsed);
     }
 
     return { name: "AI生成贴纸", description: "", keywords: "" };
@@ -222,7 +292,7 @@ registerOperation({
   id: "canvas.updateAndSaveSticker",
   name: "更新并保存贴纸到素材库",
   description:
-    "一键将当前画布内容渲染为贴纸图片，上传到 COS 并保存到素材库。名称等信息可直接传入；不传时会从画布文字生成基础元数据，不额外分析画布。",
+    "一键将当前画布内容渲染为贴纸图片，上传到 COS 并保存到素材库。Agent 制作的贴纸会自动生成名称、描述、关键词，并在 meta 中保存原始提示词和修改历史。",
   group: "贴纸",
   params: [
     {
@@ -266,7 +336,7 @@ registerOperation({
       type: "boolean",
       default: false,
       description:
-        "是否通过视觉分析自动生成名称、描述和关键词。默认关闭，避免保存时额外分析画布。",
+        "是否通过视觉分析自动生成名称、描述和关键词。Agent 制作的贴纸会自动根据提示词生成，无需开启此选项。",
     },
   ],
   async execute(params, ctx) {
@@ -298,6 +368,18 @@ registerOperation({
         return { success: false, message: validationError };
       }
 
+      const provenance = getAgentDesignProvenance(canvasStickerOptions.value);
+      const needGenerate =
+        (!name || !description || !keywords) &&
+        (!!autoGenerateMeta || provenance?.source === "ai-agent");
+      const promptMetaPromise =
+        needGenerate && provenance
+          ? generateStickerMetaFromPrompt(
+              provenance.prompt,
+              provenance.promptHistory,
+            )
+          : null;
+
       await renderCurrentCanvasNow({ timeoutMs: AI_TIMEOUTS.batchSave });
 
       const postRenderValidationError = validateCanvasBeforeSave();
@@ -305,19 +387,27 @@ registerOperation({
         return { success: false, message: postRenderValidationError };
       }
 
-      const needGenerate =
-        !!autoGenerateMeta && (!name || !description || !keywords);
+      let metadataGenerationSource = "provided";
       if (needGenerate) {
-        const meta = await generateStickerMeta();
-        name = name || meta.name;
-        description = description || meta.description;
-        keywords = keywords || meta.keywords;
+        const generatedMeta = promptMetaPromise
+          ? await promptMetaPromise
+          : await generateStickerMetaFromCanvas();
+        if (generatedMeta) {
+          name = name || generatedMeta.name;
+          description = description || generatedMeta.description;
+          keywords = keywords || generatedMeta.keywords;
+          metadataGenerationSource = provenance ? "prompt" : "vision";
+        }
       }
 
       const fallbackMeta = inferStickerMetaFromCanvas();
       name = name || fallbackMeta.name;
       description = description || fallbackMeta.description;
       keywords = keywords || fallbackMeta.keywords;
+      keywords = normalizeKeywords(keywords);
+      if (metadataGenerationSource === "provided" && needGenerate) {
+        metadataGenerationSource = "canvas-fallback";
+      }
 
       const canvasEl = controller.canvasEl;
       if (!canvasEl) {
@@ -342,6 +432,9 @@ registerOperation({
         userId: loginStore.userInfo?.id,
       });
 
+      const canvasData = JSON.parse(JSON.stringify(canvasStickerOptions.value));
+      const stickerMeta = buildStickerRecordMeta(canvasData, provenance);
+
       await createSticker({
         url: cos.url,
         suffix: "png",
@@ -350,9 +443,7 @@ registerOperation({
         keywords: keywords || "",
         isCustom: true,
         folderId: folderId || null,
-        meta: {
-          data: JSON.parse(JSON.stringify(canvasStickerOptions.value)),
-        },
+        meta: stickerMeta,
         userId: loginStore.userInfo?.id || null,
       });
 
@@ -387,6 +478,10 @@ registerOperation({
           url: cos.url,
           cosKey: cos.key,
           aiGenerated: needGenerate,
+          metadataGenerationSource,
+          source: provenance?.source || "manual",
+          prompt: provenance?.prompt || null,
+          promptHistoryCount: provenance?.promptHistory.length || 0,
           // 批量任务进度
           batchProgress: nextBatchProgress,
         },

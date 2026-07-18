@@ -26,6 +26,7 @@ import { clippathShapesKnowledge } from "./css-clippath-shapes";
 import { pseudoElementsKnowledge } from "./css-pseudo-elements";
 import { advancedCompositionsKnowledge } from "./css-compositions-advanced";
 import { backgroundPatternsKnowledge } from "./css-background-patterns";
+import { merchandisePrintKnowledge } from "./merchandise-print";
 import type { KnowledgeItem } from "./types";
 
 /**
@@ -54,6 +55,7 @@ export const builtInKnowledgeItems: KnowledgeItem[] = [
   backgroundPatternsKnowledge,
   fontBindingKnowledge,
   imageBindingKnowledge,
+  merchandisePrintKnowledge,
   batchWorkflowKnowledge,
   templateModeKnowledge,
   designRulesKnowledge,
@@ -72,4 +74,3 @@ export const allKnowledgeItems: KnowledgeItem[] = [
   ...builtInKnowledgeItems,
   ...markdownSkillKnowledgeItems,
 ];
-

@@ -355,17 +355,16 @@ function flushBatchProgress() {
 }
 
 function setBatchProgress(progress: Record<string, any>) {
-  pendingBatchProgress = progress;
-  clientInfo.designWorker.batch = progress;
   const active = ["preparing", "running", "paused"].includes(
     progress?.status,
   );
   const currentRequestId = clientInfo.designWorker.activeRequestId;
+  let batchRequestId =
+    activeRemoteRequestId || String(currentRequestId || "").trim() || null;
   if (active && !activeRemoteRequestId && !currentRequestId) {
+    batchRequestId = `local-batch-${progress?.startedAt || Date.now()}`;
     clientInfo.designWorker.state = "busy";
-    clientInfo.designWorker.activeRequestId = `local-batch-${
-      progress?.startedAt || Date.now()
-    }`;
+    clientInfo.designWorker.activeRequestId = batchRequestId;
     clientInfo.designWorker.updatedAt = new Date().toISOString();
   } else if (
     !active &&
@@ -376,6 +375,12 @@ function setBatchProgress(progress: Record<string, any>) {
     clientInfo.designWorker.activeRequestId = null;
     clientInfo.designWorker.updatedAt = new Date().toISOString();
   }
+  const normalizedProgress = {
+    ...progress,
+    requestId: progress?.requestId || batchRequestId,
+  };
+  pendingBatchProgress = normalizedProgress;
+  clientInfo.designWorker.batch = normalizedProgress;
   const terminal = ["idle", "done", "stopped"].includes(progress?.status);
   if (terminal) {
     flushBatchProgress();

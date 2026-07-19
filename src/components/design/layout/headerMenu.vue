@@ -133,6 +133,7 @@ import { designAgent } from "@/ai/langgraph";
 import { canvasStreamService } from "@/services/canvasStream";
 import { showAutocreateModal } from "./autocreate/index";
 import { batchProgress } from "@/ai/agent/batch";
+import { getAgentPhaseLabel } from "@/ai/agent/presentation";
 
 const batchIsRunning = computed(() =>
   ["preparing", "running", "paused"].includes(batchProgress.status),
@@ -172,15 +173,9 @@ const wsStatusTooltip = computed(() => {
 });
 
 const agentStatus = computed(() => designAgent.state.status || "idle");
-const agentStatusLabel = computed(() => {
-  switch (agentStatus.value) {
-    case "thinking": return "思考中";
-    case "executing": return "执行中";
-    case "waiting_user": return "等待反馈";
-    case "error": return "异常";
-    default: return "空闲";
-  }
-});
+const agentStatusLabel = computed(() =>
+  getAgentPhaseLabel(agentStatus.value, designAgent.state.plan),
+);
 const agentStatusTooltip = computed(() => {
   const error = designAgent.state.error ? ` · ${designAgent.state.error}` : "";
   const count = designAgent.state.messages?.length ?? 0;

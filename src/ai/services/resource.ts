@@ -38,6 +38,7 @@ interface CacheEntry<T> {
 }
 
 const CACHE_TTL = 5 * 60 * 1000; // 5 分钟过期
+const MAX_CACHE_ENTRIES = 150;
 const searchCache = new Map<string, CacheEntry<any>>();
 
 function getCacheKey(tool: string, params: Record<string, any>): string {
@@ -56,11 +57,19 @@ function getFromCache<T>(key: string): T | null {
     searchCache.delete(key);
     return null;
   }
+  searchCache.delete(key);
+  searchCache.set(key, entry);
   return entry.data as T;
 }
 
 function setCache<T>(key: string, data: T): void {
+  searchCache.delete(key);
   searchCache.set(key, { data, timestamp: Date.now() });
+  while (searchCache.size > MAX_CACHE_ENTRIES) {
+    const oldestKey = searchCache.keys().next().value;
+    if (!oldestKey) break;
+    searchCache.delete(oldestKey);
+  }
 }
 
 // ============ 资源类型定义 ============

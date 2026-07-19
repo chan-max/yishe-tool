@@ -9,7 +9,7 @@
     <!-- Header -->
     <div class="ai-panel__header" @mousedown="onDragStart">
       <span class="ai-panel__title">AI 设计</span>
-      <span v-if="isProcessing" class="ai-panel__status">思考中</span>
+      <span v-if="isProcessing" class="ai-panel__status">{{ agentPhaseLabel }}</span>
       <span v-if="planProgress" class="ai-panel__plan">
         {{ planProgress.settled }}/{{ planProgress.total }}
         <template v-if="planProgress.failed"> · {{ planProgress.failed }} 失败</template>
@@ -33,7 +33,7 @@
     </div>
 
     <!-- Messages -->
-    <div class="ai-panel__messages" ref="messagesRef">
+    <div class="ai-panel__messages" ref="messagesRef" @scroll="handleMessagesScroll">
       <!-- Empty -->
       <div v-if="messages.length === 0" class="ai-panel__empty">
         <p class="ai-panel__empty-text">描述你想要的设计</p>
@@ -45,7 +45,10 @@
       </div>
 
       <!-- Messages list -->
-      <template v-for="msg in messages" :key="msg.id">
+      <div v-if="hiddenMessageCount > 0" class="ai-panel__history-note">
+        已折叠 {{ hiddenMessageCount }} 条较早记录
+      </div>
+      <template v-for="msg in visibleMessages" :key="msg.id">
         <!-- User -->
         <div v-if="msg.role === 'user'" class="ai-panel__msg ai-panel__msg--user">
           {{ msg.content }}
@@ -84,6 +87,13 @@
           <button @click="submitInteraction(customAnswer)" :disabled="!customAnswer.trim()">发送</button>
         </div>
       </div>
+      <button
+        v-if="hasUnreadMessages"
+        class="ai-panel__latest-btn"
+        @click="scrollToBottom(true)"
+      >
+        查看最新进度
+      </button>
     </div>
 
     <!-- Input -->
@@ -95,8 +105,11 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       </div>
+      <div v-else-if="isPreparingImage" class="ai-panel__image-processing">
+        正在优化参考图片...
+      </div>
       <div class="ai-panel__input-row">
-        <button class="ai-panel__icon-btn" @click="triggerImageUpload" title="上传图片">
+        <button class="ai-panel__icon-btn" :disabled="isPreparingImage" @click="triggerImageUpload" title="上传图片">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
         </button>
         <input ref="imageInputRef" type="file" accept="image/*" style="display:none" @change="handleImageUpload" />
@@ -104,7 +117,7 @@
           v-model="inputText"
           class="ai-panel__input-field"
           :placeholder="isWaitingForUser ? '请输入选择...' : '描述你想要的设计...'"
-          :disabled="isProcessing && !isWaitingForUser"
+          :disabled="isPreparingImage || (isProcessing && !isWaitingForUser)"
           @keydown.enter.exact.prevent="handleSend"
           @compositionstart="isComposing = true"
           @compositionend="isComposing = false"
@@ -136,6 +149,8 @@ import { designAgent } from "@/ai/langgraph";
 import { resolveAIToolName } from "@/ai/shared/tools";
 import type { AgentInteraction } from "@/ai/langgraph";
 import { isDarkMode } from "@/components/design/store";
+import { prepareImageForAI } from "@/ai/image-preprocess";
+import { getAgentPhaseLabel } from "@/ai/agent/presentation";
 
 const isOpen = useLocalStorage("_1s_ai_panel_open", false);
 
@@ -158,6 +173,9 @@ const messagesRef = ref<HTMLElement>();
 const customAnswer = ref("");
 const imageInputRef = ref<HTMLInputElement>();
 const selectedImage = ref<{ file: File; preview: string; name: string } | null>(null);
+const isPreparingImage = ref(false);
+const autoFollowMessages = ref(true);
+const hasUnreadMessages = ref(false);
 
 // Drag
 const panelRef = ref<HTMLElement>();
@@ -191,11 +209,16 @@ function onDragEnd() {
 
 // Computed
 const messages = computed(() => agent.state.messages);
+const visibleMessages = computed(() => messages.value.slice(-50));
+const hiddenMessageCount = computed(() => Math.max(0, messages.value.length - 50));
 const isProcessing = computed(() => agent.isProcessing.value);
 const isWaitingForUser = computed(() => agent.isWaitingForUser.value);
 const interactionData = computed(() => agent.state.pendingInteraction);
 
 const currentPlan = computed(() => agent.currentPlan.value);
+const agentPhaseLabel = computed(() =>
+  getAgentPhaseLabel(agent.state.status, currentPlan.value),
+);
 
 const planProgress = computed(() => {
   if (!currentPlan.value?.steps) return null;
@@ -239,7 +262,7 @@ function handleSend() {
     agent.chatWithImage(text, selectedImage.value.preview);
     inputText.value = "";
     selectedImage.value = null;
-    scrollToBottom();
+    scrollToBottom(true);
     return;
   }
   const text = inputText.value.trim();
@@ -247,13 +270,13 @@ function handleSend() {
   if (isWaitingForUser.value) {
     agent.submitUserResponse(text);
     inputText.value = "";
-    scrollToBottom();
+    scrollToBottom(true);
     return;
   }
   if (isProcessing.value) return;
   agent.chat(text);
   inputText.value = "";
-  scrollToBottom();
+  scrollToBottom(true);
 }
 
 function handleStop() { agent.stop(); }
@@ -331,17 +354,28 @@ function copyConversationLog() {
 
 function triggerImageUpload() { imageInputRef.value?.click(); }
 
-function handleImageUpload(event: Event) {
+async function handleImageUpload(event: Event) {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
   if (!file) return;
   if (file.size > 10 * 1024 * 1024) { alert("图片不能超过 10MB"); return; }
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    selectedImage.value = { file, preview: e.target?.result as string, name: file.name };
-  };
-  reader.readAsDataURL(file);
   input.value = "";
+  isPreparingImage.value = true;
+  try {
+    const prepared = await prepareImageForAI(file);
+    selectedImage.value = { file, preview: prepared.preview, name: file.name };
+  } catch (error: any) {
+    console.warn("[AI] 参考图片预处理失败，回退原图:", error);
+    const reader = new FileReader();
+    const preview = await new Promise<string>((resolve, reject) => {
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+    selectedImage.value = { file, preview, name: file.name };
+  } finally {
+    isPreparingImage.value = false;
+  }
 }
 
 function removeImage() { selectedImage.value = null; }
@@ -387,13 +421,32 @@ function parseResult(content: string) {
   }
 }
 
-function scrollToBottom() {
+function handleMessagesScroll() {
+  const element = messagesRef.value;
+  if (!element) return;
+  autoFollowMessages.value =
+    element.scrollHeight - element.scrollTop - element.clientHeight < 48;
+  if (autoFollowMessages.value) hasUnreadMessages.value = false;
+}
+
+function scrollToBottom(force = false) {
+  if (!force && !autoFollowMessages.value) {
+    hasUnreadMessages.value = true;
+    return;
+  }
   nextTick(() => {
-    if (messagesRef.value) messagesRef.value.scrollTop = messagesRef.value.scrollHeight;
+    if (messagesRef.value) {
+      messagesRef.value.scrollTop = messagesRef.value.scrollHeight;
+      autoFollowMessages.value = true;
+      hasUnreadMessages.value = false;
+    }
   });
 }
 
-watch(() => messages.value.length, scrollToBottom);
+watch(
+  () => messages.value.length,
+  () => scrollToBottom(),
+);
 </script>
 
 <style lang="less" scoped>
@@ -474,6 +527,17 @@ watch(() => messages.value.length, scrollToBottom);
   display: flex; flex-direction: column; gap: 6px;
   &::-webkit-scrollbar { width: 3px; }
   &::-webkit-scrollbar-thumb { background: var(--border-divider); border-radius: 2px; }
+}
+.ai-panel__history-note {
+  align-self: center; font-size: 11px; color: var(--text-faint);
+  padding: 2px 8px; background: var(--bg-subtle); border-radius: 3px;
+}
+.ai-panel__latest-btn {
+  position: sticky; bottom: 2px; align-self: center;
+  border: 1px solid var(--border-strong); border-radius: 3px;
+  background: var(--bg); color: var(--accent-hover);
+  padding: 4px 10px; font-size: 11px; cursor: pointer;
+  box-shadow: 0 1px 4px var(--shadow);
 }
 
 /* ---- Empty ---- */
@@ -568,6 +632,10 @@ watch(() => messages.value.length, scrollToBottom);
 .ai-panel__image-name {
   flex: 1; font-size: 11px; color: var(--text-faint);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ai-panel__image-processing {
+  margin-bottom: 4px; padding: 4px 6px; border-radius: 3px;
+  background: var(--bg-subtle); color: var(--text-muted); font-size: 11px;
 }
 .ai-panel__input-row { display: flex; align-items: center; gap: 4px; }
 .ai-panel__input-field {

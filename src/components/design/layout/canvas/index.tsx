@@ -985,6 +985,12 @@ function reparentCanvasChildren() {
 export class CanvasController {
   target = null;
 
+  fontEmbedCSSCache: {
+    value: string;
+    key: string;
+    expiresAt: number;
+  } | null = null;
+
   constructor(params) {
     currentCanvasControllerInstance.value = this;
 
@@ -993,7 +999,7 @@ export class CanvasController {
     this.maxDisplaySize = params.max;
   }
 
-  // 保存最近的画布base64 格式
+  // 保留兼容字段；PNG 编码改为导出或 AI 分析时按需执行。
   base64 = null;
 
   maxDisplaySize = null;
@@ -1009,10 +1015,30 @@ export class CanvasController {
       quality: 1,
       pixelRatio: 1,
       backgroundColor: null,
-      fontEmbedCSS: await getFontEmbedCSS(this.el),
+      fontEmbedCSS: await this.getCachedFontEmbedCSS(),
     });
 
     return new File([blob], "canvas.png", { type: "image/png" });
+  }
+
+  async getCachedFontEmbedCSS() {
+    const now = Date.now();
+    const cacheKey = `${document.fonts?.size || 0}:${document.styleSheets.length}`;
+    if (
+      this.fontEmbedCSSCache &&
+      this.fontEmbedCSSCache.key === cacheKey &&
+      this.fontEmbedCSSCache.expiresAt > now
+    ) {
+      return this.fontEmbedCSSCache.value;
+    }
+
+    const value = await getFontEmbedCSS(this.el);
+    this.fontEmbedCSSCache = {
+      value,
+      key: cacheKey,
+      expiresAt: now + 30_000,
+    };
+    return value;
   }
 
   // 等待所有字体加载完成
@@ -1029,7 +1055,7 @@ export class CanvasController {
     // 检查所有使用的字体是否已加载
     const fontElements =
       this.el?.querySelectorAll('[style*="font-family"]') || [];
-    const fontPromises: Promise<void>[] = [];
+    const pendingFontNames = new Set<string>();
 
     fontElements.forEach((el: HTMLElement) => {
       const computedStyle = window.getComputedStyle(el);
@@ -1042,11 +1068,18 @@ export class CanvasController {
         if (fontName && document.fonts) {
           // 检查字体是否已加载
           const fontCheck = document.fonts.check(`12px ${fontName}`);
-          if (!fontCheck) {
-            // 如果字体未加载，等待它加载
-            const fontPromise = new Promise<void>((resolve) => {
+          if (!fontCheck) pendingFontNames.add(fontName);
+        }
+      }
+    });
+
+    if (pendingFontNames.size > 0) {
+      await Promise.all(
+        Array.from(pendingFontNames).map(
+          (fontName) =>
+            new Promise<void>((resolve) => {
               let attempts = 0;
-              const maxAttempts = 50; // 最多等待5秒
+              const maxAttempts = 50;
               const checkInterval = setInterval(() => {
                 attempts++;
                 if (
@@ -1057,20 +1090,11 @@ export class CanvasController {
                   resolve();
                 }
               }, 100);
-            });
-            fontPromises.push(fontPromise);
-          }
-        }
-      }
-    });
-
-    // 等待所有字体加载完成
-    if (fontPromises.length > 0) {
-      await Promise.all(fontPromises);
+            }),
+        ),
+      );
+      await new Promise((resolve) => setTimeout(resolve, 50));
     }
-
-    // 额外等待一段时间确保字体完全应用
-    await new Promise((resolve) => setTimeout(resolve, 200));
   }
 
   async downloadTrimmedPng() {
@@ -1173,7 +1197,7 @@ export class CanvasController {
 
         // 使用 html-to-image
         // 获取字体嵌入 CSS
-        const fontEmbedCSS = await getFontEmbedCSS(this.el);
+        const fontEmbedCSS = await this.getCachedFontEmbedCSS();
 
         // 转换为 canvas
         let _canvas = await toCanvas(this.el, {
@@ -1183,8 +1207,6 @@ export class CanvasController {
           fontEmbedCSS: fontEmbedCSS,
         });
         console.log("html-to-image toCanvas");
-
-        this.base64 = _canvas.toDataURL("image/png");
 
         let width = Number(
           formatSizeOptionToPixelValue(

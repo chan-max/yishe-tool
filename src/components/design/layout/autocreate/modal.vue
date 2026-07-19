@@ -65,12 +65,12 @@
       <div class="auto-running__status">
         <template v-if="batchProgress.status === 'preparing'">
           <span class="dot dot--active" />
-          <span>正在拆解生产 brief</span>
+          <span>正在拆解生产 brief · 已运行 {{ elapsedText }}</span>
         </template>
         <template v-else-if="currentItem">
           <span class="dot dot--active" />
           <span
-            >{{ currentItem.brief.title }} · {{ statusText(currentItem) }}</span
+            >{{ currentItem.brief.title }} · {{ statusText(currentItem) }} · 已运行 {{ elapsedText }}</span
           >
           <span v-if="currentItem.score !== null" class="auto-running__score">
             {{ currentItem.score }}/10
@@ -190,6 +190,7 @@
 
 <script setup lang="ts">
 import { reactive, computed } from "vue";
+import { useNow } from "@vueuse/core";
 import { showAutocreateModal } from "./index";
 import {
   batchProgress,
@@ -205,6 +206,17 @@ const config = reactive<AutoBatchConfig>({
   description: "",
   count: 5,
   enableAnalysisOptimization: false,
+});
+const now = useNow({ interval: 1000 });
+const elapsedText = computed(() => {
+  if (!batchProgress.startedAt) return "0秒";
+  const seconds = Math.max(
+    0,
+    Math.floor((now.value.getTime() - batchProgress.startedAt) / 1000),
+  );
+  const minutes = Math.floor(seconds / 60);
+  const rest = seconds % 60;
+  return minutes > 0 ? `${minutes}分${rest}秒` : `${rest}秒`;
 });
 
 const currentItem = computed<BatchItem | null>(() => {
@@ -474,7 +486,7 @@ function handleReset() {
   gap: 1px;
   background: @border;
   border-radius: 6px;
-  overflow: hidden;
+  overflow-x: hidden;
 
   &__item {
     display: flex;

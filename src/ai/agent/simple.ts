@@ -139,6 +139,10 @@ const STORAGE_KEY = migrateLegacyWorkspaceStorage(
 );
 const MAX_PERSISTED_MESSAGES = 80;
 const MAX_PERSISTED_CONTENT_LENGTH = 12000;
+const PERSIST_DEBOUNCE_MS = 400;
+const MAX_PERSISTED_STRING_LENGTH = 1600;
+const MAX_PERSISTED_ARRAY_LENGTH = 12;
+let persistTimer: ReturnType<typeof setTimeout> | null = null;
 
 function canUseLocalStorage(): boolean {
   try {
@@ -155,15 +159,56 @@ function restorePlanFromMessages() {
   agentState.plan = lastPlanMessage?.meta?.plan || null;
 }
 
+function compactValueForStorage(value: any, key = "", depth = 0): any {
+  if (
+    value == null ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    return value;
+  }
+  if (typeof value === "string") {
+    if (key === "htmlContent") {
+      return `[HTML content omitted: ${value.length} characters]`;
+    }
+    if (value.length <= MAX_PERSISTED_STRING_LENGTH) return value;
+    return `${value.slice(0, MAX_PERSISTED_STRING_LENGTH)}\n...[truncated ${value.length - MAX_PERSISTED_STRING_LENGTH} characters]`;
+  }
+  if (depth >= 4) {
+    return Array.isArray(value) ? `[Array(${value.length})]` : "[Object]";
+  }
+  if (Array.isArray(value)) {
+    const items = value
+      .slice(0, MAX_PERSISTED_ARRAY_LENGTH)
+      .map((item) => compactValueForStorage(item, key, depth + 1));
+    if (value.length > MAX_PERSISTED_ARRAY_LENGTH) {
+      items.push(`[${value.length - MAX_PERSISTED_ARRAY_LENGTH} more items]`);
+    }
+    return items;
+  }
+  if (typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([childKey, childValue]) => [
+        childKey,
+        compactValueForStorage(childValue, childKey, depth + 1),
+      ]),
+    );
+  }
+  return String(value);
+}
+
 function sanitizeMessageForStorage(message: AgentMessage): AgentMessage {
   const meta = message.meta
     ? {
         iteration: message.meta.iteration,
-        toolArgs: message.meta.toolArgs,
-        toolResult: message.meta.toolResult,
+        toolArgs: compactValueForStorage(message.meta.toolArgs, "toolArgs"),
+        toolResult: compactValueForStorage(message.meta.toolResult, "toolResult"),
         duration: message.meta.duration,
         hasImage: message.meta.hasImage,
-        plan: message.meta.plan,
+        plan: compactValueForStorage(message.meta.plan, "plan") as
+          | DesignPlan
+          | null
+          | undefined,
         type: message.meta.type,
       }
     : undefined;
@@ -173,17 +218,21 @@ function sanitizeMessageForStorage(message: AgentMessage): AgentMessage {
     role: message.role,
     content: String(message.content || "").slice(
       0,
-      MAX_PERSISTED_CONTENT_LENGTH,
+      message.role === "tool" ? 2000 : MAX_PERSISTED_CONTENT_LENGTH,
     ),
     timestamp: Number(message.timestamp || Date.now()),
-    tool_calls: message.tool_calls,
+    tool_calls: compactValueForStorage(message.tool_calls, "tool_calls"),
     tool_call_id: message.tool_call_id,
     tool_name: message.tool_name,
     ...(meta ? { meta } : {}),
   };
 }
 
-function persistConversation() {
+function persistConversationNow() {
+  if (persistTimer) {
+    clearTimeout(persistTimer);
+    persistTimer = null;
+  }
   if (!canUseLocalStorage()) return;
   try {
     const payload: PersistedAgentState = {
@@ -197,6 +246,12 @@ function persistConversation() {
   } catch (error) {
     console.warn("[Agent] 持久化会话失败:", error);
   }
+}
+
+function persistConversation() {
+  if (!canUseLocalStorage()) return;
+  if (persistTimer) clearTimeout(persistTimer);
+  persistTimer = setTimeout(persistConversationNow, PERSIST_DEBOUNCE_MS);
 }
 
 function restoreConversation() {
@@ -222,6 +277,10 @@ function restoreConversation() {
 }
 
 function clearPersistedConversation() {
+  if (persistTimer) {
+    clearTimeout(persistTimer);
+    persistTimer = null;
+  }
   if (!canUseLocalStorage()) return;
   try {
     window.localStorage.removeItem(STORAGE_KEY);
@@ -274,6 +333,10 @@ function addMessage(msg: Partial<AgentMessage>): AgentMessage {
 }
 
 restoreConversation();
+
+if (typeof window !== "undefined") {
+  window.addEventListener("pagehide", persistConversationNow);
+}
 
 // ============ 搜索去重 ============
 
@@ -854,6 +917,7 @@ async function runAgentLoop(
     resourceTools: resourceService.tools,
     includeInteractions: allowInteraction,
     excludeOperations,
+    compactPresetShortcuts: true,
   });
 
   const needsDesignKnowledge = !!plan?.steps.some((step) =>
@@ -1500,6 +1564,7 @@ async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
   const allTools = buildAITools({
     includeResources: true,
     resourceTools: resourceService.tools,
+    compactPresetShortcuts: true,
   });
   let iteration = 0;
 
@@ -1868,6 +1933,7 @@ ${evaluation.suggestions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
         tools: buildAITools({
           includeResources: true,
           resourceTools: resourceService.tools,
+          compactPresetShortcuts: true,
         }),
         timeoutMs: AI_TIMEOUTS.chat,
       });

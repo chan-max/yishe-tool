@@ -74,6 +74,7 @@ export interface BatchProgress {
 }
 
 export interface BatchRuntimeSnapshot {
+  requestId?: string | null;
   status: BatchProgress["status"];
   current: number;
   total: number;

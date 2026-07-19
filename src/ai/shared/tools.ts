@@ -112,10 +112,13 @@ export function buildAITools(options?: {
   resourceTools?: any[];
   includeInteractions?: boolean;
   excludeOperations?: string[];
+  compactPresetShortcuts?: boolean;
 }): any[] {
   const excluded = new Set(options?.excludeOperations || []);
   const operationTools = getOperationTools().filter(
-    (t) => !excluded.has(t.name),
+    (t) =>
+      !excluded.has(t.name) &&
+      (!options?.compactPresetShortcuts || t.name.includes(".")),
   );
   const opTools = operationTools.map((t) => ({
     type: "function" as const,

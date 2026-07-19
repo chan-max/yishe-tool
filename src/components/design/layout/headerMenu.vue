@@ -50,8 +50,16 @@
     </el-tooltip>
     
     <div class="header-actions flex items-center gap-2 shrink-0">
-      <div class="auto-create-btn" @click="showAutocreateModal = true">
-        <span class="auto-create-label">自动制作</span>
+      <div
+        class="auto-create-btn"
+        :class="{
+          'auto-create-btn--running': batchIsRunning,
+          'auto-create-btn--paused': batchProgress.status === 'paused',
+        }"
+        @click="showAutocreateModal = true"
+      >
+        <span v-if="batchIsRunning" class="auto-create-status-dot" />
+        <span class="auto-create-label">{{ autoCreateButtonLabel }}</span>
       </div>
 
       <el-tooltip :content="screenShareActive ? '停止共享屏幕' : '共享屏幕给管理端'" placement="bottom" :show-after="200">
@@ -124,6 +132,27 @@ import { websocketClient } from "@/services/websocketClient";
 import { designAgent } from "@/ai/langgraph";
 import { canvasStreamService } from "@/services/canvasStream";
 import { showAutocreateModal } from "./autocreate/index";
+import { batchProgress } from "@/ai/agent/batch";
+
+const batchIsRunning = computed(() =>
+  ["preparing", "running", "paused"].includes(batchProgress.status),
+);
+const batchCompletedCount = computed(
+  () =>
+    batchProgress.items.filter((item) =>
+      ["done", "failed", "skipped"].includes(item.status),
+    ).length,
+);
+const autoCreateButtonLabel = computed(() => {
+  if (batchProgress.status === "preparing") return "准备中";
+  if (batchProgress.status === "paused") {
+    return `已暂停 ${batchCompletedCount.value}/${batchProgress.items.length}`;
+  }
+  if (batchProgress.status === "running") {
+    return `制作中 ${batchCompletedCount.value}/${batchProgress.items.length}`;
+  }
+  return "自动制作";
+});
 
 const wsStatus = computed(() => websocketClient.state.status);
 const wsStatusLabel = computed(() => {
@@ -482,8 +511,13 @@ function confirmExitEditMode() {
 
 .auto-create-btn {
   display: flex;
+  width: 108px;
+  height: 24px;
   align-items: center;
-  padding: 2px 10px;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px;
+  box-sizing: border-box;
   border-radius: 3px;
   cursor: pointer;
   user-select: none;
@@ -503,6 +537,58 @@ function confirmExitEditMode() {
     color: var(--1s-text-color-secondary, #636e72);
     font-weight: 500;
   }
+}
+
+.auto-create-status-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+  animation: auto-create-dot-pulse 1.2s ease-in-out infinite;
+}
+
+.auto-create-btn--running {
+  border-color: #6c5ce7;
+  background: #6c5ce7;
+  box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.14);
+  animation: auto-create-running-pulse 1.8s ease-in-out infinite;
+
+  &:hover {
+    border-color: #5b4cdb;
+    background: #5b4cdb;
+  }
+
+  .auto-create-label {
+    color: #fff;
+    font-weight: 650;
+  }
+}
+
+.auto-create-btn--paused {
+  border-color: #d97706;
+  background: #d97706;
+  animation: none;
+
+  &:hover {
+    border-color: #b45309;
+    background: #b45309;
+  }
+
+  .auto-create-status-dot {
+    animation: none;
+  }
+}
+
+@keyframes auto-create-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.72); }
+}
+
+@keyframes auto-create-running-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.12); }
+  50% { box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.2); }
 }
 
 .screen-share-btn--active {

@@ -18,11 +18,34 @@ export interface CanvasCaptureForAIOptions {
 
 function waitForAnimationFrame(): Promise<void> {
   return new Promise((resolve) => {
-    if (typeof requestAnimationFrame === "function") {
-      requestAnimationFrame(() => resolve());
-      return;
+    let settled = false;
+    let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      if (fallbackTimer) clearTimeout(fallbackTimer);
+      resolve();
+    };
+    const hidden =
+      typeof document !== "undefined" && document.visibilityState === "hidden";
+
+    if (hidden && typeof MessageChannel !== "undefined") {
+      const channel = new MessageChannel();
+      channel.port1.onmessage = () => {
+        channel.port1.close();
+        channel.port2.close();
+        finish();
+      };
+      channel.port2.postMessage(null);
     }
-    setTimeout(resolve, 16);
+
+    fallbackTimer = setTimeout(finish, 250);
+
+    if (!hidden && typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(() => {
+        finish();
+      });
+    }
   });
 }
 

@@ -235,6 +235,7 @@ const clientInfo = reactive({
     capacity: 1,
     activeRequestId: null as string | null,
     state: "idle",
+    batch: null as Record<string, any> | null,
     updatedAt: new Date().toISOString(),
   },
   launch: readLaunchRuntimeInfo(),
@@ -255,6 +256,8 @@ let pendingAgentStatus: Record<string, any> | null = null;
 let agentStatusTimer: ReturnType<typeof setTimeout> | null = null;
 let lastAgentStatusFingerprint = "";
 let lastAgentStatusSentAt = 0;
+let pendingBatchProgress: Record<string, any> | null = null;
+let batchProgressTimer: ReturnType<typeof setTimeout> | null = null;
 
 const wsState = reactive({
   endpoint: getDefaultWsUrl(),
@@ -325,6 +328,62 @@ function emitClientInfo() {
   clientInfo.screen = buildScreenInfo();
   clientInfo.launch = readLaunchRuntimeInfo();
   socket.emit("client-info", clientInfo);
+}
+
+function flushBatchProgress() {
+  if (batchProgressTimer) {
+    clearTimeout(batchProgressTimer);
+    batchProgressTimer = null;
+  }
+  if (!pendingBatchProgress) return;
+  const progress = pendingBatchProgress;
+  pendingBatchProgress = null;
+  clientInfo.designWorker.batch = progress;
+  emitClientInfo();
+  if (socket?.connected && activeRemoteRequestId) {
+    socket.emit("remote-result", {
+      requestId: activeRemoteRequestId,
+      success: true,
+      phase: "progress",
+      batch: progress,
+      message: `自动制作 ${progress.completed || 0}/${progress.total || 0}`,
+      workerId: designRuntime.workerId,
+      workspaceId: designRuntime.workspaceId,
+      reportedAt: new Date().toISOString(),
+    });
+  }
+}
+
+function setBatchProgress(progress: Record<string, any>) {
+  pendingBatchProgress = progress;
+  clientInfo.designWorker.batch = progress;
+  const active = ["preparing", "running", "paused"].includes(
+    progress?.status,
+  );
+  const currentRequestId = clientInfo.designWorker.activeRequestId;
+  if (active && !activeRemoteRequestId && !currentRequestId) {
+    clientInfo.designWorker.state = "busy";
+    clientInfo.designWorker.activeRequestId = `local-batch-${
+      progress?.startedAt || Date.now()
+    }`;
+    clientInfo.designWorker.updatedAt = new Date().toISOString();
+  } else if (
+    !active &&
+    !activeRemoteRequestId &&
+    String(currentRequestId || "").startsWith("local-batch-")
+  ) {
+    clientInfo.designWorker.state = "idle";
+    clientInfo.designWorker.activeRequestId = null;
+    clientInfo.designWorker.updatedAt = new Date().toISOString();
+  }
+  const terminal = ["idle", "done", "stopped"].includes(progress?.status);
+  if (terminal) {
+    flushBatchProgress();
+    return;
+  }
+  if (!batchProgressTimer) {
+    batchProgressTimer = setTimeout(flushBatchProgress, 160);
+  }
 }
 
 function setRemoteWorkerState(
@@ -529,7 +588,10 @@ async function dispatchLaunchPromptIfNeeded() {
   try {
     await new Promise((resolve) => window.setTimeout(resolve, 800));
     const { designAgent } = await import("@/ai/langgraph");
-    await designAgent.chat(prompt);
+    await designAgent.chat(prompt, {
+      allowInteraction: false,
+      deliveryHandledExternally: false,
+    });
   } catch (error: any) {
     if (socket?.connected) {
       socket.emit("remote-result", {
@@ -671,6 +733,7 @@ async function handleRemoteCommand(data: any) {
       case "chat": {
         const { designAgent } = await import("@/ai/langgraph");
         const message = payload?.message;
+        const automatic = payload?.executionMode === "automatic";
         if (!message) throw new Error("缺少 message 参数");
         if (activeRemoteRequestId || designAgent.state.status !== "idle") {
           result.phase = "rejected";
@@ -695,7 +758,15 @@ async function handleRemoteCommand(data: any) {
           });
         }
 
-        await designAgent.chat(message);
+        await designAgent.chat(
+          message,
+          automatic
+            ? {
+                allowInteraction: false,
+                deliveryHandledExternally: false,
+              }
+            : undefined,
+        );
         if (designAgent.state.error) {
           throw new Error(designAgent.state.error);
         }
@@ -722,6 +793,116 @@ async function handleRemoteCommand(data: any) {
         result.message = lastAssistant?.content
           ? `Agent 已完成，共 ${result.toolCallsCount} 次工具调用`
           : "Agent 对话已完成";
+        break;
+      }
+      case "batch-start": {
+        const {
+          batchProgress,
+          getBatchRuntimeSnapshot,
+          resetBatch,
+          startBatch,
+        } = await import("@/ai/agent/batch");
+        if (
+          activeRemoteRequestId ||
+          ["preparing", "running", "paused"].includes(batchProgress.status)
+        ) {
+          result.phase = "rejected";
+          result.error = "当前设计实例正在执行其他自动制作任务";
+          result.message = result.error;
+          break;
+        }
+
+        const description = String(
+          payload?.description || payload?.message || "",
+        ).trim();
+        const count = Math.max(1, Math.min(100, Number(payload?.count) || 1));
+        if (!description) throw new Error("缺少自动制作需求");
+
+        resetBatch();
+        setBatchProgress(getBatchRuntimeSnapshot());
+        activeRemoteRequestId = String(requestId || `batch-${Date.now()}`);
+        ownedRemoteRequestId = activeRemoteRequestId;
+        ownsRemoteWorker = true;
+        setRemoteWorkerState("busy", activeRemoteRequestId);
+        if (socket?.connected) {
+          socket.emit("remote-result", {
+            requestId,
+            success: true,
+            phase: "accepted",
+            message: `自动制作已接收，共 ${count} 张`,
+            workerId: designRuntime.workerId,
+            workspaceId: designRuntime.workspaceId,
+            reportedAt: new Date().toISOString(),
+          });
+        }
+
+        await startBatch({
+          description,
+          count,
+          enableAnalysisOptimization:
+            payload?.enableAnalysisOptimization === true,
+          saveMode: "auto",
+          failureStrategy: "save_anyway",
+        });
+        const batch = getBatchRuntimeSnapshot();
+        const allSaved =
+          batch.status === "done" &&
+          batch.failed === 0 &&
+          batch.skipped === 0 &&
+          batch.succeeded === batch.total;
+        result.batch = batch;
+        result.success = allSaved;
+        result.phase =
+          allSaved
+            ? "completed"
+            : batch.error || batch.status === "done"
+              ? "failed"
+              : "cancelled";
+        result.error =
+          batch.error ||
+          (batch.status === "done" && !allSaved
+            ? `有 ${batch.failed + batch.skipped} 张未成功上传图库`
+            : undefined);
+        result.message =
+          allSaved
+            ? `自动制作完成，成功 ${batch.succeeded}/${batch.total}`
+            : result.error || "自动制作已停止";
+        break;
+      }
+      case "batch-control": {
+        const action = String(payload?.action || "").trim();
+        const {
+          batchProgress,
+          getBatchRuntimeSnapshot,
+          pauseBatch,
+          resetBatch,
+          resumeBatch,
+          stopBatch,
+        } = await import("@/ai/agent/batch");
+        if (action === "pause") pauseBatch();
+        else if (action === "resume") resumeBatch();
+        else if (action === "stop") stopBatch();
+        else if (action === "reset") resetBatch();
+        else throw new Error(`未知批次操作: ${action}`);
+        result.success = true;
+        result.batch = getBatchRuntimeSnapshot();
+        result.message = `批次已${
+          action === "pause"
+            ? "暂停"
+            : action === "resume"
+              ? "继续"
+              : action === "stop"
+                ? "停止"
+                : "重置"
+        }`;
+        result.batchStatus = batchProgress.status;
+        break;
+      }
+      case "batch-get-state": {
+        const { getBatchRuntimeSnapshot } = await import("@/ai/agent/batch");
+        result.success = true;
+        result.batch = getBatchRuntimeSnapshot();
+        result.message = "已获取自动制作状态";
         break;
       }
       case "stop": {
@@ -907,6 +1088,7 @@ export const websocketClient = {
   reconnect,
   sendMessage,
   events: emitter,
+  setBatchProgress,
 
   sendAgentStatus(status: {
     available: boolean;

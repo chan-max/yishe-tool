@@ -16,6 +16,7 @@ import {
   buildStickerRecordMeta,
   getAgentDesignProvenance,
 } from "@/ai/design-provenance";
+import { beginLibraryUpload } from "@/services/designTabStatus";
 
 // 批量任务状态
 let batchTaskState: {
@@ -362,6 +363,8 @@ registerOperation({
       return { success: false, message: "请先登录后再保存贴纸到素材库" };
     }
 
+    let finishLibraryUpload: ((success?: boolean) => void) | null = null;
+
     try {
       const validationError = validateCanvasBeforeSave();
       if (validationError) {
@@ -422,6 +425,7 @@ registerOperation({
         file = await canvasToFile(canvasEl);
       }
 
+      finishLibraryUpload = beginLibraryUpload();
       const cos = await uploadToCOS({
         file,
         category: "sticker",
@@ -446,6 +450,8 @@ registerOperation({
         meta: stickerMeta,
         userId: loginStore.userInfo?.id || null,
       });
+      finishLibraryUpload(true);
+      finishLibraryUpload = null;
 
       const nextBatchProgress = batchTaskState
         ? {
@@ -487,6 +493,7 @@ registerOperation({
         },
       };
     } catch (err: any) {
+      finishLibraryUpload?.(false);
       return {
         success: false,
         message: `保存失败: ${err?.message || "未知错误"}`,

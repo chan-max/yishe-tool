@@ -1,10 +1,15 @@
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import { directChat } from "../direct-client";
 import { designAgent } from "./simple";
 import { evaluateCanvasVisual } from "../visual-evaluate";
 import { executeAITool } from "../shared/execute-tool";
 import { parseChatResponse } from "../shared/response-parser";
 import { AI_TIMEOUTS, withTimeout } from "../shared/timeout";
+import { websocketClient } from "@/services/websocketClient";
+import {
+  beginDesignTabTask,
+  completeDesignTabTask,
+} from "@/services/designTabStatus";
 
 // ============ Types ============
 
@@ -68,6 +73,30 @@ export interface BatchProgress {
   finishedAt?: number;
 }
 
+export interface BatchRuntimeSnapshot {
+  status: BatchProgress["status"];
+  current: number;
+  total: number;
+  completed: number;
+  succeeded: number;
+  failed: number;
+  skipped: number;
+  description: string;
+  error?: string;
+  startedAt?: number;
+  finishedAt?: number;
+  updatedAt: string;
+  items: Array<{
+    index: number;
+    title: string;
+    status: BatchItem["status"];
+    score: number | null;
+    revisionCount: number;
+    error?: string;
+    savedUrl?: string;
+  }>;
+}
+
 interface NormalizedBatchConfig {
   style: string;
   description: string;
@@ -93,6 +122,57 @@ export const batchProgress = reactive<BatchProgress>({
 
 const controlSignal = ref<"running" | "paused" | "stopped">("running");
 let pauseResolve: (() => void) | null = null;
+
+export function getBatchRuntimeSnapshot(): BatchRuntimeSnapshot {
+  const terminal = new Set(["done", "failed", "skipped"]);
+  return {
+    status: batchProgress.status,
+    current: batchProgress.current,
+    total: batchProgress.items.length || batchProgress.config?.count || 0,
+    completed: batchProgress.items.filter((item) => terminal.has(item.status))
+      .length,
+    succeeded: batchProgress.items.filter((item) => item.status === "done")
+      .length,
+    failed: batchProgress.items.filter((item) => item.status === "failed")
+      .length,
+    skipped: batchProgress.items.filter((item) => item.status === "skipped")
+      .length,
+    description: batchProgress.config?.description || "",
+    error: batchProgress.error,
+    startedAt: batchProgress.startedAt,
+    finishedAt: batchProgress.finishedAt,
+    updatedAt: new Date().toISOString(),
+    items: batchProgress.items.map((item) => ({
+      index: item.index,
+      title: item.brief.title,
+      status: item.status,
+      score: item.score,
+      revisionCount: item.revisionCount,
+      error: item.error,
+      savedUrl: item.savedUrl,
+    })),
+  };
+}
+
+watch(
+  () => ({
+    status: batchProgress.status,
+    current: batchProgress.current,
+    error: batchProgress.error,
+    startedAt: batchProgress.startedAt,
+    finishedAt: batchProgress.finishedAt,
+    config: batchProgress.config,
+    items: batchProgress.items.map((item) => ({
+      status: item.status,
+      score: item.score,
+      revisionCount: item.revisionCount,
+      error: item.error,
+      savedUrl: item.savedUrl,
+    })),
+  }),
+  () => websocketClient.setBatchProgress(getBatchRuntimeSnapshot()),
+  { deep: true, immediate: true, flush: "post" },
+);
 
 function isStopped(signal = controlSignal): boolean {
   return signal.value === "stopped";
@@ -123,9 +203,8 @@ function normalizeConfig(config: AutoBatchConfig): NormalizedBatchConfig {
       3,
       enableAnalysisOptimization ? inferMaxRevisions(description) || 1 : 0,
     ),
-    saveMode: config.saveMode || inferSaveMode(description),
-    failureStrategy:
-      config.failureStrategy || inferFailureStrategy(description),
+    saveMode: "auto",
+    failureStrategy: "save_anyway",
   };
 }
 
@@ -176,19 +255,6 @@ function inferMaxRevisions(text: string): number {
   )
     ? 1
     : 0;
-}
-
-function inferSaveMode(text: string): BatchSaveMode {
-  return /不保存|不要保存|只生成|只制作|预览|draft/i.test(text)
-    ? "draft"
-    : "auto";
-}
-
-function inferFailureStrategy(text: string): BatchFailureStrategy {
-  if (/低分也保存|全部保存|都保存|save anyway/i.test(text))
-    return "save_anyway";
-  if (/失败停止|低分停止|停止等待|人工确认/i.test(text)) return "stop";
-  return "skip";
 }
 
 function asStringArray(value: unknown): string[] {
@@ -615,28 +681,36 @@ function buildRevisionPrompt(score: number, brief: StickerBrief): string {
 
 async function saveItem(item: BatchItem): Promise<void> {
   item.status = "saving";
-  try {
-    const result = await withTimeout(
-      executeAITool("canvas.updateAndSaveSticker", {
-        name: item.brief.saveName,
-        description: item.brief.description,
-        keywords: item.brief.keywords.join(","),
-      }),
-      AI_TIMEOUTS.batchSave,
-      `第 ${item.index + 1} 张保存`,
-    );
+  let lastError = "保存失败";
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const result = await withTimeout(
+        executeAITool("canvas.updateAndSaveSticker", {
+          name: item.brief.saveName,
+          description: item.brief.description,
+          keywords: item.brief.keywords.join(","),
+        }),
+        AI_TIMEOUTS.batchSave,
+        `第 ${item.index + 1} 张保存（第 ${attempt}/3 次）`,
+      );
 
-    item.saveResult = result;
-    if (!result?.success) {
-      failItem(item, result?.message || "保存失败");
-      return;
+      item.saveResult = result;
+      if (result?.success) {
+        item.savedUrl = result?.data?.url;
+        item.status = "done";
+        item.error = undefined;
+        return;
+      }
+      lastError = result?.message || "保存失败";
+    } catch (e: any) {
+      lastError = e?.message || String(e);
     }
-
-    item.savedUrl = result?.data?.url;
-    item.status = "done";
-  } catch (e: any) {
-    failItem(item, `保存失败: ${e?.message || e}`);
+    if (attempt < 3) {
+      item.error = `上传失败，正在重试 ${attempt}/3`;
+      await new Promise((resolve) => setTimeout(resolve, attempt * 800));
+    }
   }
+  failItem(item, `保存失败，已重试 3 次: ${lastError}`);
 }
 
 function failItem(item: BatchItem, error: string): void {
@@ -683,6 +757,7 @@ export async function startBatch(configInput: AutoBatchConfig): Promise<void> {
   batchProgress.startedAt = Date.now();
   batchProgress.finishedAt = undefined;
   controlSignal.value = "running";
+  beginDesignTabTask();
 
   try {
     const briefs = await generateBriefs(config);
@@ -735,6 +810,13 @@ export async function startBatch(configInput: AutoBatchConfig): Promise<void> {
     batchProgress.status = "stopped";
   } finally {
     batchProgress.finishedAt = Date.now();
+    const snapshot = getBatchRuntimeSnapshot();
+    completeDesignTabTask(
+      snapshot.status === "done" &&
+        snapshot.failed === 0 &&
+        snapshot.skipped === 0 &&
+        snapshot.succeeded === snapshot.total,
+    );
   }
 }
 
@@ -759,6 +841,7 @@ export function resumeBatch(): void {
 export function stopBatch(): void {
   controlSignal.value = "stopped";
   batchProgress.status = "stopped";
+  designAgent.stop();
   if (pauseResolve) {
     pauseResolve();
     pauseResolve = null;

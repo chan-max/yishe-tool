@@ -1,4 +1,4 @@
-import { reactive, computed } from "vue";
+import { reactive, computed, watch } from "vue";
 import { directChat } from "../direct-client";
 import { createDesignOperationContext } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
@@ -28,6 +28,11 @@ import {
   clearAgentDesignProvenance,
   recordAgentDesignPrompt,
 } from "../design-provenance";
+import {
+  beginDesignTabTask,
+  completeDesignTabTask,
+  markDesignTabWorking,
+} from "@/services/designTabStatus";
 import {
   buildExecutionPlan,
   ensurePlanStep,
@@ -104,6 +109,30 @@ const agentState = reactive({
 
 let waitForUserInputPromise: { resolve: (value: string) => void } | null = null;
 const eventListeners: ((event: any) => void)[] = [];
+let tabTaskActive = false;
+
+const isAgentStopped = () => agentState.status === "idle";
+
+watch(
+  () => agentState.status,
+  (status) => {
+    const active = !["idle", "done"].includes(status);
+    if (active && !tabTaskActive) {
+      tabTaskActive = true;
+      beginDesignTabTask();
+      return;
+    }
+    if (active) {
+      markDesignTabWorking();
+      return;
+    }
+    if (tabTaskActive) {
+      tabTaskActive = false;
+      completeDesignTabTask(!agentState.error);
+    }
+  },
+  { flush: "sync" },
+);
 
 const STORAGE_KEY = migrateLegacyWorkspaceStorage(
   "yishe_tool_ai_agent_conversation_v1",
@@ -520,6 +549,7 @@ function findUnescapedQuote(str: string, start: number): number {
 interface RunAgentLoopOptions {
   allowInteraction?: boolean;
   allowCanvasAnalysis?: boolean;
+  deliveryHandledExternally?: boolean;
   excludeOperations?: string[];
 }
 
@@ -750,11 +780,14 @@ async function runAgentLoop(
   const maxIterations = 10;
   const ctx = createDesignOperationContext();
   const allowInteraction = options.allowInteraction !== false;
+  const deliveryHandledExternally =
+    options.deliveryHandledExternally === true;
   const allowCanvasAnalysis =
     options.allowCanvasAnalysis ?? shouldAllowCanvasAnalysis(userMessage);
   let iteration = 0;
   const allowPostArtworkContinuation = shouldContinueAfterArtwork(userMessage);
   let completedArtwork = false;
+  let automaticDeliveryCompleted = false;
 
   // 添加用户消息
   addMessage({ role: "user", content: userMessage });
@@ -870,7 +903,9 @@ async function runAgentLoop(
     getBatchProgress() +
     (allowInteraction
       ? ""
-      : "\n\n## 自动制作模式\n- 当前任务不能等待用户反馈，也不要调用 ask_choice 或 request_feedback\n- 如果信息不足，请基于当前提示词和可用资源自行判断\n- 完成当前设计后直接结束，由外层流水线负责评估和保存");
+      : deliveryHandledExternally
+        ? "\n\n## 自动制作模式\n- 当前任务不能等待用户反馈，也不要调用 ask_choice 或 request_feedback\n- 如果信息不足，请基于当前提示词和可用资源自行判断\n- 只完成当前画布设计，完成后直接结束；评估和保存由外层流水线负责"
+        : "\n\n## 自动制作模式\n- 当前任务不能等待用户反馈，也不要调用 ask_choice 或 request_feedback\n- 如果信息不足，请基于当前提示词和可用资源自行判断\n- 必须完成用户明确要求的设计、检查和保存步骤\n- 保存成功后直接结束，不要请求用户确认、评价或反馈");
 
   const messagesForLLM: any[] = [
     { role: "system", content: systemPrompt },
@@ -879,7 +914,7 @@ async function runAgentLoop(
 
   for (let i = 0; i < maxIterations; i++) {
     // 检查是否被外部中断（如用户点击清空）
-    if (agentState.status === "idle") {
+    if (isAgentStopped()) {
       console.log("[Agent] 被中断，退出循环");
       failRemainingPlan(plan, "任务已被用户中断");
       return;
@@ -1012,7 +1047,8 @@ async function runAgentLoop(
     agentState.status = "executing";
 
     for (const call of toolCalls) {
-      if (agentState.status === "idle") {
+      if (automaticDeliveryCompleted) break;
+      if (isAgentStopped()) {
         failRemainingPlan(plan, "任务已被用户中断");
         return;
       }
@@ -1159,7 +1195,7 @@ async function runAgentLoop(
             recordSearch(toolName, args, resultCount, iteration, result?.data);
           }
         } else if (
-          !allowInteraction &&
+          deliveryHandledExternally &&
           AUTO_BATCH_BLOCKED_OPERATIONS.includes(toolName)
         ) {
           result = {
@@ -1272,6 +1308,15 @@ async function runAgentLoop(
           planStepSucceeded,
           getToolPlanResult(toolName, result),
         );
+        if (
+          !allowInteraction &&
+          !deliveryHandledExternally &&
+          toolName === "canvas.updateAndSaveSticker" &&
+          result?.success &&
+          getIncompleteDeliveryActions(plan).length === 0
+        ) {
+          automaticDeliveryCompleted = true;
+        }
 
         addMessage({
           role: "tool",
@@ -1329,8 +1374,17 @@ async function runAgentLoop(
       }
     }
 
-    if (agentState.status === "idle") {
+    if (isAgentStopped()) {
       failRemainingPlan(plan, "任务已被用户中断");
+      return;
+    }
+
+    if (automaticDeliveryCompleted) {
+      addMessage({
+        role: "assistant",
+        content: "自动制作已完成并保存到素材库。",
+        meta: { iteration, type: "automatic-delivery-complete" },
+      });
       return;
     }
 
@@ -2109,7 +2163,10 @@ export const designAgent = {
     };
   },
 
-  async chat(userMessage: string): Promise<void> {
+  async chat(
+    userMessage: string,
+    options: RunAgentLoopOptions = {},
+  ): Promise<void> {
     // 如果 agent 在等待用户响应，将输入作为交互响应
     if (agentState.status === "waiting_user") {
       console.log("[Agent] Submitting user response:", userMessage);
@@ -2131,7 +2188,7 @@ export const designAgent = {
     });
 
     try {
-      await runAgentLoop(userMessage);
+      await runAgentLoop(userMessage, options);
     } catch (error: any) {
       console.error("[Agent] Error:", error);
       agentState.error = error.message || "未知错误";
@@ -2283,6 +2340,7 @@ export const designAgent = {
       await runAgentLoop(userMessage, {
         allowInteraction: false,
         allowCanvasAnalysis: false,
+        deliveryHandledExternally: true,
         excludeOperations: AUTO_BATCH_BLOCKED_OPERATIONS,
       });
     } catch (error: any) {

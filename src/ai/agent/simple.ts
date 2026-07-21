@@ -4,6 +4,7 @@ import { createDesignOperationContext } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
 import { buildSystemPrompt, buildImageAnalysisPrompt } from "../prompts/system";
 import { buildKnowledgePrompt } from "../knowledge";
+import { buildMatchedSkillPrompt } from "../skills";
 import { resourceService } from "../services/resource";
 import { captureCanvasForAI, getCanvasStateSummary } from "../capture";
 import {
@@ -926,9 +927,9 @@ async function runAgentLoop(
     ),
   );
 
-  // 3. 只加载真正会注入提示词的设计知识。
-  const knowledgePrompt = needsDesignKnowledge
-    ? await withTimeout(
+  // 3. 并行加载设计知识和当前用户可用的 Skills，失败不阻断原流程。
+  const knowledgePromise = needsDesignKnowledge
+    ? withTimeout(
         buildKnowledgePrompt(searchQueries.styles),
         AI_TIMEOUTS.knowledge,
         "知识检索",
@@ -939,7 +940,19 @@ async function runAgentLoop(
         );
         return "";
       })
-    : "";
+    : Promise.resolve("");
+  const skillPromise = withTimeout(
+    buildMatchedSkillPrompt(userMessage),
+    Math.min(AI_TIMEOUTS.knowledge, 5000),
+    "Skill 匹配",
+  ).catch((error) => {
+    console.warn("[Agent] Skill match timeout/failure, skipped:", error);
+    return "";
+  });
+  const [knowledgePrompt, skillPrompt] = await Promise.all([
+    knowledgePromise,
+    skillPromise,
+  ]);
 
   const preflightSummary = completedPreflightOperations.size
     ? `\n\n## 运行时已完成的前置操作\n${Array.from(completedPreflightOperations)
@@ -961,6 +974,7 @@ async function runAgentLoop(
     buildSystemPrompt() +
     "\n" +
     knowledgePrompt +
+    (skillPrompt ? `\n\n${skillPrompt}` : "") +
     preflightSummary +
     deliverySummary +
     buildSearchContext() +

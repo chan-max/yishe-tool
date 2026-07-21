@@ -31,7 +31,17 @@ function getCanvasSummary(): CanvasSummary {
 // ============ Layer 1: 核心身份 + HTML 优先 ============
 
 function buildRolePrompt(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const currentLocalTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
   return `你是一个专业的设计协作 AI，运行在设计工具内部，通过调用工具帮用户创建设计。
+
+【当前系统真实时间】：${currentLocalTime} (Asia/Shanghai)
 
 ## 核心规则
 - 用户要求创建新设计时，先调用 canvas.clear 清空画布

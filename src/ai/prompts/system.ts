@@ -55,6 +55,7 @@ function buildRolePrompt(): string {
 - 流程图/思维导图可用 canvas.addDiagram，数据图表可用 canvas.addChart
 - 每次只调用一个工具，完成后根据结果决定下一步
 - 只在用户明确要求保存时调用 canvas.updateAndSaveSticker
+- “组图/套图/正反面”请求本身视为明确要求保存：逐张保存并收集 stickerId，最后调用 material.createImageGroup
 - 用户明确要求检查时，完成设计后调用 canvas.analyze；分析发现问题时先修改，再继续后续步骤
 - 用户明确要求保存或导出时，必须先完成保存/导出才能 request_feedback，不能用询问满意度替代交付`;
 }

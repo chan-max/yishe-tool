@@ -23,6 +23,9 @@ export interface OperationParamDef {
   min?: number;
   max?: number;
   placeholder?: string;
+  items?: JsonSchemaProperty;
+  minItems?: number;
+  maxItems?: number;
 }
 
 export interface OperationResult {
@@ -79,6 +82,9 @@ export interface JsonSchemaProperty {
   enum?: (string | number)[];
   minimum?: number;
   maximum?: number;
+  items?: JsonSchemaProperty;
+  minItems?: number;
+  maxItems?: number;
 }
 
 export interface JsonSchema {
@@ -104,6 +110,10 @@ function paramTypeToJsonSchema(type: OperationParamType): string {
       return "string";
     case "select":
       return "string";
+    case "object":
+      return "object";
+    case "array":
+      return "array";
     default:
       return "string";
   }
@@ -124,6 +134,9 @@ export function buildInputSchema(params: OperationParamDef[]): JsonSchema {
       prop.enum = p.options.map((o) => o.value);
     if (p.min !== undefined) prop.minimum = p.min;
     if (p.max !== undefined) prop.maximum = p.max;
+    if (p.items) prop.items = p.items;
+    if (p.minItems !== undefined) prop.minItems = p.minItems;
+    if (p.maxItems !== undefined) prop.maxItems = p.maxItems;
 
     properties[p.name] = prop;
     if (p.required) required.push(p.name);

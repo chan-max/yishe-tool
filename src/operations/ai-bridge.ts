@@ -116,6 +116,7 @@ const STICKER_DESIGN_SYSTEM_PART_2 = `
 - canvas.exportPng - 导出 PNG
 - canvas.analyze - AI 视觉分析
 - canvas.updateAndSaveSticker - 保存到素材库（支持 folderId 指定文件夹）
+- material.createImageGroup - 将已保存图片的 stickerId 按数组顺序创建为组图
 - canvas.loadSticker - 加载贴纸到画布
 - canvas.loadFont - 加载字体到画布
 
@@ -176,6 +177,9 @@ const STICKER_DESIGN_SYSTEM_PART_2 = `
 7. **调整布局** — element.setStyle 调整位置、大小、层级（使用三分法构图）
 8. **自测试迭代** — 使用 canvas.createAndAnalyze 进行效果验证和优化
 9. **用户要求保存时** — 最后一步加 canvas.updateAndSaveSticker（可传 folderId 保存到指定文件夹）或 canvas.exportPng
+
+### 组图制作流程
+当用户要求组图、套图、名片正反面或多页设计时，请逐张制作：每张完成后调用 canvas.updateAndSaveSticker 并记录返回的 stickerId，清空画布后制作下一张。所有图片保存成功后，调用 material.createImageGroup，将 stickerIds 按显示顺序传入，无需额外的成员角色字段。
 
 ### 基于现有贴纸改进的流程（二次开发）
 当用户说"基于XX贴纸改一个"、"参考这个设计"、"用这个贴纸改改"时：
@@ -432,4 +436,3 @@ export function formatOperationResult(result: OperationResult): string {
   }
   return `❌ ${result.message}`;
 }
-

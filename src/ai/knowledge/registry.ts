@@ -6,6 +6,7 @@ import { batchWorkflowKnowledge } from "./batch-workflow";
 import { templateModeKnowledge } from "./template-mode";
 import { designRulesKnowledge } from "./design-rules";
 import { stickerSaveKnowledge } from "./sticker-save";
+import { imageGroupKnowledge } from "./image-group";
 import { remixKnowledge } from "./remix";
 import { customKnowledgeItems } from "./custom-specs";
 import {
@@ -60,6 +61,7 @@ export const builtInKnowledgeItems: KnowledgeItem[] = [
   templateModeKnowledge,
   designRulesKnowledge,
   stickerSaveKnowledge,
+  imageGroupKnowledge,
   remixKnowledge,
   styleTemplatesKnowledge,
   layoutPatternsKnowledge,

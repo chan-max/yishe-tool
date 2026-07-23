@@ -631,6 +631,12 @@ const CANVAS_ANALYSIS_OPERATIONS = [
   "canvas.quickTest",
 ];
 
+const RETRYABLE_DELIVERY_OPERATIONS = new Set([
+  "canvas.updateAndSaveSticker",
+  "canvas.exportPng",
+  "material.createImageGroup",
+]);
+
 function getToolTimeoutMs(toolName: string): number {
   return isResourceToolName(toolName)
     ? AI_TIMEOUTS.resourceTool
@@ -675,6 +681,7 @@ function describePlanAction(toolName: string): string {
     "resource.searchSticker": "搜索图片或贴纸素材",
     "resource.searchSentence": "搜索短文案",
     "resource.searchTextDocument": "搜索文档资料",
+    "material.createImageGroup": "按成员顺序创建组图",
     ask_choice: "等待用户选择",
     request_feedback: "等待用户反馈",
   };
@@ -753,6 +760,13 @@ function settleRuntimePlanStep(
   result?: string,
 ) {
   if (!plan) return;
+  if (!success && RETRYABLE_DELIVERY_OPERATIONS.has(action)) {
+    const index = ensurePlanStep(plan, action, describePlanAction(action));
+    plan.steps[index].status = "pending";
+    plan.steps[index].result = result;
+    notifyPlanUpdated(result);
+    return;
+  }
   settlePlanStep(
     plan,
     action,
@@ -841,7 +855,6 @@ async function runAgentLoop(
   userMessage: string,
   options: RunAgentLoopOptions = {},
 ) {
-  const maxIterations = 10;
   const ctx = createDesignOperationContext();
   const allowInteraction = options.allowInteraction !== false;
   const deliveryHandledExternally =
@@ -867,6 +880,10 @@ async function runAgentLoop(
 
   agentState.plan = executionPlan.plan;
   const plan = agentState.plan;
+  const maxIterations = Math.max(
+    10,
+    Math.min(48, (plan?.steps.length || 0) + 3),
+  );
   if (plan) {
     addMessage({
       role: "assistant",
@@ -886,7 +903,12 @@ async function runAgentLoop(
     );
     if (result.success) {
       completedPreflightOperations.add("canvas.clear");
-      excludedPreflightOperations.add("canvas.clear");
+      const needsAnotherClear = plan?.steps.some(
+        (step) => step.action === "canvas.clear" && step.status === "pending",
+      );
+      if (!needsAnotherClear) {
+        excludedPreflightOperations.add("canvas.clear");
+      }
     }
   }
 
@@ -957,7 +979,7 @@ async function runAgentLoop(
   const preflightSummary = completedPreflightOperations.size
     ? `\n\n## 运行时已完成的前置操作\n${Array.from(completedPreflightOperations)
         .map((action) => `- ${action}`)
-        .join("\n")}\n这些操作已经成功完成，不要重复调用，直接继续剩余计划。`
+        .join("\n")}\n这些前置步骤已经成功完成，不要重复已完成的计划项；如果下方计划仍有同名待执行步骤，须按顺序继续执行。`
     : "";
 
   const requiredDeliveryActions = getIncompleteDeliveryActions(plan);
@@ -968,6 +990,14 @@ async function runAgentLoop(
           "\n",
         )}\n用户已明确要求这些步骤。完成设计和必要检查后必须执行，执行成功前禁止调用 ask_choice 或 request_feedback。`
     : "";
+  const runtimePlanSummary = plan
+    ? `\n\n## 当前执行计划\n${plan.steps
+        .map(
+          (step, index) =>
+            `${index + 1}. [${step.status === "done" ? "已完成" : step.status === "failed" ? "失败" : "待执行"}] ${step.action}：${step.description}`,
+        )
+        .join("\n")}\n严格按待执行步骤顺序推进。组图任务中的每次保存都必须取得 stickerId，最后才能创建组图。`
+    : "";
 
   // 4. 构建高信号消息列表。
   const systemPrompt =
@@ -976,6 +1006,7 @@ async function runAgentLoop(
     knowledgePrompt +
     (skillPrompt ? `\n\n${skillPrompt}` : "") +
     preflightSummary +
+    runtimePlanSummary +
     deliverySummary +
     buildSearchContext() +
     getBatchProgress() +
@@ -1051,8 +1082,18 @@ async function runAgentLoop(
     let response: any;
     const llmStartTime = Date.now();
     try {
+      const nextPlanStep = plan?.steps.find((step) => step.status === "pending");
+      const iterationMessages = nextPlanStep
+        ? [
+            ...messagesForLLM,
+            {
+              role: "system",
+              content: `[当前唯一下一步] ${nextPlanStep.action}：${nextPlanStep.description}。先完成这一步并等待工具结果，不要跳到后续步骤。`,
+            },
+          ]
+        : messagesForLLM;
       response = await directChat({
-        messages: sanitizeToolProtocolMessages(messagesForLLM),
+        messages: sanitizeToolProtocolMessages(iterationMessages),
         tools: allTools,
         timeoutMs: AI_TIMEOUTS.chat,
       });
@@ -1389,7 +1430,8 @@ async function runAgentLoop(
         if (
           !allowInteraction &&
           !deliveryHandledExternally &&
-          toolName === "canvas.updateAndSaveSticker" &&
+          (toolName === "canvas.updateAndSaveSticker" ||
+            toolName === "material.createImageGroup") &&
           result?.success &&
           getIncompleteDeliveryActions(plan).length === 0
         ) {

@@ -23,6 +23,7 @@ import "./add/add-ellipse";
 import "./add/add-qrcode";
 import "./add/add-barcode";
 import "./save-sticker";
+import "./create-image-group";
 import "./load-sticker";
 import "./load-font";
 import "./search-design-knowledge";

@@ -60,6 +60,7 @@ const REUSABLE_ACTIONS = new Set([
 const REQUIRED_DELIVERY_ACTIONS = new Set([
   "canvas.updateAndSaveSticker",
   "canvas.exportPng",
+  "material.createImageGroup",
 ]);
 
 function compactText(value: string, maxLength = 180): string {
@@ -81,14 +82,46 @@ export function shouldAllowCanvasAnalysis(userMessage: string): boolean {
 }
 
 export function shouldContinueAfterArtwork(userMessage: string): boolean {
-  const continuationIntent = /继续|再改|优化|调整|迭代|保存|导出|save|export/i;
+  const continuationIntent =
+    /继续|再改|优化|调整|迭代|保存|导出|save|export/i;
   const deniedContinuationIntent =
     /(不要|不用|无需|别|禁止|不需要).{0,12}(继续|再改|优化|调整|迭代|保存|导出|save|export)/i;
   return (
     (continuationIntent.test(userMessage) &&
       !deniedContinuationIntent.test(userMessage)) ||
+    isImageGroupRequest(userMessage) ||
     shouldAllowCanvasAnalysis(userMessage)
   );
+}
+
+function isImageGroupRequest(userMessage: string): boolean {
+  const groupIntent =
+    /组图|套图|正反面|正反两面|前后面|前后页|多页设计|image group|image set/i;
+  const deniedGroupIntent =
+    /(不要|不用|无需|别|禁止|不需要).{0,12}(组图|套图|正反面|前后面|前后页|多页|image group|image set)/i;
+  return groupIntent.test(userMessage) && !deniedGroupIntent.test(userMessage);
+}
+
+function inferImageGroupMemberCount(userMessage: string): number {
+  const arabicMatch = userMessage.match(/(\d{1,3})\s*(?:张|页|幅|个)/);
+  if (arabicMatch) {
+    return Math.max(2, Math.min(12, Number(arabicMatch[1])));
+  }
+
+  const chineseNumbers: Record<string, number> = {
+    两: 2,
+    二: 2,
+    三: 3,
+    四: 4,
+    五: 5,
+    六: 6,
+    七: 7,
+    八: 8,
+    九: 9,
+    十: 10,
+  };
+  const chineseMatch = userMessage.match(/([两二三四五六七八九十])\s*(?:张|页|幅|个)/);
+  return chineseMatch ? chineseNumbers[chineseMatch[1]] : 2;
 }
 
 export function extractExplicitCanvasSize(
@@ -285,7 +318,33 @@ export function buildExecutionPlan(userMessage: string): ExecutionPlanResult {
   }
 
   const artworkAction = getPrimaryArtworkAction(userMessage);
-  if (artworkAction) {
+  const imageGroupRequest = isImageGroupRequest(userMessage);
+  if (artworkAction && imageGroupRequest) {
+    const memberCount = inferImageGroupMemberCount(userMessage);
+    for (let index = 0; index < memberCount; index++) {
+      if (index > 0) {
+        steps.push(createStep("canvas.clear", `制作第 ${index + 1} 张前清空画布`));
+      }
+      steps.push(
+        createStep(
+          artworkAction,
+          `按统一视觉规范制作组图第 ${index + 1}/${memberCount} 张`,
+        ),
+      );
+      steps.push(
+        createStep(
+          "canvas.updateAndSaveSticker",
+          `保存组图第 ${index + 1}/${memberCount} 张并记录 stickerId`,
+        ),
+      );
+    }
+    steps.push(
+      createStep(
+        "material.createImageGroup",
+        `按保存顺序将 ${memberCount} 张图片创建为组图`,
+      ),
+    );
+  } else if (artworkAction) {
     const description =
       artworkAction === "canvas.addDiagram"
         ? "创建完整图示"
@@ -299,6 +358,7 @@ export function buildExecutionPlan(userMessage: string): ExecutionPlanResult {
     steps.push(createStep("canvas.analyze", "分析当前画布并给出评价"));
   }
   if (
+    !imageGroupRequest &&
     hasPositiveCommandIntent(
       userMessage,
       /保存|save/i,
@@ -430,7 +490,7 @@ export function getIncompleteDeliveryActions(
     const actionSteps = plan.steps.filter((step) => step.action === action);
     return (
       actionSteps.length > 0 &&
-      !actionSteps.some((step) => step.status === "done")
+      !actionSteps.every((step) => step.status === "done")
     );
   });
 }

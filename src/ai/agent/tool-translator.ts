@@ -109,8 +109,16 @@ export function translateToolResult(
     }
     case "canvas.remove":
       return "✅ 元素已删除";
-    case "canvas.updateAndSaveSticker":
-      return "✅ 贴纸已保存到图库";
+    case "canvas.updateAndSaveSticker": {
+      const stickerId = String(result.data?.stickerId || "").trim();
+      return stickerId
+        ? `✅ 贴纸已保存到图库，stickerId: ${stickerId}。制作组图时必须保留这个 ID，并按图片顺序传给 material.createImageGroup。`
+        : "✅ 贴纸已保存到图库";
+    }
+    case "material.createImageGroup": {
+      const data = result.data || {};
+      return `✅ 组图已创建，groupId: ${data.groupId || "未知"}，共 ${data.stickersCount || 0} 张。`;
+    }
     case "canvas.analyze":
       return `✅ 设计分析完成: ${result.message || ""}`;
     default:

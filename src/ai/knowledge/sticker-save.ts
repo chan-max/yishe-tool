@@ -29,7 +29,8 @@ canvas.updateAndSaveSticker({ folderId: "文件夹的UUID" })
 canvas.updateAndSaveSticker({ name: "促销标签", description: "...", keywords: "促销,红色", folderId: "文件夹UUID" })
 
 ### 返回结果
-{ name, description, keywords, url, aiGenerated, metadataGenerationSource, source, prompt, promptHistoryCount }
+{ stickerId, name, description, keywords, url, aiGenerated, metadataGenerationSource, source, prompt, promptHistoryCount }
+- stickerId: 新保存素材的 ID；制作组图时必须收集并按顺序传给 material.createImageGroup
 - url: 贴纸的图片地址，可直接用于后续展示
 - metadataGenerationSource: provided / prompt / vision / canvas-fallback
 - promptHistoryCount: 当前作品累计记录的提示词版本数

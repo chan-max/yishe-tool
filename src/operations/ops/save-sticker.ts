@@ -439,7 +439,7 @@ registerOperation({
       const canvasData = JSON.parse(JSON.stringify(canvasStickerOptions.value));
       const stickerMeta = buildStickerRecordMeta(canvasData, provenance);
 
-      await createSticker({
+      const createdSticker: any = await createSticker({
         url: cos.url,
         suffix: "png",
         name: name || "未命名贴纸",
@@ -450,6 +450,10 @@ registerOperation({
         meta: stickerMeta,
         userId: loginStore.userInfo?.id || null,
       });
+      const stickerId = String(createdSticker?.id || "").trim();
+      if (!stickerId) {
+        throw new Error("素材已上传，但服务端未返回 stickerId");
+      }
       finishLibraryUpload(true);
       finishLibraryUpload = null;
 
@@ -478,6 +482,7 @@ registerOperation({
         success: true,
         message: `贴纸「${name}」已保存到素材库`,
         data: {
+          stickerId,
           name,
           description,
           keywords,

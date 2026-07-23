@@ -2,6 +2,7 @@ import {
   inferCanvasTypographyDensity,
   type CanvasTypographyDensity,
 } from "../../operations/canvas-typography.ts";
+import type { ResolvedAgentTaskSpec } from "./task-spec";
 
 export type DesignPlanStepStatus = "pending" | "done" | "failed";
 
@@ -22,6 +23,11 @@ export interface ExplicitCanvasSize {
   width: number;
   height: number;
   unit: "px" | "mm" | "cm" | "in";
+}
+
+interface LocatedCanvasSize {
+  size: ExplicitCanvasSize;
+  index: number;
 }
 
 export interface ExecutionPlanResult {
@@ -71,7 +77,13 @@ function compactText(value: string, maxLength = 180): string {
   return `${text.slice(0, maxLength - 3)}...`;
 }
 
-export function shouldAllowCanvasAnalysis(userMessage: string): boolean {
+export function shouldAllowCanvasAnalysis(
+  userMessage: string,
+  task?: ResolvedAgentTaskSpec,
+): boolean {
+  if (task && task.preset !== "standard") {
+    return task.intent === "analyze" || task.intent === "optimize";
+  }
   const text = String(userMessage || "");
   const analysisIntent =
     /分析|评价|评估|打分|看看效果|看一下效果|检查(?:效果|画面|设计|素材|文字|排版|构图|加载)?|自检|自测|测试|review|analy[sz]e|evaluate|score/i;
@@ -81,7 +93,19 @@ export function shouldAllowCanvasAnalysis(userMessage: string): boolean {
   return analysisIntent.test(text) && !deniedAnalysisIntent.test(text);
 }
 
-export function shouldContinueAfterArtwork(userMessage: string): boolean {
+export function shouldContinueAfterArtwork(
+  userMessage: string,
+  task?: ResolvedAgentTaskSpec,
+): boolean {
+  if (
+    task &&
+    (task.outputKind !== "single" ||
+      task.delivery !== "canvas" ||
+      task.intent === "analyze" ||
+      task.intent === "optimize")
+  ) {
+    return true;
+  }
   const continuationIntent =
     /继续|再改|优化|调整|迭代|保存|导出|save|export/i;
   const deniedContinuationIntent =
@@ -94,7 +118,11 @@ export function shouldContinueAfterArtwork(userMessage: string): boolean {
   );
 }
 
-function isImageGroupRequest(userMessage: string): boolean {
+export function isImageGroupRequest(
+  userMessage: string,
+  task?: ResolvedAgentTaskSpec,
+): boolean {
+  if (task) return task.outputKind === "group";
   const groupIntent =
     /组图|套图|正反面|正反两面|前后面|前后页|多页设计|image group|image set/i;
   const deniedGroupIntent =
@@ -124,36 +152,58 @@ function inferImageGroupMemberCount(userMessage: string): number {
   return chineseMatch ? chineseNumbers[chineseMatch[1]] : 2;
 }
 
-export function extractExplicitCanvasSize(
-  userMessage: string,
-): ExplicitCanvasSize | null {
+function extractExplicitCanvasSizes(userMessage: string): ExplicitCanvasSize[] {
   const text = String(userMessage || "");
-  const patterns = [
-    /(\d+(?:\.\d+)?)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\s*(px|mm|cm|in)\b/i,
-    /(\d+(?:\.\d+)?)\s*(px|mm|cm|in)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\b/i,
-    /(\d+(?:\.\d+)?)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)(?=\D|$)/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (!match) continue;
-
-    if (pattern === patterns[1]) {
-      return {
+  const located: LocatedCanvasSize[] = [];
+  const patterns: Array<{
+    pattern: RegExp;
+    normalize: (match: RegExpMatchArray) => ExplicitCanvasSize;
+  }> = [
+    {
+      pattern:
+        /(\d+(?:\.\d+)?)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\s*(px|mm|cm|in)?\b/gi,
+      normalize: (match) => ({
+        width: Number(match[1]),
+        height: Number(match[2]),
+        unit: (match[3] || "px").toLowerCase() as ExplicitCanvasSize["unit"],
+      }),
+    },
+    {
+      pattern:
+        /(\d+(?:\.\d+)?)\s*(px|mm|cm|in)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\b/gi,
+      normalize: (match) => ({
         width: Number(match[1]),
         height: Number(match[3]),
         unit: match[2].toLowerCase() as ExplicitCanvasSize["unit"],
-      };
-    }
+      }),
+    },
+  ];
 
-    return {
-      width: Number(match[1]),
-      height: Number(match[2]),
-      unit: (match[3] || "px").toLowerCase() as ExplicitCanvasSize["unit"],
-    };
+  for (const { pattern, normalize } of patterns) {
+    for (const match of text.matchAll(pattern)) {
+      located.push({
+        size: normalize(match),
+        index: match.index || 0,
+      });
+    }
   }
 
-  return null;
+  const seen = new Set<string>();
+  return located
+    .sort((a, b) => a.index - b.index)
+    .map((item) => item.size)
+    .filter((size) => {
+      const key = `${size.width}x${size.height}${size.unit}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+export function extractExplicitCanvasSize(
+  userMessage: string,
+): ExplicitCanvasSize | null {
+  return extractExplicitCanvasSizes(userMessage)[0] || null;
 }
 
 export function isModificationRequest(userMessage: string): boolean {
@@ -163,7 +213,19 @@ export function isModificationRequest(userMessage: string): boolean {
   );
 }
 
-export function isNewDesignRequest(userMessage: string): boolean {
+export function isNewDesignRequest(
+  userMessage: string,
+  task?: ResolvedAgentTaskSpec,
+): boolean {
+  if (task?.preset === "standard") {
+    return isNewDesignRequest(userMessage);
+  }
+  if (task) {
+    return (
+      task.intent === "create" &&
+      (task.source === "blank" || task.source === "reference-image")
+    );
+  }
   const text = String(userMessage || "");
   if (isModificationRequest(text)) return false;
   if (
@@ -173,7 +235,7 @@ export function isNewDesignRequest(userMessage: string): boolean {
     return false;
   }
 
-  return /创建|新建|生成|制作|设计一(?:张|个|套|款|幅|枚|组)|做一(?:张|个|套|款|幅|枚|组)|创作一(?:张|个|套|款|幅|枚|组)|清空画布.*(?:添加|创建)|复刻|仿做|仿制|做同款|相同款|照着.{0,12}(?:做|制作)|create|generate|make a|design a/i.test(
+  return /创建|新建|生成|制作|实现|设计一(?:张|个|套|款|幅|枚|组)|做一(?:张|个|套|款|幅|枚|组)|创作一(?:张|个|套|款|幅|枚|组)|清空画布.*(?:添加|创建)|复刻|仿做|仿制|做同款|相同款|照着.{0,12}(?:做|制作)|create|generate|make a|design a/i.test(
     text,
   );
 }
@@ -203,7 +265,11 @@ function hasExplicitResourceRequest(
   return patterns[type]?.test(userMessage) || false;
 }
 
-function getPrimaryArtworkAction(userMessage: string): string | null {
+function getPrimaryArtworkAction(
+  userMessage: string,
+  task?: ResolvedAgentTaskSpec,
+): string | null {
+  if (task?.intent === "analyze") return null;
   if (
     /(?:设置|调整|修改|改为|改成).{0,12}画布基础字号|画布基础字号.{0,12}(?:设置|调整|修改|改为|改成)/i.test(
       userMessage,
@@ -228,9 +294,15 @@ function getPrimaryArtworkAction(userMessage: string): string | null {
     !deniedMutation &&
     (/修改|调整|替换|更换|添加|改为|改成|移到|移动/i.test(userMessage) ||
       isModificationRequest(userMessage));
-  const positiveCreation = isNewDesignRequest(userMessage);
+  const positiveCreation = isNewDesignRequest(userMessage, task);
 
-  if (!positiveCreation && !positiveMutation) return null;
+  if (
+    !positiveCreation &&
+    !positiveMutation &&
+    (!task || task.preset === "standard")
+  ) {
+    return null;
+  }
 
   if (/流程图|思维导图|关系图|mermaid|flowchart|mind ?map/i.test(userMessage)) {
     return "canvas.addDiagram";
@@ -253,11 +325,21 @@ function createStep(action: string, description: string): DesignPlanStep {
   return { action, description, status: "pending" };
 }
 
-export function buildExecutionPlan(userMessage: string): ExecutionPlanResult {
+export function buildExecutionPlan(
+  userMessage: string,
+  task?: ResolvedAgentTaskSpec,
+): ExecutionPlanResult {
   const normalized = compactText(userMessage);
-  const explicitCanvasSize = extractExplicitCanvasSize(userMessage);
+  const explicitCanvasSizes = extractExplicitCanvasSizes(userMessage);
+  const imageGroupRequest = isImageGroupRequest(userMessage, task);
+  const independentBatchRequest = task?.outputKind === "independent-batch";
+  const perOutputCanvasSize =
+    imageGroupRequest || independentBatchRequest;
+  const explicitCanvasSize = perOutputCanvasSize
+    ? null
+    : explicitCanvasSizes[0] || null;
   const typographyDensity = inferCanvasTypographyDensity(userMessage);
-  const isNewDesign = isNewDesignRequest(userMessage);
+  const isNewDesign = isNewDesignRequest(userMessage, task);
   const shouldPreflightSize = shouldApplyExplicitSize(
     userMessage,
     explicitCanvasSize,
@@ -269,22 +351,19 @@ export function buildExecutionPlan(userMessage: string): ExecutionPlanResult {
     steps.push(createStep("canvas.clear", "创建新设计前清空现有画布"));
   }
 
-  if (shouldPreflightSize && explicitCanvasSize) {
-    steps.push(
-      createStep(
-        "canvas.setSize",
-        `设置画布为 ${explicitCanvasSize.width}×${explicitCanvasSize.height} ${explicitCanvasSize.unit}，并按内容密度设置基础字号`,
-      ),
-    );
-  } else if (
-    isNewDesign &&
-    /T恤|马克杯|手机壳|海报|贴纸|鼠标垫|帆布袋|帽子|抱枕|名片|明信片|贺卡|小红书|story|instagram/i.test(
-      userMessage,
-    )
-  ) {
-    steps.push(
-      createStep("canvas.smartSize", "根据产品或发布场景设置画布尺寸"),
-    );
+  if (!perOutputCanvasSize) {
+    if (shouldPreflightSize && explicitCanvasSize) {
+      steps.push(
+        createStep(
+          "canvas.setSize",
+          `设置画布为 ${explicitCanvasSize.width}×${explicitCanvasSize.height} ${explicitCanvasSize.unit}，并按内容密度设置基础字号`,
+        ),
+      );
+    } else if (isNewDesign) {
+      steps.push(
+        createStep("canvas.smartSize", "根据当前设计内容选择合适的画布尺寸"),
+      );
+    }
   }
 
   if (
@@ -317,33 +396,47 @@ export function buildExecutionPlan(userMessage: string): ExecutionPlanResult {
     );
   }
 
-  const artworkAction = getPrimaryArtworkAction(userMessage);
-  const imageGroupRequest = isImageGroupRequest(userMessage);
-  if (artworkAction && imageGroupRequest) {
-    const memberCount = inferImageGroupMemberCount(userMessage);
+  const artworkAction = getPrimaryArtworkAction(userMessage, task);
+  if (artworkAction && (imageGroupRequest || independentBatchRequest)) {
+    const memberCount = imageGroupRequest
+      ? task?.memberCount || inferImageGroupMemberCount(userMessage)
+      : task?.jobCount || 1;
+    const outputLabel = imageGroupRequest ? "组图" : "独立设计";
     for (let index = 0; index < memberCount; index++) {
       if (index > 0) {
         steps.push(createStep("canvas.clear", `制作第 ${index + 1} 张前清空画布`));
       }
       steps.push(
         createStep(
+          explicitCanvasSizes.length > 0
+            ? "canvas.setSize"
+            : "canvas.smartSize",
+          explicitCanvasSizes.length > 0
+            ? `根据用户原始要求设置${outputLabel}第 ${index + 1}/${memberCount} 张的对应画布尺寸`
+            : `根据当前成员内容选择${outputLabel}第 ${index + 1}/${memberCount} 张的合适画布尺寸`,
+        ),
+      );
+      steps.push(
+        createStep(
           artworkAction,
-          `按统一视觉规范制作组图第 ${index + 1}/${memberCount} 张`,
+          `按需求制作${outputLabel}第 ${index + 1}/${memberCount} 张`,
         ),
       );
       steps.push(
         createStep(
           "canvas.updateAndSaveSticker",
-          `保存组图第 ${index + 1}/${memberCount} 张并记录 stickerId`,
+          `保存${outputLabel}第 ${index + 1}/${memberCount} 张并记录 stickerId`,
         ),
       );
     }
-    steps.push(
-      createStep(
-        "material.createImageGroup",
-        `按保存顺序将 ${memberCount} 张图片创建为组图`,
-      ),
-    );
+    if (imageGroupRequest) {
+      steps.push(
+        createStep(
+          "material.createImageGroup",
+          `按保存顺序将 ${memberCount} 张图片创建为组图`,
+        ),
+      );
+    }
   } else if (artworkAction) {
     const description =
       artworkAction === "canvas.addDiagram"
@@ -354,20 +447,26 @@ export function buildExecutionPlan(userMessage: string): ExecutionPlanResult {
     steps.push(createStep(artworkAction, description));
   }
 
-  if (shouldAllowCanvasAnalysis(userMessage)) {
+  if (
+    shouldAllowCanvasAnalysis(userMessage, task) &&
+    task?.source !== "reference-image"
+  ) {
     steps.push(createStep("canvas.analyze", "分析当前画布并给出评价"));
   }
   if (
     !imageGroupRequest &&
-    hasPositiveCommandIntent(
-      userMessage,
-      /保存|save/i,
-      /(不要|不用|无需|别|禁止|不需要).{0,12}(保存|save)/i,
-    )
+    !independentBatchRequest &&
+    (task?.delivery === "save" ||
+      hasPositiveCommandIntent(
+        userMessage,
+        /保存|save/i,
+        /(不要|不用|无需|别|禁止|不需要).{0,12}(保存|save)/i,
+      ))
   ) {
     steps.push(createStep("canvas.updateAndSaveSticker", "保存当前设计"));
   }
   if (
+    task?.delivery === "export" ||
     hasPositiveCommandIntent(
       userMessage,
       /导出|export/i,

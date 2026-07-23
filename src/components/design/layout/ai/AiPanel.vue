@@ -104,6 +104,66 @@
       @dragleave.prevent="isDragOver = false"
       @drop.prevent="handleDrop"
     >
+      <div
+        v-if="showMemberCount || showJobCount"
+        class="ai-panel__task-options"
+      >
+        <label v-if="showMemberCount" class="ai-panel__task-count">
+          <span>成员</span>
+          <input
+            v-model.number="taskOptions.memberCount"
+            type="number"
+            min="2"
+            max="12"
+            :disabled="isProcessing"
+          />
+        </label>
+        <label v-if="showJobCount" class="ai-panel__task-count">
+          <span>数量</span>
+          <input
+            v-model.number="taskOptions.jobCount"
+            type="number"
+            min="1"
+            max="100"
+            :disabled="isProcessing"
+          />
+        </label>
+      </div>
+
+      <div v-if="taskOptions.preset === 'custom'" class="ai-panel__task-custom">
+        <select v-model="taskOptions.source" title="设计来源">
+          <option value="blank">新建设计</option>
+          <option value="current-canvas">当前画布</option>
+          <option value="reference-image">参考图片</option>
+        </select>
+        <select v-model="taskOptions.intent" title="任务意图">
+          <option value="create">创建</option>
+          <option value="edit">修改</option>
+          <option value="analyze">分析</option>
+          <option value="optimize">优化</option>
+        </select>
+        <select v-model="taskOptions.outputKind" title="输出结构">
+          <option value="single">单图</option>
+          <option value="group">组图</option>
+          <option value="independent-batch">独立批量</option>
+        </select>
+        <select
+          v-model="taskOptions.delivery"
+          title="交付动作"
+          :disabled="taskOptions.outputKind !== 'single'"
+        >
+          <option value="canvas">仅画布</option>
+          <option value="save">保存素材</option>
+          <option value="export">导出 PNG</option>
+        </select>
+        <input
+          v-model="taskOptions.customInstructions"
+          class="ai-panel__task-instructions"
+          placeholder="附加约束"
+          :disabled="isProcessing"
+        />
+      </div>
+
       <!-- Image Preview Card -->
       <div v-if="selectedImage" class="ai-panel__image-card">
         <div class="ai-panel__image-thumb-wrapper">
@@ -133,7 +193,7 @@
         <span>松开上传参考图</span>
       </div>
 
-      <div class="ai-panel__input-row">
+      <div class="ai-panel__input-tools">
         <button
           class="ai-panel__upload-btn"
           :class="{ 'is-active': !!selectedImage }"
@@ -145,6 +205,23 @@
         </button>
         <input ref="imageInputRef" type="file" accept="image/*" style="display:none" @change="handleImageUpload" />
 
+        <select
+          v-model="taskOptions.preset"
+          class="ai-panel__task-select"
+          :disabled="isProcessing"
+          title="设计模式"
+        >
+          <option
+            v-for="preset in taskPresets"
+            :key="preset.value"
+            :value="preset.value"
+          >
+            {{ preset.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="ai-panel__input-row">
         <textarea
           ref="textareaRef"
           v-model="inputText"
@@ -194,6 +271,12 @@ import type { AgentInteraction } from "@/ai/langgraph";
 import { isDarkMode } from "@/components/design/store";
 import { prepareImageForAI } from "@/ai/image-preprocess";
 import { getAgentPhaseLabel } from "@/ai/agent/presentation";
+import {
+  AGENT_TASK_PRESETS,
+  resolveAgentTaskSpec,
+  validateAgentTaskSpec,
+  type AgentTaskOptions,
+} from "@/ai/agent/task-spec";
 
 const isOpen = useLocalStorage("_1s_ai_panel_open", false);
 
@@ -221,6 +304,44 @@ const isPreparingImage = ref(false);
 const isDragOver = ref(false);
 const autoFollowMessages = ref(true);
 const hasUnreadMessages = ref(false);
+const taskPresets = AGENT_TASK_PRESETS;
+const taskOptions = useLocalStorage<AgentTaskOptions>(
+  "_1s_ai_task_options_v1",
+  {
+    preset: "standard",
+    source: "blank",
+    intent: "create",
+    outputKind: "single",
+    jobCount: 3,
+    memberCount: 2,
+    delivery: "canvas",
+    customInstructions: "",
+  },
+  { mergeDefaults: true },
+);
+const showMemberCount = computed(
+  () =>
+    taskOptions.value.preset === "group" ||
+    (taskOptions.value.preset === "custom" &&
+      taskOptions.value.outputKind === "group"),
+);
+const showJobCount = computed(
+  () =>
+    taskOptions.value.preset === "batch" ||
+    (taskOptions.value.preset === "custom" &&
+      taskOptions.value.outputKind === "independent-batch"),
+);
+watch(
+  () => [taskOptions.value.preset, taskOptions.value.outputKind] as const,
+  ([preset, outputKind]) => {
+    if (
+      preset === "custom" &&
+      outputKind !== "single"
+    ) {
+      taskOptions.value.delivery = "save";
+    }
+  },
+);
 
 function adjustTextareaHeight() {
   const el = textareaRef.value;
@@ -340,7 +461,19 @@ function handleSend() {
   if (isComposing.value) return;
   if (selectedImage.value) {
     const text = inputText.value.trim() || "请分析这张图片的设计风格，然后创建一个类似的设计";
-    agent.chatWithImage(text, selectedImage.value.preview);
+    const resolvedTask = resolveAgentTaskSpec(text, taskOptions.value, {
+      hasReferenceImage: true,
+    });
+    const taskError = validateAgentTaskSpec(resolvedTask, {
+      hasReferenceImage: true,
+    });
+    if (taskError) {
+      alert(taskError);
+      return;
+    }
+    agent.chatWithImage(text, selectedImage.value.preview, {
+      task: { ...taskOptions.value },
+    });
     selectedImage.value = null;
     resetTextareaHeight();
     scrollToBottom(true);
@@ -355,7 +488,17 @@ function handleSend() {
     return;
   }
   if (isProcessing.value) return;
-  agent.chat(text);
+  const resolvedTask = resolveAgentTaskSpec(text, taskOptions.value, {
+    hasReferenceImage: false,
+  });
+  const taskError = validateAgentTaskSpec(resolvedTask, {
+    hasReferenceImage: false,
+  });
+  if (taskError) {
+    alert(taskError);
+    return;
+  }
+  agent.chat(text, { task: { ...taskOptions.value } });
   resetTextareaHeight();
   scrollToBottom(true);
 }
@@ -798,6 +941,73 @@ watch(
   }
 }
 
+.ai-panel__task-options {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  margin-bottom: 8px;
+}
+
+.ai-panel__task-select,
+.ai-panel__task-custom select,
+.ai-panel__task-custom input {
+  height: 26px;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 11px;
+  outline: none;
+  &:focus { border-color: var(--accent); }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+.ai-panel__task-select {
+  width: 92px;
+  height: 34px;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+
+.ai-panel__task-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  white-space: nowrap;
+
+  input {
+    width: 46px;
+    height: 26px;
+    box-sizing: border-box;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-input);
+    color: var(--text);
+    padding: 0 4px;
+    font: inherit;
+    text-align: center;
+    outline: none;
+    &:focus { border-color: var(--accent); }
+  }
+}
+
+.ai-panel__task-custom {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 8px;
+
+  select,
+  input { width: 100%; box-sizing: border-box; padding: 0 6px; }
+
+  .ai-panel__task-instructions { grid-column: 1 / -1; }
+}
+
 /* ---- Image Card Preview ---- */
 .ai-panel__image-card {
   display: flex;
@@ -893,6 +1103,13 @@ watch(
 }
 
 /* ---- Upload & Input & Send Buttons ---- */
+.ai-panel__input-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
 .ai-panel__input-row { display: flex; align-items: flex-end; gap: 6px; }
 
 .ai-panel__upload-btn {
@@ -919,7 +1136,7 @@ watch(
 }
 
 .ai-panel__input-field {
-  flex: 1; padding: 7px 10px;
+  flex: 1; min-width: 0; padding: 7px 10px;
   border: 1px solid var(--border-strong); border-radius: 6px;
   font-size: 13px; line-height: 1.45; outline: none;
   background: var(--bg-input); color: var(--text);

@@ -9,6 +9,34 @@
     :mask-closable="batchProgress.status === 'idle'"
   >
     <div v-if="batchProgress.status === 'idle'" class="auto-config">
+      <div class="auto-config__row">
+        <label>模式</label>
+        <a-select
+          v-model:value="config.taskPreset"
+          class="auto-config__mode"
+          size="small"
+        >
+          <a-select-option
+            v-for="preset in automaticPresets"
+            :key="preset.value"
+            :value="preset.value"
+          >
+            {{ preset.label }}
+          </a-select-option>
+        </a-select>
+        <a-select
+          v-if="config.taskPreset === 'custom'"
+          v-model:value="config.outputKind"
+          class="auto-config__mode"
+          size="small"
+        >
+          <a-select-option value="independent-batch">
+            独立素材
+          </a-select-option>
+          <a-select-option value="group">组图套装</a-select-option>
+        </a-select>
+      </div>
+
       <div class="auto-config__field">
         <label>需求提示词</label>
         <a-textarea
@@ -20,11 +48,29 @@
       </div>
 
       <div class="auto-config__row">
-        <label>数量</label>
+        <label>{{ isGroupMode ? "套数" : "数量" }}</label>
         <a-input-number
           v-model:value="config.count"
           :min="1"
-          :max="100"
+          :max="maxProductionCount"
+          size="small"
+        />
+        <template v-if="isGroupMode">
+          <label>每套成员</label>
+          <a-input-number
+            v-model:value="config.membersPerGroup"
+            :min="2"
+            :max="12"
+            size="small"
+          />
+        </template>
+      </div>
+
+      <div v-if="config.taskPreset === 'custom'" class="auto-config__field">
+        <label>附加约束</label>
+        <a-input
+          v-model:value="config.customInstructions"
+          placeholder="例如：每套保持统一配色，成员构图必须不同"
           size="small"
         />
       </div>
@@ -105,6 +151,7 @@
           <span v-if="item.score !== null" class="auto-list__score">
             {{ item.score }}
           </span>
+          <span v-if="item.groupId" class="auto-list__group">组图</span>
         </div>
       </div>
 
@@ -178,6 +225,7 @@
           <span v-if="item.score !== null" class="auto-list__score">
             {{ item.score }}
           </span>
+          <span v-if="item.groupId" class="auto-list__group">组图</span>
         </div>
       </div>
 
@@ -189,7 +237,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed } from "vue";
+import { reactive, computed, watch } from "vue";
 import { useNow } from "@vueuse/core";
 import { showAutocreateModal } from "./index";
 import {
@@ -201,11 +249,48 @@ import {
   resetBatch,
 } from "@/ai/agent/batch";
 import type { AutoBatchConfig, BatchItem } from "@/ai/agent/batch";
+import {
+  AGENT_TASK_PRESETS,
+  resolveAgentTaskSpec,
+} from "@/ai/agent/task-spec";
 
 const config = reactive<AutoBatchConfig>({
   description: "",
   count: 5,
+  taskPreset: "standard",
+  outputKind: "independent-batch",
+  membersPerGroup: 2,
+  customInstructions: "",
   enableAnalysisOptimization: false,
+});
+const automaticPresets = AGENT_TASK_PRESETS.filter((preset) =>
+  ["standard", "batch", "group", "custom"].includes(preset.value),
+);
+const resolvedTask = computed(() =>
+  resolveAgentTaskSpec(
+    config.description,
+    {
+      preset: config.taskPreset,
+      outputKind: config.outputKind,
+      jobCount: config.count,
+      memberCount: config.membersPerGroup,
+      customInstructions: config.customInstructions,
+    },
+    { execution: "automatic" },
+  ),
+);
+const isGroupMode = computed(
+  () => resolvedTask.value.outputKind === "group",
+);
+const maxProductionCount = computed(() =>
+  isGroupMode.value
+    ? Math.max(1, Math.floor(100 / Number(config.membersPerGroup || 2)))
+    : 100,
+);
+watch(maxProductionCount, (maxCount) => {
+  if (Number(config.count || 1) > maxCount) {
+    config.count = maxCount;
+  }
 });
 const now = useNow({ interval: 1000 });
 const elapsedText = computed(() => {
@@ -274,6 +359,8 @@ function statusText(item: BatchItem): string {
       return "修订中";
     case "saving":
       return "保存中";
+    case "grouping":
+      return "创建组图";
     case "done":
       return "已完成";
     case "skipped":
@@ -426,6 +513,10 @@ function handleReset() {
       white-space: nowrap;
     }
   }
+
+  &__mode {
+    width: 132px;
+  }
 }
 
 .auto-running {
@@ -508,9 +599,20 @@ function handleReset() {
     &--designing,
     &--evaluating,
     &--revising,
-    &--saving {
+    &--saving,
+    &--grouping {
       background: fade(@accent, 4%);
     }
+  }
+
+  &__group {
+    flex-shrink: 0;
+    padding: 1px 5px;
+    border: 1px solid fade(@accent, 28%);
+    border-radius: 3px;
+    color: @accent;
+    font-size: 10px;
+    line-height: 16px;
   }
 
   &__dot {

@@ -46,6 +46,12 @@ import {
   shouldContinueAfterArtwork,
   type DesignPlan,
 } from "./planning";
+import {
+  buildAgentTaskConstraintPrompt,
+  resolveAgentTaskSpec,
+  validateAgentTaskSpec,
+  type AgentTaskOptions,
+} from "./task-spec";
 
 // ============ 类型定义 ============
 
@@ -89,6 +95,14 @@ interface SearchRecord {
   cachedData?: any;
 }
 
+interface AgentBatchTask {
+  total: number;
+  completed: number;
+  description: string;
+  stickerIds: string[];
+  requiresImageGroup: boolean;
+}
+
 // ============ 工具定义 ============
 
 // ============ Agent 状态 ============
@@ -100,11 +114,7 @@ const agentState = reactive({
   error: null as string | null,
   searchHistory: [] as SearchRecord[],
   // 任务追踪
-  batchTask: null as {
-    total: number;
-    completed: number;
-    description: string;
-  } | null,
+  batchTask: null as AgentBatchTask | null,
   // 规划
   plan: null as DesignPlan | null,
 });
@@ -462,16 +472,28 @@ function sanitizeToolProtocolMessages(messages: any[]) {
 
 // ============ 任务追踪 ============
 
-function startBatchTask(total: number, description: string) {
+function startBatchTask(
+  total: number,
+  description: string,
+  requiresImageGroup: boolean,
+) {
+  const numericTotal = Number(total);
+  const normalizedTotal = Number.isFinite(numericTotal)
+    ? Math.max(1, Math.min(200, Math.floor(numericTotal)))
+    : 1;
   agentState.batchTask = {
-    total,
+    total: normalizedTotal,
     completed: 0,
     description,
+    stickerIds: [],
+    requiresImageGroup,
   };
-  console.log(`[Agent] Batch task started: ${description} (${total} items)`);
+  console.log(
+    `[Agent] Batch task started: ${description} (${normalizedTotal} items)`,
+  );
 }
 
-function completeBatchItem(): {
+function completeBatchItem(stickerId: unknown): {
   current: number;
   total: number;
   hint: string;
@@ -481,27 +503,73 @@ function completeBatchItem(): {
     return { current: 0, total: 0, hint: "", isComplete: false };
   }
 
-  agentState.batchTask.completed++;
-  const { completed, total } = agentState.batchTask;
+  const normalizedStickerId = String(stickerId || "").trim();
+  if (
+    normalizedStickerId &&
+    !agentState.batchTask.stickerIds.includes(normalizedStickerId)
+  ) {
+    agentState.batchTask.stickerIds.push(normalizedStickerId);
+  }
+  agentState.batchTask.completed = Math.min(
+    agentState.batchTask.stickerIds.length,
+    agentState.batchTask.total,
+  );
+  const { completed, total, requiresImageGroup, stickerIds } =
+    agentState.batchTask;
   const isComplete = completed >= total;
 
-  const hint = isComplete
-    ? `全部完成！已成功保存 ${total} 个素材。`
-    : `已完成 ${completed}/${total}，请继续创建下一个素材，完成后再次调用 canvas.updateAndSaveSticker 保存。`;
+  let hint = "";
+  if (!normalizedStickerId) {
+    hint =
+      "保存结果没有返回有效 stickerId，本项不能计入批量进度，请重新保存。";
+  } else if (!isComplete) {
+    hint = `已完成 ${completed}/${total}，请继续创建下一个素材，完成后再次调用 canvas.updateAndSaveSticker 保存。`;
+  } else if (requiresImageGroup) {
+    hint = `已成功保存 ${total} 个素材。下一步必须调用 material.createImageGroup，并按以下顺序传入 stickerIds：${JSON.stringify(stickerIds)}。`;
+  } else {
+    hint = `全部完成！已成功保存 ${total} 个素材。`;
+  }
 
   console.log(`[Agent] Batch progress: ${completed}/${total}`);
 
-  if (isComplete) {
+  if (isComplete && !requiresImageGroup) {
     agentState.batchTask = null;
   }
 
   return { current: completed, total, hint, isComplete };
 }
 
+function completeBatchImageGroup() {
+  if (!agentState.batchTask?.requiresImageGroup) return;
+  console.log(
+    `[Agent] Image group completed with ${agentState.batchTask.stickerIds.length} tracked stickers`,
+  );
+  agentState.batchTask = null;
+}
+
+function getIncompleteBatchReason(): string {
+  if (!agentState.batchTask) return "";
+  const { completed, total, requiresImageGroup } = agentState.batchTask;
+  if (completed < total) {
+    return `批量素材仅完成 ${completed}/${total}`;
+  }
+  if (requiresImageGroup) {
+    return `已保存 ${total}/${total} 个素材，但尚未创建组图`;
+  }
+  return "";
+}
+
 function getBatchProgress(): string {
   if (!agentState.batchTask) return "";
-  const { completed, total, description } = agentState.batchTask;
-  return `\n\n## 当前任务进度\n任务：${description}\n进度：${completed}/${total}\n请继续完成剩余 ${total - completed} 个素材。`;
+  const { completed, total, description, stickerIds, requiresImageGroup } =
+    agentState.batchTask;
+  const nextAction =
+    completed < total
+      ? `请继续完成剩余 ${total - completed} 个素材。`
+      : requiresImageGroup
+        ? "所有成员均已保存，必须调用 material.createImageGroup 创建组图。"
+        : "所有素材均已保存。";
+  return `\n\n## 当前批量任务（以此进度为准）\n任务：${description}\n进度：${completed}/${total}\n已保存 stickerIds：${JSON.stringify(stickerIds)}\n${nextAction}`;
 }
 
 function clearBatchTask() {
@@ -611,12 +679,13 @@ function findUnescapedQuote(str: string, start: number): number {
 
 // ============ Agent 循环 ============
 
-interface RunAgentLoopOptions {
+export interface RunAgentLoopOptions {
   allowInteraction?: boolean;
   allowCanvasAnalysis?: boolean;
   deliveryHandledExternally?: boolean;
   excludeOperations?: string[];
   referenceImage?: string;
+  task?: AgentTaskOptions;
 }
 
 const AUTO_BATCH_BLOCKED_OPERATIONS = [
@@ -637,6 +706,21 @@ const RETRYABLE_DELIVERY_OPERATIONS = new Set([
   "canvas.updateAndSaveSticker",
   "canvas.exportPng",
   "material.createImageGroup",
+]);
+
+const SIZE_DECISION_OPERATIONS = new Set([
+  "canvas.setSize",
+  "canvas.smartSize",
+  "canvas.setSizeByPreset",
+]);
+
+const ARTWORK_CREATION_ACTIONS = new Set([
+  "canvas.addHtml",
+  "canvas.addChild:html",
+  "canvas.addDiagram",
+  "canvas.addChart",
+  "canvas.createSticker",
+  "canvas.createFromDescription",
 ]);
 
 function getToolTimeoutMs(toolName: string): number {
@@ -785,6 +869,117 @@ function failRemainingPlan(plan: DesignPlan | null, reason: string) {
   notifyPlanUpdated(reason);
 }
 
+function reconcileBatchPlan(
+  plan: DesignPlan | null,
+  total: number,
+  requiresImageGroup: boolean,
+  outputKind: "group" | "independent-batch",
+) {
+  if (!plan) return;
+  const outputLabel = outputKind === "group" ? "组图" : "独立设计";
+
+  const existingSaveCount = plan.steps.filter(
+    (step) => step.action === "canvas.updateAndSaveSticker",
+  ).length;
+  const artworkAction =
+    plan.steps.find((step) =>
+      [
+        "canvas.addHtml",
+        "canvas.addChild:html",
+        "canvas.addDiagram",
+        "canvas.addChart",
+      ].includes(step.action),
+    )?.action || "canvas.addHtml";
+  const sizeDecisionAction =
+    plan.steps.find((step) => SIZE_DECISION_OPERATIONS.has(step.action))
+      ?.action || "canvas.smartSize";
+  const extraSteps = [] as DesignPlan["steps"];
+  let planChanged = false;
+
+  for (let index = existingSaveCount; index < total; index++) {
+    if (index > 0) {
+      extraSteps.push({
+        action: "canvas.clear",
+        description: `制作第 ${index + 1} 张前清空画布`,
+        status: "pending",
+      });
+    }
+    extraSteps.push(
+      {
+        action: sizeDecisionAction,
+        description: `为${outputLabel}第 ${index + 1}/${total} 张选择合适的画布尺寸`,
+        status: "pending",
+      },
+      {
+        action: artworkAction,
+        description: `按需求制作${outputLabel}第 ${index + 1}/${total} 张`,
+        status: "pending",
+      },
+      {
+        action: "canvas.updateAndSaveSticker",
+        description: `保存${outputLabel}第 ${index + 1}/${total} 张并记录 stickerId`,
+        status: "pending",
+      },
+    );
+  }
+
+  if (extraSteps.length > 0) {
+    const groupIndex = plan.steps.findIndex(
+      (step) => step.action === "material.createImageGroup",
+    );
+    plan.steps.splice(
+      groupIndex >= 0 ? groupIndex : plan.steps.length,
+      0,
+      ...extraSteps,
+    );
+    planChanged = true;
+  }
+
+  if (
+    requiresImageGroup &&
+    !plan.steps.some((step) => step.action === "material.createImageGroup")
+  ) {
+    plan.steps.push({
+      action: "material.createImageGroup",
+      description: `按保存顺序将 ${total} 张图片创建为组图`,
+      status: "pending",
+    });
+    planChanged = true;
+  }
+
+  let artworkIndex = 0;
+  let saveIndex = 0;
+  let sizeIndex = 0;
+  for (const step of plan.steps) {
+    if (SIZE_DECISION_OPERATIONS.has(step.action)) {
+      sizeIndex += 1;
+      step.description = `为${outputLabel}第 ${sizeIndex}/${total} 张选择合适的画布尺寸`;
+    } else if (
+      [
+        "canvas.addHtml",
+        "canvas.addChild:html",
+        "canvas.addDiagram",
+        "canvas.addChart",
+      ].includes(step.action)
+    ) {
+      artworkIndex += 1;
+      step.description = `按需求制作${outputLabel}第 ${artworkIndex}/${total} 张`;
+    } else if (step.action === "canvas.updateAndSaveSticker") {
+      saveIndex += 1;
+      step.description = `保存${outputLabel}第 ${saveIndex}/${total} 张并记录 stickerId`;
+    } else if (step.action === "material.createImageGroup") {
+      step.description = `按保存顺序将 ${total} 张图片创建为组图`;
+    }
+  }
+
+  if (planChanged) {
+    plan.currentStep = plan.steps.filter(
+      (step) => step.status !== "pending",
+    ).length;
+    notifyPlanUpdated(`批量计划已按实际数量校准为 ${total} 个素材`);
+  }
+}
+
 async function executePreflightOperation(
   toolName: "canvas.clear" | "canvas.setSize",
   args: Record<string, any>,
@@ -861,16 +1056,27 @@ async function runAgentLoop(
   const allowInteraction = options.allowInteraction !== false;
   const deliveryHandledExternally =
     options.deliveryHandledExternally === true;
+  const referenceImage = String(options.referenceImage || "").trim();
+  const taskSpec = resolveAgentTaskSpec(userMessage, options.task, {
+    hasReferenceImage: Boolean(referenceImage),
+    execution: allowInteraction ? "interactive" : "automatic",
+  });
   const allowCanvasAnalysis =
-    options.allowCanvasAnalysis ?? shouldAllowCanvasAnalysis(userMessage);
+    options.allowCanvasAnalysis ??
+    shouldAllowCanvasAnalysis(userMessage, taskSpec);
   let iteration = 0;
-  const allowPostArtworkContinuation = shouldContinueAfterArtwork(userMessage);
+  const allowPostArtworkContinuation = shouldContinueAfterArtwork(
+    userMessage,
+    taskSpec,
+  );
   let completedArtwork = false;
   let automaticDeliveryCompleted = false;
   let unparseableResponseCount = 0;
-  const referenceImage = String(options.referenceImage || "").trim();
   let referenceArtworkCreated = false;
-  const hasCreatedReferenceArtwork = () => !referenceImage || referenceArtworkCreated;
+  const requiresReferenceArtwork =
+    Boolean(referenceImage) && taskSpec.intent !== "analyze";
+  const hasCreatedReferenceArtwork = () =>
+    !requiresReferenceArtwork || referenceArtworkCreated;
 
   // 添加用户消息
   addMessage({
@@ -879,8 +1085,25 @@ async function runAgentLoop(
     meta: referenceImage ? { hasImage: true } : undefined,
   });
 
+  const taskValidationError = validateAgentTaskSpec(taskSpec, {
+    hasReferenceImage: Boolean(referenceImage),
+  });
+  if (taskValidationError) {
+    addMessage({
+      role: "assistant",
+      content: taskValidationError,
+      meta: { type: "task-validation-error" },
+    });
+    return;
+  }
+
   // 1. 本地生成可执行计划，避免额外的 Planner 模型请求。
-  const executionPlan = buildExecutionPlan(userMessage);
+  const executionPlan = buildExecutionPlan(userMessage, taskSpec);
+  const requiresImageGroupDelivery = taskSpec.createImageGroup;
+  let canvasSizeReadyForArtwork = !executionPlan.isNewDesign;
+  if (executionPlan.isNewDesign) {
+    clearBatchTask();
+  }
   const searchQueries = executionPlan.searchQueries;
   let explicitCanvasSize = executionPlan.shouldPreflightSize
     ? executionPlan.explicitCanvasSize
@@ -890,10 +1113,28 @@ async function runAgentLoop(
 
   agentState.plan = executionPlan.plan;
   const plan = agentState.plan;
-  const maxIterations = Math.max(
+  const hardMaxIterations = 48;
+  let maxIterations = Math.max(
     10,
-    Math.min(48, (plan?.steps.length || 0) + 3),
+    Math.min(hardMaxIterations, (plan?.steps.length || 0) + 3),
   );
+  const extendBatchIterationBudget = () => {
+    const batchTask = agentState.batchTask;
+    if (!batchTask) return;
+    const remainingItems = Math.max(
+      batchTask.total - batchTask.completed,
+      0,
+    );
+    const estimatedRequiredIterations =
+      iteration +
+      remainingItems * 4 +
+      (batchTask.requiresImageGroup ? 2 : 1) +
+      2;
+    maxIterations = Math.min(
+      hardMaxIterations,
+      Math.max(maxIterations, estimatedRequiredIterations),
+    );
+  };
   if (plan) {
     addMessage({
       role: "assistant",
@@ -933,6 +1174,7 @@ async function runAgentLoop(
       plan,
     );
     if (result.success) {
+      canvasSizeReadyForArtwork = true;
       completedPreflightOperations.add("canvas.setSize");
       excludedPreflightOperations.add("canvas.setSize");
       excludedPreflightOperations.add("canvas.smartSize");
@@ -1015,10 +1257,13 @@ async function runAgentLoop(
 
   // 4. 构建高信号消息列表。
   const baseSystemPrompt = referenceImage
-    ? `${buildImageAnalysisPrompt()}\n\n## 执行规则\n- 参考图已随用户消息提供，请先识别画布比例、构图、文字、配色和主要视觉元素。\n- 按计划逐步调用工具，每轮根据上一次工具结果继续。\n- 使用一个完整 canvas.addHtml 实现画面；外部资源必须先搜索并通过 htmlBindings 使用。\n- HTML 文字直接使用画布提供的 var(--type-hero/title/primary/subtitle/body/caption/micro)。\n- 不要只输出分析或方案，canvas.addHtml 成功前禁止表示复刻完成。`
+    ? taskSpec.intent === "analyze"
+      ? `${buildImageAnalysisPrompt()}\n\n## 执行规则\n- 只分析用户上传的参考图片，不要清空或修改当前画布。\n- 直接给出构图、文字层级、配色和主要视觉元素的分析结果。`
+      : `${buildImageAnalysisPrompt()}\n\n## 执行规则\n- 参考图已随用户消息提供，请先识别画布比例、构图、文字、配色和主要视觉元素。\n- 按计划逐步调用工具，每轮根据上一次工具结果继续。\n- 使用一个完整 canvas.addHtml 实现画面；外部资源必须先搜索并通过 htmlBindings 使用。\n- HTML 文字直接使用画布提供的 var(--type-hero/title/primary/subtitle/body/caption/micro)。\n- 不要只输出分析或方案，canvas.addHtml 成功前禁止表示复刻完成。`
     : buildSystemPrompt();
   const systemPrompt =
     baseSystemPrompt +
+    buildAgentTaskConstraintPrompt(taskSpec) +
     "\n" +
     knowledgePrompt +
     (skillPrompt ? `\n\n${skillPrompt}` : "") +
@@ -1128,15 +1373,24 @@ async function runAgentLoop(
     const llmStartTime = Date.now();
     try {
       const nextPlanStep = plan?.steps.find((step) => step.status === "pending");
-      const iterationMessages = nextPlanStep
-        ? [
-            ...messagesForLLM,
-            {
-              role: "system",
-              content: `[当前唯一下一步] ${nextPlanStep.action}：${nextPlanStep.description}。先完成这一步并等待工具结果，不要跳到后续步骤。`,
-            },
-          ]
-        : messagesForLLM;
+      const iterationGuidance: any[] = [];
+      const currentBatchProgress = getBatchProgress();
+      if (currentBatchProgress) {
+        iterationGuidance.push({
+          role: "system",
+          content: currentBatchProgress,
+        });
+      }
+      if (nextPlanStep) {
+        iterationGuidance.push({
+          role: "system",
+          content: `[当前唯一下一步] ${nextPlanStep.action}：${nextPlanStep.description}。先完成这一步并等待工具结果，不要跳到后续步骤。`,
+        });
+      }
+      const iterationMessages = [
+        ...messagesForLLM,
+        ...iterationGuidance,
+      ];
       response = await directChat({
         messages: sanitizeToolProtocolMessages(iterationMessages),
         tools: allTools,
@@ -1220,26 +1474,65 @@ async function runAgentLoop(
       });
     }
 
-    // 如果没有工具调用，结束
+    // 没有工具调用时，先确认计划和批量交付是否真的完成。
     if (toolCalls.length === 0) {
-      if (!hasCreatedReferenceArtwork() && iteration < maxIterations) {
-        console.warn("[Agent] 参考图已分析，但画布作品尚未创建，继续执行");
-        messagesForLLM.push({
-          role: "system",
-          content:
-            "参考图分析已经完成，但当前画布还没有实际 HTML 作品。请继续执行下一步并调用 canvas.addHtml；不要只描述方案，也不要表示已经完成。",
-        });
-        continue;
-      }
       if (!hasCreatedReferenceArtwork()) {
+        if (iteration >= maxIterations && maxIterations < hardMaxIterations) {
+          maxIterations = Math.min(hardMaxIterations, maxIterations + 3);
+        }
+        if (iteration < maxIterations) {
+          console.warn(
+            "[Agent] 参考图已分析，但画布作品尚未创建，继续执行",
+          );
+          messagesForLLM.push({
+            role: "system",
+            content:
+              "参考图分析已经完成，但当前画布还没有实际 HTML 作品。请继续执行下一步并调用 canvas.addHtml；不要只描述方案，也不要表示已经完成。",
+          });
+          continue;
+        }
         addMessage({
           role: "assistant",
           content: "参考图片已经分析，但设计未能创建完成，请重试。",
           meta: { iteration, type: "reference-artwork-incomplete" },
         });
+        failRemainingPlan(plan, "参考图设计未创建完成");
+        return;
       }
+
+      const batchReason = getIncompleteBatchReason();
+      const incompleteDeliveryActions = getIncompleteDeliveryActions(plan);
+      const pendingPlanSteps =
+        plan?.steps.filter((step) => step.status === "pending") || [];
+      const outstandingReason = batchReason
+        ? batchReason
+        : incompleteDeliveryActions.length > 0
+          ? `尚未完成交付步骤：${incompleteDeliveryActions.join("、")}`
+          : pendingPlanSteps.length > 0
+            ? `执行计划还有 ${pendingPlanSteps.length} 个步骤未完成`
+            : "";
+
+      if (outstandingReason) {
+        if (iteration >= maxIterations && maxIterations < hardMaxIterations) {
+          maxIterations = Math.min(hardMaxIterations, maxIterations + 3);
+        }
+        if (iteration < maxIterations) {
+          messagesForLLM.push({
+            role: "system",
+            content: `任务尚未完成：${outstandingReason}。不要结束或表示完成，请立即调用下一步所需工具。`,
+          });
+          continue;
+        }
+        failRemainingPlan(plan, outstandingReason);
+        addMessage({
+          role: "assistant",
+          content: `任务未完成：${outstandingReason}。已达到最大执行轮次，请继续任务或重试。`,
+          meta: { iteration, type: "task-incomplete" },
+        });
+        return;
+      }
+
       console.log("[Agent] No tool calls, ending loop");
-      failRemainingPlan(plan, "模型未继续执行剩余步骤");
       return;
     }
 
@@ -1270,7 +1563,40 @@ async function runAgentLoop(
       }
 
       const toolName = resolveAIToolName(call.function.name);
+      if (
+        toolName === "canvas.startBatchTask" &&
+        taskSpec.preset !== "standard"
+      ) {
+        args = {
+          ...args,
+          total:
+            taskSpec.outputKind === "group"
+              ? taskSpec.memberCount
+              : taskSpec.outputKind === "independent-batch"
+                ? taskSpec.jobCount
+                : args?.total,
+        };
+      }
+      let batchGroupBlockReason = "";
+      if (
+        toolName === "material.createImageGroup" &&
+        agentState.batchTask?.requiresImageGroup
+      ) {
+        const batchTask = agentState.batchTask;
+        if (batchTask.completed < batchTask.total) {
+          batchGroupBlockReason = `组图成员尚未保存完整，当前进度 ${batchTask.completed}/${batchTask.total}。请先完成并保存剩余成员。`;
+        } else {
+          args = {
+            ...args,
+            stickerIds: [...batchTask.stickerIds],
+          };
+        }
+      }
       const planAction = getPlanActionForTool(toolName, args);
+      const sizeDecisionBlockReason =
+        !canvasSizeReadyForArtwork && ARTWORK_CREATION_ACTIONS.has(planAction)
+          ? "当前设计尚未完成画布尺寸决策。请先调用 canvas.setSize、canvas.smartSize 或 canvas.setSizeByPreset，成功后再绘制。"
+          : "";
       const isInteractionTool = INTERACTION_TOOL_NAMES.includes(
         call.function.name,
       );
@@ -1372,8 +1698,17 @@ async function runAgentLoop(
       try {
         let result;
 
-        // 检查是否是资源工具
-        if (isResourceToolName(toolName)) {
+        if (sizeDecisionBlockReason) {
+          result = {
+            success: false,
+            message: sizeDecisionBlockReason,
+          };
+        } else if (batchGroupBlockReason) {
+          result = {
+            success: false,
+            message: batchGroupBlockReason,
+          };
+        } else if (isResourceToolName(toolName)) {
           // 检查是否是重复搜索
           const duplicate = isDuplicateSearch(toolName, args);
           if (duplicate) {
@@ -1470,6 +1805,11 @@ async function runAgentLoop(
 
         if (result?.success) {
           syncAgentDesignProvenanceAfterTool(toolName, args, userMessage);
+          if (toolName === "canvas.clear") {
+            canvasSizeReadyForArtwork = false;
+          } else if (SIZE_DECISION_OPERATIONS.has(toolName)) {
+            canvasSizeReadyForArtwork = true;
+          }
         }
 
         // 尺寸强制矫正：用户指定明确尺寸时，每次工具执行后都强制确保画布尺寸正确
@@ -1492,22 +1832,63 @@ async function runAgentLoop(
           );
         }
 
-        // 如果是保存操作，更新任务进度
+        // 同步批量任务、保存顺序和组图交付状态。
         let progressHint = "";
+        if (toolName === "canvas.startBatchTask" && result?.success) {
+          const reportedTotal = Number(
+            result?.data?.total || args?.total || 0,
+          );
+          const total =
+            taskSpec.preset === "standard"
+              ? reportedTotal
+              : taskSpec.outputKind === "group"
+                ? taskSpec.memberCount
+                : taskSpec.outputKind === "independent-batch"
+                  ? taskSpec.jobCount
+                  : reportedTotal;
+          const description = String(
+            result?.data?.description ||
+              args?.description ||
+              `创建 ${total} 个素材`,
+          );
+          startBatchTask(total, description, requiresImageGroupDelivery);
+          reconcileBatchPlan(
+            plan,
+            total,
+            requiresImageGroupDelivery,
+            taskSpec.outputKind === "group" ? "group" : "independent-batch",
+          );
+          extendBatchIterationBudget();
+        }
         if (toolName === "canvas.updateAndSaveSticker" && result?.success) {
-          const progress = completeBatchItem();
+          if (!agentState.batchTask && requiresImageGroupDelivery) {
+            const plannedTotal = Math.max(
+              2,
+              plan?.steps.filter(
+                (step) => step.action === "canvas.updateAndSaveSticker",
+              ).length || 0,
+            );
+            startBatchTask(plannedTotal, userMessage, true);
+          }
+          const progress = completeBatchItem(result?.data?.stickerId);
           if (progress.hint) {
             progressHint = `\n\n[任务进度] ${progress.hint}`;
           }
+          extendBatchIterationBudget();
+        }
+        if (toolName === "material.createImageGroup" && result?.success) {
+          completeBatchImageGroup();
         }
 
-        const planStepSucceeded = didToolCompletePlanStep(toolName, result);
-        settleRuntimePlanStep(
-          plan,
-          planAction,
-          planStepSucceeded,
-          getToolPlanResult(toolName, result),
-        );
+        if (!sizeDecisionBlockReason) {
+          const planStepSucceeded = didToolCompletePlanStep(toolName, result);
+          settleRuntimePlanStep(
+            plan,
+            planAction,
+            planStepSucceeded,
+            getToolPlanResult(toolName, result),
+          );
+        }
         if (
           !allowInteraction &&
           !deliveryHandledExternally &&
@@ -1660,15 +2041,31 @@ async function runAgentLoop(
 
   // 超过最大迭代次数
   console.warn("[Agent] Max iterations reached");
-  failRemainingPlan(plan, "达到最大推理轮次");
+  const incompleteBatchReason = getIncompleteBatchReason();
+  const pendingSteps =
+    plan?.steps.filter((step) => step.status === "pending") || [];
+  const failedSteps =
+    plan?.steps.filter((step) => step.status === "failed") || [];
+  const incompleteReason = !hasCreatedReferenceArtwork()
+    ? "参考图片已经分析，但设计尚未创建"
+    : incompleteBatchReason ||
+      (pendingSteps.length > 0
+        ? `执行计划还有 ${pendingSteps.length} 个步骤未完成`
+        : failedSteps.length > 0
+          ? `执行计划有 ${failedSteps.length} 个步骤失败`
+          : "");
+
+  if (incompleteReason) {
+    failRemainingPlan(plan, "达到最大推理轮次");
+  }
   addMessage({
     role: "assistant",
-    content: hasCreatedReferenceArtwork()
-      ? "已完成当前任务。如需继续，请告诉我。"
-      : "参考图片已经分析，但设计未能在限定轮次内创建完成，请重试。",
+    content: incompleteReason
+      ? `任务未完成：${incompleteReason}。已达到最大执行轮次，请继续任务或重试。`
+      : "已完成当前任务。如需继续，请告诉我。",
     meta: {
       iteration,
-      type: hasCreatedReferenceArtwork() ? undefined : "reference-artwork-incomplete",
+      type: incompleteReason ? "task-incomplete" : undefined,
     },
   });
 }
@@ -1709,8 +2106,13 @@ async function runVisualEvaluate(): Promise<VisualEvaluation | null> {
 
 // ============ 图片分析流程 ============
 
-async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
+async function runImageAnalysisLoop(
+  userMessage: string,
+  imageBase64: string,
+  options: RunAgentLoopOptions = {},
+) {
   await runAgentLoop(userMessage, {
+    ...options,
     referenceImage: imageBase64,
   });
 }
@@ -2250,7 +2652,11 @@ export const designAgent = {
     }
   },
 
-  async chatWithImage(userMessage: string, imageBase64: string): Promise<void> {
+  async chatWithImage(
+    userMessage: string,
+    imageBase64: string,
+    options: RunAgentLoopOptions = {},
+  ): Promise<void> {
     // 如果 agent 在处理中，忽略
     if (agentState.status !== "idle") {
       console.warn("[Agent] Agent is busy, status:", agentState.status);
@@ -2261,7 +2667,7 @@ export const designAgent = {
     agentState.error = null;
 
     try {
-      await runImageAnalysisLoop(userMessage, imageBase64);
+      await runImageAnalysisLoop(userMessage, imageBase64, options);
     } catch (error: any) {
       console.error("[Agent] Error:", error);
       agentState.error = error.message || "未知错误";
@@ -2384,6 +2790,11 @@ export const designAgent = {
         allowCanvasAnalysis: false,
         deliveryHandledExternally: true,
         excludeOperations: AUTO_BATCH_BLOCKED_OPERATIONS,
+        task: {
+          preset: "single",
+          outputKind: "single",
+          delivery: "canvas",
+        },
       });
     } catch (error: any) {
       console.error("[BatchItem] Error:", error);

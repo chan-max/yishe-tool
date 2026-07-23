@@ -821,6 +821,22 @@ async function handleRemoteCommand(data: any) {
           payload?.description || payload?.message || "",
         ).trim();
         const count = Math.max(1, Math.min(100, Number(payload?.count) || 1));
+        const taskPresetValues = [
+          "standard",
+          "single",
+          "group",
+          "batch",
+          "custom",
+        ] as const;
+        const taskPreset =
+          taskPresetValues.find((value) => value === payload?.taskPreset) ||
+          "standard";
+        const outputKind =
+          payload?.outputKind === "group" ? "group" : "independent-batch";
+        const membersPerGroup = Math.max(
+          2,
+          Math.min(12, Number(payload?.membersPerGroup) || 2),
+        );
         if (!description) throw new Error("缺少自动制作需求");
 
         resetBatch();
@@ -834,7 +850,7 @@ async function handleRemoteCommand(data: any) {
             requestId,
             success: true,
             phase: "accepted",
-            message: `自动制作已接收，共 ${count} 张`,
+            message: `自动制作已接收，共 ${count} 个生产任务`,
             workerId: designRuntime.workerId,
             workspaceId: designRuntime.workspaceId,
             reportedAt: new Date().toISOString(),
@@ -844,6 +860,10 @@ async function handleRemoteCommand(data: any) {
         await startBatch({
           description,
           count,
+          taskPreset,
+          outputKind,
+          membersPerGroup,
+          customInstructions: String(payload?.customInstructions || ""),
           enableAnalysisOptimization:
             payload?.enableAnalysisOptimization === true,
           saveMode: "auto",

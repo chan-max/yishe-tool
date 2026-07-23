@@ -10,6 +10,10 @@ import {
   beginDesignTabTask,
   completeDesignTabTask,
 } from "@/services/designTabStatus";
+import {
+  resolveAgentTaskSpec,
+  type AgentTaskPresetId,
+} from "./task-spec";
 
 // ============ Types ============
 
@@ -19,6 +23,10 @@ export type BatchFailureStrategy = "skip" | "stop" | "save_anyway";
 export interface AutoBatchConfig {
   description: string;
   count: number;
+  taskPreset?: AgentTaskPresetId;
+  outputKind?: "independent-batch" | "group";
+  membersPerGroup?: number;
+  customInstructions?: string;
   enableAnalysisOptimization?: boolean;
   style?: string;
   width?: number;
@@ -41,6 +49,8 @@ export interface StickerBrief {
   description: string;
   keywords: string[];
   qualityTarget: number;
+  groupIndex: number;
+  memberIndex: number;
 }
 
 export interface BatchItem {
@@ -54,6 +64,7 @@ export interface BatchItem {
     | "evaluating"
     | "revising"
     | "saving"
+    | "grouping"
     | "done"
     | "failed"
     | "skipped";
@@ -61,6 +72,7 @@ export interface BatchItem {
   error?: string;
   savedUrl?: string;
   saveResult?: any;
+  groupId?: string;
 }
 
 export interface BatchProgress {
@@ -95,6 +107,7 @@ export interface BatchRuntimeSnapshot {
     revisionCount: number;
     error?: string;
     savedUrl?: string;
+    groupId?: string;
   }>;
 }
 
@@ -102,6 +115,10 @@ interface NormalizedBatchConfig {
   style: string;
   description: string;
   count: number;
+  taskPreset: AgentTaskPresetId;
+  outputKind: "independent-batch" | "group";
+  membersPerGroup: number;
+  customInstructions: string;
   width?: number;
   height?: number;
   transparentBackground: boolean;
@@ -126,10 +143,16 @@ let pauseResolve: (() => void) | null = null;
 
 export function getBatchRuntimeSnapshot(): BatchRuntimeSnapshot {
   const terminal = new Set(["done", "failed", "skipped"]);
+  const configuredTotal = batchProgress.config
+    ? batchProgress.config.count *
+      (batchProgress.config.outputKind === "group"
+        ? batchProgress.config.membersPerGroup || 2
+        : 1)
+    : 0;
   return {
     status: batchProgress.status,
     current: batchProgress.current,
-    total: batchProgress.items.length || batchProgress.config?.count || 0,
+    total: batchProgress.items.length || configuredTotal,
     completed: batchProgress.items.filter((item) => terminal.has(item.status))
       .length,
     succeeded: batchProgress.items.filter((item) => item.status === "done")
@@ -151,6 +174,7 @@ export function getBatchRuntimeSnapshot(): BatchRuntimeSnapshot {
       revisionCount: item.revisionCount,
       error: item.error,
       savedUrl: item.savedUrl,
+      groupId: item.groupId,
     })),
   };
 }
@@ -169,6 +193,7 @@ watch(
       revisionCount: item.revisionCount,
       error: item.error,
       savedUrl: item.savedUrl,
+      groupId: item.groupId,
     })),
   }),
   () => websocketClient.setBatchProgress(getBatchRuntimeSnapshot()),
@@ -185,11 +210,42 @@ function normalizeConfig(config: AutoBatchConfig): NormalizedBatchConfig {
   const description = config.description || "";
   const explicitSize = extractSize(description);
   const enableAnalysisOptimization = Boolean(config.enableAnalysisOptimization);
+  const taskPreset = config.taskPreset || "standard";
+  const resolvedTask = resolveAgentTaskSpec(
+    description,
+    {
+      preset: taskPreset,
+      outputKind: config.outputKind,
+      jobCount: config.count,
+      memberCount: config.membersPerGroup,
+      customInstructions: config.customInstructions,
+    },
+    { execution: "automatic" },
+  );
+  const outputKind =
+    taskPreset === "group"
+      ? "group"
+      : taskPreset === "batch" || taskPreset === "single"
+        ? "independent-batch"
+        : taskPreset === "custom"
+          ? config.outputKind || "independent-batch"
+          : resolvedTask.outputKind === "group"
+            ? "group"
+            : "independent-batch";
+  const membersPerGroup =
+    outputKind === "group"
+      ? clampNumber(config.membersPerGroup, 2, 12, 2)
+      : 1;
+  const maxJobs = Math.max(1, Math.floor(100 / membersPerGroup));
 
   return {
     style: config.style || "",
     description,
-    count: clampNumber(config.count, 1, 100, 5),
+    count: clampNumber(config.count, 1, maxJobs, 5),
+    taskPreset,
+    outputKind,
+    membersPerGroup,
+    customInstructions: String(config.customInstructions || "").trim(),
     width: getOptionalSize(config.width, explicitSize?.width),
     height: getOptionalSize(config.height, explicitSize?.height),
     transparentBackground:
@@ -218,6 +274,10 @@ function clampNumber(
   const n = Number(value);
   if (!Number.isFinite(n)) return fallback;
   return Math.max(min, Math.min(max, Math.round(n)));
+}
+
+function getTotalDesignCount(config: NormalizedBatchConfig): number {
+  return config.count * config.membersPerGroup;
 }
 
 function getOptionalSize(...values: unknown[]): number | undefined {
@@ -286,6 +346,11 @@ async function generateBriefs(
   configInput: AutoBatchConfig,
 ): Promise<StickerBrief[]> {
   const config = normalizeConfig(configInput);
+  const totalDesignCount = getTotalDesignCount(config);
+  const outputInstruction =
+    config.outputKind === "group"
+      ? `共制作 ${config.count} 套组图，每套包含 ${config.membersPerGroup} 个成员，总计 ${totalDesignCount} 个 brief。同组（同一套）成员必须强制使用完全相同的画布尺寸、配色方案（如背景色/主调/辅色）、字体名称、边框样式和视觉语言，严禁成员之间随机更换背景色或装饰风格。各成员仅在核心文字文案或主要表达主体上有明确区分（如对联的上联与下联，名片正面与背面）。`
+      : `共制作 ${config.count} 个互相独立的设计 brief。`;
 
   let response: any;
   try {
@@ -293,7 +358,7 @@ async function generateBriefs(
       messages: [
         {
           role: "system",
-          content: `你是贴纸生产任务策划助手。根据用户的生产需求，生成一组可以逐张执行的结构化贴纸 brief。
+          content: `你是设计生产任务策划助手。根据用户的生产需求，生成一组可以逐张执行的结构化设计 brief。
 
 输出必须是 JSON 数组，不要写 Markdown 或解释。数组里每项格式如下：
 {
@@ -310,18 +375,22 @@ async function generateBriefs(
 }
 
 要求：
-- 数量以本次传入的 count 为准，输出必须正好对应数量；如果用户文本里出现其他数量，以 count 为准。
+- ${outputInstruction}
+- 输出必须正好为 ${totalDesignCount} 项；如果用户文本里出现其他数量，以结构化配置为准。
 - 从用户完整提示词里理解尺寸、风格、题材、是否透明、是否保存、质量要求等，不要依赖额外表单字段。
 - 如果用户没有指定尺寸，默认使用 1024x1024。
-- 如果用户要求同一系列，保持统一视觉语言，但每张主题、构图或元素要有差异。
-- 每张贴纸主题、构图或元素要有差异，避免只是换颜色。
+${
+  config.outputKind === "group"
+    ? "- 【组图极高优先级规约】：对于套图/组图任务，同组的所有成员必须使用 100% 相同的背景色彩、边框阴影、字号规范与视觉主题，绝对不要为同一组内的不同成员改变视觉风格或色彩风格。"
+    : "- 如果用户要求同一系列，保持统一视觉语言，但每张主题、构图或元素要有差异，避免只是换颜色。"
+}
 - prompt 要自然，像真实用户提出的设计需求。
 - 如需要图片、字体、文案资源，只写检索方向，不要编造 URL 或资源 ID。
 - 不要在 brief 里要求保存，保存由生产流水线处理。`,
         },
         {
           role: "user",
-          content: `请根据下面的完整生产提示词生成 ${config.count} 个贴纸 brief。
+          content: `请根据下面的完整生产提示词生成 ${totalDesignCount} 个设计 brief。
 
 完整生产提示词：
 ${config.description || config.style || "自由发挥"}
@@ -330,6 +399,8 @@ ${config.description || config.style || "自由发挥"}
 - 尺寸：${config.width && config.height ? `${config.width}x${config.height}` : "1024x1024"}
 - 背景：${config.transparentBackground ? "适合贴纸、透明/白边/抠边优先" : "按提示词自由处理"}
 - 分析优化：${config.enableAnalysisOptimization ? `开启，质量目标 ${config.qualityThreshold}/10` : "关闭，生成完成后直接保存"}
+- 输出结构：${outputInstruction}
+${config.customInstructions ? `- 自定义约束：${config.customInstructions}` : ""}
 
 每个 brief 都需要适合持续制作和保存到素材库，且 prompt 必须可以直接交给设计 agent 执行。`,
         },
@@ -356,7 +427,7 @@ ${config.description || config.style || "自由发挥"}
     const brief = normalizeBrief(rawItem, briefs.length, config);
     if (hasSimilarBrief(brief, briefs)) continue;
     briefs.push(brief);
-    if (briefs.length >= config.count) break;
+    if (briefs.length >= totalDesignCount) break;
   }
 
   return ensureExactBriefs(briefs, config);
@@ -399,18 +470,24 @@ function buildFallbackBriefRaw(
 ): Record<string, any> {
   const base = config.description || config.style || "创意贴纸";
   const variation = FALLBACK_VARIATIONS[index % FALLBACK_VARIATIONS.length];
+  const groupIndex = Math.floor(index / config.membersPerGroup);
+  const memberIndex = index % config.membersPerGroup;
+  const positionLabel =
+    config.outputKind === "group"
+      ? `第 ${groupIndex + 1} 套的第 ${memberIndex + 1}/${config.membersPerGroup} 个成员`
+      : `第 ${index + 1} 个独立设计`;
 
   return {
-    title: `${truncateText(base, 18)} ${index + 1}`,
+    title: `${truncateText(base, 18)} ${positionLabel}`,
     prompt: [
       `做一张${config.style || "自由风格"}的贴纸，主题来自：${base}。`,
-      `这是系列第 ${index + 1} 张，变化方向：${variation}。`,
+      `这是${positionLabel}，变化方向：${variation}。`,
       "需要和同系列其他贴纸在主体姿态、构图、装饰元素或短文案上明显不同，画面完整、有识别度。",
     ].join(""),
     resourceHints: [base, config.style].filter(Boolean),
-    saveName: `${truncateText(base, 18)} ${index + 1}`,
-    description: `${truncateText(base, 36)}系列自动制作贴纸，第 ${index + 1} 张`,
-    keywords: [base, config.style, "贴纸", `系列${index + 1}`].filter(Boolean),
+    saveName: `${truncateText(base, 18)} ${positionLabel}`,
+    description: `${truncateText(base, 36)}自动制作，${positionLabel}`,
+    keywords: [base, config.style, "自动制作", positionLabel].filter(Boolean),
   };
 }
 
@@ -419,15 +496,16 @@ function ensureExactBriefs(
   config: NormalizedBatchConfig,
 ): StickerBrief[] {
   const result: StickerBrief[] = [];
+  const totalDesignCount = getTotalDesignCount(config);
 
   for (const brief of briefs) {
-    if (result.length >= config.count) break;
+    if (result.length >= totalDesignCount) break;
     if (!hasSimilarBrief(brief, result)) {
       result.push(brief);
     }
   }
 
-  while (result.length < config.count) {
+  while (result.length < totalDesignCount) {
     result.push(
       normalizeBrief(
         buildFallbackBriefRaw(config, result.length),
@@ -437,7 +515,7 @@ function ensureExactBriefs(
     );
   }
 
-  return ensureUniqueBriefLabels(result.slice(0, config.count));
+  return ensureUniqueBriefLabels(result.slice(0, totalDesignCount));
 }
 
 function hasSimilarBrief(
@@ -497,6 +575,8 @@ function normalizeBrief(
   index: number,
   config: NormalizedBatchConfig,
 ): StickerBrief {
+  const groupIndex = Math.floor(index / config.membersPerGroup);
+  const memberIndex = index % config.membersPerGroup;
   const title =
     truncateText(
       raw?.title ||
@@ -536,6 +616,8 @@ function normalizeBrief(
       10,
       config.qualityThreshold,
     ),
+    groupIndex,
+    memberIndex,
   };
 }
 
@@ -555,7 +637,9 @@ async function runSingleDesign(
   item.status = "designing";
   try {
     await withTimeout(
-      designAgent._runBatchItem(buildDesignPrompt(item.brief, item.index)),
+      designAgent._runBatchItem(
+        buildDesignPrompt(item.brief, item.index, config),
+      ),
       AI_TIMEOUTS.batchDesign,
       `第 ${item.index + 1} 张设计`,
     );
@@ -575,7 +659,7 @@ async function runSingleDesign(
       item.status = "done";
       return;
     }
-    await saveItem(item);
+    await saveItem(item, config);
     return;
   }
 
@@ -637,21 +721,32 @@ async function runSingleDesign(
     return;
   }
 
-  await saveItem(item);
+  await saveItem(item, config);
 }
 
-function buildDesignPrompt(brief: StickerBrief, index: number): string {
+function buildDesignPrompt(
+  brief: StickerBrief,
+  index: number,
+  config?: NormalizedBatchConfig,
+): string {
   const resourceHint = brief.resourceHints.length
     ? `可以按需要搜索这些资源方向：${brief.resourceHints.join("、")}。`
     : "可以按需要自行搜索图片、字体、文案或设计知识资源。";
 
-  return `制作第 ${index + 1} 张贴纸。
+  const groupContext =
+    config?.outputKind === "group"
+      ? `这是第 ${brief.groupIndex + 1} 套组图的第 ${brief.memberIndex + 1}/${config.membersPerGroup} 个成员。【组图视觉一致性极高要求】：同组内所有成员必须使用完全相同的画布尺寸（${brief.width}x${brief.height}）、完全相同的背景色彩/渐变/红纸底色、完全相同的字体和边框边距，严禁自由发挥替换颜色或更换排版风格！请仅替换核心文字文案或主画面主体内容。`
+      : "这是一个独立设计，不要与其他结果合并为组图。";
+
+  return `制作第 ${index + 1} 张设计。
 
 尺寸：${brief.width}x${brief.height}
 ${brief.transparentBackground ? "背景要求：适合贴纸使用，可以做透明感、白边或便于抠边的主体。" : "背景要求：按设计效果自由处理。"}
 主题：${brief.title}
 需求：${brief.prompt}
 ${resourceHint}
+${groupContext}
+${config?.customInstructions ? `附加约束：${config.customInstructions}` : ""}
 
 只制作这一张，不要启动批量任务。请完成画布设计即可，不要询问用户，不要请求反馈，不要调用分析、评估、保存或导出工具。`;
 }
@@ -680,7 +775,10 @@ function buildRevisionPrompt(score: number, brief: StickerBrief): string {
 请基于当前画布做一次关键优化，优先处理构图、层级、文字可读性和素材融合问题。保持主题不变，不要重新开始，不要询问用户，也不要保存。`;
 }
 
-async function saveItem(item: BatchItem): Promise<void> {
+async function saveItem(
+  item: BatchItem,
+  config?: NormalizedBatchConfig,
+): Promise<void> {
   item.status = "saving";
   let lastError = "保存失败";
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -690,6 +788,7 @@ async function saveItem(item: BatchItem): Promise<void> {
           name: item.brief.saveName,
           description: item.brief.description,
           keywords: item.brief.keywords.join(","),
+          autoTrim: config?.outputKind === "group" ? false : undefined,
         }),
         AI_TIMEOUTS.batchSave,
         `第 ${item.index + 1} 张保存（第 ${attempt}/3 次）`,
@@ -712,6 +811,58 @@ async function saveItem(item: BatchItem): Promise<void> {
     }
   }
   failItem(item, `保存失败，已重试 3 次: ${lastError}`);
+}
+
+async function createSavedImageGroup(
+  items: BatchItem[],
+  groupIndex: number,
+  config: NormalizedBatchConfig,
+): Promise<void> {
+  const stickerIds = items
+    .map((item) => String(item.saveResult?.data?.stickerId || "").trim())
+    .filter(Boolean);
+  if (stickerIds.length !== items.length) {
+    const lastSuccessfulItem = [...items]
+      .reverse()
+      .find((item) => item.status === "done");
+    if (lastSuccessfulItem && !items.some((item) => item.status === "failed")) {
+      failItem(lastSuccessfulItem, "组图成员未全部保存，无法创建组图");
+    }
+    return;
+  }
+
+  const baseName =
+    truncateText(config.description || config.style || "自动组图", 24) ||
+    "自动组图";
+  const groupName =
+    config.count > 1 ? `${baseName} ${groupIndex + 1}` : baseName;
+  const lastItem = items[items.length - 1];
+  lastItem.status = "grouping";
+
+  try {
+    const result = await withTimeout(
+      executeAITool("material.createImageGroup", {
+        name: groupName,
+        description: `${baseName}，第 ${groupIndex + 1}/${config.count} 套，共 ${items.length} 个成员`,
+        stickerIds,
+      }),
+      AI_TIMEOUTS.batchSave,
+      `第 ${groupIndex + 1} 套组图创建`,
+    );
+    if (!result?.success) {
+      throw new Error(result?.message || "创建组图失败");
+    }
+    const groupId = String(result?.data?.groupId || "").trim();
+    if (!groupId) {
+      throw new Error("组图接口未返回 groupId");
+    }
+    for (const item of items) {
+      item.groupId = groupId;
+    }
+    lastItem.status = "done";
+  } catch (error: any) {
+    failItem(lastItem, `创建组图失败: ${error?.message || error}`);
+  }
 }
 
 function failItem(item: BatchItem, error: string): void {
@@ -794,6 +945,18 @@ export async function startBatch(configInput: AutoBatchConfig): Promise<void> {
           batchProgress.items[i],
           error?.message || "单张制作异常，已跳过",
         );
+      }
+
+      if (
+        config.outputKind === "group" &&
+        (i + 1) % config.membersPerGroup === 0
+      ) {
+        const groupIndex = Math.floor(i / config.membersPerGroup);
+        const groupItems = batchProgress.items.slice(
+          i + 1 - config.membersPerGroup,
+          i + 1,
+        );
+        await createSavedImageGroup(groupItems, groupIndex, config);
       }
 
       if (isStopped()) {

@@ -31,10 +31,10 @@ export const designRulesKnowledge: KnowledgeItem = {
 深色背景配浅色字，浅色背景配深色字
 
 ### 字号
-- 使用尺寸工具返回的 typeScale，不要自己写一组固定字号：hero=唯一主视觉，title=主标题，primaryText=核心长文/书法主体，subtitle=副标题，body=正文，caption=说明
+- 使用画布自动提供的字号变量：hero=唯一主视觉，title=主标题，primary=核心文字，subtitle=副标题，body=正文，caption=说明，micro=最小辅助信息
 - dense 用于兰亭序、碑帖、包装标签、参数列表和长文；balanced 用于常规海报；display 用于单字、短标语和艺术字
-- 根节点定义 --type-hero/title/primary/subtitle/body/caption，文字通过 var(--type-xxx) 使用；font-size 禁止 px、pt、rem、vw、vh
-- 主视觉只允许一个，主标题最多两个；普通正文不得与标题尺寸接近，核心长文不得缩成 caption
+- --type-hero/title/primary/subtitle/body/caption/micro 已自动注入，直接通过 var(--type-xxx) 使用且不要重新定义；font-size 禁止 px、pt、rem、vw、vh
+- 主视觉只允许一个，主标题最多两个；用户要求展示的重要信息最低使用 body，caption/micro 只用于非关键信息
 - 中间布局容器不要设置 font-size，避免嵌套 em 重复放大
 
 ### 构图 → CSS 实现

@@ -23,8 +23,8 @@ registerOperation({
       description: [
         "完整的 HTML/CSS 代码，元素默认填满画布（width:100%;height:100%）。",
         "",
-        "【响应式字号】HTML 会继承画布基础字号。必须使用尺寸工具返回的 typeScale，将文字分为 hero/title/primaryText/subtitle/body/caption，不要凭感觉分配。",
-        "推荐在根节点定义 --type-hero/title/primary/subtitle/body/caption，文字使用 font-size:var(--type-xxx)。font-size 禁止 px、pt、rem、vw、vh；写入时残留绝对字号会自动转为相对值。",
+        "【响应式字号】HTML 已自动注入 --type-hero/title/primary/subtitle/body/caption/micro。按文字作用直接使用 font-size:var(--type-xxx)，不要重新定义这些变量。",
+        "用户要求展示的重要信息最低使用 body；caption/micro 只用于非关键信息。font-size 禁止 px、pt、rem、vw、vh，遗留绝对字号会自动转为相对值并保证通用可读下限。",
         "主视觉只用于一个最重要的信息，主标题最多两个；长文或书法主体使用 primaryText，普通说明才使用 body/caption。中间布局容器不要设置 font-size，避免嵌套 em 重复放大。",
         "",
         "【常用模式】",

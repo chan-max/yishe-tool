@@ -15,6 +15,7 @@ import {
   ensureHtmlTemplateFontsLoaded,
   ensureHtmlTemplateOptions,
 } from "../htmlTemplate/runtime.ts";
+import { resolveCanvasTypography } from "@/operations/canvas-typography";
 
 export const createDefaultCanvasChildHtmlOptions = () => {
   const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit;
@@ -72,6 +73,14 @@ export const Html = defineComponent({
       const canvasFontSizeCss = formatToNativeSizeString(
         canvasStickerOptionsOnlyChild.value.fontSize || { value: 32, unit: "px" }
       );
+      const canvasFontSize = Number(canvasStickerOptionsOnlyChild.value.fontSize?.value) || 32;
+      const typography = resolveCanvasTypography({
+        width: Number(canvasStickerOptionsOnlyChild.value.width.value) || 1,
+        height: Number(canvasStickerOptionsOnlyChild.value.height.value) || 1,
+        unit: canvasUnit,
+        density: canvasStickerOptionsOnlyChild.value.typographyDensity || "balanced",
+        fontSize: canvasFontSize,
+      });
       const filterOptions =
         props.options?.filter || createFilterDefaultOptions(canvasUnit);
 
@@ -89,6 +98,14 @@ export const Html = defineComponent({
         "--canvas-html-vw": `calc(${canvasWidthCss} / 100)`,
         "--canvas-html-vh": `calc(${canvasHeightCss} / 100)`,
         "--canvas-font-size": canvasFontSizeCss,
+        "--type-hero": typography.typeScale.hero,
+        "--type-title": typography.typeScale.title,
+        "--type-primary": typography.typeScale.primaryText,
+        "--type-primary-text": typography.typeScale.primaryText,
+        "--type-subtitle": typography.typeScale.subtitle,
+        "--type-body": typography.typeScale.body,
+        "--type-caption": typography.typeScale.caption,
+        "--type-micro": typography.typeScale.micro,
         flexShrink: 0,
         width: "100%",
         height: "100%",

@@ -3,6 +3,7 @@ import {
   inferHtmlTemplateFieldsFromContent,
   normalizeHtmlTemplateBindings,
 } from "@/components/design/layout/canvas/htmlTemplate/runtime";
+import { resolveCanvasTypographyFromContext } from "../canvas-typography";
 
 export function isHtmlArtworkType(type: string) {
   return type === "html";
@@ -10,20 +11,14 @@ export function isHtmlArtworkType(type: string) {
 
 export interface HtmlTypographyContext {
   baseFontSize: number;
+  minimumRelativeFontSize: number;
 }
 
 export function getCanvasTypographyContext(ctx: any): HtmlTypographyContext {
-  const canvas = ctx
-    .getCanvasChildren()
-    .find((child: any) => child.type === "canvas");
-  const rawFontSize = canvas?.fontSize;
-  const baseFontSize =
-    typeof rawFontSize === "object"
-      ? Number(rawFontSize.value)
-      : Number(rawFontSize);
+  const typography = resolveCanvasTypographyFromContext(ctx);
   return {
-    baseFontSize:
-      Number.isFinite(baseFontSize) && baseFontSize > 0 ? baseFontSize : 32,
+    baseFontSize: typography.baseFontSize,
+    minimumRelativeFontSize: Number.parseFloat(typography.typeScale.micro) || 1,
   };
 }
 
@@ -31,16 +26,16 @@ function formatRelativeEm(value: number): string {
   return `${Number(value.toFixed(3))}em`;
 }
 
-function normalizeFontSizeValue(value: string, baseFontSize: number) {
+function normalizeFontSizeValue(value: string, typography: HtmlTypographyContext) {
   let normalized = value;
   normalized = normalized.replace(
     /(-?\d*\.?\d+)px\b/gi,
-    (_match, size) => formatRelativeEm(Number(size) / baseFontSize),
+    (_match, size) => formatRelativeEm(Number(size) / typography.baseFontSize),
   );
   normalized = normalized.replace(
     /(-?\d*\.?\d+)pt\b/gi,
     (_match, size) =>
-      formatRelativeEm((Number(size) * (96 / 72)) / baseFontSize),
+      formatRelativeEm((Number(size) * (96 / 72)) / typography.baseFontSize),
   );
   normalized = normalized.replace(/(-?\d*\.?\d+)rem\b/gi, "$1em");
   normalized = normalized.replace(
@@ -50,6 +45,9 @@ function normalizeFontSizeValue(value: string, baseFontSize: number) {
   normalized = normalized.replace(
     /(-?\d*\.?\d+)vh\b/gi,
     (_match, size) => `calc(var(--canvas-html-vh) * ${Number(size)})`,
+  );
+  normalized = normalized.replace(/(-?\d*\.?\d+)em\b/gi, (_match, size) =>
+    formatRelativeEm(Math.max(Number(size), typography.minimumRelativeFontSize)),
   );
   return normalized;
 }
@@ -64,15 +62,16 @@ export function normalizeHtmlTypography(
     prefix: string,
     value: string,
   ) => {
-    const normalizedValue = normalizeFontSizeValue(
-      value,
-      typography.baseFontSize,
-    );
+    const normalizedValue = normalizeFontSizeValue(value, typography);
     if (normalizedValue !== value) convertedDeclarations += 1;
     return `${prefix}${normalizedValue}`;
   };
 
   let normalizedHtml = String(htmlContent || "").replace(
+    /--type-(?:hero|title|primary(?:-text)?|subtitle|body|caption|micro)\s*:[^;}]+;?/gi,
+    "",
+  );
+  normalizedHtml = normalizedHtml.replace(
     /(font-size\s*:\s*)([^;}"']+)/gi,
     normalizeDeclaration,
   );
@@ -939,14 +938,14 @@ registerOperation({
         "",
         "【画布坐标系】",
         "- 画布宽高等于 canvas.setSize 设置的值（如 1200x1200px）",
-        "- HTML 会继承画布基础字号；必须使用尺寸工具返回的 typeScale，把文字分为 hero/title/primaryText/subtitle/body/caption",
-        "- 根节点定义对应 CSS 变量，实际文字使用 var(--type-xxx)；font-size 禁止 px、pt、rem、vw、vh，残留绝对字号会自动归一为相对值",
+        "- HTML 已自动注入 --type-hero/title/primary/subtitle/body/caption/micro，按文字作用直接使用 var(--type-xxx)，不要重复定义",
+        "- 用户要求展示的重要信息最低使用 body；caption/micro 只用于非关键信息；font-size 禁止 px、pt、rem、vw、vh",
         "- 主视觉只用于一个最重要的信息，长文/书法主体使用 primaryText，普通说明才使用 body/caption；中间容器不要设置 font-size",
         "",
         "【常用模式】",
-        "居中文字: <div style='display:flex;align-items:center;justify-content:center;width:100%;height:100%;'><div style='font-size:10em;font-weight:900;color:#fff;'>标题</div></div>",
+        "居中文字: <div style='display:flex;align-items:center;justify-content:center;width:100%;height:100%;'><div style='font-size:var(--type-title);font-weight:900;color:#fff;'>标题</div></div>",
         "渐变背景: <div style='width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);'></div>",
-        "卡片: <div style='width:100%;height:100%;display:flex;align-items:center;justify-content:center;'><div style='background:#fff;border-radius:.5em;padding:2em;box-shadow:0 .25em 1em rgba(0,0,0,.1);width:80%;height:70%;box-sizing:border-box;'><div style='font-size:7em;font-weight:700;color:#1a1a2e;'>标题</div></div></div>",
+        "卡片: <div style='width:100%;height:100%;display:flex;align-items:center;justify-content:center;'><div style='background:#fff;border-radius:.5em;padding:2em;box-shadow:0 .25em 1em rgba(0,0,0,.1);width:80%;height:70%;box-sizing:border-box;'><div style='font-size:var(--type-title);font-weight:700;color:#1a1a2e;'>标题</div></div></div>",
         "",
         "【CSS 技巧】",
         "- 用 display:flex + align-items/justify-content 做对齐",
@@ -982,7 +981,7 @@ registerOperation({
         "",
         "【绑定字体】（配合 resource.searchFont 搜索结果使用）",
         '{ "font": { "title": { "id":"搜到的id", "url":"搜到的url", "name":"名称" } } }',
-        "HTML 引用: <div style='font-family:{{font.title.family}};font-size:8em;'>文字</div>",
+        "HTML 引用: <div style='font-family:{{font.title.family}};font-size:var(--type-title);'>文字</div>",
         "",
         "【完整示例】",
         'htmlBindings: { image: { bg: { id:"123", url:"https://...", name:"背景图" } }, font: { main: { id:"456", url:"https://...", name:"字体名" } } }',

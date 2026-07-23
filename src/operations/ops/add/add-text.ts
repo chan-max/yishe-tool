@@ -1,4 +1,5 @@
 import { registerOperation } from "../../registry";
+import { resolveCanvasTypographyFromContext } from "../../canvas-typography";
 
 registerOperation({
   id: "canvas.addText",
@@ -26,10 +27,9 @@ registerOperation({
       name: "fontSize",
       label: "字号",
       type: "number",
-      default: 160,
       min: 1,
       max: 2000,
-      description: "文字大小（px）",
+      description: "可选的文字大小（px）；不传时自动使用当前画布的核心文字字号。",
     },
     {
       name: "fontWeight",
@@ -123,12 +123,17 @@ registerOperation({
     } = params;
 
     const extraOptions: Record<string, any> = {};
+    const typography = resolveCanvasTypographyFromContext(ctx);
+    const requestedFontSize = Number(fontSize);
+    const resolvedFontSize =
+      Number.isFinite(requestedFontSize) && requestedFontSize > 0
+        ? Math.max(requestedFontSize, typography.minimumReadableFontSize)
+        : typography.typeScalePx.primaryText;
 
     if (textContent !== undefined) extraOptions.textContent = textContent;
     if (fontColor !== undefined)
       extraOptions.fontColor = { color: fontColor, type: "pure" };
-    if (fontSize !== undefined)
-      extraOptions.fontSize = { value: fontSize, unit: "px" };
+    extraOptions.fontSize = { value: resolvedFontSize, unit: "px" };
     if (fontWeight !== undefined) extraOptions.fontWeight = fontWeight;
     if (lineHeight !== undefined) extraOptions.lineHeight = lineHeight;
     if (letterSpacing !== undefined) extraOptions.letterSpacing = letterSpacing;
@@ -155,7 +160,7 @@ registerOperation({
     return {
       success: true,
       message: `已添加文字元素 (id: ${id}): "${textContent || ""}"。用 element.setStyle 可通过 id 调整位置。推荐用 canvas.addChild html 类型实现更丰富的文字效果。`,
-      data: { id, type: "text" },
+      data: { id, type: "text", fontSize: resolvedFontSize },
     };
   },
 });

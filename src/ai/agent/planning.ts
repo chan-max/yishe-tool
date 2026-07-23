@@ -168,12 +168,12 @@ export function isNewDesignRequest(userMessage: string): boolean {
   if (isModificationRequest(text)) return false;
   if (
     shouldAllowCanvasAnalysis(text) &&
-    !/创建|生成|制作|设计一|做一|创作一|新建/i.test(text)
+    !/创建|生成|制作|设计一|做一|创作一|新建|复刻|仿做|仿制|同款/i.test(text)
   ) {
     return false;
   }
 
-  return /创建|新建|生成|制作|设计一(?:张|个|套|款|幅|枚|组)|做一(?:张|个|套|款|幅|枚|组)|创作一(?:张|个|套|款|幅|枚|组)|清空画布.*(?:添加|创建)|create|generate|make a|design a/i.test(
+  return /创建|新建|生成|制作|设计一(?:张|个|套|款|幅|枚|组)|做一(?:张|个|套|款|幅|枚|组)|创作一(?:张|个|套|款|幅|枚|组)|清空画布.*(?:添加|创建)|复刻|仿做|仿制|做同款|相同款|照着.{0,12}(?:做|制作)|create|generate|make a|design a/i.test(
     text,
   );
 }
@@ -215,7 +215,7 @@ function getPrimaryArtworkAction(userMessage: string): string | null {
 
   const analysisOnly =
     shouldAllowCanvasAnalysis(userMessage) &&
-    !/创建|生成|制作|设计一(?:张|个|套|款|幅|枚|组)|做一(?:张|个|套|款|幅|枚|组)|创作一(?:张|个|套|款|幅|枚|组)|新建|基于当前|修改当前|调整当前/i.test(
+    !/创建|生成|制作|设计一(?:张|个|套|款|幅|枚|组)|做一(?:张|个|套|款|幅|枚|组)|创作一(?:张|个|套|款|幅|枚|组)|新建|复刻|仿做|仿制|同款|基于当前|修改当前|调整当前/i.test(
       userMessage,
     );
   if (analysisOnly) return null;

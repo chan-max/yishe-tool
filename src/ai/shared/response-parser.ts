@@ -3,35 +3,95 @@ export interface ParsedResponse {
   tool_calls?: any[];
 }
 
+function normalizeResponseContent(content: any): string {
+  if (typeof content === "string") return content;
+  if (!Array.isArray(content)) return "";
+  return content
+    .map((part) => {
+      if (typeof part === "string") return part;
+      return part?.text || part?.content || part?.output_text || "";
+    })
+    .filter(Boolean)
+    .join("\n");
+}
+
+function parseResponseCandidate(candidate: any): ParsedResponse | null {
+  const message = candidate?.choices?.[0]?.message || candidate?.choices?.[0]?.delta;
+  if (message) {
+    return {
+      content: normalizeResponseContent(message.content),
+      tool_calls: message.tool_calls,
+    };
+  }
+
+  if (candidate?.message && typeof candidate.message === "object") {
+    return {
+      content: normalizeResponseContent(candidate.message.content),
+      tool_calls: candidate.message.tool_calls,
+    };
+  }
+
+  if (Array.isArray(candidate?.output)) {
+    const contentParts: string[] = [];
+    const toolCalls: any[] = [];
+    for (const item of candidate.output) {
+      if (item?.type === "function_call" && item?.name) {
+        toolCalls.push({
+          id: item.call_id || item.id,
+          type: "function",
+          function: {
+            name: item.name,
+            arguments: item.arguments || "{}",
+          },
+        });
+      }
+      const text = normalizeResponseContent(item?.content);
+      if (text) contentParts.push(text);
+    }
+    if (contentParts.length || toolCalls.length) {
+      return {
+        content: contentParts.join("\n"),
+        tool_calls: toolCalls.length ? toolCalls : undefined,
+      };
+    }
+  }
+
+  if (typeof candidate?.output_text === "string") {
+    return { content: candidate.output_text };
+  }
+  if (candidate?.content || candidate?.tool_calls) {
+    return {
+      content: normalizeResponseContent(candidate.content),
+      tool_calls: candidate.tool_calls,
+    };
+  }
+  return null;
+}
+
 export function parseChatResponse(response: any): ParsedResponse | null {
   const res = response as any;
-
-  if (res?.choices?.[0]?.message) {
-    return {
-      content: res.choices[0].message.content ?? "",
-      tool_calls: res.choices[0].message.tool_calls,
-    };
+  const candidates = [res, res?.data, res?.result, res?.response, res?.data?.data];
+  for (const candidate of candidates) {
+    const parsed = parseResponseCandidate(candidate);
+    if (parsed) return parsed;
   }
 
-  if (res?.data?.choices?.[0]?.message) {
-    return {
-      content: res.data.choices[0].message.content ?? "",
-      tool_calls: res.data.choices[0].message.tool_calls,
-    };
-  }
-
-  if (typeof res?.data === "string") {
-    return { content: res.data };
-  }
-
-  if (res?.content || res?.tool_calls) {
-    return {
-      content: res.content ?? "",
-      tool_calls: res.tool_calls,
-    };
-  }
-
+  if (typeof res?.data === "string") return { content: res.data };
+  if (typeof res?.result === "string") return { content: res.result };
   return null;
+}
+
+export function getChatResponseError(response: any): string {
+  const candidates = [response, response?.data, response?.result, response?.response];
+  for (const candidate of candidates) {
+    const message =
+      candidate?.error?.message ||
+      candidate?.error ||
+      candidate?.message ||
+      candidate?.msg;
+    if (typeof message === "string" && message.trim()) return message.trim();
+  }
+  return "";
 }
 
 export function extractContent(response: any): string {

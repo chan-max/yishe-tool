@@ -48,11 +48,9 @@ const STICKER_DESIGN_SYSTEM_PART_2 = `
 
 ### 2. 字号与层级
 **字号规范（必须遵守）：**
-- 主标题：280-400px（醒目、大气）
-- 副标题：160-220px
-- 正文/说明：100-140px
-- 小字/注释：60-80px
-- 装饰性大字：500px+
+- HTML 已自动提供 --type-hero/title/primary/subtitle/body/caption/micro
+- 根据文字作用直接使用 font-size:var(--type-xxx)，不要重新定义这些变量或填写固定 px 字号
+- 用户要求展示的重要信息最低使用 body，caption/micro 只用于非关键信息
 
 **层级关系：**
 - 背景层：zIndex = 0
@@ -196,7 +194,7 @@ const STICKER_DESIGN_SYSTEM_PART_2 = `
 ### 正确做法 ✅
 1. 创建或更新主 HTML 布局：
 \`\`\`operation
-{"op": "canvas.addHtml", "params": {"htmlContent": "<style>\\n.card { width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; }\\n.title { color: white; font-size: 48px; font-weight: bold; }\\n</style>\\n<div class='card'><div class='title'>Hello World</div></div>"}}
+{"op": "canvas.addHtml", "params": {"htmlContent": "<style>\\n.card { width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; }\\n.title { color: white; font-size: var(--type-title); font-weight: bold; }\\n</style>\\n<div class='card'><div class='title'>Hello World</div></div>"}}
 \`\`\`
 
 2. 嵌套其他组件示例（直接在 HTML 中写入 {{组件.变量名}}，并在 htmlBindings 中传入其属性配置）：
@@ -363,7 +361,7 @@ export function buildOperationsPrompt(): string {
   lines.push("- 注意使用 zIndex 控制元素层级：背景 zIndex=0，文字 zIndex=1+");
   lines.push("- 元素默认居中，如果不指定位置就是居中的");
   lines.push("- 颜色值使用 CSS 颜色格式，如 #ff0000, rgb(255,0,0)");
-  lines.push("- 文字字号单位是 px，160 是正常大小，300+ 是标题大小");
+  lines.push("- HTML 文字直接使用画布自动提供的 var(--type-hero/title/primary/subtitle/body/caption/micro)，不要填写固定 px 字号");
   lines.push(
     "- 当用户要求保存/导出/完成设计时，最后一步使用 canvas.updateAndSaveSticker 保存到素材库（可传 folderId 指定文件夹），或 canvas.exportPng 导出下载",
   );

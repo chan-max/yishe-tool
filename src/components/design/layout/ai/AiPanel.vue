@@ -97,45 +97,88 @@
     </div>
 
     <!-- Input -->
-    <div class="ai-panel__input">
-      <div v-if="selectedImage" class="ai-panel__image-preview">
-        <img :src="selectedImage.preview" />
-        <span class="ai-panel__image-name">{{ selectedImage.name }}</span>
-        <button class="ai-panel__icon-btn ai-panel__icon-btn--sm" @click="removeImage">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
+    <div
+      class="ai-panel__input"
+      :class="{ 'is-drag-over': isDragOver }"
+      @dragover.prevent="isDragOver = true"
+      @dragleave.prevent="isDragOver = false"
+      @drop.prevent="handleDrop"
+    >
+      <!-- Image Preview Card -->
+      <div v-if="selectedImage" class="ai-panel__image-card">
+        <div class="ai-panel__image-thumb-wrapper">
+          <img :src="selectedImage.preview" class="ai-panel__image-thumb" />
+          <button class="ai-panel__image-remove" @click="removeImage" title="删除图片">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="ai-panel__image-info">
+          <div class="ai-panel__image-title-row">
+            <span class="ai-panel__image-badge">参考图</span>
+            <span class="ai-panel__image-filename">{{ selectedImage.name }}</span>
+          </div>
+          <span v-if="selectedImage.size" class="ai-panel__image-filesize">{{ selectedImage.size }}</span>
+        </div>
       </div>
-      <div v-else-if="isPreparingImage" class="ai-panel__image-processing">
-        正在优化参考图片...
+
+      <!-- Image Processing Loading -->
+      <div v-else-if="isPreparingImage" class="ai-panel__image-loading">
+        <div class="ai-panel__spinner"></div>
+        <span>正在优化参考图片...</span>
       </div>
+
+      <!-- Drag Hint -->
+      <div v-if="isDragOver" class="ai-panel__drag-hint">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <span>松开上传参考图</span>
+      </div>
+
       <div class="ai-panel__input-row">
-        <button class="ai-panel__icon-btn" :disabled="isPreparingImage" @click="triggerImageUpload" title="上传图片">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <button
+          class="ai-panel__upload-btn"
+          :class="{ 'is-active': !!selectedImage }"
+          :disabled="isPreparingImage"
+          @click="triggerImageUpload"
+          title="上传参考图 (支持截图粘贴与拖拽)"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
         </button>
         <input ref="imageInputRef" type="file" accept="image/*" style="display:none" @change="handleImageUpload" />
-        <input
+
+        <textarea
+          ref="textareaRef"
           v-model="inputText"
           class="ai-panel__input-field"
-          :placeholder="isWaitingForUser ? '请输入选择...' : '描述你想要的设计...'"
+          :placeholder="isWaitingForUser ? '请输入选择...' : (selectedImage ? '描述你想参考此图制作的设计...' : '描述你想要的设计... (支持直接粘贴图片)')"
           :disabled="isPreparingImage || (isProcessing && !isWaitingForUser)"
-          @keydown.enter.exact.prevent="handleSend"
+          rows="1"
+          @input="adjustTextareaHeight"
+          @keydown.enter="handleKeydownEnter"
+          @paste="handlePaste"
           @compositionstart="isComposing = true"
           @compositionend="isComposing = false"
         />
+
         <button
           v-if="isProcessing && !isWaitingForUser"
           class="ai-panel__send-btn ai-panel__send-btn--stop"
           @click="handleStop"
+          title="停止生成"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
         </button>
         <button
           v-else
           class="ai-panel__send-btn"
+          :class="{ 'is-ready': inputText.trim() || selectedImage }"
           :disabled="(!inputText.trim() && !selectedImage) || (isProcessing && !isWaitingForUser)"
           @click="handleSend"
+          title="发送 (Enter)"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"/>
+            <polyline points="5 12 12 5 19 12"/>
+          </svg>
         </button>
       </div>
     </div>
@@ -170,12 +213,50 @@ const agent = designAgent;
 const inputText = ref("");
 const isComposing = ref(false);
 const messagesRef = ref<HTMLElement>();
+const textareaRef = ref<HTMLTextAreaElement>();
 const customAnswer = ref("");
 const imageInputRef = ref<HTMLInputElement>();
-const selectedImage = ref<{ file: File; preview: string; name: string } | null>(null);
+const selectedImage = ref<{ file: File; preview: string; name: string; size?: string } | null>(null);
 const isPreparingImage = ref(false);
+const isDragOver = ref(false);
 const autoFollowMessages = ref(true);
 const hasUnreadMessages = ref(false);
+
+function adjustTextareaHeight() {
+  const el = textareaRef.value;
+  if (!el) return;
+  el.style.height = "auto";
+  const newHeight = Math.min(el.scrollHeight, 160);
+  el.style.height = `${Math.max(34, newHeight)}px`;
+}
+
+function handleKeydownEnter(e: KeyboardEvent) {
+  if (e.shiftKey) return;
+  if (isComposing.value) return;
+  e.preventDefault();
+  handleSend();
+}
+
+function resetTextareaHeight() {
+  inputText.value = "";
+  nextTick(() => {
+    if (textareaRef.value) {
+      textareaRef.value.style.height = "34px";
+    }
+  });
+}
+
+watch(inputText, (val) => {
+  if (!val) {
+    nextTick(() => {
+      if (textareaRef.value) {
+        textareaRef.value.style.height = "34px";
+      }
+    });
+  } else {
+    nextTick(adjustTextareaHeight);
+  }
+});
 
 // Drag
 const panelRef = ref<HTMLElement>();
@@ -260,8 +341,8 @@ function handleSend() {
   if (selectedImage.value) {
     const text = inputText.value.trim() || "请分析这张图片的设计风格，然后创建一个类似的设计";
     agent.chatWithImage(text, selectedImage.value.preview);
-    inputText.value = "";
     selectedImage.value = null;
+    resetTextareaHeight();
     scrollToBottom(true);
     return;
   }
@@ -269,13 +350,13 @@ function handleSend() {
   if (!text) return;
   if (isWaitingForUser.value) {
     agent.submitUserResponse(text);
-    inputText.value = "";
+    resetTextareaHeight();
     scrollToBottom(true);
     return;
   }
   if (isProcessing.value) return;
   agent.chat(text);
-  inputText.value = "";
+  resetTextareaHeight();
   scrollToBottom(true);
 }
 
@@ -358,12 +439,47 @@ async function handleImageUpload(event: Event) {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
   if (!file) return;
-  if (file.size > 10 * 1024 * 1024) { alert("图片不能超过 10MB"); return; }
   input.value = "";
+  await processUploadedFile(file);
+}
+
+function handlePaste(e: ClipboardEvent) {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item.type.indexOf("image") !== -1) {
+      const file = item.getAsFile();
+      if (file) {
+        e.preventDefault();
+        processUploadedFile(file);
+        break;
+      }
+    }
+  }
+}
+
+function handleDrop(e: DragEvent) {
+  isDragOver.value = false;
+  const files = e.dataTransfer?.files;
+  if (!files || files.length === 0) return;
+  const file = files[0];
+  if (file.type.startsWith("image/")) {
+    processUploadedFile(file);
+  }
+}
+
+async function processUploadedFile(file: File) {
+  if (file.size > 10 * 1024 * 1024) { alert("图片不能超过 10MB"); return; }
   isPreparingImage.value = true;
   try {
     const prepared = await prepareImageForAI(file);
-    selectedImage.value = { file, preview: prepared.preview, name: file.name };
+    selectedImage.value = {
+      file,
+      preview: prepared.preview,
+      name: file.name,
+      size: formatFileSize(file.size),
+    };
   } catch (error: any) {
     console.warn("[AI] 参考图片预处理失败，回退原图:", error);
     const reader = new FileReader();
@@ -372,10 +488,21 @@ async function handleImageUpload(event: Event) {
       reader.onerror = () => reject(reader.error);
       reader.readAsDataURL(file);
     });
-    selectedImage.value = { file, preview, name: file.name };
+    selectedImage.value = {
+      file,
+      preview,
+      name: file.name,
+      size: formatFileSize(file.size),
+    };
   } finally {
     isPreparingImage.value = false;
   }
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
 function removeImage() { selectedImage.value = null; }
@@ -451,213 +578,405 @@ watch(
 
 <style lang="less" scoped>
 .ai-panel {
-  /* ---- Light theme (default) ---- */
-  --bg: #fff; --bg-elevated: #f3f4f6; --bg-subtle: #f5f5f5; --bg-input: #fafafa;
-  --text: #000; --text-secondary: #1f2937; --text-body: #111827;
-  --text-subtle: #374151; --text-muted: #4b5563; --text-faint: #6b7280;
-  --border: #ebebeb; --border-strong: #ddd; --border-divider: #e0e0e0;
-  --tag-bg: #e8e8e8;
-  --user-bg: #eef2ff; --user-text: #3730a3;
-  --ai-bg: #fff; --ai-text: #111; --ai-border: #e0e0e0;
-  --accent: #8b5cf6; --accent-hover: #7c3aed; --accent-muted: #c4b5fd;
-  --disabled: #d1d5db;
-  --shadow: rgba(0,0,0,0.1);
+  /* ---- Flat theme variables ---- */
+  --bg: #ffffff;
+  --bg-elevated: #f8fafc;
+  --bg-subtle: #f1f5f9;
+  --bg-input: #ffffff;
+  --text: #0f172a;
+  --text-secondary: #334155;
+  --text-body: #1e293b;
+  --text-subtle: #475569;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-divider: #e2e8f0;
+  --tag-bg: #f1f5f9;
+  --user-bg: #4f46e5;
+  --user-text: #ffffff;
+  --ai-bg: #f8fafc;
+  --ai-text: #0f172a;
+  --ai-border: #e2e8f0;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-muted: #818cf8;
+  --accent-alpha: rgba(79, 70, 229, 0.15);
+  --disabled: #e2e8f0;
+  --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
 
   &.is-dark {
-    --bg: #181818; --bg-elevated: #222; --bg-subtle: #252525; --bg-input: #1e1e1e;
-    --text: #f0f0f0; --text-secondary: #d4d4d4; --text-body: #e0e0e0;
-    --text-subtle: #aaa; --text-muted: #999; --text-faint: #777;
-    --border: #2a2a2a; --border-strong: #383838; --border-divider: #3a3a3a;
-    --tag-bg: #333;
-    --user-bg: #1e1b4b; --user-text: #c7d2fe;
-    --ai-bg: #222; --ai-text: #eee; --ai-border: #3a3a3a;
-    --accent: #8b5cf6; --accent-hover: #7c3aed; --accent-muted: #7c3aed;
-    --disabled: #444;
-    --shadow: rgba(0,0,0,0.3);
+    --bg: #18181b;
+    --bg-elevated: #27272a;
+    --bg-subtle: #27272a;
+    --bg-input: #18181b;
+    --text: #f4f4f5;
+    --text-secondary: #e4e4e7;
+    --text-body: #d4d4d8;
+    --text-subtle: #a1a1aa;
+    --text-muted: #71717a;
+    --text-faint: #52525b;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --border-divider: #27272a;
+    --tag-bg: #27272a;
+    --user-bg: #6366f1;
+    --user-text: #ffffff;
+    --ai-bg: #27272a;
+    --ai-text: #f4f4f5;
+    --ai-border: #3f3f46;
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --accent-muted: #818cf8;
+    --accent-alpha: rgba(99, 102, 241, 0.25);
+    --disabled: #3f3f46;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
   }
 
   position: fixed;
   top: 80px; right: 16px;
-  width: 360px; height: 520px; max-height: calc(100vh - 120px);
+  width: 380px; height: 560px; max-height: calc(100vh - 120px);
   background: var(--bg);
-  border: 1px solid var(--border-strong);
-  border-radius: 4px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
   display: flex; flex-direction: column;
   z-index: 1000; overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   font-size: 13px;
   color: var(--text);
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
 
-  &.is-dragging { user-select: none; box-shadow: 0 2px 8px var(--shadow); }
+  &.is-dragging { user-select: none; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); }
 }
 
 /* ---- Header ---- */
 .ai-panel__header {
   display: flex; align-items: center;
-  height: 36px; padding: 0 8px 0 12px;
+  height: 40px; padding: 0 10px 0 14px;
   border-bottom: 1px solid var(--border);
-  cursor: grab; flex-shrink: 0; gap: 6px;
+  background: var(--bg);
+  cursor: grab; flex-shrink: 0; gap: 8px;
   .is-dragging & { cursor: grabbing; }
 }
-.ai-panel__title { font-size: 12px; font-weight: 600; letter-spacing: 0.02em; }
-.ai-panel__status { font-size: 11px; color: var(--accent); }
-.ai-panel__plan { font-size: 11px; color: var(--text-faint); }
-.ai-panel__header-actions { margin-left: auto; display: flex; gap: 1px; }
+.ai-panel__title { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+.ai-panel__status { font-size: 11px; font-weight: 500; color: var(--accent); background: var(--accent-alpha); padding: 2px 6px; border-radius: 4px; }
+.ai-panel__plan { font-size: 11px; color: var(--text-muted); }
+.ai-panel__header-actions { margin-left: auto; display: flex; gap: 2px; }
 
 /* ---- Icon button ---- */
 .ai-panel__icon-btn {
-  width: 26px; height: 26px; border: none; background: transparent;
-  border-radius: 3px; cursor: pointer;
+  width: 28px; height: 28px; border: none; background: transparent;
+  border-radius: 6px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  color: var(--text-faint);
-  transition: color 0.12s, background 0.12s; flex-shrink: 0;
-  &:hover { color: var(--text-subtle); background: var(--bg-subtle); }
-  &:disabled { color: var(--disabled); cursor: default; &:hover { background: transparent; color: var(--disabled); } }
-  &--sm { width: 20px; height: 20px; }
+  color: var(--text-muted);
+  transition: color 0.15s, background 0.15s; flex-shrink: 0;
+  &:hover { color: var(--text); background: var(--bg-subtle); }
+  &:disabled { color: var(--text-faint); cursor: default; &:hover { background: transparent; } }
+  &--sm { width: 22px; height: 22px; }
 }
 
 /* ---- Progress ---- */
-.ai-panel__progress { height: 2px; background: var(--bg-elevated); flex-shrink: 0; }
+.ai-panel__progress { height: 2px; background: var(--bg-subtle); flex-shrink: 0; }
 .ai-panel__progress-bar { height: 100%; background: var(--accent); transition: width 0.25s ease; }
 
 /* ---- Messages ---- */
 .ai-panel__messages {
-  flex: 1; overflow-y: auto; padding: 10px 12px;
-  display: flex; flex-direction: column; gap: 6px;
-  &::-webkit-scrollbar { width: 3px; }
-  &::-webkit-scrollbar-thumb { background: var(--border-divider); border-radius: 2px; }
+  flex: 1; overflow-y: auto; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 8px;
+  background: var(--bg);
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 }
 .ai-panel__history-note {
-  align-self: center; font-size: 11px; color: var(--text-faint);
-  padding: 2px 8px; background: var(--bg-subtle); border-radius: 3px;
+  align-self: center; font-size: 11px; color: var(--text-muted);
+  padding: 3px 10px; background: var(--bg-subtle); border-radius: 4px;
 }
 .ai-panel__latest-btn {
-  position: sticky; bottom: 2px; align-self: center;
-  border: 1px solid var(--border-strong); border-radius: 3px;
-  background: var(--bg); color: var(--accent-hover);
-  padding: 4px 10px; font-size: 11px; cursor: pointer;
-  box-shadow: 0 1px 4px var(--shadow);
+  position: sticky; bottom: 4px; align-self: center;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg); color: var(--accent);
+  padding: 5px 12px; font-size: 11px; font-weight: 500; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 /* ---- Empty ---- */
-.ai-panel__empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
-.ai-panel__empty-text { margin: 0; font-size: 12px; color: var(--text-muted); }
-.ai-panel__quick { display: flex; flex-direction: column; gap: 3px; width: 100%; max-width: 240px; }
+.ai-panel__empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+.ai-panel__empty-text { margin: 0; font-size: 13px; font-weight: 500; color: var(--text-muted); }
+.ai-panel__quick { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 260px; }
 .ai-panel__quick-btn {
-  padding: 6px 10px; background: transparent;
-  border: 1px solid var(--border); border-radius: 3px;
+  padding: 8px 12px; background: var(--bg-elevated);
+  border: 1px solid var(--border); border-radius: 6px;
   cursor: pointer; font-size: 12px; color: var(--text-secondary);
-  text-align: left; transition: border-color 0.12s, color 0.12s;
-  &:hover { border-color: var(--accent); color: var(--accent-hover); }
+  text-align: left; transition: border-color 0.15s, color 0.15s, background 0.15s;
+  &:hover { border-color: var(--accent); color: var(--accent); background: var(--bg); }
 }
 
 /* ---- Message bubbles ---- */
 .ai-panel__msg {
-  padding: 6px 10px; border-radius: 3px;
-  line-height: 1.55; word-break: break-word; max-width: 88%; font-size: 13px;
-  &--user { align-self: flex-end; background: var(--user-bg); color: var(--user-text); }
-  &--ai { align-self: flex-start; background: var(--ai-bg); color: var(--ai-text); border: 1px solid var(--ai-border); }
+  padding: 8px 12px; border-radius: 8px;
+  line-height: 1.5; word-break: break-word; max-width: 88%; font-size: 13px;
+  &--user { align-self: flex-end; background: var(--user-bg); color: var(--user-text); border-radius: 8px 8px 2px 8px; }
+  &--ai { align-self: flex-start; background: var(--ai-bg); color: var(--ai-text); border: 1px solid var(--ai-border); border-radius: 8px 8px 8px 2px; }
 }
 .ai-panel__msg-text { white-space: pre-wrap; }
-.ai-panel__tool-calls { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
-.ai-panel__tool-tag { padding: 1px 5px; background: var(--tag-bg); border-radius: 2px; font-size: 11px; color: var(--text-subtle); }
-.ai-panel__tool-result { padding: 3px 8px; font-size: 11px; color: var(--text-muted); text-align: center; }
+.ai-panel__tool-calls { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.ai-panel__tool-tag { padding: 2px 6px; background: var(--tag-bg); border-radius: 4px; font-size: 11px; font-weight: 500; color: var(--text-subtle); border: 1px solid var(--border); }
+.ai-panel__tool-result { padding: 4px 10px; font-size: 11px; color: var(--text-muted); text-align: center; }
 
 /* ---- Typing dots ---- */
 .ai-panel__dots {
-  display: flex; gap: 3px; margin-bottom: 4px;
+  display: flex; gap: 4px; padding: 2px 0;
   span {
-    width: 4px; height: 4px; border-radius: 50%;
-    background: var(--accent-muted);
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent);
     animation: aiDot 1.2s infinite ease-in-out;
     &:nth-child(1) { animation-delay: -0.24s; }
     &:nth-child(2) { animation-delay: -0.12s; }
   }
 }
 @keyframes aiDot {
-  0%, 80%, 100% { opacity: 0.25; transform: scale(0.8); }
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
   40% { opacity: 1; transform: scale(1); }
 }
 .ai-panel__stop-btn {
-  padding: 2px 8px; background: transparent;
-  border: 1px solid var(--border-divider); border-radius: 2px;
+  margin-top: 4px;
+  padding: 3px 10px; background: transparent;
+  border: 1px solid var(--border); border-radius: 4px;
   cursor: pointer; font-size: 11px; color: var(--text-muted);
-  transition: border-color 0.12s, color 0.12s;
-  &:hover { border-color: var(--accent); color: var(--accent-hover); }
+  transition: border-color 0.15s, color 0.15s;
+  &:hover { border-color: var(--accent); color: var(--accent); }
 }
 
 /* ---- Interaction ---- */
 .ai-panel__interaction {
-  border: 1px solid var(--border); border-radius: 3px;
-  padding: 8px 10px; margin-top: 4px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg-elevated);
+  padding: 10px 12px; margin-top: 4px;
 }
-.ai-panel__interaction-q { font-size: 12px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
+.ai-panel__interaction-q { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
 .ai-panel__interaction-opts {
-  display: flex; flex-direction: column; gap: 3px; margin-bottom: 6px;
+  display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;
   button {
-    padding: 5px 8px; background: transparent;
-    border: 1px solid var(--border); border-radius: 3px;
+    padding: 6px 10px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 4px;
     cursor: pointer; font-size: 12px; color: var(--text-body);
-    text-align: left; transition: border-color 0.12s, color 0.12s;
-    &:hover { border-color: var(--accent); color: var(--accent-hover); }
+    text-align: left; transition: border-color 0.15s, color 0.15s;
+    &:hover { border-color: var(--accent); color: var(--accent); }
   }
 }
 .ai-panel__interaction-row {
-  display: flex; gap: 4px;
+  display: flex; gap: 6px;
   input {
-    flex: 1; padding: 5px 8px;
-    border: 1px solid var(--border-divider); border-radius: 3px;
+    flex: 1; padding: 6px 10px;
+    border: 1px solid var(--border-strong); border-radius: 4px;
     font-size: 12px; outline: none;
     background: var(--bg); color: var(--text);
     &:focus { border-color: var(--accent); }
   }
   button {
-    padding: 5px 10px; background: var(--accent); color: #fff;
-    border: none; border-radius: 3px; cursor: pointer; font-size: 12px;
-    transition: background 0.12s;
+    padding: 6px 12px; background: var(--accent); color: #fff;
+    border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;
+    transition: background 0.15s;
     &:hover { background: var(--accent-hover); }
     &:disabled { background: var(--disabled); cursor: not-allowed; }
   }
 }
 
 /* ---- Input ---- */
-.ai-panel__input { flex-shrink: 0; padding: 6px 8px; border-top: 1px solid var(--border); }
-.ai-panel__image-preview {
-  display: flex; align-items: center; gap: 6px;
-  margin-bottom: 4px; padding: 3px 4px;
-  background: var(--bg-subtle); border-radius: 3px;
-  img { width: 32px; height: 32px; object-fit: cover; border-radius: 2px; }
+.ai-panel__input {
+  position: relative;
+  flex-shrink: 0;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  transition: border-color 0.2s, background-color 0.2s;
+
+  &.is-drag-over {
+    background: var(--accent-alpha);
+    border-top-color: var(--accent);
+  }
 }
-.ai-panel__image-name {
-  flex: 1; font-size: 11px; color: var(--text-faint);
+
+/* ---- Image Card Preview ---- */
+.ai-panel__image-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  animation: fadeInCard 0.2s ease-out;
+}
+@keyframes fadeInCard {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ai-panel__image-thumb-wrapper {
+  position: relative;
+  width: 36px; height: 36px;
+  flex-shrink: 0;
+}
+.ai-panel__image-thumb {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+.ai-panel__image-remove {
+  position: absolute;
+  top: -4px; right: -4px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #ef4444; color: #fff;
+  border: 2px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+  &:hover { background: #dc2626; transform: scale(1.1); }
+}
+
+.ai-panel__image-info {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.ai-panel__image-title-row {
+  display: flex; align-items: center; gap: 6px;
+}
+.ai-panel__image-badge {
+  font-size: 10px; font-weight: 600;
+  color: var(--accent); background: var(--accent-alpha);
+  padding: 1px 5px; border-radius: 3px;
+  flex-shrink: 0;
+}
+.ai-panel__image-filename {
+  font-size: 12px; font-weight: 500;
+  color: var(--text);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.ai-panel__image-processing {
-  margin-bottom: 4px; padding: 4px 6px; border-radius: 3px;
-  background: var(--bg-subtle); color: var(--text-muted); font-size: 11px;
+.ai-panel__image-filesize {
+  font-size: 11px; color: var(--text-muted);
 }
-.ai-panel__input-row { display: flex; align-items: center; gap: 4px; }
+
+/* ---- Image Loading State ---- */
+.ai-panel__image-loading {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 8px; padding: 6px 10px;
+  background: var(--bg-subtle); border-radius: 6px;
+  font-size: 12px; color: var(--text-muted);
+}
+.ai-panel__spinner {
+  width: 14px; height: 14px;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Drag Hint Overlay ---- */
+.ai-panel__drag-hint {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border: 2px dashed var(--accent);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  color: var(--accent); font-size: 13px; font-weight: 500;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ---- Upload & Input & Send Buttons ---- */
+.ai-panel__input-row { display: flex; align-items: flex-end; gap: 6px; }
+
+.ai-panel__upload-btn {
+  width: 34px; height: 34px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-input);
+  border-radius: 6px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+
+  &:hover:not(:disabled) {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--bg-subtle);
+  }
+  &.is-active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-alpha);
+  }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
 .ai-panel__input-field {
-  flex: 1; padding: 6px 8px;
-  border: 1px solid var(--border-strong); border-radius: 3px;
-  font-size: 12px; outline: none;
-  background: var(--bg); color: var(--text);
-  transition: border-color 0.12s;
+  flex: 1; padding: 7px 10px;
+  border: 1px solid var(--border-strong); border-radius: 6px;
+  font-size: 13px; line-height: 1.45; outline: none;
+  background: var(--bg-input); color: var(--text);
+  resize: none; min-height: 34px; max-height: 160px;
+  overflow-y: auto; font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
   &::placeholder { color: var(--text-faint); }
-  &:focus { border-color: var(--accent); }
-  &:disabled { background: var(--bg-input); }
+  &:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-alpha);
+  }
+  &:disabled { background: var(--bg-subtle); color: var(--text-muted); cursor: not-allowed; }
 }
+
 .ai-panel__send-btn {
-  width: 28px; height: 28px; border: none; border-radius: 3px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  background: var(--accent); color: #fff; flex-shrink: 0;
-  transition: background 0.12s;
-  &:hover { background: var(--accent-hover); }
-  &:disabled { background: var(--disabled); cursor: not-allowed; }
+  width: 34px; height: 34px;
+  border: none; border-radius: 6px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-subtle); color: var(--text-faint);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.is-ready {
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+    &:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
+    }
+    &:active {
+      transform: translateY(0) scale(0.95);
+    }
+  }
+
+  &:disabled {
+    background: var(--bg-subtle);
+    color: var(--text-faint);
+    border: 1px solid var(--border);
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+  }
+
   &--stop {
-    background: var(--bg-subtle); color: var(--text-faint);
-    &:hover { background: var(--border-divider); color: var(--text-muted); }
+    background: #ef4444;
+    color: #ffffff;
+    border: none;
+    opacity: 1;
+    &:hover:not(:disabled) {
+      background: #dc2626;
+      transform: scale(1.04);
+    }
   }
 }
 </style>

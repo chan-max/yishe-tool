@@ -17,6 +17,7 @@ import { executeAITool, isResourceToolName } from "../shared/execute-tool";
 import { AI_TIMEOUTS, withTimeout } from "../shared/timeout";
 import {
   parseChatResponse,
+  getChatResponseError,
   extractContent,
   extractJSON,
 } from "../shared/response-parser";
@@ -615,6 +616,7 @@ interface RunAgentLoopOptions {
   allowCanvasAnalysis?: boolean;
   deliveryHandledExternally?: boolean;
   excludeOperations?: string[];
+  referenceImage?: string;
 }
 
 const AUTO_BATCH_BLOCKED_OPERATIONS = [
@@ -865,9 +867,17 @@ async function runAgentLoop(
   const allowPostArtworkContinuation = shouldContinueAfterArtwork(userMessage);
   let completedArtwork = false;
   let automaticDeliveryCompleted = false;
+  let unparseableResponseCount = 0;
+  const referenceImage = String(options.referenceImage || "").trim();
+  let referenceArtworkCreated = false;
+  const hasCreatedReferenceArtwork = () => !referenceImage || referenceArtworkCreated;
 
   // 添加用户消息
-  addMessage({ role: "user", content: userMessage });
+  addMessage({
+    role: "user",
+    content: referenceImage ? `${userMessage}\n[已上传参考图片]` : userMessage,
+    meta: referenceImage ? { hasImage: true } : undefined,
+  });
 
   // 1. 本地生成可执行计划，避免额外的 Planner 模型请求。
   const executionPlan = buildExecutionPlan(userMessage);
@@ -943,11 +953,13 @@ async function runAgentLoop(
     compactPresetShortcuts: true,
   });
 
-  const needsDesignKnowledge = !!plan?.steps.some((step) =>
-    ["canvas.addHtml", "canvas.addDiagram", "canvas.addChart"].includes(
-      step.action,
-    ),
-  );
+  const needsDesignKnowledge =
+    !referenceImage &&
+    !!plan?.steps.some((step) =>
+      ["canvas.addHtml", "canvas.addDiagram", "canvas.addChart"].includes(
+        step.action,
+      ),
+    );
 
   // 3. 并行加载设计知识和当前用户可用的 Skills，失败不阻断原流程。
   const knowledgePromise = needsDesignKnowledge
@@ -963,14 +975,16 @@ async function runAgentLoop(
         return "";
       })
     : Promise.resolve("");
-  const skillPromise = withTimeout(
-    buildMatchedSkillPrompt(userMessage),
-    Math.min(AI_TIMEOUTS.knowledge, 5000),
-    "Skill 匹配",
-  ).catch((error) => {
-    console.warn("[Agent] Skill match timeout/failure, skipped:", error);
-    return "";
-  });
+  const skillPromise = referenceImage
+    ? Promise.resolve("")
+    : withTimeout(
+        buildMatchedSkillPrompt(userMessage),
+        Math.min(AI_TIMEOUTS.knowledge, 5000),
+        "Skill 匹配",
+      ).catch((error) => {
+        console.warn("[Agent] Skill match timeout/failure, skipped:", error);
+        return "";
+      });
   const [knowledgePrompt, skillPrompt] = await Promise.all([
     knowledgePromise,
     skillPromise,
@@ -1000,8 +1014,11 @@ async function runAgentLoop(
     : "";
 
   // 4. 构建高信号消息列表。
+  const baseSystemPrompt = referenceImage
+    ? `${buildImageAnalysisPrompt()}\n\n## 执行规则\n- 参考图已随用户消息提供，请先识别画布比例、构图、文字、配色和主要视觉元素。\n- 按计划逐步调用工具，每轮根据上一次工具结果继续。\n- 使用一个完整 canvas.addHtml 实现画面；外部资源必须先搜索并通过 htmlBindings 使用。\n- HTML 文字直接使用画布提供的 var(--type-hero/title/primary/subtitle/body/caption/micro)。\n- 不要只输出分析或方案，canvas.addHtml 成功前禁止表示复刻完成。`
+    : buildSystemPrompt();
   const systemPrompt =
-    buildSystemPrompt() +
+    baseSystemPrompt +
     "\n" +
     knowledgePrompt +
     (skillPrompt ? `\n\n${skillPrompt}` : "") +
@@ -1016,9 +1033,34 @@ async function runAgentLoop(
         ? "\n\n## 自动制作模式\n- 当前任务不能等待用户反馈，也不要调用 ask_choice 或 request_feedback\n- 如果信息不足，请基于当前提示词和可用资源自行判断\n- 只完成当前画布设计，完成后直接结束；评估和保存由外层流水线负责"
         : "\n\n## 自动制作模式\n- 当前任务不能等待用户反馈，也不要调用 ask_choice 或 request_feedback\n- 如果信息不足，请基于当前提示词和可用资源自行判断\n- 必须完成用户明确要求的设计、检查和保存步骤\n- 保存成功后直接结束，不要请求用户确认、评价或反馈");
 
+  const conversationMessages = agentState.messages.map(toLLMMessage);
+  let referenceMessage: any = null;
+  if (referenceImage) {
+    let currentUserMessageIndex = -1;
+    for (let index = conversationMessages.length - 1; index >= 0; index--) {
+      if (conversationMessages[index].role === "user") {
+        currentUserMessageIndex = index;
+        break;
+      }
+    }
+    if (currentUserMessageIndex >= 0) {
+      referenceMessage = {
+        role: "user",
+        content: [
+          { type: "text", text: userMessage },
+          {
+            type: "image_url",
+            image_url: { url: referenceImage, detail: "high" },
+          },
+        ],
+      };
+      conversationMessages[currentUserMessageIndex] = referenceMessage;
+    }
+  }
+
   const messagesForLLM: any[] = [
     { role: "system", content: systemPrompt },
-    ...agentState.messages.map(toLLMMessage),
+    ...conversationMessages,
   ];
 
   for (let i = 0; i < maxIterations; i++) {
@@ -1069,6 +1111,9 @@ async function runAgentLoop(
 
       messagesForLLM.length = 0;
       messagesForLLM.push(...systemMsgs);
+      if (referenceMessage && !recentMsgs.includes(referenceMessage)) {
+        messagesForLLM.push(referenceMessage);
+      }
       if (summary) {
         messagesForLLM.push({
           role: "system",
@@ -1095,6 +1140,8 @@ async function runAgentLoop(
       response = await directChat({
         messages: sanitizeToolProtocolMessages(iterationMessages),
         tools: allTools,
+        maxTokens: referenceImage ? 4096 : undefined,
+        temperature: referenceImage ? 0.4 : undefined,
         timeoutMs: AI_TIMEOUTS.chat,
       });
     } catch (error: any) {
@@ -1119,14 +1166,32 @@ async function runAgentLoop(
 
     if (!parsed) {
       console.error("[Agent] No message in response:", response);
+      const responseError = getChatResponseError(response);
+      unparseableResponseCount += 1;
+      if (referenceImage && !responseError && unparseableResponseCount < 2) {
+        addMessage({
+          role: "assistant",
+          content: "视觉模型返回格式异常，正在重新请求设计步骤。",
+          meta: { iteration, llmResponse: response, type: "reference-response-retry" },
+        });
+        messagesForLLM.push({
+          role: "system",
+          content:
+            "上一轮没有返回可解析的消息。请直接继续当前计划并调用下一步工具；必须返回标准工具调用。",
+        });
+        continue;
+      }
       failRemainingPlan(plan, "无法解析模型响应");
       addMessage({
         role: "assistant",
-        content: "抱歉，无法解析响应。",
+        content: responseError
+          ? `视觉模型请求失败：${responseError}`
+          : "视觉模型没有返回可解析的内容，请重试或检查当前视觉模型配置。",
         meta: { iteration, llmResponse: response },
       });
       return;
     }
+    unparseableResponseCount = 0;
 
     const content = parsed.content;
     const toolCalls = parsed.tool_calls || [];
@@ -1157,6 +1222,22 @@ async function runAgentLoop(
 
     // 如果没有工具调用，结束
     if (toolCalls.length === 0) {
+      if (!hasCreatedReferenceArtwork() && iteration < maxIterations) {
+        console.warn("[Agent] 参考图已分析，但画布作品尚未创建，继续执行");
+        messagesForLLM.push({
+          role: "system",
+          content:
+            "参考图分析已经完成，但当前画布还没有实际 HTML 作品。请继续执行下一步并调用 canvas.addHtml；不要只描述方案，也不要表示已经完成。",
+        });
+        continue;
+      }
+      if (!hasCreatedReferenceArtwork()) {
+        addMessage({
+          role: "assistant",
+          content: "参考图片已经分析，但设计未能创建完成，请重试。",
+          meta: { iteration, type: "reference-artwork-incomplete" },
+        });
+      }
       console.log("[Agent] No tool calls, ending loop");
       failRemainingPlan(plan, "模型未继续执行剩余步骤");
       return;
@@ -1460,6 +1541,15 @@ async function runAgentLoop(
         });
 
         if (
+          referenceImage &&
+          result?.success &&
+          (toolName === "canvas.addHtml" ||
+            (toolName === "canvas.addChild" && args?.type === "html"))
+        ) {
+          referenceArtworkCreated = true;
+        }
+
+        if (
           result?.success &&
           (toolName === "canvas.addHtml" ||
             (toolName === "canvas.addChild" && args?.type === "html")) &&
@@ -1573,8 +1663,13 @@ async function runAgentLoop(
   failRemainingPlan(plan, "达到最大推理轮次");
   addMessage({
     role: "assistant",
-    content: "已完成当前任务。如需继续，请告诉我。",
-    meta: { iteration },
+    content: hasCreatedReferenceArtwork()
+      ? "已完成当前任务。如需继续，请告诉我。"
+      : "参考图片已经分析，但设计未能在限定轮次内创建完成，请重试。",
+    meta: {
+      iteration,
+      type: hasCreatedReferenceArtwork() ? undefined : "reference-artwork-incomplete",
+    },
   });
 }
 
@@ -1615,183 +1710,8 @@ async function runVisualEvaluate(): Promise<VisualEvaluation | null> {
 // ============ 图片分析流程 ============
 
 async function runImageAnalysisLoop(userMessage: string, imageBase64: string) {
-  const maxIterations = 10;
-  const ctx = createDesignOperationContext();
-  const allTools = buildAITools({
-    includeResources: true,
-    resourceTools: resourceService.tools,
-    compactPresetShortcuts: true,
-  });
-  let iteration = 0;
-
-  // 添加用户消息（带图片标记）
-  addMessage({
-    role: "user",
-    content: `${userMessage}\n[已上传参考图片]`,
-    meta: { hasImage: true },
-  });
-
-  // 构建包含图片的消息
-  const messagesForLLM: any[] = [
-    { role: "system", content: buildImageAnalysisPrompt() },
-    {
-      role: "user",
-      content: [
-        { type: "text", text: userMessage },
-        {
-          type: "image_url",
-          image_url: {
-            url: imageBase64,
-            detail: "high",
-          },
-        },
-      ],
-    },
-  ];
-
-  // 第一步：让 AI 分析图片
-  console.log("[Agent] 开始图片分析...");
-  let analysisResponse: any;
-  const analysisStartTime = Date.now();
-
-  try {
-    analysisResponse = await directChat({
-      messages: messagesForLLM,
-      tools: allTools,
-      maxTokens: 4096,
-      timeoutMs: AI_TIMEOUTS.chat,
-    });
-  } catch (error: any) {
-    console.error("[Agent] 图片分析失败:", error);
-    addMessage({
-      role: "assistant",
-      content: `图片分析失败：${error.message}`,
-      meta: { iteration: 1, duration: Date.now() - analysisStartTime },
-    });
-    return;
-  }
-
-  const analysisDuration = Date.now() - analysisStartTime;
-  iteration = 1;
-
-  // 解析分析响应
-  const parsed = parseChatResponse(analysisResponse);
-
-  if (!parsed) {
-    console.error("[Agent] 无法解析图片分析响应:", analysisResponse);
-    addMessage({
-      role: "assistant",
-      content: "抱歉，无法解析图片分析结果。",
-      meta: { iteration, llmResponse: analysisResponse },
-    });
-    return;
-  }
-
-  const analysisContent = parsed.content;
-  const toolCalls = parsed.tool_calls || [];
-
-  // 添加分析结果消息
-  addMessage({
-    role: "assistant",
-    content: analysisContent,
-    tool_calls: toolCalls.length > 0 ? toolCalls : undefined,
-    meta: {
-      iteration,
-      duration: analysisDuration,
-      llmResponse: { content: analysisContent, tool_calls: toolCalls },
-    },
-  });
-
-  // 如果有工具调用，执行它们
-  if (toolCalls.length > 0) {
-    agentState.status = "executing";
-
-    for (const call of toolCalls) {
-      const rawArgs = call.function.arguments;
-      let args: any;
-      if (typeof rawArgs === "string") {
-        try {
-          args = JSON.parse(rawArgs);
-        } catch {
-          args = safeParseToolArgs(String(rawArgs));
-        }
-      } else {
-        args = rawArgs;
-      }
-
-      const toolName = resolveAIToolName(call.function.name);
-      console.log("[Agent] 执行工具:", toolName, args);
-
-      // 检查是否是交互工具
-      if (INTERACTION_TOOL_NAMES.includes(call.function.name)) {
-        agentState.status = "waiting_user";
-        agentState.pendingInteraction = {
-          type: call.function.name,
-          question: args.question,
-          options: args.options,
-        };
-        emit({ type: "interaction", data: agentState.pendingInteraction });
-
-        const userResponse = await waitForUserInput();
-        console.log("[Agent] 用户响应:", userResponse);
-
-        // 继续执行剩余工具
-        agentState.status = "executing";
-        agentState.pendingInteraction = null;
-        continue;
-      }
-
-      // 执行普通工具
-      const toolStartTime = Date.now();
-      try {
-        let result;
-
-        result = await executeToolWithTimeout(toolName, args, ctx);
-
-        const toolDuration = Date.now() - toolStartTime;
-        console.log("[Agent] 工具结果:", result);
-
-        if (result?.success) {
-          syncAgentDesignProvenanceAfterTool(toolName, args, userMessage);
-        }
-
-        addMessage({
-          role: "tool",
-          tool_call_id: call.id,
-          tool_name: toolName,
-          content: JSON.stringify(result),
-          meta: {
-            iteration,
-            toolArgs: args,
-            toolResult: result,
-            duration: toolDuration,
-          },
-        });
-      } catch (error: any) {
-        console.error("[Agent] 工具错误:", error);
-        const errorResult = { success: false, error: error.message };
-
-        addMessage({
-          role: "tool",
-          tool_call_id: call.id,
-          tool_name: toolName,
-          content: JSON.stringify(errorResult),
-          meta: {
-            iteration,
-            toolArgs: args,
-            toolResult: errorResult,
-            duration: Date.now() - toolStartTime,
-          },
-        });
-      }
-    }
-  }
-
-  // 添加完成消息
-  addMessage({
-    role: "assistant",
-    content: "已完成图片分析和设计创建。你可以继续调整或告诉我需要修改的地方。",
-    meta: { iteration: iteration + 1 },
+  await runAgentLoop(userMessage, {
+    referenceImage: imageBase64,
   });
 }
 

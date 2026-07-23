@@ -28,7 +28,7 @@ canvas.loadFont({ fontId: "字体ID", fontUrl: "搜索结果URL", fontName: "搜
 
 核心格式：
 canvas.addHtml({
-  htmlContent: "<div style='font-family:{{font.brand.family}};font-size:8em;color:#fff;'>文字</div>",
+  htmlContent: "<div style='font-family:{{font.brand.family}};font-size:var(--type-title);color:#fff;'>文字</div>",
   htmlBindings: { font: { brand: { id:"搜到的id", url:"搜到的url", name:"搜到的name" } } }
 })
 

@@ -14,6 +14,23 @@ export interface CanvasTypographyScale {
   bodyLineHeight: number;
 }
 
+export type CanvasTypographyRole =
+  | "hero"
+  | "title"
+  | "primaryText"
+  | "subtitle"
+  | "body"
+  | "caption"
+  | "micro";
+
+export type CanvasTypographyPixelScale = Record<CanvasTypographyRole, number>;
+
+interface CanvasTypographyProfile {
+  ratios: Record<CanvasTypographyRole, number>;
+  heroLineHeight: number;
+  bodyLineHeight: number;
+}
+
 const DENSITY_RATIOS: Record<CanvasTypographyDensity, number> = {
   dense: 0.012,
   balanced: 0.016,
@@ -25,6 +42,58 @@ const UNIT_TO_CSS_PX: Record<string, number> = {
   mm: 96 / 25.4,
   cm: 96 / 2.54,
   in: 96,
+};
+
+const TYPOGRAPHY_PROFILES: Record<CanvasTypographyDensity, CanvasTypographyProfile> = {
+  dense: {
+    ratios: {
+      hero: 0.09,
+      title: 0.065,
+      primaryText: 0.052,
+      subtitle: 0.044,
+      body: 0.038,
+      caption: 0.032,
+      micro: 0.028,
+    },
+    heroLineHeight: 0.95,
+    bodyLineHeight: 1.75,
+  },
+  balanced: {
+    ratios: {
+      hero: 0.15,
+      title: 0.095,
+      primaryText: 0.07,
+      subtitle: 0.055,
+      body: 0.05,
+      caption: 0.045,
+      micro: 0.04,
+    },
+    heroLineHeight: 0.95,
+    bodyLineHeight: 1.55,
+  },
+  display: {
+    ratios: {
+      hero: 0.22,
+      title: 0.14,
+      primaryText: 0.09,
+      subtitle: 0.065,
+      body: 0.05,
+      caption: 0.042,
+      micro: 0.036,
+    },
+    heroLineHeight: 0.88,
+    bodyLineHeight: 1.45,
+  },
+};
+
+const TYPOGRAPHY_MINIMUMS: Record<CanvasTypographyRole, number> = {
+  hero: 24,
+  title: 20,
+  primaryText: 18,
+  subtitle: 16,
+  body: 14,
+  caption: 12,
+  micro: 12,
 };
 
 export const CANVAS_TYPOGRAPHY_LABELS: Record<CanvasTypographyDensity, string> =
@@ -71,61 +140,44 @@ export function buildCanvasTypographyScale(
   height: number,
   density: CanvasTypographyDensity,
 ): CanvasTypographyScale {
-  const aspectRatio = width > 0 && height > 0 ? width / height : 1;
-  const heroAspectMultiplier =
-    aspectRatio >= 2 ? 1.08 : aspectRatio <= 0.7 ? 0.9 : 1;
+  const pixelScale = buildCanvasTypographyPixelScale(width, height, density);
+  const recommendedBaseFontSize = recommendCanvasBaseFontSize(width, height, "px", density);
+  const profile = TYPOGRAPHY_PROFILES[density];
+  const toEm = (role: CanvasTypographyRole) =>
+    formatEm(pixelScale[role] / recommendedBaseFontSize);
 
-  const profiles: Record<
-    CanvasTypographyDensity,
-    Omit<CanvasTypographyScale, "hero"> & { heroBase: number }
-  > = {
-    dense: {
-      heroBase: 5.5,
-      title: "3.8em",
-      primaryText: "2.6em",
-      subtitle: "1.8em",
-      body: "1.25em",
-      caption: "0.85em",
-      micro: "0.7em",
-      heroLineHeight: 0.95,
-      bodyLineHeight: 1.75,
-    },
-    balanced: {
-      heroBase: 9,
-      title: "5.5em",
-      primaryText: "3em",
-      subtitle: "2.4em",
-      body: "1.5em",
-      caption: "0.9em",
-      micro: "0.72em",
-      heroLineHeight: 0.95,
-      bodyLineHeight: 1.55,
-    },
-    display: {
-      heroBase: 13,
-      title: "7.5em",
-      primaryText: "4em",
-      subtitle: "2.8em",
-      body: "1.4em",
-      caption: "0.9em",
-      micro: "0.72em",
-      heroLineHeight: 0.88,
-      bodyLineHeight: 1.45,
-    },
-  };
-
-  const profile = profiles[density];
   return {
-    hero: formatEm(profile.heroBase * heroAspectMultiplier),
-    title: profile.title,
-    primaryText: profile.primaryText,
-    subtitle: profile.subtitle,
-    body: profile.body,
-    caption: profile.caption,
-    micro: profile.micro,
+    hero: toEm("hero"),
+    title: toEm("title"),
+    primaryText: toEm("primaryText"),
+    subtitle: toEm("subtitle"),
+    body: toEm("body"),
+    caption: toEm("caption"),
+    micro: toEm("micro"),
     heroLineHeight: profile.heroLineHeight,
     bodyLineHeight: profile.bodyLineHeight,
   };
+}
+
+export function buildCanvasTypographyPixelScale(
+  width: number,
+  height: number,
+  density: CanvasTypographyDensity,
+  scaleFactor = 1,
+): CanvasTypographyPixelScale {
+  const shortSide = Math.max(1, Math.min(width, height));
+  const aspectRatio = width > 0 && height > 0 ? width / height : 1;
+  const heroAspectMultiplier =
+    aspectRatio >= 2 ? 1.08 : aspectRatio <= 0.7 ? 0.9 : 1;
+  const ratios = TYPOGRAPHY_PROFILES[density].ratios;
+
+  return Object.fromEntries(
+    (Object.keys(ratios) as CanvasTypographyRole[]).map((role) => {
+      const roleSize = Math.max(TYPOGRAPHY_MINIMUMS[role], shortSide * ratios[role]);
+      const aspectMultiplier = role === "hero" ? heroAspectMultiplier : 1;
+      return [role, Math.round(roleSize * aspectMultiplier * scaleFactor)];
+    }),
+  ) as CanvasTypographyPixelScale;
 }
 
 export function recommendCanvasBaseFontSize(
@@ -153,6 +205,83 @@ export function resolveCanvasBaseFontSize(
   return recommendCanvasBaseFontSize(width, height, unit, density);
 }
 
+export function resolveCanvasTypography(options: {
+  width: number;
+  height: number;
+  unit?: string;
+  density?: CanvasTypographyDensity;
+  fontSize?: number;
+}) {
+  const density: CanvasTypographyDensity =
+    options.density && options.density in TYPOGRAPHY_PROFILES
+      ? options.density
+      : "balanced";
+  const unit = options.unit || "px";
+  const cssPixelRatio = UNIT_TO_CSS_PX[unit] || 1;
+  const widthInCssPixels = Math.max(1, options.width * cssPixelRatio);
+  const heightInCssPixels = Math.max(1, options.height * cssPixelRatio);
+  const recommendedBaseFontSize = recommendCanvasBaseFontSize(
+    options.width,
+    options.height,
+    unit,
+    density,
+  );
+  const baseFontSize = resolveCanvasBaseFontSize(
+    options.width,
+    options.height,
+    unit,
+    density,
+    options.fontSize,
+  );
+  const typeScale = buildCanvasTypographyScale(
+    widthInCssPixels,
+    heightInCssPixels,
+    density,
+  );
+  const typeScalePx = buildCanvasTypographyPixelScale(
+    widthInCssPixels,
+    heightInCssPixels,
+    density,
+    baseFontSize / recommendedBaseFontSize,
+  );
+
+  return {
+    baseFontSize,
+    baseFontUnit: "px",
+    typographyDensity: density,
+    typographyDensityLabel: CANVAS_TYPOGRAPHY_LABELS[density],
+    typeScale,
+    typeScalePx,
+    minimumReadableFontSize: typeScalePx.micro,
+    emScale: {
+      displayTitle: typeScale.hero,
+      title: typeScale.title,
+      subtitle: typeScale.subtitle,
+      body: typeScale.body,
+      caption: typeScale.caption,
+    },
+  };
+}
+
+export function resolveCanvasTypographyFromContext(ctx: OperationContext) {
+  const size = ctx.getCanvasSize();
+  const canvas = ctx
+    .getCanvasChildren()
+    .find((child: any) => child.type === "canvas");
+  const rawFontSize = canvas?.fontSize;
+  const fontSize =
+    typeof rawFontSize === "object" ? Number(rawFontSize.value) : Number(rawFontSize);
+  const density = ["dense", "balanced", "display"].includes(canvas?.typographyDensity)
+    ? (canvas.typographyDensity as CanvasTypographyDensity)
+    : "balanced";
+
+  return resolveCanvasTypography({
+    ...size,
+    density,
+    fontSize: Number.isFinite(fontSize) && fontSize > 0 ? fontSize : undefined,
+  });
+}
+
 export function applyCanvasBaseFontSize(
   ctx: OperationContext,
   options: {
@@ -164,42 +293,18 @@ export function applyCanvasBaseFontSize(
   },
 ) {
   const density = options.density || "balanced";
-  const fontSize = resolveCanvasBaseFontSize(
-    options.width,
-    options.height,
-    options.unit || "px",
-    density,
-    options.fontSize,
-  );
+  const typography = resolveCanvasTypography({ ...options, density });
   const canvas = ctx
     .getCanvasChildren()
     .find((child: any) => child.type === "canvas");
 
   if (canvas?.id) {
     ctx.setChildProperty(canvas.id, "fontSize", {
-      value: fontSize,
+      value: typography.baseFontSize,
       unit: "px",
     });
+    ctx.setChildProperty(canvas.id, "typographyDensity", density);
   }
 
-  const typeScale = buildCanvasTypographyScale(
-    options.width,
-    options.height,
-    density,
-  );
-
-  return {
-    baseFontSize: fontSize,
-    baseFontUnit: "px",
-    typographyDensity: density,
-    typographyDensityLabel: CANVAS_TYPOGRAPHY_LABELS[density],
-    typeScale,
-    emScale: {
-      displayTitle: typeScale.hero,
-      title: typeScale.title,
-      subtitle: typeScale.subtitle,
-      body: typeScale.body,
-      caption: typeScale.caption,
-    },
-  };
+  return typography;
 }

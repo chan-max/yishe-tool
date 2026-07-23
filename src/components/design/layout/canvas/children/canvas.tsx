@@ -45,6 +45,7 @@ export function createDefaultCanvasChildcanvasStickerOptions(
             unit: 'px',
             value: 32
         },
+        typographyDensity: 'balanced',
         undeletable: true, // 不可删除
         filter: createFilterDefaultOptions('px'),
         backgroundColor: {

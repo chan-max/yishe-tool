@@ -1195,13 +1195,7 @@ async function runAgentLoop(
     compactPresetShortcuts: true,
   });
 
-  const needsDesignKnowledge =
-    !referenceImage &&
-    !!plan?.steps.some((step) =>
-      ["canvas.addHtml", "canvas.addDiagram", "canvas.addChart"].includes(
-        step.action,
-      ),
-    );
+  const needsDesignKnowledge = !referenceImage;
 
   // 3. 并行加载设计知识和当前用户可用的 Skills，失败不阻断原流程。
   const knowledgePromise = needsDesignKnowledge

@@ -1007,3 +1007,22 @@ class Api {
 }
 
 export default new Api();
+
+// 设计提示词导出
+export {
+  createDesignPrompt,
+  updateDesignPrompt,
+  deleteDesignPrompt,
+  queryDesignPromptPage,
+  favoriteDesignPrompt,
+  unfavoriteDesignPrompt,
+} from "./design-prompts/api";
+
+export type {
+  DesignPromptItem,
+  CreateDesignPromptParams,
+  UpdateDesignPromptParams,
+  QueryDesignPromptParams,
+  DesignPromptPageResponse,
+  DesignPromptCategory,
+} from "./design-prompts/types";

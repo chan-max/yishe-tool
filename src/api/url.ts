@@ -160,4 +160,15 @@ export enum Url {
   DESIGN_KNOWLEDGE_PAGE = "/api/design-knowledge/page",
   DESIGN_KNOWLEDGE_SEARCH = "/api/design-knowledge/search",
   DESIGN_KNOWLEDGE_REINDEX = "/api/design-knowledge/reindex",
+
+  // 设计工具提示词
+  DESIGN_PROMPT_CREATE = "/api/design-prompt/create",
+  DESIGN_PROMPT_UPDATE = "/api/design-prompt/update",
+  DESIGN_PROMPT_DELETE = "/api/design-prompt/delete",
+  DESIGN_PROMPT_PAGE = "/api/design-prompt/page",
+  DESIGN_PROMPT_GET = "/api/design-prompt",
+  DESIGN_PROMPT_FAVORITE = "/api/design-prompt/favorite",
+  DESIGN_PROMPT_UNFAVORITE = "/api/design-prompt/unfavorite",
+  DESIGN_PROMPT_BATCH = "/api/design-prompt/batch",
+  DESIGN_PROMPT_STATS = "/api/design-prompt/stats",
 }

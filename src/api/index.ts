@@ -1016,7 +1016,7 @@ export {
   queryDesignPromptPage,
   favoriteDesignPrompt,
   unfavoriteDesignPrompt,
-} from "./design-prompts/api";
+} from "../ai/design-prompts/api";
 
 export type {
   DesignPromptItem,
@@ -1025,4 +1025,4 @@ export type {
   QueryDesignPromptParams,
   DesignPromptPageResponse,
   DesignPromptCategory,
-} from "./design-prompts/types";
+} from "../ai/design-prompts/types";

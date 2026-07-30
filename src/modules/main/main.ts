@@ -162,26 +162,21 @@ function cleanupAuthParamsFromUrl() {
 // 检查并处理 URL 参数中的 token
 async function handleUrlToken() {
   const runtimeParams = parseUrlRuntimeParams()
-  const { embedSource, tokenFromUrl, prompt } = runtimeParams
-  syncEmbedRuntimeState(embedSource)
-  syncLaunchRuntimeState(runtimeParams)
-  syncLaunchPromptState(prompt)
+  const { tokenFromUrl, prompt } = runtimeParams
 
   if (!tokenFromUrl) {
     return false
   }
+
+  // 安全加固：读取 token 后立即从 URL 中移除，缩短暴露窗口
+  cleanupAuthParamsFromUrl()
 
   const loginStore = useLoginStatusStore();
   const loginSuccess = await loginStore.virtualLogin(tokenFromUrl, {
     silent: isEmbeddedRuntime(),
   });
 
-  if (loginSuccess) {
-    cleanupAuthParamsFromUrl()
-    return true
-  }
-
-  return false
+  return loginSuccess
 }
 
 async function setup() {

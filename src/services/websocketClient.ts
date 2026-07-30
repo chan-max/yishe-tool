@@ -1,6 +1,7 @@
 import { io, type Socket } from "socket.io-client";
 import { reactive } from "vue";
 import { getDesignRuntimeSnapshot } from "./designRuntime";
+import { useLoginStatusStore } from "@/store/stores/login";
 
 type WsStatus =
   | "idle"
@@ -19,6 +20,15 @@ const AGENT_STATUS_REFRESH_MS = 30_000;
 const LAUNCH_RUNTIME_KEY = "yishe_tool_launch_runtime";
 const LAUNCH_PROMPT_RUNTIME_KEY = "yishe_tool_launch_prompt_runtime";
 const designRuntime = getDesignRuntimeSnapshot();
+
+function getCurrentUserId(): string | null {
+  try {
+    const loginStore = useLoginStatusStore();
+    return loginStore.userInfo?.id ? String(loginStore.userInfo.id) : null;
+  } catch {
+    return null;
+  }
+}
 
 function generateClientId() {
   return `designtool-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -556,6 +566,19 @@ function bindSocketEvents(currentSocket: Socket) {
 
   // 监听来自 admin 的远程命令
   currentSocket.on("remote-command", (data: any) => {
+    // 防御性校验：验证发送者身份（服务端已做权限校验，此处为纵深防御）
+    const sender = data?.sender;
+    if (sender && sender.id) {
+      const myUserId = getCurrentUserId();
+      if (myUserId && String(sender.id) !== String(myUserId) && !sender.isAdmin) {
+        emitter.emit("log", {
+          level: "warn",
+          message: `[ws] remote-command 拒绝: 发送者 ${sender.id} 非当前用户且非管理员`,
+        });
+        return;
+      }
+    }
+
     emitter.emit("log", {
       level: "info",
       message: `[ws] remote-command: ${data?.type} ${data?.requestId || ""}`,
@@ -587,6 +610,13 @@ async function dispatchLaunchPromptIfNeeded() {
   const prompt = consumeLaunchPrompt();
   if (!prompt) return;
 
+  // 安全加固：URL 参数中的 prompt 不再自动执行，需用户确认
+  // 防止恶意链接通过 ?prompt=xxx 操控 AI Agent
+  const confirmed = window.confirm(
+    `检测到启动指令，是否执行？\n\n内容: ${prompt.slice(0, 200)}${prompt.length > 200 ? "..." : ""}`,
+  );
+  if (!confirmed) return;
+
   launchPromptDispatching = true;
   activeRemoteRequestId = "launch-prompt";
   setRemoteWorkerState("busy", "launch-prompt");
@@ -594,7 +624,7 @@ async function dispatchLaunchPromptIfNeeded() {
     await new Promise((resolve) => window.setTimeout(resolve, 800));
     const { designAgent } = await import("@/ai/langgraph");
     await designAgent.chat(prompt, {
-      allowInteraction: false,
+      allowInteraction: true,
       deliveryHandledExternally: false,
     });
   } catch (error: any) {

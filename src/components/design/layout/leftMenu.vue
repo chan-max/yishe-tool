@@ -184,6 +184,21 @@
       </div>
     </el-tooltip>
 
+    <el-tooltip :hide-after="0" content="提示词库" placement="right">
+      <div
+        class="menu-bar-item"
+        :class="{ 'menu-bar-item-focus': showPromptPicker }"
+        @click="showPromptPicker = true"
+      >
+        <div class="menu-bar-item-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <span>提示词</span>
+      </div>
+    </el-tooltip>
+
+    <DesignPromptPicker v-model="showPromptPicker" @select="handlePromptSelect" />
+
     <el-tooltip :hide-after="0" content="查看数据结构" placement="right">
       <div
         class="menu-bar-item"
@@ -221,8 +236,10 @@ import {
   setActiveMenu,
   clearAllMenus,
 } from "../store";
-import { isAiPanelOpen } from "@/ai/store";
+import { isAiPanelOpen, pendingPromptInput } from "@/ai/store";
 import { RobotOutlined } from "@ant-design/icons-vue";
+import { ref } from "vue";
+import DesignPromptPicker from "./ai/DesignPromptPicker.vue";
 
 import iconWorkspace from "@/icon/workspace.svg?component";
 import iconSticker from "@/components/design/assets/icon/sticker.svg?component";
@@ -257,6 +274,13 @@ import desimage from "@/components/image.vue";
 import { DESIGN_3D_ENABLED } from "../featureFlags";
 
 const isDesign3DEnabled = DESIGN_3D_ENABLED;
+
+const showPromptPicker = ref(false);
+
+function handlePromptSelect(content) {
+  pendingPromptInput.value = content;
+  isAiPanelOpen.value = true;
+}
 
 function handleSpecialMenuClick(menuKey) {
   switch (menuKey) {

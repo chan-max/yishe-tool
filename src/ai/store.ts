@@ -9,6 +9,7 @@ function generateId(): string {
 const conversations = useLocalStorage<AiConversation[]>('_1s_ai_conversations', [])
 const currentConversationId = ref<string | null>(null)
 const isAiPanelOpen = ref(false)
+const pendingPromptInput = ref<string | null>(null)
 const isProcessing = ref(false)
 
 export const currentConversation = computed(() => {
@@ -96,4 +97,5 @@ export {
   currentConversationId as aiCurrentConversationId,
   isAiPanelOpen,
   isProcessing as aiIsProcessing,
+  pendingPromptInput,
 }

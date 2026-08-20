@@ -6,6 +6,17 @@ import { buildCOSKey, extractCOSFilename, extractCOSObjectKey } from '@/utils/co
 
 var _cos
 
+// 上传成功后登记文件资产；登记失败不影响原有上传结果。
+const registerFileAssetBestEffort = (payload: Record<string, any>) => {
+    void import('./apiInstance').then(({ apiInstance }) => apiInstance.post('/api/file-asset/register', {
+        provider: 'tencent-cos',
+        sourceApp: '1s',
+        ...payload,
+    })).catch((error: any) => {
+        console.warn('[file-asset] 登记失败，不影响 COS 上传', error?.message || error)
+    })
+}
+
 export const resetCOS = () => {
     _cos = undefined
 }
@@ -87,10 +98,20 @@ export async function uploadToCOS({
             Bucket: cos.options.Bucket,
             Region: cos.options.Region
         })
-        return {
-            url: `https://${res.Location}`,
-            key: finalKey
-        }
+        const url = `https://${res.Location}`
+        registerFileAssetBestEffort({
+            bucket: cos.options.Bucket || '',
+            region: cos.options.Region || '',
+            objectKey: String(finalKey),
+            url,
+            fileName: file.name || 'file',
+            contentType: file.type || '',
+            size: file.size,
+            sourceModule: category || 'uncategorized',
+            category: category || 'uncategorized',
+            metadata: { uploadMode: 'browser-direct' },
+        })
+        return { url, key: finalKey }
     } catch (e: any) {
         console.error('文件上传失败:', e)
         const errorMessage = e?.message || e?.toString() || '未知错误'

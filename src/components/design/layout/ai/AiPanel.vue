@@ -193,6 +193,11 @@
         <span>松开上传参考图</span>
       </div>
 
+      <DesignPromptPicker
+        v-model="showPromptPicker"
+        @select="handlePromptSelect"
+      />
+
       <div class="ai-panel__input-tools">
         <button
           class="ai-panel__upload-btn"
@@ -204,6 +209,16 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
         </button>
         <input ref="imageInputRef" type="file" accept="image/*" style="display:none" @change="handleImageUpload" />
+
+        <button
+          class="ai-panel__upload-btn"
+          :class="{ 'is-active': showPromptPicker }"
+          :disabled="isProcessing"
+          @click="showPromptPicker = !showPromptPicker"
+          title="提示词库"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </button>
 
         <select
           v-model="taskOptions.preset"
@@ -269,6 +284,7 @@ import { designAgent } from "@/ai/langgraph";
 import { resolveAIToolName } from "@/ai/shared/tools";
 import type { AgentInteraction } from "@/ai/langgraph";
 import { isDarkMode } from "@/components/design/store";
+import { pendingPromptInput } from "@/ai/store";
 import { prepareImageForAI } from "@/ai/image-preprocess";
 import { getAgentPhaseLabel } from "@/ai/agent/presentation";
 import {
@@ -277,6 +293,7 @@ import {
   validateAgentTaskSpec,
   type AgentTaskOptions,
 } from "@/ai/agent/task-spec";
+import DesignPromptPicker from "./DesignPromptPicker.vue";
 
 const isOpen = useLocalStorage("_1s_ai_panel_open", false);
 
@@ -295,6 +312,7 @@ const agent = designAgent;
 // State
 const inputText = ref("");
 const isComposing = ref(false);
+const showPromptPicker = ref(false);
 const messagesRef = ref<HTMLElement>();
 const textareaRef = ref<HTMLTextAreaElement>();
 const customAnswer = ref("");
@@ -376,6 +394,17 @@ watch(inputText, (val) => {
     });
   } else {
     nextTick(adjustTextareaHeight);
+  }
+});
+
+watch(pendingPromptInput, (val) => {
+  if (val) {
+    inputText.value = val;
+    pendingPromptInput.value = null;
+    nextTick(() => {
+      textareaRef.value?.focus();
+      adjustTextareaHeight();
+    });
   }
 });
 
@@ -650,6 +679,15 @@ function formatFileSize(bytes: number): string {
 
 function removeImage() { selectedImage.value = null; }
 function sendQuick(prompt: string) { inputText.value = prompt; handleSend(); }
+
+function handlePromptSelect(content: string) {
+  inputText.value = content;
+  showPromptPicker.value = false;
+  nextTick(() => {
+    textareaRef.value?.focus();
+    adjustTextareaHeight();
+  });
+}
 function clearChat() { agent.clearMessages(); }
 
 function submitInteraction(answer: string) {

@@ -6,7 +6,7 @@ import { buildCOSKey, extractCOSFilename, extractCOSObjectKey } from '@/utils/co
 
 var _cos
 
-// 上传成功后登记文件资产；登记失败不影响原有上传结果。
+// 上传成功后登记文件存储记录；登记失败不影响原有上传结果。
 const registerFileAssetBestEffort = (payload: Record<string, any>) => {
     void import('./apiInstance').then(({ apiInstance }) => apiInstance.post('/api/file-asset/register', {
         provider: 'tencent-cos',
@@ -90,7 +90,7 @@ export async function uploadToCOS({
             isThumbnail,
         })
     }
-    
+
     try {
         const res = await cos.uploadFile({
             Key: String(finalKey),

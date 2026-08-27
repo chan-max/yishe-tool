@@ -132,7 +132,8 @@ async function submit(form) {
     // 修改字段名以匹配后端期望的username字段
     const loginData = {
       username: loginForm.account,
-      password: loginForm.password
+      password: loginForm.password,
+      terminalType: "1s"
     };
     let res = await login(loginData);
     await doLoginAction(res.data, isOnce.value);

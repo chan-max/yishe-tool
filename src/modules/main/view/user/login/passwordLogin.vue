@@ -61,7 +61,29 @@
         </el-button>
       </el-form-item>
     </el-form>
-    <div style="display: flex; justify-content: space-between">
+
+    <!-- 分割线 -->
+    <div class="login-divider">
+      <span class="login-divider__line"></span>
+      <span class="login-divider__text">或</span>
+      <span class="login-divider__line"></span>
+    </div>
+
+    <!-- 一键授权登录 -->
+    <el-button
+      class="login-oauth-btn"
+      :loading="oauthLoading"
+      @click="handleOAuthLogin"
+    >
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+        <polyline points="10 17 15 12 10 7" />
+        <line x1="15" y1="12" x2="3" y2="12" />
+      </svg>
+      一键授权登录
+    </el-button>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 16px">
       <div class="login-link login-link--muted">账号由管理员统一分配</div>
       <div></div>
       <div class="login-link login-link--muted">如需开通请联系管理员</div>
@@ -79,10 +101,13 @@ import { message } from "ant-design-vue";
 import { View, Hide, User, Lock } from "@element-plus/icons-vue";
 import { doLoginAction } from "@/store/stores/loginAction";
 import { showLoginFormModal } from "@/modules/main/view/user/login/index.tsx";
+import { openAuthorizePage } from "@/api/oauth";
+
 const router = useRouter();
 const productName = publicAppConfig.shortName;
 
 const loading = ref(false);
+const oauthLoading = ref(false);
 
 const showPassword = ref(false);
 
@@ -158,6 +183,18 @@ async function submit(form) {
     }
   }
 }
+
+/** 一键授权登录 */
+async function handleOAuthLogin() {
+  oauthLoading.value = true;
+  try {
+    openAuthorizePage();
+  } catch (e: any) {
+    errMsg.value = e?.message || '打开授权页面失败';
+  } finally {
+    oauthLoading.value = false;
+  }
+}
 </script>
 
 <style lang="less">
@@ -182,6 +219,42 @@ async function submit(form) {
   justify-content: center;
   align-items: center;
   color: var(--el-color-primary);
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.login-divider__line {
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+
+.login-divider__text {
+  font-size: 12px;
+  color: #999;
+}
+
+.login-oauth-btn {
+  width: 100%;
+  height: 36px;
+  border: 1px solid #ddd !important;
+  border-radius: 4px;
+  background: #fff !important;
+  color: #333 !important;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-oauth-btn:hover {
+  border-color: #999 !important;
+  background: #fafafa !important;
 }
 
 .login-link {

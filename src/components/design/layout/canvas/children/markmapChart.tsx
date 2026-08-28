@@ -1,5 +1,3 @@
-import { Transformer } from "markmap-lib";
-import { Markmap } from "markmap-view";
 import {
   computed,
   defineComponent,
@@ -25,8 +23,6 @@ import {
   createTransformDefaultOptions,
 } from "./defaultOptions.tsx";
 import { onBeforeReturnRender, onCanvasChildSetup } from "./commonHooks.ts";
-
-const transformer = new Transformer();
 
 export const createDefaultCanvasChildMarkmapChartOptions = () => {
   const canvasUnit = canvasStickerOptionsOnlyChild.value.width.unit;
@@ -100,6 +96,12 @@ export const MarkmapChartChild = defineComponent({
         // 清除旧内容
         svgRef.value.innerHTML = "";
 
+        const [{ Transformer }, { Markmap }] = await Promise.all([
+          import(/* @vite-ignore */ "markmap-lib" as any),
+          import(/* @vite-ignore */ "markmap-view" as any),
+        ]);
+
+        const transformer = new Transformer();
         const { root } = transformer.transform(text);
 
         // 创建新的 markmap 实例

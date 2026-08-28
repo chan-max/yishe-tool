@@ -79,6 +79,15 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    optimizeDeps: {
+      exclude: [
+        "markmap-lib",
+        "markmap-view",
+        "markmap-common",
+        "vega",
+        "vega-lite",
+      ],
+    },
     server: {
       port: 1522,
       proxy: {

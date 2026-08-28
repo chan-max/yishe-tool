@@ -537,17 +537,17 @@ const isDragOver = ref(false);
 const autoFollowMessages = ref(true);
 const hasUnreadMessages = ref(false);
 
-// 任务参数模型
+// 任务参数模型 - 默认：单图 1 张，保存到贴纸库
 const taskOptions = useLocalStorage<AgentTaskOptions>(
-  "_1s_ai_task_options_v1",
+  "_1s_ai_task_options_v2",
   {
     preset: "single",
     source: "blank",
     intent: "create",
     outputKind: "single",
-    jobCount: 3,
+    jobCount: 1,
     memberCount: 4,
-    delivery: "canvas",
+    delivery: "save",
     customInstructions: "",
   },
   { mergeDefaults: true },
@@ -561,7 +561,7 @@ const isCustomParamActive = computed(() => {
     (o.outputKind === "single" && (o.jobCount || 1) > 1) ||
     o.source === "current-canvas" ||
     o.intent === "edit" ||
-    o.delivery === "save" ||
+    o.delivery === "canvas" ||
     o.delivery === "export" ||
     !!o.customInstructions?.trim()
   );
@@ -603,7 +603,7 @@ const activeParamSummary = computed(() => {
   return {
     icon: markRaw(Palette),
     title: "单图设计",
-    desc: "在画布生成 1 张全新设计",
+    desc: "在画布生成 1 张全新设计并自动保存",
   };
 });
 
@@ -614,9 +614,9 @@ function resetParamsToDefault() {
     source: "blank",
     intent: "create",
     outputKind: "single",
-    jobCount: 3,
+    jobCount: 1,
     memberCount: 4,
-    delivery: "canvas",
+    delivery: "save",
     customInstructions: "",
   };
 }
@@ -788,13 +788,30 @@ const planProgress = computed(() => {
   };
 });
 
-// 是否展示完成后的快捷操作卡片
+// 是否展示完成后的快捷操作卡片（仅当确实成功且没有失败/未完成的步骤）
 const showSuccessActionCard = computed(() => {
   if (isProcessing.value) return false;
+  if (agent.state.status === "error") return false;
   const msgs = messages.value;
   if (!msgs.length) return false;
   const last = msgs[msgs.length - 1];
-  return last && last.role === 'assistant' && !isWaitingForUser.value;
+  if (!last || last.role !== "assistant" || isWaitingForUser.value) return false;
+
+  // 检查最后一条消息是否包含中断或失败特征
+  const text = String(last.content || "");
+  if (/任务未完成|未完成|执行失败|达到最大执行轮次|发生错误/i.test(text)) {
+    return false;
+  }
+
+  // 如果有执行计划，检查是否有未完成或失败的步骤
+  if (currentPlan.value?.steps?.length) {
+    const hasUnfinished = currentPlan.value.steps.some(
+      (s: any) => s.status === "pending" || s.status === "in_progress" || s.status === "failed"
+    );
+    if (hasUnfinished) return false;
+  }
+
+  return true;
 });
 
 function scrollToBottom(force = false) {

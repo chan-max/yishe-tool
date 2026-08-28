@@ -293,7 +293,7 @@ const form = reactive<AgentTaskOptions>({
   outputKind: "single",
   jobCount: 1,
   memberCount: 4,
-  delivery: "canvas",
+  delivery: "save",
   customInstructions: "",
 });
 
@@ -320,7 +320,7 @@ watch(
       outputKind: newVal.outputKind || "single",
       jobCount: newVal.jobCount ?? 1,
       memberCount: newVal.memberCount || 4,
-      delivery: newVal.delivery || "canvas",
+      delivery: newVal.delivery || "save",
       customInstructions: newVal.customInstructions || "",
     });
   },
@@ -333,12 +333,14 @@ function setFormat(kind: "single" | "group") {
     form.outputKind = "single";
     form.source = "blank";
     form.intent = "create";
+    form.delivery = form.delivery || "save";
     if (!form.jobCount) form.jobCount = 1;
   } else if (kind === "group") {
     form.preset = "group";
     form.outputKind = "group";
     form.source = "blank";
     form.intent = "create";
+    form.delivery = "save";
     if (!form.jobCount) form.jobCount = 1;
     if (!form.memberCount) form.memberCount = 4;
   }
@@ -352,7 +354,7 @@ function handleReset() {
     outputKind: "single",
     jobCount: 1,
     memberCount: 4,
-    delivery: "canvas",
+    delivery: "save",
     customInstructions: "",
   });
   emit("update:options", { ...form });

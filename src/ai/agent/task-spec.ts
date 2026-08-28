@@ -164,6 +164,7 @@ export function resolveAgentTaskSpec(
     source = "blank";
     intent = "create";
     outputKind = "single";
+    delivery = options.delivery || "save";
   } else if (preset === "group") {
     source = "blank";
     intent = "create";

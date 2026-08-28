@@ -362,7 +362,14 @@ registerOperation({
       ? undefined
       : requestedCustomStickerId || currentEditingCustomStickerId.value || undefined;
 
-    const controller = currentCanvasControllerInstance.value;
+    let controller = currentCanvasControllerInstance.value;
+    if (!controller) {
+      // 尝试等待 DOM / 控制器挂载 (最多 1500ms)
+      for (let i = 0; i < 3 && !controller; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        controller = currentCanvasControllerInstance.value;
+      }
+    }
     if (!controller) {
       return {
         success: false,

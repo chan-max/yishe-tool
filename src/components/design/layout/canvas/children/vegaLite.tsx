@@ -121,12 +121,19 @@ export const VegaLiteChild = defineComponent({
 
         el.innerHTML = "";
 
-        const [{ compile }, vegaModule] = await Promise.all([
-          import("vega-lite"),
-          import(/* @vite-ignore */ ("vega" as any)),
-        ]);
-        const { parse, View: VegaView } = vegaModule;
+        const importModule = (name: string) =>
+          new Function("mod", "return import(mod)")(name);
 
+        const [{ compile }, vegaModule] = await Promise.all([
+          importModule("vega-lite"),
+          importModule("vega"),
+        ]);
+
+        if (!vegaModule || !compile) {
+          throw new Error("Vega 依赖未加载成功");
+        }
+
+        const { parse, View: VegaView } = vegaModule;
         const vgSpec = compile(specVal).spec;
         view = new VegaView(parse(vgSpec), {
           renderer: "svg",

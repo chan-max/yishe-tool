@@ -96,9 +96,12 @@ export const MarkmapChartChild = defineComponent({
         // 清除旧内容
         svgRef.value.innerHTML = "";
 
+        const importModule = (name: string) =>
+          new Function("mod", "return import(mod)")(name);
+
         const [{ Transformer }, { Markmap }] = await Promise.all([
-          import(/* @vite-ignore */ "markmap-lib" as any),
-          import(/* @vite-ignore */ "markmap-view" as any),
+          importModule("markmap-lib"),
+          importModule("markmap-view"),
         ]);
 
         const transformer = new Transformer();

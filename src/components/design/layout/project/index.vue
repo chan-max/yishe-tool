@@ -1,11 +1,3 @@
-<!--
- * @Author: chan-max jackieontheway666@gmail.com
- * @Date: 2025-05-20 06:50:38
- * @LastEditors: chan-max jackieontheway666@gmail.com
- * @LastEditTime: 2025-06-12 21:30:29
- * @FilePath: /1s/src/components/design/layout/project/index.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 <template>
   <div class="project-shell">
     <div class="project-shell__main">
@@ -28,14 +20,14 @@
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
 import { ref, computed, markRaw } from "vue";
-
 import tabSticker from "./sticker/index.vue";
 import tabFont from "./font/index.vue";
-import tabSentence from './sentence/index.vue';
-import tabDocument from './document/index.vue';
-import tabTips from './tips/index.vue';
+import tabSentence from "./sentence/index.vue";
+import tabDocument from "./document/index.vue";
+import tabTips from "./tips/index.vue";
 import { useLocalStorage } from "@vueuse/core";
 
 enum UserOwnSourceType {
@@ -46,10 +38,13 @@ enum UserOwnSourceType {
   LIKED = "liked",
   DRAFT = "draft",
   DOCUMENT = "document",
-  TIPS = "tips"
+  TIPS = "tips",
 }
 
-const activeKey = useLocalStorage('_1s_projectActiveTab', UserOwnSourceType.STICKER);
+const activeKey = useLocalStorage(
+  "_1s_projectActiveTab",
+  UserOwnSourceType.STICKER,
+);
 
 const tabs = ref([
   {
@@ -84,12 +79,17 @@ if (!tabs.value.some((item) => item.key === activeKey.value)) {
 }
 
 const activeComponent = computed(() => {
-  const currentTab = tabs.value.find((item) => item.key == activeKey.value) || tabs.value[0];
+  const currentTab =
+    tabs.value.find((item) => item.key == activeKey.value) || tabs.value[0];
   return currentTab.component;
 });
-
 </script>
+
 <style lang="less">
+/* ==========================================================================
+   Material Design 3 (MD3) - 创作资源模态弹窗与工作区样式
+   ========================================================================== */
+
 .full-modal--project-resources {
   .ant-modal {
     max-width: 100vw;
@@ -98,462 +98,288 @@ const activeComponent = computed(() => {
   .ant-modal-content {
     overflow: hidden;
     background: var(--1s-surface-background);
+    border-radius: var(--1s-radius-lg);
+    box-shadow: var(--1s-shadow-lg);
   }
 
   .ant-modal-header {
-    height: 44px;
-    padding: 0 18px;
+    height: 50px;
+    padding: 0 20px;
     background: var(--1s-surface-background);
+    border-bottom: 1px solid var(--1s-divider-color);
     display: flex;
     align-items: center;
   }
 
   .ant-modal-title {
     color: var(--1s-text-color);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
+    letter-spacing: -0.2px;
   }
 
   .ant-modal-close {
-    top: 7px;
+    top: 8px;
     inset-inline-end: 12px;
-    width: 30px;
-    height: 30px;
-    border-radius: var(--1s-radius-sm);
+    width: 34px;
+    height: 34px;
+    border-radius: var(--1s-radius-pill);
     background: transparent;
     color: var(--1s-text-color-secondary);
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
   }
 
   .ant-modal-close:hover {
-    background: var(--1s-control-hover-background);
+    background: var(--1s-hover-background);
     color: var(--1s-text-color);
   }
 
   .ant-modal-body {
-    height: calc(100vh - 44px);
-    max-height: calc(100vh - 44px);
+    height: calc(100vh - 50px);
+    max-height: calc(100vh - 50px);
     overflow: hidden;
     padding: 0;
-    background: var(--1s-surface-background);
+    background: var(--1s-panel-background);
   }
 }
 
 .project-shell {
   display: flex;
   flex-direction: column;
-  position: relative;
   height: 100%;
   overflow: hidden;
-  background: var(--1s-surface-background);
+  background: var(--1s-panel-background);
   color: var(--1s-text-color);
+
+  &__main {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+    overflow: auto;
+    background: var(--1s-panel-background);
+  }
+
+  /* MD3 Pill Navigation 分类胶囊轨 */
+  &__nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 36px;
+    padding: 3px;
+    border-radius: var(--1s-radius-pill);
+    background: var(--1s-surface-background);
+    border: 1px solid var(--1s-border-color);
+  }
+
+  &__nav-item {
+    height: 30px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: var(--1s-radius-pill);
+    background: transparent;
+    color: var(--1s-text-color-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+
+    &:hover {
+      background: var(--1s-hover-background);
+      color: var(--1s-text-color);
+    }
+
+    &.is-active {
+      background: var(--1s-accent-color);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+  }
 }
 
-.project-shell,
-.project-page,
-.project-detail-modal {
-  --project-text-primary: var(--1s-text-color);
-  --project-text-secondary: var(--1s-text-color-secondary);
-  --project-text-tertiary: var(--1s-text-color-tertiary);
+body.designiy-dark,
+.designiy.dark {
+  .project-shell__nav-item.is-active {
+    background: var(--1s-accent-color-soft);
+    color: var(--1s-left-menu-item-text-active-color);
+  }
 }
 
-body.designiy-dark .project-shell,
-.designiy.dark .project-shell,
-body.designiy-dark .project-page,
-.designiy.dark .project-page,
-body.designiy-dark .project-detail-modal,
-.designiy.dark .project-detail-modal {
-  --project-text-primary: #f3f4f6;
-  --project-text-secondary: #d4d4d8;
-  --project-text-tertiary: #b4b4bb;
-}
-
-.project-shell__nav {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  height: 36px;
-  padding: 3px;
-  border-radius: var(--1s-radius-md);
-  background: var(--1s-control-surface-muted);
-}
-
-.project-shell__nav-item {
-  height: 28px;
-  min-width: 52px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: var(--1s-radius-sm);
-  background: transparent;
-  color: var(--project-text-secondary);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.18s ease, background-color 0.18s ease;
-}
-
-.project-shell__nav-item:hover {
-  background: var(--1s-control-hover-background);
-  color: var(--project-text-primary);
-}
-
-.project-shell__nav-item.is-active {
-  background: var(--1s-surface-background);
-  color: var(--project-text-primary);
-  font-weight: 700;
-}
-
-.project-shell__main {
-  width: 100%;
-  min-width: 0;
-  flex: 1;
-  overflow: auto;
-  padding: 0;
-  background: var(--1s-surface-background);
-}
-
-.project-page {
-  min-height: 100%;
-  background: transparent;
-  color: var(--project-text-primary);
-}
-
+/* 顶部操作与筛选栏 */
 .project-toolbar {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 10;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  min-height: 36px;
-  padding: 4px 10px;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 20px;
   background: var(--1s-surface-background);
+  border-bottom: 1px solid var(--1s-divider-color);
+
+  &__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  &__group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--1s-text-color-secondary);
+  }
+
+  &__caption {
+    font-size: 12px;
+    color: var(--1s-text-color-tertiary);
+    font-weight: 500;
+  }
+
+  .el-button {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: var(--1s-radius-pill);
+    border: 1px solid var(--1s-border-color);
+    background: var(--1s-surface-background);
+    color: var(--1s-text-color);
+    font-size: 12px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--1s-hover-background);
+      border-color: var(--1s-accent-color);
+      color: var(--1s-accent-color);
+    }
+  }
+
+  .el-select__wrapper {
+    min-height: 32px;
+    border-radius: var(--1s-radius-pill);
+    background: var(--1s-control-surface-muted);
+    box-shadow: 0 0 0 1px var(--1s-border-color) inset;
+  }
 }
 
-.project-toolbar__controls {
-  margin-left: auto;
-}
-
-.project-footer {
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
-  padding: 6px 10px;
-  background: var(--1s-surface-background);
-}
-
-.project-toolbar__summary {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.project-toolbar__controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-}
-
-.project-toolbar__group {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 28px;
-  padding: 0;
-  background: transparent;
-}
-
-.project-toolbar .el-button {
-  height: 26px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: var(--1s-radius-sm);
-}
-
-.project-toolbar .el-select__wrapper {
-  min-height: 26px;
-  border-radius: var(--1s-radius-sm);
-}
-
-.project-toolbar__label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--project-text-secondary);
-}
-
-.project-toolbar__heading {
+/* MD3 资源卡片网格 */
+.project-gallery-card {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  background: var(--1s-surface-background);
+  border: 1px solid var(--1s-border-color);
+  border-radius: var(--1s-radius-lg);
+  padding: 8px;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--1s-shadow-md);
+    border-color: var(--1s-accent-color);
+  }
+
+  &__media {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: var(--1s-radius-md);
+    background: var(--1s-panel-background);
+    cursor: pointer;
+  }
+
+  &__body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 4px 4px 4px;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    color: var(--1s-text-color);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
 }
 
-.project-toolbar__caption {
-  font-size: 11px;
-  color: var(--project-text-tertiary);
-}
-
-.project-card {
-  background: transparent;
-  border: 0 !important;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.project-card:hover {
-  box-shadow: none;
-}
-
-.project-thumb,
-.project-preview-surface {
-  background: var(--1s-control-surface-muted) !important;
-}
-
-.project-loading-overlay {
-  background: rgba(243, 246, 249, 0.78);
-}
-
-.project-loading-overlay__spinner {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--1s-text-color-secondary);
-}
-
-body.designiy-dark .project-loading-overlay,
-.designiy.dark .project-loading-overlay {
-  background: rgba(0, 0, 0, 0.38);
-}
-
-body.designiy-dark .project-loading-overlay__spinner,
-.designiy.dark .project-loading-overlay__spinner {
-  background: rgba(24, 24, 27, 0.9);
-  color: #e5e7eb;
-}
-
+/* MD3 胶囊小标签 (Chips & Tags) */
 .project-tag {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 18px;
-  padding: 0 6px;
-  border-radius: 999px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: var(--1s-radius-pill);
   background: var(--1s-control-surface-muted);
   color: var(--1s-text-color-secondary);
-  border: 0;
-  font-size: 9px;
-  font-weight: 600;
-  white-space: nowrap;
-}
+  font-size: 11px;
+  font-weight: 500;
 
-.project-tag--accent {
-  background: var(--1s-accent-color-soft);
-  color: var(--1s-text-color);
-}
+  &--accent {
+    background: var(--1s-active-background);
+    color: var(--1s-accent-color);
+    font-weight: 600;
+  }
 
-.project-tag--success {
-  background: rgba(34, 197, 94, 0.16);
-  color: #22c55e;
-}
+  &--success {
+    background: rgba(34, 197, 94, 0.14);
+    color: #16a34a;
+  }
 
-.project-tag--warning {
-  background: rgba(245, 158, 11, 0.16);
-  color: #f59e0b;
-}
-
-.project-tag--danger {
-  background: rgba(248, 113, 113, 0.16);
-  color: #f87171;
+  &--danger {
+    background: rgba(239, 68, 68, 0.14);
+    color: #dc2626;
+  }
 }
 
 .project-timeago {
-  font-size: 0.9rem;
-  color: var(--project-text-tertiary);
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.project-empty-text {
-  color: var(--project-text-secondary);
-}
-
-.project-muted-text {
-  color: var(--project-text-secondary);
-}
-
-.project-placeholder-text {
-  color: var(--project-text-tertiary);
-}
-
-.project-section-title {
-  color: var(--project-text-primary);
-}
-
-.project-divider {
-  opacity: 0;
-}
-
-.project-media-frame {
-  border-radius: var(--1s-radius-md);
-  overflow: hidden;
-  background: var(--1s-control-surface-muted);
-}
-
-.project-tooltip-panel {
-  background: var(--1s-elevated-background);
-  color: var(--1s-text-color);
-  border: 0;
-  box-shadow: none;
-}
-
-.project-hover-lift {
-  transition: none;
-}
-
-.project-hover-lift:hover {
-  box-shadow: none;
-}
-
-.project-gallery-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 0;
-  padding: 0;
-}
-
-.project-gallery-card__media {
-  display: block;
-  width: 100%;
-  height: auto !important;
-  min-height: 150px;
-  aspect-ratio: 4 / 3;
-  flex: 0 0 auto;
-  overflow: hidden;
-  border-radius: var(--1s-radius-sm);
-}
-
-.project-gallery-card__body {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  margin-top: 0;
-  min-width: 0;
-}
-
-.project-gallery-card__content {
-  flex: 1;
-  min-width: 0;
-}
-
-.project-gallery-card__title {
-  color: var(--project-text-primary);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.project-gallery-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
+  font-size: 11px;
+  color: var(--1s-text-color-tertiary);
+  margin-left: auto;
 }
 
 .project-action-button {
   width: 28px;
   height: 28px;
   padding: 0;
-  border-radius: var(--1s-radius-sm);
-  color: var(--project-text-secondary);
+  border-radius: var(--1s-radius-pill);
+  color: var(--1s-text-color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s ease;
-}
 
-.project-action-button:hover {
-  background: rgba(148, 163, 184, 0.12);
-  color: var(--1s-accent-color);
-}
-
-.project-page .text-color-regular,
-.project-detail-modal .text-color-regular,
-.project-page .text-gray-700,
-.project-page .text-gray-600,
-.project-page .text-gray-500 {
-  color: var(--project-text-secondary) !important;
-}
-
-.project-page .text-color-placeholder,
-.project-detail-modal .text-color-placeholder,
-.project-page .text-gray-400 {
-  color: var(--project-text-tertiary) !important;
-}
-
-.project-page .text-gray-900,
-.project-page .text-gray-800,
-.project-detail-modal h1,
-.project-detail-modal h2,
-.project-detail-modal h3,
-.project-detail-modal h4,
-.project-detail-modal h5,
-.project-detail-modal h6 {
-  color: var(--project-text-primary);
-}
-
-.project-page .el-empty__description,
-.project-page .el-empty__description p,
-.project-page .ant-empty-description,
-.project-detail-modal .ant-empty-description {
-  color: var(--project-text-secondary) !important;
-}
-
-.project-shell :is(.el-input__wrapper, .el-select__wrapper, .el-textarea__inner) {
-  background: var(--1s-control-surface-background);
-  border: 0;
-  box-shadow: none;
-}
-
-.project-shell :is(.el-input__wrapper, .el-select__wrapper):hover,
-.project-shell .el-textarea__inner:hover {
-  background: var(--1s-control-surface-muted);
-}
-
-.project-shell :is(.el-input__wrapper.is-focus, .el-select__wrapper.is-focused),
-.project-shell .el-textarea__inner:focus {
-  background: var(--1s-control-surface-background);
-  box-shadow: none !important;
-}
-
-.project-shell .el-pagination {
-  padding: 0;
-  background: transparent;
-  border: 0;
-}
-
-@media (max-width: 720px) {
-  .project-shell__nav {
-    height: 32px;
-    overflow-x: auto;
-  }
-
-  .project-toolbar {
-    align-items: stretch;
-    min-height: 0;
-    padding: 4px 10px;
-  }
-
-  .project-toolbar__controls {
-    width: 100%;
+  &:hover {
+    background: var(--1s-hover-background);
+    color: var(--1s-accent-color);
   }
 }
 </style>

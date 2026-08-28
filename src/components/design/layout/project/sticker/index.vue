@@ -272,9 +272,9 @@ async function getList() {
       pageSize: pageSize.value,
       ...queryParams.value,
     };
-    // 过滤空字符串，避免传递给后端
-    if (params.isCustom === '') {
-      delete params.isCustom;
+    // 过滤空值，避免传递给后端
+    if ((params as any).isCustom === '' || params.isCustom === undefined) {
+      delete (params as any).isCustom;
     }
     const res = await getStickerList(params);
     list.value = res.list;

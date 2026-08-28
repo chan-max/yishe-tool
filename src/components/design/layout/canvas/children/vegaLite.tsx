@@ -1,5 +1,3 @@
-import { compile } from "vega-lite";
-import { parse, View } from "vega";
 import {
   computed,
   defineComponent,
@@ -86,7 +84,7 @@ export const VegaLiteChild = defineComponent({
     const targetRef = ref<HTMLElement>();
     const plotRef = ref<HTMLElement>();
     const errorMessage = ref("");
-    let view: View | null = null;
+    let view: any = null;
 
     onCanvasChildSetup({
       targetEl: targetRef,
@@ -123,8 +121,14 @@ export const VegaLiteChild = defineComponent({
 
         el.innerHTML = "";
 
+        const [{ compile }, vegaModule] = await Promise.all([
+          import("vega-lite"),
+          import(/* @vite-ignore */ ("vega" as any)),
+        ]);
+        const { parse, View: VegaView } = vegaModule;
+
         const vgSpec = compile(specVal).spec;
-        view = new View(parse(vgSpec), {
+        view = new VegaView(parse(vgSpec), {
           renderer: "svg",
           container: el,
         });

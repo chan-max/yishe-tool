@@ -319,16 +319,29 @@ onBeforeMount(() => {
 <style scoped lang="less">
 .sentence-card {
   min-height: 0;
-  padding: 0 0 12px;
+  padding: 16px;
+  background: var(--1s-surface-background);
+  border: 1px solid var(--1s-border-color);
+  border-radius: var(--1s-radius-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--1s-shadow-md);
+    border-color: var(--1s-accent-color);
+  }
 }
 
 .sentence-card__content {
   min-height: 44px;
   margin-bottom: 6px;
-  color: var(--project-text-primary);
-  font-size: 17px;
+  color: var(--1s-text-color);
+  font-size: 15px;
   font-weight: 600;
-  line-height: 1.6;
+  line-height: 1.5;
   word-break: break-word;
 }
 
@@ -337,7 +350,8 @@ onBeforeMount(() => {
   overflow: hidden;
   margin-bottom: 10px;
   font-size: 12px;
-  line-height: 1.6;
+  color: var(--1s-text-color-secondary);
+  line-height: 1.5;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
@@ -347,7 +361,9 @@ onBeforeMount(() => {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  padding-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--1s-divider-color);
   font-size: 11px;
+  color: var(--1s-text-color-tertiary);
 }
 </style>

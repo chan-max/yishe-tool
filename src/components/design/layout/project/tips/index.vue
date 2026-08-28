@@ -338,11 +338,24 @@ onBeforeMount(() => {
 <style scoped lang="less">
 .tip-card {
   min-height: 0;
-  padding: 12px;
+  padding: 16px;
+  background: var(--1s-surface-background);
+  border: 1px solid var(--1s-border-color);
+  border-radius: var(--1s-radius-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--1s-shadow-md);
+    border-color: var(--1s-accent-color);
+  }
 }
 
 .tip-card__title {
-  color: var(--project-text-primary);
+  color: var(--1s-text-color);
   font-size: 15px;
   font-weight: 600;
   line-height: 1.4;
@@ -362,9 +375,9 @@ onBeforeMount(() => {
   line-height: 1.5;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
-  color: var(--project-text-secondary);
+  color: var(--1s-text-color-secondary);
   white-space: pre-wrap;
-  font-family: monospace;
+  font-family: inherit;
 }
 
 .tip-card__meta {
@@ -372,8 +385,9 @@ onBeforeMount(() => {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  border-top: 1px dashed var(--1s-border-color-light);
-  padding-top: 8px;
+  border-top: 1px solid var(--1s-divider-color);
+  padding-top: 12px;
   font-size: 11px;
+  color: var(--1s-text-color-tertiary);
 }
 </style>

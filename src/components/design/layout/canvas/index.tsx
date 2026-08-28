@@ -210,6 +210,9 @@ import {
     画布参数
 */
 
+export const currentEditingCustomStickerId = ref<string | null>(null)
+export const currentEditingCustomStickerFolderId = ref<string | null>(null)
+
 export var canvasStickerOptions = ref({
   unit: "px", // 这个单位还是要保留，当作整个部分的单位
   showCanvasRealSize: false,

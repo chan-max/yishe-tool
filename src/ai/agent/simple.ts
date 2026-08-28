@@ -521,11 +521,11 @@ function completeBatchItem(stickerId: unknown): {
   let hint = "";
   if (!normalizedStickerId) {
     hint =
-      "保存结果没有返回有效 stickerId，本项不能计入批量进度，请重新保存。";
+      "保存结果没有返回有效 customStickerId，本项不能计入批量进度，请重新保存。";
   } else if (!isComplete) {
     hint = `已完成 ${completed}/${total}，请继续创建下一个素材，完成后再次调用 canvas.updateAndSaveSticker 保存。`;
   } else if (requiresImageGroup) {
-    hint = `已成功保存 ${total} 个素材。下一步必须调用 material.createImageGroup，并按以下顺序传入 stickerIds：${JSON.stringify(stickerIds)}。`;
+    hint = `已成功保存 ${total} 个自定义贴纸。创建组图前需先将它们导入素材库，再调用 material.createImageGroup，传入 stickerIds：${JSON.stringify(stickerIds)}。`;
   } else {
     hint = `全部完成！已成功保存 ${total} 个素材。`;
   }
@@ -567,9 +567,9 @@ function getBatchProgress(): string {
     completed < total
       ? `请继续完成剩余 ${total - completed} 个素材。`
       : requiresImageGroup
-        ? "所有成员均已保存，必须调用 material.createImageGroup 创建组图。"
+        ? "所有成员均已保存；系统会先将 custom_sticker 复制到 sticker 素材库，再调用 material.createImageGroup 创建组图。"
         : "所有素材均已保存。";
-  return `\n\n## 当前批量任务（以此进度为准）\n任务：${description}\n进度：${completed}/${total}\n已保存 stickerIds：${JSON.stringify(stickerIds)}\n${nextAction}`;
+  return `\n\n## 当前批量任务（以此进度为准）\n任务：${description}\n进度：${completed}/${total}\n已保存 customStickerIds：${JSON.stringify(stickerIds)}\n${nextAction}`;
 }
 
 function clearBatchTask() {
@@ -917,7 +917,7 @@ function reconcileBatchPlan(
       },
       {
         action: "canvas.updateAndSaveSticker",
-        description: `保存${outputLabel}第 ${index + 1}/${total} 张并记录 stickerId`,
+        description: `保存${outputLabel}第 ${index + 1}/${total} 张并记录 customStickerId`,
         status: "pending",
       },
     );
@@ -966,7 +966,7 @@ function reconcileBatchPlan(
       step.description = `按需求制作${outputLabel}第 ${artworkIndex}/${total} 张`;
     } else if (step.action === "canvas.updateAndSaveSticker") {
       saveIndex += 1;
-      step.description = `保存${outputLabel}第 ${saveIndex}/${total} 张并记录 stickerId`;
+      step.description = `保存${outputLabel}第 ${saveIndex}/${total} 张并记录 customStickerId`;
     } else if (step.action === "material.createImageGroup") {
       step.description = `按保存顺序将 ${total} 张图片创建为组图`;
     }
@@ -1246,7 +1246,7 @@ async function runAgentLoop(
           (step, index) =>
             `${index + 1}. [${step.status === "done" ? "已完成" : step.status === "failed" ? "失败" : "待执行"}] ${step.action}：${step.description}`,
         )
-        .join("\n")}\n严格按待执行步骤顺序推进。组图任务中的每次保存都必须取得 stickerId，最后才能创建组图。`
+        .join("\n")}\n严格按待执行步骤顺序推进。组图任务中的每次保存都必须取得 customStickerId，最后才能创建组图。`
     : "";
 
   // 4. 构建高信号消息列表。
@@ -1580,10 +1580,24 @@ async function runAgentLoop(
         if (batchTask.completed < batchTask.total) {
           batchGroupBlockReason = `组图成员尚未保存完整，当前进度 ${batchTask.completed}/${batchTask.total}。请先完成并保存剩余成员。`;
         } else {
-          args = {
-            ...args,
-            stickerIds: [...batchTask.stickerIds],
-          };
+          const importedStickerIds: string[] = [];
+          for (const customStickerId of batchTask.stickerIds) {
+            const imported: any = await executeAITool("material.importCustomStickerToLibrary", {
+              customStickerId,
+            });
+            const stickerId = String(imported?.data?.stickerId || "").trim();
+            if (!imported?.success || !stickerId) {
+              batchGroupBlockReason = imported?.message || "自定义贴纸导入素材库失败，无法创建组图。";
+              break;
+            }
+            importedStickerIds.push(stickerId);
+          }
+          if (!batchGroupBlockReason) {
+            args = {
+              ...args,
+              stickerIds: importedStickerIds,
+            };
+          }
         }
       }
       const planAction = getPlanActionForTool(toolName, args);
@@ -1864,7 +1878,7 @@ async function runAgentLoop(
             );
             startBatchTask(plannedTotal, userMessage, true);
           }
-          const progress = completeBatchItem(result?.data?.stickerId);
+          const progress = completeBatchItem(result?.data?.customStickerId);
           if (progress.hint) {
             progressHint = `\n\n[任务进度] ${progress.hint}`;
           }
@@ -1967,7 +1981,7 @@ async function runAgentLoop(
     if (automaticDeliveryCompleted) {
       addMessage({
         role: "assistant",
-        content: "自动制作已完成并保存到素材库。",
+        content: "自动制作已完成并保存到自定义贴纸库。",
         meta: { iteration, type: "automatic-delivery-complete" },
       });
       return;

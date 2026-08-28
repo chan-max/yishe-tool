@@ -472,15 +472,24 @@ export const searchStickerByImage = (data) =>
     resolve(res.data.data);
   });
 
-// 获取自定义贴纸列表
-export const getCustomStickerList = (data) =>
-  new Promise(async (resolve, reject) => {
-    let res = await apiInstance.post("/api/sticker/page", {
-      ...data,
-      isCustom: true,
-    });
-    resolve(res.data.data);
-  });
+// 1s 设计工具自定义贴纸（与素材库 sticker 分离）
+export const getCustomStickerList = (data: any = {}) =>
+  apiInstance.get("/api/custom-sticker", { params: data }).then((res) => res.data?.data || res.data);
+
+export const getCustomSticker = (id: string) =>
+  apiInstance.get(`/api/custom-sticker/${encodeURIComponent(id)}`).then((res) => res.data?.data || res.data);
+
+export const createCustomSticker = (data: any) =>
+  apiInstance.post("/api/custom-sticker", data).then((res) => res.data?.data || res.data);
+
+export const updateCustomSticker = (id: string, data: any) =>
+  apiInstance.put(`/api/custom-sticker/${encodeURIComponent(id)}`, data).then((res) => res.data?.data || res.data);
+
+export const deleteCustomSticker = (id: string) =>
+  apiInstance.delete(`/api/custom-sticker/${encodeURIComponent(id)}`).then((res) => res.data?.data || res.data);
+
+export const importCustomStickerToLibrary = (data: { customStickerId: string; folderId?: string | null }) =>
+  apiInstance.post("/api/custom-sticker/import-to-sticker", data).then((res) => res.data?.data || res.data);
 
 export const deleteSticker = (data) =>
   new Promise(async (resolve, reject) => {
@@ -506,10 +515,10 @@ export const updateSticker = (data) =>
 /*
  获取贴纸文件夹树
 */
-export const getStickerFolderTree = () =>
+export const getStickerFolderTree = (params: Record<string, any> = {}) =>
   new Promise(async (resolve, reject) => {
     try {
-      let res = await apiInstance.get("/api/sticker/sticker-folder/tree");
+      let res = await apiInstance.get("/api/sticker/sticker-folder/tree", { params });
       resolve(res.data.data);
     } catch (e) {
       reject(e);

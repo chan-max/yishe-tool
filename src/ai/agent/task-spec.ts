@@ -253,7 +253,7 @@ export function buildAgentTaskConstraintPrompt(
   const deliveryDescription = task.createImageGroup
     ? "逐个保存成员，最后创建组图"
     : task.delivery === "save"
-      ? "完成后保存到素材库"
+      ? "完成后保存到自定义贴纸库"
       : task.delivery === "export"
         ? "完成后导出 PNG"
         : "只完成当前画布，不自动保存或导出";

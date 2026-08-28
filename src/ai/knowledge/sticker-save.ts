@@ -12,7 +12,7 @@ export const stickerSaveKnowledge: KnowledgeItem = {
     "文件夹",
   ],
 
-  content: `## 保存贴纸到素材库
+  content: `## 保存自定义贴纸
 
 ### Agent 作品直接保存
 canvas.updateAndSaveSticker({})
@@ -29,8 +29,9 @@ canvas.updateAndSaveSticker({ folderId: "文件夹的UUID" })
 canvas.updateAndSaveSticker({ name: "促销标签", description: "...", keywords: "促销,红色", folderId: "文件夹UUID" })
 
 ### 返回结果
-{ stickerId, name, description, keywords, url, aiGenerated, metadataGenerationSource, source, prompt, promptHistoryCount }
-- stickerId: 新保存素材的 ID；制作组图时必须收集并按顺序传给 material.createImageGroup
+{ customStickerId, name, description, keywords, url, aiGenerated, metadataGenerationSource, source, prompt, promptHistoryCount }
+- customStickerId: 自定义贴纸库中的作品 ID，可使用 canvas.loadCustomSticker 再次编辑
+- 不再返回 stickerId；制作组图若需要普通素材 ID，应先将作品导入素材库后使用返回的 sticker ID
 - url: 贴纸的图片地址，可直接用于后续展示
 - metadataGenerationSource: provided / prompt / vision / canvas-fallback
 - promptHistoryCount: 当前作品累计记录的提示词版本数

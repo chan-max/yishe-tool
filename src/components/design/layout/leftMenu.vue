@@ -87,6 +87,13 @@
       </div>
     </el-tooltip>
 
+    <el-tooltip :hide-after="0" content="自定义贴纸" placement="right">
+      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': menuState.activeMenu === menuItems.customSticker }" @click="setActiveMenu(menuItems.customSticker)">
+        <div class="menu-bar-item-icon"><icon-canvas></icon-canvas></div>
+        <span>自定义贴纸</span>
+      </div>
+    </el-tooltip>
+
     <el-tooltip :hide-after="0" content="制作贴纸" placement="right">
       <div
         class="menu-bar-item"

@@ -3,6 +3,7 @@ import { getUserApiKey } from "./api";
 import { DESIGN_TOOL_FEATURE_CODES } from "./feature-codes";
 import { postAgentProxy } from "./proxy-client";
 import { AI_TIMEOUTS } from "./shared/timeout";
+import { aiSettings } from "./settings";
 
 // 加密密钥（需要与服务端 AI_API_KEY_RESPONSE_ENCRYPT_SECRET 一致）
 const ENCRYPT_SECRET =
@@ -88,7 +89,7 @@ export function isAIInitialized(): boolean {
 }
 
 /**
- * 获取 AI 配置（带缓存）
+ * 获取系统配置绑定的 AI Key（带缓存）
  */
 export async function getAIConfig(
   keyId?: number | null,
@@ -139,7 +140,40 @@ export function clearAIConfigCache(): void {
 }
 
 /**
- * 前端直接调用 OpenAI Chat API
+ * 解析直连模式下的运行时参数
+ */
+async function resolveDirectConfig(
+  keyId?: number | null,
+  featureCode?: string,
+  modelOverride?: string,
+): Promise<{ baseURL: string; apiKey: string; model: string }> {
+  const settings = aiSettings.value;
+  if (settings.directKeySource === "custom") {
+    const custom = settings.customConfig;
+    if (!custom.baseURL) {
+      throw new Error("直连模式未配置 Base URL，请在「AI 设置」中配置");
+    }
+    return {
+      baseURL: custom.baseURL.trim(),
+      apiKey: (custom.apiKey || "").trim(),
+      model: modelOverride || custom.model || "gpt-4o",
+    };
+  }
+
+  // 默认使用系统分配并解密的 key
+  const sysConfig = await getAIConfig(
+    keyId,
+    featureCode || DESIGN_TOOL_FEATURE_CODES.chat,
+  );
+  return {
+    baseURL: sysConfig.baseURL,
+    apiKey: sysConfig.apiKey,
+    model: modelOverride || sysConfig.model || "gpt-4o",
+  };
+}
+
+/**
+ * 前端调用 OpenAI Chat API（支持代理模式与直连模式）
  */
 export async function directChat(options: {
   messages: Array<{ role: string; content: string | any[] }>;
@@ -162,23 +196,83 @@ export async function directChat(options: {
     timeoutMs,
   } = options;
 
-  // 构建请求体
-  const body: any = {
-    featureCode: featureCode || DESIGN_TOOL_FEATURE_CODES.chat,
-    keyId,
-    model,
+  const mode = aiSettings.value.mode || "proxy";
+
+  // 1. 服务端代理模式
+  if (mode === "proxy") {
+    const body: any = {
+      featureCode: featureCode || DESIGN_TOOL_FEATURE_CODES.chat,
+      keyId,
+      model,
+      messages,
+      temperature: temperature ?? 0.7,
+    };
+
+    if (maxTokens) body.max_tokens = maxTokens;
+    if (tools && tools.length > 0) body.tools = tools;
+
+    return postAgentProxy(body, { timeoutMs: timeoutMs ?? AI_TIMEOUTS.chat });
+  }
+
+  // 2. 前端直连模式
+  const config = await resolveDirectConfig(keyId, featureCode, model);
+  const endpoint = `${config.baseURL.replace(/\/+$/, "")}/chat/completions`;
+  const timeout = timeoutMs ?? AI_TIMEOUTS.chat;
+
+  const controller = new AbortController();
+  const timeoutTimer = setTimeout(() => controller.abort(), timeout);
+
+  const requestBody: any = {
+    model: config.model,
     messages,
     temperature: temperature ?? 0.7,
   };
+  if (maxTokens) requestBody.max_tokens = maxTokens;
+  if (tools && tools.length > 0) requestBody.tools = tools;
 
-  if (maxTokens) body.max_tokens = maxTokens;
-  if (tools && tools.length > 0) body.tools = tools;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (config.apiKey) {
+    headers["Authorization"] = `Bearer ${config.apiKey}`;
+  }
 
-  return postAgentProxy(body, { timeoutMs: timeoutMs ?? AI_TIMEOUTS.chat });
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestBody),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutTimer);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let parsedError = errorText;
+      try {
+        const json = JSON.parse(errorText);
+        parsedError = json.error?.message || json.message || errorText;
+      } catch {}
+      throw new Error(`AI 直连请求失败 (${response.status}): ${parsedError}`);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    clearTimeout(timeoutTimer);
+    if (error.name === "AbortError") {
+      throw new Error(`AI 直连请求超时 (${timeout}ms)`);
+    }
+    if (error.name === "TypeError" && error.message?.includes("Failed to fetch")) {
+      throw new Error(
+        `AI 直连失败（浏览器 CORS 跨域拦截）：目标地址 ${config.baseURL} 未允许跨域请求。请在「AI 设置」中切换为「服务端代理」模式，或为目标服务配置 CORS headers。`,
+      );
+    }
+    throw error;
+  }
 }
 
 /**
- * 前端直接调用 OpenAI Chat API（流式）
+ * 前端调用 OpenAI Chat API（流式，支持代理与直连）
  */
 export async function* directChatStream(options: {
   messages: Array<{ role: string; content: string | any[] }>;
@@ -201,20 +295,105 @@ export async function* directChatStream(options: {
     timeoutMs,
   } = options;
 
-  // 构建请求体
-  const body: any = {
-    featureCode: featureCode || DESIGN_TOOL_FEATURE_CODES.chat,
-    keyId,
-    model,
+  const mode = aiSettings.value.mode || "proxy";
+
+  // 1. 服务端代理模式
+  if (mode === "proxy") {
+    const body: any = {
+      featureCode: featureCode || DESIGN_TOOL_FEATURE_CODES.chat,
+      keyId,
+      model,
+      messages,
+      temperature: temperature ?? 0.7,
+    };
+
+    if (maxTokens) body.max_tokens = maxTokens;
+    if (tools && tools.length > 0) body.tools = tools;
+
+    const response = await postAgentProxy(body, {
+      timeoutMs: timeoutMs ?? AI_TIMEOUTS.chat,
+    });
+    yield response;
+    return;
+  }
+
+  // 2. 前端直连流式
+  const config = await resolveDirectConfig(keyId, featureCode, model);
+  const endpoint = `${config.baseURL.replace(/\/+$/, "")}/chat/completions`;
+  const timeout = timeoutMs ?? AI_TIMEOUTS.chat;
+
+  const controller = new AbortController();
+  const timeoutTimer = setTimeout(() => controller.abort(), timeout);
+
+  const requestBody: any = {
+    model: config.model,
     messages,
     temperature: temperature ?? 0.7,
+    stream: true,
   };
+  if (maxTokens) requestBody.max_tokens = maxTokens;
+  if (tools && tools.length > 0) requestBody.tools = tools;
 
-  if (maxTokens) body.max_tokens = maxTokens;
-  if (tools && tools.length > 0) body.tools = tools;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (config.apiKey) {
+    headers["Authorization"] = `Bearer ${config.apiKey}`;
+  }
 
-  const response = await postAgentProxy(body, {
-    timeoutMs: timeoutMs ?? AI_TIMEOUTS.chat,
-  });
-  yield response;
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestBody),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutTimer);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`AI 直连流式请求失败 (${response.status}): ${errorText}`);
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error("无法读取响应流");
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith("data: ")) {
+          const data = trimmed.slice(6).trim();
+          if (data === "[DONE]") return;
+          try {
+            yield JSON.parse(data);
+          } catch {
+            // 忽略单行解析错误
+          }
+        }
+      }
+    }
+  } catch (error: any) {
+    clearTimeout(timeoutTimer);
+    if (error.name === "AbortError") {
+      throw new Error(`AI 直连流式请求超时 (${timeout}ms)`);
+    }
+    if (error.name === "TypeError" && error.message?.includes("Failed to fetch")) {
+      throw new Error(
+        `AI 直连流式失败（浏览器 CORS 跨域拦截）：目标地址 ${config.baseURL} 未允许跨域。建议在「AI 设置」中切换为「服务端代理」模式。`,
+      );
+    }
+    throw error;
+  }
 }

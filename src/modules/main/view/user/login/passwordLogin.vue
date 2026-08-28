@@ -191,7 +191,7 @@ async function handleOAuthLogin() {
   oauthLoading.value = true;
   try {
     openAuthorizePage();
-  } catch (e: any) {
+  } catch (e) {
     errMsg.value = e?.message || '打开授权页面失败';
   } finally {
     oauthLoading.value = false;

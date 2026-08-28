@@ -110,10 +110,10 @@ export function translateToolResult(
     case "canvas.remove":
       return "✅ 元素已删除";
     case "canvas.updateAndSaveSticker": {
-      const stickerId = String(result.data?.stickerId || "").trim();
-      return stickerId
-        ? `✅ 贴纸已保存到图库，stickerId: ${stickerId}。制作组图时必须保留这个 ID，并按图片顺序传给 material.createImageGroup。`
-        : "✅ 贴纸已保存到图库";
+      const customStickerId = String(result.data?.customStickerId || "").trim();
+      return customStickerId
+        ? `✅ 贴纸已保存到自定义贴纸库，customStickerId: ${customStickerId}。如需创建组图，先导入素材库获得 stickerId。`
+        : "✅ 贴纸已保存到自定义贴纸库";
     }
     case "material.createImageGroup": {
       const data = result.data || {};

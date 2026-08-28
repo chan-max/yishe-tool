@@ -5,6 +5,8 @@ import {
   addCanvasChild as _addCanvasChild,
   removeCavnasChild as _removeCavnasChild,
   currentOperatingCanvasChildId,
+  currentEditingCustomStickerId,
+  currentEditingCustomStickerFolderId,
   getCanvasChildTopZIndex,
 } from "@/components/design/layout/canvas";
 
@@ -129,6 +131,8 @@ export function createDesignOperationContext(): OperationContext {
       if (!canvasChild) return;
       canvasStickerOptions.value.children = [canvasChild];
       currentOperatingCanvasChildId.value = canvasChild.id;
+      currentEditingCustomStickerId.value = null;
+      currentEditingCustomStickerFolderId.value = null;
     },
   };
 }

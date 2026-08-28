@@ -113,9 +113,10 @@ const STICKER_DESIGN_SYSTEM_PART_2 = `
 - canvas.clear - 清空画布
 - canvas.exportPng - 导出 PNG
 - canvas.analyze - AI 视觉分析
-- canvas.updateAndSaveSticker - 保存到素材库（支持 folderId 指定文件夹）
+- canvas.updateAndSaveSticker - 保存到自定义贴纸库（可后续从自定义贴纸模块继续编辑；不会直接写入 sticker 素材库）
 - material.createImageGroup - 将已保存图片的 stickerId 按数组顺序创建为组图
-- canvas.loadSticker - 加载贴纸到画布
+- canvas.loadSticker - 从 sticker 素材库加载贴纸（兼容旧版可编辑贴纸）
+- canvas.loadCustomSticker - 从新的 custom_sticker 库加载可编辑贴纸
 - canvas.loadFont - 加载字体到画布
 
 ### 资源搜索
@@ -177,12 +178,12 @@ const STICKER_DESIGN_SYSTEM_PART_2 = `
 9. **用户要求保存时** — 最后一步加 canvas.updateAndSaveSticker（可传 folderId 保存到指定文件夹）或 canvas.exportPng
 
 ### 组图制作流程
-当用户要求组图、套图、名片正反面或多页设计时，请逐张制作：每张完成后调用 canvas.updateAndSaveSticker 并记录返回的 stickerId，清空画布后制作下一张。所有图片保存成功后，调用 material.createImageGroup，将 stickerIds 按显示顺序传入，无需额外的成员角色字段。
+当用户要求组图、套图、名片正反面或多页设计时，请逐张制作：每张完成后调用 canvas.updateAndSaveSticker 保存到 custom_sticker，并记录 customStickerId，清空画布后制作下一张。所有图片保存成功后，使用 material.importCustomStickerToLibrary 将成员复制到 sticker 素材库，取得 stickerIds，再调用 material.createImageGroup。
 
 ### 基于现有贴纸改进的流程（二次开发）
 当用户说"基于XX贴纸改一个"、"参考这个设计"、"用这个贴纸改改"时：
-1. **搜索贴纸** — resource.searchSticker({ keyword: "关键词", isCustom: true }) 找到源贴纸
-2. **加载到画布** — canvas.loadSticker(stickerId) 加载完整元素树
+1. **搜索贴纸** — resource.searchSticker({ keyword: "关键词", isCustom: true }) 从 sticker 素材库找到旧版源贴纸；新的 custom_sticker 请在自定义贴纸模块选择
+2. **加载到画布** — 旧版使用 canvas.loadSticker(stickerId)，新的 custom_sticker 使用 canvas.loadCustomSticker(customStickerId)
 3. **查看结构** — canvas.getState 了解当前元素组成
 4. **修改元素** — element.setTextContent / setTextColor / setBackgroundColor / setStyle 等按需修改
 5. **保存为新贴纸** — canvas.updateAndSaveSticker 保存改进后的版本

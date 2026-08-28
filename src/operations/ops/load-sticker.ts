@@ -1,6 +1,10 @@
 import { registerOperation } from "../registry";
 import { getStickerById } from "@/api";
-import { canvasStickerOptions } from "@/components/design/layout/canvas";
+import {
+  canvasStickerOptions,
+  currentEditingCustomStickerId,
+  currentEditingCustomStickerFolderId,
+} from "@/components/design/layout/canvas";
 import { restoreAgentDesignProvenance } from "@/ai/design-provenance";
 
 registerOperation({
@@ -13,8 +17,9 @@ registerOperation({
 2. 批量加载：stickerId 传数组，如 canvas.loadSticker({ stickerId: ["id_a", "id_b"] })
 
 单个加载时：
-- 可二次编辑的贴纸（isCustom=true）：会加载完整的元素树，可以修改文字、颜色、布局等。
-- 普通贴纸（isCustom=false）：作为一张图片加载到画布上。
+- 兼容旧的可编辑贴纸（isCustom=true 且存在 meta.data）：加载完整元素树。
+- 普通素材库贴纸：作为一张图片加载到画布上。
+- 新的 1s 自定义贴纸请使用 canvas.loadCustomSticker。
 
 批量加载时：
 - 所有贴纸都作为图片元素添加到画布，可逐个调整位置和大小。
@@ -90,6 +95,11 @@ registerOperation({
 async function loadSingleSticker(stickerId: string, ctx: any) {
   const sticker = await getStickerById(stickerId) as any;
 
+  // 从 sticker 素材库加载图片/旧记录后，后续保存必须创建新的 custom_sticker，
+  // 不能误更新用户之前正在编辑的 custom_sticker。
+  currentEditingCustomStickerId.value = null;
+  currentEditingCustomStickerFolderId.value = null;
+
   if (!sticker) {
     return {
       success: false,
@@ -97,18 +107,15 @@ async function loadSingleSticker(stickerId: string, ctx: any) {
     };
   }
 
-  const metaData = sticker.meta?.data;
-
-  // 单个加载时，可编辑贴纸加载元素树
-  if (metaData) {
-    const deepCopy = JSON.parse(JSON.stringify(metaData));
+  // 兼容历史上已经保存到 sticker 表的可编辑贴纸。
+  const legacyCanvasData = sticker.meta?.data;
+  if (legacyCanvasData) {
+    const deepCopy = JSON.parse(JSON.stringify(legacyCanvasData));
     canvasStickerOptions.value = deepCopy;
     restoreAgentDesignProvenance(canvasStickerOptions.value, sticker.meta);
-
     const children = deepCopy?.children || [];
     const elementCount = Math.max(0, children.length - 1);
-    const elementTypes = children.slice(1).map((c: any) => c.type).join(", ");
-
+    const elementTypes = children.slice(1).map((child: any) => child.type).join(", ");
     return {
       success: true,
       message: `已加载贴纸「${sticker.name || "未命名"}」到画布（可编辑，${elementCount} 个元素：${elementTypes}）`,

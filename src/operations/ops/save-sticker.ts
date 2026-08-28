@@ -5,7 +5,7 @@ import {
 } from "@/components/design/layout/canvas";
 import { canvasToFile } from "@/common/transform";
 import { uploadToCOS } from "@/api/cos";
-import { createSticker } from "@/api";
+import { createCustomSticker, updateCustomSticker } from "@/api";
 import { useLoginStatusStore } from "@/store/stores/login";
 import Utils from "@/common/utils";
 import { captureCanvasForAI, renderCurrentCanvasNow } from "@/ai/capture";
@@ -17,6 +17,7 @@ import {
   getAgentDesignProvenance,
 } from "@/ai/design-provenance";
 import { beginLibraryUpload } from "@/services/designTabStatus";
+import { currentEditingCustomStickerId, currentEditingCustomStickerFolderId } from "@/components/design/layout/canvas";
 
 // 批量任务状态
 let batchTaskState: {
@@ -291,9 +292,9 @@ async function generateStickerMetaFromCanvas(): Promise<{
 
 registerOperation({
   id: "canvas.updateAndSaveSticker",
-  name: "更新并保存贴纸到素材库",
+  name: "保存自定义贴纸",
   description:
-    "一键将当前画布内容渲染为贴纸图片，上传到 COS 并保存到素材库。Agent 制作的贴纸会自动生成名称、描述、关键词，并在 meta 中保存原始提示词和修改历史。",
+    "一键将当前画布内容渲染为贴纸图片，上传并保存到自定义贴纸。可编辑的画布数据仅存于自定义贴纸；用户可从该模块再次打开编辑，或另行复制到素材库。",
   group: "贴纸",
   params: [
     {
@@ -301,7 +302,7 @@ registerOperation({
       label: "贴纸名称",
       type: "string",
       placeholder: "输入贴纸名称（留空则使用画布内容生成）",
-      description: "保存到素材库时的名称，留空会从画布内容生成基础名称",
+      description: "保存到自定义贴纸库时的名称，留空会从画布内容生成基础名称",
     },
     {
       name: "description",
@@ -339,6 +340,12 @@ registerOperation({
       description:
         "是否通过视觉分析自动生成名称、描述和关键词。Agent 制作的贴纸会自动根据提示词生成，无需开启此选项。",
     },
+    {
+      name: "customStickerId",
+      label: "自定义贴纸ID",
+      type: "string",
+      description: "编辑已有自定义贴纸时传入；不传则创建新的自定义贴纸",
+    },
   ],
   async execute(params, ctx) {
     let {
@@ -348,7 +355,12 @@ registerOperation({
       autoTrim = true,
       folderId,
       autoGenerateMeta = false,
+      customStickerId: requestedCustomStickerId,
     } = params;
+    // 批量创作的每一张图都必须创建独立的 custom_sticker，不能沿用上一张的编辑 ID。
+    const editingCustomStickerId = batchTaskState
+      ? undefined
+      : requestedCustomStickerId || currentEditingCustomStickerId.value || undefined;
 
     const controller = currentCanvasControllerInstance.value;
     if (!controller) {
@@ -360,7 +372,7 @@ registerOperation({
 
     const loginStore = useLoginStatusStore();
     if (!loginStore.isLogin) {
-      return { success: false, message: "请先登录后再保存贴纸到素材库" };
+      return { success: false, message: "请先登录后再保存自定义贴纸" };
     }
 
     let finishLibraryUpload: ((success?: boolean) => void) | null = null;
@@ -428,7 +440,7 @@ registerOperation({
       finishLibraryUpload = beginLibraryUpload();
       const cos = await uploadToCOS({
         file,
-        category: "sticker",
+        category: "custom-sticker",
         account:
           loginStore.userInfo?.account ||
           loginStore.userInfo?.name ||
@@ -439,21 +451,25 @@ registerOperation({
       const canvasData = JSON.parse(JSON.stringify(canvasStickerOptions.value));
       const stickerMeta = buildStickerRecordMeta(canvasData, provenance);
 
-      const createdSticker: any = await createSticker({
+      const payload = {
         url: cos.url,
         suffix: "png",
         name: name || "未命名贴纸",
         description: description || "",
         keywords: keywords || "",
-        isCustom: true,
-        folderId: folderId || null,
+        width: canvasEl.width,
+        height: canvasEl.height,
+        aspectRatio: canvasEl.height ? canvasEl.width / canvasEl.height : undefined,
+        folderId: folderId ?? currentEditingCustomStickerFolderId.value ?? null,
         meta: stickerMeta,
-        userId: loginStore.userInfo?.id || null,
-      });
-      const stickerId = String(createdSticker?.id || "").trim();
-      if (!stickerId) {
-        throw new Error("素材已上传，但服务端未返回 stickerId");
-      }
+      };
+      const savedRecord: any = editingCustomStickerId
+        ? await updateCustomSticker(String(editingCustomStickerId), payload)
+        : await createCustomSticker(payload);
+      const customStickerId = String(savedRecord?.id || editingCustomStickerId || "").trim();
+      if (!customStickerId) throw new Error("自定义贴纸已上传，但服务端未返回 customStickerId");
+      currentEditingCustomStickerId.value = customStickerId;
+      currentEditingCustomStickerFolderId.value = payload.folderId || null;
       finishLibraryUpload(true);
       finishLibraryUpload = null;
 
@@ -480,14 +496,15 @@ registerOperation({
 
       return {
         success: true,
-        message: `贴纸「${name}」已保存到素材库`,
+        message: `贴纸「${name}」已保存到自定义贴纸`,
         data: {
-          stickerId,
+          customStickerId,
           name,
           description,
           keywords,
           url: cos.url,
           cosKey: cos.key,
+          savedAs: editingCustomStickerId ? "updated" : "created",
           aiGenerated: needGenerate,
           metadataGenerationSource,
           source: provenance?.source || "manual",

@@ -9,12 +9,26 @@
     <!-- Header -->
     <div class="ai-panel__header" @mousedown="onDragStart">
       <span class="ai-panel__title">AI 设计</span>
+      <span
+        class="ai-panel__mode-tag"
+        :class="aiSettings.mode === 'direct' ? 'mode-direct' : 'mode-proxy'"
+        @click.stop="showSettingsModal = true"
+        :title="aiSettings.mode === 'direct' ? '当前为前端直连模式（点击设置）' : '当前为服务端代理模式（点击设置）'"
+      >
+        {{ aiSettings.mode === 'direct' ? '🔗 直连' : '⚡️ 代理' }}
+      </span>
       <span v-if="isProcessing" class="ai-panel__status">{{ agentPhaseLabel }}</span>
       <span v-if="planProgress" class="ai-panel__plan">
         {{ planProgress.settled }}/{{ planProgress.total }}
         <template v-if="planProgress.failed"> · {{ planProgress.failed }} 失败</template>
       </span>
       <div class="ai-panel__header-actions">
+        <button class="ai-panel__icon-btn" @click="showSettingsModal = true" title="AI 连接设置">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+          </svg>
+        </button>
         <button class="ai-panel__icon-btn" @click="copyConversationLog" title="复制对话日志">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
         </button>
@@ -274,6 +288,9 @@
         </button>
       </div>
     </div>
+
+    <!-- AI 运行时设置弹窗 -->
+    <AiSettingsModal v-model="showSettingsModal" />
   </div>
 </template>
 
@@ -294,8 +311,11 @@ import {
   type AgentTaskOptions,
 } from "@/ai/agent/task-spec";
 import DesignPromptPicker from "./DesignPromptPicker.vue";
+import AiSettingsModal from "./AiSettingsModal.vue";
+import { aiSettings } from "@/ai/settings";
 
 const isOpen = useLocalStorage("_1s_ai_panel_open", false);
+const showSettingsModal = ref(false);
 
 const props = defineProps<{ open: boolean }>();
 const emit = defineEmits<{ close: [] }>();
@@ -841,6 +861,32 @@ watch(
   .is-dragging & { cursor: grabbing; }
 }
 .ai-panel__title { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+.ai-panel__mode-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+
+  &:hover {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+
+  &.mode-proxy {
+    background: rgba(16, 185, 129, 0.14);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.28);
+  }
+
+  &.mode-direct {
+    background: rgba(99, 102, 241, 0.14);
+    color: #6366f1;
+    border: 1px solid rgba(99, 102, 241, 0.28);
+  }
+}
 .ai-panel__status { font-size: 11px; font-weight: 500; color: var(--accent); background: var(--accent-alpha); padding: 2px 6px; border-radius: 4px; }
 .ai-panel__plan { font-size: 11px; color: var(--text-muted); }
 .ai-panel__header-actions { margin-left: auto; display: flex; gap: 2px; }

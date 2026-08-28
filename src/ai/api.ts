@@ -1,7 +1,7 @@
 import { apiInstance } from "@/api/apiInstance";
 import { Url } from "@/api/url";
 import { DESIGN_TOOL_FEATURE_CODES } from "./feature-codes";
-import { postAgentProxy } from "./proxy-client";
+import { directChat } from "./direct-client";
 import type {
   AiChatOptions,
   AiTextOptions,
@@ -38,19 +38,16 @@ export async function aiChat(options: AiChatOptions): Promise<AiChatResponse> {
     ...rest
   } = options;
 
-  // 构建请求体
-  const body: Record<string, any> = {
+  const data: any = await directChat({
     featureCode: featureCode || DESIGN_TOOL_FEATURE_CODES.chat,
     keyId,
     model,
-    messages,
+    messages: messages as any,
     temperature: temperature ?? 0.7,
+    maxTokens,
     ...rest,
-  };
+  });
 
-  if (maxTokens) body.max_tokens = maxTokens;
-
-  const data: any = await postAgentProxy(body);
   return buildChatResponse(data, model || data.model || "");
 }
 
@@ -74,20 +71,17 @@ export async function aiText(options: AiTextOptions): Promise<AiChatResponse> {
   }
   messages.push({ role: "user", content: prompt });
 
-  // 构建请求体
-  const body: Record<string, any> = {
+  const data: any = await directChat({
     featureCode: featureCode || DESIGN_TOOL_FEATURE_CODES.chat,
     keyId,
     model,
-    messages,
+    messages: messages as any,
     temperature: temperature ?? 0.7,
+    maxTokens,
+    ...(responseFormat ? { response_format: responseFormat } : {}),
     ...rest,
-  };
+  });
 
-  if (maxTokens) body.max_tokens = maxTokens;
-  if (responseFormat) body.response_format = responseFormat;
-
-  const data: any = await postAgentProxy(body);
   return buildChatResponse(data, model || data.model || "");
 }
 
@@ -113,17 +107,15 @@ export async function aiVision(
   }
   messages.push({ role: "user", content: contentParts });
 
-  // 构建请求体
-  const body: Record<string, any> = {
+  const data: any = await directChat({
     featureCode: featureCode || DESIGN_TOOL_FEATURE_CODES.chat,
     keyId,
     model,
-    messages,
+    messages: messages as any,
     temperature: 0.7,
     ...rest,
-  };
+  });
 
-  const data: any = await postAgentProxy(body);
   return buildChatResponse(data, model || data.model || "");
 }
 

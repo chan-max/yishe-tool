@@ -38,7 +38,7 @@
           @click="handleUploadClick"
           :disabled="shouldUpdateCanvasSticker && !isUpdatingSticker"
         >
-          保存贴纸
+          保存自定义贴纸
         </el-button>
 
         <el-button
@@ -180,8 +180,8 @@
     :centered="true"
     :destroyOnClose="true"
     width="540px"
-    title="保存到图片素材库"
-    okText="保存"
+    title="保存自定义贴纸"
+    okText="保存自定义贴纸"
     cancelText="取消"
     @ok="doUpload"
     :confirmLoading="submitLoading"
@@ -273,6 +273,8 @@ import {
   CanvasChildType,
   currentOperatingCanvasChildId,
   currentOperatingCanvasChild,
+  currentEditingCustomStickerId,
+  currentEditingCustomStickerFolderId,
   showMainCanvas,
   canvasChildLabelMap,
   renderingLoading,
@@ -390,6 +392,8 @@ function clearCanvasChildren() {
   ).length;
 
   canvasStickerOptions.value.children = [canvasChild, htmlChild];
+  currentEditingCustomStickerId.value = null;
+  currentEditingCustomStickerFolderId.value = null;
   clearAgentDesignProvenance(canvasStickerOptions.value);
   currentOperatingCanvasChildId.value = "this_is_html_id";
   message.success(`已清空画布，共删除 ${count} 个关联组件`);
@@ -448,7 +452,7 @@ function clearFolderSelect() {
 async function loadFolderTree() {
   if (folderTree.value.length > 0) return; // 已加载过则不重复加载
   try {
-    const res = await Api.getStickerFolderTree();
+    const res = await Api.getStickerFolderTree({ folderCategory: "customsticker" });
     folderTree.value = res || [];
   } catch (e) {
     console.error("获取文件夹树失败:", e);
@@ -461,7 +465,7 @@ function handleUploadClick() {
     return;
   }
   loadFolderTree();
-  editForm.value.folderId = null; // 每次打开时重置文件夹选择
+  editForm.value.folderId = currentEditingCustomStickerFolderId.value || null; // 编辑时保留原文件夹
   showUploadModal.value = true;
 }
 

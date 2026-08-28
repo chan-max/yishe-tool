@@ -23,6 +23,22 @@ export type {
 } from "./types";
 
 export {
+  aiSettings,
+  getAiSettings,
+  updateAiSettings,
+  resetAiSettings,
+  testAiConnection,
+  DEFAULT_AI_SETTINGS,
+} from "./settings";
+export type {
+  AiRequestMode,
+  DirectKeySource,
+  AiCustomConfig,
+  AiSettings,
+  ConnectionTestResult,
+} from "./settings";
+
+export {
   aiChat,
   aiText,
   aiVision,

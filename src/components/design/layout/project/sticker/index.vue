@@ -230,6 +230,8 @@ import { loadingBottom } from "@/components/loading/index.tsx";
 import {
   addCanvasChild,
   canvasStickerOptions,
+  currentEditingCustomStickerId,
+  currentEditingCustomStickerFolderId,
 } from "@/components/design/layout/canvas/index.tsx";
 import { createDefaultCanvasChildcanvasStickerOptions } from "@/components/design/layout/canvas/children/canvas.tsx";
 import Utils from "@/common/utils";
@@ -315,6 +317,10 @@ onBeforeMount(() => {
 // }
 
 function useInCanvasSticker(item) {
+  // 这里选择的是 sticker 素材库资源，不是 custom_sticker 编辑记录。
+  // 保存当前画布时应创建新的 custom_sticker，不能覆盖此前的编辑作品。
+  currentEditingCustomStickerId.value = null;
+  currentEditingCustomStickerFolderId.value = null;
   if (item.meta?.data) {
     canvasStickerOptions.value = item.meta.data;
     restoreAgentDesignProvenance(canvasStickerOptions.value, item.meta);

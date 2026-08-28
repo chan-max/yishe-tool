@@ -25,6 +25,8 @@ import "./add/add-barcode";
 import "./save-sticker";
 import "./create-image-group";
 import "./load-sticker";
+import "./load-custom-sticker";
+import "./import-custom-sticker";
 import "./load-font";
 import "./search-design-knowledge";
 import "./export-png";

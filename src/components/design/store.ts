@@ -406,6 +406,7 @@ export const showCanvasStructure = ref(false)
 export const menuItems = {
     workspace: 'workspace',
     sticker: 'sticker',
+    customSticker: 'customSticker',
     material: 'material',
     videoClip: 'videoClip',
     canvas: 'canvas',

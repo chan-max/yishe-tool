@@ -95,7 +95,7 @@ export interface ImageResource {
   keywords: string;
   width: number;
   height: number;
-  isCustom: boolean; // 是否为系统自定义（可二次开发）
+  isCustom: boolean; // sticker 素材库中的来源标记（不代表 custom_sticker 编辑数据）
   isCutout: boolean; // 是否为抠图（无背景）
   colorPalette: string; // 主色调，逗号分隔的 hex，如 "#ff0000,#00ff00"
 }
@@ -732,7 +732,7 @@ export const resourceTools = [
           },
           isCustom: {
             type: "boolean",
-            description: "仅返回自定义模版贴纸（可基于其二次修改）",
+            description: "仅返回素材库中标记为自定义的贴纸（兼容旧数据）",
           },
           isCutout: {
             type: "boolean",

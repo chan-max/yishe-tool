@@ -368,8 +368,8 @@ async function generateBriefs(
   "height": 1024,
   "transparentBackground": true,
   "resourceHints": ["素材或字体检索方向"],
-  "saveName": "保存到素材库的名称",
-  "description": "保存到素材库的简短描述",
+  "saveName": "保存到自定义贴纸库的名称",
+  "description": "保存到自定义贴纸库的简短描述",
   "keywords": ["关键词1", "关键词2"],
   "qualityTarget": 7
 }
@@ -402,7 +402,7 @@ ${config.description || config.style || "自由发挥"}
 - 输出结构：${outputInstruction}
 ${config.customInstructions ? `- 自定义约束：${config.customInstructions}` : ""}
 
-每个 brief 都需要适合持续制作和保存到素材库，且 prompt 必须可以直接交给设计 agent 执行。`,
+每个 brief 都需要适合持续制作和保存到自定义贴纸库，且 prompt 必须可以直接交给设计 agent 执行。`,
         },
       ],
       temperature: 0.8,
@@ -818,10 +818,10 @@ async function createSavedImageGroup(
   groupIndex: number,
   config: NormalizedBatchConfig,
 ): Promise<void> {
-  const stickerIds = items
-    .map((item) => String(item.saveResult?.data?.stickerId || "").trim())
+  const customStickerIds = items
+    .map((item) => String(item.saveResult?.data?.customStickerId || "").trim())
     .filter(Boolean);
-  if (stickerIds.length !== items.length) {
+  if (customStickerIds.length !== items.length) {
     const lastSuccessfulItem = [...items]
       .reverse()
       .find((item) => item.status === "done");
@@ -829,6 +829,21 @@ async function createSavedImageGroup(
       failItem(lastSuccessfulItem, "组图成员未全部保存，无法创建组图");
     }
     return;
+  }
+
+  // 组图关系引用 sticker 表，因此组图交付前才把自定义贴纸复制进素材库。
+  const stickerIds: string[] = [];
+  for (const customStickerId of customStickerIds) {
+    const imported: any = await executeAITool("material.importCustomStickerToLibrary", {
+      customStickerId,
+    });
+    const stickerId = String(imported?.data?.stickerId || "").trim();
+    if (!imported?.success || !stickerId) {
+      const failedItem = items.find((item) => item.saveResult?.data?.customStickerId === customStickerId) || items[items.length - 1];
+      failItem(failedItem, imported?.message || "自定义贴纸导入素材库失败，无法创建组图");
+      return;
+    }
+    stickerIds.push(stickerId);
   }
 
   const baseName =

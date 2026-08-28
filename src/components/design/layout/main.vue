@@ -277,6 +277,7 @@ import saveModel from "./saveModel/index.vue";
 import decoration from "./decoration/index.vue";
 import screenshot from "../components/screenshot.vue";
 import sticker from "./sticker/index.vue";
+import customSticker from "./customSticker/index.vue";
 import qrcode from "./qrcode/index.vue";
 import customModel from "./customModel/index.vue";
 import { DirectionalLight, AmbientLight, PointLight } from "three";
@@ -336,6 +337,8 @@ const leftComponent = computed(() => {
     case menuItems.sticker:
       sticker.name = "sticker";
       return sticker;
+    case menuItems.customSticker:
+      return customSticker;
     case menuItems.material:
       return material;
     case menuItems.videoClip:

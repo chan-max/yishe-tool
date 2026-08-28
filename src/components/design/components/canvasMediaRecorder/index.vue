@@ -22,9 +22,9 @@
 <script setup>
 import { ref } from "vue";
 import icon from "./record.svg?component";
-import { currentModelController, currentEditingModelId, isEdit } from "@/components/design/store";
-import { uploadToCOS, createDraft } from "@/api";
+import { currentModelController } from "@/components/design/store";
 import { message } from "ant-design-vue";
+import { saveAs } from "file-saver";
 
 // 是否正在录制
 const isRecording = ref(false);
@@ -36,8 +36,6 @@ function clearState() {
   isRecording.value = false;
   countdown.value = 0;
   clearInterval(interval.value);
-  timeCount.value = 1;
-  clearInterval(timeCountInterval.value);
 }
 
 const handleRecord = async () => {
@@ -50,71 +48,53 @@ const handleRecord = async () => {
   }
 };
 
-// 从第一秒开始
-let timeCount = ref(1);
-let timeCountInterval = ref();
-
+// 开始录制
 const startRecording = async () => {
+  if (!currentModelController.value) {
+    message.warning("请先加载模型");
+    return;
+  }
+
   isRecording.value = true;
+  countdown.value = 0;
 
-  currentModelController.value.startMediaRecord({
-    onStop: handleRecordedVideo
-  });
-
-  timeCountInterval.value = setInterval(() => {
-    // 慕目前最多限制60秒
-    if (timeCount.value == 60) {
-      stopRecording();
-      return;
-    }
-
-    timeCount.value++;
+  interval.value = setInterval(() => {
+    countdown.value++;
   }, 1000);
+
+  // 开始录制
+  try {
+    currentModelController.value.startRecord({
+      onSuccess: async (blob) => {
+        clearState();
+        await handleRecordedVideo(blob);
+      },
+      onError: (err) => {
+        clearState();
+        message.error("录制失败");
+        console.error(err);
+      },
+    });
+  } catch (error) {
+    clearState();
+    message.error("启动录制失败");
+    console.error(error);
+  }
 };
 
+// 停止录制
 const stopRecording = () => {
-  currentModelController.value.stopMediaRecord();
+  if (!currentModelController.value) return;
+  currentModelController.value.stopRecord();
   clearState();
 };
 
 // 处理录制结束后的视频保存
 const handleRecordedVideo = async (blob) => {
   try {
-    // 创建文件对象
-    const file = new File([blob], `录制视频_${new Date().getTime()}.webm`, { type: 'video/webm' });
-
-    let userAccount = 'anonymous';
-    let userId = undefined;
-    try {
-      const { getLocalUserInfo } = await import('@/store/stores/loginAction');
-      const userInfo = getLocalUserInfo();
-      const currentUser = userInfo?.userInfo || userInfo || {};
-      userAccount = currentUser?.account || currentUser?.name || 'anonymous';
-      userId = currentUser?.id;
-    } catch (e) {
-      console.warn('无法获取用户信息:', e);
-    }
-    
-    // 上传到 COS
-    const cos = await uploadToCOS({
-      file,
-      category: 'design-draft',
-      account: userAccount,
-      userId,
-      entityId: isEdit.value && currentEditingModelId.value ? currentEditingModelId.value : undefined,
-    });
-    
-    // 保存到草稿箱
-    await createDraft({
-      url: cos.url,
-      name: '模型录制视频',
-      type: 'video',
-      suffix: 'webm',
-      updateTime: new Date(),
-      ...(isEdit.value && currentEditingModelId.value ? { customModelId: currentEditingModelId.value } : {})
-    });
-    
-    message.success('视频已保存到草稿箱');
+    const filename = `录制视频_${new Date().getTime()}.webm`;
+    saveAs(blob, filename);
+    message.success('视频已下载保存');
   } catch (err) {
     message.error('保存视频失败');
     console.error(err);

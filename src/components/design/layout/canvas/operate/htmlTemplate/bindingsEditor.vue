@@ -214,19 +214,22 @@ function getFieldIcon(type: string) {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 8px 0 14px;
+  padding: 6px 0 10px;
+  border-bottom: 1px solid var(--1s-border-color, #e4e4e7);
+  margin-bottom: 8px;
 }
 
 .html-template-bindings__title {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
-  color: #111827;
+  color: var(--1s-text-color, #09090b);
+  letter-spacing: 0.02em;
 }
 
 .html-template-bindings__subtitle {
-  margin-top: 4px;
-  font-size: 12px;
-  color: #6b7280;
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--1s-text-color-secondary, #71717a);
 }
 
 .html-template-bindings__input {
@@ -234,13 +237,13 @@ function getFieldIcon(type: string) {
   flex-direction: column;
   align-items: stretch;
   width: min(320px, 100%);
-  gap: 6px;
+  gap: 4px;
 }
 
 .html-template-bindings__desc {
-  font-size: 11px;
-  line-height: 1.5;
-  color: #8a8f98;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--1s-text-color-tertiary, #a1a1aa);
   text-align: left;
 }
 
@@ -250,8 +253,8 @@ function getFieldIcon(type: string) {
 }
 
 .html-template-bindings__sub-bindings {
-  padding-left: 16px;
-  border-left: 2px solid #e5e7eb;
-  margin: 6px 0 12px 12px;
+  padding-left: 12px;
+  border-left: 2px solid var(--1s-border-color, #e4e4e7);
+  margin: 4px 0 8px 8px;
 }
 </style>

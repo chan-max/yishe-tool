@@ -158,7 +158,6 @@ watch(show, async (val) => {
 #basic-canvas-canvas-container {
     width: 100%;
     height: 100%;
-    /* 核心修改：移除 flex 居中，完全通过位移控制，防止缩放时坐标跳变 */
     display: block;
     position: relative;
     overflow: hidden;
@@ -167,6 +166,7 @@ watch(show, async (val) => {
 .panzoom-wrapper {
     display: inline-block;
     vertical-align: top;
+    transform-origin: 0 0;
 }
 
 .top-menu-containter {
@@ -180,14 +180,9 @@ watch(show, async (val) => {
 .top-menu {
     display: flex;
     align-items: center;
-    height: 42px;
+    height: 40px;
     padding: 0 12px;
-    background: linear-gradient(
-        180deg,
-        var(--1s-elevated-background) 0%,
-        var(--1s-surface-background) 100%
-    );
-    backdrop-filter: blur(10px);
+    background: var(--1s-surface-background);
     border-bottom: 1px solid var(--1s-border-color);
     color: var(--1s-text-color);
 }

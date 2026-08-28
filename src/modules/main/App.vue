@@ -11,21 +11,13 @@
 <template>
   <a-config-provider :theme="antdTheme" :locale="antLocale">
     <el-config-provider :locale="elementLocale">
-      <div class="app-content" :class="appThemeClass">
-        <router-view></router-view>
-      </div>
-
-      <a-modal
-        v-model:open="showLoginFormModal"
-        :footer="null"
-        :destroyOnClose="true"
-        :mask-closable="true"
-        centered
-        width="420px"
-        wrap-class-name="tool-login-modal"
-      >
+      <TooltipProvider :delay-duration="150">
+        <div class="app-content" :class="appThemeClass">
+          <router-view></router-view>
+        </div>
+        <!-- shadcn Dialog-based login modal -->
         <login-form />
-      </a-modal>
+      </TooltipProvider>
     </el-config-provider>
   </a-config-provider>
 
@@ -41,8 +33,8 @@ import antEn from 'ant-design-vue/es/locale/en_US';
 import antZh from 'ant-design-vue/es/locale/zh_CN';
 
 import loginForm from '@/modules/main/view/user/login/index.vue'
-import { showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
 import { isDarkMode } from '@/components/design/store'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 
 const antLocale = computed(() => {
@@ -83,8 +75,8 @@ const antdTheme = computed(() => ({
   algorithm: isDarkMode.value ? darkAlgorithm : defaultAlgorithm,
   token: {
     ...customToken.value,
-    colorPrimary: "#2563eb",
-    borderRadius: 8,
+    colorPrimary: isDarkMode.value ? "#fafafa" : "#09090b",
+    borderRadius: 6,
   },
 }))
 
@@ -149,16 +141,5 @@ body {
 
 .app-content.tool-theme-light {
   color-scheme: light;
-}
-
-.tool-login-modal {
-  .ant-modal-content {
-    border-radius: 18px;
-    overflow: hidden;
-  }
-
-  .ant-modal-body {
-    padding: 8px 24px 24px;
-  }
 }
 </style>

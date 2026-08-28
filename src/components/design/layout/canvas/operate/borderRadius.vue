@@ -32,7 +32,7 @@
                                                 type="number"
                                                 style="width:80px;height:24px;" v-model.number="model[item.type].value">
                                                 <template #suffix>
-                                                    <div style="font-size:1rem;"> {{ model[item.type].unit }}
+                                                    <div class="text-[10px] text-muted-foreground"> {{ model[item.type].unit }}
                                                     </div>
                                                 </template>
                                             </el-input>
@@ -42,7 +42,7 @@
                                             <el-col :span="24">
                                                 <el-radio-group v-model="model[item.type].unit" size="small">
                                                     <el-radio v-for="u in unitOptions" :value="u.value">
-                                                        <span style="font-size: 1rem;">{{ u.label }}</span>
+                                                        <span class="text-xs">{{ u.label }}</span>
                                                     </el-radio>
                                                 </el-radio-group>
                                             </el-col>

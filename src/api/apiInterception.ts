@@ -26,7 +26,6 @@ const ownershipWriteKeywords = [
   '/api/font-template',
   '/api/custom-model',
   '/api/file-resource',
-  '/api/draft',
   '/api/crawler/material/add',
   '/api/crawler/material/update',
   '/api/ai/tti-record',

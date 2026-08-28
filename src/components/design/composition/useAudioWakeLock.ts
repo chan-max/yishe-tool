@@ -7,15 +7,25 @@ import { onMounted, onUnmounted } from "vue";
  *
  * 原理：创建一个增益极小（几乎无声）的振荡器连接到 destination，
  * 让浏览器认为页面正在播放音频，从而保持活跃。
+ *
+ * 注意：AudioContext 必须在用户手势（click/keydown 等）之后创建，
+ * 否则 Chrome 会报 autoplay policy 错误。
  */
 export const useAudioWakeLock = () => {
   let audioCtx: AudioContext | null = null;
   let oscillator: OscillatorNode | null = null;
   let gainNode: GainNode | null = null;
+  let started = false;
 
   function startWakeLock() {
+    if (started) return;
+    started = true;
+
     try {
-      if (typeof window.AudioContext === "undefined" && typeof (window as any).webkitAudioContext === "undefined") {
+      if (
+        typeof window.AudioContext === "undefined" &&
+        typeof (window as any).webkitAudioContext === "undefined"
+      ) {
         console.warn("[AudioWakeLock] AudioContext not supported in this browser.");
         return;
       }
@@ -32,9 +42,12 @@ export const useAudioWakeLock = () => {
       gainNode.connect(audioCtx.destination);
       oscillator.start();
 
-      console.log("[AudioWakeLock] started.");
+      // 移除监听，只需触发一次
+      document.removeEventListener("click", startWakeLock, { capture: true });
+      document.removeEventListener("keydown", startWakeLock, { capture: true });
+      document.removeEventListener("pointerdown", startWakeLock, { capture: true });
     } catch (err) {
-      console.error("[AudioWakeLock] failed to start:", err);
+      // AudioContext 创建失败，静默降级
       cleanup();
     }
   }
@@ -57,7 +70,6 @@ export const useAudioWakeLock = () => {
     } catch {
       // ignore
     }
-    console.log("[AudioWakeLock] cleaned up.");
   }
 
   function handleVisibilityChange() {
@@ -70,11 +82,17 @@ export const useAudioWakeLock = () => {
   }
 
   onMounted(() => {
-    startWakeLock();
+    // 等待第一次用户手势后再创建 AudioContext，遵循浏览器 autoplay policy
+    document.addEventListener("click", startWakeLock, { capture: true, once: true });
+    document.addEventListener("keydown", startWakeLock, { capture: true, once: true });
+    document.addEventListener("pointerdown", startWakeLock, { capture: true, once: true });
     document.addEventListener("visibilitychange", handleVisibilityChange);
   });
 
   onUnmounted(() => {
+    document.removeEventListener("click", startWakeLock, { capture: true });
+    document.removeEventListener("keydown", startWakeLock, { capture: true });
+    document.removeEventListener("pointerdown", startWakeLock, { capture: true });
     document.removeEventListener("visibilitychange", handleVisibilityChange);
     cleanup();
   });

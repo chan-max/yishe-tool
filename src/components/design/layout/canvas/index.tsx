@@ -212,6 +212,13 @@ import {
 
 export const currentEditingCustomStickerId = ref<string | null>(null)
 export const currentEditingCustomStickerFolderId = ref<string | null>(null)
+export const currentEditingCustomStickerName = ref<string | null>(null)
+
+export function exitCustomStickerEditMode() {
+  currentEditingCustomStickerId.value = null
+  currentEditingCustomStickerFolderId.value = null
+  currentEditingCustomStickerName.value = null
+}
 
 export var canvasStickerOptions = ref({
   unit: "px", // 这个单位还是要保留，当作整个部分的单位
@@ -885,9 +892,12 @@ export function removeCavnasChild(id) {
   let child = canvasStickerOptions.value.children.find(
     (child: any) => child.id == id,
   ) as any;
-  if (!child || child.undeletable) return;
+  if (!child || child.type === "canvas" || child.type === "html" || child.id === "this_is_html_id") return;
   let index = canvasStickerOptions.value.children.indexOf(child);
   canvasStickerOptions.value.children.splice(index, 1);
+  if (currentOperatingCanvasChildId.value === id) {
+    currentOperatingCanvasChildId.value = canvasStickerOptions.value.children[0]?.id || null;
+  }
   currentFocusingStickerId.value = null;
 }
 
@@ -920,20 +930,16 @@ function reparentCanvasChildren() {
         const childId = placeholder.getAttribute("data-s1-child-id");
         if (!childId) continue;
 
-        const child = canvasStickerOptions.value.children.find((c) => c.id === childId);
-        if (!child) continue;
-
-        const width = placeholder.clientWidth;
-        const height = placeholder.clientHeight;
-
-        // 动态同步宽高尺寸，触发子组件响应式重绘（如 ECharts resize）
-        if (child.width && (child.width.value !== width || child.width.unit !== "px")) {
-          child.width.value = width;
-          child.width.unit = "px";
-        }
-        if (child.height && (child.height.value !== height || child.height.unit !== "px")) {
-          child.height.value = height;
-          child.height.unit = "px";
+        const renderNode = document.getElementById(`s1-child-render-${childId}`);
+        if (renderNode) {
+          renderNode.dispatchEvent(
+            new CustomEvent("s1-child-resize", {
+              detail: {
+                width: placeholder.clientWidth,
+                height: placeholder.clientHeight,
+              },
+            })
+          );
         }
       }
     });
@@ -1296,8 +1302,6 @@ export class CanvasController {
           </div>
         );
       });
-
-      this.updateRenderingCanvas();
 
       nextTick(() => {
         reparentCanvasChildren();

@@ -10,36 +10,37 @@
 -->
 <template>
   <div class="designiy-sub-header">
-    <div style="font-size: 12px; line-height: 12px; color: #555">
+    <div class="text-xs font-medium text-muted-foreground select-none">
       {{ isEdit ? "编辑" : "新建" }}
     </div>
 
-    <div style="display: flex">
-      <div class="designiy-sub-header-button">
+    <div class="flex items-center gap-1">
+      <Button variant="ghost" size="xs" class="flex items-center gap-1">
         <icon-prev class="designiy-sub-header-icon"></icon-prev>
-        撤销
-      </div>
+        <span>撤销</span>
+      </Button>
 
-      <div class="designiy-sub-header-button">
-        <!-- 图标暂时用翻转代替 -->
+      <Button variant="ghost" size="xs" class="flex items-center gap-1">
         <icon-prev
           style="transform: rotateY(180deg)"
           class="designiy-sub-header-icon"
         ></icon-prev>
-        重做
-      </div>
+        <span>重做</span>
+      </Button>
     </div>
 
-    <div style="flex: 1"></div>
+    <div class="flex-1"></div>
 
-    <el-tooltip content="截屏">
-      <icon-camera
-        @click="$emit('takephoto')"
-        style="width: 16px; height: 16px"
-      ></icon-camera>
-    </el-tooltip>
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button variant="ghost" size="icon-sm" @click="$emit('takephoto')">
+          <icon-camera class="w-4 h-4"></icon-camera>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">截屏</TooltipContent>
+    </Tooltip>
 
-    <el-divider direction="vertical" />
+    <Separator orientation="vertical" class="h-4" />
 
     <online-point :online="online"></online-point>
   </div>
@@ -58,37 +59,26 @@ import {
 } from "../../store";
 import iconPrev from "@/icon/design/prev.svg?component";
 import iconCamera from "@/icon/camera.svg?component";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Separator } from "@/components/ui/separator";
 </script>
 
-<style>
+<style lang="less" scoped>
 .designiy-sub-header {
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: var(--1s-surface-background);
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  padding: 0 20px;
-  column-gap: 14px;
-}
-
-.designiy-sub-header-button {
-  display: flex;
-  align-items: center;
-  column-gap: 4px;
-  font-size: 12px;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 6px;
-  color: #333;
-  transition: all 0.3s;
-  &:hover {
-    background: #eaeaea;
-  }
+  padding: 0 16px;
+  column-gap: 12px;
+  border-bottom: 1px solid var(--1s-divider-color);
 }
 
 .designiy-sub-header-icon {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 </style>

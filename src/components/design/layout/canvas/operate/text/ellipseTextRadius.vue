@@ -7,12 +7,12 @@
         <template #content>
             <el-popover trigger="click" popper-class="el-popover-operation">
                 <template #reference>
-                    <div class="flex items-center">
-                        <span style="font-size: 1rem;padding: .5rem;">x</span>
-                        <el-input style="width:80px"  type="number" v-model="horizontalRadius.value" size="small" min="0"
+                    <div class="flex items-center gap-1">
+                        <span class="text-[11px] text-muted-foreground">X</span>
+                        <el-input style="width:72px" type="number" v-model="horizontalRadius.value" size="small" min="0"
                             step="1">
                             <template #suffix>
-                                <div style="font-size:1rem;"> {{ horizontalRadius.unit }}</div>
+                                <div class="text-[10px] text-muted-foreground"> {{ horizontalRadius.unit }}</div>
                             </template>
                         </el-input>
                     </div>
@@ -21,7 +21,7 @@
                     <el-col :span="24">
                         <el-radio-group v-model="horizontalRadius.unit" size="small">
                             <el-radio v-for="u in unitOptions" :value="u.value">
-                                <span style="font-size: 1rem;">{{ u.label }}</span>
+                                <span class="text-xs">{{ u.label }}</span>
                             </el-radio>
                         </el-radio-group>
                     </el-col>
@@ -29,12 +29,12 @@
             </el-popover>
             <el-popover trigger="click" popper-class="el-popover-operation">
                 <template #reference>
-                    <div class="flex items-center">
-                        <span style="font-size: 1rem;padding: .5rem;">y</span>
-                        <el-input style="width:80px" type="number"  v-model="verticalRadius.value" size="small" min="0"
+                    <div class="flex items-center gap-1">
+                        <span class="text-[11px] text-muted-foreground">Y</span>
+                        <el-input style="width:72px" type="number" v-model="verticalRadius.value" size="small" min="0"
                             step="1">
                             <template #suffix>
-                                <div style="font-size:1rem;"> {{ verticalRadius.unit }}</div>
+                                <div class="text-[10px] text-muted-foreground"> {{ verticalRadius.unit }}</div>
                             </template>
                         </el-input>
                     </div>
@@ -43,7 +43,7 @@
                     <el-col :span="24">
                         <el-radio-group v-model="verticalRadius.unit" size="small">
                             <el-radio v-for="u in unitOptions" :value="u.value">
-                                <span style="font-size: 1rem;">{{ u.label }}</span>
+                                <span class="text-xs">{{ u.label }}</span>
                             </el-radio>
                         </el-radio-group>
                     </el-col>

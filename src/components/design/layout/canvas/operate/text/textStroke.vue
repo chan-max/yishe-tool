@@ -5,14 +5,14 @@
     </template>
     <template #name> 文字描边 </template>
     <template #content>
-      <div class="flex items-center" style="column-gap: 1rem; font-size: 1rem">
-        颜色
+      <div class="flex items-center gap-2 text-[11px] text-muted-foreground">
+        <span>颜色</span>
         <color-picker v-model="color" type="pure"></color-picker>
-        边长
+        <span>宽度</span>
         <el-popover trigger="click" popper-class="el-popover-operation">
           <template #reference>
             <el-input
-              style="width: 80px"
+              style="width: 72px"
               type="number"
               v-model="width.value"
               size="small"
@@ -20,7 +20,7 @@
               step="1"
             >
               <template #suffix>
-                <div style="font-size: 1rem">{{ width.unit }}</div>
+                <div class="text-[10px] text-muted-foreground">{{ width.unit }}</div>
               </template>
             </el-input>
           </template>
@@ -28,7 +28,7 @@
             <el-col :span="24">
               <el-radio-group v-model="width.unit" size="small">
                 <el-radio v-for="u in unitOptions" :value="u.value">
-                  <span style="font-size: 1rem">{{ u.label }}</span>
+                  <span class="text-xs">{{ u.label }}</span>
                 </el-radio>
               </el-radio-group>
             </el-col>

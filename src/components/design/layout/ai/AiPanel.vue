@@ -2,262 +2,354 @@
   <div
     v-if="open || isOpen"
     ref="panelRef"
-    class="ai-panel"
-    :class="{ 'is-dragging': isDragging, 'is-dark': isDarkMode }"
-    :style="panelPosition.x >= 0 ? { left: panelPosition.x + 'px', top: panelPosition.y + 'px', right: 'auto' } : {}"
+    class="ai-panel fixed z-50 flex flex-col overflow-hidden rounded-2xl border-2 border-border/90 dark:border-white/15 bg-background text-foreground shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3),0_0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[0_24px_70px_-15px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.15)] select-none"
+    :class="{ 'is-dragging': isDragging }"
+    :style="panelStyle"
   >
-    <!-- Header -->
-    <div class="ai-panel__header" @mousedown="onDragStart">
-      <span class="ai-panel__title">AI 设计</span>
-      <span
-        class="ai-panel__mode-tag"
-        :class="aiSettings.mode === 'direct' ? 'mode-direct' : 'mode-proxy'"
-        @click.stop="showSettingsModal = true"
-        :title="aiSettings.mode === 'direct' ? '当前为前端直连模式（点击设置）' : '当前为服务端代理模式（点击设置）'"
-      >
-        {{ aiSettings.mode === 'direct' ? '🔗 直连' : '⚡️ 代理' }}
-      </span>
-      <span v-if="isProcessing" class="ai-panel__status">{{ agentPhaseLabel }}</span>
-      <span v-if="planProgress" class="ai-panel__plan">
-        {{ planProgress.settled }}/{{ planProgress.total }}
-        <template v-if="planProgress.failed"> · {{ planProgress.failed }} 失败</template>
-      </span>
-      <div class="ai-panel__header-actions">
-        <button class="ai-panel__icon-btn" @click="showSettingsModal = true" title="AI 连接设置">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
-          </svg>
-        </button>
-        <button class="ai-panel__icon-btn" @click="copyConversationLog" title="复制对话日志">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-        </button>
-        <button class="ai-panel__icon-btn" @click="clearChat" title="清空">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14"/></svg>
-        </button>
-        <button class="ai-panel__icon-btn" @click="handleClose" title="关闭">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
+    <!-- 顶部 Header 拖拽把手区 -->
+    <div
+      class="flex h-11 items-center justify-between border-b-2 border-border/70 bg-muted/40 px-3.5 select-none transition-colors"
+      :class="isDragging ? 'cursor-grabbing bg-muted/70' : 'cursor-grab hover:bg-muted/60'"
+      @mousedown="onDragStart"
+    >
+      <!-- 左侧：图标 + 标题 + 模式 Badge -->
+      <div class="flex items-center gap-2 min-w-0">
+        <div class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground shrink-0 shadow-xs">
+          <Sparkles class="h-3.5 w-3.5" />
+        </div>
+        <span class="text-xs font-semibold tracking-tight text-foreground">AI 设计助手</span>
+        
+        <!-- 运行模式 Tag -->
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Badge
+              variant="outline"
+              class="h-5 px-1.5 text-[10px] font-medium cursor-pointer transition-colors hover:bg-accent"
+              :class="aiSettings.mode === 'direct' ? 'border-emerald-500/30 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10' : 'border-blue-500/30 text-blue-600 dark:text-blue-400 bg-blue-500/10'"
+              @click.stop="showSettingsModal = true"
+            >
+              {{ aiSettings.mode === 'direct' ? '直连' : '代理' }}
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {{ aiSettings.mode === 'direct' ? '当前为前端直连模式（点击设置 API Key）' : '当前为服务端代理模式（点击设置）' }}
+          </TooltipContent>
+        </Tooltip>
+
+        <!-- 实时执行状态标签 -->
+        <Badge
+          v-if="isProcessing"
+          variant="secondary"
+          class="h-5 gap-1 px-1.5 text-[10px] font-medium border border-amber-400/40 bg-amber-50 text-amber-900 dark:bg-amber-500/10 dark:text-amber-300"
+        >
+          <span class="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
+          <span class="max-w-[100px] truncate">{{ agentPhaseLabel }}</span>
+        </Badge>
+      </div>
+
+      <!-- 右侧：控制按钮组 -->
+      <div class="flex items-center gap-0.5 shrink-0" @mousedown.stop>
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button variant="ghost" size="icon-xs" class="h-7 w-7 text-muted-foreground hover:text-foreground" @click="showSettingsModal = true">
+              <Settings2 class="h-3.5 w-3.5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">AI 连接设置</TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button variant="ghost" size="icon-xs" class="h-7 w-7 text-muted-foreground hover:text-foreground" @click="copyConversationLog">
+              <Copy class="h-3.5 w-3.5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">复制对话日志</TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button variant="ghost" size="icon-xs" class="h-7 w-7 text-muted-foreground hover:text-foreground" @click="clearChat">
+              <Trash2 class="h-3.5 w-3.5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">清空记录</TooltipContent>
+        </Tooltip>
+
+        <Button variant="ghost" size="icon-xs" class="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10" @click="handleClose">
+          <X class="h-3.5 w-3.5" />
+        </Button>
       </div>
     </div>
 
-    <!-- Progress -->
-    <div v-if="planProgress" class="ai-panel__progress">
-      <div class="ai-panel__progress-bar" :style="{ width: (planProgress.settled / planProgress.total * 100) + '%' }"></div>
+    <!-- 计划执行进度条 -->
+    <div v-if="planProgress" class="relative h-1 w-full bg-muted/60 overflow-hidden">
+      <div
+        class="h-full bg-gradient-to-r from-emerald-500 via-sky-500 to-primary transition-all duration-300 ease-out"
+        :style="{ width: (planProgress.settled / planProgress.total * 100) + '%' }"
+      />
     </div>
 
-    <!-- Messages -->
-    <div class="ai-panel__messages" ref="messagesRef" @scroll="handleMessagesScroll">
-      <!-- Empty -->
-      <div v-if="messages.length === 0" class="ai-panel__empty">
-        <p class="ai-panel__empty-text">描述你想要的设计</p>
-        <div class="ai-panel__quick">
-          <button v-for="q in quickPrompts" :key="q.label" class="ai-panel__quick-btn" @click="sendQuick(q.prompt)">
-            {{ q.label }}
+    <!-- 对话消息列表区 -->
+    <div
+      ref="messagesRef"
+      class="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-3.5 min-h-[320px] max-h-[560px] scroll-smooth text-xs"
+      @scroll="handleMessagesScroll"
+    >
+      <!-- 空状态：极简灵感推荐 -->
+      <div v-if="messages.length === 0" class="flex flex-col items-center justify-center py-5 text-center space-y-3.5">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 via-accent to-muted border border-border shadow-xs">
+          <Wand2 class="h-5 w-5 text-primary" />
+        </div>
+        <div class="space-y-0.5 max-w-[280px]">
+          <h3 class="text-xs font-semibold text-foreground">AI 自动制作贴纸</h3>
+          <p class="text-[11px] text-muted-foreground leading-relaxed">
+            描述你想要的贴纸、或点击「形式与参数」配置套组与变体，AI 将实时在画布中绘制生成
+          </p>
+        </div>
+
+        <!-- 快捷灵感卡片 -->
+        <div class="grid grid-cols-2 gap-1.5 w-full pt-1">
+          <button
+            v-for="q in quickPrompts"
+            :key="q.label"
+            class="flex items-center gap-1.5 rounded-lg border border-border/80 bg-card p-2 text-left text-[11px] font-medium text-foreground transition-all hover:bg-accent hover:border-foreground/20 hover:shadow-xs group"
+            @click="sendQuick(q.prompt)"
+          >
+            <span class="h-1.5 w-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors shrink-0" />
+            <span class="truncate">{{ q.label }}</span>
           </button>
         </div>
       </div>
 
-      <!-- Messages list -->
-      <div v-if="hiddenMessageCount > 0" class="ai-panel__history-note">
+      <!-- 历史消息折叠提示 -->
+      <div v-if="hiddenMessageCount > 0" class="text-center text-[10px] text-muted-foreground/60 py-1">
         已折叠 {{ hiddenMessageCount }} 条较早记录
       </div>
+
+      <!-- 消息列表渲染 -->
       <template v-for="msg in visibleMessages" :key="msg.id">
-        <!-- User -->
-        <div v-if="msg.role === 'user'" class="ai-panel__msg ai-panel__msg--user">
-          {{ msg.content }}
-        </div>
-        <!-- AI -->
-        <div v-if="msg.role === 'assistant'" class="ai-panel__msg ai-panel__msg--ai">
-          <div v-if="msg.content" class="ai-panel__msg-text">{{ msg.content }}</div>
-          <div v-if="msg.tool_calls?.length" class="ai-panel__tool-calls">
-            <span v-for="call in msg.tool_calls" :key="call.id" class="ai-panel__tool-tag">
-              {{ formatToolName(call.function.name) }}
-            </span>
+        <!-- 用户消息 -->
+        <div v-if="msg.role === 'user'" class="flex justify-end w-full">
+          <div class="max-w-[85%] rounded-2xl rounded-tr-xs bg-primary text-primary-foreground px-3.5 py-2 text-xs shadow-xs leading-relaxed whitespace-pre-wrap break-all [overflow-wrap:anywhere]">
+            {{ msg.content }}
           </div>
         </div>
-        <!-- Tool result -->
-        <div v-if="msg.role === 'tool'" class="ai-panel__tool-result">
-          {{ parseResult(msg.content).message }}
+
+        <!-- AI 助手消息 -->
+        <div v-if="msg.role === 'assistant'" class="flex items-start gap-2.5 w-full min-w-0">
+          <div class="flex h-6 w-6 items-center justify-center rounded-full bg-muted border border-border text-foreground shrink-0 mt-0.5 shadow-2xs">
+            <Sparkles class="h-3 w-3" />
+          </div>
+          <div class="flex-1 space-y-1.5 min-w-0 max-w-full">
+            <!-- 文本内容 -->
+            <div v-if="msg.content" class="rounded-2xl rounded-tl-xs bg-muted/60 border border-border/60 text-foreground px-3.5 py-2 text-xs shadow-2xs leading-relaxed whitespace-pre-wrap break-all [overflow-wrap:anywhere]">
+              {{ msg.content }}
+            </div>
+
+            <!-- 工具调用展示 Pill -->
+            <div v-if="msg.tool_calls?.length" class="flex flex-wrap gap-1.5 pt-0.5">
+              <span
+                v-for="call in msg.tool_calls"
+                :key="call.id"
+                class="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-0.5 text-[10px] font-mono text-muted-foreground shadow-2xs"
+              >
+                <Zap class="h-2.5 w-2.5 text-amber-500" />
+                <span>{{ formatToolName(call.function.name) }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 工具执行反馈 -->
+        <div v-if="msg.role === 'tool'" class="pl-8 w-full min-w-0">
+          <div class="flex items-start gap-1.5 rounded-md bg-muted/40 border border-border/50 px-2.5 py-1 text-[10px] text-muted-foreground font-mono w-full min-w-0 whitespace-pre-wrap break-all [overflow-wrap:anywhere]">
+            <CheckCircle2 class="h-3 w-3 text-emerald-500 shrink-0 mt-0.5" />
+            <span class="flex-1 min-w-0 leading-normal">{{ parseResult(msg.content).message }}</span>
+          </div>
         </div>
       </template>
 
-      <!-- Loading -->
-      <div v-if="isProcessing" class="ai-panel__msg ai-panel__msg--ai">
-        <div class="ai-panel__dots">
-          <span></span><span></span><span></span>
+      <!-- 思考中加载态 -->
+      <div v-if="isProcessing" class="flex items-center gap-2.5 pl-1">
+        <div class="flex h-6 w-6 items-center justify-center rounded-full bg-muted border border-border text-foreground shrink-0 shadow-2xs">
+          <Loader2 class="h-3 w-3 animate-spin text-primary" />
         </div>
-        <button v-if="!isWaitingForUser" class="ai-panel__stop-btn" @click="handleStop">停止</button>
+        <div class="flex items-center gap-2 rounded-2xl rounded-tl-xs bg-muted/50 border border-border/50 px-3 py-2 text-[11px] text-muted-foreground">
+          <span>AI 正在全自动制作贴纸...</span>
+          <Button v-if="!isWaitingForUser" variant="ghost" size="xs" class="h-5 px-1.5 text-[10px] text-destructive hover:bg-destructive/10" @click="handleStop">
+            停止
+          </Button>
+        </div>
       </div>
 
-      <!-- Interaction -->
-      <div v-if="interactionData" class="ai-panel__interaction">
-        <div class="ai-panel__interaction-q">{{ interactionData.question }}</div>
-        <div v-if="interactionData.options?.length" class="ai-panel__interaction-opts">
-          <button v-for="opt in interactionData.options" :key="opt" @click="submitInteraction(opt)">{{ opt }}</button>
+      <!-- 用户交互确认卡片 (Human in the Loop) -->
+      <div v-if="interactionData" class="rounded-xl border border-amber-400/40 bg-amber-50/60 dark:bg-amber-950/20 p-3 space-y-2.5 shadow-sm">
+        <div class="flex items-center gap-1.5 text-xs font-semibold text-amber-900 dark:text-amber-200">
+          <HelpCircle class="h-3.5 w-3.5 text-amber-500" />
+          <span>{{ interactionData.question }}</span>
         </div>
-        <div class="ai-panel__interaction-row">
-          <input v-model="customAnswer" placeholder="自定义回答..." @keydown.enter="submitInteraction(customAnswer)" />
-          <button @click="submitInteraction(customAnswer)" :disabled="!customAnswer.trim()">发送</button>
+        <div v-if="interactionData.options?.length" class="flex flex-wrap gap-1.5">
+          <Button
+            v-for="opt in interactionData.options"
+            :key="opt"
+            variant="outline"
+            size="xs"
+            class="h-6 text-[11px] bg-background hover:bg-amber-100 dark:hover:bg-amber-900/40 border-amber-300/60"
+            @click="submitInteraction(opt)"
+          >
+            {{ opt }}
+          </Button>
+        </div>
+        <div class="flex items-center gap-1.5 pt-1">
+          <Input
+            v-model="customAnswer"
+            placeholder="自定义回答..."
+            class="h-7 text-xs bg-background"
+            @keydown.enter="submitInteraction(customAnswer)"
+          />
+          <Button size="xs" class="h-7 px-2.5" :disabled="!customAnswer.trim()" @click="submitInteraction(customAnswer)">
+            发送
+          </Button>
         </div>
       </div>
+
+      <!-- 制作完成快速动作卡片 -->
+      <div
+        v-if="showSuccessActionCard"
+        class="rounded-xl border border-emerald-500/30 bg-emerald-50/40 dark:bg-emerald-950/20 p-2.5 space-y-2"
+      >
+        <div class="flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+          <div class="flex items-center gap-1">
+            <CheckCircle2 class="h-3.5 w-3.5 text-emerald-500" />
+            <span>贴纸设计已成功生成并在画布呈现</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <Button
+            variant="default"
+            size="xs"
+            class="h-6 text-[11px] gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+            @click="quickSaveCustomSticker"
+          >
+            <Save class="h-3 w-3" />
+            保存作品
+          </Button>
+          <Button
+            variant="outline"
+            size="xs"
+            class="h-6 text-[11px] gap-1 border-emerald-500/30 hover:bg-emerald-100/50"
+            @click="quickExportPng"
+          >
+            <Download class="h-3 w-3" />
+            导出 PNG
+          </Button>
+          <Button
+            variant="ghost"
+            size="xs"
+            class="h-6 text-[11px] gap-1 text-muted-foreground hover:text-foreground ml-auto"
+            @click="quickEnterEditMode"
+          >
+            <Edit3 class="h-3 w-3" />
+            继续微调
+          </Button>
+        </div>
+      </div>
+
+      <!-- 回到底部浮动按钮 -->
       <button
         v-if="hasUnreadMessages"
-        class="ai-panel__latest-btn"
+        class="sticky bottom-1 left-1/2 -translate-x-1/2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-medium text-foreground shadow-md transition-transform hover:scale-105 active:scale-95 flex items-center gap-1"
         @click="scrollToBottom(true)"
       >
+        <ArrowDown class="h-3 w-3" />
         查看最新进度
       </button>
     </div>
 
-    <!-- Input -->
+    <!-- 底部控制与输入区 -->
     <div
-      class="ai-panel__input"
-      :class="{ 'is-drag-over': isDragOver }"
+      class="border-t border-border/70 bg-card p-3 space-y-2 relative"
+      :class="{ 'ring-2 ring-primary/40': isDragOver }"
       @dragover.prevent="isDragOver = true"
       @dragleave.prevent="isDragOver = false"
       @drop.prevent="handleDrop"
     >
+      <!-- 拖拽提示层 -->
       <div
-        v-if="showMemberCount || showJobCount"
-        class="ai-panel__task-options"
+        v-if="isDragOver"
+        class="absolute inset-0 z-20 flex items-center justify-center bg-background/90 backdrop-blur-xs text-xs font-medium text-primary gap-2"
       >
-        <label v-if="showMemberCount" class="ai-panel__task-count">
-          <span>成员</span>
-          <input
-            v-model.number="taskOptions.memberCount"
-            type="number"
-            min="2"
-            max="12"
-            :disabled="isProcessing"
-          />
-        </label>
-        <label v-if="showJobCount" class="ai-panel__task-count">
-          <span>数量</span>
-          <input
-            v-model.number="taskOptions.jobCount"
-            type="number"
-            min="1"
-            max="100"
-            :disabled="isProcessing"
-          />
-        </label>
+        <ImageIcon class="h-4 w-4" />
+        <span>松开鼠标上传参考图（将基于此图进行风格制作）</span>
       </div>
 
-      <div v-if="taskOptions.preset === 'custom'" class="ai-panel__task-custom">
-        <select v-model="taskOptions.source" title="设计来源">
-          <option value="blank">新建设计</option>
-          <option value="current-canvas">当前画布</option>
-          <option value="reference-image">参考图片</option>
-        </select>
-        <select v-model="taskOptions.intent" title="任务意图">
-          <option value="create">创建</option>
-          <option value="edit">修改</option>
-          <option value="analyze">分析</option>
-          <option value="optimize">优化</option>
-        </select>
-        <select v-model="taskOptions.outputKind" title="输出结构">
-          <option value="single">单图</option>
-          <option value="group">组图</option>
-          <option value="independent-batch">独立批量</option>
-        </select>
-        <select
-          v-model="taskOptions.delivery"
-          title="交付动作"
-          :disabled="taskOptions.outputKind !== 'single'"
+      <!-- 💡 参数反显与清除胶囊 (Active Param Banner) -->
+      <div
+        v-if="isCustomParamActive"
+        class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border-2 border-primary/40 bg-primary/10 dark:bg-primary/20 text-xs shadow-2xs select-none"
+      >
+        <div
+          class="flex items-center gap-1.5 min-w-0 cursor-pointer group"
+          @click="showTaskConfigModal = true"
+          title="点击重新配置形式与参数"
         >
-          <option value="canvas">仅画布</option>
-          <option value="save">保存素材</option>
-          <option value="export">导出 PNG</option>
-        </select>
-        <input
-          v-model="taskOptions.customInstructions"
-          class="ai-panel__task-instructions"
-          placeholder="附加约束"
-          :disabled="isProcessing"
-        />
+          <Badge class="h-5 px-1.5 text-[10px] font-bold gap-1 bg-primary text-primary-foreground shadow-xs shrink-0">
+            <component :is="activeParamSummary.icon" class="h-3 w-3" />
+            <span>{{ activeParamSummary.title }}</span>
+          </Badge>
+          <span class="text-xs text-foreground font-semibold truncate">{{ activeParamSummary.desc }}</span>
+          <span class="text-[10px] text-primary/80 group-hover:underline flex items-center gap-0.5 shrink-0 ml-0.5">
+            <span>(点击修改)</span>
+          </span>
+        </div>
+
+        <!-- 一键清除反显，恢复默认单张设计 -->
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              type="button"
+              class="flex h-5 w-5 items-center justify-center rounded-md bg-background/80 hover:bg-destructive hover:text-white border border-border text-muted-foreground transition-colors shrink-0"
+              @click="resetParamsToDefault"
+            >
+              <X class="h-3 w-3" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top">清除自定义参数，恢复默认单张制作</TooltipContent>
+        </Tooltip>
       </div>
 
-      <!-- Image Preview Card -->
-      <div v-if="selectedImage" class="ai-panel__image-card">
-        <div class="ai-panel__image-thumb-wrapper">
-          <img :src="selectedImage.preview" class="ai-panel__image-thumb" />
-          <button class="ai-panel__image-remove" @click="removeImage" title="删除图片">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div class="ai-panel__image-info">
-          <div class="ai-panel__image-title-row">
-            <span class="ai-panel__image-badge">参考图</span>
-            <span class="ai-panel__image-filename">{{ selectedImage.name }}</span>
+      <!-- 参考图卡片 -->
+      <div v-if="selectedImage" class="flex items-center justify-between gap-2 rounded-lg border border-amber-400/40 bg-amber-50/50 dark:bg-amber-950/20 p-1.5">
+        <div class="flex items-center gap-2 min-w-0">
+          <img :src="selectedImage.preview" class="h-8 w-8 rounded object-cover border border-border shrink-0" />
+          <div class="flex flex-col min-w-0">
+            <span class="text-xs font-medium text-foreground truncate max-w-[200px]">{{ selectedImage.name }}</span>
+            <span class="text-[10px] text-amber-700 dark:text-amber-400">{{ selectedImage.size }} · 已开启参考图风格复刻</span>
           </div>
-          <span v-if="selectedImage.size" class="ai-panel__image-filesize">{{ selectedImage.size }}</span>
         </div>
+        <Button variant="ghost" size="icon-xs" class="h-6 w-6 text-muted-foreground hover:text-destructive" @click="removeImage">
+          <X class="h-3.5 w-3.5" />
+        </Button>
       </div>
 
-      <!-- Image Processing Loading -->
-      <div v-else-if="isPreparingImage" class="ai-panel__image-loading">
-        <div class="ai-panel__spinner"></div>
+      <!-- 图片预处理 Loading -->
+      <div v-else-if="isPreparingImage" class="flex items-center gap-2 text-[11px] text-muted-foreground py-1">
+        <Loader2 class="h-3.5 w-3.5 animate-spin text-primary" />
         <span>正在优化参考图片...</span>
       </div>
 
-      <!-- Drag Hint -->
-      <div v-if="isDragOver" class="ai-panel__drag-hint">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <span>松开上传参考图</span>
-      </div>
-
-      <DesignPromptPicker
-        v-model="showPromptPicker"
-        @select="handlePromptSelect"
-      />
-
-      <div class="ai-panel__input-tools">
-        <button
-          class="ai-panel__upload-btn"
-          :class="{ 'is-active': !!selectedImage }"
-          :disabled="isPreparingImage"
-          @click="triggerImageUpload"
-          title="上传参考图 (支持截图粘贴与拖拽)"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        </button>
-        <input ref="imageInputRef" type="file" accept="image/*" style="display:none" @change="handleImageUpload" />
-
-        <button
-          class="ai-panel__upload-btn"
-          :class="{ 'is-active': showPromptPicker }"
-          :disabled="isProcessing"
-          @click="showPromptPicker = !showPromptPicker"
-          title="提示词库"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        </button>
-
-        <select
-          v-model="taskOptions.preset"
-          class="ai-panel__task-select"
-          :disabled="isProcessing"
-          title="设计模式"
-        >
-          <option
-            v-for="preset in taskPresets"
-            :key="preset.value"
-            :value="preset.value"
-          >
-            {{ preset.label }}
-          </option>
-        </select>
-      </div>
-
-      <div class="ai-panel__input-row">
+      <!-- 输入框与工具条 (Flex 垂直排版，文本与工具栏彻底分离不遮挡) -->
+      <div class="rounded-xl border border-input/90 bg-background focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 shadow-xs transition-all flex flex-col overflow-hidden">
+        <!-- 文本域 -->
         <textarea
           ref="textareaRef"
           v-model="inputText"
-          class="ai-panel__input-field"
-          :placeholder="isWaitingForUser ? '请输入选择...' : (selectedImage ? '描述你想参考此图制作的设计...' : '描述你想要的设计... (支持直接粘贴图片)')"
+          class="w-full resize-none border-0 bg-transparent px-3.5 pt-3 pb-2 text-xs leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          :placeholder="dynamicPlaceholder"
           :disabled="isPreparingImage || (isProcessing && !isWaitingForUser)"
-          rows="1"
+          rows="3"
+          style="min-height: 76px;"
           @input="adjustTextareaHeight"
           @keydown.enter="handleKeydownEnter"
           @paste="handlePaste"
@@ -265,29 +357,101 @@
           @compositionend="isComposing = false"
         />
 
-        <button
-          v-if="isProcessing && !isWaitingForUser"
-          class="ai-panel__send-btn ai-panel__send-btn--stop"
-          @click="handleStop"
-          title="停止生成"
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
-        </button>
-        <button
-          v-else
-          class="ai-panel__send-btn"
-          :class="{ 'is-ready': inputText.trim() || selectedImage }"
-          :disabled="(!inputText.trim() && !selectedImage) || (isProcessing && !isWaitingForUser)"
-          @click="handleSend"
-          title="发送 (Enter)"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="19" x2="12" y2="5"/>
-            <polyline points="5 12 12 5 19 12"/>
-          </svg>
-        </button>
+        <!-- 输入框底部工具栏 (独立行，完全不重叠) -->
+        <div class="flex items-center justify-between px-2.5 pb-2.5 pt-1.5 border-t border-border/30 bg-muted/10">
+          <div class="flex items-center gap-1.5">
+            <!-- 形式与参数弹窗入口 -->
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <button
+                  type="button"
+                  class="flex items-center gap-1.5 h-7 px-2.5 rounded-lg text-xs font-medium transition-all"
+                  :class="isCustomParamActive ? 'bg-primary text-primary-foreground font-bold shadow-xs' : 'text-muted-foreground hover:text-foreground hover:bg-muted/70 border border-border/60 bg-muted/30'"
+                  :disabled="isProcessing"
+                  @click="showTaskConfigModal = true"
+                >
+                  <SlidersHorizontal class="h-3.5 w-3.5" />
+                  <span>{{ isCustomParamActive ? activeParamSummary.title : '形式与参数' }}</span>
+                  <span v-if="isCustomParamActive" class="h-1.5 w-1.5 rounded-full bg-white animate-pulse shrink-0" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">点击配置生成形式（单张/系列组图/数量套数）</TooltipContent>
+            </Tooltip>
+
+            <!-- 图片上传 -->
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <button
+                  type="button"
+                  class="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/70 border border-border/60 bg-muted/30 transition-colors disabled:opacity-40"
+                  :class="{ 'text-amber-600 bg-amber-100 dark:bg-amber-900/40 border-amber-400': !!selectedImage }"
+                  :disabled="isPreparingImage"
+                  @click="triggerImageUpload"
+                >
+                  <ImageIcon class="h-3.5 w-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">上传参考图（支持剪贴板粘贴或拖拽）</TooltipContent>
+            </Tooltip>
+            <input ref="imageInputRef" type="file" accept="image/*" class="hidden" @change="handleImageUpload" />
+
+            <!-- 提示词灵感库 -->
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <button
+                  type="button"
+                  class="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/70 border border-border/60 bg-muted/30 transition-colors disabled:opacity-40"
+                  :class="{ 'text-primary bg-primary/10 border-primary/40': showPromptPicker }"
+                  :disabled="isProcessing"
+                  @click="showPromptPicker = !showPromptPicker"
+                >
+                  <BookOpen class="h-3.5 w-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">精选提示词灵感库</TooltipContent>
+            </Tooltip>
+          </div>
+
+          <!-- 发送 / 停止按钮 -->
+          <div>
+            <Button
+              v-if="isProcessing && !isWaitingForUser"
+              variant="destructive"
+              size="icon-xs"
+              class="h-7 w-7 rounded-lg shadow-xs"
+              @click="handleStop"
+              title="停止生成"
+            >
+              <Square class="h-3.5 w-3.5 fill-current" />
+            </Button>
+            <Button
+              v-else
+              variant="default"
+              size="icon-xs"
+              class="h-7 w-7 rounded-lg shadow-xs transition-all"
+              :disabled="(!inputText.trim() && !selectedImage) || (isProcessing && !isWaitingForUser)"
+              @click="handleSend"
+              title="发送 (Enter)"
+            >
+              <ArrowUp class="h-4 w-4 stroke-[2.5]" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- 💡 设计形式与参数配置弹窗 -->
+    <TaskConfigModal
+      v-model="showTaskConfigModal"
+      :options="taskOptions"
+      @update:options="taskOptions = $event"
+    />
+
+    <!-- 提示词库弹窗 -->
+    <DesignPromptPicker
+      v-model="showPromptPicker"
+      @select="handlePromptSelect"
+    />
 
     <!-- AI 运行时设置弹窗 -->
     <AiSettingsModal v-model="showSettingsModal" />
@@ -295,27 +459,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, nextTick, watch, onMounted, onUnmounted } from "vue";
+import { ref, computed, reactive, nextTick, watch, onMounted, onUnmounted, markRaw } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { designAgent } from "@/ai/langgraph";
 import { resolveAIToolName } from "@/ai/shared/tools";
-import type { AgentInteraction } from "@/ai/langgraph";
-import { isDarkMode } from "@/components/design/store";
 import { pendingPromptInput } from "@/ai/store";
 import { prepareImageForAI } from "@/ai/image-preprocess";
 import { getAgentPhaseLabel } from "@/ai/agent/presentation";
 import {
-  AGENT_TASK_PRESETS,
   resolveAgentTaskSpec,
   validateAgentTaskSpec,
   type AgentTaskOptions,
 } from "@/ai/agent/task-spec";
 import DesignPromptPicker from "./DesignPromptPicker.vue";
 import AiSettingsModal from "./AiSettingsModal.vue";
+import TaskConfigModal from "./TaskConfigModal.vue";
 import { aiSettings } from "@/ai/settings";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import {
+  Sparkles,
+  Settings2,
+  Copy,
+  Trash2,
+  X,
+  Wand2,
+  Zap,
+  CheckCircle2,
+  Loader2,
+  HelpCircle,
+  ArrowDown,
+  ArrowUp,
+  Square,
+  ImageIcon,
+  BookOpen,
+  Palette,
+  Layers,
+  Edit3,
+  Edit,
+  Flame,
+  Save,
+  Download,
+  SlidersHorizontal,
+} from "lucide-vue-next";
+import { executeAITool } from "@/ai/shared/execute-tool";
+import { currentCanvasControllerInstance } from "@/components/design/layout/canvas/index.tsx";
 
 const isOpen = useLocalStorage("_1s_ai_panel_open", false);
 const showSettingsModal = ref(false);
+const showTaskConfigModal = ref(false);
 
 const props = defineProps<{ open: boolean }>();
 const emit = defineEmits<{ close: [] }>();
@@ -342,51 +536,120 @@ const isPreparingImage = ref(false);
 const isDragOver = ref(false);
 const autoFollowMessages = ref(true);
 const hasUnreadMessages = ref(false);
-const taskPresets = AGENT_TASK_PRESETS;
+
+// 任务参数模型
 const taskOptions = useLocalStorage<AgentTaskOptions>(
   "_1s_ai_task_options_v1",
   {
-    preset: "standard",
+    preset: "single",
     source: "blank",
     intent: "create",
     outputKind: "single",
     jobCount: 3,
-    memberCount: 2,
+    memberCount: 4,
     delivery: "canvas",
     customInstructions: "",
   },
   { mergeDefaults: true },
 );
-const showMemberCount = computed(
-  () =>
-    taskOptions.value.preset === "group" ||
-    (taskOptions.value.preset === "custom" &&
-      taskOptions.value.outputKind === "group"),
-);
-const showJobCount = computed(
-  () =>
-    taskOptions.value.preset === "batch" ||
-    (taskOptions.value.preset === "custom" &&
-      taskOptions.value.outputKind === "independent-batch"),
-);
-watch(
-  () => [taskOptions.value.preset, taskOptions.value.outputKind] as const,
-  ([preset, outputKind]) => {
-    if (
-      preset === "custom" &&
-      outputKind !== "single"
-    ) {
-      taskOptions.value.delivery = "save";
-    }
-  },
-);
+
+// 判断当前是否开启了非默认的定制参数
+const isCustomParamActive = computed(() => {
+  const o = taskOptions.value;
+  return (
+    o.outputKind === "group" ||
+    (o.outputKind === "single" && (o.jobCount || 1) > 1) ||
+    o.source === "current-canvas" ||
+    o.intent === "edit" ||
+    o.delivery === "save" ||
+    o.delivery === "export" ||
+    !!o.customInstructions?.trim()
+  );
+});
+
+// 参数反显文字与图标
+const activeParamSummary = computed(() => {
+  const o = taskOptions.value;
+  if (o.outputKind === "group") {
+    const sets = o.jobCount || 1;
+    const members = o.memberCount || 4;
+    return {
+      icon: markRaw(Layers),
+      title: "系列组图",
+      desc: sets > 1 ? `批量制作 ${sets} 套 (共 ${sets * members} 张)` : `制作一套 ${members} 张系列贴纸`,
+    };
+  }
+  if (o.source === "current-canvas" || o.intent === "edit") {
+    return {
+      icon: markRaw(Edit3),
+      title: "修改当前画布",
+      desc: "基于当前画布已有图层进行调整优化",
+    };
+  }
+  if ((o.jobCount || 1) > 1) {
+    return {
+      icon: markRaw(Palette),
+      title: "批量单图",
+      desc: `批量生成 ${o.jobCount} 张独立贴纸`,
+    };
+  }
+  if (o.customInstructions?.trim()) {
+    return {
+      icon: markRaw(SlidersHorizontal),
+      title: "附带约束",
+      desc: o.customInstructions.trim(),
+    };
+  }
+  return {
+    icon: markRaw(Palette),
+    title: "单图设计",
+    desc: "在画布生成 1 张全新设计",
+  };
+});
+
+// 重置参数为默认单张创作
+function resetParamsToDefault() {
+  taskOptions.value = {
+    preset: "single",
+    source: "blank",
+    intent: "create",
+    outputKind: "single",
+    jobCount: 3,
+    memberCount: 4,
+    delivery: "canvas",
+    customInstructions: "",
+  };
+}
+
+const dynamicPlaceholder = computed(() => {
+  if (isWaitingForUser.value) return "请输入选择...";
+  if (selectedImage.value) return "描述你想如何参考此图的构图、配色进行贴纸制作...";
+  if (taskOptions.value.outputKind === "group") {
+    return "描述系列主题，如：设计一套 4 个不同季节的柴犬表情包贴纸...";
+  }
+  if (taskOptions.value.outputKind === "independent-batch") {
+    return "描述批量创意，如：设计 3 款不同风格的复古旅行箱贴纸...";
+  }
+  if (taskOptions.value.source === "current-canvas" || taskOptions.value.intent === "edit") {
+    return "描述修改需求，如：把背景改成浅米色，标题文字放大并居中...";
+  }
+  return "描述你想要的贴纸设计，如：设计一个复古美式咖啡杯贴纸，带暖色调与粗边框...";
+});
+
+// Quick prompts
+const quickPrompts = [
+  { label: "促销圆形徽章", prompt: '创建一个促销徽章贴纸，黄色背景，居中写粗体 "HOT SALE 50%"，带有放射状光芒装饰' },
+  { label: "可爱萌宠小狗", prompt: '制作一个可爱的柯基小狗卡通贴纸，搭配温暖柔和色调，周围有点缀爱心和爪印' },
+  { label: "复古美式咖啡", prompt: '为咖啡品牌设计一个复古美式复古标签，居中文字 "FRESH COFFEE"，带有细腻线条边框' },
+  { label: "赛博霓虹标语", prompt: '创建一个赛博朋克风格贴纸，深色背景，发光霓虹字体 "CYBER CITY"，带有故障风线条' },
+];
 
 function adjustTextareaHeight() {
   const el = textareaRef.value;
   if (!el) return;
   el.style.height = "auto";
-  const newHeight = Math.min(el.scrollHeight, 160);
-  el.style.height = `${Math.max(34, newHeight)}px`;
+  const newHeight = Math.min(el.scrollHeight, 200);
+  el.style.height = `${Math.max(76, newHeight)}px`;
 }
 
 function handleKeydownEnter(e: KeyboardEvent) {
@@ -400,7 +663,7 @@ function resetTextareaHeight() {
   inputText.value = "";
   nextTick(() => {
     if (textareaRef.value) {
-      textareaRef.value.style.height = "34px";
+      textareaRef.value.style.height = "76px";
     }
   });
 }
@@ -409,7 +672,7 @@ watch(inputText, (val) => {
   if (!val) {
     nextTick(() => {
       if (textareaRef.value) {
-        textareaRef.value.style.height = "34px";
+        textareaRef.value.style.height = "76px";
       }
     });
   } else {
@@ -428,37 +691,78 @@ watch(pendingPromptInput, (val) => {
   }
 });
 
-// Drag
+// Dragging logic & panel dimensions
+const PANEL_WIDTH = 480;
 const panelRef = ref<HTMLElement>();
 const isDragging = ref(false);
 const dragOffset = reactive({ x: 0, y: 0 });
 const panelPosition = reactive({ x: -1, y: -1 });
 
+let rafId: number | null = null;
+let targetX = -1;
+let targetY = -1;
+
+const panelStyle = computed(() => {
+  if (panelPosition.x >= 0) {
+    return {
+      left: `${panelPosition.x}px`,
+      top: `${panelPosition.y}px`,
+      right: 'auto',
+      bottom: 'auto',
+      width: `${PANEL_WIDTH}px`,
+      willChange: isDragging.value ? 'left, top' : 'auto',
+    };
+  }
+  return {
+    right: '24px',
+    bottom: '24px',
+    width: `${PANEL_WIDTH}px`,
+  };
+});
+
 function onDragStart(e: MouseEvent) {
-  if ((e.target as HTMLElement).closest('.ai-panel__icon-btn')) return;
+  if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('input')) return;
   isDragging.value = true;
   const rect = panelRef.value?.getBoundingClientRect();
   if (rect) {
     dragOffset.x = e.clientX - rect.left;
     dragOffset.y = e.clientY - rect.top;
+    if (panelPosition.x < 0) {
+      panelPosition.x = rect.left;
+      panelPosition.y = rect.top;
+    }
   }
-  document.addEventListener('mousemove', onDragMove);
+  document.body.style.userSelect = 'none';
+  document.addEventListener('mousemove', onDragMove, { passive: true });
   document.addEventListener('mouseup', onDragEnd);
 }
 
 function onDragMove(e: MouseEvent) {
   if (!isDragging.value) return;
-  panelPosition.x = Math.max(0, Math.min(window.innerWidth - 380, e.clientX - dragOffset.x));
-  panelPosition.y = Math.max(0, Math.min(window.innerHeight - 100, e.clientY - dragOffset.y));
+  targetX = Math.max(10, Math.min(window.innerWidth - (PANEL_WIDTH + 10), e.clientX - dragOffset.x));
+  targetY = Math.max(10, Math.min(window.innerHeight - 100, e.clientY - dragOffset.y));
+
+  if (rafId === null) {
+    rafId = requestAnimationFrame(() => {
+      panelPosition.x = targetX;
+      panelPosition.y = targetY;
+      rafId = null;
+    });
+  }
 }
 
 function onDragEnd() {
   isDragging.value = false;
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+  document.body.style.userSelect = '';
   document.removeEventListener('mousemove', onDragMove);
   document.removeEventListener('mouseup', onDragEnd);
 }
 
-// Computed
+// Computed message data
 const messages = computed(() => agent.state.messages);
 const visibleMessages = computed(() => messages.value.slice(-50));
 const hiddenMessageCount = computed(() => Math.max(0, messages.value.length - 50));
@@ -484,19 +788,43 @@ const planProgress = computed(() => {
   };
 });
 
-// Quick prompts — plain text, no emoji
-const quickPrompts = [
-  { label: "圆形促销贴纸", prompt: '创建一个圆形贴纸，红色背景，白色 "SALE 50%" 粗体大字居中' },
-  { label: "T恤简约印花", prompt: "为 T恤前胸创建一个印花设计，主图案是一只简约线条猫，居中，黑底白线" },
-  { label: "马克杯手写文字", prompt: '为马克杯创建一个印花设计，写 "GOOD MORNING"，手写风格' },
-  { label: "极简海报", prompt: '创建一个 A3 海报设计，极简风格，黑底白字 "EXHIBITION"' },
-];
+// 是否展示完成后的快捷操作卡片
+const showSuccessActionCard = computed(() => {
+  if (isProcessing.value) return false;
+  const msgs = messages.value;
+  if (!msgs.length) return false;
+  const last = msgs[msgs.length - 1];
+  return last && last.role === 'assistant' && !isWaitingForUser.value;
+});
+
+function scrollToBottom(force = false) {
+  nextTick(() => {
+    const el = messagesRef.value;
+    if (!el) return;
+    if (force || autoFollowMessages.value) {
+      el.scrollTop = el.scrollHeight;
+      hasUnreadMessages.value = false;
+    }
+  });
+}
+
+function handleMessagesScroll() {
+  const el = messagesRef.value;
+  if (!el) return;
+  const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+  autoFollowMessages.value = distanceToBottom < 40;
+  if (autoFollowMessages.value) {
+    hasUnreadMessages.value = false;
+  }
+}
 
 // Events
 let unsubscribe: (() => void) | null = null;
 
 onMounted(() => {
-  unsubscribe = agent.onEvent(() => { scrollToBottom(); });
+  unsubscribe = agent.onEvent(() => {
+    scrollToBottom();
+  });
 });
 
 onUnmounted(() => {
@@ -505,11 +833,28 @@ onUnmounted(() => {
   unsubscribe?.();
 });
 
-// Actions
+// Quick action buttons
+async function quickSaveCustomSticker() {
+  await executeAITool("canvas.updateAndSaveSticker", { autoTrim: true });
+}
+
+function quickExportPng() {
+  currentCanvasControllerInstance.value?.downloadPng();
+}
+
+function quickEnterEditMode() {
+  taskOptions.value.source = "current-canvas";
+  taskOptions.value.intent = "edit";
+  nextTick(() => {
+    textareaRef.value?.focus();
+  });
+}
+
+// Send handler
 function handleSend() {
   if (isComposing.value) return;
   if (selectedImage.value) {
-    const text = inputText.value.trim() || "请分析这张图片的设计风格，然后创建一个类似的设计";
+    const text = inputText.value.trim() || "请分析这张参考图片的设计风格，并全自动制作一个高品质的类似贴纸设计";
     const resolvedTask = resolveAgentTaskSpec(text, taskOptions.value, {
       hasReferenceImage: true,
     });
@@ -552,7 +897,10 @@ function handleSend() {
   scrollToBottom(true);
 }
 
-function handleStop() { agent.stop(); }
+function handleStop() {
+  agent.stop();
+}
+
 function copyConversationLog() {
   const msgs = messages.value;
   if (msgs.length === 0) return;
@@ -591,41 +939,18 @@ function copyConversationLog() {
       lines.push('执行结果: ' + JSON.stringify((msg.meta as any).toolResult, null, 2));
     }
 
-    if ((msg.meta as any)?.plan) {
-      lines.push('计划: ' + JSON.stringify((msg.meta as any).plan, null, 2));
-    }
-
     lines.push('');
   }
 
   const log = lines.join('\n');
-
-  // 始终打印到控制台
-  console.log('[AI 对话日志]\n' + log);
-  console.log('[AI 对话日志] 完整 JSON:', JSON.stringify(msgs, null, 2));
-
-  // 尝试复制到剪贴板
   if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(log).then(() => {
-      console.log('[AI 对话日志] 已复制到剪贴板');
-    }).catch(() => {
-      console.warn('[AI 对话日志] 剪贴板写入失败，请从控制台复制');
-    });
-  } else {
-    // 降级：用 textarea 复制
-    const ta = document.createElement('textarea');
-    ta.value = log;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); } catch { /* ignore */ }
-    document.body.removeChild(ta);
-    console.log('[AI 对话日志] 已复制到剪贴板（降级方式）');
+    navigator.clipboard.writeText(log);
   }
 }
 
-function triggerImageUpload() { imageInputRef.value?.click(); }
+function triggerImageUpload() {
+  imageInputRef.value?.click();
+}
 
 async function handleImageUpload(event: Event) {
   const input = event.target as HTMLInputElement;
@@ -662,7 +987,10 @@ function handleDrop(e: DragEvent) {
 }
 
 async function processUploadedFile(file: File) {
-  if (file.size > 10 * 1024 * 1024) { alert("图片不能超过 10MB"); return; }
+  if (file.size > 10 * 1024 * 1024) {
+    alert("图片不能超过 10MB");
+    return;
+  }
   isPreparingImage.value = true;
   try {
     const prepared = await prepareImageForAI(file);
@@ -673,7 +1001,6 @@ async function processUploadedFile(file: File) {
       size: formatFileSize(file.size),
     };
   } catch (error: any) {
-    console.warn("[AI] 参考图片预处理失败，回退原图:", error);
     const reader = new FileReader();
     const preview = await new Promise<string>((resolve, reject) => {
       reader.onload = () => resolve(String(reader.result || ""));
@@ -697,8 +1024,14 @@ function formatFileSize(bytes: number): string {
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
-function removeImage() { selectedImage.value = null; }
-function sendQuick(prompt: string) { inputText.value = prompt; handleSend(); }
+function removeImage() {
+  selectedImage.value = null;
+}
+
+function sendQuick(prompt: string) {
+  inputText.value = prompt;
+  handleSend();
+}
 
 function handlePromptSelect(content: string) {
   inputText.value = content;
@@ -708,7 +1041,10 @@ function handlePromptSelect(content: string) {
     adjustTextareaHeight();
   });
 }
-function clearChat() { agent.clearMessages(); }
+
+function clearChat() {
+  agent.clearMessages();
+}
 
 function submitInteraction(answer: string) {
   if (!answer.trim()) return;
@@ -748,536 +1084,31 @@ function parseResult(content: string) {
     return { success: true, message: content };
   }
 }
-
-function handleMessagesScroll() {
-  const element = messagesRef.value;
-  if (!element) return;
-  autoFollowMessages.value =
-    element.scrollHeight - element.scrollTop - element.clientHeight < 48;
-  if (autoFollowMessages.value) hasUnreadMessages.value = false;
-}
-
-function scrollToBottom(force = false) {
-  if (!force && !autoFollowMessages.value) {
-    hasUnreadMessages.value = true;
-    return;
-  }
-  nextTick(() => {
-    if (messagesRef.value) {
-      messagesRef.value.scrollTop = messagesRef.value.scrollHeight;
-      autoFollowMessages.value = true;
-      hasUnreadMessages.value = false;
-    }
-  });
-}
-
-watch(
-  () => messages.value.length,
-  () => scrollToBottom(),
-);
 </script>
 
-<style lang="less" scoped>
+<style scoped>
 .ai-panel {
-  /* ---- Flat theme variables ---- */
-  --bg: #ffffff;
-  --bg-elevated: #f8fafc;
-  --bg-subtle: #f1f5f9;
-  --bg-input: #ffffff;
-  --text: #0f172a;
-  --text-secondary: #334155;
-  --text-body: #1e293b;
-  --text-subtle: #475569;
-  --text-muted: #64748b;
-  --text-faint: #94a3b8;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --border-divider: #e2e8f0;
-  --tag-bg: #f1f5f9;
-  --user-bg: #4f46e5;
-  --user-text: #ffffff;
-  --ai-bg: #f8fafc;
-  --ai-text: #0f172a;
-  --ai-border: #e2e8f0;
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
-  --accent-muted: #818cf8;
-  --accent-alpha: rgba(79, 70, 229, 0.15);
-  --disabled: #e2e8f0;
-  --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
-
-  &.is-dark {
-    --bg: #18181b;
-    --bg-elevated: #27272a;
-    --bg-subtle: #27272a;
-    --bg-input: #18181b;
-    --text: #f4f4f5;
-    --text-secondary: #e4e4e7;
-    --text-body: #d4d4d8;
-    --text-subtle: #a1a1aa;
-    --text-muted: #71717a;
-    --text-faint: #52525b;
-    --border: #27272a;
-    --border-strong: #3f3f46;
-    --border-divider: #27272a;
-    --tag-bg: #27272a;
-    --user-bg: #6366f1;
-    --user-text: #ffffff;
-    --ai-bg: #27272a;
-    --ai-text: #f4f4f5;
-    --ai-border: #3f3f46;
-    --accent: #6366f1;
-    --accent-hover: #4f46e5;
-    --accent-muted: #818cf8;
-    --accent-alpha: rgba(99, 102, 241, 0.25);
-    --disabled: #3f3f46;
-    --shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
-  }
-
-  position: fixed;
-  top: 80px; right: 16px;
-  width: 380px; height: 560px; max-height: calc(100vh - 120px);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  box-shadow: var(--shadow);
-  display: flex; flex-direction: column;
-  z-index: 1000; overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  font-size: 13px;
-  color: var(--text);
-  transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
-
-  &.is-dragging { user-select: none; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); }
+  background-color: var(--1s-surface-background, #ffffff) !important;
+  color: var(--1s-text-color, #09090b) !important;
+  border: 1px solid var(--1s-border-color, #e4e4e7) !important;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 20px 50px -10px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* ---- Header ---- */
-.ai-panel__header {
-  display: flex; align-items: center;
-  height: 40px; padding: 0 10px 0 14px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
-  cursor: grab; flex-shrink: 0; gap: 8px;
-  .is-dragging & { cursor: grabbing; }
-}
-.ai-panel__title { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
-.ai-panel__mode-tag {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 4px;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.15s;
-
-  &:hover {
-    opacity: 0.85;
-    transform: scale(1.02);
-  }
-
-  &.mode-proxy {
-    background: rgba(16, 185, 129, 0.14);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.28);
-  }
-
-  &.mode-direct {
-    background: rgba(99, 102, 241, 0.14);
-    color: #6366f1;
-    border: 1px solid rgba(99, 102, 241, 0.28);
-  }
-}
-.ai-panel__status { font-size: 11px; font-weight: 500; color: var(--accent); background: var(--accent-alpha); padding: 2px 6px; border-radius: 4px; }
-.ai-panel__plan { font-size: 11px; color: var(--text-muted); }
-.ai-panel__header-actions { margin-left: auto; display: flex; gap: 2px; }
-
-/* ---- Icon button ---- */
-.ai-panel__icon-btn {
-  width: 28px; height: 28px; border: none; background: transparent;
-  border-radius: 6px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-muted);
-  transition: color 0.15s, background 0.15s; flex-shrink: 0;
-  &:hover { color: var(--text); background: var(--bg-subtle); }
-  &:disabled { color: var(--text-faint); cursor: default; &:hover { background: transparent; } }
-  &--sm { width: 22px; height: 22px; }
+:global(html.dark) .ai-panel,
+:global(.dark) .ai-panel,
+:global(body.designiy-dark) .ai-panel,
+:global(.tool-theme-dark) .ai-panel {
+  background-color: #18181b !important;
+  color: #fafafa !important;
+  border: 1px solid #27272a !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 25px 70px -15px rgba(0, 0, 0, 0.85) !important;
 }
 
-/* ---- Progress ---- */
-.ai-panel__progress { height: 2px; background: var(--bg-subtle); flex-shrink: 0; }
-.ai-panel__progress-bar { height: 100%; background: var(--accent); transition: width 0.25s ease; }
-
-/* ---- Messages ---- */
-.ai-panel__messages {
-  flex: 1; overflow-y: auto; padding: 12px 14px;
-  display: flex; flex-direction: column; gap: 8px;
-  background: var(--bg);
-  &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-.ai-panel__history-note {
-  align-self: center; font-size: 11px; color: var(--text-muted);
-  padding: 3px 10px; background: var(--bg-subtle); border-radius: 4px;
-}
-.ai-panel__latest-btn {
-  position: sticky; bottom: 4px; align-self: center;
-  border: 1px solid var(--border); border-radius: 6px;
-  background: var(--bg); color: var(--accent);
-  padding: 5px 12px; font-size: 11px; font-weight: 500; cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-/* ---- Empty ---- */
-.ai-panel__empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
-.ai-panel__empty-text { margin: 0; font-size: 13px; font-weight: 500; color: var(--text-muted); }
-.ai-panel__quick { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 260px; }
-.ai-panel__quick-btn {
-  padding: 8px 12px; background: var(--bg-elevated);
-  border: 1px solid var(--border); border-radius: 6px;
-  cursor: pointer; font-size: 12px; color: var(--text-secondary);
-  text-align: left; transition: border-color 0.15s, color 0.15s, background 0.15s;
-  &:hover { border-color: var(--accent); color: var(--accent); background: var(--bg); }
-}
-
-/* ---- Message bubbles ---- */
-.ai-panel__msg {
-  padding: 8px 12px; border-radius: 8px;
-  line-height: 1.5; word-break: break-word; max-width: 88%; font-size: 13px;
-  &--user { align-self: flex-end; background: var(--user-bg); color: var(--user-text); border-radius: 8px 8px 2px 8px; }
-  &--ai { align-self: flex-start; background: var(--ai-bg); color: var(--ai-text); border: 1px solid var(--ai-border); border-radius: 8px 8px 8px 2px; }
-}
-.ai-panel__msg-text { white-space: pre-wrap; }
-.ai-panel__tool-calls { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-.ai-panel__tool-tag { padding: 2px 6px; background: var(--tag-bg); border-radius: 4px; font-size: 11px; font-weight: 500; color: var(--text-subtle); border: 1px solid var(--border); }
-.ai-panel__tool-result { padding: 4px 10px; font-size: 11px; color: var(--text-muted); text-align: center; }
-
-/* ---- Typing dots ---- */
-.ai-panel__dots {
-  display: flex; gap: 4px; padding: 2px 0;
-  span {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--accent);
-    animation: aiDot 1.2s infinite ease-in-out;
-    &:nth-child(1) { animation-delay: -0.24s; }
-    &:nth-child(2) { animation-delay: -0.12s; }
-  }
-}
-@keyframes aiDot {
-  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-  40% { opacity: 1; transform: scale(1); }
-}
-.ai-panel__stop-btn {
-  margin-top: 4px;
-  padding: 3px 10px; background: transparent;
-  border: 1px solid var(--border); border-radius: 4px;
-  cursor: pointer; font-size: 11px; color: var(--text-muted);
-  transition: border-color 0.15s, color 0.15s;
-  &:hover { border-color: var(--accent); color: var(--accent); }
-}
-
-/* ---- Interaction ---- */
-.ai-panel__interaction {
-  border: 1px solid var(--border); border-radius: 6px;
-  background: var(--bg-elevated);
-  padding: 10px 12px; margin-top: 4px;
-}
-.ai-panel__interaction-q { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
-.ai-panel__interaction-opts {
-  display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;
-  button {
-    padding: 6px 10px; background: var(--bg);
-    border: 1px solid var(--border); border-radius: 4px;
-    cursor: pointer; font-size: 12px; color: var(--text-body);
-    text-align: left; transition: border-color 0.15s, color 0.15s;
-    &:hover { border-color: var(--accent); color: var(--accent); }
-  }
-}
-.ai-panel__interaction-row {
-  display: flex; gap: 6px;
-  input {
-    flex: 1; padding: 6px 10px;
-    border: 1px solid var(--border-strong); border-radius: 4px;
-    font-size: 12px; outline: none;
-    background: var(--bg); color: var(--text);
-    &:focus { border-color: var(--accent); }
-  }
-  button {
-    padding: 6px 12px; background: var(--accent); color: #fff;
-    border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;
-    transition: background 0.15s;
-    &:hover { background: var(--accent-hover); }
-    &:disabled { background: var(--disabled); cursor: not-allowed; }
-  }
-}
-
-/* ---- Input ---- */
-.ai-panel__input {
-  position: relative;
-  flex-shrink: 0;
-  padding: 10px 12px;
-  border-top: 1px solid var(--border);
-  background: var(--bg);
-  transition: border-color 0.2s, background-color 0.2s;
-
-  &.is-drag-over {
-    background: var(--accent-alpha);
-    border-top-color: var(--accent);
-  }
-}
-
-.ai-panel__task-options {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 26px;
-  margin-bottom: 8px;
-}
-
-.ai-panel__task-select,
-.ai-panel__task-custom select,
-.ai-panel__task-custom input {
-  height: 26px;
-  min-width: 0;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--bg-input);
-  color: var(--text-secondary);
-  font: inherit;
-  font-size: 11px;
-  outline: none;
-  &:focus { border-color: var(--accent); }
-  &:disabled { opacity: 0.55; cursor: not-allowed; }
-}
-
-.ai-panel__task-select {
-  width: 92px;
-  height: 34px;
-  padding: 0 6px;
-  flex-shrink: 0;
-}
-
-.ai-panel__task-count {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--text-muted);
-  font-size: 11px;
-  white-space: nowrap;
-
-  input {
-    width: 46px;
-    height: 26px;
-    box-sizing: border-box;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--bg-input);
-    color: var(--text);
-    padding: 0 4px;
-    font: inherit;
-    text-align: center;
-    outline: none;
-    &:focus { border-color: var(--accent); }
-  }
-}
-
-.ai-panel__task-custom {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-  margin-bottom: 8px;
-
-  select,
-  input { width: 100%; box-sizing: border-box; padding: 0 6px; }
-
-  .ai-panel__task-instructions { grid-column: 1 / -1; }
-}
-
-/* ---- Image Card Preview ---- */
-.ai-panel__image-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-  padding: 6px 8px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  animation: fadeInCard 0.2s ease-out;
-}
-@keyframes fadeInCard {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.ai-panel__image-thumb-wrapper {
-  position: relative;
-  width: 36px; height: 36px;
-  flex-shrink: 0;
-}
-.ai-panel__image-thumb {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-}
-.ai-panel__image-remove {
-  position: absolute;
-  top: -4px; right: -4px;
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  background: #ef4444; color: #fff;
-  border: 2px solid var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  transition: transform 0.15s, background 0.15s;
-  &:hover { background: #dc2626; transform: scale(1.1); }
-}
-
-.ai-panel__image-info {
-  flex: 1; min-width: 0;
-  display: flex; flex-direction: column; gap: 2px;
-}
-.ai-panel__image-title-row {
-  display: flex; align-items: center; gap: 6px;
-}
-.ai-panel__image-badge {
-  font-size: 10px; font-weight: 600;
-  color: var(--accent); background: var(--accent-alpha);
-  padding: 1px 5px; border-radius: 3px;
-  flex-shrink: 0;
-}
-.ai-panel__image-filename {
-  font-size: 12px; font-weight: 500;
-  color: var(--text);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.ai-panel__image-filesize {
-  font-size: 11px; color: var(--text-muted);
-}
-
-/* ---- Image Loading State ---- */
-.ai-panel__image-loading {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 8px; padding: 6px 10px;
-  background: var(--bg-subtle); border-radius: 6px;
-  font-size: 12px; color: var(--text-muted);
-}
-.ai-panel__spinner {
-  width: 14px; height: 14px;
-  border: 2px solid var(--border-strong);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ---- Drag Hint Overlay ---- */
-.ai-panel__drag-hint {
-  position: absolute;
-  inset: 0;
-  background: var(--bg);
-  border: 2px dashed var(--accent);
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  color: var(--accent); font-size: 13px; font-weight: 500;
-  z-index: 10;
-  pointer-events: none;
-}
-
-/* ---- Upload & Input & Send Buttons ---- */
-.ai-panel__input-tools {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.ai-panel__input-row { display: flex; align-items: flex-end; gap: 6px; }
-
-.ai-panel__upload-btn {
-  width: 34px; height: 34px;
-  border: 1px solid var(--border-strong);
-  background: var(--bg-input);
-  border-radius: 6px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-muted);
-  flex-shrink: 0;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-
-  &:hover:not(:disabled) {
-    color: var(--accent);
-    border-color: var(--accent);
-    background: var(--bg-subtle);
-  }
-  &.is-active {
-    color: var(--accent);
-    border-color: var(--accent);
-    background: var(--accent-alpha);
-  }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
-}
-
-.ai-panel__input-field {
-  flex: 1; min-width: 0; padding: 7px 10px;
-  border: 1px solid var(--border-strong); border-radius: 6px;
-  font-size: 13px; line-height: 1.45; outline: none;
-  background: var(--bg-input); color: var(--text);
-  resize: none; min-height: 34px; max-height: 160px;
-  overflow-y: auto; font-family: inherit;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  &::placeholder { color: var(--text-faint); }
-  &:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px var(--accent-alpha);
-  }
-  &:disabled { background: var(--bg-subtle); color: var(--text-muted); cursor: not-allowed; }
-}
-
-.ai-panel__send-btn {
-  width: 34px; height: 34px;
-  border: none; border-radius: 6px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--bg-subtle); color: var(--text-faint);
-  border: 1px solid var(--border);
-  flex-shrink: 0;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &.is-ready {
-    background: var(--accent);
-    color: #ffffff;
-    border: none;
-    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
-    &:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
-    }
-    &:active {
-      transform: translateY(0) scale(0.95);
-    }
-  }
-
-  &:disabled {
-    background: var(--bg-subtle);
-    color: var(--text-faint);
-    border: 1px solid var(--border);
-    cursor: not-allowed;
-    opacity: 0.6;
-    box-shadow: none;
-  }
-
-  &--stop {
-    background: #ef4444;
-    color: #ffffff;
-    border: none;
-    opacity: 1;
-    &:hover:not(:disabled) {
-      background: #dc2626;
-      transform: scale(1.04);
-    }
-  }
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>

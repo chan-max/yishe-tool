@@ -23,11 +23,19 @@ function normalizeToPx(value: number, unit: string, dpi = 300): number {
 }
 
 function parseSizeString(input: string): { width: number; height: number; unit: string } | null {
-  const cleaned = input.replace(/\s+/g, '').toLowerCase()
+  // Normalize Chinese unit names to standard tokens
+  let cleaned = input.toLowerCase()
+    .replace(/英寸|inch(?:es)?/g, 'in')
+    .replace(/寸/g, 'in')
+    .replace(/厘米|公分/g, 'cm')
+    .replace(/毫米/g, 'mm')
+    .replace(/像素/g, 'px')
+    .replace(/\s+/g, '')
 
   const patterns = [
+    /(\d+(?:\.\d+)?)\s*(?:px|mm|cm|in)?\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\s*(px|mm|cm|in)/,
+    /(\d+(?:\.\d+)?)\s*(px|mm|cm|in)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)/,
     /(\d+(?:\.\d+)?)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\s*(px|mm|cm|in)?/,
-    /(\d+(?:\.\d+)?)\s*(px|mm|cm|in)\s*[x×X＊*]\s*(\d+(?:\.\d+)?)\s*(px|mm|cm|in)?/,
   ]
 
   for (const pattern of patterns) {
@@ -35,7 +43,18 @@ function parseSizeString(input: string): { width: number; height: number; unit: 
     if (match) {
       const width = parseFloat(match[1])
       const height = parseFloat(match[2])
-      const unit = match[3] || 'px'
+      let unit = match[3] || (match[2] && isNaN(Number(match[2])) ? match[2] : 'px')
+      if (unit !== 'in' && unit !== 'cm' && unit !== 'mm' && unit !== 'px') {
+        unit = 'px'
+      }
+
+      // Safeguard: if dimensions are small like 3.5x2 and unit was inferred as px, check context
+      if (unit === 'px' && width <= 20 && height <= 20) {
+        if (/名片|card|寸|inch|in/i.test(input)) {
+          unit = 'in'
+        }
+      }
+
       if (!isNaN(width) && !isNaN(height) && width > 0 && height > 0) {
         return { width, height, unit }
       }

@@ -1,222 +1,246 @@
 <template>
   <div class="menu-bar">
-    <el-tooltip :hide-after="0" content="创作资源" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': menuState.showProject }"
-        @click="menuState.showProject = !menuState.showProject"
-      >
-        <div class="menu-bar-item-icon"><icon-project></icon-project></div>
-        <span>创作资源</span>
-      </div>
-    </el-tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{ 'menu-bar-item-focus': menuState.showProject }"
+            @click="menuState.showProject = !menuState.showProject"
+          >
+            <div class="menu-bar-item-icon"><icon-project></icon-project></div>
+            <span>创作资源</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">创作资源</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip
-      v-if="isDesign3DEnabled"
-      :hide-after="0"
-      content="工作台"
-      placement="right"
-    >
-      <div
-        class="menu-bar-item"
-        :class="{
-          'menu-bar-item-focus': menuState.activeMenu === menuItems.workspace,
-        }"
-        @click="setActiveMenu(menuItems.workspace)"
-      >
-        <div class="menu-bar-item-icon"><icon-workspace></icon-workspace></div>
-        <span>工作台</span>
-      </div>
-    </el-tooltip>
+      <Tooltip v-if="isDesign3DEnabled">
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{
+              'menu-bar-item-focus': menuState.activeMenu === menuItems.workspace,
+            }"
+            @click="setActiveMenu(menuItems.workspace)"
+          >
+            <div class="menu-bar-item-icon"><icon-workspace></icon-workspace></div>
+            <span>工作台</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">工作台</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip :hide-after="0" content="许多贴纸哦～" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{
-          'menu-bar-item-focus': menuState.activeMenu === menuItems.sticker,
-        }"
-        @click="setActiveMenu(menuItems.sticker)"
-      >
-        <div class="menu-bar-item-icon"><icon-sticker></icon-sticker></div>
-        <span>贴纸资源</span>
-      </div>
-    </el-tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{
+              'menu-bar-item-focus': menuState.activeMenu === menuItems.sticker,
+            }"
+            @click="setActiveMenu(menuItems.sticker)"
+          >
+            <div class="menu-bar-item-icon"><icon-sticker></icon-sticker></div>
+            <span>贴纸资源</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">贴纸资源</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip
-      v-if="isDesign3DEnabled"
-      :hide-after="0"
-      content="选择模型"
-      placement="right"
-    >
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
-        @click="showBaseModelSelect = !showBaseModelSelect"
-      >
-        <desimage
-          style="width: 24px; height: 24px"
-          v-if="currentOperatingBaseModelInfo?.id"
-          :src="currentOperatingBaseModelInfo.thumbnail"
-        ></desimage>
-        <div v-else class="menu-bar-item-icon">
-          <icon-shirt></icon-shirt>
-        </div>
-        <span>{{
-          currentOperatingBaseModelInfo?.id ? "切换模型" : "选择模型"
-        }}</span>
-      </div>
-    </el-tooltip>
+      <Tooltip v-if="isDesign3DEnabled">
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{ 'menu-bar-item-focus': showBaseModelSelect }"
+            @click="showBaseModelSelect = !showBaseModelSelect"
+          >
+            <desimage
+              style="width: 24px; height: 24px"
+              v-if="currentOperatingBaseModelInfo?.id"
+              :src="currentOperatingBaseModelInfo.thumbnail"
+            ></desimage>
+            <div v-else class="menu-bar-item-icon">
+              <icon-shirt></icon-shirt>
+            </div>
+            <span>{{
+              currentOperatingBaseModelInfo?.id ? "切换模型" : "选择模型"
+            }}</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">选择模型</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip
-      v-if="isDesign3DEnabled"
-      :hide-after="0"
-      content="服装材质"
-      placement="right"
-    >
-      <div
-        class="menu-bar-item"
-        :class="{
-          'menu-bar-item-focus': menuState.activeMenu === menuItems.material,
-        }"
-        @click="setActiveMenu(menuItems.material)"
-      >
-        <div class="menu-bar-item-icon">
-          <s1-icon name="material"></s1-icon>
-        </div>
-        <span>服装材质</span>
-      </div>
-    </el-tooltip>
+      <Tooltip v-if="isDesign3DEnabled">
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{
+              'menu-bar-item-focus': menuState.activeMenu === menuItems.material,
+            }"
+            @click="setActiveMenu(menuItems.material)"
+          >
+            <div class="menu-bar-item-icon">
+              <s1-icon name="material"></s1-icon>
+            </div>
+            <span>服装材质</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">服装材质</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip :hide-after="0" content="自定义贴纸" placement="right">
-      <div class="menu-bar-item" :class="{ 'menu-bar-item-focus': menuState.activeMenu === menuItems.customSticker }" @click="setActiveMenu(menuItems.customSticker)">
-        <div class="menu-bar-item-icon"><icon-canvas></icon-canvas></div>
-        <span>自定义贴纸</span>
-      </div>
-    </el-tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{ 'menu-bar-item-focus': menuState.activeMenu === menuItems.customSticker }"
+            @click="setActiveMenu(menuItems.customSticker)"
+          >
+            <div class="menu-bar-item-icon"><icon-canvas></icon-canvas></div>
+            <span>自定义贴纸</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">自定义贴纸</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip :hide-after="0" content="制作贴纸" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{
-          'menu-bar-item-focus': menuState.activeMenu === menuItems.canvas,
-        }"
-        @click="setActiveMenu(menuItems.canvas)"
-      >
-        <div class="menu-bar-item-icon">
-          <icon-canvas></icon-canvas>
-        </div>
-        <span>制作贴纸</span>
-      </div>
-    </el-tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{
+              'menu-bar-item-focus': menuState.activeMenu === menuItems.canvas,
+            }"
+            @click="setActiveMenu(menuItems.canvas)"
+          >
+            <div class="menu-bar-item-icon">
+              <icon-canvas></icon-canvas>
+            </div>
+            <span>制作贴纸</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">制作贴纸</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip :hide-after="0" content="图片编辑" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showImageEditorModal }"
-        @click="handleSpecialMenuClick(menuItems.imageEditor)"
-      >
-        <div class="menu-bar-item-icon">
-          <icon-image-editor></icon-image-editor>
-        </div>
-        <span>图片编辑</span>
-      </div>
-    </el-tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{ 'menu-bar-item-focus': showImageEditorModal }"
+            @click="handleSpecialMenuClick(menuItems.imageEditor)"
+          >
+            <div class="menu-bar-item-icon">
+              <icon-image-editor></icon-image-editor>
+            </div>
+            <span>图片编辑</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">图片编辑</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip :hide-after="0" content="字体" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showFontModal }"
-        @click="handleSpecialMenuClick(menuItems.font)"
-      >
-        <div class="menu-bar-item-icon"><icon-font></icon-font></div>
-        <span>字体</span>
-      </div>
-    </el-tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{ 'menu-bar-item-focus': showFontModal }"
+            @click="handleSpecialMenuClick(menuItems.font)"
+          >
+            <div class="menu-bar-item-icon"><icon-font></icon-font></div>
+            <span>字体</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">字体</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip
-      v-if="isDesign3DEnabled"
-      :hide-after="0"
-      content="辅助视频剪辑"
-      placement="right"
-    >
-      <div
-        class="menu-bar-item"
-        :class="{
-          'menu-bar-item-focus': menuState.activeMenu === menuItems.videoClip,
-        }"
-        @click="setActiveMenu(menuItems.videoClip)"
-      >
-        <div class="menu-bar-item-icon">
-          <VideoCameraOutlined />
-        </div>
-        <span>图像导出</span>
-      </div>
-    </el-tooltip>
+      <Tooltip v-if="isDesign3DEnabled">
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{
+              'menu-bar-item-focus': menuState.activeMenu === menuItems.videoClip,
+            }"
+            @click="setActiveMenu(menuItems.videoClip)"
+          >
+            <div class="menu-bar-item-icon">
+              <VideoCameraOutlined />
+            </div>
+            <span>图像导出</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">图像导出</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip
-      v-if="isDesign3DEnabled"
-      :hide-after="0"
-      content="设置场景"
-      placement="right"
-    >
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showSceneControl }"
-        @click="handleSpecialMenuClick(menuItems.scene)"
-      >
-        <div class="menu-bar-item-icon"><icon-earth></icon-earth></div>
-        <span>场景</span>
-      </div>
-    </el-tooltip>
+      <Tooltip v-if="isDesign3DEnabled">
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{ 'menu-bar-item-focus': showSceneControl }"
+            @click="handleSpecialMenuClick(menuItems.scene)"
+          >
+            <div class="menu-bar-item-icon"><icon-earth></icon-earth></div>
+            <span>场景</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">设置场景</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip :hide-after="0" content="AI 操作" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showOperationsModal }"
-        @click="showOperationsModal = !showOperationsModal"
-      >
-        <div class="menu-bar-item-icon"><ThunderboltOutlined /></div>
-        <span>操作</span>
-      </div>
-    </el-tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{ 'menu-bar-item-focus': showOperationsModal }"
+            @click="showOperationsModal = !showOperationsModal"
+          >
+            <div class="menu-bar-item-icon"><ThunderboltOutlined /></div>
+            <span>操作</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">AI 操作</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip :hide-after="0" content="AI 设计助手" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': isAiPanelOpen }"
-        @click="isAiPanelOpen = !isAiPanelOpen"
-      >
-        <div class="menu-bar-item-icon"><RobotOutlined /></div>
-        <span>AI</span>
-      </div>
-    </el-tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{ 'menu-bar-item-focus': isAiPanelOpen }"
+            @click="isAiPanelOpen = !isAiPanelOpen"
+          >
+            <div class="menu-bar-item-icon"><RobotOutlined /></div>
+            <span>AI</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">AI 设计助手</TooltipContent>
+      </Tooltip>
 
-    <el-tooltip :hide-after="0" content="提示词库" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showPromptPicker }"
-        @click="showPromptPicker = true"
-      >
-        <div class="menu-bar-item-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        </div>
-        <span>提示词</span>
-      </div>
-    </el-tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{ 'menu-bar-item-focus': showPromptPicker }"
+            @click="showPromptPicker = true"
+          >
+            <div class="menu-bar-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <span>提示词</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">提示词库</TooltipContent>
+      </Tooltip>
 
-    <DesignPromptPicker v-model="showPromptPicker" @select="handlePromptSelect" />
+      <DesignPromptPicker v-model="showPromptPicker" @select="handlePromptSelect" />
 
-    <el-tooltip :hide-after="0" content="查看数据结构" placement="right">
-      <div
-        class="menu-bar-item"
-        :class="{ 'menu-bar-item-focus': showCanvasStructure }"
-        @click="showCanvasStructure = !showCanvasStructure"
-      >
-        <div class="menu-bar-item-icon"><CodeOutlined /></div>
-        <span>数据</span>
-      </div>
-    </el-tooltip>
-  </div>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <div
+            class="menu-bar-item"
+            :class="{ 'menu-bar-item-focus': showCanvasStructure }"
+            @click="showCanvasStructure = !showCanvasStructure"
+          >
+            <div class="menu-bar-item-icon"><CodeOutlined /></div>
+            <span>数据</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">查看数据结构</TooltipContent>
+      </Tooltip>
+    </div>
 </template>
 <script setup>
 import {
@@ -246,6 +270,7 @@ import {
 import { isAiPanelOpen, pendingPromptInput } from "@/ai/store";
 import { RobotOutlined } from "@ant-design/icons-vue";
 import { ref } from "vue";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import DesignPromptPicker from "./ai/DesignPromptPicker.vue";
 
 import iconWorkspace from "@/icon/workspace.svg?component";
@@ -315,29 +340,27 @@ function handleSpecialMenuClick(menuKey) {
   row-gap: 2px;
   overflow: auto;
   background: var(--1s-left-menu-background-color);
-  padding: 10px 0 12px;
+  padding: 8px 0 12px;
   box-sizing: border-box;
 }
 
 .menu-bar-item {
-  width: calc(var(--1s-left-menu-width) - 8px);
-  min-height: 56px;
-  padding: 7px 4px;
+  width: calc(var(--1s-left-menu-width) - 12px);
+  min-height: 46px;
+  padding: 4px 2px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   flex-shrink: 0;
-  color: var(--1s-left-menu-item-text-color);
-  border-radius: 10px;
-  transition:
-    background-color 0.18s ease,
-    color 0.18s ease;
+  color: var(--1s-text-color-secondary);
+  border-radius: 6px;
+  transition: background-color 0.15s ease, color 0.15s ease;
 
   .menu-bar-item-icon {
     flex-shrink: 0;
-    padding: 4px;
+    padding: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -350,52 +373,26 @@ function handleSpecialMenuClick(menuKey) {
 
   span {
     margin-top: 2px;
-    font-size: 9px;
+    font-size: 10px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     max-width: calc(var(--1s-left-menu-width) - 10px);
     font-weight: 500;
     color: inherit;
-    line-height: 1.2;
+    line-height: 1.1;
     text-align: center;
-    white-space: normal;
-    word-break: break-word;
   }
 
   &:hover {
-    background: var(--1s-left-menu-icon-hover-background-color);
+    background: var(--1s-hover-background);
+    color: var(--1s-text-color);
   }
 }
 
 .menu-bar-item-focus {
-  background: var(--1s-left-menu-item-active-background);
-  color: var(--1s-left-menu-item-text-active-color);
-}
-
-@media (max-width: 1080px) {
-  .menu-bar-item {
-    min-height: 52px;
-
-    span {
-      font-size: 8px;
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .menu-bar {
-    padding-top: 8px;
-  }
-
-  .menu-bar-item {
-    min-height: 48px;
-    padding: 5px 3px;
-
-    svg {
-      width: 14px;
-      height: 14px;
-    }
-  }
+  background: var(--1s-active-background);
+  color: var(--1s-text-color);
+  font-weight: 600;
 }
 </style>

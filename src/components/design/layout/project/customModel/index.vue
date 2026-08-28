@@ -47,7 +47,6 @@
               </el-button>
               <template #overlay>
                 <a-menu>
-                  <a-menu-item @click="viewRelatedDrafts(item)"> 查看相关截图 </a-menu-item>
                   <a-menu-item @click="copyToWorkspace(item)"> 复制模型信息到工作台 </a-menu-item>
                   <a-menu-item @click="edit(item)"> 编辑 </a-menu-item>
                   <a-menu-item @click="deleteItem(item)">
@@ -117,88 +116,6 @@
   </a-modal>
 
   <!-- 关联草稿弹窗 -->
-  <a-modal
-    v-model:open="draftModalVisible"
-    :centered="true"
-    :destroyOnClose="true"
-    width="80%"
-    title="关联草稿"
-    :footer="null"
-  >
-    <div class="draft-modal-content">
-      <div class="model-info mb-4">
-        <h3 class="project-section-title text-lg font-medium mb-2">
-          模型：{{ currentModel?.name || currentModel?.id }}
-        </h3>
-        <p v-if="currentModel?.description" class="project-muted-text">
-          {{ currentModel.description }}
-        </p>
-      </div>
-      
-      <div v-if="relatedDrafts.length === 0" class="empty-state text-center py-8">
-        <a-empty description="暂无关联草稿" />
-      </div>
-      
-      <div v-else class="draft-grid">
-        <div 
-          v-for="draft in relatedDrafts" 
-          :key="draft.id" 
-          class="draft-item"
-        >
-          <div class="draft-preview">
-            <!-- 图片类型 -->
-            <el-image 
-              v-if="draft.type !== 'video'"
-              :src="draft.url" 
-              fit="contain" 
-              class="project-preview-surface w-full rounded-t-lg cursor-pointer"
-              style="aspect-ratio: 4/3;"
-              :preview-src-list="[draft.url]"
-              :preview-teleported="true"
-              :z-index="9999"
-            />
-            <!-- 视频类型 -->
-            <div 
-              v-else
-              class="project-preview-surface video-preview w-full rounded-t-lg cursor-pointer"
-              style="aspect-ratio: 4/3;"
-            >
-              <video 
-                :src="draft.url" 
-                class="w-full h-full object-contain rounded-t-lg"
-                controls
-                preload="metadata"
-                @click.stop
-              >
-                您的浏览器不支持视频播放
-              </video>
-              <div class="video-overlay">
-                <div class="video-icon">
-                  <el-icon size="24">
-                    <VideoPlay />
-                  </el-icon>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="draft-info p-4">
-            <div class="draft-name text-base font-semibold truncate mb-2">
-              {{ draft.name || '未命名' }}
-            </div>
-            <div v-if="draft.description" class="draft-desc text-sm text-color-regular mb-3 line-clamp-2">
-              {{ draft.description }}
-            </div>
-            <div class="draft-meta text-xs text-color-placeholder flex items-center gap-2">
-              <span>{{ Utils.time.timeago(draft.createTime) }}</span>
-              <span v-if="draft.type" class="type-tag">
-                {{ draft.type === 'video' ? '视频' : '图片' }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </a-modal>
 </template>
 
 <script setup lang="tsx">
@@ -244,7 +161,7 @@ const showTemplateOnly = useLocalStorage('_1s_custom_model_show_template_only', 
 async function getList() {
   loading.value = true;
   try {
-    const params = {
+    const params: Record<string, any> = {
       currentPage: currentPage.value,
       pageSize: pageSize.value,
     };
@@ -314,9 +231,7 @@ const showFormModal = ref(false);
 
 const submitLoading = ref(false);
 const editForm = ref({} as any);
-const draftModalVisible = ref(false);
-const currentModel = ref(null);
-const relatedDrafts = ref([]);
+
 // 编辑
 function edit(item) {
   editForm.value = {
@@ -353,25 +268,6 @@ function downloadThumbnail(item) {
 
 function editInWorkspace(item) {
   openCustomModel(item, { editMode: true });
-}
-
-// 查看关联草稿
-async function viewRelatedDrafts(model) {
-  currentModel.value = model;
-  draftModalVisible.value = true;
-  
-  try {
-    const res = await Api.getDraftList({
-      customModelId: model.id,
-      currentPage: 1,
-      pageSize: 100 // 获取较多数据
-    });
-    relatedDrafts.value = res.list || [];
-  } catch (error) {
-    console.error('获取关联草稿失败:', error);
-    message.error('获取关联草稿失败');
-    relatedDrafts.value = [];
-  }
 }
 </script>
 

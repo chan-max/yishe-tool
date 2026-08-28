@@ -398,44 +398,55 @@ export function buildExecutionPlan(
 
   const artworkAction = getPrimaryArtworkAction(userMessage, task);
   if (artworkAction && (imageGroupRequest || independentBatchRequest)) {
+    const setsCount = imageGroupRequest ? (task?.jobCount || 1) : 1;
     const memberCount = imageGroupRequest
       ? task?.memberCount || inferImageGroupMemberCount(userMessage)
       : task?.jobCount || 1;
+    const totalCount = setsCount * memberCount;
     const outputLabel = imageGroupRequest ? "组图" : "独立设计";
-    for (let index = 0; index < memberCount; index++) {
-      if (index > 0) {
-        steps.push(createStep("canvas.clear", `制作第 ${index + 1} 张前清空画布`));
+
+    let globalIndex = 0;
+    for (let setIdx = 0; setIdx < setsCount; setIdx++) {
+      for (let mIdx = 0; mIdx < memberCount; mIdx++) {
+        globalIndex++;
+        if (globalIndex > 1) {
+          steps.push(createStep("canvas.clear", `制作第 ${globalIndex} 张前清空画布`));
+        }
+        steps.push(
+          createStep(
+            explicitCanvasSizes.length > 0
+              ? "canvas.setSize"
+              : "canvas.smartSize",
+            explicitCanvasSizes.length > 0
+              ? `根据用户原始要求设置第 ${globalIndex}/${totalCount} 张的对应画布尺寸`
+              : `根据当前内容选择第 ${globalIndex}/${totalCount} 张的合适画布尺寸`,
+          ),
+        );
+        steps.push(
+          createStep(
+            artworkAction,
+            setsCount > 1
+              ? `制作第 ${setIdx + 1} 套第 ${mIdx + 1}/${memberCount} 张（总第 ${globalIndex}/${totalCount} 张）`
+              : `按需求制作${outputLabel}第 ${mIdx + 1}/${memberCount} 张`,
+          ),
+        );
+        steps.push(
+          createStep(
+            "canvas.updateAndSaveSticker",
+            `保存第 ${globalIndex}/${totalCount} 张并记录 stickerId`,
+          ),
+        );
       }
-      steps.push(
-        createStep(
-          explicitCanvasSizes.length > 0
-            ? "canvas.setSize"
-            : "canvas.smartSize",
-          explicitCanvasSizes.length > 0
-            ? `根据用户原始要求设置${outputLabel}第 ${index + 1}/${memberCount} 张的对应画布尺寸`
-            : `根据当前成员内容选择${outputLabel}第 ${index + 1}/${memberCount} 张的合适画布尺寸`,
-        ),
-      );
-      steps.push(
-        createStep(
-          artworkAction,
-          `按需求制作${outputLabel}第 ${index + 1}/${memberCount} 张`,
-        ),
-      );
-      steps.push(
-        createStep(
-          "canvas.updateAndSaveSticker",
-          `保存${outputLabel}第 ${index + 1}/${memberCount} 张并记录 stickerId`,
-        ),
-      );
-    }
-    if (imageGroupRequest) {
-      steps.push(
-        createStep(
-          "material.createImageGroup",
-          `按保存顺序将 ${memberCount} 张图片创建为组图`,
-        ),
-      );
+      if (imageGroupRequest) {
+        steps.push(
+          createStep(
+            "material.createImageGroup",
+            setsCount > 1
+              ? `将第 ${setIdx + 1} 套的 ${memberCount} 张图片创建为独立组图`
+              : `按保存顺序将 ${memberCount} 张图片创建为组图`,
+          ),
+        );
+      }
     }
   } else if (artworkAction) {
     const description =

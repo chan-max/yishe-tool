@@ -23,15 +23,16 @@ export const imageGroupKnowledge: KnowledgeItem = {
 3. 一次只制作一张。名片组图默认制作 2 张：第 1 张正面，第 2 张背面；对联组图制作 2 张：第 1 张上联，第 2 张下联。
 4. 每张完成后调用 canvas.updateAndSaveSticker，记录返回的 customStickerId。
 5. 制作下一张前调用 canvas.clear，再按同一视觉规范创建新页面。
-6. 所有成员都保存成功后，先使用 material.importCustomStickerToLibrary 将每个 customStickerId 复制到 sticker 素材库，再调用 material.createImageGroup({ name, stickerIds, description })。
-7. stickerIds 的数组顺序就是组图显示顺序，无需额外的成员角色字段。
+6. 每套成员保存成功后，直接调用 material.createImageGroup({ name, stickerIds, description }) 传入该套成员的 ID 数组，系统会自动完成组图归类打包，无需手动调用 importCustomStickerToLibrary 或搜索素材。
+7. stickerIds 的数组顺序就是组图显示顺序。
 8. 任意成员保存失败时不要创建半成品组图，应先修复失败步骤。
 
-### 名片正反面示例
-- 正面：完成设计 -> canvas.updateAndSaveSticker -> 得到第 1 个 customStickerId
-- canvas.clear
-- 背面：完成设计 -> canvas.updateAndSaveSticker -> 得到第 2 个 customStickerId
-- 分别调用 material.importCustomStickerToLibrary 得到 stickerId 后，再调用 material.createImageGroup({ name: "客户名片正反面", stickerIds: ["第1个stickerId", "第2个stickerId"] })
+### 名片/卡片组图制作示例
+- 第 1 张：完成设计 -> 调用 canvas.updateAndSaveSticker -> 记录返回的第 1 个 ID
+- 调用 canvas.clear 清空画布
+- 第 2 张：完成设计 -> 调用 canvas.updateAndSaveSticker -> 记录返回的第 2 个 ID
+- 直接调用 material.createImageGroup({ name: "黄色风格卡片", stickerIds: ["第1个ID", "第2个ID"] })
+- 若配置了多套（如第 2 套），清空画布后继续制作第 2 套成员并创建第 2 套组图。
 
 只有 material.createImageGroup 成功后，组图任务才算完成。`,
 };

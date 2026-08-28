@@ -55,7 +55,6 @@ import {
     getStickerById,
     getProductModelById,
     getTextStickerById,
-    getDraftById,
 } from "@/api";
 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";

@@ -1,5 +1,5 @@
 :root {
-  /* Material Design 3 字体阶梯 */
+  /* 字体阶梯 (像素基准) */
   --1s-font-size-2xs: 10px;
   --1s-font-size-xs: 11px;
   --1s-font-size-sm: 12px;
@@ -8,64 +8,128 @@
   --1s-font-size-lg: 16px;
   --1s-font-size-xl: 20px;
 
-  /* Material Design 3 圆角规范 */
+  /* Figma / shadcn-vue 规范圆角 */
   --1s-radius-xs: 4px;
-  --1s-radius-sm: 8px;
-  --1s-radius-md: 12px;
-  --1s-radius-lg: 16px;
-  --1s-radius-xl: 24px;
+  --1s-radius-sm: 6px;
+  --1s-radius-md: 8px;
+  --1s-radius-lg: 12px;
+  --1s-radius-xl: 16px;
   --1s-radius-pill: 9999px;
 
   /* 布局与尺寸 */
   --1s-header-height: 48px;
   --1s-sub-header-height: 40px;
   --1s-left-menu-width: 68px;
-  --1s-left-panel-width: 360px;
+  --1s-left-panel-width: 300px;
   --1s-right-panel-width: 340px;
   --1s-bottom-menu-height: 44px;
   --1s-canvas-stage-padding: 14px;
   --1s-canvas-inner-gap: 12px;
   --1s-control-gap: 8px;
 
-  /* MD3 Light 色调表面系统 */
-  --1s-shell-background: #f8f9fa;
-  --1s-canvas-shell-background: #f0f4f9;
+  /* Figma Neutral 色调表面系统 */
+  --1s-shell-background: #f4f4f5;
+  --1s-canvas-shell-background: #e4e4e7;
   --1s-surface-background: #ffffff;
-  --1s-panel-background: #f3f6fb;
-  --1s-elevated-background: #e9eef6;
+  --1s-panel-background: #fafafa;
+  --1s-elevated-background: #f4f4f5;
 
-  --1s-text-color: #1f1f1f;
-  --1s-text-color-secondary: #444746;
-  --1s-text-color-tertiary: #747775;
-  --1s-icon-color: #444746;
+  --1s-text-color: #09090b;
+  --1s-text-color-secondary: #71717a;
+  --1s-text-color-tertiary: #a1a1aa;
+  --1s-icon-color: #71717a;
 
-  --1s-border-color: rgba(0, 0, 0, 0.12);
-  --1s-border-color-strong: rgba(0, 0, 0, 0.2);
-  --1s-divider-color: rgba(0, 0, 0, 0.08);
+  --1s-border-color: #e4e4e7;
+  --1s-border-color-strong: #d4d4d8;
+  --1s-divider-color: rgba(0, 0, 0, 0.06);
 
-  --1s-accent-color: #0b57d0;
-  --1s-accent-color-soft: #d3e3fd;
-  --1s-hover-background: rgba(11, 87, 208, 0.08);
-  --1s-active-background: #d3e3fd;
+  --1s-accent-color: #09090b;
+  --1s-accent-color-soft: #f4f4f5;
+  --1s-hover-background: rgba(0, 0, 0, 0.04);
+  --1s-active-background: rgba(0, 0, 0, 0.08);
 
-  --1s-shadow-sm: 0 1px 3px 1px rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --1s-shadow-md: 0 2px 6px 2px rgba(0, 0, 0, 0.08), 0 1px 4px 0 rgba(0, 0, 0, 0.06);
-  --1s-shadow-lg: 0 4px 14px 3px rgba(0, 0, 0, 0.1), 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+  --1s-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --1s-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --1s-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
 
-  --1s-scrollbar-background: rgba(0, 0, 0, 0.24);
-  --1s-scrollbar-background-hover: rgba(0, 0, 0, 0.4);
+  --1s-scrollbar-background: rgba(0, 0, 0, 0.18);
+  --1s-scrollbar-background-hover: rgba(0, 0, 0, 0.32);
 
   --1s-grid-line-color: rgba(0, 0, 0, 0.06);
   --1s-checkerboard-base: #ffffff;
-  --1s-checkerboard-cell-dark: #f0f2f5;
-  --1s-checkerboard-cell-mini-dark: #e5e8ec;
+  --1s-checkerboard-cell-dark: #f4f4f5;
+  --1s-checkerboard-cell-mini-dark: #e4e4e7;
 
   --1s-control-surface-background: #ffffff;
-  --1s-control-surface-muted: #f0f4f9;
-  --1s-control-border-color: rgba(0, 0, 0, 0.16);
-  --1s-control-hover-background: rgba(11, 87, 208, 0.06);
-  --1s-control-text-muted: #444746;
-  --1s-control-focus-ring: 0 0 0 2px rgba(11, 87, 208, 0.25);
+  --1s-control-surface-muted: #f4f4f5;
+  --1s-control-border-color: #e4e4e7;
+  --1s-control-hover-background: #ebebeb;
+  --1s-control-text-muted: #71717a;
+  --1s-control-focus-ring: 0 0 0 2px rgba(9, 9, 11, 0.15);
+
+  /* Left rail */
+  --1s-left-menu-background-color: #fafafa;
+  --1s-left-menu-item-text-color: #71717a;
+
+  /* Right panel */
+  --1s-right-panel-background: #ffffff;
+
+  /* Dialog — explicit opaque colors (not relying on Tailwind bg-background) */
+  --1s-dialog-bg: #ffffff;
+  --1s-dialog-fg: #09090b;
+  --1s-dialog-border: #e4e4e7;
+}
+
+html.dark,
+.dark,
+.tool-theme-dark,
+body.designiy-dark {
+  --1s-shell-background: #09090b;
+  --1s-canvas-shell-background: #18181b;
+  --1s-surface-background: #18181b;
+  --1s-panel-background: #121215;
+  --1s-elevated-background: #27272a;
+
+  --1s-text-color: #fafafa;
+  --1s-text-color-secondary: #a1a1aa;
+  --1s-text-color-tertiary: #71717a;
+  --1s-icon-color: #a1a1aa;
+
+  --1s-border-color: #27272a;
+  --1s-border-color-strong: #3f3f46;
+  --1s-divider-color: rgba(255, 255, 255, 0.08);
+
+  --1s-accent-color: #fafafa;
+  --1s-accent-color-soft: #27272a;
+  --1s-hover-background: rgba(255, 255, 255, 0.06);
+  --1s-active-background: rgba(255, 255, 255, 0.12);
+
+  --1s-scrollbar-background: rgba(255, 255, 255, 0.18);
+  --1s-scrollbar-background-hover: rgba(255, 255, 255, 0.32);
+
+  --1s-grid-line-color: rgba(255, 255, 255, 0.05);
+  --1s-checkerboard-base: #18181b;
+  --1s-checkerboard-cell-dark: #27272a;
+  --1s-checkerboard-cell-mini-dark: #202024;
+
+  --1s-control-surface-background: #18181b;
+  --1s-control-surface-muted: #27272a;
+  --1s-control-border-color: #27272a;
+  --1s-control-hover-background: #27272a;
+  --1s-control-text-muted: #a1a1aa;
+  --1s-control-focus-ring: 0 0 0 2px rgba(250, 250, 250, 0.2);
+
+  /* Left rail */
+  --1s-left-menu-background-color: #121215;
+  --1s-left-menu-item-text-color: #a1a1aa;
+
+  /* Right panel */
+  --1s-right-panel-background: #18181b;
+
+  /* Dialog */
+  --1s-dialog-bg: #18181b;
+  --1s-dialog-fg: #fafafa;
+  --1s-dialog-border: #27272a;
 }
 
 @media (max-width: 1366px) {

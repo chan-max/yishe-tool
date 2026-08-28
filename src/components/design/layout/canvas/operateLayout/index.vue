@@ -1,6 +1,6 @@
 <template>
-  <el-scrollbar>
-    <div class="canvas-operate-form" style="margin: 1rem">
+  <el-scrollbar class="canvas-operate-scrollbar">
+    <div class="canvas-operate-form">
       <component v-if="activeChild" :is="CanvasChildOperationComponentMap[activeChild.type]"></component>
     </div>
   </el-scrollbar>
@@ -51,7 +51,6 @@ import operateItemFilterGroup from "@/components/design/layout/canvas/operate/fi
 import operateItemObjectFit from "@/components/design/layout/canvas/operate/objectFit.vue";
 import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue';
 
-
 import {
   updateCanvasStickerOptionsUnit
 } from '../helper'
@@ -68,152 +67,99 @@ import {
   CanvasChildOperationComponentMap
 } from "../index.tsx";
 
-
-
-
-
-
-
-
 function remove(index) {
   removeCavnasChild(index);
 }
-
-
-
 </script>
+
 <style lang="less">
 .custom-segmented-control {
   display: flex;
-  background-color: #f1f5f9;
-  padding: 3px;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  background-color: var(--1s-shell-background, #f1f5f9);
+  padding: 2px;
+  border-radius: 4px;
+  margin-bottom: 8px;
   user-select: none;
   cursor: pointer;
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid var(--1s-border-color, rgba(226, 232, 240, 0.8));
 
   .segmented-item {
     flex: 1;
     text-align: center;
-    padding: 5px 8px;
+    padding: 3px 6px;
     font-size: 11px;
-    font-weight: 600;
-    color: #64748b;
-    border-radius: 4px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    color: var(--1s-text-color-secondary, #64748b);
+    border-radius: 3px;
+    transition: all 0.15s ease;
 
     &:hover {
-      color: #0f172a;
+      color: var(--1s-text-color, #0f172a);
     }
 
     &.active {
-      background-color: #ffffff;
-      color: #0f172a;
+      background-color: var(--1s-surface-background, #ffffff);
+      color: var(--1s-text-color, #0f172a);
       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      font-weight: 600;
     }
   }
 }
 
 .sidebar-back-header {
-  margin-bottom: 14px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--1s-border-color, rgba(226, 232, 240, 0.8));
 }
 
-.el-input--small {
-  input::-webkit-textfield-decoration-container {
-    height: 16px;
+.canvas-operate-form {
+  padding: 4px 8px 16px;
+  box-sizing: border-box;
+
+  .el-collapse {
+    border-top: none;
+    border-bottom: none;
   }
-}
 
-.el-alert__title {
-  font-size: 1.2rem !important;
-  line-height: 1.4rem !important;
-}
+  .el-collapse-item__header {
+    height: 28px;
+    line-height: 28px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--1s-text-color, #09090b);
+    background: transparent;
+    border-bottom: 1px solid var(--1s-border-color, #e4e4e7);
+    padding: 0 4px;
+    letter-spacing: 0.02em;
+    user-select: none;
+  }
 
-.el-alert__description {
-  font-size: 1rem !important;
-  line-height: 1.2rem;
-}
+  .el-collapse-item__wrap {
+    background: transparent;
+    border-bottom: 1px solid var(--1s-border-color, #e4e4e7);
+  }
 
-.operate-form-item,
-.el-popover-operation {
-  // --el-text-color-placeholder: #222;
-  --el-border-radius-base: 6px;
-
+  .el-collapse-item__content {
+    padding: 6px 2px 8px;
+  }
 
   .el-input__wrapper,
   .el-select__wrapper,
   .el-textarea__inner {
-    background-color: #f6f6f6;
-    color: #000;
-
-    &:hover {
-      // box-shadow: #6900ffdd 0px 0px 0px 1px;
-    }
-
-
+    background-color: var(--1s-elevated-background, #f4f4f5);
+    border-radius: 4px;
+    font-size: 11px;
   }
-
-  .el-input,
-  .el-select,
-  .el-textarea {
-    --el-border-color: rgba(0, 0, 0, 0) !important;
-  }
-
 }
 </style>
+
 <style scoped>
-.canvas-operate-form :deep(.operate-form-item-title),
-.canvas-operate-form :deep(.operate-form-item-content),
-.canvas-operate-form :deep(.el-button),
-.canvas-operate-form :deep(.el-input__inner),
-.canvas-operate-form :deep(.el-select__selected-item),
-.canvas-operate-form :deep(.el-radio__label),
-.canvas-operate-form :deep(.el-checkbox__label),
-.canvas-operate-form :deep(.el-switch__label),
-.canvas-operate-form :deep(.el-form-item__label) {
-  font-size: 0.92rem;
-}
-
-.canvas-operate-form :deep(.el-button) {
-  padding-inline: 8px;
-}
-
-.canvas-operate-form :deep(.el-input__wrapper),
-.canvas-operate-form :deep(.el-select__wrapper) {
-  min-height: 22px;
-}
-
-.canvas-operate-form :deep(.el-collapse-item__arrow) {
-  font-size: 11px;
+.canvas-operate-scrollbar {
+  height: 100%;
+  width: 100%;
 }
 
 :deep(.el-scrollbar__bar.is-vertical) {
-  width: 4px;
-}
-
-:deep(.el-collapse-item__header) {
-  font-size: 0.92rem;
-  margin-left: 0.35em;
-}
-
-@media (max-width: 1080px) {
-  .canvas-operate-form :deep(.operate-form-item-title),
-  .canvas-operate-form :deep(.operate-form-item-content),
-  .canvas-operate-form :deep(.el-button),
-  .canvas-operate-form :deep(.el-input__inner),
-  .canvas-operate-form :deep(.el-select__selected-item),
-  .canvas-operate-form :deep(.el-radio__label),
-  .canvas-operate-form :deep(.el-checkbox__label),
-  .canvas-operate-form :deep(.el-switch__label),
-  .canvas-operate-form :deep(.el-form-item__label) {
-    font-size: 0.88rem;
-  }
-
-  .canvas-operate-form :deep(.el-button) {
-    padding-inline: 7px;
-  }
+  width: 3px;
 }
 </style>

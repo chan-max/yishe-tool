@@ -10,7 +10,7 @@
           v-model.number="model"
         >
           <template #suffix>
-            <span style="font-size: 1rem">
+            <span class="text-[10px] text-muted-foreground">
               {{ unit }}
             </span>
           </template>
@@ -21,7 +21,7 @@
       <el-col :span="24">
         <el-radio-group v-model="unit" size="small">
           <el-radio v-for="(u, index) in unitOptions" :value="u.value">
-            <div style="font-size: 1rem">{{ u.label }}</div>
+            <div class="text-xs">{{ u.label }}</div>
           </el-radio>
         </el-radio-group>
       </el-col>

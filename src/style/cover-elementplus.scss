@@ -1,4 +1,4 @@
-@forward 'element-plus/theme-chalk/src/common/var.scss' with ($colors: ('primary': ('base': #2563eb,
+@forward 'element-plus/theme-chalk/src/common/var.scss' with ($colors: ('primary': ('base': #09090b,
     ),
   ),
 );
@@ -341,60 +341,38 @@ body.designiy-dark {
 
 
 @media only screen and (min-width: 1960px) {
-  :root {
-    font-size: 10px;
-    --el-font-size-base: 10px !important;
-  }
-
-
   .el-button--small,
   .el-input--small,
   .el-select--small .el-select__wrapper,
   .el-radio-button--small {
-    font-size: 9px !important;
+    font-size: 12px !important;
   }
 }
 
 @media only screen and (max-width: 1960px) {
-  :root {
-    font-size: 10px;
-    --el-font-size-base: 10px !important;
-  }
-
   .el-button--small,
   .el-input--small,
   .el-select--small .el-select__wrapper,
   .el-radio-button--small {
-    font-size: 9px !important;
+    font-size: 12px !important;
   }
 }
 
 @media only screen and (max-width: 1280px) {
-  :root {
-    font-size: 10px;
-    --el-font-size-base: 10px !important;
-  }
-
   .el-button--small,
   .el-input--small,
   .el-select--small .el-select__wrapper,
   .el-radio-button--small {
-    font-size: 9px !important;
-
+    font-size: 12px !important;
   }
 }
 
 @media only screen and (max-width: 780px) {
-  :root {
-    font-size: 10px;
-    --el-font-size-base: 10px !important;
-  }
-
   .el-button--small,
   .el-input--small,
   .el-select--small .el-select__wrapper,
   .el-radio-button--small {
-    font-size: 9px !important;
+    font-size: 12px !important;
   }
 }
 

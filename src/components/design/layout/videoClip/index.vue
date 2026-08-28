@@ -57,20 +57,6 @@
             >
               下载多角度图 ({{ selectedAngles.length }}张)
             </el-button>
-            <el-button
-              class="w-full"
-              type="success"
-              round
-              :disabled="selectedAngles.length === 0"
-              :loading="isSavingToDraft"
-              @click="handleSaveToDraft"
-            >
-              {{
-                isSavingToDraft
-                  ? "保存中..."
-                  : `保存到草稿箱 (${selectedAngles.length}张)`
-              }}
-            </el-button>
           </div>
         </div>
       </el-form-item>
@@ -132,7 +118,7 @@ import { ref, computed, onMounted } from "vue";
 import { selectedAngles } from '../../store';
 import gsap from "gsap";
 import { message } from "ant-design-vue";
-import { uploadToCOS, createDraft } from "@/api";
+import { saveAs } from "file-saver";
 import { QuestionFilled } from "@element-plus/icons-vue";
 import {
   isRecordingEnabled,
@@ -202,7 +188,7 @@ const handleExportImages = async () => {
       key: "exportImages",
     });
 
-    await currentModelController.value.batchDownloadMultiAngleImages({
+    await (currentModelController.value as any).batchDownloadMultiAngleImages({
       angles: selectedAngles.value,
       filename: "model",
       showProgress: true,
@@ -249,146 +235,14 @@ const handleRecord = async () => {
 };
 
 // 处理录制结束后的视频保存
-const handleRecordedVideo = async (blob: Blob) => {
+const handleRecordedVideo = async (blob: any) => {
   try {
-    // 创建文件对象
-    const file = new File([blob], `录制视频_${new Date().getTime()}.webm`, {
-      type: "video/webm",
-    });
-
-    // 获取用户账号
-    let userAccount = 'anonymous'
-    let userId = undefined
-    try {
-      const { getLocalUserInfo } = await import('@/store/stores/loginAction')
-      const userInfo = getLocalUserInfo()
-      const currentUser = userInfo?.userInfo || userInfo || {}
-      userAccount = currentUser?.account || currentUser?.name || 'anonymous'
-      userId = currentUser?.id
-    } catch (e) {
-      console.warn('无法获取用户信息:', e)
-    }
-
-    // 上传到 COS
-    const cos = await uploadToCOS({ 
-      file,
-      category: 'design-draft',
-      account: userAccount,
-      userId,
-      entityId: isEdit?.value && currentEditingModelInfo?.value?.id ? currentEditingModelInfo.value.id : undefined
-    });
-
-    // 保存到草稿箱
-    const draftPayload = {
-      url: cos.url,
-      name: "模型录制视频",
-      updateTime: new Date(),
-      suffix: 'webm',
-      customModelId: null,
-    };
-    if (isEdit?.value && currentEditingModelInfo?.value?.id) {
-      draftPayload.customModelId = currentEditingModelInfo.value.id;
-    }
-    await createDraft(draftPayload);
-
-    message.success("视频已保存到草稿箱");
+    const file = new File([blob], `录制视频_${new Date().getTime()}.webm`, { type: 'video/webm' });
+    saveAs(blob, `录制视频_${new Date().getTime()}.webm`);
+    message.success("视频已下载保存");
   } catch (err) {
     message.error("保存视频失败");
     console.error(err);
-  }
-};
-
-// 处理保存到草稿箱
-const handleSaveToDraft = async () => {
-  if (selectedAngles.value.length === 0) {
-    message.warning("请至少选择一个角度");
-    return;
-  }
-
-  isSavingToDraft.value = true;
-
-  try {
-    message.loading({
-      content: `正在生成 ${selectedAngles.value.length} 张多角度图片...`,
-      key: "saveToDraft",
-    });
-
-    // 获取多角度图片
-    const images = await currentModelController.value.exportMultiAngleImages(
-      selectedAngles.value
-    );
-
-    message.loading({
-      content: `正在上传 ${images.length} 张图片到云端...`,
-      key: "saveToDraft",
-    });
-
-    // 并发上传所有图片
-    const uploadPromises = images.map(async (image) => {
-      // 将base64转换为文件
-      const base64Data = image.base64.split(",")[1];
-      const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let j = 0; j < byteCharacters.length; j++) {
-        byteNumbers[j] = byteCharacters.charCodeAt(j);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const file = new File([byteArray], `多角度图片_${image.label}.png`, {
-        type: "image/png",
-      });
-
-      // 获取用户账号
-      let userAccount = 'anonymous'
-      let userId = undefined
-      try {
-        const { getLocalUserInfo } = await import('@/store/stores/loginAction')
-        const userInfo = getLocalUserInfo()
-        const currentUser = userInfo?.userInfo || userInfo || {}
-        userAccount = currentUser?.account || currentUser?.name || 'anonymous'
-        userId = currentUser?.id
-      } catch (e) {
-        console.warn('无法获取用户信息:', e)
-      }
-
-      // 上传到 COS
-      const cos = await uploadToCOS({ 
-        file,
-        category: 'design-draft',
-        account: userAccount,
-        userId,
-        entityId: isEdit?.value && currentEditingModelInfo?.value?.id ? currentEditingModelInfo.value.id : undefined
-      });
-
-      // 保存到草稿箱
-      const draftPayload = {
-        url: cos.url,
-        name: `多角度图片_${image.label}`,
-        updateTime: new Date(),
-        customModelId:null,
-      };
-      if (isEdit?.value && currentEditingModelInfo?.value?.id) {
-        draftPayload.customModelId = currentEditingModelInfo.value.id;
-      }
-      const draft = await createDraft(draftPayload);
-      return draft;
-    });
-
-    // 等待所有上传完成
-    const savedDrafts = await Promise.all(uploadPromises);
-
-    message.success({
-      content: `成功
-      保存 ${savedDrafts.length} 张多角度图片到草稿箱`,
-      key: "saveToDraft",
-    });
-  } catch (error) {
-    message.error({
-      content: "保存到草稿箱失败",
-      key: "saveToDraft",
-    });
-    console.error("保存到草稿箱失败:", error);
-  } finally {
-    isSavingToDraft.value = false;
   }
 };
 </script>

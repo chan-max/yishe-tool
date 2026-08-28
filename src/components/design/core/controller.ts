@@ -1439,7 +1439,7 @@ export class ModelController {
                         return resolve(new Error('贴纸不存在'));
                     }
 
-                    const sticker = isDraft ? await Api.getDraftById(id) : await Api.getStickerById(id)
+                    const sticker = await Api.getStickerById(id)
 
 
                     let decalController = new DecalController(sticker)

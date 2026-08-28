@@ -462,14 +462,22 @@ export const deleteProductModel = (data) =>
 */
 export const getStickerList = (data) =>
   new Promise(async (resolve, reject) => {
-    let res = await apiInstance.post("/api/sticker/page", data);
-    resolve(res.data.data);
+    try {
+      let res = await apiInstance.post("/api/sticker/page", data);
+      resolve(res.data.data);
+    } catch (e) {
+      reject(e);
+    }
   });
 
 export const searchStickerByImage = (data) =>
   new Promise(async (resolve, reject) => {
-    let res = await apiInstance.post("/api/sticker/search-by-image", data);
-    resolve(res.data.data);
+    try {
+      let res = await apiInstance.post("/api/sticker/search-by-image", data);
+      resolve(res.data.data);
+    } catch (e) {
+      reject(e);
+    }
   });
 
 // 1s 设计工具自定义贴纸（与素材库 sticker 分离）
@@ -607,12 +615,6 @@ export const getStickerById = (id: string) =>
     resolve(data.data.data);
   });
 
-export const getDraftById = (id: string) =>
-  new Promise(async (resolve, reject) => {
-    const data = await apiInstance.get("/api/draft", { params: { id } });
-    resolve(data.data.data);
-  });
-
 /**
  * @define 公司管理
  */
@@ -657,27 +659,7 @@ export const updateResource = (data) =>
 
 export const hello = (data) => apiInstance.get("/api/hello");
 
-/*
-    文件草稿
-*/
-
-export const createDraft = (data) =>
-  new Promise(async (resolve, reject) => {
-    let res = await apiInstance.post("/api/draft/create", data);
-    resolve(res.data.data);
-  });
-
-export const getDraftList = (data) =>
-  new Promise(async (resolve, reject) => {
-    let res = await apiInstance.post("/api/draft/page", data);
-    resolve(res.data.data);
-  });
-
-export const deleteDraft = (data) =>
-  new Promise(async (resolve, reject) => {
-    let res = await apiInstance.post("/api/draft/delete", data);
-    resolve(res.data.data);
-  });
+// 句子相关API
 
 // 句子相关API
 export const getSentenceList = (data?: any) =>
@@ -975,12 +957,6 @@ class Api {
   createResource = createResource;
   deleteResource = deleteResource;
   updateResource = updateResource;
-
-  // 草稿文件
-  getDraftList = getDraftList;
-  createDraft = createDraft;
-  deleteDraft = deleteDraft;
-  getDraftById = getDraftById;
 
   // 字体相关
 

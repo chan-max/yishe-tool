@@ -1572,27 +1572,27 @@ async function runAgentLoop(
         };
       }
       let batchGroupBlockReason = "";
-      if (
-        toolName === "material.createImageGroup" &&
-        agentState.batchTask?.requiresImageGroup
-      ) {
-        const batchTask = agentState.batchTask;
-        if (batchTask.completed < batchTask.total) {
-          batchGroupBlockReason = `组图成员尚未保存完整，当前进度 ${batchTask.completed}/${batchTask.total}。请先完成并保存剩余成员。`;
+      if (toolName === "material.createImageGroup") {
+        const idsToImport =
+          Array.isArray(args?.stickerIds) && args.stickerIds.length >= 2
+            ? args.stickerIds
+            : agentState.batchTask?.stickerIds || [];
+        if (idsToImport.length < 2) {
+          batchGroupBlockReason = "组图至少需要 2 个已保存的贴纸成员 ID。";
         } else {
           const importedStickerIds: string[] = [];
-          for (const customStickerId of batchTask.stickerIds) {
+          for (const rawId of idsToImport) {
+            const id = String(rawId || "").trim();
+            if (!id) continue;
             const imported: any = await executeAITool("material.importCustomStickerToLibrary", {
-              customStickerId,
+              customStickerId: id,
             });
-            const stickerId = String(imported?.data?.stickerId || "").trim();
-            if (!imported?.success || !stickerId) {
-              batchGroupBlockReason = imported?.message || "自定义贴纸导入素材库失败，无法创建组图。";
-              break;
+            const resolvedStickerId = String(imported?.data?.stickerId || id).trim();
+            if (resolvedStickerId) {
+              importedStickerIds.push(resolvedStickerId);
             }
-            importedStickerIds.push(stickerId);
           }
-          if (!batchGroupBlockReason) {
+          if (importedStickerIds.length >= 2) {
             args = {
               ...args,
               stickerIds: importedStickerIds,

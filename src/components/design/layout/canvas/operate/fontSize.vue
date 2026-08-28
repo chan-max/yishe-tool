@@ -8,7 +8,7 @@
       <el-popover trigger="click" popper-class="el-popover-operation">
         <template #reference>
           <el-input
-            style="width: 80px"
+            style="width: 72px"
             type="number"
             v-model="model.value"
             size="small"
@@ -16,7 +16,7 @@
             step="10"
           >
             <template #suffix>
-              <div style="font-size: 1rem">{{ model.unit }}</div>
+              <div class="text-[10px] text-muted-foreground">{{ model.unit }}</div>
             </template>
           </el-input>
         </template>
@@ -24,7 +24,7 @@
           <el-col :span="24">
             <el-radio-group v-model="model.unit" size="small">
               <el-radio v-for="u in unitOptions" :value="u.value">
-                <span style="font-size: 1rem">{{ u.label }}</span>
+                <span class="text-xs">{{ u.label }}</span>
               </el-radio>
             </el-radio-group>
           </el-col>

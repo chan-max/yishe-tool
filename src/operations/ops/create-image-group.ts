@@ -70,7 +70,7 @@ registerOperation({
       const group = await createImageGroup({
         name,
         description: String(params.description || "").trim() || undefined,
-        folderId: String(params.folderId || "").trim() || null,
+        folderId: String(params.folderId || "").trim() || undefined,
         meta: {
           source: "yishe-tool-agent",
           createdAt: new Date().toISOString(),

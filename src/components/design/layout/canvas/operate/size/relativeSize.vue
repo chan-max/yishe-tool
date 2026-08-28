@@ -5,48 +5,50 @@
         </template>
         <template #name> {{ label }} </template>
         <template #content>
-            <span style="font-size: 1rem;">宽</span>
-            <el-popover trigger="hover" width="160" popper-class="el-popover-operation">
-                <template #reference>
-                    <el-input type="number" style="width: 80px" size="small" v-model="width.value" step="10" min="0"
-                        placeholder="宽">
-                        <template #suffix>
-                            <div style="font-size:1rem;">{{ width.unit }}</div>
-                        </template>
-                    </el-input>
-                </template>
-                <el-row align="middle" justify="end">
-                    <el-col :span="24">
-                        <el-radio-group v-model="width.unit" size="small">
-                            <el-radio v-for="u, index in unitOptions" :value="u.value" :key="index">
-                                <span style="font-size: 1rem;">{{ u.label }}</span>
-                            </el-radio>
-                        </el-radio-group>
-                    </el-col>
-                </el-row>
-            </el-popover>
+            <div class="flex items-center gap-1.5">
+                <span class="text-[11px] text-muted-foreground">宽</span>
+                <el-popover trigger="hover" width="160" popper-class="el-popover-operation">
+                    <template #reference>
+                        <el-input type="number" style="width: 72px" size="small" v-model="width.value" step="10" min="0"
+                            placeholder="宽">
+                            <template #suffix>
+                                <div class="text-[10px] text-muted-foreground">{{ width.unit }}</div>
+                            </template>
+                        </el-input>
+                    </template>
+                    <el-row align="middle" justify="end">
+                        <el-col :span="24">
+                            <el-radio-group v-model="width.unit" size="small">
+                                <el-radio v-for="u, index in unitOptions" :value="u.value" :key="index">
+                                    <span class="text-xs">{{ u.label }}</span>
+                                </el-radio>
+                            </el-radio-group>
+                        </el-col>
+                    </el-row>
+                </el-popover>
 
-            <span style="font-size: 1rem;">高</span>
+                <span class="text-[11px] text-muted-foreground">高</span>
 
-            <el-popover trigger="hover" width="160" popper-class="el-popover-operation">
-                <template #reference>
-                    <el-input type="number" style="width: 80px" size="small" v-model="height.value" step="10"
-                        placeholder="高" min="0">
-                        <template #suffix>
-                            <div style="font-size:1rem;">{{ height.unit }}</div>
-                        </template>
-                    </el-input>
-                </template>
-                <el-row align="middle" justify="end">
-                    <el-col :span="24">
-                        <el-radio-group v-model="height.unit" size="small">
-                            <el-radio v-for="u, index in unitOptions" :value="u.value" :key="index">
-                                <span style="font-size: 1rem;">{{ u.label }}</span>
-                            </el-radio>
-                        </el-radio-group>
-                    </el-col>
-                </el-row>
-            </el-popover>
+                <el-popover trigger="hover" width="160" popper-class="el-popover-operation">
+                    <template #reference>
+                        <el-input type="number" style="width: 72px" size="small" v-model="height.value" step="10"
+                            placeholder="高" min="0">
+                            <template #suffix>
+                                <div class="text-[10px] text-muted-foreground">{{ height.unit }}</div>
+                            </template>
+                        </el-input>
+                    </template>
+                    <el-row align="middle" justify="end">
+                        <el-col :span="24">
+                            <el-radio-group v-model="height.unit" size="small">
+                                <el-radio v-for="u, index in unitOptions" :value="u.value" :key="index">
+                                    <span class="text-xs">{{ u.label }}</span>
+                                </el-radio>
+                            </el-radio-group>
+                        </el-col>
+                    </el-row>
+                </el-popover>
+            </div>
         </template>
     </operate-form-item>
 </template>

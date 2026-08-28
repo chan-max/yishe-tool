@@ -6,7 +6,6 @@ import Utils from '@/common/utils'
 import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
 import Api from '@/api'
 import { message } from 'ant-design-vue'
-import { uploadToCOS, createDraft } from '@/api'
 import { saveAs } from 'file-saver';
 import { migrateLegacyWorkspaceStorage } from '@/services/designRuntime'
 
@@ -55,31 +54,7 @@ export async function saveScreenshot() {
       console.warn('无法获取用户信息:', e)
     }
 
-    // 上传到 COS 并保存到草稿箱
-    uploadToCOS({ 
-      file,
-      category: 'design-draft',
-      account: userAccount,
-      userId,
-      entityId: isEdit.value && currentEditingModelId.value ? currentEditingModelId.value : undefined
-    }).then(cos => {
-        createDraft({
-            url: cos.url,
-            name: '模型截图',
-            type: 'image',
-            suffix: 'png',
-            updateTime: new Date(),
-            ...(isEdit.value && currentEditingModelId.value ? { customModelId: currentEditingModelId.value } : {})
-        }).then(() => {
-            message.success('截图已保存到草稿箱和本地');
-        }).catch(err => {
-            message.error('保存到草稿箱失败');
-            console.error(err);
-        });
-    }).catch(err => {
-        message.error('上传截图失败');
-        console.error(err);
-    });
+    message.success('截图已保存到本地');
 }
 
 

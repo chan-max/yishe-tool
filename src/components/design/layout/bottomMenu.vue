@@ -10,83 +10,89 @@
 -->
 <template>
   <div class="designiy-bottom-menu">
-    <el-tooltip :hide-after="0" content="拾色器" placement="top">
-      <div>
-        <el-button link class="bottom-menu-icon-button" @click="openEyeDropper">
-          <BgColorsOutlined class="bottom-menu-icon" />
-        </el-button>
-      </div>
-    </el-tooltip>
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button variant="ghost" size="icon-sm" class="text-muted-foreground hover:text-foreground" @click="openEyeDropper">
+          <BgColorsOutlined class="text-sm" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">拾色器</TooltipContent>
+    </Tooltip>
 
-    <el-tooltip :hide-after="0" content="保存当前模型截图" placement="top">
-      <div>
-        <el-button link class="bottom-menu-icon-button" @click="takeshot">
-          <CameraOutlined class="bottom-menu-icon" />
-        </el-button>
-      </div>
-    </el-tooltip>
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button variant="ghost" size="icon-sm" class="text-muted-foreground hover:text-foreground" @click="takeshot">
+          <CameraOutlined class="text-sm" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">保存当前模型截图</TooltipContent>
+    </Tooltip>
 
-    <el-tooltip :hide-after="0" content="查看所有截图" placement="top">
-      <div>
-        <el-button link class="bottom-menu-icon-button" @click="showScreenshotDrawer = true">
-          <PictureOutlined class="bottom-menu-icon" />
-        </el-button>
-      </div>
-    </el-tooltip>
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button variant="ghost" size="icon-sm" class="text-muted-foreground hover:text-foreground" @click="showScreenshotDrawer = true">
+          <PictureOutlined class="text-sm" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">查看所有截图</TooltipContent>
+    </Tooltip>
 
-    <el-tooltip
-      :hide-after="0"
-      :content="isFullScreen ? '退出全屏' : '进入全屏'"
-      placement="top"
-    >
-      <div>
-        <el-button link class="bottom-menu-icon-button" @click="isFullScreen = !isFullScreen">
-          <ExpandOutlined class="bottom-menu-icon" />
-        </el-button>
-      </div>
-    </el-tooltip>
-    <el-tooltip :hide-after="0" content="移除当前所有贴纸" placement="top">
-      <div>
-        <el-button link class="bottom-menu-icon-button" @click="currentModelController.removeDecals()">
-          <DeleteOutlined class="bottom-menu-icon" />
-        </el-button>
-      </div>
-    </el-tooltip>
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button variant="ghost" size="icon-sm" class="text-muted-foreground hover:text-foreground" @click="isFullScreen = !isFullScreen">
+          <ExpandOutlined class="text-sm" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">{{ isFullScreen ? '退出全屏' : '进入全屏' }}</TooltipContent>
+    </Tooltip>
 
-    <el-tooltip :hide-after="0" content="执行内置动画" placement="top">
-      <div>
-        <el-button link class="bottom-menu-icon-button" @click="doBuiltInAnimations">
-          <VideoCameraOutlined class="bottom-menu-icon" />
-        </el-button>
-      </div>
-    </el-tooltip>
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button variant="ghost" size="icon-sm" class="text-muted-foreground hover:text-destructive" @click="currentModelController.removeDecals()">
+          <DeleteOutlined class="text-sm" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">移除当前所有贴纸</TooltipContent>
+    </Tooltip>
 
-    <el-tooltip :hide-after="0" content="自动根据当前控制台生成模型" placement="top">
-      <div>
-        <el-button
-          class="bottom-menu-primary"
-          size="small"
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button variant="ghost" size="icon-sm" class="text-muted-foreground hover:text-foreground" @click="doBuiltInAnimations">
+          <VideoCameraOutlined class="text-sm" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">执行内置动画</TooltipContent>
+    </Tooltip>
+
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button
+          variant="default"
+          size="xs"
           @click="autocreate"
-          :icon="Grid"
-          color="var(--1s-accent-color)"
+          class="flex items-center gap-1 font-medium"
         >
-          自动生成
-        </el-button>
-      </div>
-    </el-tooltip>
+          <Sparkles class="w-3 h-3" />
+          <span>自动生成</span>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">自动根据当前控制台生成模型</TooltipContent>
+    </Tooltip>
 
-    <el-tooltip :hide-after="0" content="裁剪参考线" placement="top">
-      <div>
-        <el-button link class="bottom-menu-icon-button" @click="showCropGuideModal = true">
-          <ScissorOutlined class="bottom-menu-icon" />
-        </el-button>
-      </div>
-    </el-tooltip>
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button variant="ghost" size="icon-sm" class="text-muted-foreground hover:text-foreground" @click="showCropGuideModal = true">
+          <ScissorOutlined class="text-sm" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">裁剪参考线</TooltipContent>
+    </Tooltip>
   </div>
 
   <screenshotDrawer></screenshotDrawer>
   <CropGuideModal />
 </template>
+
 <script setup>
 import {
   isFullScreen,
@@ -94,31 +100,24 @@ import {
   saveScreenshot,
   showScreenshotDrawer,
 } from "../store";
-import iconFullscreen from "@/icon/fullscreen.svg?component";
-import iconRotate from "@/icon/rotate.svg?component";
-import iconLocate from "@/icon/locate.svg?component";
-import iconRefresh from "@/icon/refresh.svg?component";
-import iconScreenshot from "@/icon/screenshot.svg?component";
 import {
   ScissorOutlined,
   BgColorsOutlined,
   CameraOutlined,
-  FileImageOutlined,
   PictureOutlined,
   ExpandOutlined,
-  CloseCircleOutlined,
-  RedoOutlined,
   DeleteOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons-vue";
-import { useEyeDropper, useClipboard } from "@vueuse/core";
-import { Pointer, Grid } from "@element-plus/icons-vue";
+import { Sparkles } from "lucide-vue-next";
+import { useEyeDropper } from "@vueuse/core";
 import { notification } from "ant-design-vue";
 import screenshotDrawer from "@/components/design/components/screenshotDrawer.vue";
-import canvasMediaRecorder from "@/components/design/components/canvasMediaRecorder/index.vue";
 import { showAutocreateModal } from "@/components/design/layout/autocreate/index.ts";
 import CropGuideModal from "@/components/design/layout/canvas/crop/components/CropGuideModal.vue";
 import { showCropGuideModal } from "@/components/design/layout/canvas/crop/store";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const { isSupported, open, sRGBHex } = useEyeDropper();
 
@@ -129,7 +128,6 @@ async function openEyeDropper() {
   notification.open({
     placement: "topRight",
     message: `颜色 ${sRGBHex} 已复制到粘贴板`,
-    // style:`background-color:${sRGBHex}22`
   });
 }
 
@@ -137,27 +135,14 @@ function takeshot() {
   saveScreenshot();
 }
 
-function locate() {
-  currentModelController.value.resetPosition();
-}
-
-function animate() {
-  currentModelController.value.animate = !currentModelController.value.animate;
-}
-
-/**
- * @method 根据当前控制台信息快速生成模型
- */
 function autocreate() {
   showAutocreateModal.value = true;
 }
 
-/**
- * @method 执行内置动画，可以生成短视频
- */
 function doBuiltInAnimations() {}
 </script>
-<style lang="less">
+
+<style lang="less" scoped>
 .designiy-bottom-menu {
   height: 100%;
   width: 100%;
@@ -165,41 +150,18 @@ function doBuiltInAnimations() {}
   justify-content: center;
   align-items: center;
   padding: 0 12px;
-  background-color: var(--1s-elevated-background);
+  background-color: var(--1s-surface-background);
   border: 1px solid var(--1s-border-color);
   border-bottom: 0;
-  border-radius: 12px 12px 0 0;
-  column-gap: 4px;
+  border-radius: 8px 8px 0 0;
+  column-gap: 3px;
   box-shadow: var(--1s-shadow-sm);
-}
-
-.bottom-menu-icon-button {
-  min-width: 28px;
-  min-height: 28px;
-  padding: 4px;
-  color: var(--1s-icon-color);
-}
-
-.bottom-menu-icon {
-  font-size: 14px;
-}
-
-.bottom-menu-primary {
-  min-height: 28px;
-  padding-inline: 10px;
-  border: 0;
-  box-shadow: none;
 }
 
 @media (max-width: 768px) {
   .designiy-bottom-menu {
-    padding: 0 8px;
-    column-gap: 2px;
-  }
-
-  .bottom-menu-primary {
-    padding-inline: 8px;
-    font-size: 10px;
+    padding: 0 6px;
+    column-gap: 1px;
   }
 }
 </style>

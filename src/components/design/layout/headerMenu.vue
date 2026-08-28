@@ -10,82 +10,131 @@
 -->
 <template>
   <div class="designiy-header">
-    <div
-      class="designiy-header__brand flex items-center justify-center shrink-0"
-    >
+    <div class="designiy-header__brand">
       <img src="/favicon.png" class="designiy-header__brand-logo" />
+      <span class="designiy-header__brand-title">1s design tool</span>
     </div>
 
     <template v-if="isEdit">
       <div class="edit-mode-info flex items-center gap-2 shrink-0">
         <span class="model-id-text">模型ID: {{ currentEditingModelId }}</span>
-        <el-button type="danger" size="small" @click="confirmExitEditMode">退出</el-button>
+        <Button variant="destructive" size="sm" @click="confirmExitEditMode">退出</Button>
+      </div>
+    </template>
+
+    <!-- 自定义贴纸编辑模式指示 -->
+    <template v-else-if="currentEditingCustomStickerId">
+      <div class="edit-mode-info flex items-center gap-1.5 shrink-0">
+        <Badge variant="secondary" class="h-6 gap-1.5 px-2 text-[11px] font-medium border border-amber-400/60 bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-400/40 shadow-xs">
+          <span class="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
+          <Pencil class="h-3 w-3 text-amber-600 dark:text-amber-400" />
+          <span class="max-w-[150px] truncate">编辑中: {{ currentEditingCustomStickerName || currentEditingCustomStickerId }}</span>
+        </Badge>
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button variant="ghost" size="xs" class="h-6 text-[11px] text-muted-foreground hover:text-foreground" @click="handleConvertToCreateNew">
+              转为新建
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">断开原贴纸关联，保存时将作为新贴纸创建</TooltipContent>
+        </Tooltip>
+      </div>
+    </template>
+
+    <!-- 新建空白作品指示 -->
+    <template v-else>
+      <div class="edit-mode-info flex items-center shrink-0">
+        <Badge variant="outline" class="h-6 px-2 text-[11px] font-normal text-muted-foreground border-dashed">
+          新建贴纸
+        </Badge>
       </div>
     </template>
 
     <div class="designiy-header__spacer"></div>
 
-    <a-button size="small" type="text" class="header-link">快速指南</a-button>
+    <Button variant="ghost" size="sm" class="h-7 text-xs text-muted-foreground hover:text-foreground">快速指南</Button>
 
-    <el-tooltip
-      :content="wsStatusTooltip"
-      placement="bottom"
-      :show-after="200"
-    >
-      <div class="ws-status-indicator" :class="`ws-status--${wsStatus}`">
-        <span class="ws-status-dot" />
-        <span class="ws-status-label">{{ wsStatusLabel }}</span>
-      </div>
-    </el-tooltip>
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Badge variant="outline" class="h-6 gap-1.5 px-2 text-[11px] font-normal cursor-pointer select-none border-border hover:bg-accent/50 transition-colors">
+          <span
+            class="h-1.5 w-1.5 rounded-full shrink-0"
+            :class="{
+              'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]': wsStatus === 'connected',
+              'bg-amber-500 animate-pulse': wsStatus === 'connecting' || wsStatus === 'reconnecting',
+              'bg-rose-500': wsStatus === 'error',
+              'bg-muted-foreground/50': wsStatus === 'disconnected' || wsStatus === 'idle'
+            }"
+          />
+          <span class="text-muted-foreground">{{ wsStatusLabel }}</span>
+        </Badge>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">{{ wsStatusTooltip }}</TooltipContent>
+    </Tooltip>
 
-    <el-tooltip
-      :content="agentStatusTooltip"
-      placement="bottom"
-      :show-after="200"
-    >
-      <div class="agent-status-indicator" :class="`agent-status--${agentStatus}`">
-        <span class="agent-status-dot" />
-        <span class="agent-status-label">Agent {{ agentStatusLabel }}</span>
-      </div>
-    </el-tooltip>
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Badge variant="outline" class="h-6 gap-1.5 px-2 text-[11px] font-normal cursor-pointer select-none border-border hover:bg-accent/50 transition-colors">
+          <span
+            class="h-1.5 w-1.5 rounded-full shrink-0"
+            :class="{
+              'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]': agentStatus === 'idle',
+              'bg-amber-500 animate-pulse': agentStatus === 'thinking' || agentStatus === 'executing',
+              'bg-rose-500': agentStatus === 'error',
+              'bg-muted-foreground/50': agentStatus === 'disconnected'
+            }"
+          />
+          <span class="text-muted-foreground">Agent {{ agentStatusLabel }}</span>
+        </Badge>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">{{ agentStatusTooltip }}</TooltipContent>
+    </Tooltip>
     
     <div class="header-actions flex items-center gap-2 shrink-0">
-      <div
-        class="auto-create-btn"
-        :class="{
-          'auto-create-btn--running': batchIsRunning,
-          'auto-create-btn--paused': batchProgress.status === 'paused',
-        }"
+      <Button
+        :variant="batchIsRunning ? 'default' : 'outline'"
+        size="sm"
+        class="h-6 text-[11px] px-2.5 gap-1.5 font-medium"
         @click="showAutocreateModal = true"
       >
-        <span v-if="batchIsRunning" class="auto-create-status-dot" />
-        <span class="auto-create-label">{{ autoCreateButtonLabel }}</span>
-      </div>
+        <span v-if="batchIsRunning" class="h-1.5 w-1.5 rounded-full bg-primary-foreground animate-ping shrink-0" />
+        <span>{{ autoCreateButtonLabel }}</span>
+      </Button>
 
-      <el-tooltip :content="screenShareActive ? '停止共享屏幕' : '共享屏幕给管理端'" placement="bottom" :show-after="200">
-        <div class="screen-share-btn" :class="{ 'screen-share-btn--active': screenShareActive }" @click="toggleScreenShare">
-          <span class="screen-share-dot" />
-          <span class="screen-share-label">{{ screenShareActive ? '共享中' : '共享屏幕' }}</span>
-        </div>
-      </el-tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <Button
+            :variant="screenShareActive ? 'default' : 'outline'"
+            size="sm"
+            class="h-6 text-[11px] px-2.5 gap-1.5 font-medium"
+            @click="toggleScreenShare"
+          >
+            <span
+              class="h-1.5 w-1.5 rounded-full shrink-0"
+              :class="screenShareActive ? 'bg-primary-foreground animate-pulse' : 'bg-muted-foreground/50'"
+            />
+            <span>{{ screenShareActive ? '共享中' : '共享屏幕' }}</span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">{{ screenShareActive ? '停止共享屏幕' : '共享屏幕给管理端' }}</TooltipContent>
+      </Tooltip>
 
-      <el-switch
-        v-model="isDarkMode"
-        inline-prompt
-        style="--el-switch-off-color: var(--1s-border-color-strong)"
-        active-text="夜"
-        inactive-text="昼"
-        class="theme-switch"
-      />
-
-      <!--
-      <el-button type="primary" size="small" @click="showSaveModel = true" class="save-btn" :icon="Download">
-        <span>保存</span>
-      </el-button>
-      -->
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <button
+            class="h-6 w-6 rounded-md inline-flex items-center justify-center border border-border bg-muted/40 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer select-none"
+            @click="isDarkMode = !isDarkMode"
+            :aria-label="isDarkMode ? '切换为浅色模式' : '切换为深色模式'"
+          >
+            <Moon v-if="isDarkMode" class="h-3.5 w-3.5 text-indigo-400" />
+            <Sun v-else class="h-3.5 w-3.5 text-amber-500" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">{{ isDarkMode ? '深色模式（点击切换浅色）' : '浅色模式（点击切换深色）' }}</TooltipContent>
+      </Tooltip>
     </div>
     <user-avatar v-if="loginStatusStore.isLogin" />
-    <el-button @click="login" v-else type="primary" size="small" class="login-btn">登录</el-button>
+    <Button @click="login" v-else variant="default" size="sm" class="login-btn">登录</Button>
   </div>
 </template>
 
@@ -107,6 +156,17 @@ import {
   currentEditingModelId,
   exitEditMode,
 } from "../store";
+
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Pencil, Sun, Moon } from "lucide-vue-next";
+import { message } from "ant-design-vue";
+import {
+  currentEditingCustomStickerId,
+  currentEditingCustomStickerName,
+  exitCustomStickerEditMode,
+} from "@/components/design/layout/canvas/index.tsx";
 
 import { openFileModal } from "@/components/design/layout/upload/index.tsx";
 import { Share, UploadFilled } from "@element-plus/icons-vue";
@@ -231,7 +291,12 @@ function openUplaodModal(file) {
   openFileModal(file);
 }
 
-//
+function handleConvertToCreateNew() {
+  const previousName = currentEditingCustomStickerName.value;
+  exitCustomStickerEditMode();
+  message.success(`已转为新建模式${previousName ? `（基于「${previousName}」副本）` : ''}，保存时将生成新作品`);
+}
+
 function remove(file) {}
 
 function confirmExitEditMode() {
@@ -269,15 +334,35 @@ function confirmExitEditMode() {
 }
 
 .designiy-header__brand {
-  width: 44px;
+  display: flex;
+  align-items: center;
   height: 100%;
   flex-shrink: 0;
+  padding: 0 10px 0 4px;
+  gap: 9px;
+  border-right: 1px solid var(--1s-divider-color, #e4e4e7);
+  text-decoration: none;
+  overflow: hidden;
+  cursor: default;
 }
 
 .designiy-header__brand-logo {
   width: 22px;
   height: 22px;
   object-fit: contain;
+  flex-shrink: 0;
+}
+
+.designiy-header__brand-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--1s-text-color, #162033);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  flex: 1;
 }
 
 .designiy-header__spacer {

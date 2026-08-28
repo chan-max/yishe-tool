@@ -4,7 +4,7 @@ import { isEdit, currentEditingModelInfo } from '../../store';
 import gsap from "gsap";
 import { FrontSide } from "three";
 import { message } from "ant-design-vue";
-import { uploadToCOS, createDraft } from "@/api";
+import { saveAs } from "file-saver";
 
 export const modelControllerViewSetterOptions = ref([
     {
@@ -41,49 +41,11 @@ export const stopAllAnimations = () => {
 // 处理录制结束后的视频保存
 const handleRecordedVideo = async (blob: Blob, animationName?: string) => {
   try {
-    // 创建文件对象，文件名包含动画名称
     const timestamp = new Date().getTime();
     const animationSuffix = animationName ? `_${animationName}` : '';
     const fileName = `录制视频${animationSuffix}_${timestamp}.webm`;
-    const file = new File([blob], fileName, { type: 'video/webm' });
-    
-    // 获取用户账号
-    let userAccount = 'anonymous'
-    let userId = undefined
-    try {
-      const LOGIN_FLAG = "1s_login"
-      const userInfoStr = localStorage.getItem(LOGIN_FLAG) || sessionStorage.getItem(LOGIN_FLAG)
-      if (userInfoStr) {
-        const userInfo = JSON.parse(userInfoStr)
-        const currentUser = userInfo?.userInfo || userInfo || {}
-        userAccount = currentUser?.account || currentUser?.name || 'anonymous'
-        userId = currentUser?.id
-      }
-    } catch (e) {
-      console.warn('无法获取用户信息:', e)
-    }
-    
-    // 上传到 COS
-    const cos = await uploadToCOS({ 
-      file,
-      category: 'design-draft',
-      account: userAccount,
-      userId,
-      entityId: isEdit.value && currentEditingModelId.value ? currentEditingModelId.value : undefined
-    });
-    
-    // 保存到草稿箱，名称也包含动画信息
-    const draftName = animationName ? `模型录制视频_${animationName}` : '模型录制视频';
-    await createDraft({
-      url: cos.url,
-      name: draftName,
-      type: 'video',
-      suffix: 'webm',
-      updateTime: new Date(),
-      ...(isEdit.value && currentEditingModelId.value ? { customModelId: currentEditingModelId.value } : {})
-    });
-    
-    message.success('视频已保存到草稿箱');
+    saveAs(blob, fileName);
+    message.success('视频已下载保存');
   } catch (err) {
     message.error('保存视频失败');
     console.error(err);

@@ -4,32 +4,23 @@
     <div class="project-toolbar">
       <slot name="tabs"></slot>
       <div class="project-toolbar__controls">
-        <div class="project-toolbar__group">
-          <span class="project-toolbar__label">自定义贴纸</span>
-          <el-select 
-            v-model="queryParams.isCustom" 
-            placeholder="请选择类型" 
-            style="width: 92px" 
-            clearable 
-            @change="getList"
-          >
-            <el-option label="全部" :value="''" />
-            <el-option label="是" :value="true" />
-            <el-option label="否" :value="false" />
-          </el-select>
-        </div>
-        <el-button @click="reset">重置筛选</el-button>
+        <Button variant="outline" size="sm" @click="reset" class="h-7 text-xs gap-1.5">
+          <RotateCw class="h-3.5 w-3.5" :class="{ 'animate-spin': loading }" />
+          刷新
+        </Button>
       </div>
       <div class="project-toolbar__caption">{{ total }} 项</div>
     </div>
     
-    <div class="flex-1 relative">
+    <div class="flex-1 relative p-4">
       <div
-        class="grid grid-cols-1 gap-3 w-full p-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+        v-if="list.length > 0"
+        class="grid grid-cols-1 gap-4 w-full sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
       >
         <div
           v-for="item in list"
-          class="project-card project-gallery-card"
+          :key="item.id"
+          class="project-card project-gallery-card group"
         >
           <s1-img
             padding="5%"
@@ -50,394 +41,395 @@
                 {{ item.name || "未命名" }}
               </div>
               <div class="project-gallery-card__meta">
-                <div class="project-tag project-tag--accent" v-if="item.isPublic">已共享</div>
-                <div
-                  class="project-tag"
+                <Badge variant="tonal" v-if="item.isPublic">已共享</Badge>
+                <Badge
+                  variant="secondary"
                   v-if="item?.uploader?.account == loginStore.userInfo?.account"
                 >
                   我
-                </div>
-                <div 
-                  class="project-tag"
-                  :class="item.isCustom ? 'project-tag--success' : 'project-tag--danger'"
+                </Badge>
+                <Badge 
+                  :variant="item.isCustom ? 'success' : 'destructive'"
                   v-if="item.isCustom !== undefined"
                 >
                   {{ item.isCustom ? '自定义' : '系统' }}
-                </div>
+                </Badge>
                 <div class="project-timeago">{{ Utils.time.timeago(item.updateTime) }}</div>
               </div>
             </div>
-            <a-dropdown trigger="click" class="project-gallery-card__actions">
-              <el-button link class="project-action-button">
-                <el-icon>
-                  <MoreFilled />
-                </el-icon>
-              </el-button>
-              <template #overlay>
-                <a-menu>
-                  <a-menu-item @click="edit(item)"> 编辑 </a-menu-item>
-                  <!-- 3D 工作台链路已停用，暂不提供直接使用贴纸入口。 -->
-                  <!-- <a-menu-item @click="useSticker(item)"> 在工作台使用 </a-menu-item> -->
-                  <!-- <a-menu-item @click="editStickerInWorkspace(item)">
-                      在工作台中编辑
-                  </a-menu-item> -->
-                  <a-menu-item
-                    @click="useInCanvasSticker(item)"
-                  >
-                    在贴纸制作中使用
-                  </a-menu-item>
-
-                  <a-menu-item @click="showRepeatEffect(item)"> 查看重复效果 </a-menu-item>
-
-                  <a-menu-item @click="deleteItem(item)">
-                    <span style="color: var(--el-color-danger)">删除</span>
-                  </a-menu-item>
-                  <!-- <a-menu-item> 分享给好友 </a-menu-item>
-                  <a-menu-item> 发布 </a-menu-item> -->
-                  <a-menu-item v-if="item.type == 'image'" @click="download(item)">
-                    下载源文件
-                  </a-menu-item>
-                </a-menu>
-              </template>
-            </a-dropdown>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <Button variant="ghost" size="icon-sm" class="project-action-button opacity-70 group-hover:opacity-100">
+                  <MoreVertical class="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem @click="edit(item)">
+                  <Pencil class="h-3.5 w-3.5 mr-2" />
+                  编辑信息
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="useInCanvasSticker(item)">
+                  <Palette class="h-3.5 w-3.5 mr-2" />
+                  在贴纸制作中使用
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="showRepeatEffect(item)">
+                  <Grid class="h-3.5 w-3.5 mr-2" />
+                  查看重复效果
+                </DropdownMenuItem>
+                <DropdownMenuItem v-if="item.type == 'image'" @click="download(item)">
+                  <Download class="h-3.5 w-3.5 mr-2" />
+                  下载源文件
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem @click="deleteItem(item)" class="text-red-500 focus:text-red-500">
+                  <Trash2 class="h-3.5 w-3.5 mr-2" />
+                  删除
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
+
+      <!-- 空状态 -->
+      <div
+        v-else-if="!loading"
+        class="flex flex-col items-center justify-center h-64 text-center"
+      >
+        <Sparkles class="h-10 w-10 text-[var(--1s-text-color-tertiary)] mb-2 opacity-50" />
+        <div class="text-sm font-medium text-[var(--1s-text-color-secondary)]">暂无贴纸资源</div>
+        <div class="text-xs text-[var(--1s-text-color-tertiary)] mt-1">可在贴纸制作或 AI 助手生成专属贴纸</div>
+      </div>
+
+      <!-- 加载遮罩 -->
       <div
         v-if="loading"
-        class="project-loading-overlay absolute inset-0 flex items-center justify-center"
+        class="absolute inset-0 bg-[var(--1s-panel-background)]/60 flex items-center justify-center"
       >
-        <div class="project-loading-overlay__spinner">
-          <el-icon class="animate-spin text-lg"><Loading /></el-icon>
-        </div>
+        <div class="animate-spin rounded-full h-8 w-8 border-2 border-[var(--1s-accent-color)] border-t-transparent"></div>
       </div>
-      <s1-empty v-if="isEmpty">
-        <template #description> 暂无贴纸 </template>
-      </s1-empty>
     </div>
 
+    <!-- 分页 -->
     <div class="project-footer">
-      <div class="mx-auto flex justify-end">
-        <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[20, 40, 60, 80]"
-          :total="total"
-          layout="total, sizes, prev, pager, next"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
-    </div>
-  </div>
-
-  <a-modal
-    v-model:open="showFormModal"
-    :centered="true"
-    :destroyOnClose="true"
-    width="540px"
-    title="更新信息"
-    okText="修改"
-    cancelText="取消"
-    @ok="ok"
-    :confirmLoading="submitLoading"
-  >
-    <el-form
-      label-width="72px"
-      :inline-message="false"
-      :show-message="false"
-      label-position="left"
-    >
-      <el-form-item label="贴纸名称：">
-        <el-input v-model="editForm.name" placeholder="名称"></el-input>
-      </el-form-item>
-      <el-form-item label="贴纸描述:">
-        <el-input
-          type="textarea"
-          v-model="editForm.description"
-          placeholder="描述"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="关键字:">
-        <tagsInput
-          v-model="editForm.keywords"
-          :string="true"
-          :autocomplete-tags="stickerAutoplacementTags"
-          :autocomplete-width="400"
-          autocompletePlacement="right"
-        ></tagsInput>
-      </el-form-item>
-      <!-- <el-form-item label="是否共享:">
-        <a-switch
-          v-model:checked="editForm.isPublic"
-          checked-children="公开"
-          un-checked-children="私密"
-        />
-      </el-form-item> -->
-      <el-form-item label="是否为材质:">
-        <el-switch
-          v-model="editForm.isTexture"
-        ></el-switch>
-      </el-form-item>
-    </el-form>
-  </a-modal>
-
-  <!-- 重复效果预览 Modal -->
-  <a-modal
-    v-model:open="showRepeatModal"
-    :centered="true"
-    :destroyOnClose="true"
-    width="600px"
-    title="重复效果预览"
-    :footer="null"
-  >
-    <div class="repeat-preview-container">
-      <div class="repeat-preview-grid">
-        <div v-for="i in 9" :key="i" class="repeat-preview-item-wrapper">
-          <img 
-            :src="currentPreviewItem?.url" 
-            class="repeat-preview-item"
-            @load="onImageLoad"
-            ref="previewImages"
-          />
+      <div class="flex items-center justify-between px-2">
+        <div class="text-xs text-[var(--1s-text-color-tertiary)]">
+          第 {{ currentPage }} 页 / 共 {{ Math.ceil(total / pageSize) || 1 }} 页
+        </div>
+        <div class="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            :disabled="currentPage <= 1 || loading"
+            @click="changePage(currentPage - 1)"
+          >
+            上一页
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            :disabled="currentPage * pageSize >= total || loading"
+            @click="changePage(currentPage + 1)"
+          >
+            下一页
+          </Button>
         </div>
       </div>
     </div>
-  </a-modal>
+
+    <!-- 编辑弹窗 -->
+    <Dialog v-model:open="showFormModal">
+      <DialogContent class="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>编辑贴纸信息</DialogTitle>
+          <DialogDescription>
+            修改贴纸的标题、描述、标签及材质属性。
+          </DialogDescription>
+        </DialogHeader>
+
+        <div class="space-y-3 py-2">
+          <div class="space-y-1">
+            <label class="text-xs font-medium text-[var(--1s-text-color-secondary)]">贴纸名称</label>
+            <Input v-model="editForm.name" placeholder="请输入贴纸名称" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs font-medium text-[var(--1s-text-color-secondary)]">贴纸描述</label>
+            <Textarea v-model="editForm.description" rows="3" placeholder="请输入贴纸描述..." />
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs font-medium text-[var(--1s-text-color-secondary)]">关键字标签</label>
+            <tagsInput
+              v-model="editForm.keywords"
+              :string="true"
+              :autocomplete-tags="stickerAutoplacementTags"
+              :autocomplete-width="400"
+              autocompletePlacement="right"
+            />
+          </div>
+
+          <div class="flex items-center justify-between py-2 border-t border-[var(--1s-divider-color)]">
+            <div class="space-y-0.5">
+              <div class="text-xs font-medium text-[var(--1s-text-color)]">是否作为材质</div>
+              <div class="text-[11px] text-[var(--1s-text-color-tertiary)]">开启后该贴纸可用于 3D 服装/物体材质纹理</div>
+            </div>
+            <Switch v-model:checked="editForm.isTexture" />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="ghost" size="sm" @click="showFormModal = false">取消</Button>
+          <Button variant="default" size="sm" :disabled="submitLoading" @click="ok">
+            {{ submitLoading ? '保存中...' : '确定保存' }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <!-- 重复效果预览 Modal -->
+    <Dialog v-model:open="showRepeatModal">
+      <DialogContent class="sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle>平铺重复效果预览</DialogTitle>
+          <DialogDescription>
+            查看 3x3 连续平铺无缝效果
+          </DialogDescription>
+        </DialogHeader>
+
+        <div class="repeat-preview-container my-2">
+          <div class="repeat-preview-grid">
+            <div v-for="i in 9" :key="i" class="repeat-preview-item-wrapper">
+              <img 
+                :src="currentPreviewItem?.url" 
+                class="repeat-preview-item"
+                @load="onImageLoad"
+                ref="previewImages"
+              />
+            </div>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" size="sm" @click="showRepeatModal = false">关闭</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </div>
 </template>
 
-<script setup lang="tsx">
-import { ref, onBeforeMount } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import {
-  Search,
-  ArrowRightBold,
-  Operation,
-  ArrowRight,
-  MoreFilled,
-  Loading,
-} from "@element-plus/icons-vue";
-import { getStickerList } from "@/api";
-import { usePaging } from "@/hooks/data/paging.ts";
-import desimage from "@/components/image.vue";
-import { MoreOutlined } from "@ant-design/icons-vue";
-import { menuItems, menuState, setActiveMenu } from "@/components/design/store";
-import { initDraggableElement } from "@/components/design/utils/draggable";
-import { imgToFile, createImgObjectURL, imgToBase64 } from "@/common/transform/index";
-import { stickerAutoplacementTags } from "@/components/design/components/tagsInput/index.ts";
-import { useLoadingOptions } from "@/components/loading/index.tsx";
-
-import { loadingBottom } from "@/components/loading/index.tsx";
+  MoreVertical,
+  Pencil,
+  Palette,
+  Grid,
+  Download,
+  Trash2,
+  Sparkles,
+  RotateCw,
+} from 'lucide-vue-next'
+import { getStickerList } from '@/api'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
+import { Badge } from '@/components/ui/badge'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import { menuItems, menuState, setActiveMenu } from '@/components/design/store'
+import { stickerAutoplacementTags } from '@/components/design/components/tagsInput/index.ts'
 import {
   addCanvasChild,
   canvasStickerOptions,
   currentEditingCustomStickerId,
   currentEditingCustomStickerFolderId,
-} from "@/components/design/layout/canvas/index.tsx";
-import { createDefaultCanvasChildcanvasStickerOptions } from "@/components/design/layout/canvas/children/canvas.tsx";
-import Utils from "@/common/utils";
-import { message, Modal } from "ant-design-vue";
-import { s1Confirm } from "@/common/message";
-import Api from "@/api";
-import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
-import { useStickerDetailModal } from "./stickerModal.ts";
-import { useLoginStatusStore } from "@/store/stores/login";
+} from '@/components/design/layout/canvas/index.tsx'
+import { createDefaultCanvasChildcanvasStickerOptions } from '@/components/design/layout/canvas/children/canvas.tsx'
+import Utils from '@/common/utils'
+import { message } from 'ant-design-vue'
+import { s1Confirm } from '@/common/message'
+import Api from '@/api'
+import tagsInput from '@/components/design/components/tagsInput/tagsInput.vue'
+import { useStickerDetailModal } from './stickerModal.ts'
+import { useLoginStatusStore } from '@/store/stores/login'
 import {
   clearAgentDesignProvenance,
   restoreAgentDesignProvenance,
-} from "@/ai/design-provenance";
+} from '@/ai/design-provenance'
 
-const loginStore = useLoginStatusStore();
-
-const loadingOptions = useLoadingOptions({});
+const loginStore = useLoginStatusStore()
 
 // 分页相关
-const currentPage = ref(1);
-const pageSize = ref(20);
-const total = ref(0);
-const list = ref([]);
-const loading = ref(false);
-const isEmpty = ref(false);
-
-// 查询参数
-const queryParams = ref({
-  isCustom: true, // 默认仅显示自定义贴纸
-});
+const currentPage = ref(1)
+const pageSize = ref(20)
+const total = ref(0)
+const list = ref<any[]>([])
+const loading = ref(false)
 
 // 获取列表数据
 async function getList() {
-  loading.value = true;
+  loading.value = true
   try {
-    const params = {
+    const params: any = {
       currentPage: currentPage.value,
       pageSize: pageSize.value,
-      ...queryParams.value,
-    };
-    // 过滤空值，避免传递给后端
-    if ((params as any).isCustom === '' || params.isCustom === undefined) {
-      delete (params as any).isCustom;
     }
-    const res = await getStickerList(params);
-    list.value = res.list;
-    total.value = res.total;
-    isEmpty.value = list.value.length === 0;
+    const res = await getStickerList(params)
+    list.value = res?.list || []
+    total.value = res?.total || 0
   } catch (error) {
-    console.error(error);
+    console.error(error)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
-// 处理页码改变
-function handleCurrentChange(val: number) {
-  currentPage.value = val;
-  getList();
+function changePage(page: number) {
+  currentPage.value = page
+  getList()
 }
 
-// 处理每页条数改变
-function handleSizeChange(val: number) {
-  pageSize.value = val;
-  currentPage.value = 1;
-  getList();
-}
-
-// 重置
+// 刷新/重置
 function reset() {
-  currentPage.value = 1;
-  queryParams.value.isCustom = true;
-  getList();
+  currentPage.value = 1
+  getList()
 }
 
-onBeforeMount(() => {
-  getList();
-});
+onMounted(() => {
+  getList()
+})
 
-// function useSticker(item) {
-//   canvasStickerOptions.value = item.meta.data;
-//   message.success("引用成功");
-// }
-
-function useInCanvasSticker(item) {
-  // 这里选择的是 sticker 素材库资源，不是 custom_sticker 编辑记录。
-  // 保存当前画布时应创建新的 custom_sticker，不能覆盖此前的编辑作品。
-  currentEditingCustomStickerId.value = null;
-  currentEditingCustomStickerFolderId.value = null;
+function useInCanvasSticker(item: any) {
+  currentEditingCustomStickerId.value = null
+  currentEditingCustomStickerFolderId.value = null
   if (item.meta?.data) {
-    canvasStickerOptions.value = item.meta.data;
-    restoreAgentDesignProvenance(canvasStickerOptions.value, item.meta);
+    canvasStickerOptions.value = item.meta.data
+    restoreAgentDesignProvenance(canvasStickerOptions.value, item.meta)
   } else {
     canvasStickerOptions.value = {
-      unit: "px",
+      unit: 'px',
       showCanvasRealSize: false,
       supportBackgroundColor: {
-        type: "pure",
-        color: "rgba(0,0,0,0)",
+        type: 'pure',
+        color: 'rgba(0,0,0,0)',
       },
       svgFilter: {
         children: [],
       },
       children: [createDefaultCanvasChildcanvasStickerOptions()],
-    };
+    }
     addCanvasChild({
-      type: "image",
+      type: 'image',
       imageInfo: item,
-    });
-    clearAgentDesignProvenance(canvasStickerOptions.value);
+    })
+    clearAgentDesignProvenance(canvasStickerOptions.value)
   }
-  menuState.value.showProject = false;
-  setActiveMenu(menuItems.canvas);
-  message.success("已加载到贴纸制作");
+  menuState.value.showProject = false
+  setActiveMenu(menuItems.canvas)
+  message.success('已加载到贴纸制作')
 }
 
-async function deleteItem(item) {
-  await s1Confirm({
-    content: "确认删除该贴纸吗？",
-  });
-
-  await Api.deleteSticker({ids:[item.id]});
-  reset();
-  message.success("删除成功");
+async function deleteItem(item: any) {
+  try {
+    await s1Confirm({
+      content: '确认删除该贴纸吗？',
+    })
+    await Api.deleteSticker({ ids: [item.id] })
+    reset()
+    message.success('删除成功')
+  } catch (err) {
+    // cancelled
+  }
 }
 
-function download(item) {
-  Api.downloadCOSFile(item.url);
+function download(item: any) {
+  Api.downloadCOSFile(item.url)
 }
 
-const currentItem = ref({});
+const currentItem = ref({} as any)
+const showFormModal = ref(false)
+const submitLoading = ref(false)
+const editForm = ref({} as any)
 
-const showFormModal = ref(false);
-
-const submitLoading = ref(false);
-const editForm = ref({} as any);
 // 编辑
-function edit(item) {
+function edit(item: any) {
   editForm.value = {
-    ...item
-  };
-  showFormModal.value = true;
-  currentItem.value = item;
+    ...item,
+  }
+  showFormModal.value = true
+  currentItem.value = item
 }
 
 async function ok() {
-  submitLoading.value = true;
-  let res = await Api.updateSticker(editForm.value);
-  message.success("修改成功");
-  submitLoading.value = false;
-  let ind = list.value.indexOf(currentItem.value);
-
-  // 这里可以保存关联的信息
-  list.value[ind] = {
-    ...currentItem.value,
-    ...res,
-  };
+  submitLoading.value = true
+  try {
+    let res = await Api.updateSticker(editForm.value)
+    message.success('修改成功')
+    let ind = list.value.indexOf(currentItem.value)
+    if (ind !== -1) {
+      list.value[ind] = {
+        ...currentItem.value,
+        ...res,
+      }
+    }
+    showFormModal.value = false
+  } catch (err: any) {
+    message.error(err?.message || '修改失败')
+  } finally {
+    submitLoading.value = false
+  }
 }
 
-const { open } = useStickerDetailModal();
+const { open } = useStickerDetailModal()
 
-function itemClick(item) {
-  currentItem.value = item;
-  open(item);
+function itemClick(item: any) {
+  currentItem.value = item
+  open(item)
 }
 
-/**
- * @method 在工作台中编辑
- */
-function editStickerInWorkspace(item) {}
+const showRepeatModal = ref(false)
+const currentPreviewItem = ref<any>(null)
+const previewImages = ref<any[]>([])
 
-const showRepeatModal = ref(false);
-const currentPreviewItem = ref(null);
-const previewImages = ref([]);
-
-function showRepeatEffect(item) {
-  currentPreviewItem.value = item;
-  showRepeatModal.value = true;
+function showRepeatEffect(item: any) {
+  currentPreviewItem.value = item
+  showRepeatModal.value = true
 }
 
-function onImageLoad(event) {
-  const img = event.target;
-  const wrapper = img.parentElement;
+function onImageLoad(event: any) {
+  const img = event.target
+  const wrapper = img.parentElement
   
-  // 获取图片原始宽高比
-  const aspectRatio = img.naturalWidth / img.naturalHeight;
+  const aspectRatio = img.naturalWidth / img.naturalHeight
+  const maxWidth = 150
+  const maxHeight = 150
   
-  // 设置最大尺寸
-  const maxWidth = 150;
-  const maxHeight = 150;
-  
-  // 根据宽高比计算实际尺寸
-  let width, height;
+  let width, height
   if (aspectRatio > 1) {
-    // 宽图
-    width = Math.min(maxWidth, img.naturalWidth);
-    height = width / aspectRatio;
+    width = Math.min(maxWidth, img.naturalWidth)
+    height = width / aspectRatio
   } else {
-    // 高图
-    height = Math.min(maxHeight, img.naturalHeight);
-    width = height * aspectRatio;
+    height = Math.min(maxHeight, img.naturalHeight)
+    width = height * aspectRatio
   }
   
-  // 设置容器尺寸
-  wrapper.style.width = `${width}px`;
-  wrapper.style.height = `${height}px`;
+  wrapper.style.width = `${width}px`
+  wrapper.style.height = `${height}px`
 }
 </script>
 
@@ -446,8 +438,9 @@ function onImageLoad(event) {
   width: 100%;
   overflow: hidden;
   background: var(--1s-control-surface-muted);
-  padding: 10px;
-  border-radius: 8px;
+  padding: 16px;
+  border-radius: var(--1s-radius-lg);
+  border: 1px solid var(--1s-border-color);
   display: flex;
   justify-content: center;
   align-items: center;

@@ -198,34 +198,26 @@ export function resolveAgentTaskSpec(
     delivery = options.delivery || delivery;
   }
 
+  // 用户在弹窗中配置的显式参数具有最高优先级
+  if (options.outputKind) outputKind = options.outputKind;
+  if (options.source) source = options.source;
+  if (options.intent) intent = options.intent;
+  if (options.delivery) delivery = options.delivery;
+
   if (
     context.hasReferenceImage &&
-    preset !== "custom"
+    preset !== "custom" &&
+    source !== "blank"
   ) {
     source = "reference-image";
   }
 
   const inferredCount = inferCount(userMessage, 2);
-  const useConfiguredCounts =
-    preset !== "standard" || context.execution === "automatic";
   const memberCount =
     outputKind === "group"
-      ? clampCount(
-          useConfiguredCounts ? options.memberCount : undefined,
-          2,
-          12,
-          inferredCount,
-        )
+      ? clampCount(options.memberCount, 2, 12, inferredCount)
       : 1;
-  const jobCount =
-    outputKind === "independent-batch"
-      ? clampCount(
-          useConfiguredCounts ? options.jobCount : undefined,
-          1,
-          100,
-          inferCount(userMessage, 3),
-        )
-      : clampCount(options.jobCount, 1, 100, 1);
+  const jobCount = clampCount(options.jobCount, 1, 100, 1);
 
   return {
     preset,

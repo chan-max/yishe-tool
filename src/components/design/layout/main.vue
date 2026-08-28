@@ -180,18 +180,20 @@
     <save-model></save-model>
   </a-modal>
 
-  <!-- 个人项目弹层 -->
-
-  <a-modal
-    title="创作资源"
-    v-model:open="menuState.showProject"
-    width="100%"
-    :footer="null"
-    wrap-class-name="full-modal full-modal--project-resources"
-    :destroyOnClose="true"
-  >
-    <projectModal></projectModal>
-  </a-modal>
+  <!-- 创作资源弹层 (基于 shadcn-vue Dialog) -->
+  <Dialog v-model:open="menuState.showProject">
+    <DialogContent class="max-w-[94vw] w-[94vw] h-[88vh] max-h-[88vh] p-0 overflow-hidden flex flex-col rounded-2xl border-[var(--1s-border-color)] bg-[var(--1s-surface-background)] shadow-2xl">
+      <DialogHeader class="px-5 py-3 border-b border-[var(--1s-divider-color)] flex flex-row items-center justify-between space-y-0">
+        <div class="flex items-center gap-2">
+          <Sparkles class="h-4 w-4 text-[var(--1s-accent-color)]" />
+          <DialogTitle class="text-sm font-semibold">创作资源</DialogTitle>
+        </div>
+      </DialogHeader>
+      <div class="flex-1 overflow-hidden">
+        <projectModal />
+      </div>
+    </DialogContent>
+  </Dialog>
 
   <!-- 贴纸详细信息弹层 -->
   <stickerDetailModal></stickerDetailModal>
@@ -292,6 +294,9 @@ import stickerModal from "./sticker/modal.vue";
 import { Modal } from "ant-design-vue";
 import { createVNode } from "vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Sparkles } from "lucide-vue-next";
 import projectModal from "./project/index.vue";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { openLoginDialog } from "@/modules/main/view/user/login/index.tsx";
@@ -606,7 +611,7 @@ async function initAction() {
   flex: 1;
   min-width: 0;
   min-height: 0;
-  padding: var(--1s-canvas-stage-padding);
+  padding: 0;
   background-color: var(--1s-canvas-stage-background);
   background-image:
     linear-gradient(var(--1s-grid-line-color) 1px, transparent 1px),
@@ -628,12 +633,12 @@ async function initAction() {
 .design-layout__three-canvas,
 #threejs-canvas {
   position: absolute;
-  inset: var(--1s-canvas-inner-gap);
+  inset: 0;
   z-index: 1;
   overflow: hidden;
-  border: 1px solid var(--1s-accent-color-soft);
-  border-radius: var(--1s-radius-md);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .design-layout__basic-canvas {

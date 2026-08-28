@@ -1,44 +1,65 @@
 <template>
   <div class="container flex flex-col items-center">
+    <!-- 预览画布卡片 -->
     <div
       ref="canvasContainerRef"
       v-if="!showMainCanvas"
       v-loading="renderingLoading"
       v-bind="loadingOptions"
-      class="canvas-container mini-png-background"
+      class="canvas-preview-card mini-png-background"
     >
       <canvass></canvass>
-      <div class="canvas-container-bottom-menu">
-        <div style="flex: 1"></div>
+      <div class="canvas-preview-badge-overlay">
         <el-tooltip
           :hide-after="0"
-          content="小画布始终展示等比缩放的尺寸，大画布可以显示真实尺寸"
+          content="在中央工作区开启大画布全屏显示与高精度实时编辑"
+          placement="bottom"
         >
-          <el-button
+          <button
+            class="canvas-expand-pill-btn"
             @click="showMainCanvas = true"
-            :icon="FullScreen"
-            type="info"
-            text
-            bg
-            round
-            size="small"
           >
-            <span>大画布显示</span>
-          </el-button>
+            <el-icon :size="11"><FullScreen /></el-icon>
+            <span>大画布</span>
+          </button>
         </el-tooltip>
       </div>
     </div>
 
+    <!-- 顶部动作工具栏 -->
     <div class="canvas-actions-panel">
       <div class="canvas-actions-panel__row">
         <el-button
-          class="canvas-action-button"
-          plain
+          class="canvas-action-button canvas-action-button--primary"
+          type="primary"
           size="small"
           @click="handleUploadClick"
           :disabled="shouldUpdateCanvasSticker && !isUpdatingSticker"
         >
-          保存自定义贴纸
+          <el-icon :size="12" class="mr-0.5"><Check /></el-icon>
+          {{ currentEditingCustomStickerId ? '保存修改' : '保存作品' }}
+        </el-button>
+
+        <el-button
+          v-if="shouldUpdateCanvasSticker && !isUpdatingSticker"
+          class="canvas-action-button update-required"
+          plain
+          size="small"
+          @click="genSticker"
+          :loading="isUpdatingSticker"
+        >
+          更新贴纸
+        </el-button>
+        <el-button
+          v-else
+          class="canvas-action-button"
+          plain
+          size="small"
+          @click="genSticker"
+          :loading="isUpdatingSticker"
+          :disabled="isUpdatingSticker"
+        >
+          {{ isUpdatingSticker ? '更新中...' : '已更新' }}
         </el-button>
 
         <el-button
@@ -48,11 +69,11 @@
           @click="exportPng"
           :disabled="shouldUpdateCanvasSticker && !isUpdatingSticker"
         >
-          导出PNG
+          导出
         </el-button>
 
         <el-popconfirm
-          title="确定清空画布？所有元素将被删除，此操作不可撤销。"
+          title="确定清空画布所有图层？"
           confirm-button-text="清空"
           cancel-button-text="取消"
           @confirm="clearCanvasChildren"
@@ -64,15 +85,15 @@
               size="small"
               type="danger"
             >
-              清空画布
+              清空
             </el-button>
           </template>
         </el-popconfirm>
 
         <a-dropdown arrow placement="bottom">
           <div class="canvas-actions-panel__dropdown-trigger">
-            <el-button class="canvas-action-button" plain size="small">
-              更多
+            <el-button class="canvas-action-button canvas-action-button--more" plain size="small">
+              •••
             </el-button>
           </div>
           <template #overlay>
@@ -86,88 +107,82 @@
             </a-menu>
           </template>
         </a-dropdown>
-
-        <el-tooltip
-          v-if="shouldUpdateCanvasSticker && !isUpdatingSticker"
-          content="画布内容已更改，请先更新贴纸后再进行上传或导出操作"
-          placement="top"
-        >
-          <span class="canvas-actions-panel__tooltip-trigger">
-            <el-button
-              class="canvas-action-button"
-              plain
-              size="small"
-              @click="genSticker"
-              :loading="isUpdatingSticker"
-              :disabled="isUpdatingSticker"
-              :class="{ 'update-required': shouldUpdateCanvasSticker }"
-            >
-              <template v-if="isUpdatingSticker"> 正在更新... </template>
-              <template v-else>
-                {{ shouldUpdateCanvasSticker ? "更新贴纸" : "贴纸已更新" }}
-              </template>
-            </el-button>
-          </span>
-        </el-tooltip>
-        <el-button
-          v-else
-          class="canvas-action-button"
-          plain
-          size="small"
-          @click="genSticker"
-          :loading="isUpdatingSticker"
-          :disabled="isUpdatingSticker"
-          :class="{ 'update-required': shouldUpdateCanvasSticker }"
-        >
-          <template v-if="isUpdatingSticker"> 正在更新... </template>
-          <template v-else>
-            {{ shouldUpdateCanvasSticker ? "更新贴纸" : "贴纸已更新" }}
-          </template>
-        </el-button>
-        <div class="canvas-actions-panel__spacer"></div>
       </div>
     </div>
 
-    <div style="width: 100%; padding: 1rem 1rem 0">
-      <el-select v-model="currentOperatingCanvasChildId">
-        <template #label="{ label }">
-          <div style="font-size: 1rem">
-            {{ canvasChildLabelMap[currentOperatingCanvasChild.type] }}
-          </div>
-        </template>
-
-        <template v-for="(item, index) in canvasStickerOptions.children">
-          <el-option
-            class="canvas-child-select-option"
-            :value="item.id"
-            :label="canvasChildLabelMap[item.type]"
-          >
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                font-size: 1rem;
-                height: 100%;
-              "
-              @mouseenter="optionMouseenter(item)"
-              @mouseleave="optionMouseleave(item)"
-            >
-              {{ canvasChildLabelMap[item.type] }}
-              <div style="flex: 1"></div>
-              <el-button
-                v-if="!item.undeletable"
-                link
-                type="danger"
-                @click="remove(item.id)"
-              >
-                <el-icon size="14">
-                  <CircleCloseFilled></CircleCloseFilled>
-                </el-icon>
-              </el-button>
+    <!-- 图层选择条 -->
+    <div class="canvas-layer-selector">
+      <div class="canvas-layer-selector__label">
+        <span>当前编辑图层</span>
+        <span class="canvas-layer-count">({{ canvasStickerOptions.children?.length || 0 }})</span>
+      </div>
+      <div class="canvas-layer-selector__row">
+        <el-select
+          v-model="currentOperatingCanvasChildId"
+          size="small"
+          class="canvas-layer-select"
+        >
+          <template #label="{ label }">
+            <div class="canvas-layer-selected-text">
+              <span class="canvas-layer-dot" />
+              <span>{{ canvasChildLabelMap[currentOperatingCanvasChild.type] }}</span>
             </div>
-          </el-option>
-        </template>
-      </el-select>
+          </template>
+
+          <template v-for="(item, index) in canvasStickerOptions.children" :key="item.id">
+            <el-option
+              class="canvas-child-select-option"
+              :value="item.id"
+              :label="canvasChildLabelMap[item.type]"
+            >
+              <div
+                class="canvas-layer-option-item"
+                @mouseenter="optionMouseenter(item)"
+                @mouseleave="optionMouseleave(item)"
+              >
+                <span>{{ canvasChildLabelMap[item.type] }}</span>
+                <div style="flex: 1"></div>
+                <el-button
+                  v-if="item.type !== 'canvas' && item.type !== 'html' && item.id !== 'this_is_html_id'"
+                  link
+                  type="danger"
+                  size="small"
+                  @click.stop="remove(item.id)"
+                >
+                  <el-icon size="12">
+                    <CircleCloseFilled></CircleCloseFilled>
+                  </el-icon>
+                </el-button>
+              </div>
+            </el-option>
+          </template>
+        </el-select>
+
+        <!-- 当前选中图层的快捷删除按钮 (画布与主代码画布不展示) -->
+        <el-tooltip
+          v-if="currentOperatingCanvasChild?.type !== 'canvas' && currentOperatingCanvasChild?.type !== 'html' && currentOperatingCanvasChild?.id !== 'this_is_html_id'"
+          content="删除当前选中图层"
+          placement="top"
+          :hide-after="0"
+        >
+          <el-popconfirm
+            :title="`确定删除当前【${canvasChildLabelMap[currentOperatingCanvasChild.type] || '图层'}】？`"
+            confirm-button-text="删除"
+            cancel-button-text="取消"
+            @confirm="remove(currentOperatingCanvasChild.id)"
+          >
+            <template #reference>
+              <button
+                type="button"
+                class="canvas-layer-delete-btn"
+                title="删除当前图层"
+              >
+                <el-icon :size="13"><CircleCloseFilled /></el-icon>
+              </button>
+            </template>
+          </el-popconfirm>
+        </el-tooltip>
+      </div>
     </div>
 
     <div class="operate">
@@ -180,8 +195,8 @@
     :centered="true"
     :destroyOnClose="true"
     width="540px"
-    title="保存自定义贴纸"
-    okText="保存自定义贴纸"
+    :title="currentEditingCustomStickerId ? '更新自定义贴纸（保存将覆盖原作品）' : '保存自定义贴纸（新建作品）'"
+    :okText="currentEditingCustomStickerId ? '确认更新' : '确认保存'"
     cancelText="取消"
     @ok="doUpload"
     :confirmLoading="submitLoading"
@@ -275,6 +290,7 @@ import {
   currentOperatingCanvasChild,
   currentEditingCustomStickerId,
   currentEditingCustomStickerFolderId,
+  currentEditingCustomStickerName,
   showMainCanvas,
   canvasChildLabelMap,
   renderingLoading,
@@ -465,7 +481,10 @@ function handleUploadClick() {
     return;
   }
   loadFolderTree();
-  editForm.value.folderId = currentEditingCustomStickerFolderId.value || null; // 编辑时保留原文件夹
+  if (currentEditingCustomStickerId.value) {
+    editForm.value.name = currentEditingCustomStickerName.value || editForm.value.name;
+    editForm.value.folderId = currentEditingCustomStickerFolderId.value || null;
+  }
   showUploadModal.value = true;
 }
 
@@ -664,88 +683,214 @@ function genSticker() {
   flex-direction: column;
   align-items: center;
   overflow: hidden;
+  background: var(--1s-panel-background, #fafafa);
 }
 
-.canvas-container {
-  width: min(100%, 320px);
-  height: min(320px, calc(100vw - 48px));
+.canvas-preview-card {
+  width: calc(100% - 16px);
+  max-width: 320px;
+  height: min(280px, calc(100vw - 48px));
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 8px;
+  margin: 8px 8px 4px;
   position: relative;
   overflow: hidden;
-
-  // &:hover {
-
-  //     .canvas-container-bottom-menu {
-  //         bottom: 0px;
-  //     }
-  // }
+  border-radius: 8px;
+  border: 1px solid var(--1s-border-color, #e4e4e7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.canvas-container-bottom-menu {
-  width: 100%;
-  height: 48px;
-  position: fixed;
-  padding: 0 1rem;
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.2) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
+.canvas-preview-badge-overlay {
   position: absolute;
-  // bottom: -48px;
-  bottom: 0px;
-  display: flex;
+  bottom: 8px;
+  right: 8px;
+  z-index: 10;
+}
+
+.canvas-expand-pill-btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  transition: all 0.2s;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  color: #18181b;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.dark .canvas-expand-pill-btn {
+  background: rgba(24, 24, 27, 0.85);
+  color: #f4f4f5;
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+
+  &:hover {
+    background: #27272a;
+  }
 }
 
 .canvas-actions-panel {
   width: 100%;
-  padding: 10px 12px 8px;
+  padding: 4px 8px;
+  box-sizing: border-box;
 }
 
 .canvas-actions-panel__row {
   width: 100%;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 4px;
   min-width: 0;
 }
 
 .canvas-action-button {
   margin-left: 0 !important;
-  height: 28px;
-  min-width: 76px;
-  padding: 0 10px;
+  height: 24px !important;
+  padding: 0 8px !important;
+  font-size: 11px !important;
+  border-radius: 4px !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
   white-space: nowrap;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
 }
 
 .canvas-actions-panel__dropdown-trigger {
   display: inline-flex;
+  flex: 0 0 auto;
 }
 
-.canvas-actions-panel__spacer {
-  flex: 1 1 24px;
-  min-width: 12px;
-}
-
-.canvas-actions-panel__tooltip-trigger {
-  display: inline-flex;
+.canvas-action-button--more {
+  flex: 0 0 auto !important;
+  min-width: 24px !important;
+  padding: 0 6px !important;
+  font-weight: 700;
+  letter-spacing: 0.1em;
 }
 
 .canvas-action-button--primary {
-  min-width: 84px;
+  font-weight: 600;
+  background: var(--1s-accent-color, #09090b) !important;
+  border-color: var(--1s-accent-color, #09090b) !important;
+  color: #ffffff !important;
+}
+
+.dark .canvas-action-button--primary {
+  background: #fafafa !important;
+  border-color: #fafafa !important;
+  color: #09090b !important;
+}
+
+.canvas-layer-selector {
+  width: 100%;
+  padding: 4px 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  box-sizing: border-box;
+
+  .canvas-layer-selector__label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--1s-text-color-secondary, #71717a);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0 2px;
+  }
+
+  .canvas-layer-count {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--1s-text-color-tertiary, #a1a1aa);
+  }
+
+  .canvas-layer-selector__row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .canvas-layer-select {
+    flex: 1;
+    min-width: 0;
+
+    :deep(.el-select__wrapper) {
+      height: 26px !important;
+      min-height: 26px !important;
+      padding: 0 8px !important;
+      font-size: 11px !important;
+      border-radius: 4px !important;
+      background: var(--1s-elevated-background, #f4f4f5);
+      border: 1px solid var(--1s-border-color, #e4e4e7);
+      box-shadow: none !important;
+    }
+  }
+
+  .canvas-layer-delete-btn {
+    height: 26px;
+    width: 26px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: var(--1s-elevated-background, #f4f4f5);
+    border: 1px solid var(--1s-border-color, #e4e4e7);
+    color: #ef4444;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.4);
+      transform: scale(1.05);
+    }
+  }
+
+  .canvas-layer-selected-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .canvas-layer-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--1s-accent-color, #09090b);
+    flex-shrink: 0;
+  }
+
+  .canvas-layer-option-item {
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    height: 100%;
+    width: 100%;
+  }
 }
 
 .operate {
@@ -754,37 +899,10 @@ function genSticker() {
   overflow: auto;
 }
 
-.title {
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-.label {
-  line-height: 22px;
-}
-
 // 需要更新贴纸时的样式
 :deep(.update-required) {
-  color: #f56c6c !important;
-  font-weight: bold !important;
-
-  &:hover {
-    color: #f56c6c !important;
-    opacity: 0.8;
-  }
-}
-
-@media (max-width: 1080px) {
-  .canvas-actions-panel {
-    padding-inline: 10px;
-  }
-
-  .canvas-actions-panel__row {
-    gap: 6px;
-  }
-
-  .canvas-actions-panel__spacer {
-    display: none;
-  }
+  color: #f59e0b !important;
+  border-color: #f59e0b !important;
+  font-weight: 600 !important;
 }
 </style>

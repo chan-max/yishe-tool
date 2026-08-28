@@ -5,16 +5,16 @@
         </template>
         <template #name> 圆角尺寸 </template>
         <template #content>
-            <div class="flex items-center" style="column-gap:1rem;">
+            <div class="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <span>水平</span>
                 <el-popover  width="180" trigger="click" popper-class="el-popover-operation">
                     <template #reference>
                         <el-input size="small"  min="0" step="1"
                             type="number"
-                        style="width:80px;"
+                        style="width:72px;"
                             v-model.number="model.horizontal.value">
                             <template #suffix>
-                                <div style="font-size:1rem;"> {{ model.horizontal.unit }}
+                                <div class="text-[10px] text-muted-foreground"> {{ model.horizontal.unit }}
                                 </div>
                             </template>
                         </el-input>
@@ -24,7 +24,7 @@
                         <el-col :span="24">
                             <el-radio-group v-model="model.horizontal.unit" size="small">
                                 <el-radio v-for="u in unitOptions" :value="u.value">
-                                    <span style="font-size: 1rem;">{{ u.label }}</span>
+                                    <span class="text-xs">{{ u.label }}</span>
                                 </el-radio>
                             </el-radio-group>
                         </el-col>
@@ -35,10 +35,10 @@
                     <template #reference>
                         <el-input size="small"  min="0" step="1"
                             type="number"
-                            style="width:80px;"
+                            style="width:72px;"
                             v-model.number="model.vertical.value">
                             <template #suffix>
-                                <div style="font-size:1rem;"> {{ model.vertical.unit }}
+                                <div class="text-[10px] text-muted-foreground"> {{ model.vertical.unit }}
                                 </div>
                             </template>
                         </el-input>
@@ -48,7 +48,7 @@
                         <el-col :span="24">
                             <el-radio-group v-model="model.vertical.unit" size="small">
                                 <el-radio v-for="u in unitOptions" :value="u.value">
-                                    <span style="font-size: 1rem;">{{ u.label }}</span>
+                                    <span class="text-xs">{{ u.label }}</span>
                                 </el-radio>
                             </el-radio-group>
                         </el-col>

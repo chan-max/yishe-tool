@@ -2,7 +2,7 @@
     <el-popover trigger="click" width="340">
         <div class="addchild">
             <template v-for="v, k in canvasChildLabelMap">
-                <el-button v-if="k !== 'canvas'" size="small" @click="add(k)" round> {{ v }} </el-button>
+                <el-button v-if="k !== 'canvas' && k !== 'html'" size="small" @click="add(k)" round> {{ v }} </el-button>
             </template>
       
             <div style="flex: 1"></div>

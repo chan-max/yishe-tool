@@ -8,11 +8,11 @@
             <el-tooltip content="纠错等级越高，二维码在损坏的情况下扫描成功率越高" :hide-after="0">
                 <el-select v-model="model" size="small" placeholder="" style="width:120px">
                     <template #label="{label}">
-                        <div style="font-size: 1rem;">    {{ label }}</div>
+                        <div class="text-[11px]">{{ label }}</div>
                     </template>
                     <el-option v-for="item in errorCorrectionLevelOptions" :key="item.value" :label="item.label"
                         :value="item.value">
-                        <span> {{ item.label }}</span>
+                        <span class="text-xs">{{ item.label }}</span>
                     </el-option>
                 </el-select>
             </el-tooltip>

@@ -9,14 +9,11 @@
                 <div>
                     <el-popover trigger="click" width="180" popper-class="el-popover-operation">
                         <template #reference>
-                            <el-button link>
-                                <div style="font-size: 1rem;display:flex;column-gap:.5rem;">
-                                    <span>x:</span>
-                                    <span> {{ x }} </span>
-                                    <span> y:</span>
-                                    <span> {{ y }} </span>
-                                    <span>z:</span>
-                                    <span>{{ z }}</span>
+                            <el-button link size="small">
+                                <div class="flex items-center gap-1.5 text-[11px] text-muted-foreground font-mono">
+                                    <span>X: {{ x }}</span>
+                                    <span>Y: {{ y }}</span>
+                                    <span>Z: {{ z }}</span>
                                 </div>
                             </el-button>
                         </template>

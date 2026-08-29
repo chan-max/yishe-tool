@@ -769,6 +769,7 @@ async function handleRemoteCommand(data: any) {
         const { designAgent } = await import("@/ai/langgraph");
         const message = payload?.message;
         const automatic = payload?.executionMode === "automatic";
+        const taskOptions = payload?.taskOptions || payload?.task || undefined;
         if (!message) throw new Error("缺少 message 参数");
         if (activeRemoteRequestId || designAgent.state.status !== "idle") {
           result.phase = "rejected";
@@ -795,12 +796,11 @@ async function handleRemoteCommand(data: any) {
 
         await designAgent.chat(
           message,
-          automatic
-            ? {
-                allowInteraction: false,
-                deliveryHandledExternally: false,
-              }
-            : undefined,
+          {
+            task: taskOptions,
+            allowInteraction: !automatic,
+            deliveryHandledExternally: false,
+          },
         );
         if (designAgent.state.error) {
           throw new Error(designAgent.state.error);
@@ -825,9 +825,55 @@ async function handleRemoteCommand(data: any) {
         result.toolCallsCount = msgs.filter(
           (m: any) => m.role === "tool",
         ).length;
+
+        // 提取生成的产物数据 (贴纸 / 组图)
+        const outputs: Array<{
+          type: "sticker" | "image-group";
+          name?: string;
+          url?: string;
+          customStickerId?: string;
+          stickerId?: string;
+          groupId?: string;
+          stickersCount?: number;
+        }> = [];
+
+        for (const m of msgs) {
+          if (m.role === "tool" && (m.meta as any)?.toolResult) {
+            const tr = (m.meta as any).toolResult;
+            if (tr?.success && tr?.data) {
+              if (tr.data.customStickerId || tr.data.url) {
+                outputs.push({
+                  type: "sticker",
+                  name: tr.data.name,
+                  url: tr.data.url,
+                  customStickerId: tr.data.customStickerId,
+                  stickerId: tr.data.stickerId,
+                });
+              }
+              if (tr.data.groupId) {
+                outputs.push({
+                  type: "image-group",
+                  name: tr.data.name,
+                  groupId: tr.data.groupId,
+                  stickersCount: tr.data.stickersCount || tr.data.stickerIds?.length,
+                });
+              }
+            }
+          }
+        }
+        result.outputs = outputs;
+
         result.message = lastAssistant?.content
           ? `Agent 已完成，共 ${result.toolCallsCount} 次工具调用`
           : "Agent 对话已完成";
+        break;
+      }
+      case "snapshot": {
+        const { captureCanvasForAI } = await import("@/ai/capture");
+        const snapshot = await captureCanvasForAI();
+        result.success = true;
+        result.snapshot = snapshot;
+        result.message = "已获取当前画布截图";
         break;
       }
       case "batch-start": {

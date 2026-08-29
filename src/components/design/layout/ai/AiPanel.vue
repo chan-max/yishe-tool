@@ -1086,7 +1086,10 @@ function formatToolName(name: string): string {
     element_setTextContent: "修改文字",
     element_setBackground: "修改背景",
     resource_searchImage: "搜索图片",
+    resource_searchSticker: "搜索贴纸素材",
     resource_searchFont: "搜索字体",
+    resource_searchCustomSticker: "搜索模板",
+    canvas_loadCustomSticker: "加载模板",
     ask_choice: "询问",
     request_feedback: "反馈",
   };

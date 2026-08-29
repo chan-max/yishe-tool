@@ -7,6 +7,7 @@ const RESOURCE_TOOL_NAMES = new Set([
   "resource.searchSticker",
   "resource.searchSentence",
   "resource.searchTextDocument",
+  "resource.searchCustomSticker",
 ]);
 
 export function isResourceToolName(toolName: string): boolean {

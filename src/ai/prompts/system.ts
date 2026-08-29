@@ -63,9 +63,10 @@ function buildRolePrompt(): string {
 // ============ Layer 3: 资源使用 ============
 
 function buildResourceGuidePrompt(): string {
-  return `## 素材库 / 字体 / 文案 / 文档
+  return `## 素材库 / 模板库 / 字体 / 文案 / 文档
 
-- resource.searchSticker：搜索图片/贴纸/插画候选
+- resource.searchCustomSticker：搜索用户的自定义贴纸/成品设计模板。当用户希望参考、复刻、或制作与已有作品类似风格的主题时优先使用。命中后可调用 canvas.loadCustomSticker 直接载入完整排版，然后进行文案替换与素材微调
+- resource.searchSticker：搜索图片/贴纸/插画等基础原子素材
 - resource.searchFont：搜索字体候选
 - resource.searchSentence：搜索短文案候选
 - resource.searchTextDocument：搜索长文本/知识文档候选

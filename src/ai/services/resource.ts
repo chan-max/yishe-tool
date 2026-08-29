@@ -116,6 +116,27 @@ export interface TextDocumentResource {
   tags: string | null;
 }
 
+export interface CustomStickerResource {
+  id: string;
+  name: string;
+  description: string;
+  keywords: string;
+  url: string;
+  width: number;
+  height: number;
+  aspectRatio: number;
+  hasEditableCanvasData: boolean;
+  folderId?: string | null;
+  createdAt?: string;
+}
+
+export interface CustomStickerSearchParams {
+  query?: string;
+  limit?: number;
+  page?: number;
+  folderId?: string | null;
+}
+
 export interface FontSearchParams {
   query?: string; // 搜索关键词
   limit?: number; // 返回数量
@@ -159,7 +180,8 @@ export interface ResourceSearchResult {
     | FontResource[]
     | ImageResource[]
     | SentenceResource[]
-    | TextDocumentResource[];
+    | TextDocumentResource[]
+    | CustomStickerResource[];
   total: number;
   query: string;
 }
@@ -611,6 +633,64 @@ export async function searchTextDocumentResources(
   }
 }
 
+// ============ 自定义贴纸/模板资源服务 ============
+
+export async function searchCustomStickerResources(
+  params: CustomStickerSearchParams,
+): Promise<ResourceSearchResult> {
+  const cacheKey = getCacheKey("customSticker", params);
+  const cached = getFromCache<ResourceSearchResult>(cacheKey);
+  if (cached) {
+    console.log("[ResourceService] 自定义贴纸模板缓存命中:", params.query);
+    return cached;
+  }
+
+  try {
+    const apiParams: Record<string, any> = {
+      searchText: params.query || "",
+      page: params.page || 1,
+      pageSize: params.limit || 10,
+    };
+    if (params.folderId) apiParams.folderId = params.folderId;
+
+    const response = await apiInstance.get("/api/custom-sticker", {
+      params: apiParams,
+    });
+    const result = response.data?.data || response.data;
+    const list = result?.list || result || [];
+
+    const searchResult: ResourceSearchResult = {
+      items: (Array.isArray(list) ? list : []).map((item: any) => ({
+        id: String(item.id),
+        name: item.name || "未命名模板",
+        description: item.description || "",
+        keywords: item.keywords || "",
+        url: item.url || "",
+        width: item.width || 0,
+        height: item.height || 0,
+        aspectRatio:
+          item.aspectRatio || (item.height ? item.width / item.height : 1),
+        hasEditableCanvasData: Boolean(
+          item?.meta?.data || item?.meta?.canvasData,
+        ),
+        folderId: item.folderId || null,
+        createdAt: item.createdAt || "",
+      })),
+      total: result?.total || (Array.isArray(list) ? list.length : 0),
+      query: params.query || "",
+    };
+
+    if (searchResult.items.length > 0) {
+      setCache(cacheKey, searchResult);
+    }
+
+    return searchResult;
+  } catch (error) {
+    console.error("[ResourceService] 搜索自定义贴纸模板失败:", error);
+    return { items: [], total: 0, query: params.query || "" };
+  }
+}
+
 // ============ 单个资源获取 ============
 
 export async function getFontResource(
@@ -829,6 +909,31 @@ export const resourceTools = [
       },
     },
   },
+  {
+    type: "function" as const,
+    function: {
+      name: "resource.searchCustomSticker",
+      description: `从用户的自定义贴纸/模板库中搜索已有的成品设计与模板作品。
+当用户需要复刻、修改、或者设计与已有作品类似风格的主题时，优先调用此工具搜索模板。
+返回列表包含 id/name/description/keywords/url/hasEditableCanvasData。
+如果命中合适模板，可以直接调用 canvas.loadCustomSticker({ customStickerId: id }) 将其完整排版加载到画布上，然后在此成熟排版基底上进行文案替换、插画替换或局部微调！`,
+      parameters: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description:
+              "搜索关键词或风格描述，如：咖啡、日系、复古、中秋、标牌、国潮",
+          },
+          limit: {
+            type: "number",
+            description: "返回数量，默认 5，最大 20",
+          },
+        },
+        required: ["query"],
+      },
+    },
+  },
 ];
 
 // ============ AI 工具执行 ============
@@ -994,6 +1099,38 @@ export async function executeResourceTool(
       };
     }
 
+    case "resource.searchCustomSticker": {
+      const result = await searchCustomStickerResources({
+        query: args.query,
+        limit: args.limit || 5,
+      });
+      if (result.items.length === 0) {
+        return {
+          success: true,
+          data: [],
+          total: 0,
+          query: result.query,
+          message: `未找到与"${result.query}"相关的自定义贴纸模板，建议从零创建全新设计。`,
+        };
+      }
+      return {
+        success: true,
+        data: result.items.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          description: item.description,
+          url: item.url,
+          width: item.width,
+          height: item.height,
+          aspectRatio: item.aspectRatio,
+          hasEditableCanvasData: item.hasEditableCanvasData,
+          keywords: item.keywords,
+        })),
+        total: result.total,
+        query: result.query,
+      };
+    }
+
     default:
       return { success: false, error: `未知工具: ${toolName}` };
   }
@@ -1049,6 +1186,7 @@ export const resourceService = {
   searchImage: searchImageResources,
   searchSentence: searchSentenceResources,
   searchTextDocument: searchTextDocumentResources,
+  searchCustomSticker: searchCustomStickerResources,
   getFont: getFontResource,
   getImage: getImageResource,
   executeTool: executeResourceTool,

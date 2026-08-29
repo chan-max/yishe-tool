@@ -61,6 +61,8 @@ const REUSABLE_ACTIONS = new Set([
   "resource.searchSticker",
   "resource.searchSentence",
   "resource.searchTextDocument",
+  "resource.searchCustomSticker",
+  "canvas.loadCustomSticker",
 ]);
 
 const REQUIRED_DELIVERY_ACTIONS = new Set([
@@ -256,6 +258,8 @@ function hasExplicitResourceRequest(
   type: string,
 ): boolean {
   const patterns: Record<string, RegExp> = {
+    customSticker:
+      /模板库|自定义贴纸|搜索.{0,10}模板|使用.{0,10}模板|参考.{0,10}模板|基于.{0,10}模板|同款|现有作品/i,
     font: /字体库|搜索.{0,10}字体|检索.{0,10}字体|使用.{0,10}(手写体|标题字|字体资源)/i,
     image:
       /素材库|贴纸库|搜索.{0,12}(图片|贴纸|插画|素材)|检索.{0,12}(图片|贴纸|插画|素材)|抠图素材/i,
@@ -377,6 +381,14 @@ export function buildExecutionPlan(
     );
   }
 
+  if (hasExplicitResourceRequest(userMessage, "customSticker")) {
+    steps.push(
+      createStep(
+        "resource.searchCustomSticker",
+        "搜索用户的自定义贴纸/成品设计模板",
+      ),
+    );
+  }
   if (hasExplicitResourceRequest(userMessage, "font")) {
     steps.push(createStep("resource.searchFont", "搜索用户明确要求的字体资源"));
   }
@@ -538,12 +550,17 @@ export function ensurePlanStep(
   );
   if (pendingIndex >= 0) return pendingIndex;
 
-  if (REUSABLE_ACTIONS.has(action)) {
+  if (REUSABLE_ACTIONS.has(action) || REQUIRED_DELIVERY_ACTIONS.has(action)) {
     const existingIndex = plan.steps.findIndex((step) =>
       planActionsMatch(step.action, action),
     );
     if (existingIndex >= 0) return existingIndex;
   }
+
+  const failedIndex = plan.steps.findIndex(
+    (step) => step.status === "failed" && planActionsMatch(step.action, action),
+  );
+  if (failedIndex >= 0) return failedIndex;
 
   plan.steps.push(createStep(action, description));
   return plan.steps.length - 1;

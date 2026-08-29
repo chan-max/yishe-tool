@@ -767,6 +767,8 @@ function describePlanAction(toolName: string): string {
     "resource.searchSticker": "搜索图片或贴纸素材",
     "resource.searchSentence": "搜索短文案",
     "resource.searchTextDocument": "搜索文档资料",
+    "resource.searchCustomSticker": "搜索自定义贴纸模板",
+    "canvas.loadCustomSticker": "加载自定义贴纸模板",
     "material.createImageGroup": "按成员顺序创建组图",
     ask_choice: "等待用户选择",
     request_feedback: "等待用户反馈",

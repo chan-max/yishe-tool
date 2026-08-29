@@ -107,6 +107,23 @@ export function translateToolResult(
         .join("\n\n");
       return `✅ 找到 ${items.length} 篇文档，可作为设计的文案与背景参考数据源:\n${list}`;
     }
+    case "resource.searchCustomSticker": {
+      const items = (result.data as any[]) || [];
+      if (items.length === 0) {
+        return `⚠️ 自定义贴纸模板库没有找到匹配模板。建议：从零开始使用 canvas.addHtml 进行全新排版设计。${result.message ? `\n${result.message}` : ""}`;
+      }
+      const list = items
+        .slice(0, 5)
+        .map(
+          (d: any, i: number) =>
+            `${i + 1}. ${d.name || "未命名模板"} | id:${d.id} | ${d.width}x${d.height} | 可编辑画布数据: ${d.hasEditableCanvasData ? "是" : "否"}${d.keywords ? " | " + d.keywords : ""}`,
+        )
+        .join("\n");
+      return `✅ 找到 ${items.length} 个模板候选。如果匹配度高，可以直接调用 canvas.loadCustomSticker({ customStickerId: "${items[0]?.id}" }) 载入排版，然后进行文案与插画微调；如果不合适，请继续全新创作。\n${list}`;
+    }
+    case "canvas.loadCustomSticker": {
+      return `✅ 模板加载成功: ${result.message || "已加载自定义贴纸模板到画布，可在此基础上修改文字或替换素材"}`;
+    }
     case "canvas.remove":
       return "✅ 元素已删除";
     case "canvas.updateAndSaveSticker": {

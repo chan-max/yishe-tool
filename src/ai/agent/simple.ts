@@ -2,6 +2,7 @@ import { reactive, computed, watch } from "vue";
 import { directChat } from "../direct-client";
 import { createDesignOperationContext } from "@/operations";
 import { canvasStickerOptions } from "@/components/design/layout/canvas";
+import { isAiPanelOpen } from "../store";
 import { buildSystemPrompt, buildImageAnalysisPrompt } from "../prompts/system";
 import { buildKnowledgePrompt } from "../knowledge";
 import { buildMatchedSkillPrompt } from "../skills";
@@ -2621,6 +2622,7 @@ export const designAgent = {
     userMessage: string,
     options: RunAgentLoopOptions = {},
   ): Promise<void> {
+    isAiPanelOpen.value = true;
     // 如果 agent 在等待用户响应，将输入作为交互响应
     if (agentState.status === "waiting_user") {
       console.log("[Agent] Submitting user response:", userMessage);
@@ -2866,6 +2868,19 @@ export const designAgent = {
       plan: undefined,
       lastToolCall: undefined,
       lastError: undefined,
-    });
   },
 };
+
+if (typeof window !== "undefined") {
+  (window as any).__1s_ai = {
+    chat: (prompt: string, options?: any) => {
+      isAiPanelOpen.value = true;
+      return designAgent.chat(prompt, options);
+    },
+    open: () => { isAiPanelOpen.value = true; },
+    close: () => { isAiPanelOpen.value = false; },
+    clear: () => designAgent.clearMessages(),
+    stop: () => designAgent.stop(),
+    getState: () => designAgent.state,
+  };
+}

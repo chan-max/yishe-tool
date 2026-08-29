@@ -25,13 +25,14 @@ canvas.updateAndSaveSticker({ name: "促销标签", description: "...", keywords
 ### 保存到指定文件夹
 canvas.updateAndSaveSticker({ folderId: "文件夹的UUID" })
 
-### 保存到文件夹 + 指定信息
-canvas.updateAndSaveSticker({ name: "促销标签", description: "...", keywords: "促销,红色", folderId: "文件夹UUID" })
+### 保存并同时导入到素材库
+canvas.updateAndSaveSticker({ autoImportToLibrary: true })
+- 保存到 custom_sticker（保留完整可编辑画布工程）的同时，自动克隆一份到普通 sticker 素材库并返回 stickerId
 
 ### 返回结果
-{ customStickerId, name, description, keywords, url, aiGenerated, metadataGenerationSource, source, prompt, promptHistoryCount }
+{ customStickerId, stickerId, importedToLibrary, name, description, keywords, url, aiGenerated, metadataGenerationSource, source, prompt, promptHistoryCount }
 - customStickerId: 自定义贴纸库中的作品 ID，可使用 canvas.loadCustomSticker 再次编辑
-- 不再返回 stickerId；制作组图若需要普通素材 ID，应先将作品导入素材库后使用返回的 sticker ID
+- stickerId: 若指定 autoImportToLibrary: true，则会返回导入到素材库后的普通素材 ID
 - url: 贴纸的图片地址，可直接用于后续展示
 - metadataGenerationSource: provided / prompt / vision / canvas-fallback
 - promptHistoryCount: 当前作品累计记录的提示词版本数

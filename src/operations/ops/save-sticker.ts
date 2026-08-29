@@ -5,7 +5,11 @@ import {
 } from "@/components/design/layout/canvas";
 import { canvasToFile } from "@/common/transform";
 import { uploadToCOS } from "@/api/cos";
-import { createCustomSticker, updateCustomSticker } from "@/api";
+import {
+  createCustomSticker,
+  updateCustomSticker,
+  importCustomStickerToLibrary,
+} from "@/api";
 import { useLoginStatusStore } from "@/store/stores/login";
 import Utils from "@/common/utils";
 import { captureCanvasForAI, renderCurrentCanvasNow } from "@/ai/capture";
@@ -346,6 +350,20 @@ registerOperation({
       type: "string",
       description: "编辑已有自定义贴纸时传入；不传则创建新的自定义贴纸",
     },
+    {
+      name: "autoImportToLibrary",
+      label: "同时导入素材库",
+      type: "boolean",
+      default: false,
+      description: "保存自定义贴纸后，是否同时物理复制一份到普通贴纸素材库（获取 stickerId）",
+    },
+    {
+      name: "materialFolderId",
+      label: "素材库文件夹ID",
+      type: "string",
+      placeholder: "留空则保存到素材库根目录",
+      description: "如果开启了同时导入素材库，可指定导入到素材库的目标文件夹ID",
+    },
   ],
   async execute(params, ctx) {
     let {
@@ -356,6 +374,8 @@ registerOperation({
       folderId,
       autoGenerateMeta = false,
       customStickerId: requestedCustomStickerId,
+      autoImportToLibrary = false,
+      materialFolderId,
     } = params;
     // 批量创作的每一张图都必须创建独立的 custom_sticker，不能沿用上一张的编辑 ID。
     const editingCustomStickerId = batchTaskState
@@ -477,8 +497,19 @@ registerOperation({
       if (!customStickerId) throw new Error("自定义贴纸已上传，但服务端未返回 customStickerId");
       currentEditingCustomStickerId.value = customStickerId;
       currentEditingCustomStickerFolderId.value = payload.folderId || null;
-      finishLibraryUpload(true);
+      finishLibraryUpload?.(true);
       finishLibraryUpload = null;
+      let importedSticker: any = null;
+      if (autoImportToLibrary) {
+        try {
+          importedSticker = await importCustomStickerToLibrary({
+            customStickerId,
+            folderId: materialFolderId || null,
+          });
+        } catch (importErr: any) {
+          console.warn("[SaveSticker] 自动导入素材库失败:", importErr);
+        }
+      }
 
       const nextBatchProgress = batchTaskState
         ? {
@@ -501,11 +532,17 @@ registerOperation({
         }
       }
 
+      const successMessage = importedSticker?.id
+        ? `贴纸「${name}」已保存到自定义贴纸，并已同步导入到素材库 (stickerId: ${importedSticker.id})`
+        : `贴纸「${name}」已保存到自定义贴纸`;
+
       return {
         success: true,
-        message: `贴纸「${name}」已保存到自定义贴纸`,
+        message: successMessage,
         data: {
           customStickerId,
+          stickerId: importedSticker?.id || null,
+          importedToLibrary: !!importedSticker?.id,
           name,
           description,
           keywords,

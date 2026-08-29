@@ -171,4 +171,7 @@ export enum Url {
   DESIGN_PROMPT_UNFAVORITE = "/api/design-prompt/unfavorite",
   DESIGN_PROMPT_BATCH = "/api/design-prompt/batch",
   DESIGN_PROMPT_STATS = "/api/design-prompt/stats",
+
+  // 客户端与扩展下载配置
+  GET_DOWNLOAD_CONFIG = "/api/system-config/downloads",
 }

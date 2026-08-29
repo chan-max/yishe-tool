@@ -1011,3 +1011,60 @@ export type {
   DesignPromptPageResponse,
   DesignPromptCategory,
 } from "../ai/design-prompts/types";
+
+export const DEFAULT_DOWNLOAD_CONFIG = {
+  cards: [
+    {
+      key: "client-unified",
+      title: "衣设桌面客户端",
+      platform: "Windows / macOS",
+      description: "跨平台生产力桌面终端，集成浏览器自动化、本地离线推理与批量视频渲染",
+      icon: "monitor",
+      actions: [
+        {
+          key: "windows",
+          label: "Windows 安装包 (.exe)",
+          downloadUrl:
+            "https://gh-proxy.org/https://github.com/1s-design/yishe-client/releases/latest/download/yishe-client.exe",
+        },
+        {
+          key: "macos",
+          label: "macOS 安装包 (.dmg)",
+          downloadUrl:
+            "https://gh-proxy.org/https://github.com/1s-design/yishe-client/releases/latest/download/yishe-client.dmg",
+        },
+      ],
+    },
+    {
+      key: "chrome-extension",
+      title: "衣设扩展系统",
+      platform: "Chrome / Edge 浏览器",
+      description: "全网爆款灵感素材一键采集、智能图层解析与电商快速铺货扩展",
+      icon: "puzzle",
+      actions: [
+        {
+          key: "extension-zip",
+          label: "下载扩展包 (.zip)",
+          downloadUrl:
+            "https://gh-proxy.org/https://github.com/1s-design/yishe-extensions/releases/latest/download/yishe-extensions.zip",
+        },
+      ],
+    },
+  ],
+};
+
+export async function getDownloadConfig() {
+  try {
+    const res: any = await apiInstance.get(Url.GET_DOWNLOAD_CONFIG);
+    if (res && res.data && res.data.cards) {
+      return res.data;
+    }
+    if (res && res.cards) {
+      return res;
+    }
+    return DEFAULT_DOWNLOAD_CONFIG;
+  } catch (e) {
+    return DEFAULT_DOWNLOAD_CONFIG;
+  }
+}
+

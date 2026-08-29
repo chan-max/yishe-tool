@@ -52,6 +52,21 @@
 
     <div class="designiy-header__spacer"></div>
 
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button
+          variant="ghost"
+          size="sm"
+          class="h-7 text-xs text-muted-foreground hover:text-foreground gap-1 px-2"
+          @click="showDownloadModal = true"
+        >
+          <Download class="h-3.5 w-3.5" />
+          <span>客户端</span>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">下载桌面客户端与浏览器扩展插件</TooltipContent>
+    </Tooltip>
+
     <Button variant="ghost" size="sm" class="h-7 text-xs text-muted-foreground hover:text-foreground">快速指南</Button>
 
     <Tooltip>
@@ -135,6 +150,8 @@
     </div>
     <user-avatar v-if="loginStatusStore.isLogin" />
     <Button @click="login" v-else variant="default" size="sm" class="login-btn">登录</Button>
+
+    <DownloadModal v-model:open="showDownloadModal" />
   </div>
 </template>
 
@@ -160,8 +177,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { Pencil, Sun, Moon } from "lucide-vue-next";
+import { Pencil, Sun, Moon, Download } from "lucide-vue-next";
 import { message } from "ant-design-vue";
+import DownloadModal from "./downloadModal/index.vue";
 import {
   currentEditingCustomStickerId,
   currentEditingCustomStickerName,
@@ -194,6 +212,8 @@ import { canvasStreamService } from "@/services/canvasStream";
 import { showAutocreateModal } from "./autocreate/index";
 import { batchProgress } from "@/ai/agent/batch";
 import { getAgentPhaseLabel } from "@/ai/agent/presentation";
+
+const showDownloadModal = ref(false);
 
 const batchIsRunning = computed(() =>
   ["preparing", "running", "paused"].includes(batchProgress.status),

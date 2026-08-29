@@ -2868,6 +2868,7 @@ export const designAgent = {
       plan: undefined,
       lastToolCall: undefined,
       lastError: undefined,
+    });
   },
 };
 

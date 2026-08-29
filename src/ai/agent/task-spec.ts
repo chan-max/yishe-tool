@@ -62,7 +62,21 @@ function clampCount(value: unknown, min: number, max: number, fallback: number) 
 }
 
 function inferCount(text: string, fallback: number): number {
-  const arabicMatch = text.match(/(\d{1,3})\s*(?:张|页|幅|个|套|组)/);
+  if (!text) return fallback;
+
+  // 1. 特殊关键词：正反面、双面、前后面固定为 2
+  if (/正反面|正反两面|双面|前后面|前后两面|前后两页/.test(text)) {
+    return 2;
+  }
+
+  // 2. 优先匹配显式总数声明（如“共2张”、“一共3张”、“总计4套”）
+  const totalMatch = text.match(/(?:共|一共|总共|总计|合计)\s*(\d{1,3})\s*(?:张|页|幅|个|套|组)/);
+  if (totalMatch) return clampCount(totalMatch[1], 1, 100, fallback);
+
+  // 3. 过滤掉序号（如“第1张”、“第2页”、“第一幅”），避免序号数字被误判为总数
+  const cleaned = text.replace(/第[0-9两一二三四五六七八九十]+\s*(?:张|页|幅|个|套|组|面)/g, " ");
+
+  const arabicMatch = cleaned.match(/(\d{1,3})\s*(?:张|页|幅|个|套|组)/);
   if (arabicMatch) return clampCount(arabicMatch[1], 1, 100, fallback);
 
   const chineseNumbers: Record<string, number> = {
@@ -77,7 +91,7 @@ function inferCount(text: string, fallback: number): number {
     九: 9,
     十: 10,
   };
-  const chineseMatch = text.match(/([两二三四五六七八九十])\s*(?:张|页|幅|个|套|组)/);
+  const chineseMatch = cleaned.match(/([两二三四五六七八九十])\s*(?:张|页|幅|个|套|组)/);
   return chineseMatch ? chineseNumbers[chineseMatch[1]] : fallback;
 }
 
@@ -216,7 +230,7 @@ export function resolveAgentTaskSpec(
   const inferredCount = inferCount(userMessage, 2);
   const memberCount =
     outputKind === "group"
-      ? clampCount(options.memberCount, 2, 12, inferredCount)
+      ? clampCount(options.memberCount, 2, 12, inferredCount >= 2 ? inferredCount : 2)
       : 1;
   const jobCount = clampCount(options.jobCount, 1, 100, 1);
 

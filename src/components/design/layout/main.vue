@@ -537,7 +537,7 @@ async function initAction() {
   height: var(--1s-header-height);
   border-bottom: 1px solid var(--1s-border-color);
   background: var(--1s-surface-background);
-  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+  box-shadow: 0 1px 0 var(--1s-border-color);
 }
 
 .design-layout__header-inner {
@@ -579,7 +579,7 @@ async function initAction() {
   width: var(--1s-right-panel-width);
   flex-shrink: 0;
   border-left: 1px solid var(--1s-border-color);
-  box-shadow: -1px 0 0 rgba(15, 23, 42, 0.03);
+  box-shadow: -1px 0 0 var(--1s-border-color);
   z-index: 4;
 }
 
@@ -654,7 +654,7 @@ async function initAction() {
   align-items: flex-end;
   justify-content: center;
   padding: 0 12px;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.06), transparent);
+  background: linear-gradient(to top, var(--1s-border-color), transparent);
 }
 
 .bg-transparent {

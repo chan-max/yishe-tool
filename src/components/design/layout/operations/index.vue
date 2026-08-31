@@ -209,17 +209,26 @@ async function handleExecute(op: OperationListItem) {
   border-radius: 10px;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    border-color var(--1s-transition-base),
+    box-shadow var(--1s-transition-base),
+    transform var(--1s-transition-base),
+    background-color var(--1s-transition-base);
   background: var(--1s-elevated-background);
 
   &:hover {
     border-color: var(--1s-accent-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--1s-shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 
   &--active {
     border-color: var(--1s-accent-color);
-    box-shadow: 0 0 0 1px var(--1s-accent-color);
+    box-shadow: 0 0 0 2px var(--1s-focus-ring-color);
   }
 }
 

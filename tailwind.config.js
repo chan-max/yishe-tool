@@ -56,6 +56,9 @@ export default {
         figma: '0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
         'figma-popover': '0 0 0 1px rgba(0, 0, 0, 0.08), 0 8px 24px -4px rgba(0, 0, 0, 0.12)',
         'figma-dark': '0 0 0 1px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.4)',
+        popover: 'var(--1s-shadow-popover)',
+        float: 'var(--1s-shadow-float)',
+        overlay: 'var(--1s-shadow-overlay)',
       },
       keyframes: {
         'accordion-down': {

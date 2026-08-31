@@ -324,13 +324,13 @@ watch(() => messages.value.length, scrollToBottom);
 
   :deep(.el-drawer) {
     pointer-events: auto;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--1s-shadow-lg);
   }
 
   :deep(.el-drawer__header) {
     margin-bottom: 0;
     padding: 16px 20px;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--1s-border-color);
     flex-shrink: 0;
   }
 

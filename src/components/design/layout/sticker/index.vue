@@ -262,7 +262,7 @@ getList();
 
   &:hover {
     border-color: var(--el-color-primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--1s-shadow-sm);
   }
 }
 

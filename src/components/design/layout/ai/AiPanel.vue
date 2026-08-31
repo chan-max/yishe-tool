@@ -2,30 +2,30 @@
   <div
     v-if="open || isOpen"
     ref="panelRef"
-    class="ai-panel fixed z-50 flex flex-col overflow-hidden rounded-2xl border-2 border-border/90 dark:border-white/15 bg-background text-foreground shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3),0_0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[0_24px_70px_-15px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.15)] select-none"
+    class="ai-panel fixed z-50 flex flex-col overflow-hidden rounded-2xl shadow-lg select-none"
     :class="{ 'is-dragging': isDragging }"
     :style="panelStyle"
   >
     <!-- 顶部 Header 拖拽把手区 -->
     <div
-      class="flex h-11 items-center justify-between border-b-2 border-border/70 bg-muted/40 px-3.5 select-none transition-colors"
-      :class="isDragging ? 'cursor-grabbing bg-muted/70' : 'cursor-grab hover:bg-muted/60'"
+      class="ai-panel-header flex h-11 items-center justify-between px-3.5 select-none transition-colors"
+      :class="isDragging ? 'cursor-grabbing' : 'cursor-grab'"
       @mousedown="onDragStart"
     >
       <!-- 左侧：图标 + 标题 + 模式 Badge -->
       <div class="flex items-center gap-2 min-w-0">
-        <div class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground shrink-0 shadow-xs">
+        <div class="ai-panel-logo flex h-6 w-6 items-center justify-center rounded-md shrink-0">
           <Sparkles class="h-3.5 w-3.5" />
         </div>
-        <span class="text-xs font-semibold tracking-tight text-foreground">AI 设计助手</span>
-        
+        <span class="ai-panel-title text-xs font-semibold tracking-tight">AI 设计助手</span>
+
         <!-- 运行模式 Tag -->
         <Tooltip>
           <TooltipTrigger as-child>
             <Badge
               variant="outline"
-              class="h-5 px-1.5 text-[10px] font-medium cursor-pointer transition-colors hover:bg-accent"
-              :class="aiSettings.mode === 'direct' ? 'border-emerald-500/30 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10' : 'border-blue-500/30 text-blue-600 dark:text-blue-400 bg-blue-500/10'"
+              class="ai-panel-mode-badge h-5 px-1.5 text-[10px] font-medium cursor-pointer transition-colors"
+              :class="aiSettings.mode === 'direct' ? 'border-emerald-500/30 text-emerald-600 bg-emerald-500/10' : 'border-blue-500/30 text-blue-600 bg-blue-500/10'"
               @click.stop="showSettingsModal = true"
             >
               {{ aiSettings.mode === 'direct' ? '直连' : '代理' }}
@@ -40,7 +40,7 @@
         <Badge
           v-if="isProcessing"
           variant="secondary"
-          class="h-5 gap-1 px-1.5 text-[10px] font-medium border border-amber-400/40 bg-amber-50 text-amber-900 dark:bg-amber-500/10 dark:text-amber-300"
+          class="ai-panel-status-badge h-5 gap-1 px-1.5 text-[10px] font-medium border border-amber-400/40 bg-amber-50 text-amber-900"
         >
           <span class="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
           <span class="max-w-[100px] truncate">{{ agentPhaseLabel }}</span>
@@ -51,41 +51,41 @@
       <div class="flex items-center gap-0.5 shrink-0" @mousedown.stop>
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button variant="ghost" size="icon-xs" class="h-7 w-7 text-muted-foreground hover:text-foreground" @click="showSettingsModal = true">
+            <button class="ai-panel-icon-btn h-7 w-7" @click="showSettingsModal = true">
               <Settings2 class="h-3.5 w-3.5" />
-            </Button>
+            </button>
           </TooltipTrigger>
           <TooltipContent side="bottom">AI 连接设置</TooltipContent>
         </Tooltip>
 
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button variant="ghost" size="icon-xs" class="h-7 w-7 text-muted-foreground hover:text-foreground" @click="copyConversationLog">
+            <button class="ai-panel-icon-btn h-7 w-7" @click="copyConversationLog">
               <Copy class="h-3.5 w-3.5" />
-            </Button>
+            </button>
           </TooltipTrigger>
           <TooltipContent side="bottom">复制对话日志</TooltipContent>
         </Tooltip>
 
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button variant="ghost" size="icon-xs" class="h-7 w-7 text-muted-foreground hover:text-foreground" @click="clearChat">
+            <button class="ai-panel-icon-btn h-7 w-7" @click="clearChat">
               <Trash2 class="h-3.5 w-3.5" />
-            </Button>
+            </button>
           </TooltipTrigger>
           <TooltipContent side="bottom">清空记录</TooltipContent>
         </Tooltip>
 
-        <Button variant="ghost" size="icon-xs" class="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10" @click="handleClose">
+        <button class="ai-panel-icon-btn ai-panel-close-btn h-7 w-7" @click="handleClose">
           <X class="h-3.5 w-3.5" />
-        </Button>
+        </button>
       </div>
     </div>
 
     <!-- 计划执行进度条 -->
-    <div v-if="planProgress" class="relative h-1 w-full bg-muted/60 overflow-hidden">
+    <div v-if="planProgress" class="ai-panel-progress relative h-1 w-full overflow-hidden">
       <div
-        class="h-full bg-gradient-to-r from-emerald-500 via-sky-500 to-primary transition-all duration-300 ease-out"
+        class="ai-panel-progress-bar h-full bg-gradient-to-r from-emerald-500 via-sky-500 to-blue-500 transition-all duration-300 ease-out"
         :style="{ width: (planProgress.settled / planProgress.total * 100) + '%' }"
       />
     </div>
@@ -93,17 +93,17 @@
     <!-- 对话消息列表区 -->
     <div
       ref="messagesRef"
-      class="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-3.5 min-h-[320px] max-h-[560px] scroll-smooth text-xs"
+      class="ai-panel-messages flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-3.5 min-h-[320px] max-h-[560px] scroll-smooth text-xs"
       @scroll="handleMessagesScroll"
     >
       <!-- 空状态：极简灵感推荐 -->
       <div v-if="messages.length === 0" class="flex flex-col items-center justify-center py-5 text-center space-y-3.5">
-        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 via-accent to-muted border border-border shadow-xs">
-          <Wand2 class="h-5 w-5 text-primary" />
+        <div class="ai-panel-empty-icon flex h-11 w-11 items-center justify-center rounded-2xl border shadow-xs">
+          <Wand2 class="h-5 w-5" />
         </div>
         <div class="space-y-0.5 max-w-[280px]">
-          <h3 class="text-xs font-semibold text-foreground">AI 自动制作贴纸</h3>
-          <p class="text-[11px] text-muted-foreground leading-relaxed">
+          <h3 class="text-xs font-semibold ai-panel-text">AI 自动制作贴纸</h3>
+          <p class="text-[11px] ai-panel-text-secondary leading-relaxed">
             描述你想要的贴纸、或点击「形式与参数」配置套组与变体，AI 将实时在画布中绘制生成
           </p>
         </div>
@@ -113,17 +113,17 @@
           <button
             v-for="q in quickPrompts"
             :key="q.label"
-            class="flex items-center gap-1.5 rounded-lg border border-border/80 bg-card p-2 text-left text-[11px] font-medium text-foreground transition-all hover:bg-accent hover:border-foreground/20 hover:shadow-xs group"
+            class="ai-panel-quick-card flex items-center gap-1.5 rounded-lg border p-2 text-left text-[11px] font-medium transition-all group"
             @click="sendQuick(q.prompt)"
           >
-            <span class="h-1.5 w-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors shrink-0" />
+            <span class="ai-panel-quick-dot h-1.5 w-1.5 rounded-full group-hover:bg-primary transition-colors shrink-0" />
             <span class="truncate">{{ q.label }}</span>
           </button>
         </div>
       </div>
 
       <!-- 历史消息折叠提示 -->
-      <div v-if="hiddenMessageCount > 0" class="text-center text-[10px] text-muted-foreground/60 py-1">
+      <div v-if="hiddenMessageCount > 0" class="text-center text-[10px] ai-panel-text-muted py-1">
         已折叠 {{ hiddenMessageCount }} 条较早记录
       </div>
 
@@ -131,19 +131,19 @@
       <template v-for="msg in visibleMessages" :key="msg.id">
         <!-- 用户消息 -->
         <div v-if="msg.role === 'user'" class="flex justify-end w-full">
-          <div class="max-w-[85%] rounded-2xl rounded-tr-xs bg-primary text-primary-foreground px-3.5 py-2 text-xs shadow-xs leading-relaxed whitespace-pre-wrap break-all [overflow-wrap:anywhere]">
+          <div class="ai-panel-msg-user max-w-[85%] rounded-2xl rounded-tr-xs px-3.5 py-2 text-xs shadow-xs leading-relaxed whitespace-pre-wrap break-all [overflow-wrap:anywhere]">
             {{ msg.content }}
           </div>
         </div>
 
         <!-- AI 助手消息 -->
         <div v-if="msg.role === 'assistant'" class="flex items-start gap-2.5 w-full min-w-0">
-          <div class="flex h-6 w-6 items-center justify-center rounded-full bg-muted border border-border text-foreground shrink-0 mt-0.5 shadow-2xs">
+          <div class="ai-panel-avatar flex h-6 w-6 items-center justify-center rounded-full shrink-0 mt-0.5">
             <Sparkles class="h-3 w-3" />
           </div>
           <div class="flex-1 space-y-1.5 min-w-0 max-w-full">
             <!-- 文本内容 -->
-            <div v-if="msg.content" class="rounded-2xl rounded-tl-xs bg-muted/60 border border-border/60 text-foreground px-3.5 py-2 text-xs shadow-2xs leading-relaxed whitespace-pre-wrap break-all [overflow-wrap:anywhere]">
+            <div v-if="msg.content" class="ai-panel-msg-ai rounded-2xl rounded-tl-xs px-3.5 py-2 text-xs shadow-2xs leading-relaxed whitespace-pre-wrap break-all [overflow-wrap:anywhere]">
               {{ msg.content }}
             </div>
 
@@ -152,7 +152,7 @@
               <span
                 v-for="call in msg.tool_calls"
                 :key="call.id"
-                class="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-0.5 text-[10px] font-mono text-muted-foreground shadow-2xs"
+                class="ai-panel-tool-pill inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-mono"
               >
                 <Zap class="h-2.5 w-2.5 text-amber-500" />
                 <span>{{ formatToolName(call.function.name) }}</span>
@@ -163,7 +163,7 @@
 
         <!-- 工具执行反馈 -->
         <div v-if="msg.role === 'tool'" class="pl-8 w-full min-w-0">
-          <div class="flex items-start gap-1.5 rounded-md bg-muted/40 border border-border/50 px-2.5 py-1 text-[10px] text-muted-foreground font-mono w-full min-w-0 whitespace-pre-wrap break-all [overflow-wrap:anywhere]">
+          <div class="ai-panel-tool-result flex items-start gap-1.5 rounded-md border px-2.5 py-1 text-[10px] font-mono w-full min-w-0 whitespace-pre-wrap break-all [overflow-wrap:anywhere]">
             <CheckCircle2 class="h-3 w-3 text-emerald-500 shrink-0 mt-0.5" />
             <span class="flex-1 min-w-0 leading-normal">{{ parseResult(msg.content).message }}</span>
           </div>
@@ -172,94 +172,90 @@
 
       <!-- 思考中加载态 -->
       <div v-if="isProcessing" class="flex items-center gap-2.5 pl-1">
-        <div class="flex h-6 w-6 items-center justify-center rounded-full bg-muted border border-border text-foreground shrink-0 shadow-2xs">
-          <Loader2 class="h-3 w-3 animate-spin text-primary" />
+        <div class="ai-panel-avatar flex h-6 w-6 items-center justify-center rounded-full shrink-0">
+          <Loader2 class="h-3 w-3 animate-spin" />
         </div>
-        <div class="flex items-center gap-2 rounded-2xl rounded-tl-xs bg-muted/50 border border-border/50 px-3 py-2 text-[11px] text-muted-foreground">
+        <div class="ai-panel-thinking flex items-center gap-2 rounded-2xl rounded-tl-xs border px-3 py-2 text-[11px]">
           <span>AI 正在全自动制作贴纸...</span>
-          <Button v-if="!isWaitingForUser" variant="ghost" size="xs" class="h-5 px-1.5 text-[10px] text-destructive hover:bg-destructive/10" @click="handleStop">
+          <button v-if="!isWaitingForUser" class="ai-panel-stop-btn h-5 px-1.5 text-[10px] rounded" @click="handleStop">
             停止
-          </Button>
+          </button>
         </div>
       </div>
 
       <!-- 用户交互确认卡片 (Human in the Loop) -->
-      <div v-if="interactionData" class="rounded-xl border border-amber-400/40 bg-amber-50/60 dark:bg-amber-950/20 p-3 space-y-2.5 shadow-sm">
-        <div class="flex items-center gap-1.5 text-xs font-semibold text-amber-900 dark:text-amber-200">
+      <div v-if="interactionData" class="ai-panel-interaction rounded-xl border border-amber-400/40 bg-amber-50/60 p-3 space-y-2.5 shadow-sm">
+        <div class="flex items-center gap-1.5 text-xs font-semibold text-amber-900">
           <HelpCircle class="h-3.5 w-3.5 text-amber-500" />
           <span>{{ interactionData.question }}</span>
         </div>
         <div v-if="interactionData.options?.length" class="flex flex-wrap gap-1.5">
-          <Button
+          <button
             v-for="opt in interactionData.options"
             :key="opt"
-            variant="outline"
-            size="xs"
-            class="h-6 text-[11px] bg-background hover:bg-amber-100 dark:hover:bg-amber-900/40 border-amber-300/60"
+            class="ai-panel-option-btn h-6 text-[11px] rounded-md border border-amber-300/60 bg-white px-2.5 hover:bg-amber-100 transition-colors"
             @click="submitInteraction(opt)"
           >
             {{ opt }}
-          </Button>
+          </button>
         </div>
         <div class="flex items-center gap-1.5 pt-1">
-          <Input
+          <input
             v-model="customAnswer"
             placeholder="自定义回答..."
-            class="h-7 text-xs bg-background"
+            class="ai-panel-input h-7 text-xs flex-1 rounded-md border px-2.5 py-1 focus:outline-none focus:ring-1"
             @keydown.enter="submitInteraction(customAnswer)"
           />
-          <Button size="xs" class="h-7 px-2.5" :disabled="!customAnswer.trim()" @click="submitInteraction(customAnswer)">
+          <button
+            class="ai-panel-send-btn h-7 px-2.5 text-[11px] rounded-md text-white font-medium disabled:opacity-40"
+            :disabled="!customAnswer.trim()"
+            @click="submitInteraction(customAnswer)"
+          >
             发送
-          </Button>
+          </button>
         </div>
       </div>
 
       <!-- 制作完成快速动作卡片 -->
       <div
         v-if="showSuccessActionCard"
-        class="rounded-xl border border-emerald-500/30 bg-emerald-50/40 dark:bg-emerald-950/20 p-2.5 space-y-2"
+        class="ai-panel-success rounded-xl border border-emerald-500/30 bg-emerald-50/40 p-2.5 space-y-2"
       >
-        <div class="flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+        <div class="flex items-center justify-between text-xs text-emerald-800 font-medium">
           <div class="flex items-center gap-1">
             <CheckCircle2 class="h-3.5 w-3.5 text-emerald-500" />
             <span>贴纸设计已成功生成并在画布呈现</span>
           </div>
         </div>
         <div class="flex items-center gap-1.5">
-          <Button
-            variant="default"
-            size="xs"
-            class="h-6 text-[11px] gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+          <button
+            class="ai-panel-action-btn h-6 text-[11px] gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-2.5 rounded-md"
             @click="quickSaveCustomSticker"
           >
             <Save class="h-3 w-3" />
             保存作品
-          </Button>
-          <Button
-            variant="outline"
-            size="xs"
-            class="h-6 text-[11px] gap-1 border-emerald-500/30 hover:bg-emerald-100/50"
+          </button>
+          <button
+            class="ai-panel-action-btn-outline h-6 text-[11px] gap-1 border border-emerald-500/30 hover:bg-emerald-100/50 px-2.5 rounded-md"
             @click="quickExportPng"
           >
             <Download class="h-3 w-3" />
             导出 PNG
-          </Button>
-          <Button
-            variant="ghost"
-            size="xs"
-            class="h-6 text-[11px] gap-1 text-muted-foreground hover:text-foreground ml-auto"
+          </button>
+          <button
+            class="ai-panel-action-btn-ghost h-6 text-[11px] gap-1 ml-auto px-2.5 rounded-md"
             @click="quickEnterEditMode"
           >
             <Edit3 class="h-3 w-3" />
             继续微调
-          </Button>
+          </button>
         </div>
       </div>
 
       <!-- 回到底部浮动按钮 -->
       <button
         v-if="hasUnreadMessages"
-        class="sticky bottom-1 left-1/2 -translate-x-1/2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-medium text-foreground shadow-md transition-transform hover:scale-105 active:scale-95 flex items-center gap-1"
+        class="ai-panel-scroll-btn sticky bottom-1 left-1/2 -translate-x-1/2 rounded-full border px-3 py-1 text-[11px] font-medium shadow-md transition-transform hover:scale-105 active:scale-95 flex items-center gap-1"
         @click="scrollToBottom(true)"
       >
         <ArrowDown class="h-3 w-3" />
@@ -269,7 +265,7 @@
 
     <!-- 底部控制与输入区 -->
     <div
-      class="border-t border-border/70 bg-card p-3 space-y-2 relative"
+      class="ai-panel-input-area border-t p-3 space-y-2 relative"
       :class="{ 'ring-2 ring-primary/40': isDragOver }"
       @dragover.prevent="isDragOver = true"
       @dragleave.prevent="isDragOver = false"
@@ -278,7 +274,7 @@
       <!-- 拖拽提示层 -->
       <div
         v-if="isDragOver"
-        class="absolute inset-0 z-20 flex items-center justify-center bg-background/90 backdrop-blur-xs text-xs font-medium text-primary gap-2"
+        class="ai-panel-drag-overlay absolute inset-0 z-20 flex items-center justify-center text-xs font-medium gap-2"
       >
         <ImageIcon class="h-4 w-4" />
         <span>松开鼠标上传参考图（将基于此图进行风格制作）</span>
@@ -287,19 +283,19 @@
       <!-- 💡 参数反显与清除胶囊 (Active Param Banner) -->
       <div
         v-if="isCustomParamActive"
-        class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border-2 border-primary/40 bg-primary/10 dark:bg-primary/20 text-xs shadow-2xs select-none"
+        class="ai-param-banner flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border-2 text-xs shadow-2xs select-none"
       >
         <div
           class="flex items-center gap-1.5 min-w-0 cursor-pointer group"
           @click="showTaskConfigModal = true"
           title="点击重新配置形式与参数"
         >
-          <Badge class="h-5 px-1.5 text-[10px] font-bold gap-1 bg-primary text-primary-foreground shadow-xs shrink-0">
+          <span class="ai-param-badge h-5 px-1.5 text-[10px] font-bold gap-1 rounded bg-primary text-white inline-flex items-center shrink-0">
             <component :is="activeParamSummary.icon" class="h-3 w-3" />
             <span>{{ activeParamSummary.title }}</span>
-          </Badge>
-          <span class="text-xs text-foreground font-semibold truncate">{{ activeParamSummary.desc }}</span>
-          <span class="text-[10px] text-primary/80 group-hover:underline flex items-center gap-0.5 shrink-0 ml-0.5">
+          </span>
+          <span class="text-xs ai-panel-text font-semibold truncate">{{ activeParamSummary.desc }}</span>
+          <span class="text-[10px] group-hover:underline flex items-center gap-0.5 shrink-0 ml-0.5">
             <span>(点击修改)</span>
           </span>
         </div>
@@ -309,7 +305,7 @@
           <TooltipTrigger as-child>
             <button
               type="button"
-              class="flex h-5 w-5 items-center justify-center rounded-md bg-background/80 hover:bg-destructive hover:text-white border border-border text-muted-foreground transition-colors shrink-0"
+              class="ai-param-clear-btn flex h-5 w-5 items-center justify-center rounded-md border transition-colors shrink-0"
               @click="resetParamsToDefault"
             >
               <X class="h-3 w-3" />
@@ -320,32 +316,32 @@
       </div>
 
       <!-- 参考图卡片 -->
-      <div v-if="selectedImage" class="flex items-center justify-between gap-2 rounded-lg border border-amber-400/40 bg-amber-50/50 dark:bg-amber-950/20 p-1.5">
+      <div v-if="selectedImage" class="ai-ref-image flex items-center justify-between gap-2 rounded-lg border border-amber-400/40 bg-amber-50/50 p-1.5">
         <div class="flex items-center gap-2 min-w-0">
           <img :src="selectedImage.preview" class="h-8 w-8 rounded object-cover border border-border shrink-0" />
           <div class="flex flex-col min-w-0">
-            <span class="text-xs font-medium text-foreground truncate max-w-[200px]">{{ selectedImage.name }}</span>
-            <span class="text-[10px] text-amber-700 dark:text-amber-400">{{ selectedImage.size }} · 已开启参考图风格复刻</span>
+            <span class="text-xs font-medium ai-panel-text truncate max-w-[200px]">{{ selectedImage.name }}</span>
+            <span class="text-[10px] text-amber-700">{{ selectedImage.size }} · 已开启参考图风格复刻</span>
           </div>
         </div>
-        <Button variant="ghost" size="icon-xs" class="h-6 w-6 text-muted-foreground hover:text-destructive" @click="removeImage">
+        <button class="h-6 w-6 flex items-center justify-center rounded hover:text-red-500 transition-colors" @click="removeImage">
           <X class="h-3.5 w-3.5" />
-        </Button>
+        </button>
       </div>
 
       <!-- 图片预处理 Loading -->
-      <div v-else-if="isPreparingImage" class="flex items-center gap-2 text-[11px] text-muted-foreground py-1">
-        <Loader2 class="h-3.5 w-3.5 animate-spin text-primary" />
+      <div v-else-if="isPreparingImage" class="flex items-center gap-2 text-[11px] ai-panel-text-secondary py-1">
+        <Loader2 class="h-3.5 w-3.5 animate-spin" />
         <span>正在优化参考图片...</span>
       </div>
 
-      <!-- 输入框与工具条 (Flex 垂直排版，文本与工具栏彻底分离不遮挡) -->
-      <div class="rounded-xl border border-input/90 bg-background focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 shadow-xs transition-all flex flex-col overflow-hidden">
+      <!-- 输入框与工具条 -->
+      <div class="ai-input-box rounded-xl border focus-within:ring-2 shadow-xs transition-all flex flex-col overflow-hidden">
         <!-- 文本域 -->
         <textarea
           ref="textareaRef"
           v-model="inputText"
-          class="w-full resize-none border-0 bg-transparent px-3.5 pt-3 pb-2 text-xs leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          class="ai-input-textarea w-full resize-none border-0 bg-transparent px-3.5 pt-3 pb-2 text-xs leading-relaxed focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           :placeholder="dynamicPlaceholder"
           :disabled="isPreparingImage || (isProcessing && !isWaitingForUser)"
           rows="3"
@@ -357,16 +353,16 @@
           @compositionend="isComposing = false"
         />
 
-        <!-- 输入框底部工具栏 (独立行，完全不重叠) -->
-        <div class="flex items-center justify-between px-2.5 pb-2.5 pt-1.5 border-t border-border/30 bg-muted/10">
+        <!-- 输入框底部工具栏 -->
+        <div class="ai-input-toolbar flex items-center justify-between px-2.5 pb-2.5 pt-1.5 border-t">
           <div class="flex items-center gap-1.5">
             <!-- 形式与参数弹窗入口 -->
             <Tooltip>
               <TooltipTrigger as-child>
                 <button
                   type="button"
-                  class="flex items-center gap-1.5 h-7 px-2.5 rounded-lg text-xs font-medium transition-all"
-                  :class="isCustomParamActive ? 'bg-primary text-primary-foreground font-bold shadow-xs' : 'text-muted-foreground hover:text-foreground hover:bg-muted/70 border border-border/60 bg-muted/30'"
+                  class="ai-toolbar-btn flex items-center gap-1.5 h-7 px-2.5 rounded-lg text-xs font-medium transition-all"
+                  :class="isCustomParamActive ? 'ai-toolbar-btn--active' : 'ai-toolbar-btn--idle'"
                   :disabled="isProcessing"
                   @click="showTaskConfigModal = true"
                 >
@@ -383,8 +379,8 @@
               <TooltipTrigger as-child>
                 <button
                   type="button"
-                  class="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/70 border border-border/60 bg-muted/30 transition-colors disabled:opacity-40"
-                  :class="{ 'text-amber-600 bg-amber-100 dark:bg-amber-900/40 border-amber-400': !!selectedImage }"
+                  class="ai-toolbar-icon-btn flex h-7 w-7 items-center justify-center rounded-lg transition-colors disabled:opacity-40"
+                  :class="{ 'text-amber-600 bg-amber-100 border-amber-400': !!selectedImage }"
                   :disabled="isPreparingImage"
                   @click="triggerImageUpload"
                 >
@@ -400,7 +396,7 @@
               <TooltipTrigger as-child>
                 <button
                   type="button"
-                  class="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/70 border border-border/60 bg-muted/30 transition-colors disabled:opacity-40"
+                  class="ai-toolbar-icon-btn flex h-7 w-7 items-center justify-center rounded-lg transition-colors disabled:opacity-40"
                   :class="{ 'text-primary bg-primary/10 border-primary/40': showPromptPicker }"
                   :disabled="isProcessing"
                   @click="showPromptPicker = !showPromptPicker"
@@ -414,27 +410,23 @@
 
           <!-- 发送 / 停止按钮 -->
           <div>
-            <Button
+            <button
               v-if="isProcessing && !isWaitingForUser"
-              variant="destructive"
-              size="icon-xs"
-              class="h-7 w-7 rounded-lg shadow-xs"
+              class="ai-input-send-btn h-7 w-7 rounded-lg shadow-xs flex items-center justify-center bg-red-500 hover:bg-red-600"
               @click="handleStop"
               title="停止生成"
             >
-              <Square class="h-3.5 w-3.5 fill-current" />
-            </Button>
-            <Button
+              <Square class="h-3.5 w-3.5 fill-current text-white" />
+            </button>
+            <button
               v-else
-              variant="default"
-              size="icon-xs"
-              class="h-7 w-7 rounded-lg shadow-xs transition-all"
+              class="ai-input-send-btn h-7 w-7 rounded-lg shadow-xs flex items-center justify-center transition-all disabled:opacity-40"
               :disabled="(!inputText.trim() && !selectedImage) || (isProcessing && !isWaitingForUser)"
               @click="handleSend"
               title="发送 (Enter)"
             >
-              <ArrowUp class="h-4 w-4 stroke-[2.5]" />
-            </Button>
+              <ArrowUp class="h-4 w-4 stroke-[2.5] text-white" />
+            </button>
           </div>
         </div>
       </div>
@@ -475,9 +467,7 @@ import DesignPromptPicker from "./DesignPromptPicker.vue";
 import AiSettingsModal from "./AiSettingsModal.vue";
 import TaskConfigModal from "./TaskConfigModal.vue";
 import { aiSettings } from "@/ai/settings";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import {
   Sparkles,
@@ -1107,23 +1097,460 @@ function parseResult(content: string) {
 </script>
 
 <style scoped>
+/* ===== AI Panel Container ===== */
 .ai-panel {
-  background-color: var(--1s-surface-background, #ffffff) !important;
-  color: var(--1s-text-color, #09090b) !important;
-  border: 1px solid var(--1s-border-color, #e4e4e7) !important;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 20px 50px -10px rgba(0, 0, 0, 0.25) !important;
+  background-color: var(--1s-surface-background);
+  color: var(--1s-text-color);
+  border: 1px solid var(--1s-border-color);
+  box-shadow: var(--1s-shadow-popover);
+  transition: box-shadow var(--1s-transition-base);
 }
 
-:global(html.dark) .ai-panel,
-:global(.dark) .ai-panel,
-:global(body.designiy-dark) .ai-panel,
-:global(.tool-theme-dark) .ai-panel {
-  background-color: #18181b !important;
-  color: #fafafa !important;
-  border: 1px solid #27272a !important;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 25px 70px -15px rgba(0, 0, 0, 0.85) !important;
+.ai-panel.is-dragging {
+  box-shadow: var(--1s-shadow-float);
+  cursor: grabbing;
 }
 
+/* ===== Header ===== */
+.ai-panel-header {
+  background-color: var(--1s-control-surface-muted);
+  border-bottom: 1px solid var(--1s-border-color);
+}
+.ai-panel-header:hover {
+  background-color: var(--1s-control-hover-background);
+}
+.ai-panel-header.cursor-grabbing {
+  background-color: var(--1s-control-hover-background);
+}
+
+.ai-panel-logo {
+  background-color: var(--1s-accent-color);
+  color: #ffffff;
+}
+
+.ai-panel-title {
+  color: var(--1s-text-color);
+}
+
+.ai-panel-mode-badge {
+  border-color: var(--1s-border-color);
+  background: var(--1s-control-surface-muted);
+  color: var(--1s-text-color-secondary);
+}
+.ai-panel-mode-badge:hover {
+  background: var(--1s-control-hover-background);
+}
+
+.ai-panel-status-badge {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.ai-panel-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: var(--1s-text-color-secondary);
+  transition:
+    color var(--1s-transition-base),
+    background-color var(--1s-transition-base),
+    transform var(--1s-transition-base);
+}
+.ai-panel-icon-btn:hover {
+  color: var(--1s-text-color);
+  background-color: var(--1s-control-hover-background);
+}
+.ai-panel-icon-btn:active {
+  transform: scale(0.92);
+}
+.ai-panel-close-btn:hover {
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* ===== Progress Bar ===== */
+.ai-panel-progress {
+  background-color: var(--1s-control-surface-muted);
+}
+.ai-panel-progress-bar {
+  background: linear-gradient(to right, #10b981, #0ea5e9, var(--1s-accent-color));
+}
+
+/* ===== Messages Area ===== */
+.ai-panel-messages {
+  background-color: var(--1s-surface-background);
+  color: var(--1s-text-color);
+}
+
+/* Empty state */
+.ai-panel-empty-icon {
+  background: linear-gradient(135deg, rgba(11, 87, 208, 0.08), var(--1s-control-surface-muted));
+  border-color: var(--1s-border-color);
+  color: var(--1s-accent-color);
+}
+.ai-panel-empty-icon > svg {
+  color: var(--1s-accent-color);
+}
+
+.ai-panel-quick-card {
+  border-color: var(--1s-border-color);
+  background-color: var(--1s-surface-background);
+  color: var(--1s-text-color);
+}
+.ai-panel-quick-card:hover {
+  background-color: var(--1s-control-hover-background);
+  border-color: var(--1s-border-color-strong);
+  box-shadow: var(--1s-shadow-xs);
+}
+.ai-panel-quick-dot {
+  background-color: rgba(11, 87, 208, 0.4);
+}
+
+/* Text colors */
+.ai-panel-text {
+  color: var(--1s-text-color);
+}
+.ai-panel-text-secondary {
+  color: var(--1s-text-color-secondary);
+}
+.ai-panel-text-muted {
+  color: var(--1s-text-color-tertiary);
+}
+
+/* Message bubbles */
+.ai-panel-msg-user {
+  background-color: var(--1s-accent-color);
+  color: #ffffff;
+  animation: ai-msg-in 0.2s var(--1s-easing-standard) both;
+}
+
+.ai-panel-avatar {
+  background-color: var(--1s-control-surface-muted);
+  border: 1px solid var(--1s-border-color);
+  color: var(--1s-text-color);
+}
+
+.ai-panel-msg-ai {
+  background-color: var(--1s-control-surface-muted);
+  border: 1px solid var(--1s-border-color);
+  color: var(--1s-text-color);
+  animation: ai-msg-in 0.2s var(--1s-easing-standard) both;
+}
+
+@keyframes ai-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ai-panel-tool-pill {
+  border-color: var(--1s-border-color);
+  background-color: var(--1s-surface-background);
+  color: var(--1s-text-color-secondary);
+}
+
+.ai-panel-tool-result {
+  background-color: var(--1s-control-surface-muted);
+  border-color: var(--1s-border-color);
+  color: var(--1s-text-color-secondary);
+}
+
+/* Thinking state */
+.ai-panel-thinking {
+  background-color: var(--1s-control-surface-muted);
+  border-color: var(--1s-border-color);
+  color: var(--1s-text-color-secondary);
+}
+.ai-panel-stop-btn {
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+.ai-panel-stop-btn:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Interaction card */
+.ai-panel-interaction {
+  border-color: rgba(245, 158, 11, 0.4);
+  background-color: #fffbeb;
+}
+.ai-panel-interaction .text-amber-900 {
+  color: #78350f;
+}
+.ai-panel-option-btn {
+  border-color: rgba(245, 158, 11, 0.4);
+  background-color: #ffffff;
+  color: #78350f;
+}
+.ai-panel-option-btn:hover {
+  background-color: #fef3c7;
+}
+.ai-panel-input {
+  border-color: var(--1s-border-color);
+  background-color: #ffffff;
+  color: var(--1s-text-color);
+}
+.ai-panel-input:focus {
+  outline: none;
+  border-color: var(--1s-accent-color);
+  box-shadow: 0 0 0 2px rgba(11, 87, 208, 0.15);
+}
+.ai-panel-send-btn {
+  background-color: var(--1s-accent-color);
+  color: #ffffff;
+}
+.ai-panel-send-btn:hover {
+  opacity: 0.9;
+}
+
+/* Success action card */
+.ai-panel-success {
+  border-color: rgba(16, 185, 129, 0.3);
+  background-color: #ecfdf5;
+}
+.ai-panel-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  transition: all 0.15s ease;
+}
+.ai-panel-action-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #059669;
+  transition: all 0.15s ease;
+}
+.ai-panel-action-btn-outline:hover {
+  background-color: rgba(5, 150, 105, 0.1);
+}
+.ai-panel-action-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--1s-text-color-secondary);
+  transition: all 0.15s ease;
+}
+.ai-panel-action-btn-ghost:hover {
+  color: var(--1s-text-color);
+  background-color: var(--1s-control-hover-background);
+}
+
+/* Scroll to bottom button */
+.ai-panel-scroll-btn {
+  border-color: var(--1s-border-color);
+  background-color: var(--1s-surface-background);
+  color: var(--1s-text-color);
+}
+.ai-panel-scroll-btn:hover {
+  background-color: var(--1s-control-hover-background);
+}
+
+/* ===== Input Area ===== */
+.ai-panel-input-area {
+  background-color: var(--1s-surface-background);
+  border-top: 1px solid var(--1s-border-color);
+}
+
+.ai-panel-drag-overlay {
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  color: var(--1s-accent-color);
+}
+
+/* Param banner */
+.ai-param-banner {
+  border-color: rgba(11, 87, 208, 0.4);
+  background-color: rgba(11, 87, 208, 0.08);
+}
+.ai-param-banner .group:hover span {
+  color: var(--1s-accent-color);
+}
+.ai-param-badge {
+  background-color: var(--1s-accent-color);
+  color: #ffffff;
+}
+.ai-param-clear-btn {
+  background-color: var(--1s-surface-background);
+  border-color: var(--1s-border-color);
+  color: var(--1s-text-color-secondary);
+}
+.ai-param-clear-btn:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+/* Reference image card */
+.ai-ref-image {
+  border-color: rgba(245, 158, 11, 0.4);
+  background-color: #fffbeb;
+}
+.ai-ref-image .text-amber-700 {
+  color: #92400e;
+}
+
+/* Input box */
+.ai-input-box {
+  border-color: var(--1s-border-color);
+  background-color: var(--1s-surface-background);
+}
+.ai-input-box:focus-within {
+  border-color: var(--1s-accent-color);
+  box-shadow: 0 0 0 2px rgba(11, 87, 208, 0.12);
+}
+:global(html.dark) .ai-input-box:focus-within,
+:global(.dark) .ai-input-box:focus-within,
+:global(body.designiy-dark) .ai-input-box:focus-within {
+  box-shadow: 0 0 0 2px rgba(250, 250, 250, 0.15);
+}
+
+.ai-input-textarea {
+  color: var(--1s-text-color);
+}
+.ai-input-textarea::placeholder {
+  color: var(--1s-text-color-tertiary);
+}
+
+.ai-input-toolbar {
+  border-top-color: var(--1s-border-color);
+  background-color: var(--1s-control-surface-muted);
+}
+
+/* Toolbar buttons */
+.ai-toolbar-btn {
+  border: 1px solid transparent;
+}
+.ai-toolbar-btn--idle {
+  color: var(--1s-text-color-secondary);
+  background-color: var(--1s-control-surface-muted);
+  border-color: var(--1s-border-color);
+}
+.ai-toolbar-btn--idle:hover {
+  color: var(--1s-text-color);
+  background-color: var(--1s-control-hover-background);
+}
+.ai-toolbar-btn--active {
+  background-color: var(--1s-accent-color);
+  color: #ffffff;
+  border-color: var(--1s-accent-color);
+  box-shadow: var(--1s-shadow-xs);
+}
+
+.ai-toolbar-icon-btn {
+  color: var(--1s-text-color-secondary);
+  background-color: var(--1s-control-surface-muted);
+  border: 1px solid var(--1s-border-color);
+}
+.ai-toolbar-icon-btn:hover {
+  color: var(--1s-text-color);
+  background-color: var(--1s-control-hover-background);
+}
+
+/* Send button */
+.ai-input-send-btn {
+  background-color: var(--1s-accent-color);
+  transition:
+    background-color var(--1s-transition-base),
+    transform var(--1s-transition-base),
+    box-shadow var(--1s-transition-base);
+}
+.ai-input-send-btn:hover {
+  transform: scale(1.08);
+  box-shadow: var(--1s-shadow-sm);
+}
+.ai-input-send-btn:active {
+  transform: scale(0.95);
+}
+
+/* ===== Dark mode overrides ===== */
+:global(html.dark) .ai-panel-header,
+:global(.dark) .ai-panel-header,
+:global(body.designiy-dark) .ai-panel-header {
+  background-color: var(--1s-control-surface-muted);
+  border-bottom-color: var(--1s-border-color);
+}
+
+:global(html.dark) .ai-panel-status-badge,
+:global(.dark) .ai-panel-status-badge,
+:global(body.designiy-dark) .ai-panel-status-badge {
+  background: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+}
+
+:global(html.dark) .ai-panel-interaction,
+:global(.dark) .ai-panel-interaction,
+:global(body.designiy-dark) .ai-panel-interaction {
+  background-color: rgba(120, 53, 15, 0.2);
+}
+:global(html.dark) .ai-panel-interaction .text-amber-900,
+:global(.dark) .ai-panel-interaction .text-amber-900,
+:global(body.designiy-dark) .ai-panel-interaction .text-amber-900 {
+  color: #fde68a;
+}
+:global(html.dark) .ai-panel-option-btn,
+:global(.dark) .ai-panel-option-btn,
+:global(body.designiy-dark) .ai-panel-option-btn {
+  background-color: var(--1s-surface-background);
+  color: #fde68a;
+}
+:global(html.dark) .ai-panel-option-btn:hover,
+:global(.dark) .ai-panel-option-btn:hover,
+:global(body.designiy-dark) .ai-panel-option-btn:hover {
+  background-color: rgba(245, 158, 11, 0.2);
+}
+:global(html.dark) .ai-panel-input,
+:global(.dark) .ai-panel-input,
+:global(body.designiy-dark) .ai-panel-input {
+  background-color: var(--1s-surface-background);
+}
+
+:global(html.dark) .ai-panel-success,
+:global(.dark) .ai-panel-success,
+:global(body.designiy-dark) .ai-panel-success {
+  background-color: rgba(6, 78, 59, 0.2);
+}
+
+:global(html.dark) .ai-ref-image,
+:global(.dark) .ai-ref-image,
+:global(body.designiy-dark) .ai-ref-image {
+  background-color: rgba(120, 53, 15, 0.15);
+}
+:global(html.dark) .ai-ref-image .text-amber-700,
+:global(.dark) .ai-ref-image .text-amber-700,
+:global(body.designiy-dark) .ai-ref-image .text-amber-700 {
+  color: #fbbf24;
+}
+
+:global(html.dark) .ai-panel-drag-overlay,
+:global(.dark) .ai-panel-drag-overlay,
+:global(body.designiy-dark) .ai-panel-drag-overlay {
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+:global(html.dark) .ai-param-banner,
+:global(.dark) .ai-param-banner,
+:global(body.designiy-dark) .ai-param-banner {
+  background-color: rgba(11, 87, 208, 0.15);
+}
+
+/* ===== Scrollbar ===== */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

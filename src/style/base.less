@@ -24,32 +24,30 @@ img::part(span) {
 }
 
 
+/* 全局基础 reset — 不影响 shadcn-vue */
 body,
-html,
-#app,
-.app-content,
-.design-view-container,
-.design-view,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: var(--1s-font-family-sans);
+}
+
+/* 编辑器区域内部 reset */
 .designiy,
 .design-layout {
     margin: 0;
     padding: 0;
-    border: none !important;
-    outline: none !important;
+    border: none;
+    outline: none;
+    background: var(--1s-shell-background);
+    color: var(--1s-text-color);
 }
 
 body[data-scroll-locked] {
     padding-right: 0px !important;
     margin-right: 0px !important;
-}
-
-body,
-html {
-    width: 100%;
-    height: 100%;
-    font-family: var(--1s-font-family-sans);
-    background: var(--1s-shell-background, #eef2f7);
-    color: var(--1s-text-color, #18202c);
 }
 
 button,
@@ -59,11 +57,87 @@ select {
     font-family: inherit;
 }
 
+/* ===== 精致滚动条 — 仅作用于编辑器区域 ===== */
+.designiy * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--1s-scrollbar-background) transparent;
+}
+
+.designiy ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.designiy ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.designiy ::-webkit-scrollbar-thumb {
+    background: var(--1s-scrollbar-background);
+    border-radius: 999px;
+    transition: background var(--1s-transition-fast);
+}
+
+.designiy ::-webkit-scrollbar-thumb:hover {
+    background: var(--1s-scrollbar-background-hover);
+}
+
+/* ===== 焦点环 — 仅作用于编辑器区域，不影响 shadcn-vue ===== */
+.designiy :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 var(--1s-focus-ring-width) var(--1s-focus-ring-color);
+}
+
+/* 不需要焦点环的元素 */
+.designiy [tabindex="-1"]:focus-visible,
+.designiy [role="button"]:focus-visible {
+    box-shadow: none;
+}
+
+/* ===== 语义化工具类 — 统一组件样式 ===== */
 .text-ellipsis {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
 }
+
+/* 文本颜色 */
+.s-text { color: var(--1s-text-color); }
+.s-text-secondary { color: var(--1s-text-color-secondary); }
+.s-text-tertiary { color: var(--1s-text-color-tertiary); }
+.s-text-accent { color: var(--1s-accent-color); }
+
+/* 背景颜色 */
+.s-bg { background: var(--1s-surface-background); }
+.s-bg-panel { background: var(--1s-panel-background); }
+.s-bg-elevated { background: var(--1s-elevated-background); }
+.s-bg-hover { background: var(--1s-hover-background); }
+.s-bg-active { background: var(--1s-active-background); }
+.s-bg-accent { background: var(--1s-accent-color); }
+
+/* 边框 */
+.s-border { border: 1px solid var(--1s-border-color); }
+.s-border-strong { border: 1px solid var(--1s-border-color-strong); }
+.s-border-accent { border: 1px solid var(--1s-accent-color); }
+
+/* 阴影 */
+.s-shadow-xs { box-shadow: var(--1s-shadow-xs); }
+.s-shadow-sm { box-shadow: var(--1s-shadow-sm); }
+.s-shadow-md { box-shadow: var(--1s-shadow-md); }
+.s-shadow-lg { box-shadow: var(--1s-shadow-lg); }
+.s-shadow-popover { box-shadow: var(--1s-shadow-popover); }
+.s-shadow-float { box-shadow: var(--1s-shadow-float); }
+
+/* 过渡 */
+.s-transition { transition: all var(--1s-transition-base); }
+.s-transition-fast { transition: all var(--1s-transition-fast); }
+
+/* 圆角 */
+.s-radius-xs { border-radius: var(--1s-radius-xs); }
+.s-radius-sm { border-radius: var(--1s-radius-sm); }
+.s-radius-md { border-radius: var(--1s-radius-md); }
+.s-radius-lg { border-radius: var(--1s-radius-lg); }
+.s-radius-pill { border-radius: var(--1s-radius-pill); }
 
 .chess-background {
     background-color: var(--1s-checkerboard-base, #fdfefe);

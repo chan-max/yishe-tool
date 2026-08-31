@@ -11,7 +11,7 @@
           $attrs.class ?? ''
         )
       "
-      style="background-color: var(--1s-dialog-bg, #ffffff); color: var(--1s-dialog-fg, #09090b); border-color: var(--1s-dialog-border, #e4e4e7);"
+      style="background-color: var(--1s-dialog-bg); color: var(--1s-dialog-fg); border-color: var(--1s-dialog-border);"
     >
       <slot />
 

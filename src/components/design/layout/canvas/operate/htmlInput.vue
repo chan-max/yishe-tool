@@ -1154,15 +1154,15 @@ onBeforeUnmount(() => {
 
 :global(html.dark) .html-editor-dialog.el-dialog.is-fullscreen,
 :global(.dark) .html-editor-dialog.el-dialog.is-fullscreen {
-  background: #09090b !important;
+  background: var(--1s-shell-background) !important;
 }
 
 :global(html.dark) .html-editor-dialog .el-dialog__header,
 :global(.dark) .html-editor-dialog .el-dialog__header,
 :global(html.dark) .html-editor-dialog .el-dialog__footer,
 :global(.dark) .html-editor-dialog .el-dialog__footer {
-  background: #18181b !important;
-  border-color: #27272a !important;
+  background: var(--1s-surface-background) !important;
+  border-color: var(--1s-border-color) !important;
 }
 
 :deep(.html-editor-dialog__editor .cm-editor) {

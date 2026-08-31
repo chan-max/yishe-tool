@@ -106,30 +106,29 @@
     </Tooltip>
     
     <div class="header-actions flex items-center gap-2 shrink-0">
-      <Button
-        :variant="batchIsRunning ? 'default' : 'outline'"
-        size="sm"
-        class="h-6 text-[11px] px-2.5 gap-1.5 font-medium"
+      <button
+        class="header-action-btn"
+        :class="{ 'header-action-btn--active': batchIsRunning }"
         @click="showAutocreateModal = true"
       >
-        <span v-if="batchIsRunning" class="h-1.5 w-1.5 rounded-full bg-primary-foreground animate-ping shrink-0" />
-        <span>{{ autoCreateButtonLabel }}</span>
-      </Button>
+        <span v-if="batchIsRunning" class="header-action-dot header-action-dot--ping" />
+        <span v-else class="header-action-dot header-action-dot--idle" />
+        <span class="header-action-label">{{ autoCreateButtonLabel }}</span>
+      </button>
 
       <Tooltip>
         <TooltipTrigger as-child>
-          <Button
-            :variant="screenShareActive ? 'default' : 'outline'"
-            size="sm"
-            class="h-6 text-[11px] px-2.5 gap-1.5 font-medium"
+          <button
+            class="header-action-btn"
+            :class="{ 'header-action-btn--active': screenShareActive }"
             @click="toggleScreenShare"
           >
             <span
-              class="h-1.5 w-1.5 rounded-full shrink-0"
-              :class="screenShareActive ? 'bg-primary-foreground animate-pulse' : 'bg-muted-foreground/50'"
+              class="header-action-dot"
+              :class="screenShareActive ? 'header-action-dot--ping header-action-dot--sharing' : 'header-action-dot--idle'"
             />
-            <span>{{ screenShareActive ? '共享中' : '共享屏幕' }}</span>
-          </Button>
+            <span class="header-action-label">{{ screenShareActive ? '共享中' : '共享屏幕' }}</span>
+          </button>
         </TooltipTrigger>
         <TooltipContent side="bottom">{{ screenShareActive ? '停止共享屏幕' : '共享屏幕给管理端' }}</TooltipContent>
       </Tooltip>
@@ -137,12 +136,12 @@
       <Tooltip>
         <TooltipTrigger as-child>
           <button
-            class="h-6 w-6 rounded-md inline-flex items-center justify-center border border-border bg-muted/40 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer select-none"
+            class="theme-switch-btn h-6 w-6 rounded-md inline-flex items-center justify-center border border-[var(--1s-border-color)] bg-[var(--1s-control-surface-muted)] text-[var(--1s-text-color-secondary)] hover:text-[var(--1s-text-color)] hover:bg-[var(--1s-hover-background)] cursor-pointer select-none transition-all duration-150"
             @click="isDarkMode = !isDarkMode"
             :aria-label="isDarkMode ? '切换为浅色模式' : '切换为深色模式'"
           >
-            <Moon v-if="isDarkMode" class="h-3.5 w-3.5 text-indigo-400" />
-            <Sun v-else class="h-3.5 w-3.5 text-amber-500" />
+            <Moon v-if="isDarkMode" class="theme-switch-icon h-3.5 w-3.5 text-indigo-400" />
+            <Sun v-else class="theme-switch-icon h-3.5 w-3.5 text-amber-500" />
           </button>
         </TooltipTrigger>
         <TooltipContent side="bottom">{{ isDarkMode ? '深色模式（点击切换浅色）' : '浅色模式（点击切换深色）' }}</TooltipContent>
@@ -371,13 +370,18 @@ function confirmExitEditMode() {
   height: 22px;
   object-fit: contain;
   flex-shrink: 0;
+  transition: transform var(--1s-transition-base);
+}
+
+.designiy-header__brand:hover .designiy-header__brand-logo {
+  transform: scale(1.08);
 }
 
 .designiy-header__brand-title {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--1s-text-color, #162033);
+  color: var(--1s-text-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -413,23 +417,115 @@ function confirmExitEditMode() {
   min-width: 0;
   flex-wrap: nowrap;
   gap: 6px;
-  
+
   .action-btn {
     white-space: nowrap;
   }
-  
+
   .theme-switch {
     flex-shrink: 0;
   }
-  
+
   .three-canvas-switch {
     flex-shrink: 0;
   }
-  
+
   .save-btn,
   .login-btn {
     flex-shrink: 0;
   }
+}
+
+/* Header action buttons - 自动制作 & 共享屏幕 */
+.header-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid var(--1s-border-color-strong);
+  background: var(--1s-surface-background);
+  color: var(--1s-text-color-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition:
+    color var(--1s-transition-base),
+    background-color var(--1s-transition-base),
+    border-color var(--1s-transition-base),
+    box-shadow var(--1s-transition-base),
+    transform var(--1s-transition-base);
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: var(--1s-accent-color);
+    color: var(--1s-accent-color);
+    background: var(--1s-hover-background);
+    transform: translateY(-1px);
+    box-shadow: var(--1s-shadow-sm);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+
+.header-action-btn--active {
+  border-color: var(--1s-accent-color);
+  background: var(--1s-accent-color);
+  color: #ffffff;
+
+  &:hover {
+    background: var(--1s-accent-color);
+    color: #ffffff;
+    filter: brightness(0.92);
+  }
+
+  .header-action-dot {
+    background: #ffffff;
+  }
+}
+
+.header-action-label {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.header-action-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.header-action-dot--idle {
+  background: var(--1s-text-color-tertiary);
+}
+
+.header-action-dot--ping {
+  animation: header-dot-pulse 1.2s ease-in-out infinite;
+}
+
+.header-action-dot--sharing {
+  background: #22c55e;
+}
+
+@keyframes header-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.75); }
+}
+
+/* 暗色切换按钮图标旋转 */
+.theme-switch-icon {
+  transition: transform var(--1s-transition-slow) var(--1s-easing-bounce);
+}
+
+.theme-switch-btn:hover .theme-switch-icon {
+  transform: rotate(180deg) scale(1.1);
 }
 
 .save-btn,
@@ -590,7 +686,7 @@ function confirmExitEditMode() {
   transition: all 0.15s;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: var(--1s-hover-background);
   }
 
   .screen-share-dot {

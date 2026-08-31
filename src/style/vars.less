@@ -1,4 +1,45 @@
 :root {
+  /* ============================================================
+   * shadcn-vue 语义化令牌 — 桥接层
+   * 使 shadcn-vue 组件与编辑器设计系统无缝协作
+   * ============================================================ */
+  --background: oklch(0.985 0.002 260);
+  --foreground: oklch(0.145 0.004 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0.004 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0.004 260);
+  --primary: oklch(0.55 0.16 260);
+  --primary-foreground: oklch(0.985 0.002 260);
+  --secondary: oklch(0.97 0.004 260);
+  --secondary-foreground: oklch(0.205 0.006 260);
+  --muted: oklch(0.97 0.004 260);
+  --muted-foreground: oklch(0.556 0.01 260);
+  --accent: oklch(0.97 0.004 260);
+  --accent-foreground: oklch(0.205 0.006 260);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0.002 260);
+  --border: oklch(0.922 0.004 260);
+  --input: oklch(0.922 0.004 260);
+  --ring: oklch(0.55 0.16 260);
+  --radius: 0.5rem;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --sidebar: oklch(0.985 0.002 260);
+  --sidebar-foreground: oklch(0.145 0.004 260);
+  --sidebar-primary: oklch(0.55 0.16 260);
+  --sidebar-primary-foreground: oklch(0.985 0.002 260);
+  --sidebar-accent: oklch(0.97 0.004 260);
+  --sidebar-accent-foreground: oklch(0.205 0.006 260);
+  --sidebar-border: oklch(0.922 0.004 260);
+  --sidebar-ring: oklch(0.55 0.16 260);
+
+  /* ============================================================
+   * 编辑器专用令牌 — 1s design system
+   * ============================================================ */
+
   /* 字体阶梯 (像素基准) */
   --1s-font-size-2xs: 10px;
   --1s-font-size-xs: 11px;
@@ -16,115 +57,198 @@
   --1s-radius-xl: 16px;
   --1s-radius-pill: 9999px;
 
-  /* 布局与尺寸 */
-  --1s-header-height: 48px;
-  --1s-sub-header-height: 40px;
-  --1s-left-menu-width: 68px;
-  --1s-left-panel-width: 300px;
-  --1s-right-panel-width: 340px;
-  --1s-bottom-menu-height: 44px;
-  --1s-canvas-stage-padding: 14px;
-  --1s-canvas-inner-gap: 12px;
-  --1s-control-gap: 8px;
+  /* 布局与尺寸 — Figma 风格：紧凑精密 */
+  --1s-header-height: 40px;
+  --1s-sub-header-height: 32px;
+  --1s-left-menu-width: 72px;
+  --1s-left-panel-width: 280px;
+  --1s-right-panel-width: 300px;
+  --1s-bottom-menu-height: 36px;
+  --1s-canvas-stage-padding: 8px;
+  --1s-canvas-inner-gap: 8px;
+  --1s-control-gap: 6px;
 
-  /* Figma Neutral 色调表面系统 */
-  --1s-shell-background: #f4f4f5;
-  --1s-canvas-shell-background: #e4e4e7;
+  /* 白天模式表面系统 - 柔和的浅灰底色 */
+  --1s-shell-background: #f8f9fa;
+  --1s-canvas-shell-background: #f0f4f9;
   --1s-surface-background: #ffffff;
-  --1s-panel-background: #fafafa;
-  --1s-elevated-background: #f4f4f5;
+  --1s-panel-background: #f3f6fb;
+  --1s-elevated-background: #e9eef6;
 
-  --1s-text-color: #09090b;
-  --1s-text-color-secondary: #71717a;
-  --1s-text-color-tertiary: #a1a1aa;
-  --1s-icon-color: #71717a;
+  /* 白天模式文本颜色 - 深灰而非纯黑，更柔和 */
+  --1s-text-color: #1f1f1f;
+  --1s-text-color-secondary: #444746;
+  --1s-text-color-tertiary: #747775;
+  --1s-icon-color: #444746;
 
-  --1s-border-color: #e4e4e7;
-  --1s-border-color-strong: #d4d4d8;
-  --1s-divider-color: rgba(0, 0, 0, 0.06);
+  --1s-border-color: rgba(0, 0, 0, 0.12);
+  --1s-border-color-strong: rgba(0, 0, 0, 0.18);
+  --1s-divider-color: rgba(0, 0, 0, 0.08);
 
-  --1s-accent-color: #09090b;
-  --1s-accent-color-soft: #f4f4f5;
-  --1s-hover-background: rgba(0, 0, 0, 0.04);
-  --1s-active-background: rgba(0, 0, 0, 0.08);
+  /* 白天模式强调色 - 使用蓝色而非近黑色 */
+  --1s-accent-color: #0b57d0;
+  --1s-accent-color-soft: #d3e3fd;
+  --1s-hover-background: rgba(11, 87, 208, 0.08);
+  --1s-active-background: #d3e3fd;
 
-  --1s-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --1s-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --1s-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  /* 阴影层级 — 从浅到深，覆盖所有 UI 场景 */
+  --1s-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --1s-shadow-sm: 0 1px 3px 1px rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --1s-shadow-md: 0 2px 6px 2px rgba(0, 0, 0, 0.08), 0 1px 4px 0 rgba(0, 0, 0, 0.06);
+  --1s-shadow-lg: 0 4px 14px 3px rgba(0, 0, 0, 0.1), 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+  --1s-shadow-popover: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 8px 24px -4px rgba(0, 0, 0, 0.12);
+  --1s-shadow-float: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 16px 48px -12px rgba(0, 0, 0, 0.16);
+  --1s-shadow-overlay: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 24px 60px -16px rgba(0, 0, 0, 0.2);
 
-  --1s-scrollbar-background: rgba(0, 0, 0, 0.18);
-  --1s-scrollbar-background-hover: rgba(0, 0, 0, 0.32);
+  /* 过渡动画 — Figma 风格：快速响应 */
+  --1s-duration-instant: 50ms;
+  --1s-duration-fast: 80ms;
+  --1s-duration-base: 120ms;
+  --1s-duration-slow: 180ms;
+  --1s-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --1s-easing-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --1s-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --1s-transition-instant: var(--1s-duration-instant) var(--1s-easing-standard);
+  --1s-transition-fast: var(--1s-duration-fast) var(--1s-easing-standard);
+  --1s-transition-base: var(--1s-duration-base) var(--1s-easing-standard);
+  --1s-transition-slow: var(--1s-duration-slow) var(--1s-easing-standard);
+
+  /* 交互状态 */
+  --1s-hover-overlay: rgba(0, 0, 0, 0.04);
+  --1s-pressed-overlay: rgba(0, 0, 0, 0.08);
+  --1s-focus-ring-color: rgba(11, 87, 208, 0.25);
+  --1s-focus-ring-width: 1.5px;
+
+  /* Backdrop blur */
+  --1s-blur-sm: 8px;
+  --1s-blur-md: 16px;
+  --1s-blur-lg: 24px;
+
+  /* Z-index 层级 */
+  --1s-z-base: 1;
+  --1s-z-dropdown: 100;
+  --1s-z-sticky: 200;
+  --1s-z-popover: 300;
+  --1s-z-modal: 400;
+  --1s-z-toast: 500;
+  --1s-z-loading: 1000;
+
+  --1s-scrollbar-background: rgba(0, 0, 0, 0.24);
+  --1s-scrollbar-background-hover: rgba(0, 0, 0, 0.4);
 
   --1s-grid-line-color: rgba(0, 0, 0, 0.06);
   --1s-checkerboard-base: #ffffff;
-  --1s-checkerboard-cell-dark: #f4f4f5;
-  --1s-checkerboard-cell-mini-dark: #e4e4e7;
+  --1s-checkerboard-cell-dark: #f0f2f5;
+  --1s-checkerboard-cell-mini-dark: #e5e8ec;
 
   --1s-control-surface-background: #ffffff;
-  --1s-control-surface-muted: #f4f4f5;
-  --1s-control-border-color: #e4e4e7;
-  --1s-control-hover-background: #ebebeb;
-  --1s-control-text-muted: #71717a;
-  --1s-control-focus-ring: 0 0 0 2px rgba(9, 9, 11, 0.15);
+  --1s-control-surface-muted: #f0f4f9;
+  --1s-control-border-color: rgba(0, 0, 0, 0.16);
+  --1s-control-hover-background: rgba(11, 87, 208, 0.08);
+  --1s-control-text-muted: #444746;
+  --1s-control-focus-ring: 0 0 0 2px rgba(11, 87, 208, 0.25);
 
   /* Left rail */
-  --1s-left-menu-background-color: #fafafa;
-  --1s-left-menu-item-text-color: #71717a;
+  --1s-left-menu-background-color: #f0f4f9;
+  --1s-left-menu-item-text-color: #444746;
 
   /* Right panel */
   --1s-right-panel-background: #ffffff;
 
   /* Dialog — explicit opaque colors (not relying on Tailwind bg-background) */
   --1s-dialog-bg: #ffffff;
-  --1s-dialog-fg: #09090b;
-  --1s-dialog-border: #e4e4e7;
+  --1s-dialog-fg: #1f1f1f;
+  --1s-dialog-border: rgba(0, 0, 0, 0.12);
 }
 
 html.dark,
 .dark,
 .tool-theme-dark,
 body.designiy-dark {
-  --1s-shell-background: #09090b;
-  --1s-canvas-shell-background: #18181b;
-  --1s-surface-background: #18181b;
-  --1s-panel-background: #121215;
-  --1s-elevated-background: #27272a;
+  /* shadcn-vue 暗色模式令牌 */
+  --background: oklch(0.145 0.004 260);
+  --foreground: oklch(0.985 0.002 260);
+  --card: oklch(0.205 0.006 260);
+  --card-foreground: oklch(0.985 0.002 260);
+  --popover: oklch(0.205 0.006 260);
+  --popover-foreground: oklch(0.985 0.002 260);
+  --primary: oklch(0.65 0.18 260);
+  --primary-foreground: oklch(0.145 0.004 260);
+  --secondary: oklch(0.269 0.008 260);
+  --secondary-foreground: oklch(0.985 0.002 260);
+  --muted: oklch(0.269 0.008 260);
+  --muted-foreground: oklch(0.708 0.006 260);
+  --accent: oklch(0.269 0.008 260);
+  --accent-foreground: oklch(0.985 0.002 260);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0.002 260);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.65 0.18 260);
+  --sidebar: oklch(0.205 0.006 260);
+  --sidebar-foreground: oklch(0.985 0.002 260);
+  --sidebar-primary: oklch(0.65 0.18 260);
+  --sidebar-primary-foreground: oklch(0.985 0.002 260);
+  --sidebar-accent: oklch(0.269 0.008 260);
+  --sidebar-accent-foreground: oklch(0.985 0.002 260);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.65 0.18 260);
 
-  --1s-text-color: #fafafa;
-  --1s-text-color-secondary: #a1a1aa;
-  --1s-text-color-tertiary: #71717a;
-  --1s-icon-color: #a1a1aa;
+  /* 暗色模式表面系统 — 与 theme.less 统一 */
+  --1s-shell-background: #111318;
+  --1s-canvas-shell-background: #191c20;
+  --1s-surface-background: #1d2024;
+  --1s-panel-background: #282a2f;
+  --1s-elevated-background: #33353a;
 
-  --1s-border-color: #27272a;
-  --1s-border-color-strong: #3f3f46;
+  /* 暗色模式文本颜色 */
+  --1s-text-color: #e2e2e6;
+  --1s-text-color-secondary: #c4c7c5;
+  --1s-text-color-tertiary: #8e918f;
+  --1s-icon-color: #c4c7c5;
+
+  --1s-border-color: rgba(255, 255, 255, 0.12);
+  --1s-border-color-strong: rgba(255, 255, 255, 0.2);
   --1s-divider-color: rgba(255, 255, 255, 0.08);
 
-  --1s-accent-color: #fafafa;
-  --1s-accent-color-soft: #27272a;
-  --1s-hover-background: rgba(255, 255, 255, 0.06);
-  --1s-active-background: rgba(255, 255, 255, 0.12);
+  /* 暗色模式强调色 — 蓝色系，非白色 */
+  --1s-accent-color: #a8c7fa;
+  --1s-accent-color-soft: #0842a0;
+  --1s-hover-background: rgba(168, 199, 250, 0.08);
+  --1s-active-background: rgba(168, 199, 250, 0.16);
 
-  --1s-scrollbar-background: rgba(255, 255, 255, 0.18);
-  --1s-scrollbar-background-hover: rgba(255, 255, 255, 0.32);
+  /* 暗色模式阴影 — 使用更亮的边框 + 更深的投影 */
+  --1s-shadow-popover: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+  --1s-shadow-float: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 16px 48px -12px rgba(0, 0, 0, 0.5);
+  --1s-shadow-overlay: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 24px 60px -16px rgba(0, 0, 0, 0.6);
 
-  --1s-grid-line-color: rgba(255, 255, 255, 0.05);
-  --1s-checkerboard-base: #18181b;
-  --1s-checkerboard-cell-dark: #27272a;
-  --1s-checkerboard-cell-mini-dark: #202024;
+  /* 暗色模式交互状态 */
+  --1s-hover-overlay: rgba(255, 255, 255, 0.06);
+  --1s-pressed-overlay: rgba(255, 255, 255, 0.1);
+  --1s-focus-ring-color: rgba(168, 199, 250, 0.35);
 
-  --1s-control-surface-background: #18181b;
-  --1s-control-surface-muted: #27272a;
-  --1s-control-border-color: #27272a;
-  --1s-control-hover-background: #27272a;
-  --1s-control-text-muted: #a1a1aa;
-  --1s-control-focus-ring: 0 0 0 2px rgba(250, 250, 250, 0.2);
+  --1s-scrollbar-background: rgba(255, 255, 255, 0.2);
+  --1s-scrollbar-background-hover: rgba(255, 255, 255, 0.35);
+
+  --1s-grid-line-color: rgba(255, 255, 255, 0.06);
+  --1s-checkerboard-base: #14161b;
+  --1s-checkerboard-cell-dark: #1d2026;
+  --1s-checkerboard-cell-mini-dark: #242830;
+
+  --1s-control-surface-background: #1d2024;
+  --1s-control-surface-muted: #282a2f;
+  --1s-control-border-color: rgba(255, 255, 255, 0.16);
+  --1s-control-hover-background: rgba(168, 199, 250, 0.08);
+  --1s-control-text-muted: #c4c7c5;
+  --1s-control-focus-ring: 0 0 0 2px rgba(168, 199, 250, 0.25);
 
   /* Left rail */
-  --1s-left-menu-background-color: #121215;
-  --1s-left-menu-item-text-color: #a1a1aa;
+  --1s-left-menu-background-color: #191c20;
+  --1s-left-menu-container-background-color: #1d2024;
+  --1s-left-menu-item-text-color: #c4c7c5;
 
   /* Right panel */
-  --1s-right-panel-background: #18181b;
+  --1s-right-panel-background: #1d2024;
 
   /* Dialog */
   --1s-dialog-bg: #18181b;
@@ -134,46 +258,46 @@ body.designiy-dark {
 
 @media (max-width: 1366px) {
   :root {
-    --1s-header-height: 42px;
-    --1s-left-menu-width: 62px;
-    --1s-left-panel-width: 320px;
-    --1s-right-panel-width: 300px;
-    --1s-bottom-menu-height: 38px;
-    --1s-canvas-stage-padding: 10px;
-    --1s-canvas-inner-gap: 10px;
-    --1s-control-gap: 6px;
+    --1s-header-height: 38px;
+    --1s-left-menu-width: 44px;
+    --1s-left-panel-width: 260px;
+    --1s-right-panel-width: 280px;
+    --1s-bottom-menu-height: 32px;
+    --1s-canvas-stage-padding: 6px;
+    --1s-canvas-inner-gap: 6px;
+    --1s-control-gap: 5px;
   }
 }
 
 @media (max-width: 1080px) {
   :root {
-    --1s-header-height: 40px;
-    --1s-left-menu-width: 58px;
-    --1s-left-panel-width: 288px;
-    --1s-right-panel-width: 280px;
-    --1s-bottom-menu-height: 36px;
-    --1s-canvas-stage-padding: 8px;
-    --1s-canvas-inner-gap: 8px;
+    --1s-header-height: 36px;
+    --1s-left-menu-width: 40px;
+    --1s-left-panel-width: 240px;
+    --1s-right-panel-width: 260px;
+    --1s-bottom-menu-height: 30px;
+    --1s-canvas-stage-padding: 5px;
+    --1s-canvas-inner-gap: 5px;
   }
 }
 
 @media (max-width: 768px) {
   :root {
-    --1s-header-height: 38px;
-    --1s-left-menu-width: 54px;
-    --1s-left-panel-width: 260px;
-    --1s-right-panel-width: 248px;
-    --1s-bottom-menu-height: 34px;
-    --1s-font-size-base: 12px;
+    --1s-header-height: 34px;
+    --1s-left-menu-width: 38px;
+    --1s-left-panel-width: 220px;
+    --1s-right-panel-width: 220px;
+    --1s-bottom-menu-height: 28px;
+    --1s-font-size-base: 11px;
   }
 }
 
 @media (max-width: 560px) {
   :root {
-    --1s-left-menu-width: 50px;
-    --1s-left-panel-width: 224px;
-    --1s-right-panel-width: 216px;
-    --1s-canvas-stage-padding: 6px;
-    --1s-canvas-inner-gap: 6px;
+    --1s-left-menu-width: 36px;
+    --1s-left-panel-width: 200px;
+    --1s-right-panel-width: 200px;
+    --1s-canvas-stage-padding: 4px;
+    --1s-canvas-inner-gap: 4px;
   }
 }

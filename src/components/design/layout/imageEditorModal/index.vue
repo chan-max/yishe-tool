@@ -77,7 +77,7 @@ if (typeof window !== 'undefined') {
 .image-editor-modal-container {
   width: 100%;
   height: 100%;
-  background: #ffffff;
+  background: var(--1s-surface-background);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -102,9 +102,9 @@ if (typeof window !== 'undefined') {
 }
 
 .image-editor-close-btn {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--1s-surface-background);
   backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--1s-shadow-sm);
 }
 
 // 动画效果

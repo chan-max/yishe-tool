@@ -143,17 +143,18 @@ async function handleLogout() {
 /* 确保下拉菜单 Portal 挂载到 body 上时拥有实体纯色背景 */
 .user-dropdown-content,
 [data-radix-dropdown-menu-content] {
-  background-color: #ffffff !important;
-  color: #18181b !important;
+  background-color: var(--1s-surface-background) !important;
+  color: var(--1s-text-color) !important;
   opacity: 1 !important;
-  box-shadow: 0 10px 38px -10px rgba(22, 23, 24, 0.35), 0 10px 20px -15px rgba(22, 23, 24, 0.2) !important;
+  border-color: var(--1s-border-color) !important;
+  box-shadow: var(--1s-shadow-lg) !important;
 }
 
 .dark .user-dropdown-content,
 .dark [data-radix-dropdown-menu-content] {
-  background-color: #18181b !important;
-  color: #f4f4f5 !important;
-  border-color: #3f3f46 !important;
-  box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.8), 0 10px 20px -15px rgba(0, 0, 0, 0.6) !important;
+  background-color: var(--1s-surface-background) !important;
+  color: var(--1s-text-color) !important;
+  border-color: var(--1s-border-color) !important;
+  box-shadow: var(--1s-shadow-lg) !important;
 }
 </style>

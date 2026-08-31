@@ -381,7 +381,7 @@ function editInWorkspace(item) {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.38);
+    background: rgba(0, 0, 0, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -389,10 +389,10 @@ function editInWorkspace(item) {
     transition: opacity 0.3s ease;
     pointer-events: none;
   }
-  
+
   .video-icon {
     color: #fff;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.55);
     border-radius: 50%;
     width: 48px;
     height: 48px;

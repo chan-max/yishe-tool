@@ -790,7 +790,7 @@ async function doUpload() {
     width: 100%;
     height: 100%;
     min-height: 0;
-    background: #111;
+    background: var(--1s-control-surface-muted);
     display: flex;
     align-items: center;
     justify-content: center;

@@ -630,19 +630,20 @@ function genSticker() {
   cursor: pointer;
   user-select: none;
   font-size: 12px;
-  color: var(--1s-text-color, #333);
+  color: var(--1s-text-color);
   transition: all 0.15s;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: var(--1s-hover-background);
   }
 
   &.is-selected {
-    background-color: #1890ff;
+    background-color: var(--1s-accent-color);
     color: #fff;
 
     &:hover {
-      background-color: #096dd9;
+      background-color: var(--1s-accent-color);
+      filter: brightness(0.9);
     }
 
     .folder-check-icon {
@@ -659,7 +660,7 @@ function genSticker() {
 
 .folder-check-icon {
   font-size: 14px;
-  color: #1890ff;
+  color: var(--1s-accent-color);
   flex-shrink: 0;
   margin-left: 4px;
 }
@@ -718,17 +719,26 @@ function genSticker() {
   font-weight: 500;
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
-  color: #18181b;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(var(--1s-blur-sm));
+  color: var(--1s-text-color);
+  border: 1px solid var(--1s-border-color);
+  box-shadow: var(--1s-shadow-sm);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition:
+    background-color var(--1s-transition-base),
+    box-shadow var(--1s-transition-base),
+    transform var(--1s-transition-base),
+    backdrop-filter var(--1s-transition-base);
 
   &:hover {
     background: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    box-shadow: var(--1s-shadow-md);
+    backdrop-filter: blur(var(--1s-blur-md));
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
@@ -787,15 +797,15 @@ function genSticker() {
 
 .canvas-action-button--primary {
   font-weight: 600;
-  background: var(--1s-accent-color, #09090b) !important;
-  border-color: var(--1s-accent-color, #09090b) !important;
+  background: var(--1s-accent-color) !important;
+  border-color: var(--1s-accent-color) !important;
   color: #ffffff !important;
 }
 
-.dark .canvas-action-button--primary {
-  background: #fafafa !important;
-  border-color: #fafafa !important;
-  color: #09090b !important;
+body.designiy-dark .canvas-action-button--primary {
+  background: var(--1s-accent-color) !important;
+  border-color: var(--1s-accent-color) !important;
+  color: #111318 !important;
 }
 
 .canvas-layer-selector {
@@ -880,7 +890,7 @@ function genSticker() {
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: var(--1s-accent-color, #09090b);
+    background: var(--1s-accent-color);
     flex-shrink: 0;
   }
 

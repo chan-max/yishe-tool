@@ -464,23 +464,23 @@ function handleStickerImgClick() {
   height: 36px;
   border-radius: 50%;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--1s-shadow-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #606266;
+  color: var(--1s-text-color-secondary);
   font-size: 14px;
 
   &:hover {
-    background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
-    border-color: #c0c4cc;
+    background: var(--1s-hover-background);
+    border-color: var(--1s-border-color-strong);
     transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--1s-shadow-md);
   }
 
   &:active {
     transform: scale(0.95);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--1s-shadow-xs);
   }
 }
 

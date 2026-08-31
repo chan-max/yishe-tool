@@ -13,8 +13,9 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
+    /* 白天模式：使用蓝色作为 primary 强调色，而非近黑色 */
+    --primary: 217 91% 50%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
@@ -22,15 +23,15 @@
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 217 91% 95%;
+    --accent-foreground: 217 91% 30%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 88%;
-    --ring: 240 5.9% 10%;
+    --ring: 217 91% 50%;
 
     --radius: 0.375rem;
   }

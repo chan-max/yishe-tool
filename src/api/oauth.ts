@@ -16,7 +16,7 @@ function getAuthorizeBaseUrl(): string {
   if (origin.includes('localhost')) {
     return 'http://localhost:1521'
   }
-  return 'https://admin.1s.design'
+  return 'http://admin.1s.design'
 }
 
 /** 获取回调地址 */

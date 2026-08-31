@@ -29,7 +29,6 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import App from './App.vue'
 import '@/style/cover-elementplus.scss'
 import { apiInstance } from "@/api/apiInstance";
-import { defaultResponseInterceptors } from '@/api/apiInterception'
 
 import '@/style/cover-antdesign.less'
 import { s1Plugin } from '@/components/export.ts'
@@ -191,9 +190,6 @@ async function setup() {
       return; // 如果检测到其他活跃标签页，直接返回
     }
   }
-
-  // pc 端专有的拦截器
-  apiInstance.interceptors.response.use(defaultResponseInterceptors);
 
   const app = createApp(App)
 

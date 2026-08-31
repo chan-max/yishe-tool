@@ -46,7 +46,7 @@
 import { useStickerDetailModal } from "./stickerModal.ts";
 import { ref } from "vue";
 import Utils from "@/common/utils";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 
 const { show, detailInfo } = useStickerDetailModal();
 

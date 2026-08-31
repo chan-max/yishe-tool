@@ -132,7 +132,7 @@ import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/i
 import Utils from "@/common/utils";
 import Api from "@/api";
 import { s1Confirm } from "@/common/message";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import { useCustomModelDetailModal } from "@/components/design/layout/project/customModel/customModelModal";
 import { openShareCardModal } from "@/components/design/layout/shareCard/index.ts";
 import { saveAs } from "file-saver";

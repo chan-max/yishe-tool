@@ -177,7 +177,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Pencil, Sun, Moon, Download } from "lucide-vue-next";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import DownloadModal from "./downloadModal/index.vue";
 import {
   currentEditingCustomStickerId,

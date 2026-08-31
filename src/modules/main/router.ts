@@ -18,6 +18,14 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: "/oauth/callback",
+    name: "OAuthCallback",
+    component: () => import("./view/user/login/OAuthCallback.vue"),
+    meta: {
+      title: "授权登录",
+    },
+  },
+  {
     path: "/:catchAll(.*)",
     redirect: {
       name: "Design",

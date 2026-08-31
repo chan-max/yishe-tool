@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { message, Modal } from "ant-design-vue";
+import { message, Modal } from '@/common/message';
 import {
   getCustomStickerList,
   importCustomStickerToLibrary,

@@ -1,3 +1,3 @@
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 
 

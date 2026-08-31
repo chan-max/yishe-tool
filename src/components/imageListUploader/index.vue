@@ -27,7 +27,7 @@
 import { ref, watch } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import Api from "@/api";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 
 /**
  * 这里采用的策略为选择及上传，删除即删除

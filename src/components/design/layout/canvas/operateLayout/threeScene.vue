@@ -310,7 +310,7 @@ import operateItemSize from '@/components/design/layout/canvas/operate/size/rela
 import operateItemCommonGroup from '@/components/design/layout/canvas/operate/commonGroup.vue'
 import operateFormItem from '@/components/design/layout/canvas/operate/operateFormItem.vue'
 import { getAsset3dList } from '@/api'
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 import { currentOperatingCanvasChild } from '../index.tsx'
 import {
     createDebugCubeObject,

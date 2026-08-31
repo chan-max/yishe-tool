@@ -5,7 +5,7 @@ import { filesize } from 'filesize'
 const cacheFontFamilyLoadingMap = {
 }
 
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 
 // 加载字体
 

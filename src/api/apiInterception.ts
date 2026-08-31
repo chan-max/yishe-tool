@@ -10,7 +10,7 @@
  */
 import { normalizeTokenValue, useLoginStatusStore } from "@/store/stores/login";
 import { ElMessage } from 'element-plus'
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 import { openLoginDialog } from '@/modules/main/view/user/login/index.tsx'
 
 const ownershipExcludedKeywords = ['/login', '/signup', '/page', '/list', '/delete', '/logout']
@@ -179,6 +179,19 @@ export const messageResponseInterceptor = (response) => {
   return response
 }
 
+// 防抖：避免未登录时多个并发请求重复弹出登录提示
+let _401Notified = false
+function notifyUnauthorized() {
+  if (_401Notified) return
+  _401Notified = true
+  const loginStore = useLoginStatusStore()
+  loginStore.logout()
+  openLoginDialog()
+  message.error('请登录 :-)')
+  // 3 秒后重置，允许后续再次提示
+  setTimeout(() => { _401Notified = false }, 3000)
+}
+
 export const defaultResponseInterceptors = (response) => {
 
   if (response?.data?.code === 400) {
@@ -186,14 +199,9 @@ export const defaultResponseInterceptors = (response) => {
     return Promise.reject()
   }
 
-
-
   // 无权限
   if (response?.data?.code === 401) {
-    let loginStore = useLoginStatusStore()
-    loginStore.logout()
-    openLoginDialog()
-    message.error('请登录 :-)')
+    notifyUnauthorized()
     return Promise.reject()
   }
 

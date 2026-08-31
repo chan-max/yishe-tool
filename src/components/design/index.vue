@@ -28,7 +28,7 @@ import {
 } from "vue";
 import { getModelById } from "@/api";
 import { useStats } from "@/common/use/stats";
-import { message, Modal } from "ant-design-vue";
+import { message, Modal } from '@/common/message';
 import { s1Confirm } from "@/common/message";
 import { initAIConfig } from "@/ai/direct-client";
 // useStats()

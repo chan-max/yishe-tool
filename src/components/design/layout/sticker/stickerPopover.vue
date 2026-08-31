@@ -57,7 +57,7 @@
 // import { currentModelController } from "@/components/design/store";
 import { getStickerTypeLabel } from "./index";
 import { canvasStickerOptions } from "../canvas";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import { restoreAgentDesignProvenance } from "@/ai/design-provenance";
 
 const props = defineProps({

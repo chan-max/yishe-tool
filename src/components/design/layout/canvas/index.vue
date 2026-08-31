@@ -311,7 +311,7 @@ import { CircleCloseFilled, FullScreen, Check } from "@element-plus/icons-vue";
 import { useLoadingOptions } from "@/components/loading/index.tsx";
 import addPopover from "./addPopover.vue";
 import Api from "@/api";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";
 import { stickerAutoplacementTags } from "@/components/design/components/tagsInput/index.ts";
 import { executeAITool } from "@/ai/shared/execute-tool";

@@ -1,4 +1,4 @@
-import { Modal } from "ant-design-vue"
+import { Modal } from '@/common/message'
 
 import component from './index.vue'
 import { ref } from 'vue'

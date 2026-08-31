@@ -270,7 +270,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { Picture, Loading } from '@element-plus/icons-vue'
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 
 // 配置 message 的 z-index，确保显示在弹窗之上
 message.config({

@@ -5,7 +5,7 @@ import { defineStore } from "pinia";
 import Utils from '@/common/utils'
 import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
 import Api from '@/api'
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 import { saveAs } from 'file-saver';
 import { migrateLegacyWorkspaceStorage } from '@/services/designRuntime'
 

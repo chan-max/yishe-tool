@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref, defineExpose, nextTick } from "vue";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 
 // 组件一旦展示就会进入动画流程
 const show = ref(false);

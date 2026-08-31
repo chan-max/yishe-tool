@@ -21,6 +21,9 @@
     </el-config-provider>
   </a-config-provider>
 
+  <!-- shadcn Toast host -->
+  <ToastHost />
+
   <AutomationOverlay />
 </template>
 <script setup>
@@ -35,6 +38,7 @@ import antZh from 'ant-design-vue/es/locale/zh_CN';
 import loginForm from '@/modules/main/view/user/login/index.vue'
 import { isDarkMode } from '@/components/design/store'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { ToastHost } from '@/components/ui/toast'
 
 
 const antLocale = computed(() => {

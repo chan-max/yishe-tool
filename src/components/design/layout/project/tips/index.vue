@@ -234,7 +234,7 @@ import {
 import Utils from '@/common/utils'
 import Api from '@/api'
 import { s1Confirm } from '@/common/message'
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 
 interface TipItem {
   id: string | number

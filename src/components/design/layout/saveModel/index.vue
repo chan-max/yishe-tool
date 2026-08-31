@@ -275,7 +275,7 @@ import {
 } from "../../store";
 import { base64ToFile, base64ToPngFile } from "@/common/transform/base64ToFile";
 import { useLoginStatusStore } from "@/store/stores/login";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import desimage from "@/components/image.vue";
 import { CircleCloseFilled } from "@element-plus/icons-vue";
 import Utils from "@/common/utils";

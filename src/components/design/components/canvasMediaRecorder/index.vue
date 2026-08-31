@@ -23,7 +23,7 @@
 import { ref } from "vue";
 import icon from "./record.svg?component";
 import { currentModelController } from "@/components/design/store";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import { saveAs } from "file-saver";
 
 // 是否正在录制

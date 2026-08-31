@@ -214,6 +214,20 @@
 
   <!-- AI 设计助手面板 -->
   <AiPanel :open="isAiPanelOpen" @close="isAiPanelOpen = false" />
+
+  <!-- 登录提示弹窗 -->
+  <Dialog v-model:open="showLoginConfirmModal">
+    <DialogContent class="max-w-[320px] p-5 gap-3">
+      <DialogHeader>
+        <DialogTitle class="text-sm font-semibold">提示</DialogTitle>
+        <DialogDescription class="text-xs">登录以继续使用设计工具</DialogDescription>
+      </DialogHeader>
+      <DialogFooter class="gap-2">
+        <Button variant="outline" class="h-8 text-xs flex-1" @click="showLoginConfirmModal = false">暂不</Button>
+        <Button class="h-8 text-xs flex-1" @click="showLoginConfirmModal = false; openLoginDialog()">登录</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, ref, watchEffect, watch, nextTick } from "vue";
@@ -291,10 +305,8 @@ import canvasLayout from "./canvas/index.vue";
 import basicCanvas from "./basic-canvas/index.vue";
 import { showMainCanvas } from "./canvas/index.tsx";
 import stickerModal from "./sticker/modal.vue";
-import { Modal } from "ant-design-vue";
-import { createVNode } from "vue";
-import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Sparkles } from "lucide-vue-next";
 import projectModal from "./project/index.vue";
@@ -323,6 +335,8 @@ const loginStore = useLoginStatusStore();
 
 const des = useDesignStore();
 const isDesign3DEnabled = DESIGN_3D_ENABLED;
+
+const showLoginConfirmModal = ref(false);
 
 const basicContainerAnimation = ref({
   "enter-active-class": "animate__animated animate__bounceIn",
@@ -500,20 +514,8 @@ initAction();
 
 async function initAction() {
   setTimeout(() => {
-    // 提示用户登录
     if (!loginStore.isLogin) {
-      Modal.confirm({
-        content: <div>请登录</div>,
-        icon: createVNode(ExclamationCircleOutlined),
-        onOk() {
-          openLoginDialog();
-        },
-        okText: <div>登录</div>,
-        cancelText: "暂不",
-        onCancel() {
-          Modal.destroyAll();
-        },
-      });
+      showLoginConfirmModal.value = true;
     }
   }, 1999);
 }

@@ -108,7 +108,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 import {
   getOperationList,
   getOperationGroups,

@@ -19,7 +19,7 @@
 import { ref, watch } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import Api from "@/api";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import { genFileId } from "element-plus";
 
 /**

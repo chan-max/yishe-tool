@@ -117,7 +117,7 @@ import { currentModelController } from "../../store";
 import { ref, computed, onMounted } from "vue";
 import { selectedAngles } from '../../store';
 import gsap from "gsap";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import { saveAs } from "file-saver";
 import { QuestionFilled } from "@element-plus/icons-vue";
 import {

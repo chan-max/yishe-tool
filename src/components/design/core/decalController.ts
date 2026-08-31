@@ -19,7 +19,7 @@ import {
   RGBAFormat,
   UnsignedByteType,
 } from "three";
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 import { ref, reactive, computed, shallowRef, watch } from 'vue'
 import { v4 } from 'uuid'
 import Utils from '@/common/utils'

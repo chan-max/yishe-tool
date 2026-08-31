@@ -1,5 +1,5 @@
 
-import { Modal } from "ant-design-vue"
+import { Modal } from '@/common/message'
 
 import stickerDetailModal from './stickerDetailModal.vue'
 import { ref } from 'vue'

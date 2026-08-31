@@ -33,7 +33,7 @@ import {
 } from "three";
 
 
-import { message } from 'ant-design-vue';
+import { message } from '@/common/message';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { debounce, onWindowResize } from "../utils/utils";

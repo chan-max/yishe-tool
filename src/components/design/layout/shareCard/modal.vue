@@ -31,7 +31,7 @@ import {
 } from "./index.ts";
 import { ref, unref } from "vue";
 import shareCard from "./shareCard.vue";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 
 const shareCardRef = ref();
 

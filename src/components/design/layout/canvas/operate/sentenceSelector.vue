@@ -59,7 +59,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { Search } from '@element-plus/icons-vue';
 import Api from '@/api';
-import { message } from 'ant-design-vue';
+import { message } from '@/common/message';
 
 const props = defineProps<{
   visible: boolean;

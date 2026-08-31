@@ -1,5 +1,6 @@
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 
+export { message }
 
 export function formatUrl(url) {
     return url.startsWith('http') ? url : 'https://' + url;
@@ -9,7 +10,7 @@ export function formatUrl(url) {
     当image标签被定义src属性时，需异步等待加载完成才能使用
 */
 export function waitImage(image: any) {
-    return new Promise((resolve: any, reject) => {
+    return new Promise((resolve: any, reject: any) => {
 
         let timer = setTimeout(() => {
             message.error('图片加载超时')
@@ -22,4 +23,3 @@ export function waitImage(image: any) {
         }
     })
 }
-

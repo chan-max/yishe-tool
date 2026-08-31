@@ -1,4 +1,4 @@
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 import { ElNotification } from 'element-plus'
 
 export const meta = {

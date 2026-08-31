@@ -244,7 +244,7 @@
 
 <script setup lang="ts">
 import { ref, toRaw, nextTick } from "vue";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import Api, { uploadManyFile, createSticker, uploadFile } from "@/api";
 import { uploadToCOS } from "@/api/cos";
 import { showUpload } from "@/components/design/store.ts";

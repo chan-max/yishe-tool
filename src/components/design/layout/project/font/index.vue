@@ -248,7 +248,7 @@ import {
 import Utils from '@/common/utils'
 import Api from '@/api'
 import { s1Confirm } from '@/common/message'
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 import { useLoginStatusStore } from '@/store/stores/login'
 import { fontAutoplacementTags } from '@/components/design/components/tagsInput'
 import { getFontList, deleteFontTemplate } from '@/api'

@@ -275,7 +275,7 @@ import { showUpload, showFontModal, cacheFontFamily } from "@/components/design/
 import { useDebounceFn } from "@vueuse/core";
 import { Loading, Search, Check, DocumentCopy, Download, View } from "@element-plus/icons-vue";
 import { getFontList } from "@/api";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 
 interface FontItem {
   id: string;

@@ -130,7 +130,7 @@ import { useLoadingOptions } from "@/components/loading/index.tsx";
 import { currentOperatingCanvasChild } from "@/components/design/layout/canvas/index.tsx";
 import Utils from "@/common/utils";
 import { canvasStickerOptions } from "@/components/design/layout/canvas/index.tsx";
-import { message, Modal } from "ant-design-vue";
+import { message, Modal } from '@/common/message';
 import { s1Confirm } from "@/common/message";
 import Api from "@/api";
 import tagsInput from "@/components/design/components/tagsInput/tagsInput.vue";

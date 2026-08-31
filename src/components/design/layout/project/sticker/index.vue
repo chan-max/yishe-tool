@@ -261,7 +261,7 @@ import {
 } from '@/components/design/layout/canvas/index.tsx'
 import { createDefaultCanvasChildcanvasStickerOptions } from '@/components/design/layout/canvas/children/canvas.tsx'
 import Utils from '@/common/utils'
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 import { s1Confirm } from '@/common/message'
 import Api from '@/api'
 import tagsInput from '@/components/design/components/tagsInput/tagsInput.vue'

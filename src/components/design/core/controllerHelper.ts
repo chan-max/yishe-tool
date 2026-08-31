@@ -30,7 +30,7 @@ import {
     ACESFilmicToneMapping,
     SRGBColorSpace
 } from "three";
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 import three from '../../../common/three';
 import Utils from '@/common/utils'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';

@@ -3,7 +3,7 @@ import { currentModelController, currentEditingModelId } from "../../store";
 import { isEdit, currentEditingModelInfo } from '../../store';
 import gsap from "gsap";
 import { FrontSide } from "three";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import { saveAs } from "file-saver";
 
 export const modelControllerViewSetterOptions = ref([

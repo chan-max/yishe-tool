@@ -41,7 +41,7 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 import iconLogout from "@/icon/user/logout.svg?component";
 import iconSaved from "@/icon/user/saved.svg?component";
-import { Modal } from "ant-design-vue";
+import { Modal } from '@/common/message';
 import Utils from "@/common/utils";
 let router = useRouter();
 

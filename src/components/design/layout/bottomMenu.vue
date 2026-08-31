@@ -111,7 +111,7 @@ import {
 } from "@ant-design/icons-vue";
 import { Sparkles } from "lucide-vue-next";
 import { useEyeDropper } from "@vueuse/core";
-import { notification } from "ant-design-vue";
+import { toast } from '@/components/ui/toast';
 import screenshotDrawer from "@/components/design/components/screenshotDrawer.vue";
 import { showAutocreateModal } from "@/components/design/layout/autocreate/index.ts";
 import CropGuideModal from "@/components/design/layout/canvas/crop/components/CropGuideModal.vue";
@@ -125,10 +125,7 @@ async function openEyeDropper() {
   let { sRGBHex } = await open();
   navigator.clipboard.writeText(sRGBHex);
 
-  notification.open({
-    placement: "topRight",
-    message: `颜色 ${sRGBHex} 已复制到粘贴板`,
-  });
+  toast.success(`颜色 ${sRGBHex} 已复制到粘贴板`);
 }
 
 function takeshot() {

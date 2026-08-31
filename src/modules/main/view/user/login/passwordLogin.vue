@@ -77,11 +77,9 @@
     <Button
       variant="outline"
       class="h-8 w-full gap-2 text-xs"
-      :disabled="oauthLoading"
       @click="handleOAuthLogin"
     >
-      <Loader2 v-if="oauthLoading" class="h-3.5 w-3.5 animate-spin" />
-      <LogIn v-else class="h-3.5 w-3.5" />
+      <LogIn class="h-3.5 w-3.5" />
       一键授权登录
     </Button>
 
@@ -93,7 +91,7 @@ import { publicAppConfig } from '@/config/public'
 import { reactive, ref } from 'vue'
 import { login } from '@/api/index'
 import { useRouter } from 'vue-router'
-import { message } from 'ant-design-vue'
+import { message } from '@/common/message'
 import { User, Lock, Eye, EyeOff, LogIn, Loader2 } from 'lucide-vue-next'
 import { doLoginAction } from '@/store/stores/loginAction'
 import { showLoginFormModal } from '@/modules/main/view/user/login/index.tsx'
@@ -106,7 +104,6 @@ const router = useRouter()
 const productName = publicAppConfig.shortName
 
 const loading = ref(false)
-const oauthLoading = ref(false)
 const showPassword = ref(false)
 const errMsg = ref('')
 const isOnce = ref(false)
@@ -140,14 +137,8 @@ async function submit() {
   }
 }
 
-async function handleOAuthLogin() {
-  oauthLoading.value = true
-  try {
-    openAuthorizePage()
-  } catch (e) {
-    errMsg.value = e?.message || '打开授权页面失败'
-  } finally {
-    oauthLoading.value = false
-  }
+function handleOAuthLogin() {
+  // 整页跳转到授权页面，页面会被替换，不需要 loading 状态
+  openAuthorizePage()
 }
 </script>

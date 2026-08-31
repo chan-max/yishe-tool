@@ -24,7 +24,7 @@
 </template>
 <script setup>
 import { ref, onBeforeMount } from "vue";
-import { Modal } from "ant-design-vue";
+import { Modal } from '@/common/message';
 import { getFontListApi } from "@/api";
 import { showFontModal } from "../../store.ts";
 import { usePaging } from "@/hooks/data/paging.ts";

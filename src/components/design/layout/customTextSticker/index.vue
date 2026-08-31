@@ -34,7 +34,7 @@ import {
   exportTextStickerPng,
   exportTextStickerSvg,
 } from "./watch";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 
 const loading = ref(false);
 

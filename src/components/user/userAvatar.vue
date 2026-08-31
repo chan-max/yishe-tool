@@ -65,7 +65,7 @@ import { useRouter } from 'vue-router'
 import { useLoginStatusStore } from '@/store/stores/login'
 import { doLogout } from '@/store/stores/loginAction'
 import Utils from '@/common/utils'
-import { Modal } from 'ant-design-vue'
+import { Modal } from '@/common/message'
 import { LayoutDashboard, LogOut } from 'lucide-vue-next'
 import {
   DropdownMenu,

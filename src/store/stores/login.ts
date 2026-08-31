@@ -14,7 +14,7 @@ import { defineStore } from "pinia";
 import { reactive, ref, watch, toRaw, isReactive, isRef, unref } from "vue";
 import Api from '@/api'
 import to from 'await-to-js';
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 
 export function normalizeTokenValue(tokenValue: unknown) {
   if (typeof tokenValue === "string") {

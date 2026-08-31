@@ -131,7 +131,7 @@
 import { ref, computed, watch, nextTick } from 'vue';
 import { viewDisplayController, currentModelController } from "@/components/design/store";
 import { builtInClothingColors } from "./index.ts";
-import { message } from 'ant-design-vue';
+import { message } from '@/common/message';
 
 // 响应式的原始材质状态
 // 默认使用自定义材质模式（false），只有在控制器明确设置为原始材质时才为true

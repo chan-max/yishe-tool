@@ -177,7 +177,7 @@ import { getFontList, updateFontTemplate } from "@/api";
 import { canvasStickerOptions, currentOperatingCanvasChildId,currentOperatingCanvasChild } from '@/components/design/layout/canvas/index.tsx'
 import { htmlToPngFile } from "@/common/transform";
 import { uploadToCOS } from "@/api/cos";
-import { message } from "ant-design-vue";
+import { message } from '@/common/message';
 import { cacheFontFamily } from "@/components/design/store";
 import { DocumentCopy, Download, Check } from "@element-plus/icons-vue";
 
